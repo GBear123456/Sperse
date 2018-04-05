@@ -1867,10 +1867,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 return path.indexOf(this.allYears[0]) !== -1;
             });
             if (!yearWasExpanded) {
-                let yearFieldIndex = this.getIndexByCaption('year');
-                let quarterFieldIndex = this.getIndexByCaption('quarter');
-                this.pivotGrid.instance.getDataSource().expandAll(yearFieldIndex);
-                this.pivotGrid.instance.getDataSource().expandAll(quarterFieldIndex);
+                let historicalValue = this.getYearHistoricalSelectorWithCurrent()({date: moment.unix(0).tz('UTC').year(this.allYears[0])});
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0]]);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 1]);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 2]);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 3]);
+                this.pivotGrid.instance.getDataSource().expandHeaderItem('column', [historicalValue, this.allYears[0], 4]);
                 this.allYears = undefined;
             }
         }
