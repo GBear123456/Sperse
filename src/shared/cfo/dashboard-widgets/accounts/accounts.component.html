@@ -6,10 +6,10 @@
             hideEvent="dxhoverend">     
             <div *dxTemplate="let data = data of 'content'">
                 <div class="tooltip-wrap">
-                    <header>{{l('Accounts_BalanceToolTip_Header')}}:</header>
-                    <div>{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span class="total">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
-                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
                     <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData?.totalNetWorth - accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                    <hr/>
+                    <div class="total">{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span>{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
                 </div>
             </div>
         </dx-tooltip>
