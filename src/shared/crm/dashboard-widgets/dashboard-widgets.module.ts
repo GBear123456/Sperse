@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import * as ngCommon from '@angular/common';
 import {CommonModule} from '@shared/common/common.module';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
+import { RouterModule } from '@angular/router';
 
 import { CountsAndTotalsComponent } from './counts-and-totals/counts-and-totals.component';
 import { NewItemsTotalsComponent } from './new-items-totals/new-items-totals.component';
@@ -26,6 +27,7 @@ import { MatDialogModule } from '@angular/material';
 @NgModule({
     imports: [
         CommonModule,
+        RouterModule,
         RoundProgressModule,
         DxSelectBoxModule,
         DxCheckBoxModule,

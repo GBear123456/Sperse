@@ -28,8 +28,10 @@ export class CountsAndTotalsComponent extends AppComponentBase implements OnInit
 
         this.fields = _dashboardService.totalsDataFields;
 
-        _dashboardService.subscribeTotalsData(result => {            
-            this.onDataLoaded.emit(this.data = result);
+        _dashboardService.subscribeTotalsData(result => {                        
+            this.data = result;
+            this.onDataLoaded.emit(result['totalOrderAmount'] || 
+                result['totalLeadCount'] || result['totalClientCount'] ? [result]: []);
           
             this.fields.forEach((field) => {
                 field.percent = _dashboardService.getPercentage(

@@ -1,15 +1,16 @@
 <div class="wrapper">
     <header>
-        <h2 class="title">{{l('Recent Clients')}}</h2>
+        <h2 class="title"><i class="icon-people"></i>{{l('CRMDashboard_RecentClients')}}<span>{{l('CRMDashboard_LastNClientsRecords', [recordsCount])}}</span><a routerLink="/app/crm/clients">{{l('CRMDashboard_SeeAllRecords')}}></a></h2>
     </header>
 
-    <div class="wrapper" [hidden]="isDataLoaded && !totalRowCount">
-        <dx-data-grid id="gridContainer"
+    <div class="grid-wrapper" [hidden]="isDataLoaded && !totalRowCount">
+        <dx-data-grid id="gridContainer" class="grid-compact-view"
                       [dataSource]="dataSource"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                      (onContentReady)="onContentReady($event)">
-            <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
-            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+                      (onContentReady)="onContentReady($event)"
+                      (onCellClick)="onCellClick($event)">
+            <dxi-column dataField="name" caption="{{l('Customer.Name')}}"></dxi-column>
+            <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
             <div *dxTemplate="let cellData of 'dateCell'">
                 {{cellData.value | date: formatting.dateTime}}
             </div>

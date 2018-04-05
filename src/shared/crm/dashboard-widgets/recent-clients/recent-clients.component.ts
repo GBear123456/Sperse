@@ -1,46 +1,46 @@
 import { Component, OnInit, Injector, ViewChild, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import { DashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'recent-clients',
     templateUrl: './recent-clients.component.html',
     styleUrls: ['./recent-clients.component.less'],
-    providers: [ CustomersServiceProxy ]
+    providers: [ DashboardServiceProxy ]
 })
 export class RecentClientsComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     @Output() onReady = new EventEmitter();
 
+    recordsCount = 10;
+
     private formatting = AppConsts.formatting;
     private readonly dataSourceURI = 'Customer';
 
     constructor(injector: Injector,
-        private _customersServiceProxy: CustomersServiceProxy
+        private _router: Router,
+        private _dashboardServiceProxy: DashboardServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.dataSource = {
-            store: {
-                key: 'Id',
-                type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
-                }
-            }
-        };
+        this.dataSource = {};
     }
 
     ngOnInit() {
+        this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount).subscribe(result => {
+            this.dataSource = result;
+        });
     }
 
     onContentReady($event) {        
         this.onReady.emit($event.component.getVisibleRows());
+    }
+
+    onCellClick($event) {
+        this._router.navigate(['app/crm/client', $event.row.data.id]);
     }
 }
