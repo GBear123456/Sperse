@@ -41,6 +41,7 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
     }
 
     onCellClick($event) {
-        this._router.navigate(['app/crm/client', $event.row.data.id]);
+        $event.row && this._router.navigate(
+            ['app/crm/client', $event.row.data.id]);
     }
 }
