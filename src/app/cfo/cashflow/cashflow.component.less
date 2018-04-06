@@ -683,6 +683,10 @@
                                 background: @forecastDataCellBackgroundColor;
                             }
 
+                            &[data-is-weekend='true'] {
+                                background: url('../../../assets/common/images/weekend-background.png');
+                            }
+
                             &.dx-row-total {
                                 background: @totalDataCellBackgroundColor;
                             }
@@ -752,10 +756,6 @@
                                     background: url('../../../assets/common/icons/info-icon.svg') no-repeat center;
                                     display: inline-block;
                                 }
-                            }
-
-                            &[data-is-weekend='true'] {
-                                background-image: url('../../../assets/common/images/weekend-background.png') !important;
                             }
                         }
 
