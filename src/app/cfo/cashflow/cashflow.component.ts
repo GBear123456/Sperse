@@ -2806,7 +2806,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /* if ($(targetElement).attr('class').indexOf('prev') !== -1) {
                         $(`[droppable]:nth-child(${cellIndex + 1}):not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
                     } else*/
-                if (targetCell.getAttribute('class').indexOf('next') !== -1) {
+                if (targetCell.getAttribute('class').indexOf('next') !== -1 || targetCell.className.indexOf('current') !== -1) {
                     $(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
                     $(`[droppable][class*="current"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
                     $(`[droppable]:not(.chosenFilterForCashFlow) > span`).attr('droppable', 'true');
