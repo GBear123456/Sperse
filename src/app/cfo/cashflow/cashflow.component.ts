@@ -2861,7 +2861,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let targetCell = this.getCellElementFromTarget(e.target);
         if (targetCell && this.elementIsDataCell(targetCell)) {
             let cellObj = this.getCellObjectFromCellElement(targetCell);
-            let cellWhereToMove = cellObj;           
+            let cellWhereToMove = cellObj;
 
             /** Get the transaction of moved cell */
             let itemsToMove = this.getDataItemsByCell(this.movedCell);
@@ -3062,7 +3062,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (!isCellMarked) {
                 cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 0);
-                /** add title to the cells that has too little value and showen as 0 to show the real value on hover */
+                /** add title to the cells that has too little value and shown as 0 to show the real value on hover */
                 if (cellObj.cell.value > -1 && cellObj.cell.value < 1 && cellObj.cell.value !== 0 && Math.abs(cellObj.cell.value) >= 0.01) {
                     cellObj.cellElement.setAttribute('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 2));
                 }
@@ -3074,7 +3074,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellType = this.getCellType(cellObj);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
-            if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value <= 0)) {
+            if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value < 0.01)) {
                 cellObj.cellElement.innerText = '';
                 cellObj.cellElement.classList.add('hideZeroValues');
             }
@@ -3123,7 +3123,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
         if (!locale)
             locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? 'tr' : 'en-EN';
-        value = value > -0.01 && value <= 0 ? 0 : value;
+        value = value > -0.01 && value < 0.01 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
             currency: this.currencyId,
