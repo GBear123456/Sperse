@@ -3,44 +3,22 @@
         <h2 class="title">{{l('Totals')}}</h2>
     </header>
     <div class="content-wrap">
-        <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingCount')" class="align-data">
+        <div *ngIf="dataAvailable" class="align-data">
 
-            <div class="starting-count">
-                {{l('Starting Count')}}
-                <span>{{ 443 }}</span>
-            </div>
             <div class="charts-wrapper">
-                <div class="chart-head">
-                    {{l('NewClientsAdded')}}
-                    <span [ngStyle]="{'color': '#3CA8EE'}">
-                        {{ 315 }} of {{ 777 }}
-                    </span>
-                </div>
-                <div class="chart-line" [ngStyle]="{'background-color': '#88E6DD'}"><div [ngStyle]="{width: '40%', 'background-color': '#3CA8EE'}"></div></div>
-
-                <div class="chart-head">
-                    {{l('NewLeadsAdded')}}
-                    <span [ngStyle]="{'color': '#41B9A3'}">
-                        {{ 495 }} of {{ 830 }}
-                    </span>
-                </div>
-                <div class="chart-line" [ngStyle]="{'background-color': '#81EAE1'}"><div [ngStyle]="{width: '73%', 'background-color': '#41B9A3'}"></div></div>
-
-                <div class="chart-head">
-                    {{l('Net_Change')}}
-                    <span [ngStyle]="{'color': '#F3583E'}">
-                        {{ 180 }}
-                    </span>
-                </div>
-                <div class="chart-line"><div [ngStyle]="{width: '22%', 'background-color': '#F3583E'}"></div></div>
-            </div>
-
-            <div class="ending-count">
-                {{l('Ending Count')}}
-                <span>{{ 1607 }}</span>
+                <ng-container *ngFor="let field of fields">
+                    <div class="chart-head">
+                        {{l('CRMDashboard_NewAdded', [l(field.title).toLowerCase()])}}
+                        <span [ngStyle]="{'color': field.color}">
+                            <ng-container *ngIf="field.type == 'currency'">{{ data[field.name.replace('total', 'new')] | currency }} of {{ data[field.name] | currency }}</ng-container>
+                            <ng-container *ngIf="field.type == 'number'">{{ data[field.name.replace('total', 'new')] | number }} of {{ data[field.name] | number }}</ng-container>
+                        </span>
+                    </div>
+                    <div class="chart-line" [ngStyle]="{'background-color': '#F1F5F6'}"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
+                </ng-container>
             </div>
 
         </div>
-        <app-no-data [hidden]="loading || (totalData && totalData?.hasOwnProperty('startingCount'))"></app-no-data>
+        <app-no-data [hidden]="dataAvailable"></app-no-data>
     </div>
 </section>

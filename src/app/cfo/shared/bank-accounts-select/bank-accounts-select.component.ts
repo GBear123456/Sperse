@@ -100,7 +100,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this.refreshSelected([]);
 
         if (this.useGlobalCache)
-            this._cacheService.set(this.bankAccountsCacheKey, {});
+            this._cacheService.set(this.bankAccountsCacheKey, { 'bankAccounts': [], 'isActive': true });
 
         this.onBankAccountsSelected.emit({
             bankAccountIds: [],
@@ -146,6 +146,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
                 if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
                     let bankAccountIds = this._cacheService.get(this.bankAccountsCacheKey)['bankAccounts'];
+                    if (!bankAccountIds)
+                        bankAccountIds = [];
+
                     this.refreshSelected(bankAccountIds);
 
                     if (initial) {

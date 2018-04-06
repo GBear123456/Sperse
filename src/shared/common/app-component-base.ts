@@ -288,7 +288,8 @@ export abstract class AppComponentBase {
                 webWidget: {
                     launcher: {
                         label: {
-                            '*': 'Questions or feedback'
+                            '*': abp.localization.localize('QuestionsOrFeedback', 
+                                AppConsts.localization.defaultLocalizationSourceName)
                         }
                     }
                 }

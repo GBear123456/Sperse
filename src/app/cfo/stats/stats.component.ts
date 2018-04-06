@@ -32,7 +32,7 @@ import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-selec
 import * as _ from 'underscore';
 import * as moment from 'moment';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
-import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filte.model';
+import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 
 @Component({
     'selector': 'app-stats',
@@ -759,6 +759,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     customizeBarTooltip = (pointInfo) => {
+        console.log(pointInfo);
+        if (pointInfo.seriesName == 'historicalGradient' || pointInfo.seriesName == 'forecastGradient')
+            return {
+                html: ''
+            };
+
         return {
             html: this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo)
         };
