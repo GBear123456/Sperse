@@ -42,9 +42,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneValidator: any;
 
     emails = {};
-    emailType = {};
+    emailType = {
+        personal: 'P'
+    };
     phones = {};
-    phoneType = {};
+    phoneType = {
+        personal: 'M'
+    };
     phoneExtension = {};
     phoneTypes: any = [];
     emailTypes: any = [];
@@ -378,9 +382,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (list.length)
             ['business', 'personal'].forEach((type) => {
                 if (field)
-                    obj[type][field] = list[0].id;
+                    obj[type][field] = obj[type][field] || list[0].id;
                 else
-                    obj[type] = list[0].id;
+                    obj[type] = obj[type] || list[0].id;
             });
     }
 
