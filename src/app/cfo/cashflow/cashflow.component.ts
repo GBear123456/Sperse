@@ -640,6 +640,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Selected cell on cashflow grid (dxPivotGridPivotGridCell) interface */
     private selectedCell;
 
+    /** Moved cell on cashflow grid (dxPivotGridPivotGridCell) interface */
+    private movedCell;
+
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     private copiedCell;
 
@@ -1307,8 +1310,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 stubCashflowDataForAllDays
             );
 
-            let start = underscore.min(this.cashflowData, function(val) { return val.date; }).date.year();
-            let end = underscore.max(this.cashflowData, function(val) { return val.date; }).date.year();
+            let start = underscore.min(this.cashflowData, function (val) { return val.date; }).date.year();
+            let end = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
             this.setSliderReportPeriodFilterData(start, end);
         } else {
             this.cashflowData = [];
@@ -1674,7 +1677,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         this.allYears = this.allYears.sort();
         let stubsInterval = this.getStubsInterval(minDate, maxDate, existingPeriods, periodFormat);
-        this.yearsAmount = stubsInterval.endDate.diff(stubsInterval .startDate, 'years') + 1;
+        this.yearsAmount = stubsInterval.endDate.diff(stubsInterval.startDate, 'years') + 1;
+
 
         /** cycle from started date to ended date */
         /** added fake data for each date that is not already exists in cashflow data */
@@ -2782,6 +2786,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** add selected class */
                 $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
                 targetCell.classList.add('chosenFilterForCashFlow');
+                this.movedCell = cellObj;
 
                 let dragImg = new Image();
                 dragImg.src = 'assets/common/icons/drag-icon.svg';
@@ -2798,6 +2803,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     } else*/
                 if (targetCell.getAttribute('class').indexOf('next') !== -1) {
                     $(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
+                    $(`[droppable][class*="current"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
                     $(`[droppable]:not(.chosenFilterForCashFlow) > span`).attr('droppable', 'true');
                 }
             }
@@ -2855,11 +2861,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let targetCell = this.getCellElementFromTarget(e.target);
         if (targetCell && this.elementIsDataCell(targetCell)) {
             let cellObj = this.getCellObjectFromCellElement(targetCell);
-            let cellWhereToMove = cellObj;
-            let movedCell = this.selectedCell;
+            let cellWhereToMove = cellObj;           
 
             /** Get the transaction of moved cell */
-            let itemsToMove = this.getDataItemsByCell(movedCell);
+            let itemsToMove = this.getDataItemsByCell(this.movedCell);
 
             /** Handle moving of historical transactions */
             /** @todo implement */
@@ -2868,7 +2873,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** Handle moving of forecasts */
-            if (targetCell.className.indexOf('next') !== -1) {
+            if (targetCell.className.indexOf('next') !== -1 || targetCell.className.indexOf('current') !== -1) {
                 this.moveOrCopyForecasts(itemsToMove, cellWhereToMove, 'move');
             }
         }
