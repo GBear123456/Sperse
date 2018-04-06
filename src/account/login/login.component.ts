@@ -58,14 +58,27 @@ export class LoginComponent extends AppComponentBase implements OnInit {
                 });
         }
 
-        let $modal = $('.modal');
-        $modal.on('show.bs.modal', function(e) {
+        let privacy = $('#privacy');
+        privacy.on('show.bs.modal', function() {
             $(this)
                 .addClass('modal-scrollfix')
                 .find('.modal-body')
                 .html('loading...')
                 .load(AppConsts.remoteServiceBaseUrl + '/docs/privacy.html', function() {
-                    $modal
+                    privacy
+                        .removeClass('modal-scrollfix')
+                        .modal('handleUpdate');
+                });
+        });
+
+        let terms = $('#terms');
+        terms.on('show.bs.modal', function() {
+            $(this)
+                .addClass('modal-scrollfix')
+                .find('.modal-body')
+                .html('loading...')
+                .load(AppConsts.remoteServiceBaseUrl + '/docs/terms.html', function() {
+                    terms
                         .removeClass('modal-scrollfix')
                         .modal('handleUpdate');
                 });
@@ -91,7 +104,6 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     login(): void {
         this.submitting = true;
-
         this.loginService.authenticate(() => this.submitting = false);
     }
 

@@ -38,7 +38,7 @@ export class DashboardWidgetsService  {
         this._period = new Subject<Object>();
     }
 
-    subscribePeriodChange(callback: (period: Object) => any) {
+    subscribePeriodChange(callback: (period: any) => any) {
         this._subscribers.push(
             this._period.asObservable().subscribe(callback)
         );
