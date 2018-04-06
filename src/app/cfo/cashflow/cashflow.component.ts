@@ -4532,28 +4532,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /* update CFO grid */
-            let transactionsToUpdate: TransactionStatsDto[] = [];
+            let affectedTransactions: TransactionStatsDto[] = [];
             let sameDateTransactionExist = false;
-            this.cashflowData.forEach((item: TransactionStatsDto, i) => {
+            for (var i = this.cashflowData.length - 1; i >= 0; i--) {
+                let item = this.cashflowData[i];
+
                 if (item.forecastId === e.key.id) {
                     if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
                         this.cashflowData.splice(i, 1);
                     }
-                    else {
-                        transactionsToUpdate.push(item);
-                    }
+
+                    affectedTransactions.push(item);
                 }
-                else {
-                    if (paramNameForUpdateInput == 'date' &&  moment(e.oldData[paramName]).isSame(item.date)) {
-                        sameDateTransactionExist = true;
-                    }
+                else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
+                    sameDateTransactionExist = true;
                 }
-            });
-            transactionsToUpdate.forEach(item => {
-                if (paramNameForUpdateInput == 'date' && !sameDateTransactionExist) {
+            }
+
+            affectedTransactions.forEach(item => {
+                if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
                     this.cashflowData.push(
                         this.createStubTransaction({
                             date: item.date,
+                            initialDate: item.date,
                             amount: 0,
                             cashflowTypeId: item.cashflowTypeId,
                             accountId: item.accountId

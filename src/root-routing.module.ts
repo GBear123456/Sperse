@@ -40,7 +40,7 @@ export class RootRoutingModule implements AfterViewInit {
            {
                path: '',
                redirectTo: AppConsts.isMobile
-                   ? '/app/cfo/user/start'
+                   ? '/app/cfo/main/start'
                    : '/app/crm/start',
                pathMatch: 'full'
            },
