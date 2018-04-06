@@ -45,7 +45,7 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.onChange.emit(this.selectedPeriod);
+        this.onChange.emit(this.getDatePeriodFromName(this.selectedPeriod));
     }
 
     onPeriodChanged($event) {

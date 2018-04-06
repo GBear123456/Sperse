@@ -70,6 +70,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this._dashboardService.unsubscribe();
     }
 
     addAccount() {
