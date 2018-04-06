@@ -11,9 +11,9 @@ import { DashboardWidgetsService } from '../dashboard-widgets.service';
 })
 export class TotalsBySourceComponent extends AppComponentBase implements OnInit {
     totalsData: any = [
-        { type: "10 - 20",  yield: 10 },
-        { type: "25 - 50",  yield: 15 },
-        { type: "50 - 100", yield: 9 }
+        { type: "10 - 20",  yield: 10, color: '#F9B65C' },
+        { type: "25 - 50",  yield: 15,  color: '#98D66B' },
+        { type: "50 - 100", yield: 9, color: '#ED9757' }
     ];
 
     constructor(
@@ -41,5 +41,11 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
 
     ngOnInit() {
 
+    }
+
+    customizePoint = (data) => {
+        return {    
+            color: this.totalsData[data.index].color
+        }
     }
 }

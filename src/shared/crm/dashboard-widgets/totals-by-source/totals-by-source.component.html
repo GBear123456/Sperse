@@ -4,6 +4,7 @@
         <dx-pie-chart [dataSource]="totalsData" 
             [type]="'doughnut'" 
             [innerRadius]="0.9"
+            [customizePoint]="customizePoint"
             (onInitialized)="onInitialized($event)"
             [title]="{text: 'Totals by Company Size', font: {color: '#212c36', size: 18, weight: '700', family: 'Montserrat'}}"
             [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}">

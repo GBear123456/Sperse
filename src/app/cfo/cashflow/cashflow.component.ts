@@ -2959,7 +2959,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     transactionDescriptor: transactionDescriptor
                 });
             }
-            forecastModels.forecasts.push(forecastModel);
+            if (forecastModel)
+                forecastModels.forecasts.push(forecastModel);
         });
 
         let method = operation === 'copy' ? 'createForecasts' : 'updateForecasts';
