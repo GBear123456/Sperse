@@ -286,7 +286,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 period = 'all';
                 break;
             default:
-                endDate.subtract(12, 'month');
+                startDate.subtract(12, 'month');
                 break;
         }
 

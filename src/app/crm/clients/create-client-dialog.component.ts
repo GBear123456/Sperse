@@ -42,9 +42,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneValidator: any;
 
     emails = {};
-    emailType = {};
+    emailTypeDefault = 'P';
+    emailType = {
+        personal: this.emailTypeDefault
+    };
     phones = {};
-    phoneType = {};
+    phoneTypeDefault = 'M';
+    phoneType = {
+        personal: this.phoneTypeDefault
+    };
     phoneExtension = {};
     phoneTypes: any = [];
     emailTypes: any = [];
@@ -104,7 +110,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             {
                 name: 'discard',
-                action: Function()
+                action: this.resetFullDialog.bind(this)
             }
         ]
         },
@@ -378,9 +384,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (list.length)
             ['business', 'personal'].forEach((type) => {
                 if (field)
-                    obj[type][field] = list[0].id;
+                    obj[type][field] = obj[type][field] || list[0].id;
                 else
-                    obj[type] = list[0].id;
+                    obj[type] = obj[type] || list[0].id;
             });
     }
 
@@ -522,5 +528,28 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.setComponentToValid(field, type, true);
         this.clearButtonVisible[type][field] = false;
         this.checkSimilarCustomers();
+    }
+
+    resetFullDialog() {
+        ['business', 'personal'].forEach((type) => {
+            this.resetComponent(this['emails' + this.capitalize(type)]);
+            this.resetComponent(this['phones' + this.capitalize(type)]);
+            this.clearButtonVisible[type]['emails'] = false;
+            this.clearButtonVisible[type]['phones'] = false;
+            this.addButtonVisible[type]['emails'] = false;
+            this.addButtonVisible[type]['phones'] = false;
+            this.contacts.emails[type] = [];
+            this.contacts.phones[type] = [];
+            this.contacts.addresses[type] = {};
+            this.notes[type] = undefined;
+        });
+
+        this.emailType.personal = this.emailTypeDefault;
+        this.phoneType.personal = this.phoneTypeDefault;
+        this.setDefaultTypeValue(this.contacts.addresses, this.addressTypes, 'addressType');
+        this.data.title = undefined;
+        this.data.isTitleValid = true;
+        this.company = undefined;
+        this.similarCustomers = [];
     }
 }

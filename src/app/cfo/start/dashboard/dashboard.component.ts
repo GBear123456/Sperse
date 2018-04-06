@@ -10,16 +10,13 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
-import { InstanceType, FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
-
-import { CacheService } from 'ng2-cache-service';
+import { InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.less'],
     animations: [appModuleAnimation()],
-    providers: [CacheService, FinancialInformationServiceProxy]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
@@ -29,21 +26,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
 
     private rootComponent: any;
-    private readonly PERIOD_CACHE_KEY = 'selected.period';
-    private readonly LOCAL_STORAGE = 0;
 
     headlineConfig;
-    availablePeriods = [
-        this.l('Today'),
-        this.l('Yesterday'),
-        this.l('This_Week'),
-        this.l('This_Month'),
-        this.l('Last_Month'),
-        this.l('This_Year'),
-        this.l('Last_Year'),
-        this.l('All_Periods')
-    ];
-    selectedPeriod;
 
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
@@ -51,28 +35,18 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
 
+    quovoUIToken: string;
     quovoHandler: any;
 
     constructor(
         injector: Injector,
         private _router: Router,
-        private _cacheService: CacheService,
         private _dashboardService: DashboardService,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
-        private _quovoService: QuovoService,
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy
+        private _quovoService: QuovoService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
-        if (this._cacheService.exists(this.getCacheKey(this.PERIOD_CACHE_KEY)))
-            this.selectedPeriod = this._cacheService.get(this.getCacheKey(this.PERIOD_CACHE_KEY));
-        else
-            this.selectedPeriod = this.availablePeriods[this.availablePeriods.length - 1];
-    }
-
-    getCacheKey(key) {
-        return this.constructor.name + '_' + key;
     }
 
     ngOnInit(): void {
@@ -83,25 +57,25 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             iconSrc: 'assets/common/icons/pie-chart.svg',
             buttons: []
         };
-        this._financialInformationServiceProxy.createProviderUIToken(InstanceType[this.instanceType], this.instanceId)
-            .subscribe((data) => {
-                this.quovoHandler = this._quovoService.getQuovoHandler(data.token);
-            });
+
+        if (!this.quovoHandler) {
+            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
+        }
     }
 
     ngAfterViewInit(): void {
-        this._dashboardService.periodChanged(this.selectedPeriod);
         CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
     }
 
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this._dashboardService.unsubscribe();
     }
 
     addAccount() {
-        if (this.quovoHandler) {
-            this.quovoHandler.open();
+        if (this.quovoHandler.isLoaded) {
+            this.quovoHandler.handler.open();
         }
     }
 
@@ -114,11 +88,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     onSyncComplete() {
         this.accountsComponent.getAccountTotals();
-        this._dashboardService.periodChanged(this.selectedPeriod);
     }
 
-    onPeriodChanged($event) {
-        this._dashboardService.periodChanged($event.value);
-        this._cacheService.set(this.getCacheKey(this.PERIOD_CACHE_KEY), $event.value);
+    periodChanged($event) {
+        this._dashboardService.periodChanged($event.name);
     }
 }

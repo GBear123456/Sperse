@@ -7141,6 +7141,63 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @periodCount (optional) 
+     * @return Success
+     */
+    getCustomerAndLeadStats(groupBy: GroupBy2, periodCount: number): Observable<GetCustomerAndLeadStatsOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
+        if (groupBy === undefined || groupBy === null)
+            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
+        else
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
+        if (periodCount !== undefined)
+            url_ += "PeriodCount=" + encodeURIComponent("" + periodCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetCustomerAndLeadStats(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCustomerAndLeadStats(response_);
+                } catch (e) {
+                    return <Observable<GetCustomerAndLeadStatsOutput[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetCustomerAndLeadStatsOutput[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCustomerAndLeadStats(response: Response): Observable<GetCustomerAndLeadStatsOutput[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetCustomerAndLeadStatsOutput.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetCustomerAndLeadStatsOutput[]>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getRecentlyCreatedCustomers(topCount: number): Observable<GetRecentlyCreatedCustomersOutput[]> {
@@ -7248,6 +7305,62 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<GetCustomersByCompanySizeOutput[]>(<any>null);
+    }
+
+    /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getCustomersByRegion(startDate: moment.Moment, endDate: moment.Moment): Observable<GetCustomersByRegionOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByRegion?";
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetCustomersByRegion(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetCustomersByRegion(response_);
+                } catch (e) {
+                    return <Observable<GetCustomersByRegionOutput[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetCustomersByRegionOutput[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetCustomersByRegion(response: Response): Observable<GetCustomersByRegionOutput[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetCustomersByRegionOutput.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetCustomersByRegionOutput[]>(<any>null);
     }
 }
 
@@ -28328,6 +28441,49 @@ export interface IGetTotalsOutput {
     totalClientCount: number;
 }
 
+export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOutput {
+    date: moment.Moment;
+    customerCount: number;
+    leadCount: number;
+
+    constructor(data?: IGetCustomerAndLeadStatsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.customerCount = data["customerCount"];
+            this.leadCount = data["leadCount"];
+        }
+    }
+
+    static fromJS(data: any): GetCustomerAndLeadStatsOutput {
+        let result = new GetCustomerAndLeadStatsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["customerCount"] = this.customerCount;
+        data["leadCount"] = this.leadCount;
+        return data; 
+    }
+}
+
+export interface IGetCustomerAndLeadStatsOutput {
+    date: moment.Moment;
+    customerCount: number;
+    leadCount: number;
+}
+
 export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
     id: number;
     name: string;
@@ -28408,6 +28564,45 @@ export class GetCustomersByCompanySizeOutput implements IGetCustomersByCompanySi
 export interface IGetCustomersByCompanySizeOutput {
     customerCount: number;
     companySizeRange: string;
+}
+
+export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
+    customerCount: number;
+    region: string;
+
+    constructor(data?: IGetCustomersByRegionOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerCount = data["customerCount"];
+            this.region = data["region"];
+        }
+    }
+
+    static fromJS(data: any): GetCustomersByRegionOutput {
+        let result = new GetCustomersByRegionOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerCount"] = this.customerCount;
+        data["region"] = this.region;
+        return data; 
+    }
+}
+
+export interface IGetCustomersByRegionOutput {
+    customerCount: number;
+    region: string;
 }
 
 export class DateToStringOutput implements IDateToStringOutput {
@@ -41168,6 +41363,14 @@ export enum InstanceType62 {
 export enum InstanceType63 {
     User = <any>"User", 
     Main = <any>"Main", 
+}
+
+export enum GroupBy2 {
+    Daily = <any>"Daily", 
+    Weekly = <any>"Weekly", 
+    Monthly = <any>"Monthly", 
+    Quarterly = <any>"Quarterly", 
+    Yearly = <any>"Yearly", 
 }
 
 export enum InstanceType64 {

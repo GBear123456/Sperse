@@ -1,4 +1,21 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500');
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Montserrat Light'), local('Montserrat-Light'), url(https://fonts.gstatic.com/s/montserrat/v12/JTURjIg1_i6t8kCHKm45_cJD3gnD-w.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wlhzg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Montserrat Medium'), local('Montserrat-Medium'), url(https://fonts.gstatic.com/s/montserrat/v12/JTURjIg1_i6t8kCHKm45_ZpC3gnD-w.ttf) format('truetype');
+}
 #loading-overlay {
   background-color: #fff;
 }
@@ -181,10 +198,10 @@ body {
 #client-details .accounts-list ul li .fdt.fake table tbody td:first-child {
   padding-left: 54px;
 }
-#client-details .accounts-list .status {
+#client-details .accounts-list ul li .status {
   font-size: 11px;
 }
-#client-details .accounts-list .status .account-status {
+#client-details .accounts-list ul li .status .account-status {
   background: #f3f7fa;
   color: #424c56;
   text-transform: uppercase;
@@ -197,7 +214,7 @@ body {
   padding-left: 16px;
   font-family: 'Montserrat', sans-serif;
 }
-#client-details .accounts-list .status .account-status::before {
+#client-details .accounts-list ul li .status .account-status::before {
   width: 8px;
   height: 8px;
   content: '';
@@ -208,16 +225,26 @@ body {
   transform: translateY(-50%);
   border-radius: 50%;
 }
-#client-details .accounts-list .status .account-status.in-progress::before {
+#client-details .accounts-list ul li .status .account-status.in-progress::before {
   background: #00b7fa;
 }
-#client-details .accounts-list .status .account-status.questions::before,
-#client-details .accounts-list .status .account-status.login::before,
-#client-details .accounts-list .status .account-status.config::before {
+#client-details .accounts-list ul li .status .account-status.questions::before,
+#client-details .accounts-list ul li .status .account-status.login::before,
+#client-details .accounts-list ul li .status .account-status.config::before {
   background: #f9af47;
 }
-#client-details .accounts-list .status .account-status.good::before {
+#client-details .accounts-list ul li .status .account-status.good::before {
   background: #37d749;
+}
+@media (max-width: 768px) {
+  #client-details .accounts-list ul li .status .account-status {
+    width: auto;
+    padding: 5px 7px 5px 16px;
+    font-size: 8px;
+  }
+  #client-details .accounts-list ul li .status .account-status:before {
+    left: 5px;
+  }
 }
 .action-bar .header-container h1 {
   color: #212c36;

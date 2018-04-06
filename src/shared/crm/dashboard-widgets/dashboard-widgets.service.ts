@@ -6,6 +6,7 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 
 @Injectable()
 export class DashboardWidgetsService  {
+    private _period: Subject<Object>;
     private _totalsData: Subject<Object>;
     private _subscribers: Array<Subscription> = [];
 
@@ -34,14 +35,23 @@ export class DashboardWidgetsService  {
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
         this._totalsData = new Subject<Object>();
+        this._period = new Subject<Object>();
     }
 
-    periodChanged(dateFrom = null, dateTo = null) {
-        this._dashboardServiceProxy.getTotals(dateFrom, dateTo)
-            .subscribe(result => {
-                this._totalsData.next(result);
-            }
-        );         
+    subscribePeriodChange(callback: (period: any) => any) {
+        this._subscribers.push(
+            this._period.asObservable().subscribe(callback)
+        );
+    }
+
+    periodChanged(period = undefined) {
+        this._period.next(period);
+        this._dashboardServiceProxy.getTotals(
+            period && period.from, period && period.to)
+                .subscribe(result => {
+                    this._totalsData.next(result);
+                }       
+       );         
     }
 
     subscribeTotalsData(callback: (period: Object) => any) {

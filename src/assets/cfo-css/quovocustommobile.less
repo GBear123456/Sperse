@@ -205,50 +205,61 @@ body {
                         }
                     }
                 }
-            }
-        }
 
-        .status {
-            font-size: 11px;
+                .status {
+                    font-size: 11px;
 
-            .account-status {
-                background: #f3f7fa;
-                color: #424c56;
-                text-transform: uppercase;
-                text-align: center;
-                width: 130px;
-                position: relative;
-                border: 0;
-                font-weight: 400 !important;
-                border-radius: 15px;
-                padding-left: 16px;
-                font-family: 'Montserrat', sans-serif;
-                &::before {
-                    width: 8px;
-                    height: 8px;
-                    content: '';
-                    display: block;
-                    position: absolute;
-                    left: 10px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    border-radius: 50%;
-                }
-                &.in-progress {
-                    &::before {
-                        background: #00b7fa;
+                    .account-status {
+                        background: #f3f7fa;
+                        color: #424c56;
+                        text-transform: uppercase;
+                        text-align: center;
+                        width: 130px;
+                        position: relative;
+                        border: 0;
+                        font-weight: 400 !important;
+                        border-radius: 15px;
+                        padding-left: 16px;
+                        font-family: 'Montserrat', sans-serif;
+                        &::before {
+                            width: 8px;
+                            height: 8px;
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            left: 10px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            border-radius: 50%;
+                        }
+                        &.in-progress {
+                            &::before {
+                                background: #00b7fa;
+                            }
+                        }
+                        &.questions,
+                        &.login,
+                        &.config {
+                            &::before {
+                                background: #f9af47;
+                            }
+                        }
+                        &.good {
+                            &::before {
+                                background: #37d749;
+                            }
+                        }
                     }
-                }
-                &.questions,
-                &.login,
-                &.config {
-                    &::before {
-                        background: #f9af47;
-                    }
-                }
-                &.good {
-                    &::before {
-                        background: #37d749;
+
+                    @media (max-width: 768px) {
+                        .account-status {
+                            width: auto;
+                            padding: 5px 7px 5px 16px;
+                            font-size: 8px;
+                            &:before {
+                                left: 5px;
+                            }
+                        }
                     }
                 }
             }
@@ -528,12 +539,12 @@ body {
     .mfa {
         display: flex;
         justify-content: space-around;
-        
+
         .special-info {
             margin: 0;
             width: 42%;
         }
-        
+
         form {
             width: 42%;
         }
@@ -637,7 +648,7 @@ body {
                 }
 
                 &:nth-child(3) {
-                    position: absolute !important; 
+                    position: absolute !important;
                     left: 24px;
                     top: 20px;
                     width: calc(~"65% - 38px");
@@ -652,11 +663,11 @@ body {
 
         .accounts-list {
             padding: 0 24px;
-    
+
             .accounts-list-header {
                 display: none;
             }
-    
+
             ul {
 
                 li {
@@ -842,7 +853,7 @@ body {
                 padding: 0;
                 height: 54px;
                 position: relative;
-                
+
                 span {
                     i {
                         font-size: 16px;
@@ -861,8 +872,8 @@ body {
                         content: '';
                         display: block;
                         position: absolute;
-                        width: 0; 
-                        height: 0; 
+                        width: 0;
+                        height: 0;
                         border-top: 27px solid transparent;
                         border-bottom: 27px solid transparent;
                         border-left: 20px solid #f9fbfc;
@@ -884,8 +895,8 @@ body {
                         content: '';
                         display: block;
                         position: absolute;
-                        width: 0; 
-                        height: 0; 
+                        width: 0;
+                        height: 0;
                         border-top: 27px solid transparent;
                         border-bottom: 27px solid transparent;
                         border-left: 20px solid #00aeef;
@@ -911,7 +922,7 @@ body {
             .search {
                 padding: 0 20px !important;
                 margin: 0 !important;
-    
+
                 h2 {
                     margin-top: 50px !important;
                     font-family: Montserrat;
@@ -922,7 +933,7 @@ body {
                     text-align: center;
                     color: #282f38;
                 }
-    
+
                 h4 {
                     margin-bottom: 50px !important;
                     font-family: Montserrat;
@@ -969,8 +980,8 @@ body {
                         content: '';
                         display: block;
                         position: absolute;
-                        width: 0; 
-                        height: 0; 
+                        width: 0;
+                        height: 0;
                         border-left: 10px solid transparent;
                         border-right: 10px solid transparent;
                         border-bottom: 8px solid #dadde0;
@@ -984,8 +995,8 @@ body {
                         content: '';
                         display: block;
                         position: absolute;
-                        width: 0; 
-                        height: 0; 
+                        width: 0;
+                        height: 0;
                         border-left: 9px solid transparent;
                         border-right: 9px solid transparent;
                         border-bottom: 7px solid #fff;
@@ -1002,11 +1013,11 @@ body {
                 margin-top: 20px;
             }
         }
-        
+
 
         .top-brokerages {
             display: block !important;
-            
+
             div.col-xs-12 {
                 width: 32% !important;
                 margin-right: 2%;

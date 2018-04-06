@@ -23,6 +23,7 @@ import { CommonLookupModalComponent } from './lookup/common-lookup-modal.compone
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
 import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
+import { PeriodComponent } from './period/period.component';
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -67,7 +68,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         HeadLineComponent,
         ContactInfoPanelComponent,
         InplaceEditComponent,
-        InplaceSelectBoxComponent
+        InplaceSelectBoxComponent,
+        PeriodComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -79,7 +81,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ToolBarComponent,
         ContactInfoPanelComponent,
         InplaceEditComponent,
-        InplaceSelectBoxComponent
+        InplaceSelectBoxComponent,
+        PeriodComponent
     ],
     providers: [
         DateTimeService,

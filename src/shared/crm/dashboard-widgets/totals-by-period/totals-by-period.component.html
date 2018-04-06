@@ -3,10 +3,8 @@
         <h2 class="title">{{l('Statistics By Period')}}</h2>
         <div class="legend" [hidden]="!totalsData || !totalsData.length">
             <ul class="legend-list">
-                <li class="label legend-item">{{l('Historical')}}:</li>
-                <li class="legend-item inflow">{{l('Stats_Inflows')}}</li>
-                <li class="legend-item outflows">{{l('Stats_Outflows')}}</li>
-                <li class="legend-item net-change">{{l('Net_Change')}}</li>
+                <li class="legend-item inflow">{{l('Client Count')}}</li>
+                <li class="legend-item outflows">{{l('Lead Count')}}</li>
             </ul>
         </div>
     </div>
@@ -14,12 +12,13 @@
 <div>
     <dx-chart
         [hidden]="!totalsData || !totalsData.length"
-        id="bar"
+        id="bar"        
         [dataSource]="totalsData"
         animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
-        [size]="{height: 245}"
-        #barChart>
+        (onInitialized)="onInitialized($event)"
+        [size]="{height: 245}">
+
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
         <dxo-common-series-settings
@@ -28,21 +27,8 @@
             ignoreEmptyPoints="true">
         </dxo-common-series-settings>
 
-        <dxo-tooltip
-            enabled="true"
-            zIndex="1"
-            [customizeTooltip]="customizeBarTooltip">
-        </dxo-tooltip>
-
-        <dxi-series [color]="historicalCreditColor" valueField="credit" name="{{l('Stats_Inflows')}}"></dxi-series>
-        <dxi-series [color]="historicalDebitColor" valueField="debit" name="{{l('Stats_Outflows')}}"></dxi-series>
-        <dxi-series
-            type="line"
-            [color]="historicalNetChangeColor"
-            valueField="netChange"
-            name="{{l('Net_Change')}}"
-            [showInLegend]="false">
-        </dxi-series>
+        <dxi-series [color]="historicalCreditColor" valueField="customerCount" name="{{l('Client Count')}}"></dxi-series>
+        <dxi-series [color]="historicalDebitColor" valueField="leadCount" name="{{l('Lead Count')}}"></dxi-series>
 
         <!-- Bottom axis -->
         <dxo-argument-axis
@@ -64,8 +50,8 @@
         <dxi-value-axis>
             <dxo-label [customizeText]="customizeAxisValues">
                 <dxo-format
-                    type="currency largeNumber"
-                    [currency]="currency">
+                    type="number largeNumber"
+                    [currency]="number">
                 </dxo-format>
             </dxo-label>
             <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>

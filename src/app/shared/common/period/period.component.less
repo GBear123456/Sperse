@@ -1,0 +1,39 @@
+:host {
+    position: absolute;
+    right: 35px;
+    top: 25px;
+
+    /deep/ dx-select-box {
+        float: right;
+        border-radius: 0;
+        background-color: transparent;
+
+        .dx-texteditor-input, input.form-control {
+            color: #677380;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            padding: 0 16px 0 0 ;
+            background-color: transparent;
+            min-height: 24px;
+            text-align: right;
+            border: 0;
+        }
+
+        .dx-dropdowneditor-button {
+            width: 10px;
+            padding: 0;
+            border-radius: 0;
+
+            .dx-dropdowneditor-icon {
+                background-color: transparent !important;
+
+                &::before {
+                    content: '\f107';
+                    font-family: FontAwesome !important;
+                }
+            }
+        }
+    }
+}
