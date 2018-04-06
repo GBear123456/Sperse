@@ -6,8 +6,8 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, 
-    SetupInput, TenantHostType, PersonContactServiceProxy, UpdatePersonInfoInput } from '@shared/service-proxies/service-proxies';
+import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, CreateContactPhotoInput,
+    SetupInput, TenantHostType, PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -17,7 +17,7 @@ import { ClientService } from '@app/crm/clients/clients.service';
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [UserServiceProxy, InstanceServiceProxy, ClientService]
+    providers: [UserServiceProxy, InstanceServiceProxy, ClientService, ContactPhotoServiceProxy]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input()
@@ -44,6 +44,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private userServiceProxy: UserServiceProxy,
         private instanceServiceProxy: InstanceServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
+        private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
         private clientService: ClientService
     ) {
@@ -69,9 +70,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         let dialogData = this.data.organizationContactInfo;
         this.dialog.closeAll();
         this.dialog.open(OrganizationDialogComponent, {
-          data: dialogData,
-          hasBackdrop: false,
-          position: this.getDialogPossition(event, 304)
+            data: dialogData,
+            hasBackdrop: false,
+            position: this.getDialogPossition(event, 304)
         }).afterClosed().subscribe(result => {
           // some logic
         });
@@ -81,9 +82,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     showContactPersons(event) {
         this.dialog.closeAll();
         this.dialog.open(ContactPersonsDialogComponent, {
-          data: this.data,
-          hasBackdrop: false,
-          position: this.getDialogPossition(event, 170)
+            data: this.data,
+            hasBackdrop: false,
+            position: this.getDialogPossition(event, 170)
         });
         event.stopPropagation();
     }
@@ -91,10 +92,28 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     showUploadPhotoDialog(event) {
         this.dialog.closeAll();
         this.dialog.open(UploadPhotoDialogComponent, {
-          data: this.data,
-          hasBackdrop: true
+            data: this.data,
+            hasBackdrop: true
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.data.primaryContactInfo.primaryPhoto = {
+                    original: this.getBase64(result.origImage)
+                };
+                this.contactPhotoServiceProxy.createContactPhoto(
+                    CreateContactPhotoInput.fromJS({
+                        contactId: this.data.primaryContactInfo.id,
+                        originalImage: this.getBase64(result.origImage),
+                        thumbnail: this.getBase64(result.thumImage)
+                    })
+                ).subscribe((result) => {});
+            }
         });
         event.stopPropagation();
+    }
+
+    getBase64(data) {
+        let prefix = ';base64,';
+        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 
     getNameInplaceEditData() {
@@ -116,7 +135,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             data: this.data.primaryContactInfo,
             hasBackdrop: false,
             position: this.getDialogPossition(event, 200)
-        });
+        })
         event.stopPropagation();        
     }
 
