@@ -35,7 +35,7 @@ import { OperationsComponent } from './cashflow/operations/operations.component'
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 
@@ -144,7 +144,8 @@ import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-wi
         CFOService,
         CustomersServiceProxy,
         ContactServiceProxy,
-        QuovoService
+        QuovoService,
+        FinancialInformationServiceProxy
     ]
 })
 
