@@ -78,7 +78,10 @@
                           (onRowPrepared)="onDetailsRowPrepared($event)"
                           (onRowUpdating)="onDetailsRowUpdating($event)">
 
-                <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
+                <dxo-editing mode="cell"
+                             [allowUpdating]="true"
+                             texts = "{'confirmDeleteMessage': ''}">                    
+                </dxo-editing>
 
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
                 <dxo-selection selectAllMode="page"

@@ -4495,13 +4495,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.addLocalTimezoneOffset(momentDate);
                 data['date'] = momentDate.toDate();
             }
-            this._cashFlowForecastServiceProxy
-                .updateForecast(
+            if (data['amount'] === 0) {
+                this._cashFlowForecastServiceProxy
+                    .deleteForecast(
+                    InstanceType10[this.instanceType],
+                    this.instanceId,
+                    data.id
+                    )
+                    .subscribe();
+                                
+                if (e.component.getVisibleRows().length === 1) {
+                    this.closeTransactionsDetail();
+                } else {
+                    e.component.deleteRow(e.component.getRowIndexByKey(e.key));
+                }
+
+            } else {
+                this._cashFlowForecastServiceProxy
+                    .updateForecast(
                     InstanceType10[this.instanceType],
                     this.instanceId,
                     UpdateForecastInput.fromJS(data)
-                )
-                .subscribe();
+                    )
+                    .subscribe();
+            }
 
             /** Remove opposite cell */
             if (paramName === 'debit' || paramName === 'credit') {
