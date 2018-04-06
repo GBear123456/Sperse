@@ -36,10 +36,6 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    onContentReady($event) {        
-        this.onReady.emit($event.component.getVisibleRows());
-    }
-
     onCellClick($event) {
         $event.row && this._router.navigate(
             ['app/crm/client', $event.row.data.id]);

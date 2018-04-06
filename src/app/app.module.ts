@@ -12,6 +12,7 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
 import { AppConsts } from '@shared/AppConsts';
 
 import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { CacheService } from 'ng2-cache-service';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
   accountUrl = 'sperse.zendesk.com';
@@ -34,6 +35,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     ],
     providers: [
         AppService,
+        CacheService,
         ImpersonationService,
         ngxZendeskWebwidgetService
     ]

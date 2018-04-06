@@ -1,4 +1,4 @@
-<app-headline [config]="headlineConfig"></app-headline>
+<app-headline [config]="headlineConfig"><app-period (onChange)="periodChanged($event)"></app-period></app-headline>
 <div [@routerTransition]>
   <left-menu></left-menu>
   <div class="lead-status">
