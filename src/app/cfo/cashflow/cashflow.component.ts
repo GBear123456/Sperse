@@ -2925,43 +2925,41 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 .TransactionDescriptor);
 
         forecasts.forEach(forecast => {
-            if (forecast.forecastId) {
-                date = moment(targetCellDate.startDate);
-                /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
-                if (['year', 'quarter', 'month'].indexOf(targetFieldCaption) !== -1) {
-                    let dayNumber = forecast.initialDate.date() < date.daysInMonth() ? forecast.initialDate.date() : date.daysInMonth();
-                    date.date(dayNumber);
-                    if (targetFieldCaption === 'year') {
-                        date.month(forecast.initialDate.month());
-                    }
+            date = moment(targetCellDate.startDate);
+            /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
+            if (['year', 'quarter', 'month'].indexOf(targetFieldCaption) !== -1) {
+                let dayNumber = forecast.initialDate.date() < date.daysInMonth() ? forecast.initialDate.date() : date.daysInMonth();
+                date.date(dayNumber);
+                if (targetFieldCaption === 'year') {
+                    date.month(forecast.initialDate.month());
                 }
-
-                let forecastModel;
-                if (operation === 'copy') {
-                    forecastModel = new AddForecastInput({
-                        forecastModelId: this.selectedForecastModel.id,
-                        bankAccountId: forecast.accountId,
-                        date: date,
-                        startDate: targetCellDate.startDate,
-                        endDate: targetCellDate.endDate,
-                        cashFlowTypeId: forecast.cashflowTypeId,
-                        categoryId: subCategoryId || categoryId || -1,
-                        transactionDescriptor: transactionDescriptor,
-                        currencyId: this.currencyId,
-                        amount: forecast.amount
-                    });
-                } else if (operation === 'move') {
-                    /** @todo check moving of transaction to different date range then current one */
-                    forecastModel = UpdateForecastInput.fromJS({
-                        id: forecast.forecastId,
-                        date: date,
-                        amount: forecast.amount,
-                        categoryId: subCategoryId || categoryId || -1,
-                        transactionDescriptor: transactionDescriptor
-                    });
-                }
-                forecastModels.forecasts.push(forecastModel);
             }
+
+            let forecastModel;
+            if (operation === 'copy') {
+                forecastModel = new AddForecastInput({
+                    forecastModelId: this.selectedForecastModel.id,
+                    bankAccountId: forecast.accountId,
+                    date: date,
+                    startDate: targetCellDate.startDate,
+                    endDate: targetCellDate.endDate,
+                    cashFlowTypeId: forecast.cashflowTypeId,
+                    categoryId: subCategoryId || categoryId || -1,
+                    transactionDescriptor: transactionDescriptor,
+                    currencyId: this.currencyId,
+                    amount: forecast.amount
+                });
+            } else if (forecast.forecastId && operation === 'move') {
+                /** @todo check moving of transaction to different date range then current one */
+                forecastModel = UpdateForecastInput.fromJS({
+                    id: forecast.forecastId,
+                    date: date,
+                    amount: forecast.amount,
+                    categoryId: subCategoryId || categoryId || -1,
+                    transactionDescriptor: transactionDescriptor
+                });
+            }
+            forecastModels.forecasts.push(forecastModel);
         });
 
         let method = operation === 'copy' ? 'createForecasts' : 'updateForecasts';
