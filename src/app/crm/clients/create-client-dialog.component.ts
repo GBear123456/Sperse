@@ -42,12 +42,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneValidator: any;
 
     emails = {};
+    emailTypeDefault = 'P';
     emailType = {
-        personal: 'P'
+        personal: this.emailTypeDefault
     };
     phones = {};
+    phoneTypeDefault = 'M';
     phoneType = {
-        personal: 'M'
+        personal: this.phoneTypeDefault
     };
     phoneExtension = {};
     phoneTypes: any = [];
@@ -108,7 +110,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             {
                 name: 'discard',
-                action: Function()
+                action: this.resetFullDialog.bind(this)
             }
         ]
         },
@@ -526,5 +528,28 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.setComponentToValid(field, type, true);
         this.clearButtonVisible[type][field] = false;
         this.checkSimilarCustomers();
+    }
+
+    resetFullDialog() {
+        ['business', 'personal'].forEach((type) => {
+            this.resetComponent(this['emails' + this.capitalize(type)]);
+            this.resetComponent(this['phones' + this.capitalize(type)]);
+            this.clearButtonVisible[type]['emails'] = false;
+            this.clearButtonVisible[type]['phones'] = false;
+            this.addButtonVisible[type]['emails'] = false;
+            this.addButtonVisible[type]['phones'] = false;
+            this.contacts.emails[type] = [];
+            this.contacts.phones[type] = [];
+            this.contacts.addresses[type] = {};
+            this.notes[type] = undefined;
+        });
+
+        this.emailType.personal = this.emailTypeDefault;
+        this.phoneType.personal = this.phoneTypeDefault;
+        this.setDefaultTypeValue(this.contacts.addresses, this.addressTypes, 'addressType');
+        this.data.title = undefined;
+        this.data.isTitleValid = true;
+        this.company = undefined;
+        this.similarCustomers = [];
     }
 }

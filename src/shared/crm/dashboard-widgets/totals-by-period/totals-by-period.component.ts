@@ -1,9 +1,8 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import {
-    BankAccountsServiceProxy
-} from '@shared/service-proxies/service-proxies';
 import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { DashboardServiceProxy, GroupBy2 } from 'shared/service-proxies/service-proxies';
+import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
 
 import * as moment from 'moment';
 
@@ -11,7 +10,7 @@ import * as moment from 'moment';
     selector: 'totals-by-period',
     templateUrl: './totals-by-period.component.html',
     styleUrls: ['./totals-by-period.component.less'],
-    providers: [  ]
+    providers: [ DashboardServiceProxy ]
 })
 export class TotalsByPeriodComponent extends AppComponentBase implements OnInit {
     totalsData: any = [];
@@ -23,45 +22,55 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
     historicalCreditColor = '#00aeef';
     historicalDebitColor = '#f05b2a';
     historicalNetChangeColor = '#fab800';
-    barChartTooltipFields = [
-        {
-            'name': 'startingCount',
-            'label': this.l('Stats_startingCount')
-        },
-        {
-            'name': 'endingCount',
-            'label': this.l('Stats_endingCount')
-        }
-    ];
 
     periods: TotalsByPeriodModel[] = [
          {
              key: 0,
-             name: 'day',
+             name: 'Daily',
              text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
          },
          {
              key: 1,
-             name: 'week',
+             name: 'Weekly',
              text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
              amount: 15
         },
         {
             key: 2,
-            name: 'month',
+            name: 'Monthly',
             text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
         }
     ];
-    selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'day');
+    selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
 
-    constructor(injector: Injector
+    constructor(injector: Injector,
+        private _dashboardServiceProxy: DashboardServiceProxy,
+        private _dashboardWidgetsService: DashboardWidgetsService
     ) {
         super(injector);
     }
 
     ngOnInit() {
+        this._dashboardWidgetsService.subscribePeriodChange((period) => {
+            if (period) {
+                if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week')].indexOf(period.name) >= 0) 
+                    this.selectedPeriod = this.periods[0];
+                else if ([this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
+                    this.selectedPeriod = this.periods[1];
+                else
+                    this.selectedPeriod = this.periods[2];
+            }
+            this._dashboardServiceProxy.getCustomerAndLeadStats(GroupBy2[this.selectedPeriod.name],
+                 this.selectedPeriod.amount).subscribe((result) => {
+                     this.totalsData = result;
+                 });
+        });
+    }
+
+    getPeriodBottomAxisCustomizer(period: string) {
+        return this[`get${this.capitalize(period)}BottomAxisCustomizer`];
     }
 
     /** Replace minus for the brackets */
@@ -74,29 +83,22 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
     }
 
     /** Factory for method that customize axis */
-    getPeriodBottomAxisCustomizer(period: string) {
-        return this[`get${this.capitalize(period)}BottomAxisCustomizer`];
-    }
 
-    getMonthBottomAxisCustomizer(elem) {
+    getMonthlyBottomAxisCustomizer(elem) {
         return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
     }
 
-    getWeekBottomAxisCustomizer(elem) {
+    getWeeklyBottomAxisCustomizer(elem) {
         return `${elem.value.getDate()}.${elem.value.getMonth() + 1}`;
     }
 
-    getDayBottomAxisCustomizer(elem) {
+    getDailyBottomAxisCustomizer(elem) {
         return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
-    customizeBarTooltip = (pointInfo) => {
-        return {
-            html: 'Tooltip TEMPLATE'
-        };
-    }
-
-    loadStatsData() {
-        this.startLoading();
+    onInitialized($event) { 
+        setTimeout(() => {
+            $event.component.render();
+        }, 1000);
     }
 }

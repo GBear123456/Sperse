@@ -71,9 +71,12 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onNextClick() {
-        this.syncComponent.requestSync(true);
-        this._cfoService.instanceChangeProcess();
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
+        setTimeout(() => {
+            this.syncComponent.requestSync(true);
+            this._cfoService.instanceChangeProcess(() => {
+                this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
+            });
+        }, 300);        
     }
 
     ngAfterViewInit(): void {
