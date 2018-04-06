@@ -832,10 +832,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 text = text.toUpperCase();
             }
 
-            /** Text customizing for acounts names  */
+            /** Text customizing for accounts names */
             if (prefix === CategorizationPrefixes.AccountName) {
                 let account = this.bankAccounts.find(account => account.id == key );
-                text = account ? account.accountName + account.accountNumber : cellInfo.valueText;
+                text = account && account.accountName ? account.accountName : '';
             }
 
             /** Text customizing for transactions descriptor */
@@ -1274,7 +1274,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             .subscribe((result: any)  => {
                 this.startDataLoading = true;
                 this.handleMonthlyCashflowData(result[0].transactionStats);
-                /** override cashflow data push method to add totals and net change automaticly after adding of cashflow */
+                /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
                 this.overrideCashflowDataPushMethod();
                 for (let i = 1; i < result.length; i++) {
                     this.handleDailyCashflowData(result[i].transactionStats, dailyStatsFilters[i - 1].startDate, dailyStatsFilters[i - 1].endDate);
@@ -3409,7 +3409,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else {
                 /** If we collapse month - collapse projected columns of current month to show them after next expand of the month */
                 if (monthIsCurrent) {
-                    this.collapseCurrentMonthProjectedColums(cellObj.cell.path.slice());
+                    let collapseMonth = !cellObj.cellElement.closest('table').querySelector('.projectedRow').classList.contains('hidden');
+                    if (!collapseMonth) {
+                        cellObj.cancel = true;
+                    }
+                    this.collapseCurrentMonthProjectedColums(cellObj.cell.path.slice(), collapseMonth);
                 }
             }
         }
@@ -3451,11 +3455,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Collapse projected child columns of current month
      * @param {number[]} path
      */
-    collapseCurrentMonthProjectedColums(path: number[]) {
+    collapseCurrentMonthProjectedColums(path: number[], collapseMonth: boolean) {
         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Mtd]));
         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Today]));
         this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path.concat([Projected.Forecast]));
-        this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path);
+        if (collapseMonth) {
+            this.pivotGrid.instance.getDataSource().collapseHeaderItem('column', path);
+        }
     }
 
     expandMonthProjectedChilds(cellObj) {
