@@ -1246,8 +1246,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         this.cachedRowsSparkLines.clear();
 
-        let getStatsObservervables = [];
-
         /** Monthly cashflow data observer */
         let monthlyStatsObservers = [this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)];
 
@@ -1269,7 +1267,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
         }
 
-        getStatsObservervables = monthlyStatsObservers.concat(dailyStatsObservers);
+        let getStatsObservervables = monthlyStatsObservers.concat(dailyStatsObservers);
         Observable.forkJoin(...getStatsObservervables)
             .subscribe((result: any)  => {
                 this.startDataLoading = true;
