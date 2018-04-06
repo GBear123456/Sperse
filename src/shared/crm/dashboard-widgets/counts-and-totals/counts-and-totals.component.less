@@ -1,0 +1,80 @@
+:host {
+    display: block;
+
+    .totals-list {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+
+        .total-item {
+            max-width: 32%;
+            width: 100%;
+            padding: 5px 20px 5px 20px;
+            border: 1px solid #E5E9EC;
+            border-radius: 4px;
+            position: relative;
+
+            @media (max-width: 1540px) {
+                padding-left: 60px !important;
+                background-position: 15px 50% !important;
+            }
+
+            .chart-head {
+                width: 100vw;
+                height: 34px;
+                display: table-cell;
+                vertical-align: bottom;
+                span:first-child {
+                    padding-top: 6px;
+                    color: #D4D4D4;
+                    float: left;
+                }
+                span:last-child {
+                    font-size: 22px;
+                    float: right;
+                }
+            }
+        
+            .chart-progress {
+                color: #D4D4D4;
+                span:first-child {
+                    font-size: 12px;
+                    float: left;
+                }
+                span:last-child {
+                    font-size: 12px;
+                    float: right;
+                }
+            }
+
+            .chart-head {
+                font-size: 14px;
+                font-weight: 400;
+                font-style: normal;
+                font-stretch: normal;
+                letter-spacing: 0.3px;
+                color: #677380;
+                
+                span {
+                    font-weight: 500;
+                }
+                
+                .plus {
+                    position: relative;
+                    right: -4px;
+                }
+            }
+
+            .chart-line {
+                width: 100%;
+                background-color: #F1F5F6;
+                border-radius: 6px;
+                div {
+                    height: 8px;
+                    border-radius: 6px;
+                    
+                }
+            }
+        }
+    }
+}

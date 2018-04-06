@@ -32,6 +32,8 @@ import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutp
     CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
+import { ClientService } from '@app/crm/clients/clients.service';
+
 import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
 
@@ -39,11 +41,12 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 
+
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ InstanceServiceProxy ]
+    providers: [ InstanceServiceProxy, ClientService ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -54,6 +57,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
+    private canSendVerificationRequest: boolean = false;
 
     public headlineConfig = {
         names: [this.l('Customers')],
@@ -75,7 +79,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
         private _cfoInstanceServiceProxy: InstanceServiceProxy,
-        private _customersServiceProxy: CustomersServiceProxy
+        private _customersServiceProxy: CustomersServiceProxy,
+        private _clientService: ClientService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -104,6 +109,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
+
+        this.canSendVerificationRequest =  this._clientService.canSendVerificationRequest();
     }
 
     private checkCFOClientAccessPermission() {
@@ -126,9 +133,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.dataGrid.instance.refresh();
     }
 
+    showCompactRowsHeight() {
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+    }
+
     createClient() {
         this.dialog.open(CreateClientDialogComponent, {
             panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
             data: {}
         }).afterClosed().subscribe(() => this.refreshDataGrid())
     }
@@ -170,7 +183,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'name',
-                    items: { Name: new FilterItemModel()}
+                    items: { FullName: new FilterItemModel()}
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
@@ -313,6 +326,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             {
                 location: 'after', items: [
                     { name: 'refresh', action: this.refreshDataGrid.bind(this) },
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -541,5 +555,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+    }
+
+    requestVerification(contactId: number) {
+        this._clientService.requestVerification(contactId);
     }
 }

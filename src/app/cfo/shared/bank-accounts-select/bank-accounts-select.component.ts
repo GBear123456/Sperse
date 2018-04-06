@@ -28,7 +28,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     tooltipVisible: boolean;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
-    moreThanOneBusinessEntityExist = true;
+    businessEntityExist = true;
     selectedBusinessEntities: any[];
     businessEntities = [];
     isActive = true;
@@ -64,7 +64,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.businessEntities = result;
-                this.moreThanOneBusinessEntityExist = result.length > 1;
+                this.businessEntityExist = result.length > 0;
             });
     }
 
@@ -100,7 +100,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this.refreshSelected([]);
 
         if (this.useGlobalCache)
-            this._cacheService.set(this.bankAccountsCacheKey, {});
+            this._cacheService.set(this.bankAccountsCacheKey, { 'bankAccounts': [], 'isActive': true });
 
         this.onBankAccountsSelected.emit({
             bankAccountIds: [],
@@ -139,13 +139,16 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     getBankAccounts(initial = false): void {
-        let businessEntityIds = _.map(this.selectedBusinessEntities, function (b) { return b.id; });
+        let businessEntityIds = _.map(this.selectedBusinessEntities, (b) => b.id);
         this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', businessEntityIds, this.isActive)
             .subscribe((result) => {
                 this.syncAccountsDataSource = result;
 
                 if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
                     let bankAccountIds = this._cacheService.get(this.bankAccountsCacheKey)['bankAccounts'];
+                    if (!bankAccountIds)
+                        bankAccountIds = [];
+
                     this.refreshSelected(bankAccountIds);
 
                     if (initial) {

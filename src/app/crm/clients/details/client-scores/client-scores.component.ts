@@ -1,5 +1,5 @@
-﻿import { Component, OnInit } from '@angular/core';
-
+﻿import { Component, OnInit, Injector } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
 //import { FinancialService } from '../../services/financial/financial.service';
 
 @Component({
@@ -7,25 +7,29 @@
     templateUrl: './client-scores.component.html',
     styleUrls: ['./client-scores.component.less']
 })
-export class ClientScoresComponent implements OnInit {
+export class ClientScoresComponent extends AppComponentBase implements OnInit {
 
     scores = {
         experian_score: {
-            'amount': 803,
+            'amount': 1000,
             'label': 'Experian Score'
         },
         equifax_score: {
-            'amount': 809,
+            'amount': 1000,
             'label': 'Equifax Score'
         },
         transunion_score: {
-            'amount': 799,
+            'amount': 1000,
             'label': 'TransUnion Score'
         }
     };
 
-    constructor(//private FinancialService: FinancialService
-    ) {}
+    constructor(
+        injector: Injector
+        //private FinancialService: FinancialService
+    ) {
+        super(injector);
+    }
 
     ngOnInit() {
         //this.scores = this.FinancialService.getPersonScores();

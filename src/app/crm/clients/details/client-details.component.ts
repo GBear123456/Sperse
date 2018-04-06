@@ -38,7 +38,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     };
 
     navLinks = [
-        {'label': 'Contact Information', 'route': 'contact-information'},
+        {'label': 'Contact Information', 'route': 'contact-information', active: true},
         {'label': 'Lead Information', 'route': 'lead-information',},
         {'label': 'Questionnaire', 'route': 'questionnaire'},
         {'label': 'Documents', 'route': 'required-documents'},

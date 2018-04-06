@@ -1,0 +1,165 @@
+:host {
+    min-height: 330px;
+    border: 1px solid #E5E9EC;
+    background-color: #FFFFFF;
+    border-radius: 4px;
+    position: relative;
+    padding: 8px 30px;
+    display: block;
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 500;
+        .left-section {
+            margin-bottom: 5px;
+            flex: 1 auto;
+            display: flex;
+            align-items: center;
+            .title {
+                font-size: 18px;
+                font-weight: 700;
+                color: #212c36;
+                margin: 0;
+                line-height: 1;
+                padding: 12px 0;
+            }
+
+            .legend {
+                display: flex;
+                flex-flow: column wrap;
+                margin: 0 0 0 auto;
+
+                .legend-list {
+                    padding-left: 0;
+                    margin-bottom: 0;
+
+                    .legend-item {
+                        display: inline-block;
+                        font-weight: 400;
+                        font-size: 12px;
+                        margin-right: 15px;
+                        &:last-child {
+                            margin-right: 0px;
+                        }
+
+                        &::before {
+                            content: '';
+                            width: 8px;
+                            height: 8px;
+                            background: #00aeef;
+                            display: inline-block;
+                            margin-right: 5px;
+                            position: relative;
+                            top: -1px;
+                        }
+
+                        &.outflows {
+                            &::before {
+                                background: #f05b2a;
+                            }
+                        }
+
+                        &.net-change {
+                            &::before {
+                                background: #fab800;
+                            }
+                        }
+                        &.forecast {
+                            &::before {
+                                background: #a9e3f9;
+                            }
+                            &.outflows {
+                                &::before {
+                                    background: #fec6b3;
+                                }
+                            }
+
+                            &.net-change {
+                                &::before {
+                                    background: #a82aba;
+                                }
+                            }
+                        }
+
+                        &.label {
+                            width: 60px;
+                            &::before{
+                                content: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .right-section {
+            /deep/ dx-select-box {
+                width: 110px;
+                margin-top: 10px;
+
+                .dx-texteditor-input {
+                    padding: 0;
+                    padding-right: 34px;
+                }
+            }
+        }
+    }
+    
+    app-no-data {
+        border-top: 0;
+        padding-top: 30px;
+    }
+    
+    /deep/ dx-select-box {
+        border-radius: 0;
+        background-color: transparent;
+
+        .dx-texteditor-input, input.form-control {
+            color: #677380;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            padding: 0 16px 0 0 ;
+            background-color: transparent;
+            min-height: 24px;
+            border: 0;
+        }
+
+        .dx-dropdowneditor-button {
+            width: 10px;
+            padding: 0;
+            border-radius: 0;
+
+            .dx-dropdowneditor-icon {
+                background-color: transparent !important;
+
+                &::before {
+                    content: '\f107';
+                    font-family: FontAwesome !important;
+                }
+            }
+        }
+    }
+    app-dashboard-no-data {
+        padding-top: 20px;
+    }
+    dx-chart {
+        position: relative;
+        color: red;
+        font-size: 36.9px;
+        color: rgba(99, 107, 114, .08);
+        font-weight: 700;
+
+        @media screen and (max-width: 1024px) {
+            font-size: 30px
+        }
+        .yearArgument {
+            font-size: 10px;
+        }
+        /deep/ g.dxc-arg-line {
+            display: none!important;
+        }
+    }
+}

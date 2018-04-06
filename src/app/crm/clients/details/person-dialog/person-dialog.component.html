@@ -1,28 +1,10 @@
 <mat-dialog-content>
     <div class="names form-wrapper">
-        <div>
-            <div class="edit-label">{{l("NamePrefix")}}:</div>
-            <inplace-edit [data]="getPropData('namePrefix')" (valueChanged)="updateValue($event, 'namePrefix')"></inplace-edit>
-        </div>
-        <div>
-            <div class="edit-label">{{l("FirstName")}}:</div>
-            <inplace-edit [data]="getPropData('firstName')" (valueChanged)="updateValue($event, 'firstName')"></inplace-edit>
-        </div>
-        <div>
-            <div class="edit-label">{{l("MiddleName")}}:</div>
-            <inplace-edit [data]="getPropData('middleName')" (valueChanged)="updateValue($event, 'middleName')"></inplace-edit>
-        </div>
-        <div>
-            <div class="edit-label">{{l("LastName")}}:</div>
-            <inplace-edit [data]="getPropData('lastName')" (valueChanged)="updateValue($event, 'lastName')"></inplace-edit>
-        </div>
-        <div>
-            <div class="edit-label">{{l("NameSuffix")}}:</div>
-            <inplace-edit [data]="getPropData('nameSuffix')" (valueChanged)="updateValue($event, 'nameSuffix')"></inplace-edit>
-        </div>
-        <div>
-            <div class="edit-label">{{l("NickName")}}:</div>
-            <inplace-edit [data]="getPropData('nickName')" (valueChanged)="updateValue($event, 'nickName')"></inplace-edit>
-        </div>
+        <ng-container *ngFor="let item of ['namePrefix', 'firstName', 'middleName', 'lastName', 'nameSuffix', 'nickName']">
+            <div class="name-item">
+                <div class="edit-label">{{l(capitalize(item))}}:</div>
+                <inplace-edit [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
+            </div>
+        </ng-container>
     </div>
 </mat-dialog-content>

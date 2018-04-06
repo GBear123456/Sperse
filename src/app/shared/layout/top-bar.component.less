@@ -37,7 +37,8 @@
                 padding-right: 6px;
                 padding-left: 6px;
 
-                border-bottom: 3px solid #FFF;
+                border-bottom: 0;
+                margin-bottom: 3px;
                 .dx-state-disabled {
                     opacity: 1 !important;
                     .dx-menu-item-text {
@@ -46,11 +47,13 @@
                 }
                 &.dx-tab-selected {
                     border-bottom: 3px solid #00aeef;
+                    margin-bottom: 0;
                     &.dx-state-focused {
                         box-shadow: none;
                     }
                     &.dx-state-hover {
                         border-bottom: 3px solid #00aeef;
+                        margin-bottom: 0;
                     }
                     .dx-menu-item-text {
                         color: #202b35 !important;
@@ -59,7 +62,8 @@
                 }
                 &.dx-state-hover {
                     background-color: #FFF;
-                    border-bottom: 3px solid #FFF;
+                    border-bottom: 0;
+                    margin-bottom: 3px;
                 }
             }
             .dx-menu-items-container {

@@ -1,5 +1,5 @@
 :host {
-    
+
     h3 {
         width: 340px;
         font-size: 16px;
@@ -157,11 +157,15 @@
                 }
 
                 &.dx-selection .category-drop-add-rule {
-                    background-color: #F0FAFE;
+                    background-color: #F0FAFE !important;
                 }
 
-                &.filtered-category .category-drop-add-rule {
-                    background-color: #f0fef1;
+                &.inflows.filtered-category .category-drop-add-rule {
+                    background-color: #f0fef1 !important;
+                }
+
+                &.outflows.filtered-category .category-drop-add-rule {
+                    background-color: #fff5f7 !important;
                 }
             }
         }
@@ -207,11 +211,11 @@
 
                 colgroup {
                     col:nth-child(2) {
-                        width: 51px !important;
+                        width: 54px !important;
                     }
 
                     col:last-child {
-                        width: 49px !important;
+                        width: 48px !important;
                     }
                 }
 
@@ -222,7 +226,7 @@
                     background-color: transaparent !important;
 
                     &.dx-editor-cell:first-child {
-                        margin-left: 45px;
+                        margin-left: 30px;
                         display: block;
                     }
 
@@ -390,8 +394,13 @@
                     }
 
                     td {
+                        &:first-child .dx-treelist-text-content {
+                            width: 250px;
+                        }
+
                         &:nth-child(2) {
-                            max-width: 40px;
+                            position: absolute;
+                            right: 13px;
                         }
 
                         .category-hover, .category-drop-area {
@@ -413,11 +422,12 @@
                                 position: relative;
                                 top: 4px;
                                 right: 1px;
-                                padding: 3px 7px;
+                                padding: 4px 8px;
                                 border-radius: 11px;
                                 font-size: 10px;
                                 color: orange;
                                 font-weight: 500;
+                                background-color: #FFFBF5;
 
                                 &.element-drag-hover {
                                     border: 1px solid orange;
@@ -425,22 +435,40 @@
                             }
                         }
 
-                        &.dx-command-edit a {
-                            display: none;
-                        }
-                    }
+                        .dx-treelist-text-content {
+                            overflow: visible !important;
+                            font-size: 15px;
+                            font-style: normal;
+                            font-stretch: normal;
+                            letter-spacing: 0.3px;
+                            color: #424c56;
 
-                    &.dx-edit-row {
-                        &[aria-level="2"] {
-                            td:first-child {
-                                &:before {
-                                    margin-top: -5px;
-                                }
+                            span:not(.dx-treelist-search-text) {
+                                max-width: stretch;
+                                display: inline-block;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                width: 83%;
                             }
                         }
 
-                        td:nth-child(2) {
-                            visibility: visible !important;
+                        .transactionCount {
+                            border-radius: 10px;
+                            background-color: #f0f2f5;
+                            min-width: 30px;
+                            max-width: 100px;
+                            text-align: center;
+                            font-size: 11px;
+                            color: #9a9fa4;
+
+                            span {
+                                margin: 3px 8px;
+                                display: inline-block;
+                            }
+                        }
+
+                        &.dx-command-edit a {
+                            display: none;
                         }
                     }
 
@@ -457,8 +485,17 @@
                     }
 
                     &.dx-edit-row {
+                        &[aria-level="2"] {
+                            td:first-child {
+                                &:before {
+                                    margin-top: -5px;
+                                }
+                            }
+                        }
+
                         td {
                             &:nth-child(2) {
+                                visibility: visible !important;
                                 padding-left: 0px !important;
                             }
 
@@ -505,38 +542,6 @@
                                 border: solid 1px #b8e9fb !important;
                                 background-color: #F0FAFE;
                             }
-                        }
-                    }
-
-                    .dx-treelist-text-content {
-                        overflow: visible !important;
-                        font-size: 15px;
-                        font-style: normal;
-                        font-stretch: normal;
-                        letter-spacing: 0.3px;
-                        color: #424c56;
-
-                        span:not(.dx-treelist-search-text) {
-                            max-width: stretch;
-                            display: inline-block;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            width: 83%;
-                        }
-                    }
-
-                    .transactionCount {
-                        border-radius: 10px;
-                        background-color: #f0f2f5;
-                        min-width: 30px;
-                        max-width: 100px;
-                        text-align: center;
-                        font-size: 11px;
-                        color: #9a9fa4;
-
-                        span {
-                            margin: 3px 8px;
-                            display: inline-block;
                         }
                     }
 

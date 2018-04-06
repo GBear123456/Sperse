@@ -83,7 +83,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             iconSrc: 'assets/common/icons/pie-chart.svg',
             buttons: []
         };
-        this._financialInformationServiceProxy.getProviderUIToken(InstanceType[this.instanceType], this.instanceId)
+        this._financialInformationServiceProxy.createProviderUIToken(InstanceType[this.instanceType], this.instanceId)
             .subscribe((data) => {
                 this.quovoHandler = this._quovoService.getQuovoHandler(data.token);
             });

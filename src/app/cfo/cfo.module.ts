@@ -70,16 +70,6 @@ import {
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 
-import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-
-export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
-  accountUrl = 'sperse.zendesk.com';
-  beforePageLoad(zE) {
-    zE.setLocale('en');
-    zE.hide();
-  }
-}
-
 @NgModule({
     imports: [
         CfoRoutingModule,
@@ -115,7 +105,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         MatDialogModule,
         RoundProgressModule,
         DashboardWidgetsModule,
-        ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         DxRangeSliderModule,
         DxSwitchModule
     ],
@@ -155,7 +144,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         CFOService,
         CustomersServiceProxy,
         ContactServiceProxy,
-        ngxZendeskWebwidgetService,
         QuovoService
     ]
 })

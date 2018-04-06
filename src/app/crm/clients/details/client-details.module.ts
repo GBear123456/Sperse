@@ -26,12 +26,14 @@ import { ClientScoresComponent } from './client-scores/client-scores.component';
 import { TotalApprovedComponent } from './total-approved/total-approved.component';
 import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
+import { VerificationChecklistComponent } from './verification-checklist/verification-checklist.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { SimilarCustomersDialogComponent } from './similar-customers-dialog/similar-customers-dialog.component';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImageCropperComponent } from 'ng2-img-cropper';
+import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
@@ -60,12 +62,14 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     CreditLinesComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
+    VerificationChecklistComponent,
     OperationsWidgetComponent,
     OrganizationDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     ImageCropperComponent,
-    UploadPhotoDialogComponent
+    UploadPhotoDialogComponent,
+    SimilarCustomersDialogComponent
   ],
   imports: [
     FormsModule,
@@ -103,7 +107,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     OrganizationDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,
-    UploadPhotoDialogComponent
+    UploadPhotoDialogComponent,
+    SimilarCustomersDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent

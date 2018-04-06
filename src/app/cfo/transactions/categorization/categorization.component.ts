@@ -50,6 +50,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             this.categoryList.instance.option('elementAttr', {
                 dropAllowed: value
             });
+        if (value)
+            this.categoryList.instance.cancelEditData();
     }
     @Input('isValid')
     set isValid(value: boolean) {
@@ -398,10 +400,16 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         element.find('.dx-data-row')
             .off('dragstart').off('dragend')
             .on('dragstart', (e) => {
+                if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
+                    e.originalEvent.preventDefault();
+                    return;
+                }
+                
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
-                let elementKey = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
-                e.originalEvent.dataTransfer.setData('Text', elementKey);
+                sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+                let categoryName = this.categorization.categories[sourceCategory.key].name;
+                e.originalEvent.dataTransfer.setData('Text', categoryName);
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
                 e.originalEvent.dropEffect = 'move';
 
@@ -434,9 +442,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }).on('dragleave', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
-
-                e.target.classList.remove('element-drag-hover');                
-                if (e.relatedTarget && (e.relatedTarget.classList.contains('category-drop-add-rule') || e.relatedTarget.classList.contains('category-drop-area')))
+                
+                e.target.classList.remove('element-drag-hover');
+                if (e.relatedTarget && (e.target.parentElement === e.relatedTarget || e.target.firstElementChild === e.relatedTarget))
                     return;
 
                 e.currentTarget.closest('tr').classList.remove('drag-hover');
@@ -445,7 +453,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 e.originalEvent.stopPropagation();
                 
                 if (sourceCategory) {
-                    let source = e.originalEvent.dataTransfer.getData('Text');
+                    let source = sourceCategory.key;
                     let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
                     
                     this.handleCategoryDrop(source, target);

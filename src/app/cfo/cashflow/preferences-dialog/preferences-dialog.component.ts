@@ -33,7 +33,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     ];
     numberFormats = [
         '-$1,000,000.0',
-        '-$1.000.000.0'
+        '-$1.000.000,0'
     ];
     currencies = [
         { text: '$ USD US Dollars' },
@@ -72,10 +72,8 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         });
 
         this.dialogRef.afterClosed().subscribe(closeData => {
-            if ((closeData && closeData.saveLocally) || !closeData) {
+            if (closeData && closeData.saveLocally) {
                 this.userPreferencesService.saveLocally(this.model);
-            } else {
-                this.userPreferencesService.removeLocalModel();
             }
         });
     }
@@ -129,16 +127,6 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         return slice ? keys.slice(keys.length / 2) : keys;
     }
 
-    save(): void {
-        this.saving = true;
-        this._cashflowService.saveCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId, this.model)
-            .finally(() => { this.saving = false; })
-            .subscribe(result => {
-                    this.closeSuccessful();
-                }
-            );
-    }
-
     checkFlag(value, flag): boolean {
         return this.userPreferencesService.checkFlag(value, flag);
     }
@@ -154,7 +142,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     applyChanges() {
         this.close(true,  {
             'update': true,
-            'saveLocally': false,
+            'saveLocally': true,
             'apply': true,
             'model': this.model
         });

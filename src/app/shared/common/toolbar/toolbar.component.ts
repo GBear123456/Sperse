@@ -65,6 +65,10 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.l('Delete'),
             icon: this.getImgURI('delete-icon')
         },
+        discard: {
+            text: this.l('Discard'),
+            icon: this.getImgURI('delete-icon')
+        },
         folder: {
             hint: this.l('Folder'),
             icon: this.getImgURI('folder')

@@ -12,6 +12,7 @@ import { FiltersModule } from '@shared/filters/filters.module';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { ClientDetailsModule } from './clients/details/client-details.module';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 
 import { ClientsComponent } from './clients/clients.component';
 import { CreateClientDialogComponent } from './clients/create-client-dialog.component';
@@ -24,6 +25,7 @@ import { CreateTenantModalComponent } from './tenants/create-tenant-modal.compon
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
 import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 
 import { EditionComboComponent } from './shared/edition-combo.component';
@@ -84,6 +86,7 @@ import {
       MatSelectModule,
       GooglePlaceModule,
 
+      CRMDashboardWidgetsModule,
       ClientDetailsModule,
       FileUploadModule,
       ModalModule.forRoot(),
@@ -111,6 +114,7 @@ import {
       FeatureTreeComponent,
       EditionComboComponent,
       DashboardComponent,
+      DashboardMenuComponent,
       LeadsStatsComponent
     ],
     entryComponents: [

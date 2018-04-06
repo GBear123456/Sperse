@@ -11,6 +11,16 @@ import { AppService } from './app.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { AppConsts } from '@shared/AppConsts';
 
+import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+
+export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
+  accountUrl = 'sperse.zendesk.com';
+  beforePageLoad(zE) {
+    zE.setLocale('en');
+    zE.hide();
+  }
+}
+
 @NgModule({
     declarations: [
         AppComponent
@@ -18,12 +28,14 @@ import { AppConsts } from '@shared/AppConsts';
     imports: [
         LayoutModule,
         AppCommonModule.forRoot(),
+        ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,
         AppRoutingModule
     ],
     providers: [
         AppService,
-        ImpersonationService
+        ImpersonationService,
+        ngxZendeskWebwidgetService
     ]
 })
 export class AppModule {}

@@ -1,0 +1,24 @@
+<section class="new-items-status">
+    <header>
+        <h2 class="title">{{l('Totals')}}</h2>
+    </header>
+    <div class="content-wrap">
+        <div *ngIf="dataAvailable" class="align-data">
+
+            <div class="charts-wrapper">
+                <ng-container *ngFor="let field of fields">
+                    <div class="chart-head">
+                        {{l('CRMDashboard_NewAdded', [l(field.title).toLowerCase()])}}
+                        <span [ngStyle]="{'color': field.color}">
+                            <ng-container *ngIf="field.type == 'currency'">{{ data[field.name.replace('total', 'new')] | currency }} of {{ data[field.name] | currency }}</ng-container>
+                            <ng-container *ngIf="field.type == 'number'">{{ data[field.name.replace('total', 'new')] | number }} of {{ data[field.name] | number }}</ng-container>
+                        </span>
+                    </div>
+                    <div class="chart-line" [ngStyle]="{'background-color': '#F1F5F6'}"><div [ngStyle]="{width: field.percent, 'background-color': field.color}"></div></div>
+                </ng-container>
+            </div>
+
+        </div>
+        <app-no-data [hidden]="dataAvailable"></app-no-data>
+    </div>
+</section>

@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
 :host {
     /deep/ .mat-dialog-header {
         padding: 0px 10px 0px 130px!important;
     }
 
     /deep/ .main_sidenav {
+        visibility: visible!important;
         position: static!important;
         .tab-content {
             display: flex;
@@ -36,6 +39,7 @@
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     &.phone {
+                        font-family: 'Lato' !important;
                         &.H, &.P {
                             background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 0px;
                         }
@@ -72,35 +76,47 @@
                     width: 260px;
                     height: 34px;
                     font-size: 14px;
-                    font-weight: 300;
+                    font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
-                    color: #424c56;
+                    color: #424c56;                    
                     padding: 0px;
                     vertical-align: top;
                 }
-                .add-contact {
-                    color: #00aeef;
+                span {
                     font-size: 32px;
                     font-weight: 100;
                     margin: 0px 15px;
                     cursor: pointer;
+
+                    &.hidden {
+                        display: none;
+                    }
+                    &.add-contact {
+                        color: #00aeef;
+                    }
+                    &.clear-contact {
+                        color: red;
+                        transform: rotate(45deg);
+                        display: inline-block;
+                    }
                 }
                 &.email {
                     background: url("../../../assets/common/icons/email.svg") no-repeat 160px 10px;
                 }
                 &.phone {
-                  &.H, &.P {
-                      background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 10px;
-                  }
+                    font-family: 'Lato' !important;
+                    &.H, &.P {
+                        background: url("../../../assets/common/icons/phone.svg") no-repeat 160px 10px;
+                    }
 
-                  &.W {
-                      background: url("../../../assets/common/icons/phone-work.svg") no-repeat 160px 10px;
-                  }
+                    &.W {
+                        background: url("../../../assets/common/icons/phone-work.svg") no-repeat 160px 10px;
+                    }
 
-                  &.M {
-                      background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 10px;
-                  }
+                    &.M {
+                        background: url("../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 10px;
+                    }
                 }
                 &.address {
                     &.P {
@@ -115,6 +131,11 @@
                 }
                 dx-text-box, dx-number-box, dx-text-area, dx-select-box {
                     display: inline-block;
+                    &.dx-invalid {
+                        input {
+                            color: #d9534f!important;
+                        }
+                    }
                     &.dx-state-focused {
                         .dx-placeholder {
                             top: -30px;
@@ -122,12 +143,17 @@
                     }
                     .dx-placeholder, input, textarea {                        
                         font-size: 14px;
-                        font-weight: 300;
+                        font-weight: 400;
                         line-height: 1.79;
                         letter-spacing: 0.3px;
                         color: #424c56;
                         padding: 0px;
                     }    
+                }
+                dx-text-box[name="phone"], dx-number-box[name="phoneExtension"]{
+                    input{
+                        font-family: 'Lato' !important;
+                    }
                 }
                 dx-select-box[name="state"] {
                     &[name="state"], &[name="country"] {
@@ -171,5 +197,13 @@
            left: 35px;
            position: relative;
         }
+    }
+
+    .similar-clients-message {
+        background-color: #ed6d6d;
+        color: white;
+        padding: 5px 30px;
+        font-size: 16px;
+        cursor: pointer;
     }
 }

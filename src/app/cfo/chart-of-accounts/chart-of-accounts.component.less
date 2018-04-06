@@ -1,6 +1,7 @@
 :host {
     position: relative;
     top: 75px;
+
     .content-wrap {
         display: flex;
     }
@@ -11,16 +12,20 @@
 
     /deep/ categorization {
         display: block;
-        
+
         table {
             width: calc(~"100vw - 760px");
         }
-        
+
+        td:first-child .dx-treelist-text-content {
+            width: auto !important;
+        }
+
         td:nth-child(2) {
-            position: static;
+            position: static !important;
             visibility: visible !important;
         }
-        
+
         .dx-scrollbar-horizontal {
             visibility: hidden;
         }
