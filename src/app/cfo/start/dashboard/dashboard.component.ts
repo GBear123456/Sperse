@@ -57,6 +57,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             iconSrc: 'assets/common/icons/pie-chart.svg',
             buttons: []
         };
+
+        if (!this.quovoHandler) {
+            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
+        }
     }
 
     ngAfterViewInit(): void {
@@ -69,9 +73,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     addAccount() {
-        if (!this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
-        }
         if (this.quovoHandler.isLoaded) {
             this.quovoHandler.handler.open();
         }
