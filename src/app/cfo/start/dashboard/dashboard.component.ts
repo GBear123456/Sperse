@@ -51,6 +51,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
 
+    quovoUIToken: string;
     quovoHandler: any;
 
     constructor(
@@ -85,7 +86,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         };
         this._financialInformationServiceProxy.createProviderUIToken(InstanceType[this.instanceType], this.instanceId)
             .subscribe((data) => {
-                this.quovoHandler = this._quovoService.getQuovoHandler(data.token);
+                this.quovoUIToken = data.token;
             });
     }
 
@@ -102,6 +103,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     addAccount() {
         if (this.quovoHandler) {
             this.quovoHandler.open();
+        }
+        else {
+            this.quovoHandler = this._quovoService.getQuovoHandler(this.quovoUIToken);
         }
     }
 
