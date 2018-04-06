@@ -2,6 +2,8 @@ import { Component, Output, Injector, EventEmitter, AfterViewInit } from '@angul
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CacheService } from 'ng2-cache-service';
 
+import * as moment from 'moment';
+
 @Component({
     selector: 'app-period',
     templateUrl: './period.component.html',

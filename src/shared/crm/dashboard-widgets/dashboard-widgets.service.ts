@@ -45,14 +45,13 @@ export class DashboardWidgetsService  {
     }
 
     periodChanged(period = undefined) {
-        let from = period && period.from;
-        let to = period && period.to;
-        this._period.next(from, to);
-        this._dashboardServiceProxy.getTotals(from, to)
-            .subscribe(result => {
-                this._totalsData.next(result);
-            }
-        );         
+        this._period.next(period);
+        this._dashboardServiceProxy.getTotals(
+            period && period.from, period && period.to)
+                .subscribe(result => {
+                    this._totalsData.next(result);
+                }       
+       );         
     }
 
     subscribeTotalsData(callback: (period: Object) => any) {
