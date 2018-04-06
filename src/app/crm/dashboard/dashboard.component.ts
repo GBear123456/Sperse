@@ -7,12 +7,16 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 
+import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
+
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 @Component({
-  templateUrl: './dashboard.component.html',
-  animations: [appModuleAnimation()],
-  styleUrls: ['./dashboard.component.less']
+    templateUrl: './dashboard.component.html',
+    animations: [appModuleAnimation()],
+    styleUrls: ['./dashboard.component.less'],
+    providers: [DashboardWidgetsService]
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     private rootComponent: any;
@@ -29,20 +33,24 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         injector: Injector,
         private _router: Router,
         private _dashboardService: TenantDashboardServiceProxy,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        private _dashboardWidgetsService: DashboardWidgetsService,
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     checkDataEmpty(data) {      
-        if (this.dataEmpty != false)
-            this.dataEmpty = !data.length;
+        this.dataEmpty = !data.length;
         this.finishLoading(true);
     }
 
     addClient() {
         this._router.navigate(['app/crm/clients'], 
             { queryParams: { action: 'addNewClient' } });
+    }
+
+    periodChanged($event) {
+        this._dashboardWidgetsService.periodChanged($event);
     }
 
     ngAfterViewInit(): void {
