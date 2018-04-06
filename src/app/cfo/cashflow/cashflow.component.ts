@@ -1546,6 +1546,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
+        if (transactionObj[`level${levelNumber}`]) {
+            for (let i = levelNumber; i < 5; i++) {
+                delete transactionObj[`level${i}`];
+            }
+        }
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
@@ -4503,12 +4508,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     data.id
                     )
                     .subscribe();
-                                
-                if (e.component.getVisibleRows().length === 1) {
-                    this.closeTransactionsDetail();
-                } else {
-                    e.component.deleteRow(e.component.getRowIndexByKey(e.key));
-                }
+                
+                e.component.deleteRow(e.component.getRowIndexByKey(e.key));
 
             } else {
                 this._cashFlowForecastServiceProxy
@@ -4529,6 +4530,43 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
                 }
             }
+
+            /* update CFO grid */
+            let transactionsToUpdate: TransactionStatsDto[] = [];
+            let sameDateTransactionExist = false;
+            this.cashflowData.forEach((item: TransactionStatsDto, i) => {
+                if (item.forecastId === e.key.id) {
+                    if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
+                        this.cashflowData.splice(i, 1);
+                    }
+                    else {
+                        transactionsToUpdate.push(item);
+                    }
+                }
+                else {
+                    if (paramNameForUpdateInput == 'date' &&  moment(e.oldData[paramName]).isSame(item.date)) {
+                        sameDateTransactionExist = true;
+                    }
+                }
+            });
+            transactionsToUpdate.forEach(item => {
+                if (paramNameForUpdateInput == 'date' && !sameDateTransactionExist) {
+                    this.cashflowData.push(
+                        this.createStubTransaction({
+                            date: item.date,
+                            amount: 0,
+                            cashflowTypeId: item.cashflowTypeId,
+                            accountId: item.accountId
+                        }));
+                    sameDateTransactionExist = true;
+                }
+
+                item[paramNameForUpdateInput] = paramNameForUpdateInput == 'date' ? moment(paramValue) : paramValue;
+                if (paramNameForUpdateInput == 'transactionDescriptor')
+                    this.addCategorizationLevels(item);
+            });
+            
+            this.pivotGrid.instance.getDataSource().reload();
         }
     }
 
