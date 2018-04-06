@@ -7,7 +7,6 @@
         <dx-data-grid id="gridContainer" class="grid-compact-view"
                       [dataSource]="dataSource"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                      (onContentReady)="onContentReady($event)"
                       (onCellClick)="onCellClick($event)">
             <dxi-column dataField="name" caption="{{l('Customer.Name')}}"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>

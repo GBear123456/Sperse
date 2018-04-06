@@ -12,14 +12,12 @@ import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.servic
 import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 import { InstanceType, FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
 
-import { CacheService } from 'ng2-cache-service';
-
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.less'],
     animations: [appModuleAnimation()],
-    providers: [CacheService, FinancialInformationServiceProxy]
+    providers: [FinancialInformationServiceProxy]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
@@ -29,21 +27,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
 
     private rootComponent: any;
-    private readonly PERIOD_CACHE_KEY = 'selected.period';
-    private readonly LOCAL_STORAGE = 0;
 
     headlineConfig;
-    availablePeriods = [
-        this.l('Today'),
-        this.l('Yesterday'),
-        this.l('This_Week'),
-        this.l('This_Month'),
-        this.l('Last_Month'),
-        this.l('This_Year'),
-        this.l('Last_Year'),
-        this.l('All_Periods')
-    ];
-    selectedPeriod;
 
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
@@ -57,7 +42,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     constructor(
         injector: Injector,
         private _router: Router,
-        private _cacheService: CacheService,
         private _dashboardService: DashboardService,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         private _quovoService: QuovoService,
@@ -65,15 +49,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
-        if (this._cacheService.exists(this.getCacheKey(this.PERIOD_CACHE_KEY)))
-            this.selectedPeriod = this._cacheService.get(this.getCacheKey(this.PERIOD_CACHE_KEY));
-        else
-            this.selectedPeriod = this.availablePeriods[this.availablePeriods.length - 1];
-    }
-
-    getCacheKey(key) {
-        return this.constructor.name + '_' + key;
     }
 
     ngOnInit(): void {
@@ -91,7 +66,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     ngAfterViewInit(): void {
-        this._dashboardService.periodChanged(this.selectedPeriod);
         CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
     }
 
@@ -118,11 +92,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     onSyncComplete() {
         this.accountsComponent.getAccountTotals();
-        this._dashboardService.periodChanged(this.selectedPeriod);
     }
 
-    onPeriodChanged($event) {
-        this._dashboardService.periodChanged($event.value);
-        this._cacheService.set(this.getCacheKey(this.PERIOD_CACHE_KEY), $event.value);
+    periodChanged($event) {
+        this._dashboardService.periodChanged($event.name);
     }
 }
