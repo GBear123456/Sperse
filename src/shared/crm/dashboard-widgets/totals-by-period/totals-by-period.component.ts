@@ -53,12 +53,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
-        this._dashboardWidgetsService.subscribePeriodChange((period) => {
+        this._dashboardWidgetsService.subscribePeriodChange((period) => {            
             if (period) {
-                if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week')].indexOf(period.name) >= 0) 
+                if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week'), this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
                     this.selectedPeriod = this.periods[0];
-                else if ([this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
-                    this.selectedPeriod = this.periods[1];
                 else
                     this.selectedPeriod = this.periods[2];
             }
