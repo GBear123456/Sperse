@@ -51,8 +51,8 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
 
     customizePoint = (data) => {
         let color = [
-            '#F9B65C'
-            '#98D66B'
+            '#F9B65C',
+            '#98D66B',
             '#ED9757'
         ][data.index];
 
