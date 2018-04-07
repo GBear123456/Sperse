@@ -3,6 +3,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
 
+import * as _ from "underscore";
+
 @Component({
     selector: 'totals-by-source',
     templateUrl: './totals-by-source.component.html',
@@ -10,11 +12,9 @@ import { DashboardWidgetsService } from '../dashboard-widgets.service';
     providers: []
 })
 export class TotalsBySourceComponent extends AppComponentBase implements OnInit {
-    totalsData: any = [
-        { type: "10 - 20",  yield: 10, color: '#F9B65C' },
-        { type: "25 - 50",  yield: 15,  color: '#98D66B' },
-        { type: "50 - 100", yield: 9, color: '#ED9757' }
-    ];
+    totalsData: any;
+    totalCount = 0;
+    percentage: string;
 
     constructor(
         injector: Injector,
@@ -27,7 +27,13 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
             _dashboardServiceProxy.getCustomersByCompanySize(
                 period && period.form, period && period.to)
                     .subscribe((result) => {
-                        //console.log(result);
+                        this.totalCount = 0;
+                        result.forEach((item) => {
+                            if (!item.companySizeRange)
+                                item.companySizeRange = 'Unknown';
+                            this.totalCount += item.customerCount;
+                        });
+                        this.totalsData = result;
                     }
             )
         });
@@ -44,8 +50,20 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
     }
 
     customizePoint = (data) => {
-        return {    
-            color: this.totalsData[data.index].color
-        }
+        let color = [
+            '#F9B65C'
+            '#98D66B'
+            '#ED9757'
+        ][data.index];
+
+        if (color)
+            return {    
+                color: color
+            }
+    }
+
+    onPointHoverChanged($event) {
+        this.percentage = $event.target.fullState ? 
+            ($event.target.percent * 100).toFixed(2) + '%': '';
     }
 }

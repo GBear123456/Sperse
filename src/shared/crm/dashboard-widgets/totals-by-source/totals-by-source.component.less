@@ -9,10 +9,28 @@
         }
     }
 
-    .totalCount {
+    .percentage {
         position: absolute;
-        top: 40%;
-        left: 38%;
-        font-size: 36px;      
+        top: calc(~"50% - 10px");
+        left: calc(~"50% - 25px");
+        width: 50px;
+        font-size: 12px;
+        display: inline-block;
+
+    }
+
+    .total-count {
+        position: absolute;
+        top: calc(~"50% - 60px");
+        left: calc(~"50% - 100px");
+        width: 200px;
+        font-weight: 600;        
+        font-size: 36px;
+        display: inline-block;
+    }
+
+    app-no-data {
+        padding-top: 50px!important;
+        border-top: none!important;
     }
 }

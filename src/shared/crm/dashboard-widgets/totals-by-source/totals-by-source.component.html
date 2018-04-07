@@ -1,16 +1,22 @@
 <div class="wrapper">
-    <span class="totalCount">24,419</span>
-    <div class="round-progress">
-        <dx-pie-chart [dataSource]="totalsData" 
-            [type]="'doughnut'" 
-            [innerRadius]="0.9"
-            [customizePoint]="customizePoint"
-            (onInitialized)="onInitialized($event)"
-            [title]="{text: 'Totals by Company Size', font: {color: '#212c36', size: 18, weight: '700', family: 'Montserrat'}}"
-            [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}">
-            <dxo-common-series-settings argumentField="type"></dxo-common-series-settings>
-            <dxi-series valueField="yield"></dxi-series>
-        </dx-pie-chart>
+    <div *ngIf="totalCount">
+        <span class="total-count">{{totalCount}}</span>
+        <span class="percentage">{{percentage}}</span>
+        <div class="round-progress">
+            <dx-pie-chart [dataSource]="totalsData" 
+                [type]="'doughnut'" 
+                [innerRadius]="0.9"
+                [customizePoint]="customizePoint"
+                (onInitialized)="onInitialized($event)"
+                (onPointHoverChanged)="onPointHoverChanged($event)"
+                (onPointSelectionChanged)="onPointSelectionChanged($event)"
+                [title]="{text: 'Totals by Company Size', font: {color: '#212c36', size: 18, weight: '700', family: 'Montserrat'}}"
+                [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}">
+                <dxo-common-series-settings argumentField="companySizeRange"></dxo-common-series-settings>
+                <dxi-series valueField="customerCount"></dxi-series>
+            </dx-pie-chart>
+        </div>
     </div>
+    <app-no-data [hidden]="totalCount"></app-no-data>
 </div>
 
