@@ -306,7 +306,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
-        this.requestFilter.endDate = moment().utc();
+        this.requestFilter.endDate = moment().utc().add(1, 'year');
 
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
