@@ -158,7 +158,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     allYears: number[] = [];
 
     /** Amount of years with stubs */
-    yearsAmount: number = 0;
+    yearsAmount = 0;
 
     cashflowDataTree = {};
     treePathes = [];
@@ -388,25 +388,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             area: 'column',
             areaIndex: 4,
             showTotals: false,
-            selector: function(dataItem) {
-                let result: Projected;
-                let itemMonthFormatted = dataItem.initialDate.format('YYYY.MM');
-                let currentMonthFormatted = moment().format('YYYY.MM');
-                if (itemMonthFormatted !== currentMonthFormatted) {
-                    result = currentMonthFormatted > itemMonthFormatted ? Projected.PastTotal : Projected.FutureTotal;
-                } else {
-                    let itemDate = dataItem.initialDate.format('YYYY.MM.DD');
-                    let currentDate = moment().format('YYYY.MM.DD');
-                    if (itemDate === currentDate) {
-                        result = Projected.Today;
-                    } else if (itemDate > currentDate) {
-                        result = Projected.Forecast;
-                    } else if (itemDate < currentDate) {
-                        result = Projected.Mtd;
-                    }
-                }
-                return  result;
-            },
+            selector: this.projectedSelector,
             customizeText: cellInfo => {
                 let projectedKey;
                 switch (cellInfo.value) {
@@ -2070,8 +2052,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             return (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
                     (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
-                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval ;
-                        return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cellObj.cell[columnPathPropertyName][index];
+                        if (field.caption === 'Projected') {
+                            return this.projectedSelector(cashflowItem) === cellObj.cell[columnPathPropertyName][index];
+                        }
+                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
+                        return field.dataType !== 'date' ||
+                               (field.groupInterval === 'month' ?
+                                cashflowItem.initialDate[dateMethod]() + 1 :
+                                cashflowItem.initialDate[dateMethod]()
+                               ) === cellObj.cell[columnPathPropertyName][index];
                     }));
         });
     }
@@ -2206,6 +2195,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return result;
         };
+    }
+
+    projectedSelector(dataItem) {
+        let result: Projected;
+        let itemMonthFormatted = dataItem.initialDate.format('YYYY.MM');
+        let currentMonthFormatted = moment().format('YYYY.MM');
+        if (itemMonthFormatted !== currentMonthFormatted) {
+            result = currentMonthFormatted > itemMonthFormatted ? Projected.PastTotal : Projected.FutureTotal;
+        } else {
+            let itemDate = dataItem.initialDate.format('YYYY.MM.DD');
+            let currentDate = moment().format('YYYY.MM.DD');
+            if (itemDate === currentDate) {
+                result = Projected.Today;
+            } else if (itemDate > currentDate) {
+                result = Projected.Forecast;
+            } else if (itemDate < currentDate) {
+                result = Projected.Mtd;
+            }
+        }
+        return  result;
     }
 
     /**
