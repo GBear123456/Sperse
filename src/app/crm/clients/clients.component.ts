@@ -110,7 +110,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
 
-        this.canSendVerificationRequest =  this._clientService.canSendVerificationRequest();
+        this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
     }
 
     private checkCFOClientAccessPermission() {

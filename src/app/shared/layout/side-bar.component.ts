@@ -71,6 +71,7 @@ export class SideBarComponent extends AppComponentBase {
             .change(this.activeFilter);
         this.activeFilter = undefined;
 
+        this.checkFilterDisable(event);
         event.stopPropagation &&
             event.stopPropagation();
     }
