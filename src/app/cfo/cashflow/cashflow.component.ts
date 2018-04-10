@@ -4531,17 +4531,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /* update CFO grid */
             let affectedTransactions: TransactionStatsDto[] = [];
             let sameDateTransactionExist = false;
-            for (var i = this.cashflowData.length - 1; i >= 0; i--) {
+            for (let i = this.cashflowData.length - 1; i >= 0; i--) {
                 let item = this.cashflowData[i];
 
-                if (item.forecastId === e.key.id) {
+                if (item.forecastId == e.key.id) {
                     if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
                         this.cashflowData.splice(i, 1);
                     }
 
                     affectedTransactions.push(item);
-                }
-                else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
+                } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
                     sameDateTransactionExist = true;
                 }
             }
@@ -4551,7 +4550,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowData.push(
                         this.createStubTransaction({
                             date: item.date,
-                            initialDate: item.date,
+                            initialDate: (<any>item).initialDate,
                             amount: 0,
                             cashflowTypeId: item.cashflowTypeId,
                             accountId: item.accountId
@@ -4559,7 +4558,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     sameDateTransactionExist = true;
                 }
 
-                item[paramNameForUpdateInput] = paramNameForUpdateInput == 'date' ? moment(paramValue) : paramValue;
+                if (paramNameForUpdateInput == 'date') {
+                    item[paramNameForUpdateInput] = moment(paramValue);
+                    item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+                }
+                else {
+                    item[paramNameForUpdateInput] = paramValue;
+                }
+                
                 if (paramNameForUpdateInput == 'transactionDescriptor')
                     this.addCategorizationLevels(item);
             });
