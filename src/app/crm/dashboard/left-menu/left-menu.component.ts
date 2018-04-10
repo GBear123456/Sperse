@@ -11,10 +11,10 @@ import { Router } from '@angular/router';
 export class DashboardMenuComponent extends AppComponentBase {
 
     items = [
-        { caption: 'ManageClients', component: '/clients' },
-        { caption: 'ManageLeads', component: '/leads' },
-        { caption: 'ImportYourList', component: '/clients' },
-        { caption: 'CustomizeSettings', component: '/editions' }
+        { caption: 'ManageClients', component: '/clients', showPlus: true },
+        { caption: 'ManageLeads', component: '/leads', showPlus: true },
+        { caption: 'ImportYourList', component: '/clients', disabled: true },
+        { caption: 'CustomizeSettings', component: '/editions', disabled: true }
     ];
 
     constructor(injector: Injector,
@@ -24,6 +24,9 @@ export class DashboardMenuComponent extends AppComponentBase {
     }
 
     onClick(event, elem, i) {
+        if (elem.disabled)
+            return ;
+
         if (event.clientX < 260)
             elem.component && this._router.navigate(
                 ['/app/crm' + elem.component]);

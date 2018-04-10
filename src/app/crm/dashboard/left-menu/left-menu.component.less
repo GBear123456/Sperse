@@ -47,6 +47,13 @@
             position: relative;
             font-weight: 500;
 
+            &.disabled {
+                .img, .link {
+                    opacity: 0.5;
+                    cursor: default;
+                }
+            }
+  
             .link {
                 width: 215px;
                 position: relative;
