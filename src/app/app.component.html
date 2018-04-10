@@ -15,7 +15,7 @@
         [hidden]="appService.toolbarIsHidden">
     </app-toolbar>
     <div class="page-content"
-        [ngClass]="{'fixed-filters': appService.marginLeftEnable && appService.toolbarConfig && filtersService.fixed}">
+        [ngClass]="{'fixed-filters': appService.narrowingPageContentWhenFixedFilter && appService.toolbarConfig && filtersService.fixed}">
       <router-outlet></router-outlet>
     </div>
   </div>

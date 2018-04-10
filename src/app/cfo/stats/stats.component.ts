@@ -158,7 +158,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
-        this._appService.marginLeftEnable = false;
+        this._appService.narrowingPageContentWhenFixedFilter = false;
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }

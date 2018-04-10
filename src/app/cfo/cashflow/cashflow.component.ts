@@ -602,10 +602,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private adjustmentsList = [];
 
     /** Text box for modifying of the cell*/
-    private modifyingCelltextBox: HTMLElement;
-
-    /** Type of operation with the cell */
-    private currentCellOperationType: 'add' | 'update' | 'delete';
+    private modifyingCellNumberBox: NumberBox;
 
     /** Cell input padding */
     private oldCellPadding: string;
@@ -3555,7 +3552,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     // check feature
                     && this.isEnableForecastAdding()
                 ) {
-                    this.handleAddOrEdit(cellObj, result);
+                    this.handleForecastAdding(cellObj, result);
                 } else {
                     this.showTransactionDetail(result);
                 }
@@ -3621,17 +3618,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return (date >= possibleStartDate && date <= possibleEndDate);
     }
 
-    handleAddOrEdit(cellObj, details) {
+    handleForecastAdding(cellObj, details) {
         let element: HTMLElement = cellObj.cellElement;
-        this.currentCellOperationType = details.length === 0 ? 'add' : 'update';
-        if (this.modifyingCelltextBox) {
-            let parent = this.modifyingCelltextBox.parentElement;
-            this.modifyingCelltextBox.remove();
-            this.modifyingCelltextBox = null;
-            $(parent).children().show();
-            parent.style.padding = window.getComputedStyle(cellObj.cellElement).padding;
+        /** if the modifying input has already exists */
+        if (this.modifyingCellNumberBox) {
+            this.removeModifyingCellNumberBox(cellObj);
         }
-        /** @todo uncommment */
         if (!element.querySelector('span'))
             $(element).wrapInner('<span></span>');
         $(element).children().hide();
@@ -3641,21 +3633,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.clickedRowResult = details[0];
         }
 
-        this.modifyingCelltextBox = document.createElement('div');
-        this.modifyingCelltextBox.onclick = function(ev) {
+        let wrapper = document.createElement('div');
+        wrapper.onclick = function(ev) {
             ev.stopPropagation();
         };
 
-        let numberBoxInstance = new NumberBox(this.modifyingCelltextBox, {
+        this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
+            format: "$ #,###.##",
             onEnterKey: this.saveForecast.bind(this, cellObj),
             onFocusOut: this.saveForecast.bind(this, cellObj)
         });
-
-        element.appendChild(this.modifyingCelltextBox);
+        element.appendChild(this.modifyingCellNumberBox.element());
+        this.modifyingCellNumberBox.focus();
         element = null;
-        document.getSelection().removeAllRanges();
+    }
+
+    removeModifyingCellNumberBox(cellObj) {
+        let parent = this.modifyingCellNumberBox.element().parentElement;
+        this.modifyingCellNumberBox.dispose();
+        this.modifyingCellNumberBox = null;
+        $(parent).children().show();
+        parent.style.padding = this.oldCellPadding;
     }
 
     showTransactionDetail(details) {
@@ -3683,49 +3683,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     saveForecast() {
-        let event = arguments[1];
-        let numberInputBlock: HTMLElement = event.component.element();
-        let savedCellObj = arguments[0];
+        let [savedCellObj, event] = Array.from(arguments);
         let newValue = event.component.option('value');
-        let parentTd = numberInputBlock.parentElement;
-        event.component.dispose();
-        this.modifyingCelltextBox = null;
-        $(parentTd).css('padding', this.oldCellPadding);
-        $(parentTd).children().show();
-        if (+newValue !== savedCellObj.cell.value) {
-            if (+newValue === 0) {
-                this.currentCellOperationType = 'delete';
-            }
+        this.removeModifyingCellNumberBox(savedCellObj);
+        if (+newValue !== 0) {
             let forecastModel;
             let cashflowTypeId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
             let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
-            if (this.currentCellOperationType === 'add') {
-                /** @todo fix bug with wrong date */
-                let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
-                forecastModel = new AddForecastInput({
-                    forecastModelId: this.selectedForecastModel.id,
-                    bankAccountId: this.bankAccounts[0].id,
-                    date: forecastedDate,
-                    startDate: this.statsDetailFilter.startDate,
-                    endDate: this.statsDetailFilter.endDate,
-                    cashFlowTypeId: cashflowTypeId,
-                    categoryId: subCategoryId || categoryId || -1,
-                    transactionDescriptor: transactionDescriptor,
-                    currencyId: this.currencyId,
-                    amount: newValue
-                });
-            } else if (this.currentCellOperationType === 'update') {
-                forecastModel = UpdateForecastInput.fromJS({
-                    id: this.clickedRowResult.forecastId,
-                    amount: newValue
-                });
-            } else if (this.currentCellOperationType === 'delete') {
-                forecastModel = this.clickedRowResult.forecastId;
-            }
+            let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
+            forecastModel = new AddForecastInput({
+                forecastModelId: this.selectedForecastModel.id,
+                bankAccountId: this.bankAccounts[0].id,
+                date: forecastedDate,
+                startDate: this.statsDetailFilter.startDate,
+                endDate: this.statsDetailFilter.endDate,
+                cashFlowTypeId: cashflowTypeId,
+                categoryId: subCategoryId || categoryId || -1,
+                transactionDescriptor: transactionDescriptor,
+                currencyId: this.currencyId,
+                amount: newValue
+            });
 
-            this._cashFlowForecastServiceProxy[`${this.currentCellOperationType}Forecast`](
+            this._cashFlowForecastServiceProxy.addForecast(
                 InstanceType10[this.instanceType],
                 this.instanceId,
                 forecastModel
@@ -3735,23 +3716,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     let date = cellDate.startDate > moment() ? moment(cellDate.startDate).add(new Date(<any>cellDate.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
                     let initialDate = cellDate.startDate > moment() ? cellDate.startDate : moment();
                     /** Update data locally */
-                    if (this.currentCellOperationType === 'add') {
-                        this.cashflowData.push(this.createStubTransaction({
-                            accountId: this.bankAccounts[0].id,
-                            count: 1,
-                            amount: newValue,
-                            date: date,
-                            initialDate: initialDate,
-                            forecastId: res
-                        }, savedCellObj.cell.rowPath));
-                    } else {
-                        /** Find an item and its total and edit it */
-                        this.cashflowData.forEach(item => {
-                            if (item.forecastId === this.clickedRowResult.forecastId) {
-                                item.amount = newValue;
-                            }
-                        });
-                    }
+                    this.cashflowData.push(this.createStubTransaction({
+                        accountId: this.bankAccounts[0].id,
+                        count: 1,
+                        amount: newValue,
+                        date: date,
+                        initialDate: initialDate,
+                        forecastId: res
+                    }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload();
                 });
@@ -4559,17 +4531,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /* update CFO grid */
             let affectedTransactions: TransactionStatsDto[] = [];
             let sameDateTransactionExist = false;
-            for (var i = this.cashflowData.length - 1; i >= 0; i--) {
+            for (let i = this.cashflowData.length - 1; i >= 0; i--) {
                 let item = this.cashflowData[i];
 
-                if (item.forecastId === e.key.id) {
+                if (item.forecastId == e.key.id) {
                     if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
                         this.cashflowData.splice(i, 1);
                     }
 
                     affectedTransactions.push(item);
-                }
-                else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
+                } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
                     sameDateTransactionExist = true;
                 }
             }
@@ -4579,7 +4550,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowData.push(
                         this.createStubTransaction({
                             date: item.date,
-                            initialDate: item.date,
+                            initialDate: (<any>item).initialDate,
                             amount: 0,
                             cashflowTypeId: item.cashflowTypeId,
                             accountId: item.accountId
@@ -4587,7 +4558,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     sameDateTransactionExist = true;
                 }
 
-                item[paramNameForUpdateInput] = paramNameForUpdateInput == 'date' ? moment(paramValue) : paramValue;
+                if (paramNameForUpdateInput == 'date') {
+                    item[paramNameForUpdateInput] = moment(paramValue);
+                    item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+                }
+                else {
+                    item[paramNameForUpdateInput] = paramValue;
+                }
+                
                 if (paramNameForUpdateInput == 'transactionDescriptor')
                     this.addCategorizationLevels(item);
             });
