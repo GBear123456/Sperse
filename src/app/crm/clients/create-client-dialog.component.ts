@@ -7,6 +7,7 @@ import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { ContactTypes } from '@shared/AppEnums';
 import { DxTextBoxComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -24,6 +25,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
+    contactTypes = [ContactTypes.Personal, ContactTypes.Business];
+
     emailsPersonal: any;
     emailsBusiness: any;
     phonesPersonal: any;
@@ -198,13 +201,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 namePrefix: person.namePrefix,
                 nameSuffix: person.nameSuffix,
                 nickName: person.nickName,
-                emailAddresses: this.getEmailContactInput('personal'),
-                phoneNumbers: this.getPhoneContactInput('personal'), 
-                address: this.getAddressContactInput('personal'), 
+                emailAddresses: this.getEmailContactInput(ContactTypes.Personal),
+                phoneNumbers: this.getPhoneContactInput(ContactTypes.Personal),
+                address: this.getAddressContactInput(ContactTypes.Personal),
                 companyName: this.company,
-                organizationEmailAddresses: this.getEmailContactInput('business'),
-                organizationPhoneNumbers: this.getPhoneContactInput('business'),
-                organizationAddress: this.getAddressContactInput('business'),
+                organizationEmailAddresses: this.getEmailContactInput(ContactTypes.Business),
+                organizationPhoneNumbers: this.getPhoneContactInput(ContactTypes.Business),
+                organizationAddress: this.getAddressContactInput(ContactTypes.Business),
                 photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
                     originalImage: this.getBase64(this.photoOriginalData),
                     thumbnail: this.getBase64(this.photoThumbnailData)
@@ -382,7 +385,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     setDefaultTypeValue(obj, list, field = null) {
         if (list.length)
-            ['business', 'personal'].forEach((type) => {
+            this.contactTypes.forEach((type) => {
                 if (field)
                     obj[type][field] = obj[type][field] || list[0].id;
                 else
@@ -531,7 +534,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     resetFullDialog() {
-        ['business', 'personal'].forEach((type) => {
+        this.contactTypes.forEach((type) => {
             this.resetComponent(this['emails' + this.capitalize(type)]);
             this.resetComponent(this['phones' + this.capitalize(type)]);
             this.clearButtonVisible[type]['emails'] = false;
