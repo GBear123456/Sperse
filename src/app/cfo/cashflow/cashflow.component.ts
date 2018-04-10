@@ -2572,15 +2572,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onCellPrepared(e) {
         let maxCategoryWidth = this.maxCategoriesWidth;
 
-        /** Get cell date from path and add it to the cell object for using */
-        if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined) {
-            let path = e.cell.path || e.cell.columnPath;
-            let date = this.getDateByPath(path, this.getColumnFields(), 'day');
-            e.date = date;
-        }
-
         /** Add day (MON, TUE etc) to the day header cells */
         if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined && this.isDayCell(e)) {
+            let path = e.cell.path || e.cell.columnPath;
+            let date = this.formattingDate(path);
+            e.date = date.startDate;
             this.addWeekendAttribute(e);
         }
 
@@ -3533,13 +3529,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 let columnFields = this.getColumnFields();
                 let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
-                lowestCaption = lowestCaption === 'projected' ? lowestCaption : 'projected';
-                let cellDate = this.getDateByPath(cellObj.cell.columnPath, columnFields, lowestCaption);
+                let cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
+                let currentDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
                 if (
                     /** disallow adding historical periods */
                     (
-                        /** check the date - if it is mtd date - disallow editing, if projected - welcome on board */
-                        cellDate.format('YYYY.MM.DD') >= moment().format('YYYY.MM.DD')
+                        /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
+                        currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') || cellDateInterval.endDate.isAfter(currentDate, 'day')
                     ) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
@@ -3753,7 +3749,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getDateByPath(path, columnFields, lowestCaption ?: string) {
         lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(path, columnFields);
         let date = moment.unix(0).tz('UTC');
-        columnFields.forEach(dateField => {
+        columnFields.every(dateField => {
             let fieldValue = path[dateField.areaIndex];
             if (dateField.dataType === 'date') {
                 let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval;
@@ -3762,18 +3758,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** set the new interval to the moment */
                     date[method](fieldValue);
                 }
-            } else if (lowestCaption === 'projected') {
+            } else if (dateField.caption === 'Projected') {
                 let currentDate = moment().date();
                 if (fieldValue) {
                     if (fieldValue === Projected.Today) {
                         date.date(currentDate);
                     } else if (fieldValue === Projected.Mtd || fieldValue === Projected.PastTotal) {
-                        date.date(currentDate - 1);
+                        date.date(1);
                     } else if (fieldValue === Projected.Forecast || fieldValue === Projected.FutureTotal) {
                         date.date(currentDate + 1);
                     }
                 }
             }
+            return dateField.caption.toLowerCase() !== lowestCaption;
         });
         return date;
     }
@@ -4565,7 +4562,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 else {
                     item[paramNameForUpdateInput] = paramValue;
                 }
-                
+
                 if (paramNameForUpdateInput == 'transactionDescriptor')
                     this.addCategorizationLevels(item);
             });
