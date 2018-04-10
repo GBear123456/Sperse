@@ -2052,15 +2052,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             return (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
                     (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
-                        if (field.caption === 'Projected') {
-                            return this.projectedSelector(cashflowItem) === cellObj.cell[columnPathPropertyName][index];
+                        if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
+                            return this.projectedSelector(cashflowItem) === fieldValue;
                         }
                         let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
                         return field.dataType !== 'date' ||
                                (field.groupInterval === 'month' ?
                                 cashflowItem.initialDate[dateMethod]() + 1 :
                                 cashflowItem.initialDate[dateMethod]()
-                               ) === cellObj.cell[columnPathPropertyName][index];
+                               ) === fieldValue;
                     }));
         });
     }
