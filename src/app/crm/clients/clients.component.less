@@ -4,12 +4,16 @@
 	position: relative;
 	top: 74px;
 
+	/deep/ .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td{
+		height: 40px !important;
+	}		
+
 	/deep/ #gridContainer {
 		.dx-datagrid-rowsview tr td.tabular,
 		.dx-datagrid-rowsview tr td.tabular * {
 			font-family: 'Lato' !important;
 		}
-
+					
 		.dx-datagrid-rowsview {
 			.dx-column-lines {
           		cursor: pointer; 

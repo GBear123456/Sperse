@@ -158,7 +158,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     allYears: number[] = [];
 
     /** Amount of years with stubs */
-    yearsAmount: number = 0;
+    yearsAmount = 0;
 
     cashflowDataTree = {};
     treePathes = [];
@@ -388,25 +388,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             area: 'column',
             areaIndex: 4,
             showTotals: false,
-            selector: function(dataItem) {
-                let result: Projected;
-                let itemMonthFormatted = dataItem.initialDate.format('YYYY.MM');
-                let currentMonthFormatted = moment().format('YYYY.MM');
-                if (itemMonthFormatted !== currentMonthFormatted) {
-                    result = currentMonthFormatted > itemMonthFormatted ? Projected.PastTotal : Projected.FutureTotal;
-                } else {
-                    let itemDate = dataItem.initialDate.format('YYYY.MM.DD');
-                    let currentDate = moment().format('YYYY.MM.DD');
-                    if (itemDate === currentDate) {
-                        result = Projected.Today;
-                    } else if (itemDate > currentDate) {
-                        result = Projected.Forecast;
-                    } else if (itemDate < currentDate) {
-                        result = Projected.Mtd;
-                    }
-                }
-                return  result;
-            },
+            selector: this.projectedSelector,
             customizeText: cellInfo => {
                 let projectedKey;
                 switch (cellInfo.value) {
@@ -2070,8 +2052,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             return (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
                     (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
-                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval ;
-                        return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cellObj.cell[columnPathPropertyName][index];
+                        if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
+                            return this.projectedSelector(cashflowItem) === fieldValue;
+                        }
+                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
+                        return field.dataType !== 'date' ||
+                               (field.groupInterval === 'month' ?
+                                cashflowItem.initialDate[dateMethod]() + 1 :
+                                cashflowItem.initialDate[dateMethod]()
+                               ) === fieldValue;
                     }));
         });
     }
@@ -2206,6 +2195,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return result;
         };
+    }
+
+    projectedSelector(dataItem) {
+        let result: Projected;
+        let itemMonthFormatted = dataItem.initialDate.format('YYYY.MM');
+        let currentMonthFormatted = moment().format('YYYY.MM');
+        if (itemMonthFormatted !== currentMonthFormatted) {
+            result = currentMonthFormatted > itemMonthFormatted ? Projected.PastTotal : Projected.FutureTotal;
+        } else {
+            let itemDate = dataItem.initialDate.format('YYYY.MM.DD');
+            let currentDate = moment().format('YYYY.MM.DD');
+            if (itemDate === currentDate) {
+                result = Projected.Today;
+            } else if (itemDate > currentDate) {
+                result = Projected.Forecast;
+            } else if (itemDate < currentDate) {
+                result = Projected.Mtd;
+            }
+        }
+        return  result;
     }
 
     /**
@@ -2364,6 +2373,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (cellObj.area === 'row' || cellObj.area === 'data') {
             let path = cellObj.cell.path || cellObj.cell.rowPath;
             result = path && !cellObj.cell.isWhiteSpace ? path.length === 1 : false;
+        }
+        return result;
+    }
+
+    isAccountingRowTotal(cellObj): boolean {
+        let result = false;
+        if (cellObj.area === 'row' || cellObj.area === 'data') {
+            let path = cellObj.cell.path || cellObj.cell.rowPath;
+            result = path && !cellObj.cell.isWhiteSpace && path.length === 2 && path[1] ? path[1].slice(0, 2) === CategorizationPrefixes.AccountingType : false;
         }
         return result;
     }
@@ -2630,6 +2648,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cellElement.parentElement.classList.add(path[0].slice(2).toLowerCase() + 'Row', 'totalRow');
         }
 
+        if (this.isAccountingRowTotal(e)) {
+            e.cellElement.parentElement.classList.add('totalRow');
+        }
+
         /** added css class to the income and outcomes columns */
         if (this.isIncomeOrExpensesChildCell(e)) {
             let cssClass = `${e.cell.path[0] === PI ? 'income' : 'expenses'}ChildRow`;
@@ -2806,10 +2828,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /* if ($(targetElement).attr('class').indexOf('prev') !== -1) {
                         $(`[droppable]:nth-child(${cellIndex + 1}):not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
                     } else*/
+
+                let $targetCell = $(targetCell);
+                let $targetCellParent = $targetCell.parent();
+                let availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
                 if (targetCell.getAttribute('class').indexOf('next') !== -1 || targetCell.className.indexOf('current') !== -1) {
-                    $(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
-                    $(`[droppable][class*="current"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
-                    $(`[droppable]:not(.chosenFilterForCashFlow) > span`).attr('droppable', 'true');
+                    availableRows.find(`[droppable][class*="next"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
+                    availableRows.find(`[droppable][class*="current"]:not(.chosenFilterForCashFlow)`).attr('droppable', 'true');
+                    availableRows.find(`[droppable]:not(.chosenFilterForCashFlow) > span`).attr('droppable', 'true');
                 }
             }
         }
@@ -4507,7 +4533,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     data.id
                     )
                     .subscribe();
-                
+
                 e.component.deleteRow(e.component.getRowIndexByKey(e.key));
 
             } else {
@@ -4565,7 +4591,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (paramNameForUpdateInput == 'transactionDescriptor')
                     this.addCategorizationLevels(item);
             });
-            
+
             this.pivotGrid.instance.getDataSource().reload();
         }
     }
