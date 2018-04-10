@@ -25,7 +25,7 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
             _dashboardServiceProxy.getCustomersByCompanySize(
-                period && period.form, period && period.to)
+                period && period.from, period && period.to)
                     .subscribe((result) => {
                         this.totalCount = 0;
                         result.forEach((item) => {
