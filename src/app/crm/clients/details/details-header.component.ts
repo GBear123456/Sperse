@@ -96,13 +96,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
+                let base64OrigImage = this.getBase64(result.origImage);
                 this.data.primaryContactInfo.primaryPhoto = ContactPhotoDto.fromJS({
-                    original: this.getBase64(result.origImage)
+                    original: base64OrigImage
                 });
                 this.contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
                         contactId: this.data.primaryContactInfo.id,
-                        originalImage: this.getBase64(result.origImage),
+                        originalImage: base64OrigImage,
                         thumbnail: this.getBase64(result.thumImage)
                     })
                 ).subscribe((result) => {});
