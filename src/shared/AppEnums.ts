@@ -114,3 +114,8 @@ export class LinkUsageType {
     static Work	= 'W';
 }
 
+export class ContactTypes {
+    static Personal = 'personal';
+    static Business = 'business';
+}
+
