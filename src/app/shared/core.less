@@ -483,6 +483,7 @@ button {
 
             .dx-datagrid-group-panel {
                 margin: 5px 0px 0px 10px;
+                width: auto!important;
             }
 
             .dx-button {
@@ -882,10 +883,14 @@ button {
     margin: 5px 15px 0 !important;
     height: 46px;
     border: 1px solid transparent;
-    border-image: url("../../assets/common/icons/border-img.png") 1 round;
+    &:hover {
+        border-image: url("../../assets/common/icons/border-img.png") 1 round;
+        .dx-group-panel-message {
+            background-color: #F9FBFC;
+        }
+    }
 
     .dx-group-panel-message {
-        background-color: #F9FBFC;
         padding: 9px 10px 8px;
         
         font-size: 14px;

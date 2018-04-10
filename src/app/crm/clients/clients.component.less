@@ -13,6 +13,14 @@
 		.dx-datagrid-rowsview tr td.tabular * {
 			font-family: 'Lato' !important;
 		}
+
+    .verify-icon {
+        width: 11px;
+        height: 9px;   
+        margin-right: 6px;     
+        display: inline-block;
+        background: url('../../../assets/common/icons/verify-icon.svg') no-repeat center;
+    }
 					
 		.dx-datagrid-rowsview {
 			.dx-column-lines {
@@ -25,6 +33,17 @@
 						.link-to-cfo-column {
 							position: relative;
 							width: 100%;
+
+							&::after {
+								content: '';
+                background: url('../../../assets/common/icons/cfo-check.svg') no-repeat center;
+                position: absolute;
+                left: 10px;
+                width: 11px;
+                height: 9px;
+                top: 9px;
+              }
+
 							&::before {
 								padding-top: 2px;
 								content: 'CFO';
@@ -34,11 +53,12 @@
 								color: #ffffff;
 								font-size: 10px;
 								font-weight: 600;
-								line-height: 2.4;
+								line-height: 2.2;
 								letter-spacing: 0.2px;
-								width: 66px;
-								height: 28px;
+								width: 72px;
+								height: 23px;
 								display: inline-block;
+                padding-left: 10px;
 							}
 						}
 							
