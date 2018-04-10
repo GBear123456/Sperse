@@ -514,7 +514,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     attributeGridDropDownValueChanged($event, cell) {
         this.keyAttributeValuesDataSource = 
-            this.getKeyAttributeValues(cell.value);
+            this.getKeyAttributeValues($event.value);
         this.onCustomAttributeCreating($event, cell);
     }
 
@@ -558,6 +558,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     selectedGridAttributeValue($event, value) {
         this.attributeEditData.conditionTypeId = 'Equal';
         this.attributeEditData.conditionValue = value.name;
+        setTimeout(() => this.attributeList.instance.repaintRows([0]), 100);
     }
 
     getKeyAttribute(typeId) {
