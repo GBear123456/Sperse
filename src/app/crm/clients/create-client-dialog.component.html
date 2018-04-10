@@ -4,7 +4,7 @@
     <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>
-        <mat-tab *ngFor="let type of ['personal', 'business']" label="{{l(type) | uppercase}}">
+        <mat-tab *ngFor="let type of contactTypes" label="{{l(type) | uppercase}}">
           <div class="tab-content">
               <div class="field" *ngIf="type == 'business'">
                   <label>{{l('Company')}}</label>

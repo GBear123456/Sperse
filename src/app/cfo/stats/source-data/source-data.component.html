@@ -9,13 +9,13 @@
                     <dxo-format [formatter]="formatDate"></dxo-format>
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Inflows_Field').toUpperCase()}}"
-                            [dataField]="period === 'historical' ? 'income' : 'forecastIncome'"
+                            [dataField]="period === 'historical' ? 'inflows' : 'forecastInflows'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Outflows_Field').toUpperCase()}}"
-                            [dataField]="period === 'historical' ? 'expenses' : 'forecastExpenses'"
+                            [dataField]="period === 'historical' ? 'outflows' : 'forecastOutflows'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false">
