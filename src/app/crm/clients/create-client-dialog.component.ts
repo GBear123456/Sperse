@@ -554,5 +554,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.data.isTitleValid = true;
         this.company = undefined;
         this.similarCustomers = [];
+        this.photoOriginalData = undefined;
+        this.photoThumbnailData = undefined;
     }
 }
