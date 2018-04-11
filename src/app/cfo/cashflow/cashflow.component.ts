@@ -2810,6 +2810,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 let dragImg = new Image();
                 dragImg.src = 'assets/common/icons/drag-icon.svg';
+                e.dataTransfer.setData('text/plain', 'moving');
 
                 /** set the draggable image */
                 e.dataTransfer.setDragImage(dragImg, -10, -10);
