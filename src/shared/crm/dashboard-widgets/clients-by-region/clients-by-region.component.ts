@@ -36,22 +36,17 @@ export class ClientsByReginComponent extends AppComponentBase implements OnInit,
                 period && period.from, period && period.to)
                     .subscribe((result) => {
                         result.forEach((val, index) => {
-                            let countryParts = val.region.split('/'), 
-                                country = countryParts.shift(), 
-                                state = countryParts.shift();
-                            
-                            if (this.gdpData.hasOwnProperty(country))
-                                this.gdpData[country].total = state ? 
-                                    this.gdpData[country].total: val.customerCount;
+                            if (this.gdpData.hasOwnProperty(val.countryId))
+                                this.gdpData[val.countryId].total += val.customerCount;
                             else
-                                this.gdpData[country] = {
-                                    name: country, 
+                                this.gdpData[val.countryId] = {
+                                    name: val.countryId, 
                                     total: val.customerCount, 
                                     states: []
                                 };
 
-                            this.gdpData[country].states.push({
-                                state: state,
+                            this.gdpData[val.countryId].states.push({
+                                state: val.stateId || 'Other',
                                 count: val.customerCount
                             });
                         });
