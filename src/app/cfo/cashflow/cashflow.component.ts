@@ -577,9 +577,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
 
-    /** Max amount of characters of the left column of cashflow table */
-    private maxCategoriesWidth = 22;
-
     footerToolbarConfig = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -1182,7 +1179,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Changed thousands and decimal separators */
         config({
             thousandsSeparator: thousandsSeparator,
-            decimalSeparator: thousandsSeparator === '.' ? ',': '.'
+            decimalSeparator: thousandsSeparator === '.' ? ',' : '.'
         });
     }
 
@@ -2584,7 +2581,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * https://js.devexpress.com/Documentation/ApiReference/UI_Widgets/dxPivotGrid/Events/#cellPrepared
      */
     onCellPrepared(e) {
-        let maxCategoryWidth = this.maxCategoriesWidth;
 
         /** Add day (MON, TUE etc) to the day header cells */
         if ((e.area === 'column' || e.area === 'data') && e.cell.text !== undefined && this.isDayCell(e)) {
@@ -2670,7 +2666,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let accountId = e.cell.path[1].slice(2);
             let account = this.bankAccounts.find(account => account.id == accountId);
             if (account && account.accountNumber) {
-                maxCategoryWidth -= 7;
                 e.cellElement.insertAdjacentHTML('beforeEnd', `<span class="accountNumber">${account.accountNumber}</span>`);
             }
         }
@@ -2717,9 +2712,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text*/
-        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.path.length !== 1 && e.cell.text && e.cell.text.length > maxCategoryWidth) {
-            e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
-            $(e.cellElement).find('> span:first-of-type').text(_.truncate(e.cell.text, maxCategoryWidth));
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
+            this.truncateCellText(e);
         }
 
         /** Show descriptors in Italic */
@@ -2790,6 +2784,34 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         }
 
+    }
+
+    /**
+     * Check if cell text is not fit to one row with other elements and if so - truncate it
+     * @param e
+     */
+    truncateCellText(e) {
+        let paddingRight: number = parseInt(getComputedStyle(e.cellElement).paddingRight);
+        let paddingLeft: number = parseInt(getComputedStyle(e.cellElement).paddingLeft);
+        let cellWidth: number = e.cellElement.clientWidth - paddingRight - paddingLeft;
+        let textElement: HTMLSpanElement = e.cellElement.parentElement.querySelector(`td:nth-child(${e.cellElement.cellIndex + 1}) > span`);
+        /** Extend text to the whole cell */
+        textElement.style.whiteSpace = 'nowrap';
+        let textWidth: number = textElement.getBoundingClientRect().width;
+        /** Get the sum of widths of all cell children except text element width */
+        let anotherChildsElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
+            let computedStyles: CSSStyleDeclaration = getComputedStyle(element);
+            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight ) + parseInt(computedStyles.marginLeft) : 0);
+        }, 0);
+        /** If text size is too big */
+        if ((textWidth + anotherChildsElementsWidth) > cellWidth) {
+            e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
+            textElement.classList.add('truncated');
+            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conficts */
+            textElement.innerHTML = `<span>${textElement.textContent}</span>`;
+            /** Set new width to the text element */
+            textElement.style.width = (cellWidth - anotherChildsElementsWidth) + 'px';
+        }
     }
 
     /**

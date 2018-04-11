@@ -386,7 +386,6 @@
                     table {
                         tr {
                             position: relative;
-
                             &:first-child td.dx-white-space-column {
                                 border-top: 0;
                             }
@@ -398,9 +397,18 @@
                                 line-height: 23px;
                                 min-width: 23px;
 
+                                span.truncated {
+                                    display: inline-flex;
+                                    span {
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                    }
+                                }
+
                                 .accountNumber {
                                     font-family: Lato;
                                     float: right;
+                                    padding-left: 3px;
                                 }
 
                                 &.dx-white-space-column {
