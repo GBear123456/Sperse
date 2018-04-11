@@ -122,7 +122,7 @@
                                            [noDataText]="''"
                                            [dropDownButtonTemplate]="''"
                                            [dataSource]="keyAttributeValuesDataSource"
-                                           (onValueChanged)="onCustomAttributeCreating($event, cell)"
+                                           (onCustomItemCreating)="onCustomAttributeCreating($event, cell)"
                                            (onKeyDown)="onAttributeKeyEnter($event, cell)"
                                            valueExpr="name"
                                            displayExpr="name"
