@@ -9,6 +9,7 @@ import { NewItemsTotalsComponent } from './new-items-totals/new-items-totals.com
 import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.component';
 import { TotalsBySourceComponent } from './totals-by-source/totals-by-source.component';
 import { RecentClientsComponent } from './recent-clients/recent-clients.component';
+import { ClientsByReginComponent } from './clients-by-region/clients-by-region.component';
 import { DashboardWidgetsService } from './dashboard-widgets.service'; 
 
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -20,7 +21,8 @@ import {
     DxChartModule,
     DxSliderModule,
     DxPieChartModule,
-    DxDataGridModule
+    DxDataGridModule,
+    DxVectorMapModule
 } from 'devextreme-angular';
 import { MatDialogModule } from '@angular/material';
 
@@ -37,9 +39,11 @@ import { MatDialogModule } from '@angular/material';
         DxPieChartModule,
         DxDataGridModule,
         MatDialogModule,
+        DxVectorMapModule, 
         ngCommon.CommonModule
     ],
     declarations: [
+        ClientsByReginComponent,
         CountsAndTotalsComponent,
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
@@ -49,6 +53,7 @@ import { MatDialogModule } from '@angular/material';
     entryComponents: [
     ],
     exports: [
+        ClientsByReginComponent,
         CountsAndTotalsComponent,
         NewItemsTotalsComponent,
         TotalsByPeriodComponent,
