@@ -8068,55 +8068,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountsWithQuovo(instanceType: InstanceType66, instanceId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccountsWithQuovo?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSyncAccountsWithQuovo(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSyncAccountsWithQuovo(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSyncAccountsWithQuovo(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    syncAllAccounts(instanceType: InstanceType67, instanceId: number, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType66, instanceId: number, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8172,7 +8124,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccount(instanceType: InstanceType68, instanceId: number, syncAccountId: number): Observable<boolean> {
+    syncAccount(instanceType: InstanceType67, instanceId: number, syncAccountId: number): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -8228,7 +8180,7 @@ export class FinancialInformationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType69, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType68, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -9024,7 +8976,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType70, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType69, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -9074,7 +9026,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType71): Observable<SetupOutput> {
+    setup(instanceType: InstanceType70): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -16109,7 +16061,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType72, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType71, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16161,7 +16113,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType73, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType72, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16213,7 +16165,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType74, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType73, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -28568,7 +28520,8 @@ export interface IGetCustomersByCompanySizeOutput {
 
 export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
     customerCount: number;
-    region: string;
+    countryId: string;
+    stateId: string;
 
     constructor(data?: IGetCustomersByRegionOutput) {
         if (data) {
@@ -28582,7 +28535,8 @@ export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
     init(data?: any) {
         if (data) {
             this.customerCount = data["customerCount"];
-            this.region = data["region"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
         }
     }
 
@@ -28595,14 +28549,16 @@ export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["customerCount"] = this.customerCount;
-        data["region"] = this.region;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
         return data; 
     }
 }
 
 export interface IGetCustomersByRegionOutput {
     customerCount: number;
-    region: string;
+    countryId: string;
+    stateId: string;
 }
 
 export class DateToStringOutput implements IDateToStringOutput {
@@ -41398,11 +41354,6 @@ export enum InstanceType68 {
     Main = <any>"Main", 
 }
 
-export enum InstanceType69 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
 export enum IncomeStatisticsDateInterval {
     _1 = 1, 
     _2 = 2, 
@@ -41415,12 +41366,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType70 {
+export enum InstanceType69 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType71 {
+export enum InstanceType70 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
@@ -41461,17 +41412,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
+export enum InstanceType71 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum InstanceType72 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
 export enum InstanceType73 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
-export enum InstanceType74 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
