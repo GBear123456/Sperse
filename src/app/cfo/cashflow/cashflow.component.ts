@@ -575,7 +575,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             ]
         }
     ];
-    maxCategoriesWidth = 22;
+
+    /** Max amount of characters of the left column of cashflow table */
+    private maxCategoriesWidth = 22;
+
     footerToolbarConfig = [];
     private initialData: CashFlowInitialData;
     private filters: FilterModel[] = new Array<FilterModel>();
@@ -584,6 +587,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private anotherPeriodAccountsValues: Map<object, number> = new Map();
     private cachedColumnActivity: Map<string, boolean> = new Map();
     private cachedRowsFitsToFilter: Map<string, boolean> = new Map();
+
+    /** List of cached sparklines of rows of type Sparkline */
     private cachedRowsSparkLines: Map<string, SparkLine> = new Map();
 
     /** Total amount of transactions */
@@ -665,6 +670,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Tooltip instance to show adjustment info */
     private infoTooltip: Tooltip;
 
+    /** Cashflow events descriptions */
     private cashflowEvents: IEventDescription[] = [
         {
             name: 'dragstart',
@@ -696,6 +702,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
 
+    /** Listener of keydown event */
     keyDownEventHandler = this.keyDownListener.bind(this);
 
     /** Interval between state saving (ms) */
@@ -2939,6 +2946,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let targetFieldCaption = this.getLowestFieldCaptionFromPath(targetCell.cell.columnPath, this.getColumnFields());
         let forecastModels = {'forecasts': []};
         let date;
+        let cashflowTypeId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.CashflowType);
         let categoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.Category);
         let subCategoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.SubCategory);
         let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes
@@ -2963,7 +2971,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     date: date,
                     startDate: targetCellDate.startDate,
                     endDate: targetCellDate.endDate,
-                    cashFlowTypeId: forecast.cashflowTypeId,
+                    cashFlowTypeId: cashflowTypeId,
                     categoryId: subCategoryId || categoryId || -1,
                     transactionDescriptor: transactionDescriptor,
                     currencyId: this.currencyId,
@@ -3511,11 +3519,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** If user copy to the accounting type - show popup with message that he should select the category */
         /** @todo implement */
         /** Allow copy paste only for the same cashflowTypeId and to the current or forecast periods */
-        if (this.selectedCell.cell.rowPath[0] === targetCell.cell.rowPath[0] &&
-            targetCell.cell.columnPath[0] !== Periods.Historical) {
+        if ((targetCell.cell.rowPath[0] === PI || targetCell.cell.rowPath[0] === PE) &&
+            this.cellIsNotHistorical(targetCell)
+        ) {
             let forecastsItems = this.getDataItemsByCell(this.copiedCell);
             this.moveOrCopyForecasts(forecastsItems, targetCell, 'copy');
         }
+    }
+
+    /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
+    cellIsNotHistorical(cellObj): boolean {
+        let cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
+        let currentDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
+        return  cellDateInterval.endDate.isAfter(currentDate, 'day') ||
+                currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
+                (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'))
     }
 
     handleDataCellDoubleClick(cellObj) {
@@ -3530,16 +3548,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 let columnFields = this.getColumnFields();
                 let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
-                let cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
-                let currentDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
                 if (
                     /** disallow adding historical periods */
-                    (
-                        /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
-                        cellDateInterval.endDate.isAfter(currentDate, 'day') ||
-                        currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
-                        (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'))
-                    ) &&
+                    this.cellIsNotHistorical(cellObj) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
                     /** disallow adding unclassified category, but allow change or add (no descriptor) */
