@@ -514,8 +514,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     attributeGridDropDownValueChanged($event, cell) {
         this.keyAttributeValuesDataSource = 
-            this.getKeyAttributeValues(cell.value);
-        this.onCustomAttributeCreating($event, cell);
+            this.getKeyAttributeValues($event.value);
+        cell.setValue($event.value);
     }
 
     attributeGridDropDownDisposing($event, cell) {
@@ -531,20 +531,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.descriptor = $event.text;
         });
     }
-
+    
     onCustomAttributeCreating($event, cell) {
-        cell.setValue($event.value);
+        cell.setValue($event.text);
     }
 
     onAttributeKeyEnter($event, cell) {
         if ($event.keyCode == 13)
             this.attributeEditData = null;
-        clearTimeout(this.attributeEnterTimeout);
-        this.attributeEnterTimeout = setTimeout(() => {
-            this.attributeEnterTimeout = null;
-            this.onCustomAttributeCreating(
-                {value: $event.event.target.value}, cell);
-        }, 500);
     }
 
     selectedAttributeValue($event, value) {
@@ -558,6 +552,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     selectedGridAttributeValue($event, value) {
         this.attributeEditData.conditionTypeId = 'Equal';
         this.attributeEditData.conditionValue = value.name;
+        setTimeout(() => this.attributeList.instance.repaintRows([0]), 100);
     }
 
     getKeyAttribute(typeId) {
