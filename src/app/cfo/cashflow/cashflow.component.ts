@@ -3535,7 +3535,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** disallow adding historical periods */
                     (
                         /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
-                        currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') || cellDateInterval.endDate.isAfter(currentDate, 'day')
+                        cellDateInterval.endDate.isAfter(currentDate, 'day') ||
+                        currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
+                        (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'))
                     ) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
