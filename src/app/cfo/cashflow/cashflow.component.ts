@@ -35,6 +35,7 @@ import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-d
 
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import DevExpress from 'devextreme/bundles/dx.all';
+import config from 'devextreme/core/config';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
 import Tooltip from 'devextreme/ui/tooltip';
@@ -329,7 +330,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             dataField: 'amount',
             dataType: 'number',
             summaryType: 'sum',
-            format: (value) => {
+            format: value => {
                 return this.formatAsCurrencyWithLocale(value);
             },
             area: 'data',
@@ -1177,6 +1178,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cashflowSettingsResult;
+        let thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
+        /** Changed thousands and decimal separators */
+        config({
+            thousandsSeparator: thousandsSeparator,
+            decimalSeparator: thousandsSeparator === '.' ? ',': '.'
+        });
     }
 
     /**
@@ -3533,7 +3540,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let currentDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
         return  cellDateInterval.endDate.isAfter(currentDate, 'day') ||
                 currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
-                (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'))
+                (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'));
     }
 
     handleDataCellDoubleClick(cellObj) {
@@ -3651,7 +3658,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
-            format: "$ #,###.##",
+            format: '$ #,###.##',
             onEnterKey: this.saveForecast.bind(this, cellObj),
             onFocusOut: this.saveForecast.bind(this, cellObj)
         });
@@ -4572,8 +4579,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (paramNameForUpdateInput == 'date') {
                     item[paramNameForUpdateInput] = moment(paramValue);
                     item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
-                }
-                else {
+                } else {
                     item[paramNameForUpdateInput] = paramValue;
                 }
 
