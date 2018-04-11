@@ -80,7 +80,7 @@
                   <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
               </div>
               <dx-validation-group (onInitialized)="initValidationGroup($event, 'addressValidator')">
-                  <div class="field address H">
+                  <div class="field addr address H">
                       <label>{{l('Address')}}</label>                   
                       <input *ngIf="!googleAutoComplete" type="text"
                           name="Address"
@@ -112,7 +112,7 @@
                         (onValueChanged)="onTypeChanged($event, 'address')">
                       </dx-select-box>
                   </div>
-                  <div class="field">
+                  <div class="field addr">
                       <label></label>                   
                       <dx-text-box
                           name="city"
@@ -126,7 +126,7 @@
                           </dx-validator>
                       </dx-text-box>
                   </div>
-                  <div class="field">
+                  <div class="field addr">
                       <label></label>                   
                       <dx-select-box
                           [dataSource]="states"
@@ -143,7 +143,7 @@
                           </dx-validator>
                       </dx-select-box>
                   </div>
-                  <div class="field">
+                  <div class="field addr">
                       <label></label>                   
                       <dx-text-box
                           name="zip"
