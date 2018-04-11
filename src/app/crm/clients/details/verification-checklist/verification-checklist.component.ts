@@ -1,6 +1,7 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist.model';
 
 @Component({
     selector: 'verification-checklist',
@@ -8,51 +9,37 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./verification-checklist.component.less']
 })
 export class VerificationChecklistComponent extends AppComponentBase implements OnInit {
-    checklist = [
-        {
-            name: this.l('Verification_Checklist_FullName'),
-            status: 'success'
-        },
-        {
-            name: this.l('Verification_Checklist_Email'),
-            status: 'success'            
-        },
-        {
-            name: this.l('Verification_Checklist_Phone'),
-            status: 'success'            
-        },
-        {
-            name: this.l('Verification_Checklist_Address'),
-            status: 'unsuccess'            
-        },
-        {
-            name: this.l('Verification_Checklist_Employment'),
-            status: 'pending'            
-        },
-        {
-            name: this.l('Verification_Checklist_Income'),
-            status: 'unsuccess'            
-        }
-    ];
-    personal_checklist_collapsed: boolean = false;
+    @Input() data: VerificationChecklistItem[];
+    collapsed: boolean = false;
 
     constructor(injector: Injector) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-     }
+    }
 
     ngOnInit() {
+    }
+
+    getItemName(item: VerificationChecklistItem):string {
+        return this.l(`Verification_Checklist_${this.capitalize(item.type)}`);
+    }
+
+    getItemCounts(item: VerificationChecklistItem): string {
+        return (item.confirmedCount != null 
+            ? `(${item.confirmedCount}/${item.totalCount})` 
+            : (item.totalCount == null ? '' : `(${item.totalCount })`)
+        );
     }
 
     getCheckStyle(status) {
         let style = '';
         switch (status) {
-            case 'success':
+            case VerificationChecklistItemStatus.success:
                 style = 'check';
                 break;
-            case 'unsuccess':
+            case VerificationChecklistItemStatus.unsuccess:
                 style = 'times';
                 break;
-            case 'pending':
+            case VerificationChecklistItemStatus.pending:
                 style = 'square';
                 break;
             default:
@@ -62,6 +49,6 @@ export class VerificationChecklistComponent extends AppComponentBase implements 
     }
 
     changeCollapseStatus() {
-        this.personal_checklist_collapsed = !this.personal_checklist_collapsed;
+        this.collapsed = !this.collapsed;
     }
 }

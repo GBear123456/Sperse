@@ -9,6 +9,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
+import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 
 @Component({
     selector: 'client-details',
@@ -22,6 +23,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     customerId: number;
     customerInfo: CustomerInfoDto;
     primaryContact: PersonContactInfoDto;
+    verificationChecklist: VerificationChecklistItem[];
 
     person: any = {
         id: 1,
@@ -72,11 +74,58 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this._customerService['data'].customerInfo = responce;
             this.primaryContact = responce.primaryContactInfo;
             this.customerInfo = responce;
+            this.initVerificationChecklist();
         });
     }
 
     private getCustomerName() {
         return this.customerInfo.primaryContactInfo.fullName;
+    }
+
+    private showConfirmationDialog(statusId: string) {
+        this.message.confirm(
+            this.l('ClientUpdateStatusWarningMessage'),
+            this.l('ClientStatusUpdateConfirmationTitle'),
+            isConfirmed => {
+                if (isConfirmed)
+                    this.updateStatusInternal(statusId);
+            }
+        );
+    }
+
+    private updateStatusInternal(statusId: string) {
+        this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
+            customerId: this.customerId,
+            statusId: statusId
+        })).subscribe(() => {
+            this.notify.success(this.l('StatusSuccessfullyUpdated'));
+        });
+    }
+
+    private getVerificationChecklistItem(type: VerificationChecklistItemType, 
+        status?: VerificationChecklistItemStatus, confirmedCount?, totalCount?): VerificationChecklistItem {
+        return {
+            type: type,
+            status: status,
+            confirmedCount: confirmedCount,
+            totalCount: totalCount
+        } as VerificationChecklistItem;
+    }
+
+    private getVerificationChecklistItemByMultipleValues(items: any[], 
+        type: VerificationChecklistItemType
+    ): VerificationChecklistItem {
+        let confirmedCount = 0;
+        items.forEach(i => {
+            if (i.isConfirmed)
+                confirmedCount++;
+        });
+        return this.getVerificationChecklistItem(
+            type,
+            confirmedCount > 0 ? VerificationChecklistItemStatus.success : VerificationChecklistItemStatus.unsuccess,
+            confirmedCount,
+            items.length
+        );
     }
 
     close() {
@@ -132,23 +181,20 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.showConfirmationDialog(statusId);
     }
 
-    private showConfirmationDialog(statusId: string) {
-        this.message.confirm(
-            this.l('ClientUpdateStatusWarningMessage'),
-            this.l('ClientStatusUpdateConfirmationTitle'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.updateStatusInternal(statusId);
-            }
-        );
-    }
-
-    private updateStatusInternal(statusId: string) {
-        this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
-            customerId: this.customerId,
-            statusId: statusId
-        })).subscribe(() => {
-            this.notify.success(this.l('StatusSuccessfullyUpdated'));
-        });
+    initVerificationChecklist(): void {
+        let contactDetails = this.primaryContact.details;
+        this.verificationChecklist = [
+            this.getVerificationChecklistItem(
+                VerificationChecklistItemType.Identity, 
+                this.primaryContact.person.identityConfirmationDate 
+                    ? VerificationChecklistItemStatus.success 
+                    : VerificationChecklistItemStatus.unsuccess
+            ),
+            this.getVerificationChecklistItemByMultipleValues(contactDetails.emails, VerificationChecklistItemType.Email),
+            this.getVerificationChecklistItemByMultipleValues(contactDetails.phones, VerificationChecklistItemType.Phone),
+            this.getVerificationChecklistItemByMultipleValues(contactDetails.addresses, VerificationChecklistItemType.Address),
+            this.getVerificationChecklistItem(VerificationChecklistItemType.Employment),
+            this.getVerificationChecklistItem(VerificationChecklistItemType.Income)
+        ];
     }
 }
