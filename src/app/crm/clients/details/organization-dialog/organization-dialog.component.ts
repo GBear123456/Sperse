@@ -4,10 +4,11 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { InplaceEditModel } from 'app/shared/common/inplace-edit/inplace-edit.model';
 import { InplaceSelectBoxModel, InplaceSelectBoxOption } from '@app/shared/common/inplace-select-box/inplace-select-box.model';
-import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, 
-    CountryServiceProxy, CountryDto, CountryStateDto, OrganizationTypeServiceProxy } from 'shared/service-proxies/service-proxies';
+import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
+    CountryServiceProxy, CountryDto, CountryStateDto, OrganizationTypeServiceProxy,
+    ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
 
-import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';                                                                                  
+import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';
 
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -16,6 +17,7 @@ import * as _ from 'underscore';
     selector: 'organization-dialog',
     templateUrl: './organization-dialog.component.html',
     styleUrls: ['./organization-dialog.component.less'],
+    providers: [ContactPhotoServiceProxy]
 })
 export class OrganizationDialogComponent extends AppComponentBase {
     isEditAllowed: boolean = false;
@@ -82,7 +84,8 @@ export class OrganizationDialogComponent extends AppComponentBase {
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<OrganizationDialogComponent>,
         private _orgContactService: OrganizationContactServiceProxy,
-        private _countryService: CountryServiceProxy
+        private _countryService: CountryServiceProxy,
+        private _contactPhotoServiceProxy: ContactPhotoServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         
@@ -180,6 +183,29 @@ export class OrganizationDialogComponent extends AppComponentBase {
         this.dialog.open(UploadPhotoDialogComponent, {
           data: this.data,
           hasBackdrop: true
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                let base64OrigImage = this.getBase64(result.origImage);
+                let base64Thumbnail = this.getBase64(result.thumImage);
+                this._contactPhotoServiceProxy.createContactPhoto(
+                    CreateContactPhotoInput.fromJS({
+                        contactId: this.data.id,
+                        originalImage: base64OrigImage,
+                        thumbnail: base64Thumbnail
+                    })
+                ).subscribe((result) => {
+                    this.data.primaryPhoto = ContactPhotoDto.fromJS({
+                        original: base64OrigImage,
+                        thumbnail: base64Thumbnail
+                    });
+                });
+            }
         });
+        event.stopPropagation();
+    }
+
+    getBase64(data) {
+        let prefix = ';base64,';
+        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 }
