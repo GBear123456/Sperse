@@ -273,7 +273,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     getTotalValues() {
         let totals = this.totalDataSource.items();
-        let selectedRows = this.dataGrid.instance.getSelectedRowsData();
+        let selectedRows = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowsData() : [];
 
         if (selectedRows.length) {
             let creditTotal = this.creditTransactionTotal = 0;
@@ -758,7 +758,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onSelectionChanged($event, initial = false) {
         let img = new Image(),
-            transactionKeys = this.dataGrid.instance.getSelectedRowKeys();
+            transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
         img.src = 'assets/common/icons/drag-icon.svg';
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
