@@ -41,14 +41,14 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     navLinks = [
         {'label': 'Contact Information', 'route': 'contact-information', active: true},
-        {'label': 'Lead Information', 'route': 'lead-information',},
-        {'label': 'Questionnaire', 'route': 'questionnaire'},
-        {'label': 'Documents', 'route': 'required-documents'},
-        {'label': 'Application Status', 'route': 'application-status'},
-        {'label': 'Referral History', 'route': 'referal-history'},
-        {'label': 'Payment Information', 'route': 'payment-information'},
-        {'label': 'Activity Logs', 'route': 'activity-logs'},
-        {'label': 'Notes', 'route': 'notes'}
+        {'label': 'Lead Information', 'route': 'lead-information', active: true},
+        {'label': 'Questionnaire', 'route': 'questionnaire', active: true},
+        {'label': 'Documents', 'route': 'required-documents', active: true},
+        {'label': 'Application Status', 'route': 'application-status', active: true},
+        {'label': 'Referral History', 'route': 'referal-history', active: true},
+        {'label': 'Payment Information', 'route': 'payment-information', active: true},
+        {'label': 'Activity Logs', 'route': 'activity-logs', active: true},
+        {'label': 'Notes', 'route': 'notes', active: true}
     ];
 
     private rootComponent: any;
