@@ -37,45 +37,55 @@ export class OrganizationDialogComponent extends AppComponentBase {
         {id: 3, name: '100 - 1000'}
     ];
 
-    sections: any = [{
-        expandable: false,
-        fields: [
-            ['shortname', 'formedDate'],
-            ['industry', 'relationship'],
-            [
-                'annualRevenue', 
-                {
-                    name: 'size', 
-                    data: {
-                        name: 'size',
-                        options: this.companySizeList,
-                        value: this.getCompanySize()
-                    },
-                    onChange: (value) => {
-                        let item = this.companySizeList[value];
-                        item && this.updateValue(item.name, 'size');
+    sections: any = [
+        {
+            header: true,
+            expandable: false,
+            field: 'companyName'
+        },
+        {
+            header: false,
+            expandable: false,
+            fields: [
+                ['shortname', 'formedDate'],
+                ['industry', 'relationship'],
+                [
+                    'annualRevenue', 
+                    {
+                        name: 'size', 
+                        data: {
+                            name: 'size',
+                            options: this.companySizeList,
+                            value: this.getCompanySize()
+                        },
+                        onChange: (value) => {
+                            let item = this.companySizeList[value];
+                            item && this.updateValue(item.name, 'size');
+                        }
                     }
-                }
-           ]    
-    ]}, {
-        expandable: true,
-        fields: [
-            ['ein', 'duns'],
-            ['businessSicCode', 'ticker'],
-            [
-                {
-                    name: 'formedCountryId', 
-                    data: this.countries, 
-                    onChange: this.countryChanged.bind(this)
-                }, 
-                {
-                    name: 'formedStateId', 
-                    data: this.states,
-                    onChange: this.stateChanged.bind(this)
-                }
-            ],
-            ['description', 'productServicesSold']
-        ]
+                ]
+            ]
+        },
+        {
+            header: false,
+            expandable: true,
+            fields: [
+                ['ein', 'duns'],
+                ['businessSicCode', 'ticker'],
+                [
+                    {
+                        name: 'formedCountryId', 
+                        data: this.countries, 
+                        onChange: this.countryChanged.bind(this)
+                    }, 
+                    {
+                        name: 'formedStateId', 
+                        data: this.states,
+                        onChange: this.stateChanged.bind(this)
+                    }
+                ],
+                ['description', 'productServicesSold']
+            ]
     }];
 
     constructor(
@@ -168,7 +178,10 @@ export class OrganizationDialogComponent extends AppComponentBase {
         this._orgContactService.updateOrganizationInfo(
             UpdateOrganizationInfoInput.fromJS(
                 _.extend({id: this.data.id}, this.data.organization))
-        ).subscribe(result => {});
+        ).subscribe(result => {
+            if (field == 'companyName')
+                this.data.fullName = value;
+        });
     }
 
     toggleMoreFields($event) {

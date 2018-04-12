@@ -245,7 +245,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
                     originalImage: this.getBase64(this.photoOriginalData),
                     thumbnail: this.getBase64(this.photoThumbnailData)
-                }): null
+                }) : null,
+                note: this.notes[ContactTypes.Personal],
+                organizationNote: this.notes[ContactTypes.Business]
             })
         ).finally(() => {  })
             .subscribe(result => {

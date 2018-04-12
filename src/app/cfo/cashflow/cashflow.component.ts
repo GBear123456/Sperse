@@ -740,7 +740,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId, null, true);
+        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
@@ -1821,6 +1821,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.dataSource = this.getApiDataSource();
                 }
             }
+            this.pivotGrid.instance.updateDimensions();
             this.handleBottomHorizontalScrollPosition();
             this.notify.info(notificationMessage);
         });
@@ -1858,8 +1859,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     onContentReady(event) {
 
-        this.contentReady = true;
-
         /** If amount of years is 1 and it is collapsed - expand it to the month */
         if (this.allYears && this.allYears.length && this.allYears.length === 1 && this.yearsAmount === 1) {
             /** Check if the year was expanded, if no - expand to months for better user experience */
@@ -1895,6 +1894,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
+
+        /** update dimensions as cells font sizes might be changed in user preferences and cells widths don't correspond
+         *  to the new font sizes */
+        if (!this.contentReady) {
+            setTimeout(() => { this.pivotGrid.instance.updateDimensions(); }, 0);
+        }
+
+        this.contentReady = true;
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
@@ -2028,10 +2035,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleBottomHorizontalScrollPosition() {
         let scrollElement = $('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         let cashflowWrapper = document.getElementsByClassName('pivot-grid-wrapper')[0];
-        if (cashflowWrapper && cashflowWrapper.getBoundingClientRect().bottom > window.innerHeight) {
+        if (cashflowWrapper && (cashflowWrapper.getBoundingClientRect().bottom > window.innerHeight || this.statsDetailResult)) {
             scrollElement.addClass('fixedScrollbar');
             let minusValue = scrollElement.height();
-            if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
+
+            if (this.statsDetailResult) {
+                let height = $('.cashflow-wrap').outerHeight();
+                minusValue += height || 0;
+            } else if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
             let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt($('.fixed-filters').css('marginLeft')) : 0;
@@ -2048,9 +2059,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         cashflowWrapper = null;
     }
 
+    handleVerticalScrollPosition() {
+        let cashflowScroll = $('.cashflow-scroll');
+        if (this.statsDetailResult) {
+            let cashflowElement = $('.cashflow');
+            cashflowScroll.height(cashflowElement.outerHeight() - $('.cashflow-wrap').outerHeight());
+        }
+        else {
+            cashflowScroll.height('');
+        }
+    }
+
     @HostListener('window:resize', ['$event']) onResize() {
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     getDataItemsByCell(cellObj) {
@@ -3709,12 +3732,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (height) {
                 let cashflowWrapElement = <HTMLElement>document.querySelector('.cashflow-wrap');
                 cashflowWrapElement.style.height = height + 'px';
+                this.handleBottomHorizontalScrollPosition();
+                this.handleVerticalScrollPosition();
             }
         }, 0);
     }
 
     onTransactionDetailsResize($event) {
         this.cashFlowGrid.height = $event.height;
+        this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     onTransactionDetailsResizeEnd($event) {
@@ -3838,8 +3865,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return lastOpenedField ? lastOpenedField.caption.toLowerCase() : null;
     }
 
-    customCurrency(value) {
-        return (value).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
+    customCurrency = value => {
+        return this.formatAsCurrencyWithLocale(parseInt(value));
     }
 
     formattingDate(path) {
@@ -3890,6 +3917,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
         this.showAllDisable = false;
+        this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     reclassifyTransactions($event) {
@@ -4417,11 +4446,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this._cashflowServiceProxy
                 .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                 .subscribe(result => {
-                    this.statsDetailResult = result.map(detail => {
-                        this.removeLocalTimezoneOffset(detail.date);
-                        this.removeLocalTimezoneOffset(detail.forecastDate);
-                        return detail;
-                    });
+                    this.showTransactionDetail(result);
                 });
         } else {
             this.statsDetailResult = null;
@@ -4435,11 +4460,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
             .subscribe(result => {
-                this.statsDetailResult = result.map(detail => {
-                    this.removeLocalTimezoneOffset(detail.date);
-                    this.removeLocalTimezoneOffset(detail.forecastDate);
-                    return detail;
-                });
+                this.showTransactionDetail(result);
             });
     }
 
@@ -4450,11 +4471,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this._cashflowServiceProxy
                 .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                 .subscribe(result => {
-                    this.statsDetailResult = result.map(detail => {
-                        this.removeLocalTimezoneOffset(detail.date);
-                        this.removeLocalTimezoneOffset(detail.forecastDate);
-                        return detail;
-                    });
+                    this.showTransactionDetail(result);
                 });
         }
     }
@@ -4503,8 +4520,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /** If date is lower then the current date - return false */
-    validateForecastDate(e) {
-        return new Date(e.value.toLocaleDateString()) >= new Date(new Date().toLocaleDateString());
+    validateForecastDate = (e) => {
+        let dateIsValid = new Date(e.value.toLocaleDateString()) >= new Date(new Date().toLocaleDateString());
+        if (!dateIsValid) {
+            this.notify.error(this.l('ForecastDateUpdating_validation_message'));
+        }
+        return dateIsValid;
     }
 
     onDetailsRowPrepared(e) {
@@ -4568,7 +4589,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
 
-            /* update CFO grid */
+            /** update CFO grid */
             let affectedTransactions: TransactionStatsDto[] = [];
             let sameDateTransactionExist = false;
             for (let i = this.cashflowData.length - 1; i >= 0; i--) {

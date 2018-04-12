@@ -5,8 +5,9 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MatDialog } from '@angular/material';
 import {
-    CustomersServiceProxy, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
-    ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto
+    CustomersServiceProxy, CustomerInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
+    ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
+    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -18,6 +19,7 @@ import * as _ from 'underscore';
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
+    @Input() customerInfo: CustomerInfoDto;
 
     types: Object = {};
     country: string;
@@ -38,7 +40,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 public dialog: MatDialog,
                 private _customerService: CustomersServiceProxy,
                 private _addressService: ContactAddressServiceProxy,
-                private _countryService: CountryServiceProxy) {
+                private _countryService: CountryServiceProxy,
+                private _organizationContactService: OrganizationContactServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _addressService.getAddressUsageTypes().subscribe(result => {
@@ -73,13 +76,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     showDialog(address, event, index) {
-        if (!this.contactInfoData)
-            return;
-  
         let dialogData = _.pick(address || {}, 'id', 'city',
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');
-        dialogData.contactId = this.contactInfoData.contactId;
+        dialogData.contactId = this.contactInfoData && this.contactInfoData.contactId;
         dialogData.deleteItem = (event) => {
             this.deleteAddress(address, event, index);
         };
@@ -89,10 +89,44 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
-            if (result)
-                this.updateDataField(address, dialogData);
+            if (result) {
+                if (dialogData.contactId) {
+                    this.updateDataField(address, dialogData);
+                } else {
+                    this.createOrganization(address, dialogData);
+                }
+            }
         });
         event.stopPropagation();
+    }
+
+    createOrganization(address, dialogData) {
+        let companyName = AppConsts.defaultCompanyName;
+        this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
+            customerId: this.customerInfo.id,
+            companyName: companyName
+        })).subscribe(response => {
+            this.initializeOrganizationInfo(companyName, response.id);
+            dialogData.contactId = response.id;
+            this.updateDataField(address, dialogData);
+        });
+    }
+
+    initializeOrganizationInfo(companyName, contactId) {
+        this.customerInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+            organization: OrganizationInfoDto.fromJS({
+                companyName: companyName
+            }),
+            id: contactId,
+            fullName: companyName,
+            details: ContactInfoDetailsDto.fromJS({
+                contactId: contactId,
+                emails: [],
+                phones: [],
+                addresses: [],
+                links: [],
+            })
+        });
     }
 
     updateDataField(address, data) {
