@@ -2066,6 +2066,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @HostListener('window:resize', ['$event']) onResize() {
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     getDataItemsByCell(cellObj) {
