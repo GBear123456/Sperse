@@ -157,8 +157,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     ngOnDestroy() {
+        this._dialog.closeAll();
         this.paramsSubscribe.unsubscribe();
-
         this.rootComponent.overflowHidden();
         this.rootComponent.pageHeaderFixed(true);
     }
