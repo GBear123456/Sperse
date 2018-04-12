@@ -19,9 +19,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
     chartWidth = 650;
     currency = 'USD';
 
-    historicalCreditColor = '#00aeef';
-    historicalDebitColor = '#f05b2a';
-    historicalNetChangeColor = '#fab800';
+    clientColor = '#00aeef';
+    leadColor = '#54e4c9';
 
     periods: TotalsByPeriodModel[] = [
          {
@@ -94,9 +93,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
         return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
-    onInitialized($event) { 
-        setTimeout(() => {
-            $event.component.render();
-        }, 1000);
+    onDrawn($event) { 
+        setTimeout(() => $event.component.render(), 1000);
     }
 }

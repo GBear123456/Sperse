@@ -3,8 +3,8 @@
         <h2 class="title">{{l('Statistics By Period')}}</h2>
         <div class="legend" [hidden]="!totalsData || !totalsData.length">
             <ul class="legend-list">
-                <li class="legend-item inflow">{{l('Client Count')}}</li>
-                <li class="legend-item outflows">{{l('Lead Count')}}</li>
+                <li class="legend-item client">{{l('Client Count')}}</li>
+                <li class="legend-item lead">{{l('Lead Count')}}</li>
             </ul>
         </div>
     </div>
@@ -16,7 +16,7 @@
         [dataSource]="totalsData"
         animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
-        (onInitialized)="onInitialized($event)"
+        (onDrawn)="onDrawn($event)"
         [size]="{height: 245}">
 
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
@@ -27,8 +27,8 @@
             ignoreEmptyPoints="true">
         </dxo-common-series-settings>
 
-        <dxi-series [color]="historicalCreditColor" valueField="customerCount" name="{{l('Client Count')}}"></dxi-series>
-        <dxi-series [color]="historicalDebitColor" valueField="leadCount" name="{{l('Lead Count')}}"></dxi-series>
+        <dxi-series [color]="clientColor" valueField="customerCount" name="{{l('Client Count')}}"></dxi-series>
+        <dxi-series [color]="leadColor" valueField="leadCount" name="{{l('Lead Count')}}"></dxi-series>
 
         <!-- Bottom axis -->
         <dxo-argument-axis

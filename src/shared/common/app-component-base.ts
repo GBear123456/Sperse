@@ -96,6 +96,10 @@ export abstract class AppComponentBase {
         return this._elementRef;
     }
 
+    getCacheKey(key) {
+        return this.constructor.name + '_' + key;
+    }
+
     l(key: string, ...args: any[]): string {
         return this.ls(this.localizationSourceName, key, ...args);
     }

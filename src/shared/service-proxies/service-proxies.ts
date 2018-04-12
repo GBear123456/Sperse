@@ -27921,6 +27921,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     organizationPhoneNumbers: CreateContactPhoneInput[];
     organizationAddress: CreateContactAddressInput;
     photo: ContactPhotoInput;
+    note: string;
+    organizationNote: string;
     organizationUnitId: number;
 
     constructor(data?: ICreateCustomerInput) {
@@ -27964,6 +27966,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             }
             this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
             this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
+            this.note = data["note"];
+            this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
         }
     }
@@ -28006,6 +28010,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         }
         data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        data["note"] = this.note;
+        data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
         return data; 
     }
@@ -28026,6 +28032,8 @@ export interface ICreateCustomerInput {
     organizationPhoneNumbers: CreateContactPhoneInput[];
     organizationAddress: CreateContactAddressInput;
     photo: ContactPhotoInput;
+    note: string;
+    organizationNote: string;
     organizationUnitId: number;
 }
 

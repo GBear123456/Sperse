@@ -8,7 +8,7 @@ import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactTypes } from '@shared/AppEnums';
-import { DxTextBoxComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
+import { DxTextBoxComponent, DxContextMenuComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatDialog } from '@angular/material';
@@ -16,6 +16,7 @@ import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.c
 import { UploadPhotoDialogComponent } from './details/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from './details/similar-customers-dialog/similar-customers-dialog.component';
 
+import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
@@ -25,12 +26,22 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
+    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
 
     emailsPersonal: any;
     emailsBusiness: any;
     phonesPersonal: any;
     phonesBusiness: any;
+
+    private readonly SAVE_OPTION_DEFAULT   = 1;
+    private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
+    
+    saveButtonId: string = 'saveClientOptions';
+    saveContextMenuItems = [
+        {text: this.l('SaveAndAddNew'), selected: false}, 
+        {text: this.l('SaveAndExtend'), selected: false}
+    ];
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
@@ -133,6 +144,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private _cacheService: CacheService,
         private _countryService: CountryServiceProxy,
         private _customersService: CustomersServiceProxy,
         private _photoUploadService: ContactPhotoServiceProxy,
@@ -146,11 +158,27 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
+        this._cacheService = this._cacheService.useStorage(0);
 
         this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
         this.emailTypesLoad();
+    }
+
+    saveOptionsInit() {
+        let cacheKey = this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+            selectedIndex = this.SAVE_OPTION_DEFAULT;
+        if (this._cacheService.exists(cacheKey))
+            selectedIndex = this._cacheService.get(cacheKey);
+        this.saveContextMenuItems[selectedIndex].selected = true;
+        this.data.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
+    }
+
+    updateSaveOption(option) {
+        this.data.buttons[0].title = option.text;
+        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY), 
+            this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
     ngOnInit() {
@@ -159,10 +187,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.data.editTitle = true;
         this.data.placeholder = this.l('Contact.FullName');
         this.data.buttons = [{
+            id: this.saveButtonId,
             title: this.l('Save'),
             class: 'primary menu',
             action: this.save.bind(this)
         }];
+        this.saveOptionsInit();
     }
 
     getCountryCode(name) {
@@ -175,7 +205,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return state && state['code'];
     }
 
-    save(event): void {
+    save(event): void {     
+        if (event.offsetX > 85)
+            return this.saveContextComponent
+                .instance.option('visible', true);
+
         if (!this.addressValidator.validate().isValid)
             return ;
 
@@ -211,11 +245,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
                     originalImage: this.getBase64(this.photoOriginalData),
                     thumbnail: this.getBase64(this.photoThumbnailData)
-                }): null
+                }) : null,
+                note: this.notes[ContactTypes.Personal],
+                organizationNote: this.notes[ContactTypes.Business]
             })
         ).finally(() => {  })
             .subscribe(result => {
-                this.redirectToContactInformation(result.id);
+                if (this.saveContextMenuItems[0].selected) {
+                    this.data.refreshParent();
+                    this.resetFullDialog();
+                    this.notify.info(this.l('SavedSuccessfully'));
+                } else
+                    this.redirectToContactInformation(result.id);
             }
         );
     }
@@ -556,5 +597,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.similarCustomers = [];
         this.photoOriginalData = undefined;
         this.photoThumbnailData = undefined;
+    }
+
+    onSaveOptionSelectionChanged($event) {
+        let option = $event.addedItems.pop() || $event.removedItems.pop() ||
+            this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
+        option.selected = true;
+        $event.component.option('selectedItem', option);
+
+        this.updateSaveOption(option);
     }
 }

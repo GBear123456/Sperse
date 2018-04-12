@@ -142,7 +142,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {}
+            data: {refreshParent: this.refreshDataGrid.bind(this)}
         }).afterClosed().subscribe(() => this.refreshDataGrid())
     }
 
