@@ -25,7 +25,6 @@
                 </div>
                 <div class="transactions">
                     <dx-data-grid id="gridContainer"
-                                  [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
@@ -133,6 +132,7 @@
 
                                 <bank-accounts-select targetBankAccountsTooltip="#subaccountsDetails"
                                                       [highlightedBankAccountIds]="bankAccounts"
+                                                      useGlobalCache="true"
                                                       (onBankAccountsSelected)="applyTotalBankAccountFilter($event)">
                                 </bank-accounts-select>
                             </div>
