@@ -1,5 +1,13 @@
 <div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 <modal-dialog>
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="saveContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
+        target="#{{saveButtonId}}">
+    </dx-context-menu>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">

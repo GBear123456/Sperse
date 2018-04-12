@@ -16,7 +16,7 @@
         </div>
         <div class="mat-dialog-buttons">
             <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">
-                <button mat-button (click)="button.action($event)" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
+                <button mat-button (click)="button.action($event)" id="{{button.id}}" class="button-layout button-{{button.class}}">{{l(button.title)}}</button>
             </ng-template>
         </div>
     </mat-dialog-actions>

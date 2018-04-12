@@ -45,6 +45,7 @@ import {
     DxDateBoxModule,
     DxTextBoxModule,
     DxValidatorModule,
+    DxDropDownBoxModule,
     DxValidationSummaryModule,
     DxValidationGroupModule,
     DxButtonModule,
@@ -53,7 +54,8 @@ import {
     DxPivotGridModule,
     DxNumberBoxModule,
     DxScrollViewModule,
-    DxTextAreaModule
+    DxTextAreaModule,
+    DxContextMenuModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -77,6 +79,7 @@ import {
       DxNumberBoxModule,
       DxScrollViewModule,
       DxTextAreaModule,
+      DxContextMenuModule,
 
       MatSidenavModule,
       MatProgressBarModule,
