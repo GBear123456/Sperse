@@ -1821,6 +1821,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.dataSource = this.getApiDataSource();
                 }
             }
+            this.pivotGrid.instance.updateDimensions();
             this.handleBottomHorizontalScrollPosition();
             this.notify.info(notificationMessage);
         });
@@ -1858,8 +1859,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     onContentReady(event) {
 
-        this.contentReady = true;
-
         /** If amount of years is 1 and it is collapsed - expand it to the month */
         if (this.allYears && this.allYears.length && this.allYears.length === 1 && this.yearsAmount === 1) {
             /** Check if the year was expanded, if no - expand to months for better user experience */
@@ -1895,6 +1894,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
+
+        /** update dimensions as cells font sizes might be changed in user preferences and cells widths don't correspond
+         *  to the new font sizes */
+        if (!this.contentReady) {
+            setTimeout(() => { this.pivotGrid.instance.updateDimensions(); }, 0);
+        }
+
+        this.contentReady = true;
 
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
