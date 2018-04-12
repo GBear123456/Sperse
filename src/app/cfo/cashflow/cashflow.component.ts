@@ -740,7 +740,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId, null, true);
+        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */

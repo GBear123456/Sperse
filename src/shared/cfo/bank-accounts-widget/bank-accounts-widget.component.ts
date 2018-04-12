@@ -159,9 +159,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         this.bankAccountTypesForSelect = [];
         this.bankAccountTypesForSelect.push(this.allAccountTypesFilter);
         this.baseBankAccountTypes.forEach(type => {
-            if (_.contains(this.existBankAccountTypes, type)) {
-                this.bankAccountTypesForSelect.push(type);
-            }
+            this.bankAccountTypesForSelect.push(type);
         });
 
         let otherExist = _.some(this.existBankAccountTypes, x => !_.contains(this.baseBankAccountTypes, x));

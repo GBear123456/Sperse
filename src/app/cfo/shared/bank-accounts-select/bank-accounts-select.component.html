@@ -15,13 +15,14 @@
                                         </div>
                                     </ng-container>
                                     <ng-container *ngIf="businessEntityExist">
-                                        <dx-tag-box [items]="businessEntities"
+                                        <dx-tag-box [dataSource]="businessEntities"
                                                     displayExpr="name"
                                                     valueExpr="id"
                                                     placeholder="All Entities"
                                                     showSelectionControls="true"
                                                     tagTemplate="customTagTemplate"
-                                                    (onClosed)="businessEntitySelectedChange($event)">
+                                                    (onClosed)="businessEntitySelectedChange($event)"                                                    
+                                                    [(value)]="selectedBusinessEntityIds">
 
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                                 <span class="tag-value"> {{tag.name}}  </span>

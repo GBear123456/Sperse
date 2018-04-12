@@ -311,7 +311,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true);
+        let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD');
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
