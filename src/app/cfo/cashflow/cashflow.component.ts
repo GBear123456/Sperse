@@ -134,7 +134,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
-    selectedBankAccounts = [];
+    selectedBankAccounts;
     sliderReportPeriod = {
         start: null,
         end: null,
@@ -754,9 +754,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 /** Handle the get cashflow grid settings response*/
                 this.handleGetCashflowGridSettingsResult(result[3]);
-
-                /** load cashflow data grid */
-                this.loadGridDataSource();
             });
 
         this.initHeadlineConfig();

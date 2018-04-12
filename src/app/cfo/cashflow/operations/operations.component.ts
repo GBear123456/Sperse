@@ -25,15 +25,17 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     }
     @Input('selectedBankAccounts')
     set selectedBankAccounts(selectedBankAccounts) {
-        clearTimeout(this.initSelectedBankAccountsTimeout);
-        this.initSelectedBankAccountsTimeout = setTimeout(() => {
-            this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
-            if (!selectedBankAccounts.length)
-                this.bankAccountCount = '';
-            else
-                this.bankAccountCount = selectedBankAccounts.length;
-            this.initToolbarConfig();
-        }, 300);
+        if (selectedBankAccounts) {
+            clearTimeout(this.initSelectedBankAccountsTimeout);
+            this.initSelectedBankAccountsTimeout = setTimeout(() => {
+                this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
+                if (!selectedBankAccounts.length)
+                    this.bankAccountCount = '';
+                else
+                    this.bankAccountCount = selectedBankAccounts.length;
+                this.initToolbarConfig();
+            }, 300);
+        }
     }
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
