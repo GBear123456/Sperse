@@ -5,9 +5,10 @@ import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-d
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import {
-    CustomersServiceProxy, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+    CustomersServiceProxy, CustomerInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
-    UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput
+    UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
+    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -17,6 +18,7 @@ import {
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
+    @Input() customerInfo: CustomerInfoDto;
 
     isEditAllowed = false;
 
@@ -29,7 +31,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
                 public dialog: MatDialog,
                 private _customerService: CustomersServiceProxy,
                 private _contactEmailService: ContactEmailServiceProxy,
-                private _contactPhoneService: ContactPhoneServiceProxy) {
+                private _contactPhoneService: ContactPhoneServiceProxy,
+                private _organizationContactService: OrganizationContactServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
@@ -61,7 +64,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             value: data && data[field],
             name: this.getFieldName(field),
             contactId: data && data.contactId
-            || this.contactInfoData.contactId,
+            || this.contactInfoData && this.contactInfoData.contactId,
             emailAddress: data && data.emailAddress,
             phoneNumber: data && data.phoneNumber,
             phoneExtension: data && data.phoneExtension,
@@ -82,10 +85,44 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
-            if (result)
-                this.updateDataField(field, data, dialogData);
+            if (result) {
+                if (dialogData.contactId) {
+                    this.updateDataField(field, data, dialogData);
+                } else {
+                    this.createOrganization(field, data, dialogData);
+                }
+            }
         });
         event.stopPropagation();
+    }
+
+    createOrganization(field, data, dialogData) {
+        let companyName = AppConsts.defaultCompanyName;
+        this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
+            customerId: this.customerInfo.id,
+            companyName: companyName
+        })).subscribe(response => {
+            this.initializeOrganizationInfo(companyName, response.id);
+            dialogData.contactId = response.id;
+            this.updateDataField(field, data, dialogData);
+        });
+    }
+
+    initializeOrganizationInfo(companyName, contactId) {
+        this.customerInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+            organization: OrganizationInfoDto.fromJS({
+                companyName: companyName
+            }),
+            id: contactId,
+            fullName: companyName,
+            details: ContactInfoDetailsDto.fromJS({
+                contactId: contactId,
+                emails: [],
+                phones: [],
+                addresses: [],
+                links: [],
+            })
+        });
     }
 
     updateDataField(field, dataItem, updatedData) {
