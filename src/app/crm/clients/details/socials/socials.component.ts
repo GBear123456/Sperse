@@ -3,8 +3,9 @@ import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-d
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    CustomersServiceProxy, ContactInfoDetailsDto, ContactLinkServiceProxy,
-    ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput
+    CustomersServiceProxy, CustomerInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
+    ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
+    OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 
@@ -17,6 +18,7 @@ import { MatDialog } from '@angular/material';
 })
 export class SocialsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
+    @Input() customerInfo: CustomerInfoDto;
 
     isEditAllowed = false;
 
@@ -45,7 +47,8 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     constructor(injector: Injector,
                 public dialog: MatDialog,
                 private _customerService: CustomersServiceProxy,
-                private _contactLinkService: ContactLinkServiceProxy) {
+                private _contactLinkService: ContactLinkServiceProxy,
+                private _organizationContactService: OrganizationContactServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
@@ -74,7 +77,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
             value: data && data.url,
             name: this.l('Link'),
             contactId: data && data.contactId
-            || this.contactInfoData.contactId,
+            || this.contactInfoData && this.contactInfoData.contactId,
             url: data && data.url,
             usageTypeId: data && data.linkTypeId ? data.linkTypeId : AppConsts.otherLinkTypeId,
             isConfirmed: Boolean(data && data.isConfirmed),
@@ -91,29 +94,66 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
             if (result) {
-                if (dialogData.usageTypeId != AppConsts.otherLinkTypeId)
-                    dialogData['linkTypeId'] = dialogData.usageTypeId;
-
-                this._contactLinkService
-                    [(data ? 'update' : 'create') + 'ContactLink'](
-                    (data ? UpdateContactLinkInput : CreateContactLinkInput).fromJS(dialogData)
-                ).subscribe(result => {
-                    if (!result && data) {
-                        data.url = dialogData.url;
-                        data.comment = dialogData.comment;
-                        data.linkTypeId = dialogData.usageTypeId;
-                        data.isSocialNetwork = dialogData['isSocialNetwork'];
-                        data.isConfirmed = dialogData.isConfirmed;
-                        data.isActive = dialogData.isActive;
-                    } else if (result.id) {
-                        dialogData.id = result.id;
-                        this.contactInfoData.links
-                            .push(ContactLinkDto.fromJS(dialogData));
-                    }
-                });
+                if (dialogData.contactId) {
+                    this.updateDataField(data, dialogData);
+                } else {
+                    this.createOrganization(data, dialogData);
+                }
             }
         });
         event.stopPropagation();
+    }
+
+    createOrganization(data, dialogData) {
+        let companyName = AppConsts.defaultCompanyName;
+        this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
+            customerId: this.customerInfo.id,
+            companyName: companyName
+        })).subscribe(response => {
+            this.initializeOrganizationInfo(companyName, response.id);
+            dialogData.contactId = response.id;
+            this.updateDataField(data, dialogData);
+        });
+    }
+
+    initializeOrganizationInfo(companyName, contactId) {
+        this.customerInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+            organization: OrganizationInfoDto.fromJS({
+                companyName: companyName
+            }),
+            id: contactId,
+            fullName: companyName,
+            details: ContactInfoDetailsDto.fromJS({
+                contactId: contactId,
+                emails: [],
+                phones: [],
+                addresses: [],
+                links: [],
+            })
+        });
+    }
+
+    updateDataField(data, dialogData) {
+        if (dialogData.usageTypeId != AppConsts.otherLinkTypeId)
+        dialogData['linkTypeId'] = dialogData.usageTypeId;
+
+        this._contactLinkService
+            [(data ? 'update' : 'create') + 'ContactLink'](
+            (data ? UpdateContactLinkInput : CreateContactLinkInput).fromJS(dialogData)
+        ).subscribe(result => {
+            if (!result && data) {
+                data.url = dialogData.url;
+                data.comment = dialogData.comment;
+                data.linkTypeId = dialogData.usageTypeId;
+                data.isSocialNetwork = dialogData['isSocialNetwork'];
+                data.isConfirmed = dialogData.isConfirmed;
+                data.isActive = dialogData.isActive;
+            } else if (result.id) {
+                dialogData.id = result.id;
+                this.contactInfoData.links
+                    .push(ContactLinkDto.fromJS(dialogData));
+            }
+        });
     }
 
     deleteLink(link, event, index) {
