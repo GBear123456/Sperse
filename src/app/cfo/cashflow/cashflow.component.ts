@@ -3726,7 +3726,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
-        
+
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
             if (height) {
@@ -3865,8 +3865,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return lastOpenedField ? lastOpenedField.caption.toLowerCase() : null;
     }
 
-    customCurrency(value) {
-        return (value).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
+    customCurrency = value => {
+        return this.formatAsCurrencyWithLocale(parseInt(value));
     }
 
     formattingDate(path) {
@@ -4520,8 +4520,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /** If date is lower then the current date - return false */
-    validateForecastDate(e) {
-        return new Date(e.value.toLocaleDateString()) >= new Date(new Date().toLocaleDateString());
+    validateForecastDate = (e) => {
+        let dateIsValid = new Date(e.value.toLocaleDateString()) >= new Date(new Date().toLocaleDateString());
+        if (!dateIsValid) {
+            this.notify.error(this.l('ForecastDateUpdating_validation_message'));
+        }
+        return dateIsValid;
     }
 
     onDetailsRowPrepared(e) {
@@ -4585,7 +4589,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
 
-            /* update CFO grid */
+            /** update CFO grid */
             let affectedTransactions: TransactionStatsDto[] = [];
             let sameDateTransactionExist = false;
             for (let i = this.cashflowData.length - 1; i >= 0; i--) {

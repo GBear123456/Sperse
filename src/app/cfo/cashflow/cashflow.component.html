@@ -60,7 +60,7 @@
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
-                        [caption]="this.l('DetailsHeaders_ForecastDate')"
+                        [caption]="l('DetailsHeaders_ForecastDate')"
                         [minWidth]="130">
                 <dxi-validation-rule type="required"></dxi-validation-rule>
                 <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
@@ -70,22 +70,22 @@
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
-                        [caption]="this.l('DetailsHeaders_ActualDate')"
+                        [caption]="l('DetailsHeaders_ActualDate')"
                         [allowEditing]="false"
                         [minWidth]="120">
             </dxi-column>
             <dxi-column dataField="status"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
-                        [caption]="this.l('DetailsHeaders_CurrentStatus')"
+                        [caption]="l('DetailsHeaders_CurrentStatus')"
                         [allowEditing]="false"
                         [minWidth]="130">
             </dxi-column>
-            <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="this.l('DetailsHeaders_Description')">
+            <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="l('DetailsHeaders_Description')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
             <dxi-column dataField="debit"
-                        [caption]="this.l('DetailsHeaders_Debit')"
+                        [caption]="l('DetailsHeaders_Debit')"
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -94,7 +94,7 @@
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
             <dxi-column dataField="credit"
-                        [caption]="this.l('DetailsHeaders_Credit')"
+                        [caption]="l('DetailsHeaders_Credit')"
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -102,14 +102,14 @@
                         [minWidth]="150">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>
-            <dxi-column [caption]="this.l('DetailsHeaders_Account')"
+            <dxi-column [caption]="l('DetailsHeaders_Account')"
                         dataField="accountNumber"
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false"
                         [minWidth]="130">
             </dxi-column>
-            <dxi-column [caption]="this.l('DetailsHeaders_Type')"
+            <dxi-column [caption]="l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"
                         [allowSorting]="false"
                         [allowFiltering]="false"
@@ -117,7 +117,7 @@
                         cellTemplate="typeCell"
                         [minWidth]="130">
             </dxi-column>
-            <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
+            <dxi-column [caption]="l('DetailsHeaders_Comments')"
                         dataField="comment"
                         [width]="detailsCommentsColumnWidth()"
                         [allowSorting]="false"
