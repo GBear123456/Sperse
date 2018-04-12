@@ -482,7 +482,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             },
             onChanged: this.getTotalValues.bind(this)
         });
-        this.totalDataSource.load();
 
         Observable.forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
@@ -595,7 +594,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             );
         });
 
-        this.filtersService.apply(() => {
+        this.filtersService.apply(() => {   
             this.initToolbarConfig();
             let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
             if (this.selectedCashflowCategoryKey && classifiedFilter.items['no'].value === true && classifiedFilter.items['yes'].value !== true) {
@@ -609,11 +608,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
     }
 
+    setDataSource() {
+        this.dataGrid.dataSource = this.dataSource;
+    }
+
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
     applyTotalBankAccountFilter(data) {
+        this.setDataSource();
+
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (data.bankAccountIds) {
             accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);

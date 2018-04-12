@@ -227,5 +227,10 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     setSelectedBankAccounts(bankAccountIds) {
         this.selectedBankAccounts = bankAccountIds;
         this.refreshSelected(bankAccountIds);
+
+        if (this.useGlobalCache)
+            this._cacheService.set(this.bankAccountsCacheKey, {
+                'bankAccounts': bankAccountIds, 'isActive': this.isActive, 'selectedBusinessEntityIds': this.selectedBusinessEntityIds
+            });
     }
 }
