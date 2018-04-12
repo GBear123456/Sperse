@@ -19,8 +19,123 @@
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">
-        <app-toolbar [config]="categoryToolbarConfig" [compact]="true" ></app-toolbar>
+        <app-toolbar [config]="categoryToolbarConfig" [compact]="true"></app-toolbar>
     </div>
+
+    <dx-resizable *ngIf="statsDetailResult !== undefined" class="cashflow-wrap"
+                  [maxHeight]="735"
+                  (onResize)="onTransactionDetailsResize($event)"
+                  (onResizeEnd)="onTransactionDetailsResizeEnd($event)"
+                  handles="top">
+        <div class="resize-buttons noselect">....</div>
+        <div class="detailsButtons">
+            <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="showSearchResult($event)"></dx-button>
+            <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="showAll($event)" [disabled]="showAllDisable"></dx-button>
+            <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
+            <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
+        </div>
+        <dx-data-grid id="cashflowGridContainer"
+                      [rowAlternationEnabled]="true"
+                      [allowColumnResizing]="true"
+                      [dataSource]="statsDetailResult"
+                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                      (onCellPrepared)="onDetailsCellPrepared($event)"
+                      (onCellClick)="onDetailsCellClick($event)"
+                      (onEditingStart)="onDetailsEditingStart($event)"
+                      (onRowPrepared)="onDetailsRowPrepared($event)"
+                      (onRowUpdating)="onDetailsRowUpdating($event)">
+
+            <dxo-editing mode="cell"
+                         [allowUpdating]="true"
+                         texts="{'confirmDeleteMessage': ''}">
+            </dxo-editing>
+
+            <dxo-header-filter [visible]="true"></dxo-header-filter>
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxi-column dataField="forecastDate"
+                        dataType="date"
+                        cellTemplate="dateCell"
+                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        alignment="left"
+                        [caption]="this.l('DetailsHeaders_ForecastDate')"
+                        [minWidth]="130">
+                <dxi-validation-rule type="required"></dxi-validation-rule>
+                <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="date"
+                        dataType="date"
+                        cellTemplate="dateCell"
+                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        alignment="left"
+                        [caption]="this.l('DetailsHeaders_ActualDate')"
+                        [allowEditing]="false"
+                        [minWidth]="120">
+            </dxi-column>
+            <dxi-column dataField="status"
+                        headerCellTemplate="twoRowsHeaderCellTemplate"
+                        alignment="left"
+                        [caption]="this.l('DetailsHeaders_CurrentStatus')"
+                        [allowEditing]="false"
+                        [minWidth]="130">
+            </dxi-column>
+            <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="this.l('DetailsHeaders_Description')">
+                <dxo-header-filter [visible]="true"></dxo-header-filter>
+            </dxi-column>
+            <dxi-column dataField="debit"
+                        [caption]="this.l('DetailsHeaders_Debit')"
+                        [format]="customCurrency"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        alignment="right"
+                        [minWidth]="150">
+                <dxi-validation-rule type="numeric"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column dataField="credit"
+                        [caption]="this.l('DetailsHeaders_Credit')"
+                        [format]="customCurrency"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        alignment="right"
+                        [minWidth]="150">
+                <dxi-validation-rule type="numeric"></dxi-validation-rule>
+            </dxi-column>
+            <dxi-column [caption]="this.l('DetailsHeaders_Account')"
+                        dataField="accountNumber"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [allowEditing]="false"
+                        [minWidth]="130">
+            </dxi-column>
+            <dxi-column [caption]="this.l('DetailsHeaders_Type')"
+                        dataField="cashflowTypeId"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [allowEditing]="false"
+                        cellTemplate="typeCell"
+                        [minWidth]="130">
+            </dxi-column>
+            <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
+                        dataField="comment"
+                        [width]="detailsCommentsColumnWidth()"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [allowEditing]="false">
+            </dxi-column>
+
+            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+            <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
+            <div *dxTemplate="let cellData of 'typeCell'">{{this.cashflowTypes[cellData.value]}}</div>
+            <div *dxTemplate="let headerCellData of 'twoRowsHeaderCellTemplate'">
+                <div class="firstLine">{{headerCellData.column.caption.slice(0, headerCellData.column.caption.indexOf(' '))}}</div>
+                <div>{{headerCellData.column.caption.slice(headerCellData.column.caption.indexOf(' ') + 1)}}</div>
+            </div>
+        </dx-data-grid>
+    </dx-resizable>
     <dx-scroll-view class="cashflow-scroll" (onScroll)="onScroll($event)">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
@@ -36,7 +151,7 @@
                            [showRowGrandTotals]="false"
                            [showRowTotals]="false"
                            [showBorders]="true"
-                           [texts] = "{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
+                           [texts]="{'grandTotal': 'ENDING CASH POSITION', 'total': '{0}'}"
                            [fieldChooser]="false"
                            [export]="{'enabled': false}"
                            [loadPanel]="{enabled: false}"
@@ -44,131 +159,16 @@
                            (onContentReady)="onContentReady($event)"
                            (onCellClick)="onCellClick($event)"
                            [wordWrapEnabled]="false">
-                <dxo-state-storing
-                    [customLoad]="stateLoad"
-                    [customSave]="stateSave"
-                    [enabled]="true"
-                    [savingTimeout]="stateSavingTimeout"
-                    type="custom">
+                <dxo-state-storing [customLoad]="stateLoad"
+                                   [customSave]="stateSave"
+                                   [enabled]="true"
+                                   [savingTimeout]="stateSavingTimeout"
+                                   type="custom">
                 </dxo-state-storing>
                 <dxo-scrolling mode="standard"></dxo-scrolling>
             </dx-pivot-grid>
         </div>
     </dx-scroll-view>
-    <dx-resizable *ngIf="statsDetailResult !== undefined" class="cashflow-wrap"
-                  [maxHeight]="900"
-                  (onResize)="onTransactionDetailsResize($event)"
-                  (onResizeEnd)="onTransactionDetailsResizeEnd($event)"
-                  handles="top">
-            <div class="resize-buttons noselect">....</div>
-            <div class="detailsButtons">
-                <dx-button  *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="showSearchResult($event)" ></dx-button>
-                <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="showAll($event)" [disabled]="showAllDisable"></dx-button>
-                <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!cashFlowGrid || !cashFlowGrid.instance.getSelectedRowKeys().length" (onClick)="reclassifyTransactions($event)"></dx-button>
-                <dx-button icon="close" (onClick)="closeTransactionsDetail()" class="close-btn"></dx-button>
-            </div>
-            <dx-data-grid id="cashflowGridContainer"
-                          [rowAlternationEnabled]="true"
-                          [allowColumnResizing]="true"
-                          [dataSource]="statsDetailResult"
-                          (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                          (onCellPrepared)="onDetailsCellPrepared($event)"
-                          (onCellClick)="onDetailsCellClick($event)"
-                          (onEditingStart)="onDetailsEditingStart($event)"
-                          (onRowPrepared)="onDetailsRowPrepared($event)"
-                          (onRowUpdating)="onDetailsRowUpdating($event)">
-
-                <dxo-editing mode="cell"
-                             [allowUpdating]="true"
-                             texts = "{'confirmDeleteMessage': ''}">                    
-                </dxo-editing>
-
-                <dxo-header-filter [visible]="true"></dxo-header-filter>
-                <dxo-selection selectAllMode="page"
-                               showCheckBoxesMode="always"
-                               mode="multiple">
-                </dxo-selection>
-                <dxi-column dataField="forecastDate"
-                            dataType="date"
-                            cellTemplate="dateCell"
-                            headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="left"
-                            [caption]="this.l('DetailsHeaders_ForecastDate')"
-                            [minWidth]="130">
-                    <dxi-validation-rule type="required"></dxi-validation-rule>
-                    <dxi-validation-rule type="custom" [validationCallback]="validateForecastDate"></dxi-validation-rule>
-                </dxi-column>
-                <dxi-column dataField="date"
-                            dataType="date"
-                            cellTemplate="dateCell"
-                            headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="left"
-                            [caption]="this.l('DetailsHeaders_ActualDate')"
-                            [allowEditing]="false"
-                            [minWidth]="120">
-                </dxi-column>
-                <dxi-column dataField="status"
-                            headerCellTemplate="twoRowsHeaderCellTemplate"
-                            alignment="left"
-                            [caption]="this.l('DetailsHeaders_CurrentStatus')"
-                            [allowEditing]="false"
-                            [minWidth]="130">
-                </dxi-column>
-                <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="this.l('DetailsHeaders_Description')">
-                    <dxo-header-filter [visible]="true"></dxo-header-filter>
-                </dxi-column>
-                <dxi-column dataField="debit"
-                            [caption]="this.l('DetailsHeaders_Debit')"
-                            [format]="customCurrency"
-                            [allowSorting]="false"
-                            [allowFiltering]="false"
-                            alignment="right"
-                            [minWidth]="150">
-                    <dxi-validation-rule type="numeric"></dxi-validation-rule>
-                </dxi-column>
-                <dxi-column dataField="credit"
-                            [caption]="this.l('DetailsHeaders_Credit')"
-                            [format]="customCurrency"
-                            [allowSorting]="false"
-                            [allowFiltering]="false"
-                            alignment="right"
-                            [minWidth]="150">
-                    <dxi-validation-rule type="numeric"></dxi-validation-rule>
-                </dxi-column>
-                <dxi-column [caption]="this.l('DetailsHeaders_Account')"
-                            dataField="accountNumber"
-                            [allowSorting]="false"
-                            [allowFiltering]="false"
-                            [allowEditing]="false"
-                            [minWidth]="130">
-                </dxi-column>
-                <dxi-column [caption]="this.l('DetailsHeaders_Type')"
-                            dataField="cashflowTypeId"
-                            [allowSorting]="false"
-                            [allowFiltering]="false"
-                            [allowEditing]="false"
-                            cellTemplate="typeCell"
-                            [minWidth]="130">
-                </dxi-column>
-                <dxi-column [caption]="this.l('DetailsHeaders_Comments')"
-                            dataField="comment"
-                            [width]="detailsCommentsColumnWidth()"
-                            [allowSorting]="false"
-                            [allowFiltering]="false"
-                            [allowEditing]="false">
-                </dxi-column>
-
-                <dxo-load-panel [enabled]="true"></dxo-load-panel>
-                <dxo-scrolling mode="virtual"></dxo-scrolling>
-
-                <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
-                <div *dxTemplate="let cellData of 'typeCell'">{{this.cashflowTypes[cellData.value]}}</div>
-                <div *dxTemplate="let headerCellData of 'twoRowsHeaderCellTemplate'">
-                    <div class="firstLine">{{headerCellData.column.caption.slice(0, headerCellData.column.caption.indexOf(' '))}}</div>
-                    <div>{{headerCellData.column.caption.slice(headerCellData.column.caption.indexOf(' ') + 1)}}</div>
-                </div>
-            </dx-data-grid>
-    </dx-resizable>
 
     <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>

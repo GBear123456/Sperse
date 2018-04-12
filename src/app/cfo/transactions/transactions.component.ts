@@ -487,7 +487,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         Observable.forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
-            this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD', null, true)
+            this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
         ).subscribe(result => {
 
             this.filtersService.setup(

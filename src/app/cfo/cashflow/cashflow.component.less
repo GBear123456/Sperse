@@ -383,9 +383,11 @@
                 /** bottom left column (labels cells) */
                 .dx-area-row-cell {
                     min-width: @left-column-width !important;
+
                     table {
                         tr {
                             position: relative;
+
                             &:first-child td.dx-white-space-column {
                                 border-top: 0;
                             }
@@ -399,6 +401,7 @@
 
                                 span.truncated {
                                     display: inline-flex;
+
                                     span {
                                         text-overflow: ellipsis;
                                         overflow: hidden;
@@ -652,7 +655,6 @@
                         }
                     }
                 }
-
                 /** bottom right column (data cells) */
                 .dx-area-data-cell {
 
@@ -968,7 +970,7 @@
         background-color: #fff;
         position: relative;
         height: 100%;
-
+        
         #cashflowFooterToolbar {
             position: absolute;
             bottom: 135px;
@@ -1398,6 +1400,13 @@
         letter-spacing: 0.3px;
         float: right;
         position: relative;
+    }
+}
+
+
+.cashflow-wrap + .cashflow-scroll {
+    .pivot-grid-wrapper {
+        margin-bottom: 150px;
     }
 }
 .pivot-grid-wrapper {

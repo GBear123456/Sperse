@@ -740,7 +740,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId, null, true);
+        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
         Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
@@ -2035,10 +2035,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     handleBottomHorizontalScrollPosition() {
         let scrollElement = $('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
         let cashflowWrapper = document.getElementsByClassName('pivot-grid-wrapper')[0];
-        if (cashflowWrapper && cashflowWrapper.getBoundingClientRect().bottom > window.innerHeight) {
+        if (cashflowWrapper && (cashflowWrapper.getBoundingClientRect().bottom > window.innerHeight || this.statsDetailResult)) {
             scrollElement.addClass('fixedScrollbar');
             let minusValue = scrollElement.height();
-            if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
+
+            if (this.statsDetailResult) {
+                let height = $('.cashflow-wrap').outerHeight();
+                minusValue += height || 0;
+            } else if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
             let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt($('.fixed-filters').css('marginLeft')) : 0;
@@ -2055,9 +2059,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         cashflowWrapper = null;
     }
 
+    handleVerticalScrollPosition() {
+        let cashflowScroll = $('.cashflow-scroll');
+        if (this.statsDetailResult) {
+            let cashflowElement = $('.cashflow');
+            cashflowScroll.height(cashflowElement.outerHeight() - $('.cashflow-wrap').outerHeight());
+        }
+        else {
+            cashflowScroll.height('');
+        }
+    }
+
     @HostListener('window:resize', ['$event']) onResize() {
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     getDataItemsByCell(cellObj) {
@@ -3710,18 +3726,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
-
+        
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
             if (height) {
                 let cashflowWrapElement = <HTMLElement>document.querySelector('.cashflow-wrap');
                 cashflowWrapElement.style.height = height + 'px';
+                this.handleBottomHorizontalScrollPosition();
+                this.handleVerticalScrollPosition();
             }
         }, 0);
     }
 
     onTransactionDetailsResize($event) {
         this.cashFlowGrid.height = $event.height;
+        this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     onTransactionDetailsResizeEnd($event) {
@@ -3897,6 +3917,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
         this.showAllDisable = false;
+        this.handleBottomHorizontalScrollPosition();
+        this.handleVerticalScrollPosition();
     }
 
     reclassifyTransactions($event) {
@@ -4424,11 +4446,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this._cashflowServiceProxy
                 .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                 .subscribe(result => {
-                    this.statsDetailResult = result.map(detail => {
-                        this.removeLocalTimezoneOffset(detail.date);
-                        this.removeLocalTimezoneOffset(detail.forecastDate);
-                        return detail;
-                    });
+                    this.showTransactionDetail(result);
                 });
         } else {
             this.statsDetailResult = null;
@@ -4442,11 +4460,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
             .subscribe(result => {
-                this.statsDetailResult = result.map(detail => {
-                    this.removeLocalTimezoneOffset(detail.date);
-                    this.removeLocalTimezoneOffset(detail.forecastDate);
-                    return detail;
-                });
+                this.showTransactionDetail(result);
             });
     }
 
@@ -4457,11 +4471,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this._cashflowServiceProxy
                 .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                 .subscribe(result => {
-                    this.statsDetailResult = result.map(detail => {
-                        this.removeLocalTimezoneOffset(detail.date);
-                        this.removeLocalTimezoneOffset(detail.forecastDate);
-                        return detail;
-                    });
+                    this.showTransactionDetail(result);
                 });
         }
     }

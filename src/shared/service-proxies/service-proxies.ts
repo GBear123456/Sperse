@@ -712,10 +712,9 @@ export class BankAccountsServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @businessEntitiesIds (optional) 
      * @return Success
      */
-    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string, businessEntitiesIds: number[], isActive: boolean): Observable<SyncAccountBankDto[]> {
+    getBankAccounts(instanceType: InstanceType, instanceId: number, currency: string): Observable<SyncAccountBankDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetBankAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -725,12 +724,6 @@ export class BankAccountsServiceProxy {
             throw new Error("The parameter 'currency' must be defined and cannot be null.");
         else
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
-        if (businessEntitiesIds !== undefined)
-            businessEntitiesIds && businessEntitiesIds.forEach(item => { url_ += "BusinessEntitiesIds=" + encodeURIComponent("" + item) + "&"; });
-        if (isActive === undefined || isActive === null)
-            throw new Error("The parameter 'isActive' must be defined and cannot be null.");
-        else
-            url_ += "IsActive=" + encodeURIComponent("" + isActive) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -18218,6 +18211,8 @@ export class BankAccountDto implements IBankAccountDto {
     accountName: string;
     accountNumber: string;
     businessEntityName: string;
+    businessEntityId: number;
+    isActive: boolean;
     balance: number;
     syncAccountId: number;
     isUsed: boolean;
@@ -18238,6 +18233,8 @@ export class BankAccountDto implements IBankAccountDto {
             this.accountName = data["accountName"];
             this.accountNumber = data["accountNumber"];
             this.businessEntityName = data["businessEntityName"];
+            this.businessEntityId = data["businessEntityId"];
+            this.isActive = data["isActive"];
             this.balance = data["balance"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
@@ -18257,6 +18254,8 @@ export class BankAccountDto implements IBankAccountDto {
         data["accountName"] = this.accountName;
         data["accountNumber"] = this.accountNumber;
         data["businessEntityName"] = this.businessEntityName;
+        data["businessEntityId"] = this.businessEntityId;
+        data["isActive"] = this.isActive;
         data["balance"] = this.balance;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
@@ -18270,6 +18269,8 @@ export interface IBankAccountDto {
     accountName: string;
     accountNumber: string;
     businessEntityName: string;
+    businessEntityId: number;
+    isActive: boolean;
     balance: number;
     syncAccountId: number;
     isUsed: boolean;
