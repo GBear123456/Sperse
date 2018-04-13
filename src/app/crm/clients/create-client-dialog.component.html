@@ -1,5 +1,5 @@
 <div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
-<modal-dialog>
+<modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
     <dx-context-menu
         [selectByClick]="true"
         [selectionMode]="'single'"
