@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, Input } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
 import { Router } from '@angular/router';
@@ -12,6 +12,7 @@ import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules
     providers: [DashboardServiceProxy, ClassificationServiceProxy]
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
+    @Input() waitForBankAccounts = false;
     bankAccountFilterData: any = { };
     categorySynchData: any;
     private autoClassifyData = new AutoClassifyDto();
@@ -31,11 +32,13 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
     }
 
     getCategorizationStatus(): void {
-        this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.bankAccountIds)
-            .subscribe((result) => {
-                this.categorySynchData = result;
-                this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
-            });
+        if (!this.waitForBankAccounts) {
+            this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.bankAccountIds)
+                .subscribe((result) => {
+                    this.categorySynchData = result;
+                    this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
+                });
+        }
     }
 
     autoClassify(): void {
@@ -94,6 +97,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
     }
 
     filterByBankAccounts(data) {
+        this.waitForBankAccounts = false;
         this.bankAccountFilterData = data;
         this.getCategorizationStatus();
     }
