@@ -2680,7 +2680,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** disable expanding and hide the plus button of the elements that has no children */
-        if (e.area === 'row' && e.cell.path && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
+        if (e.area === 'row' && e.cell.path && !e.cell.isWhiteSpace && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
             if (!this.hasChildsByPath(e.cell.path)) {
                 this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', e.cell.path);
                 e.cellElement.classList.add('emptyChildren');
@@ -2793,18 +2793,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         textElement.style.whiteSpace = 'nowrap';
         let textWidth: number = textElement.getBoundingClientRect().width;
         /** Get the sum of widths of all cell children except text element width */
-        let anotherChildsElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
+        let anotherChildrendElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
             let computedStyles: CSSStyleDeclaration = getComputedStyle(element);
-            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight ) + parseInt(computedStyles.marginLeft) : 0);
+            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight) + parseInt(computedStyles.marginLeft) : 0);
         }, 0);
-        /** If text size is too big */
-        if ((textWidth + anotherChildsElementsWidth) > cellWidth) {
+        /** If text size is too big - truncate it */
+        if ((textWidth + anotherChildrendElementsWidth) > cellWidth) {
             e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
             textElement.classList.add('truncated');
-            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conficts */
+            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
             textElement.innerHTML = `<span>${textElement.textContent}</span>`;
             /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildsElementsWidth) + 'px';
+            textElement.style.width = (cellWidth - anotherChildrendElementsWidth) + 'px';
         }
     }
 
@@ -3928,7 +3928,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellPath = path.join(',');
         return path.slice(-1)[0] && this.treePathes.some(path => {
             let currentPathIndex = path.indexOf(cellPath);
-            return currentPathIndex !== -1 && !!path[currentPathIndex + cellPath.length];
+            return currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length;
         });
     }
 
