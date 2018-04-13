@@ -59,5 +59,31 @@
     }
 
     .headline-buttons {
+        .vertical-delimiter {
+            width: 30px;
+            height: 0px;
+            position: relative;
+            display: inline-block;              
+            vertical-align: top;
+            &:before { 
+                content: '';
+                position: absolute;
+                border-left: 1px solid #dfdfdf;
+                display: block;
+                height: 74px;
+                left: 15px;
+                top: -10px;
+            }
+        }
+        .refresh-button {
+            width: 44px;
+            height: 44px;
+            margin: 5px;
+            outline: none;
+            border: none;
+            cursor: pointer;
+            vertical-align: bottom;
+            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center; 
+        }
     }
 }

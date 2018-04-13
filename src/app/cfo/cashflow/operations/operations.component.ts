@@ -244,10 +244,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 location: 'after',
                 items: [
                     {
-                        name: 'refresh',
-                        action: this.refresh.bind(this)
-                    },
-                    {
                         name: 'download',
                         widget: 'dxDropDownMenu',
                         options: {

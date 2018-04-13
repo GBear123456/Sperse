@@ -839,16 +839,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Cashflow_mainTitle')],
-            iconSrc: 'assets/common/icons/chart-icon.svg',
-            buttons: [
-                {
-                    enabled: this.noRefreshedAfterSync,
-                    action: this.refreshDataGrid.bind(this),
-                    lable: this.l('Refresh'),
-                    icon: 'refresh',
-                    class: 'btn-default back-button'
-                }
-            ]
+            onRefresh: this.refreshDataGrid.bind(this),
+            iconSrc: 'assets/common/icons/chart-icon.svg'
         };
     }
 

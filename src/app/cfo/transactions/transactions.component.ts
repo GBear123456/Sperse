@@ -115,6 +115,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
+            onRefresh: this.refreshDataGrid.bind(this),
             iconSrc: 'assets/common/icons/credit-card-icon.svg',
             buttons: [
                 {
@@ -199,7 +200,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             },
             {
                 location: 'after', items: [
-                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',
