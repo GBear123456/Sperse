@@ -22,6 +22,7 @@
                     (onKeyUp)="onCompanyKeyUp($event)"
                     [(value)]="company">
                   </dx-text-box>
+                  <span [class]="company && 'clear-contact' || 'hidden'" (click)="company = ''">+</span>
               </div>
               <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidator')">
                   <div class="field email">
@@ -119,6 +120,7 @@
                         [value]="contacts.addresses[type].addressType"
                         (onValueChanged)="onTypeChanged($event, 'address')">
                       </dx-select-box>
+                      <span [class]="contacts.addresses[type].address && 'clear-contact' || 'hidden'" (click)="contacts.addresses[type] = {}">+</span>  
                   </div>
                   <div class="field addr">
                       <label></label>                   
@@ -189,8 +191,10 @@
                         name="comment"
                         [width]="'360px'"
                         [height]="'100px'"
+                        (onKeyUp)="onCommentKeyUp($event, type)"
                         [(value)]="notes[type]">
                       </dx-text-area>
+                      <span [class]="notes[type] && 'clear-contact' || 'hidden'" (click)="notes[type] = ''">+</span>
                   </div>
               </dx-validation-group>
           </div>

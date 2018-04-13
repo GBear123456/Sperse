@@ -185,6 +185,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         super.ngOnInit();
 
         this.data.editTitle = true;
+        this.data.titleClearButton = true;
         this.data.placeholder = this.l('Contact.FullName');
         this.data.buttons = [{
             id: this.saveButtonId,
@@ -540,6 +541,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     onCompanyKeyUp($event) {
         this.company = this.getInputElementValue($event);
         this.checkSimilarCustomers();
+    }
+
+    onCommentKeyUp($event, type) {
+        this.notes[type] = $event.element.getElementsByTagName('textarea')[0].value;
     }
 
     setComponentToValid(field, type, reset = false) {
