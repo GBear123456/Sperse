@@ -171,7 +171,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 this.filterDataSource();
 
                 if (this.useGlobalCache && initial) {
-                    let bankAccountIds = this._cacheService.get(this.bankAccountsCacheKey)['bankAccounts'];
+                    let bankAccountIds = this._cacheService.exists(this.bankAccountsCacheKey)
+                        ? this._cacheService.get(this.bankAccountsCacheKey)['bankAccounts']
+                        : [];
                     if (!bankAccountIds)
                         bankAccountIds = [];
                     let data = {
