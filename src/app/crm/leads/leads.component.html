@@ -24,50 +24,23 @@
                                 [allowUpdating]="true">
                             </dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
-                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                            <div *dxTemplate="let data of 'photoTemplate'">
-                                <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
-                                     alt="{{l('AltPersonPhoto')}}"
-                                     width="38"
-                                     class="img-circle"/>
-                            </div>
+                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
                             <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
-                            <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell" 
-                                [editorOptions]="{
-                                    mask: masks.phone,
-                                    maskInvalidMessage: l('PhoneValidationError')
-                                }">
-                            </dxi-column>
-                            <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false"></dxi-column>
+                            <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
+                            <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
+                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                            <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
+                            <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
-                            <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
-                            <dxi-column dataField="LeadType" caption="{{l('Type')}}"></dxi-column>
-                            <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}"></dxi-column>
-                            <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="NoteCount" caption="{{l('NoteCount')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="DocumentCount" caption="{{l('DocumentCount')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Website" caption="{{l('Website')}}"></dxi-column>
-                            <dxi-column dataField="Comments" caption="{{l('Comments')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="LastTransactionType" caption="{{l('LastTransactionType')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="LastTransactionStatus" caption="{{l('LastTransactionStatus')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="LastTransactionAmount" caption="{{l('LastTransactionAmount')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="LastTransactionErrorMessage" caption="{{l('LastTransactionErrorMessage')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell"
-                                [editorOptions]="{
-                                    displayFormat: formatting.date
-                                }">
-                            </dxi-column>
-                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{cellData.value | date: formatting.dateTime}}
                             </div>
+
+                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-paging [pageSize]="20"></dxo-paging>

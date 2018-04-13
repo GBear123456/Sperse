@@ -10345,6 +10345,221 @@ export class MemberServiceProxy {
 }
 
 @Injectable()
+export class NotesServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getNotes(customerId: number, contactId: number): Observable<NoteInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetNotes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetNotes(response_);
+                } catch (e) {
+                    return <Observable<NoteInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<NoteInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetNotes(response: Response): Observable<NoteInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(NoteInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<NoteInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    createNote(input: CreateNoteInput): Observable<CreateNoteOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/CreateNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processCreateNote(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateNote(response_);
+                } catch (e) {
+                    return <Observable<CreateNoteOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CreateNoteOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateNote(response: Response): Observable<CreateNoteOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateNoteOutput.fromJS(resultData200) : new CreateNoteOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<CreateNoteOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteNote(customerId: number, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/DeleteNote?";
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
+            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteNote(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteNote(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteNote(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateNote(input: UpdateNoteInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/UpdateNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateNote(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateNote(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateNote(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class NotificationServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -33412,6 +33627,170 @@ export interface IRegisterMemberRequest {
     isUSCitizen: boolean;
     packageId: number;
     utmParameter: UTMParameterInfo;
+}
+
+export class NoteInfoDto implements INoteInfoDto {
+    customerId: number;
+    contactId: number;
+    text: string;
+
+    constructor(data?: INoteInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.contactId = data["contactId"];
+            this.text = data["text"];
+        }
+    }
+
+    static fromJS(data: any): NoteInfoDto {
+        let result = new NoteInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["contactId"] = this.contactId;
+        data["text"] = this.text;
+        return data; 
+    }
+}
+
+export interface INoteInfoDto {
+    customerId: number;
+    contactId: number;
+    text: string;
+}
+
+export class CreateNoteInput implements ICreateNoteInput {
+    customerId: number;
+    contactId: number;
+    text: string;
+
+    constructor(data?: ICreateNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.contactId = data["contactId"];
+            this.text = data["text"];
+        }
+    }
+
+    static fromJS(data: any): CreateNoteInput {
+        let result = new CreateNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["contactId"] = this.contactId;
+        data["text"] = this.text;
+        return data; 
+    }
+}
+
+export interface ICreateNoteInput {
+    customerId: number;
+    contactId: number;
+    text: string;
+}
+
+export class CreateNoteOutput implements ICreateNoteOutput {
+    id: number;
+
+    constructor(data?: ICreateNoteOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateNoteOutput {
+        let result = new CreateNoteOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateNoteOutput {
+    id: number;
+}
+
+export class UpdateNoteInput implements IUpdateNoteInput {
+    customerId: number;
+    id: number;
+    text: string;
+
+    constructor(data?: IUpdateNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.id = data["id"];
+            this.text = data["text"];
+        }
+    }
+
+    static fromJS(data: any): UpdateNoteInput {
+        let result = new UpdateNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["id"] = this.id;
+        data["text"] = this.text;
+        return data; 
+    }
+}
+
+export interface IUpdateNoteInput {
+    customerId: number;
+    id: number;
+    text: string;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {

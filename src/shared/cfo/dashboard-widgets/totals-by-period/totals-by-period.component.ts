@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import { Component, Injector, OnInit, Input} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
 import {
@@ -17,6 +17,7 @@ import 'rxjs/add/operator/scan';
     providers: [BankAccountsServiceProxy]
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
+    @Input() waitForBankAccounts = false;
     bankAccountIds: number[] = [];
     totalData: any;
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
@@ -41,37 +42,38 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     loadStatsData() {
-        this.startLoading();
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            'USD',
-            undefined,
-            undefined,
-            this.bankAccountIds,
-            this.startDate,
-            this.endDate,
-            undefined,
-            this.selectedPeriod
-        )
-            .mergeMap(x => x)
-            .scan((prevStatsItem, currentStatsItem) => {
-                let credit = currentStatsItem.credit + prevStatsItem.credit;
-                let debit = currentStatsItem.debit + prevStatsItem.debit;
-                let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
-                let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
-                return {
-                    'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
-                    'endingBalance': currentStatsItem.endingBalance,
-                    'credit': credit,
-                    'debit': debit,
-                    'adjustments': adjustments,
-                    'startingBalanceAdjustments': startingBalanceAdjustments,
-                    'netChange': credit - Math.abs(debit),
-                    'date': currentStatsItem.date
-                };
-            }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
-            .subscribe(
+        if (!this.waitForBankAccounts) {
+            this.startLoading();
+            this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                'USD',
+                undefined,
+                undefined,
+                this.bankAccountIds,
+                this.startDate,
+                this.endDate,
+                undefined,
+                this.selectedPeriod
+            )
+                .mergeMap(x => x)
+                .scan((prevStatsItem, currentStatsItem) => {
+                    let credit = currentStatsItem.credit + prevStatsItem.credit;
+                    let debit = currentStatsItem.debit + prevStatsItem.debit;
+                    let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                    let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
+                    return {
+                        'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                        'endingBalance': currentStatsItem.endingBalance,
+                        'credit': credit,
+                        'debit': debit,
+                        'adjustments': adjustments,
+                        'startingBalanceAdjustments': startingBalanceAdjustments,
+                        'netChange': credit - Math.abs(debit),
+                        'date': currentStatsItem.date
+                    };
+                }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
+                .subscribe(
                 result => {
                     this.totalData = result;
                     let maxValue = Math.max(
@@ -85,7 +87,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 },
                 e => { this.finishLoading(); },
                 () => this.finishLoading()
-            );
+                );
+        }
     }
 
     getPercentage(maxValue, currValue) {
@@ -160,6 +163,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
+        this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
         this.loadStatsData();
     }

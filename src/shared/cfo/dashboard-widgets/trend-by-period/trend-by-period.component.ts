@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
@@ -25,6 +25,7 @@ import * as moment from 'moment';
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
+    @Input() waitForBankAccounts = false;
     bankAccountIds: number[] = [];
     trendData: Array<BankAccountDailyStatDto>;
     startDate: any;
@@ -176,19 +177,20 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     loadStatsData() {
-        this.startLoading();
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            'USD',
-            this.selectedForecastModelId,
-            undefined,
-            this.bankAccountIds,
-            this.startDate,
-            this.endDate,
-            undefined,
-            this.selectedPeriod.key
-        ).subscribe(result => {
+        if (!this.waitForBankAccounts) {
+            this.startLoading();
+            this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                'USD',
+                this.selectedForecastModelId,
+                undefined,
+                this.bankAccountIds,
+                this.startDate,
+                this.endDate,
+                undefined,
+                this.selectedPeriod.key
+            ).subscribe(result => {
                 if (result) {
                     let historical = [], forecast = [];
                     result.forEach(statsItem => {
@@ -223,8 +225,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     this.finishLoading();
                 }
             },
-            error => { console.log('Error: ' + error); this.finishLoading(); }
-        );
+                error => { console.log('Error: ' + error); this.finishLoading(); }
+                );
+        }
     }
 
     /**
@@ -301,6 +304,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
+        this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
         this.loadStatsData();
     }
