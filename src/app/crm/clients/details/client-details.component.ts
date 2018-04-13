@@ -69,12 +69,14 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     private fillCustomerDetails(customerId) {
+        this.startLoading(true);
         this.customerId = customerId;
         this._customerService.getCustomerInfo(this.customerId).subscribe(responce => {
             this._customerService['data'].customerInfo = responce;
             this.primaryContact = responce.primaryContactInfo;
             this.customerInfo = responce;
             this.initVerificationChecklist();
+            this.finishLoading(true);
         });
     }
 
