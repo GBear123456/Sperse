@@ -318,10 +318,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 this.handleCashFlowInitialResult(result[0], result[2]);
 
                 /** Forecast models handling */
-                this.handleForecastModelResult(result[1]);
-
-                /** load stats */
-                this.loadStatsData();
+                this.handleForecastModelResult(result[1]);                
             });
 
         this.initHeadlineConfig();

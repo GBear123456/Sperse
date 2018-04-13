@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../dashboard.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -14,6 +14,7 @@ import * as moment from 'moment';
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
+    @Input() waitForBankAccounts = false;
 
     accountsData: any;
     bankAccountIds: number[] = [];
@@ -53,20 +54,24 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
-            .subscribe((result) => {
-                this.accountsData = result;
-            });
+        if (!this.waitForBankAccounts) {
+            this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
+                .subscribe((result) => {
+                    this.accountsData = result;
+                });
+        }
     }
 
     getDailyStats(): void {
-        this.startLoading();
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
-            .subscribe(result => {
-                this.dailyStatsData = result;
-                this.setDailyStatsAmount();
-            }, () => this.finishLoading(),
-               () => this.finishLoading());
+        if (!this.waitForBankAccounts) {
+            this.startLoading();
+            this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
+                .subscribe(result => {
+                    this.dailyStatsData = result;
+                    this.setDailyStatsAmount();
+                }, () => this.finishLoading(),
+                () => this.finishLoading());
+        }
     }
 
     navigateTo() {
@@ -74,6 +79,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
+        this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
 

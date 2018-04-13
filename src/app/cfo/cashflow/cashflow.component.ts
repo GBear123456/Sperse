@@ -134,7 +134,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
-    selectedBankAccounts = [];
+    selectedBankAccounts;
     sliderReportPeriod = {
         start: null,
         end: null,
@@ -161,8 +161,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Amount of years with stubs */
     yearsAmount = 0;
 
-    cashflowDataTree = {};
-    treePathes = [];
+    /** The string paths of cashflow data */
+    private treePathes: string[] = [];
+
     cashflowTypes: any;
 
     /** Bank accounts of user */
@@ -421,13 +422,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         'Periods_Historical',
         'Periods_Current',
         'Periods_Forecast'
-    ];
-
-    /** Css classes for historical field columns */
-    historicalClasses = [
-        'historical',
-        'current',
-        'forecast'
     ];
 
     /** Paths that should be clicked in onContentReady */
@@ -754,9 +748,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 /** Handle the get cashflow grid settings response*/
                 this.handleGetCashflowGridSettingsResult(result[3]);
-
-                /** load cashflow data grid */
-                this.loadGridDataSource();
             });
 
         this.initHeadlineConfig();
@@ -1446,7 +1437,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.transactionsTotal = 0;
             this.transactionsAverage = 0;
             this.adjustmentsList = [];
-            this.cashflowDataTree = [];
             this.hasDiscrepancyInData = false;
         }
 
@@ -1501,20 +1491,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     return true;
                 }
 
-                /** Create categories levels */
+                /** Create categories levels properties */
                 if (level.prefix === CategorizationPrefixes.AccountName) {
                     if (isAccountTransaction) {
-
-                        /** @todo refactor to avoid doubles */
-                        /** Create categorization tree to */
-                        if (levelNumber !== 0) {
-                            parentKey = key;
-                        }
                         key = level.prefix + transactionObj[level.statsKeyName];
-                        if (parentKey && !this.cashflowDataTree[parentKey]) {
-                            this.cashflowDataTree[parentKey] = true;
-                        }
-
                         transactionObj[`level${levelNumber++}`] = key;
                         return false;
                     } else {
@@ -1522,16 +1502,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
 
-                /** @todo refactor to avoid doubles */
-                /** Create categorization tree to */
-                if (levelNumber !== 0) {
-                    parentKey = key;
-                }
                 key = level.prefix + transactionObj[level.statsKeyName];
-                if (parentKey && !this.cashflowDataTree[parentKey]) {
-                    this.cashflowDataTree[parentKey] = true;
-                }
-
                 transactionObj[`level${levelNumber++}`] = key;
             }
             return true;
@@ -1557,8 +1528,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 fullPath.push(levelValue);
             }
         }
-        if (this.treePathes.indexOf(fullPath) === -1) {
-            this.treePathes.push(fullPath);
+        let stringPath = fullPath.join(',');
+        if (this.treePathes.indexOf(stringPath) === -1) {
+            this.treePathes.push(stringPath);
         }
     }
 
@@ -2064,8 +2036,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.statsDetailResult) {
             let cashflowElement = $('.cashflow');
             cashflowScroll.height(cashflowElement.outerHeight() - $('.cashflow-wrap').outerHeight());
-        }
-        else {
+        } else {
             cashflowScroll.height('');
         }
     }
@@ -2709,7 +2680,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** disable expanding and hide the plus button of the elements that has no children */
-        if (e.area === 'row' && e.cell.path && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
+        if (e.area === 'row' && e.cell.path && !e.cell.isWhiteSpace && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
             if (!this.hasChildsByPath(e.cell.path)) {
                 this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', e.cell.path);
                 e.cellElement.classList.add('emptyChildren');
@@ -2734,7 +2705,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        /** hide long text for row headers and show '...' instead with the hover and long text*/
+        /** hide long text for row headers and show '...' instead with the hover and long text */
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
             this.truncateCellText(e);
         }
@@ -2822,18 +2793,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         textElement.style.whiteSpace = 'nowrap';
         let textWidth: number = textElement.getBoundingClientRect().width;
         /** Get the sum of widths of all cell children except text element width */
-        let anotherChildsElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
+        let anotherChildrendElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
             let computedStyles: CSSStyleDeclaration = getComputedStyle(element);
-            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight ) + parseInt(computedStyles.marginLeft) : 0);
+            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight) + parseInt(computedStyles.marginLeft) : 0);
         }, 0);
-        /** If text size is too big */
-        if ((textWidth + anotherChildsElementsWidth) > cellWidth) {
+        /** If text size is too big - truncate it */
+        if ((textWidth + anotherChildrendElementsWidth) > cellWidth) {
             e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
             textElement.classList.add('truncated');
-            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conficts */
+            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
             textElement.innerHTML = `<span>${textElement.textContent}</span>`;
             /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildsElementsWidth) + 'px';
+            textElement.style.width = (cellWidth - anotherChildrendElementsWidth) + 'px';
         }
     }
 
@@ -3953,12 +3924,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param object - the tree with the data
      * @return {boolean}
      */
-    hasChildsByPath(path) {
-        let lastLevel = path.slice(-1);
-        if (lastLevel && lastLevel[0]) {
-            return this.cashflowDataTree[lastLevel[0]];
-        }
-        return false;
+    hasChildsByPath(path): boolean {
+        let cellPath = path.join(',');
+        return path.slice(-1)[0] && this.treePathes.some(path => {
+            let currentPathIndex = path.indexOf(cellPath);
+            return currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length;
+        });
     }
 
     /**
@@ -4041,21 +4012,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     rowFitsToFilter(summaryCell, filter: string) {
         let cellsToCheck = [];
-        let rowInfo = summaryCell.value(summaryCell.field('row').dataField);
+        let rowInfo = summaryCell.value(summaryCell.field('row').dataField) || '';
         let result = false;
         /** add the rowInfo to cash to avoid checking for every cell */
         if (!this.cachedRowsFitsToFilter.has(rowInfo) || !rowInfo) {
-            this.treePathes.forEach(path => {
-                if (path.indexOf(rowInfo) !== -1) {
+            this.treePathes.forEach(strPath => {
+                let arrPath = strPath.split(',');
+                if (arrPath.indexOf(rowInfo) !== -1) {
                     /** Handle for uncategorized */
                     if (!rowInfo) {
                         let parent = summaryCell.parent('row');
                         let parentInfo = parent.value(parent.field('row').dataField);
-                        if (path.indexOf(parentInfo) !== -1) {
-                            cellsToCheck = underscore.union(cellsToCheck, path);
+                        if (arrPath.indexOf(parentInfo) !== -1) {
+                            cellsToCheck = underscore.union(cellsToCheck, arrPath);
                         }
                     } else {
-                        cellsToCheck = underscore.union(cellsToCheck, path);
+                        cellsToCheck = underscore.union(cellsToCheck, arrPath);
                     }
                 }
             });
