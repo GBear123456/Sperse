@@ -4417,27 +4417,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.closeTransactionsDetail();
         }
     }
+    
+    refreshTransactionDetail(showAll = true) {
+        this.showAllVisible = this.searchValue && !showAll ?  true : false;
+        this.statsDetailFilter.searchTerm = showAll ? '' : this.searchValue;
 
-    showAll(e) {
-        this.showAllVisible = false;
-        this.statsDetailFilter.searchTerm = '';
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
             .subscribe(result => {
                 this.showTransactionDetail(result);
             });
-    }
-
-    showSearchResult(e) {
-        if (this.searchValue) {
-            this.showAllVisible = true;
-            this.statsDetailFilter.searchTerm = this.searchValue;
-            this._cashflowServiceProxy
-                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                .subscribe(result => {
-                    this.showTransactionDetail(result);
-                });
-        }
     }
 
     detailsCellIsEditable(e) {
