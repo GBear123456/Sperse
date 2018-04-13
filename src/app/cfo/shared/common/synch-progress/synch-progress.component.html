@@ -1,16 +1,22 @@
-<div *ngIf="!completed && synchData" class="synch-progress-wrapper">
-    <div id="synchProgressContainer" class="synch-container" (mouseenter)="toggleTooltip()">
-        <div class="loadindicator" [class.error]="isFailed"></div>
-        <h3>{{l('Sync_status')}}</h3>
-        <dx-progress-bar #progressBar
-                         id="progress-bar-status"
-                         width="162"
-                         [class.complete]="progressBar.value == maxValue"
-                         [min]="0"
-                         [max]="100"
-                         [statusFormat]="format"
-                         [value]="currentProgress">
-        </dx-progress-bar>
+<div class="synch-progress-wrapper">
+    <div class="synch-container">
+        <div *ngIf="!completed && synchData && !syncFailed" id="synchProgressContainer" (mouseenter)="toggleTooltip()">
+            <div class="loadindicator" [class.error]="hasFailedAccounts"></div>
+            <h3>{{l('Sync_status')}}</h3>
+            <dx-progress-bar #progressBar
+                             id="progress-bar-status"
+                             width="162"
+                             [class.complete]="progressBar.value == maxValue"
+                             [min]="0"
+                             [max]="100"
+                             [statusFormat]="format"
+                             [value]="currentProgress">
+            </dx-progress-bar>
+        </div>
+        <div *ngIf="syncFailed">
+            <i class="fa fa-exclamation-triangle warning-icon"></i>
+            <h3>Synchronization failed</h3>
+        </div>
     </div>
 
     <dx-tooltip target="#synchProgressContainer"
