@@ -20,7 +20,7 @@
     <div *ngIf="data?.organizationContactInfo" class="organization_info">
         <div class="delimiter"></div>
         <div class="organization_logo">
-            <img src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+            <img (click)="showUploadPhotoDialog($event, true)" src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
         </div>
         <h2>{{ data?.organizationContactInfo?.fullName }}</h2>
         <div class="info-icon" (click)="showOrganizationDetails($event)">

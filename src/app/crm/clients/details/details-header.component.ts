@@ -89,22 +89,25 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    showUploadPhotoDialog(event) {
+    showUploadPhotoDialog(event, isCompany = undefined) {
         this.dialog.closeAll();
         this.dialog.open(UploadPhotoDialogComponent, {
             data: this.data,
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
-                let base64OrigImage = this.getBase64(result.origImage);
-                this.data.primaryContactInfo.primaryPhoto = ContactPhotoDto.fromJS({
-                    original: base64OrigImage
+                let base64OrigImage = this.getBase64(result.origImage),
+                    base64ThumbImage = this.getBase64(result.thumImage),
+                    dataField = (isCompany ? 'organization': 'primary') + 'ContactInfo';
+                this.data[dataField].primaryPhoto = ContactPhotoDto.fromJS({
+                    original: base64OrigImage,
+                    thumbnail: base64ThumbImage
                 });
                 this.contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
-                        contactId: this.data.primaryContactInfo.id,
+                        contactId: this.data[dataField].id,
                         originalImage: base64OrigImage,
-                        thumbnail: this.getBase64(result.thumImage)
+                        thumbnail: base64ThumbImage
                     })
                 ).subscribe((result) => {});
             }
