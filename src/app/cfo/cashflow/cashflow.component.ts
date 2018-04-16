@@ -187,6 +187,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Filter by string */
     private filterBy: string;
+    
+    private _calculatorShowed = false;
+    public set calculatorShowed(value: boolean) {
+        if (this._calculatorShowed = value) {
+            //this.filtersService.fixed = false;
+            //this.filtersService.disable();
+        }
+    }
+
+    public get calculatorShowed(): boolean {
+        return this._calculatorShowed;
+    }
 
     /**
      *  Categorization settings for creating categorization tree on cashflow
@@ -3661,6 +3673,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         element.appendChild(this.modifyingCellNumberBox.element());
         this.modifyingCellNumberBox.focus();
         element = null;
+        this.calculatorShowed = true;
     }
 
     removeModifyingCellNumberBox(cellObj) {
@@ -4703,5 +4716,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 findInput.style.display = 'none';
             }
         }
+    }
+
+    closeCalculator(e) {
+        this.calculatorShowed = false;
     }
 }

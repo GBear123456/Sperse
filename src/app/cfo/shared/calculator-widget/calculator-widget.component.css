@@ -1,0 +1,152 @@
+/* CSS used here will be applied after bootstrap.css */
+html, body, table, td {
+    font-family: "Montserrat Light", sans-serif;
+}
+
+    table.calculator {
+        width: 280px;
+        border: 1px solid #ccc;
+    }
+
+    table.calculator, table.keypad, table.operators {
+        border-spacing: 0px;
+    }
+
+        table.calculator td {
+            padding: 0px;
+        }
+
+        table.calculator .lastOp {
+            width: 30px;
+            height: 40px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        table.calculator .lastOp, table.calculator .tdInput {
+            padding: 0px;
+            background-color: #f3f7fa;
+        }
+
+        table.calculator .input {
+            border: 0;
+            background: none;
+            font-size: 18px;
+            font-weight: 500;
+            width: 98%;
+            /*direction  : rtl;*/
+            text-align: right;
+            padding-right: 2%;
+            outline: none;
+        }
+
+        table.calculator td.history div {
+            height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+            font-size: 13px;
+        }
+
+        table.calculator td.history table {
+            width: 100%;
+        }
+
+            table.calculator td.history table td {
+                text-align: right;
+            }
+
+                table.calculator td.history table td.ScientificModeToggle {
+                    text-align: left;
+                    color: #666;
+                    border-bottom: 1px solid #ccc;
+                }
+
+                table.calculator td.history table td.tdOperator {
+                    text-align: left;
+                    font-size: 14pt;
+                }
+
+                table.calculator td.history table td.tdOperand {
+                    font-weight: 600;
+                }
+
+            table.calculator td.history table tr:nth-child(even) .tdOperator {
+                color: #ffcc00;
+            }
+
+            table.calculator td.history table tr:nth-child(odd) .tdOperator {
+                color: #2eb82e;
+            }
+
+            table.calculator td.history table tr:nth-child(even) .tdOperand {
+                color: #00ccff;
+            }
+
+            table.calculator td.history table tr:nth-child(odd) .tdOperand {
+                color: #666;
+            }
+
+            table.calculator td.history table td.tdEquals {
+                width: 10px;
+                color: #999;
+            }
+
+            table.calculator td.history table td.tdResult {
+                width: 10px;
+            }
+
+        table.calculator td.history .result {
+            color: #999;
+        }
+
+        /* table.calculator td.history ul {
+  list-style: none;
+  text-align: right;
+  padding-right: 10px;
+  margin: 5px 10px;
+} */
+
+        table.keypad td {
+            width: 70px;
+            height: 50px;
+            border: 1px solid #efefef;
+            padding: 0;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        table.operators td {
+            width: 70px;
+            height: 50px;
+            border: 1px solid #efefef;
+            padding: 0;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #ffffff;
+            font-size: 36px;
+            color: #00aeef;
+        }
+
+            table.operators td.equalsButton {
+                height: 102px;
+            }
+
+        table.keypad .backspace, table.keypad .clearKey {
+            background-color: #ffffff;
+            font-size: 20px;
+            color: #d1251f;
+        }
+
+        table.keypad td:hover, table.operators td:hover {
+            background-color: #eeeeee;
+        }
+
+        table.keypad td.disabled {
+            background-color: #eee;
+            color: #999;
+            cursor: auto;
+        }

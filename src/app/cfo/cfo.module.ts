@@ -22,6 +22,7 @@ import { BusinessEntitiesComponent } from './business-entities/business-entities
 
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { CalculatorComponent } from 'app/cfo/shared/calculator-widget/calculator-widget.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -130,7 +131,8 @@ import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-wi
         BusinessEntitiesComponent,
         ChartOfAccountsComponent,
         BankAccountsSelectComponent,
-        ChooseResetRulesComponent
+        ChooseResetRulesComponent,
+        CalculatorComponent
     ],
     entryComponents: [
         RuleDialogComponent,
