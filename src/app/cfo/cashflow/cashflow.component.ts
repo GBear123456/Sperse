@@ -1970,18 +1970,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onScroll(e) {
-        this.handleHeaderPosition(e);
         this.handleBottomHorizontalScrollPosition();
-    }
-
-    handleHeaderPosition(e) {
-        let toolbar = <HTMLElement>document.querySelector('.page-content-wrapper app-toolbar');
-        let dxToolbar = <HTMLElement>toolbar.children[0];
-        let topIntend = toolbar.offsetTop + dxToolbar.offsetHeight;
-        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset({top: Math.floor(topIntend), left: 0});
-        let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
-        scrollElement.style.top = e.scrollOffset + e.element.clientHeight;
-        scrollElement = null;
     }
 
     synchronizeHeaderHeightWithCashflow() {
