@@ -249,55 +249,19 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             .toArray();
     }
 
-    onSelectChange(value) {
-        let period = 'month';
-        let startDate = moment().utc();
-        let endDate = moment().utc();
-        switch (value) {
-            case this.l('Today'):
-                period = 'day';
-                break;
-            case this.l('Yesterday'):
-                period = 'day';
-                startDate.subtract(1, 'day');
-                endDate.subtract(1, 'day');
-                break;
-            case this.l('This_Week'):
-                period = 'day';
-                startDate.startOf('week');
-                endDate.endOf('week');
-                break;
-            case this.l('This_Month'):
-                period = 'day';
-                startDate.startOf('month');
-                endDate.endOf('month');
-                break;
-            case this.l('Last_Month'):
-                period = 'day';
-                startDate.startOf('month').subtract(1, 'month');
-                endDate.endOf('month').subtract(1, 'month');
-                break;
-            case this.l('This_Year'):
-                startDate.startOf('year');
-                endDate.endOf('year');
-                break;
-            case this.l('Last_Year'):
-                startDate.startOf('year').subtract(1, 'year');
-                endDate.endOf('year').subtract(1, 'year');
-                break;
-            case this.l('All_Periods'):
-                period = 'all';
-                break;
-            default:
-                startDate.subtract(12, 'month');
-                break;
+    onSelectChange(period) {
+        this.startDate = period.from ? period.from.startOf('day') : null;
+        this.endDate = period.to ? period.to.startOf('day') : null;
+
+        let periodName = period.period;
+        if (periodName === 'year' || periodName === 'all') {
+            periodName = 'month';
+        } else {
+            periodName = 'day';
         }
 
-        this.startDate = (period == 'all' ? undefined : startDate.startOf('day'));
-        this.endDate = (period == 'all' ? undefined : endDate.endOf('day'));
-
         this.selectedPeriod = this.periods.find((obj) => {
-            return obj.name === (period == 'all' ? 'month': period);
+            return (obj.name === periodName);
         });
 
         this.loadStatsData();
