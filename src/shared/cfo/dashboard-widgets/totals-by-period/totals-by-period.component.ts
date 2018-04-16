@@ -95,61 +95,41 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         return maxValue ? Math.round(Math.abs(currValue) / maxValue * 100) : 0;
     }
 
-    onValueChanged(value): void {
-        let period;
+    onValueChanged(period): void {
         let groupBy;
-        this.currentPeriod = value;
-        let startDate = moment().utc();
-        let endDate = moment().utc();
-        switch (value) {
+        switch (period.name) {
             case this.l('Today'):
-                period = 'day';
                 groupBy = 'Daily';
                 break;
             case this.l('Yesterday'):
-                period = 'day';
                 groupBy = 'Daily';
-                startDate.subtract(1, 'day');
-                endDate.subtract(1, 'day');
                 break;
             case this.l('This_Week'):
-                period = 'week';
                 groupBy = 'Weekly';
                 break;
             case this.l('This_Month'):
-                period = 'month';
                 groupBy = 'Monthly';
                 break;
             case this.l('Last_Month'):
-                period = 'month';
                 groupBy = 'Monthly';
-                startDate.subtract(1, 'month');
-                endDate.subtract(1, 'month');
                 break;
             case this.l('This_Year'):
-                period = 'year';
                 groupBy = 'Yearly';
                 break;
             case this.l('Last_Year'):
-                period = 'year';
                 groupBy = 'Yearly';
-                startDate.subtract(1, 'year');
-                endDate.subtract(1, 'year');
                 break;
             case this.l('All_Periods'):
-                period = 'all';
                 groupBy = 'Yearly';
                 break;
             default:
-                period = 'year';
                 groupBy = 'Yearly';
-                startDate.subtract(1, 'year');
-                endDate.subtract(1, 'year');
                 break;
         }
 
-        this.startDate = period !== 'all' ? startDate.startOf(period) : undefined;
-        this.endDate = period !== 'all' ? endDate.endOf(period) : undefined;
+        this.startDate = period.from ? period.from.startOf('day') : null;
+        this.endDate = period.to ? period.to.startOf('day') : null;
+
         this.selectedPeriod = String(GroupBy[groupBy]).toLowerCase();
         this.loadStatsData();
     }

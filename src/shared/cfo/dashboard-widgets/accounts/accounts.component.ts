@@ -95,47 +95,19 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.setDailyStatsAmount();
     }
 
-    onDailyStatsPeriodChanged(value = '') {
-        let startDate: moment.Moment = moment().utc();
-        let endDate: moment.Moment = moment().utc();
+    onDailyStatsPeriodChanged(period) {
+        let currentDate = moment().utc().startOf('day');
 
-        switch (value) {
-            case this.l('Today'):
-                startDate.startOf('day');
-                endDate.startOf('day');
-                break;
-            case this.l('Yesterday'):
-                startDate.subtract(1, 'day').startOf('day');
-                endDate.subtract(1, 'day').endOf('day');
-                break;
-            case this.l('This_Week'):
-                startDate.startOf('week');
-                endDate.startOf('day');
-                break;
-            case this.l('This_Month'):
-                startDate.startOf('month');
-                endDate.startOf('day');
-                break;
-            case this.l('Last_Month'):
-                startDate.subtract(1, 'month').startOf('month');
-                endDate = startDate.clone().endOf('month');
-                break;
-            case this.l('This_Year'):
-                startDate.startOf('year');
-                endDate.startOf('day');
-                break;
-            case this.l('Last_Year'):
-                startDate.subtract(1, 'year').startOf('year');
-                endDate = startDate.clone().endOf('year');
-                break;
-            default:
-                startDate = null;
-                endDate.startOf('day');
-                break;
+        if (period) {
+            this.startDate = period.from ? period.from.startOf('day') : null;
+            this.endDate = period.to ? period.to.startOf('day') : null;
+
+            this.endDate = !this.endDate || currentDate.isBefore(this.endDate) ? currentDate : this.endDate;
+            this.startDate = this.startDate && this.endDate.isBefore(this.startDate) ? this.endDate : this.startDate;
+        } else {
+            this.startDate = null;
+            this.endDate = currentDate;
         }
-
-        this.startDate = startDate;
-        this.endDate = endDate;
 
         this.getDailyStats();
     }

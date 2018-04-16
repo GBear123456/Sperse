@@ -3724,7 +3724,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
-                bankAccountId: this.bankAccounts[0].id,
+                bankAccountId: this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
+
                 date: forecastedDate,
                 startDate: this.statsDetailFilter.startDate,
                 endDate: this.statsDetailFilter.endDate,
@@ -4643,12 +4644,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
 
-        if (data.bankAccountIds) {
-            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+        if (!accountFilter) {
+            setTimeout(() => {
+                this.setBankAccountsFilter(data);
+            }, 300);
         } else {
-            accountFilter.items['element'].setValue([], accountFilter);
+            if (data.bankAccountIds) {
+                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+            } else {
+                accountFilter.items['element'].setValue([], accountFilter);
+            }
+            this._filtersService.change(accountFilter);
         }
-        this._filtersService.change(accountFilter);
     }
 
     discardDiscrepancy(cellObj) {

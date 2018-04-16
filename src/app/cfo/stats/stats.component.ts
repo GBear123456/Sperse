@@ -590,12 +590,18 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        if (data.bankAccountIds) {
-            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+        if (!accountFilter) {
+            setTimeout(() => {
+                this.setBankAccountsFilter(data);
+            }, 300);
         } else {
-            accountFilter.items['element'].setValue([], accountFilter);
+            if (data.bankAccountIds) {
+                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+            } else {
+                accountFilter.items['element'].setValue([], accountFilter);
+            }
+            this._filtersService.change(accountFilter);
         }
-        this._filtersService.change(accountFilter);
     }
 
     apply() {
