@@ -38,6 +38,7 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
 
     onCellClick($event) {
         $event.row && this._router.navigate(
-            ['app/crm/client', $event.row.data.id]);
+            ['app/crm/client', $event.row.data.id], 
+                {queryParams: {referrer: this._router.url}});
     }
 }
