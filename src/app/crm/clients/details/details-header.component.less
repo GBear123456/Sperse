@@ -18,6 +18,31 @@
         }
     }
 
+     /deep/ inplace-edit {
+         .inplace-edit-view-mode {
+             height: 35px;
+
+             .actions i {
+                 padding: 0 0 2px 7px;
+                 vertical-align: middle;
+             }
+         }
+
+         .inplace-edit-edit-mode {
+             dx-text-box {
+                 .dx-texteditor-input{
+                     background: #f3f7fa;
+                     color: #202b35;
+                     font-size: 28px !important;
+                     font-weight: 400;
+                 }
+             }
+             dx-button {
+                 background: inherit;
+             }
+         }
+     }           
+
     .full_name {
         font-family: Montserrat;
         display: flex;
@@ -30,31 +55,6 @@
             font-size: 28px !important;
             font-weight: 400;
             line-height: 1;
-
-            inplace-edit {
-                /deep/ .inplace-edit-view-mode {
-                    height: 35px;
-
-                    .actions i {
-                        padding: 0 0 2px 7px;
-                        vertical-align: middle;
-                    }
-                }
-
-                /deep/ .inplace-edit-edit-mode {
-                    dx-text-box {
-                        .dx-texteditor-input{
-                            background: #f3f7fa;
-                            color: #202b35;
-                            font-size: 28px !important;
-                            font-weight: 400;
-                        }
-                    }
-                    dx-button {
-                        background: inherit;
-                    }
-                }
-            }           
         }
     }
 
@@ -173,6 +173,22 @@
             line-height: 1.56;
             letter-spacing: 0.3px;
             margin: 0px !important;
+            vertical-align: middle;
+            /deep/ inplace-edit {
+                i.dx-icon {
+                    font-size: 14px!important;
+                }
+                i.edit {
+                    display: none!important;
+                }
+                span {
+                    display: inline-block;
+                    vertical-align: -webkit-baseline-middle;
+                }
+                input {
+                    font-size: 16px!important;
+                }
+            }
         }
 
         .info-icon {

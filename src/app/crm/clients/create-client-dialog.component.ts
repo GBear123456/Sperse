@@ -40,10 +40,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     
     saveButtonId: string = 'saveClientOptions';
-    saveContextMenuItems = [
-        {text: this.l('SaveAndAddNew'), selected: false}, 
-        {text: this.l('SaveAndExtend'), selected: false}
-    ];
+    saveContextMenuItems = [];
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
@@ -162,6 +159,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.googleAutoComplete = Boolean(window['google']);
         this._cacheService = this._cacheService.useStorage(0);
 
+        this.saveContextMenuItems = [
+            {text: this.l('SaveAndAddNew'), selected: false}, 
+            {text: this.l('SaveAndExtend'), selected: false},
+            {text: this.l('SaveAndClose'), selected: false}
+        ];
+
         this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
@@ -209,7 +212,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     save(event): void {     
-        if (event.offsetX > 85)
+        if (event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
@@ -255,8 +258,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     this.data.refreshParent();
                     this.resetFullDialog();
                     this.notify.info(this.l('SavedSuccessfully'));
-                } else
+                } else if (this.saveContextMenuItems[1].selected)
                     this.redirectToContactInformation(result.id);
+                else {
+                    this.data.refreshParent();
+                    this.close();
+                }
             }
         );
     }
