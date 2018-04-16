@@ -2482,7 +2482,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cellCanBeDragged(cellObj) {
         return cellObj.area === 'data' && (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) &&
-               !(cellObj.cell.rowPath.length && cellObj.cell.rowPath.length === 2 && (!cellObj.cell.rowPath[1] || cellObj.cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
+               !(cellObj.cell.rowPath.length && cellObj.cell.rowPath.length === 2 && (cellObj.cell.rowPath[1] && cellObj.cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
                cellObj.cell.rowPath.length !== 1;
     }
 
@@ -2964,8 +2964,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cashflowTypeId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.CashflowType);
         let categoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.Category);
         let subCategoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.SubCategory);
-        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes
-.TransactionDescriptor);
+        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
 
         forecasts.forEach(forecast => {
             date = moment(targetCellDate.startDate);
@@ -2987,7 +2986,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     startDate: targetCellDate.startDate,
                     endDate: targetCellDate.endDate,
                     cashFlowTypeId: cashflowTypeId,
-                    categoryId: subCategoryId || categoryId || -1,
+                    categoryId: subCategoryId || categoryId,
                     transactionDescriptor: transactionDescriptor,
                     currencyId: this.currencyId,
                     amount: forecast.amount
@@ -2998,7 +2997,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     id: forecast.forecastId,
                     date: date,
                     amount: forecast.amount,
-                    categoryId: subCategoryId || categoryId || -1,
+                    categoryId: subCategoryId || categoryId,
                     transactionDescriptor: transactionDescriptor
                 });
             }
@@ -3031,7 +3030,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             /** Change forecast locally */
                             forecastInCashflow.date = moment(targetCellDate.startDate).add(timezoneOffset, 'minutes');
                             forecastInCashflow.initialDate = targetCellDate.startDate;
-                            forecastInCashflow.categoryId = categoryId || subCategoryId || -1;
+                            forecastInCashflow.categoryId = categoryId || subCategoryId;
                             forecastInCashflow.subCategoryId = subCategoryId;
                             forecastInCashflow.transactionDescriptor = transactionDescriptor;
                             forecastsInCashflow[index] = this.addCategorizationLevels(forecastInCashflow);
