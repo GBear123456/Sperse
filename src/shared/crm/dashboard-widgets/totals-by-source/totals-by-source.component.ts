@@ -38,7 +38,7 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
                         this.totalCount = 0;
                         this.totalsData = result.sort((a, b) => {
                             return (parseInt(a.companySizeRange) || Infinity) > 
-                                (parseInt(b.companySizeRange) || Infinity);
+                                (parseInt(b.companySizeRange) || Infinity) ? 1: -1;
                         });
                         this.totalsData.forEach((item) => {
                             if (!item.companySizeRange)
