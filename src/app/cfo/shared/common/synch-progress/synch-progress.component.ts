@@ -41,6 +41,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.ajaxRequest('/api/services/CFO/FinancialInformation/SyncAllAccounts?', 'POST', params)
             .done(result => {
                 this.hasFailedAccounts = false;
+                this.completed = false;
                 this.getSynchProgressAjax();
             }).fail(result => {
                 this.syncFailed = true;
@@ -50,52 +51,52 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     private getSynchProgressAjax() {
         this.ajaxRequest('/api/services/CFO/FinancialInformation/GetSyncProgress?', 'GET', {})
             .done((result: SyncProgressOutput) => {
-            this.currentProgress = result.totalProgress.progressPercent;
+                this.currentProgress = result.totalProgress.progressPercent;
 
-            this.synchData = result;
+                this.synchData = result;
 
-            let hasFailed = false;
-            this.synchData.accountProgresses.forEach(value => {
-                if (value.syncStatus == SyncProgressDtoSyncStatus.Failed) {
-                    hasFailed = true;
-                }
-            });
-            this.hasFailedAccounts = hasFailed;
+                let hasFailed = false;
+                this.synchData.accountProgresses.forEach(value => {
+                    if (value.syncStatus == SyncProgressDtoSyncStatus.Failed) {
+                        hasFailed = true;
+                    }
+                });
+                this.hasFailedAccounts = hasFailed;
 
-            if (this.currentProgress != 100) {
-                this.completed = false;
+                if (this.currentProgress != 100) {
+                    this.completed = false;
 
-                this.timeoutHandler = setTimeout(
-                    () => this.getSynchProgressAjax(), 10 * 1000
-                );
-            } else {
-                if (!this.completed) {
-                    this.completed = true;
-                    this.onComplete.emit();
-                }
-
-                if (this.hasFailedAccounts) {
                     this.timeoutHandler = setTimeout(
-                        () => this.requestSyncAjax(), 30 * 1000
+                        () => this.getSynchProgressAjax(), 10 * 1000
                     );
                 } else {
-                    this.timeoutHandler = setTimeout(
-                        () => this.getSynchProgressAjax(), 30 * 1000
-                    );
-                }
-            }
+                    if (!this.completed) {
+                        this.completed = true;
+                        this.onComplete.emit();
+                    }
 
-            this._cfoService.instanceType = this.instanceType;
-            if (!this.statusCheckCompleted && result.accountProgresses &&
-                !result.accountProgresses.every((account) => {
-                    return account.progressPercent < 100;
-                })
-            ) this._cfoService.instanceChangeProcess((hasTransactions) => {
-                this.statusCheckCompleted = hasTransactions;
+                    if (this.hasFailedAccounts) {
+                        this.timeoutHandler = setTimeout(
+                            () => this.requestSyncAjax(), 30 * 1000
+                        );
+                    } else {
+                        this.timeoutHandler = setTimeout(
+                            () => this.getSynchProgressAjax(), 30 * 1000
+                        );
+                    }
+                }
+
+                this._cfoService.instanceType = this.instanceType;
+                if (!this.statusCheckCompleted && result.accountProgresses &&
+                    !result.accountProgresses.every((account) => {
+                        return account.progressPercent < 100;
+                    })
+                ) this._cfoService.instanceChangeProcess((hasTransactions) => {
+                    this.statusCheckCompleted = hasTransactions;
+                });
+            }).fail(result => {
+                this.syncFailed = true;
             });
-        }).fail(result => {
-            this.syncFailed = true;
-        });
     }
 
     format(value) {
@@ -136,7 +137,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 _url += key + "=" + encodeURIComponent("" + requestParams[key]) + "&";
         });
         _url = _url.replace(/[?&]$/, "");
-        
+
         return abp.ajax({
             url: _url,
             method: method,
