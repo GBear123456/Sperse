@@ -57,6 +57,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     public headlineConfig = {
         names: [this.l('Orders')],
+        onRefresh: this.refreshDataGrid.bind(this),
         icon: 'briefcase',
         buttons: [
             {
@@ -329,7 +330,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             },
             {
                 location: 'after', items: [
-                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',

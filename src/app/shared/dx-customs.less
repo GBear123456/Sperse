@@ -84,3 +84,21 @@ input.form-control {
 .dx-popup-wrapper {
     z-index: 9999999999!important;
 }
+
+.dx-widget {
+    .dx-sort-up, .dx-sort-down {
+        font: initial!important;
+        &:before {
+            content: ''!important;
+            top: 1px;
+            width: 10px;
+            height: 14px;
+            position: relative;
+            display: inline-block;        
+            background: url('../../assets/common/icons/sort-up.svg') no-repeat center;
+        }
+    }
+    .dx-sort-down {
+        transform: rotate(180deg);
+    }
+}

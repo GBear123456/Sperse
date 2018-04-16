@@ -839,16 +839,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Cashflow_mainTitle')],
-            iconSrc: 'assets/common/icons/chart-icon.svg',
-            buttons: [
-                {
-                    enabled: this.noRefreshedAfterSync,
-                    action: this.refreshDataGrid.bind(this),
-                    lable: this.l('Refresh'),
-                    icon: 'refresh',
-                    class: 'btn-default back-button'
-                }
-            ]
+            onRefresh: this.refreshDataGrid.bind(this),
+            iconSrc: 'assets/common/icons/chart-icon.svg'
         };
     }
 
@@ -2479,7 +2471,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cellCanBeDragged(cellObj) {
         return cellObj.area === 'data' && (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) &&
-               !(cellObj.cell.rowPath.length && cellObj.cell.rowPath.length === 2 && (!cellObj.cell.rowPath[1] || cellObj.cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
+               !(cellObj.cell.rowPath.length && cellObj.cell.rowPath.length === 2 && (cellObj.cell.rowPath[1] && cellObj.cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
                cellObj.cell.rowPath.length !== 1;
     }
 
@@ -2961,8 +2953,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cashflowTypeId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.CashflowType);
         let categoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.Category);
         let subCategoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.SubCategory);
-        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes
-.TransactionDescriptor);
+        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
 
         forecasts.forEach(forecast => {
             date = moment(targetCellDate.startDate);
@@ -2984,7 +2975,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     startDate: targetCellDate.startDate,
                     endDate: targetCellDate.endDate,
                     cashFlowTypeId: cashflowTypeId,
-                    categoryId: subCategoryId || categoryId || -1,
+                    categoryId: subCategoryId || categoryId,
                     transactionDescriptor: transactionDescriptor,
                     currencyId: this.currencyId,
                     amount: forecast.amount
@@ -2995,7 +2986,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     id: forecast.forecastId,
                     date: date,
                     amount: forecast.amount,
-                    categoryId: subCategoryId || categoryId || -1,
+                    categoryId: subCategoryId || categoryId,
                     transactionDescriptor: transactionDescriptor
                 });
             }
@@ -3028,7 +3019,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             /** Change forecast locally */
                             forecastInCashflow.date = moment(targetCellDate.startDate).add(timezoneOffset, 'minutes');
                             forecastInCashflow.initialDate = targetCellDate.startDate;
-                            forecastInCashflow.categoryId = categoryId || subCategoryId || -1;
+                            forecastInCashflow.categoryId = categoryId || subCategoryId;
                             forecastInCashflow.subCategoryId = subCategoryId;
                             forecastInCashflow.transactionDescriptor = transactionDescriptor;
                             forecastsInCashflow[index] = this.addCategorizationLevels(forecastInCashflow);
@@ -3721,7 +3712,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
-                bankAccountId: this.bankAccounts[0].id,
+                bankAccountId: this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
+
                 date: forecastedDate,
                 startDate: this.statsDetailFilter.startDate,
                 endDate: this.statsDetailFilter.endDate,
@@ -4414,27 +4406,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.closeTransactionsDetail();
         }
     }
+    
+    refreshTransactionDetail(showAll = true) {
+        this.showAllVisible = this.searchValue && !showAll ?  true : false;
+        this.statsDetailFilter.searchTerm = showAll ? '' : this.searchValue;
 
-    showAll(e) {
-        this.showAllVisible = false;
-        this.statsDetailFilter.searchTerm = '';
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
             .subscribe(result => {
                 this.showTransactionDetail(result);
             });
-    }
-
-    showSearchResult(e) {
-        if (this.searchValue) {
-            this.showAllVisible = true;
-            this.statsDetailFilter.searchTerm = this.searchValue;
-            this._cashflowServiceProxy
-                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                .subscribe(result => {
-                    this.showTransactionDetail(result);
-                });
-        }
     }
 
     detailsCellIsEditable(e) {
@@ -4651,12 +4632,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
 
-        if (data.bankAccountIds) {
-            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+        if (!accountFilter) {
+            setTimeout(() => {
+                this.setBankAccountsFilter(data);
+            }, 300);
         } else {
-            accountFilter.items['element'].setValue([], accountFilter);
+            if (data.bankAccountIds) {
+                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+            } else {
+                accountFilter.items['element'].setValue([], accountFilter);
+            }
+            this._filtersService.change(accountFilter);
         }
-        this._filtersService.change(accountFilter);
     }
 
     discardDiscrepancy(cellObj) {

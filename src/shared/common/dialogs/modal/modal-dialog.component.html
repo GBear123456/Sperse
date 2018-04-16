@@ -2,11 +2,13 @@
 <div class="mat-dialog-header">
     <dx-text-box
         name="title"
+        [showClearButton]="data.titleClearButton"
         [placeholder]="data.placeholder"
         [(value)]="data.title"
         [readOnly]="!data.editTitle"
         [isValid]="data.isTitleValid == undefined || data.isTitleValid"
-        (onInput)="onTitleChanged()">
+        (onInput)="onTitleChanged()"
+        (onKeyUp)="titleKeyUp($event)">
     </dx-text-box>
     <mat-dialog-actions>
         <div class="mat-dialog-options">

@@ -11,9 +11,6 @@
             <div *ngIf="data?.contactPersons?.length > 1" class="contact-persons-info" (click)="showContactPersons($event)">
                 <img src="../../../../assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
             </div>
-            <ng-template #loading>
-                <mat-progress-spinner mode="indeterminate" strokeWidth="10"></mat-progress-spinner>
-            </ng-template>
         </div>
         <div class="rating">
             <mat-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>

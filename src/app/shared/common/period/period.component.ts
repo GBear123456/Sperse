@@ -55,8 +55,8 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
 
     getDatePeriodFromName(name) {
         let period;
-        let startDate = moment().utc();
-        let endDate = moment().utc();
+        let startDate = moment();
+        let endDate = moment();
         switch (name) {
             case this.l('Today'):
                 period = 'day';
@@ -95,6 +95,7 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
 
         return {
             name: name,
+            period: period,
             from: period !== 'all' ? startDate.startOf(period) : undefined,
             to: period !== 'all' ? endDate.endOf(period) : undefined
         }
