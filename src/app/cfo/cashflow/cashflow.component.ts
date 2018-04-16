@@ -3677,15 +3677,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
-
+        
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
             if (height) {
                 let cashflowWrapElement = <HTMLElement>document.querySelector('.cashflow-wrap');
                 cashflowWrapElement.style.height = height + 'px';
-                this.handleBottomHorizontalScrollPosition();
-                this.handleVerticalScrollPosition();
             }
+            this.handleBottomHorizontalScrollPosition();
+            this.handleVerticalScrollPosition();
         }, 0);
     }
 
