@@ -1,5 +1,5 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
@@ -13,6 +13,8 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
   private slider: any;
   public data: any;
   public dialogRef: MatDialogRef<ModalDialogComponent>;
+
+  @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     injector: Injector
@@ -69,5 +71,10 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
 
   onTitleChanged() {  
       this.data.isTitleValid = true;
+  }
+
+  titleKeyUp(event) {
+    let title = event.element.getElementsByTagName('input')[0].value;
+    this.onTitleKeyUp.emit(title);
   }
 }

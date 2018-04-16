@@ -13,5 +13,7 @@
         <ng-template ngFor let-item [ngForOf]="data.buttons">
             <button *ngIf="item.enabled" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action()"><i class="icon-{{item.icon}}"></i> {{item.lable}}</button>
         </ng-template>
+        <div *ngIf="data.onRefresh" class="vertical-delimiter"></div>
+        <button *ngIf="data.onRefresh" class="refresh-button" (click)="data.onRefresh($event)"></button>
     </div>
 </div>

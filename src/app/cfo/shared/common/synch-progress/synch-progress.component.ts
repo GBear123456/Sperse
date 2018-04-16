@@ -1,5 +1,5 @@
-import {Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild} from '@angular/core';
-import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType } from 'shared/service-proxies/service-proxies';
+import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild } from '@angular/core';
+import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
@@ -13,9 +13,9 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @Output() onComplete = new EventEmitter();
     @Output() completed = true;
     synchData: SyncProgressOutput;
-    currentProgress: any;
-    isFailed = false;
-    Failed = <any>'Failed';
+    currentProgress: number;
+    hasFailedAccounts = false;
+    syncFailed = false;
 
     statusCheckCompleted = false;
     tooltipVisible: boolean;
@@ -31,56 +31,71 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     ngOnInit(): void {
         super.ngOnInit();
 
-        this.requestSync();
+        this.requestSyncAjax();
     }
 
-    public requestSync(forcedSync: boolean = false) {
-        this._financialInformationServiceProxy.syncAllAccounts(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            forcedSync)
-            .subscribe((result) => {
-                this.getSynchProgress();
+    public requestSyncAjax(forcedSync: boolean = false) {
+        let params = {
+            forcedSync: forcedSync
+        };
+        this.ajaxRequest('/api/services/CFO/FinancialInformation/SyncAllAccounts?', 'POST', params)
+            .done(result => {
+                this.hasFailedAccounts = false;
+                this.getSynchProgressAjax();
+            }).fail(result => {
+                this.syncFailed = true;
             });
     }
 
-    getSynchProgress() {
-        this._financialInformationServiceProxy.getSyncProgress(
-            InstanceType[this.instanceType],
-            this.instanceId)
-            .subscribe((result) => {
-                this.currentProgress = result.totalProgress.progressPercent;
+    private getSynchProgressAjax() {
+        this.ajaxRequest('/api/services/CFO/FinancialInformation/GetSyncProgress?', 'GET', {})
+            .done((result: SyncProgressOutput) => {
+            this.currentProgress = result.totalProgress.progressPercent;
 
-                if (this.currentProgress != 100) {
-                    this.completed = false;
-                    this.synchData = result;
+            this.synchData = result;
 
-                    this.synchData.accountProgresses.forEach(value => {
-                        if ( value.syncStatus == this.Failed) {
-                            this.isFailed = true;
-                        }
-                    });
+            let hasFailed = false;
+            this.synchData.accountProgresses.forEach(value => {
+                if (value.syncStatus == SyncProgressDtoSyncStatus.Failed) {
+                    hasFailed = true;
+                }
+            });
+            this.hasFailedAccounts = hasFailed;
 
-                    this.timeoutHandler = setTimeout(
-                        () => this.getSynchProgress(), 10 * 1000
-                    );
+            if (this.currentProgress != 100) {
+                this.completed = false;
 
-                } else {
-                    if (!this.completed) {
-                        this.completed = true;
-                        this.onComplete.emit();
-                    }
+                this.timeoutHandler = setTimeout(
+                    () => this.getSynchProgressAjax(), 10 * 1000
+                );
+            } else {
+                if (!this.completed) {
+                    this.completed = true;
+                    this.onComplete.emit();
                 }
 
-                this._cfoService.instanceType = this.instanceType;
-                if (!this.statusCheckCompleted && result.accountProgresses &&
-                    !result.accountProgresses.every((account) => {
-                        return account.progressPercent < 100;
-                    })
-                ) this._cfoService.instanceChangeProcess((hasTransactions) => {
-                    this.statusCheckCompleted = hasTransactions;
-                });
+                if (this.hasFailedAccounts) {
+                    this.timeoutHandler = setTimeout(
+                        () => this.requestSyncAjax(), 30 * 1000
+                    );
+                } else {
+                    this.timeoutHandler = setTimeout(
+                        () => this.getSynchProgressAjax(), 30 * 1000
+                    );
+                }
+            }
+
+            this._cfoService.instanceType = this.instanceType;
+            if (!this.statusCheckCompleted && result.accountProgresses &&
+                !result.accountProgresses.every((account) => {
+                    return account.progressPercent < 100;
+                })
+            ) this._cfoService.instanceChangeProcess((hasTransactions) => {
+                this.statusCheckCompleted = hasTransactions;
             });
+        }).fail(result => {
+            this.syncFailed = true;
+        });
     }
 
     format(value) {
@@ -106,8 +121,35 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.tooltipVisible = !this.tooltipVisible;
     }
 
+    ajaxRequest(url: string, method: string, params) {
+        let _url = AppConsts.remoteServiceBaseUrl + url;
+
+        let requestParams = {
+            instanceType: InstanceType[this.instanceType],
+            instanceId: this.instanceId
+        }
+
+        requestParams = { ...requestParams, ...params };
+        var paramKeys = Object.keys(requestParams);
+        paramKeys.forEach(key => {
+            if (key && requestParams[key] !== undefined)
+                _url += key + "=" + encodeURIComponent("" + requestParams[key]) + "&";
+        });
+        _url = _url.replace(/[?&]$/, "");
+        
+        return abp.ajax({
+            url: _url,
+            method: method,
+            headers: {
+                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie(),
+                'Authorization': 'Bearer ' + abp.auth.getToken()
+            },
+            abpHandleError: false
+        });
+    }
+
     ngOnDestroy(): void {
-        if (!this.completed) {
+        if (this.timeoutHandler) {
             clearTimeout(this.timeoutHandler);
         }
 
