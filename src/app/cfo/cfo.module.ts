@@ -70,6 +70,7 @@ import {
     DxSwitchModule
 } from 'devextreme-angular';
 import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
+import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 
 @NgModule({
     imports: [
@@ -147,7 +148,8 @@ import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-wi
         CustomersServiceProxy,
         ContactServiceProxy,
         QuovoService,
-        FinancialInformationServiceProxy
+        FinancialInformationServiceProxy,
+        CalculatorService
     ]
 })
 

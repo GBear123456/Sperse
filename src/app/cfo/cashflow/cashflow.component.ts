@@ -38,6 +38,7 @@ import DevExpress from 'devextreme/bundles/dx.all';
 import config from 'devextreme/core/config';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
+import Button from 'devextreme/ui/button';
 import Tooltip from 'devextreme/ui/tooltip';
 import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
@@ -72,6 +73,8 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/buffer';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
+
+import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
@@ -128,7 +131,7 @@ class CashflowCategorizationModel {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy ]
+    providers: [CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -613,6 +616,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Text box for modifying of the cell*/
     private modifyingCellNumberBox: NumberBox;
 
+    private functionButton: any;
+
     /** Cell input padding */
     private oldCellPadding: string;
 
@@ -727,11 +732,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _bankAccountsServiceProxy: BankAccountsServiceProxy,
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService,
-                private _appService: AppService
+                private _appService: AppService,
+                private _calculatorService: CalculatorService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+
+        _calculatorService.subscribePeriodChange((value) => {
+            this.onCalculatorValueChange(value);
+        });
     }
 
     ngOnInit() {
@@ -3483,7 +3493,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (cellObj.area === 'data') {
             this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-
+            
             $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
             cellObj.cellElement.classList.add('chosenFilterForCashFlow');
             this.selectedCell = cellObj;
@@ -3662,26 +3672,36 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         wrapper.onclick = function(ev) {
             ev.stopPropagation();
         };
-
+        let wrapperButton = document.createElement('div');
+        wrapperButton.onclick = function (ev) {
+            ev.stopPropagation();
+        };
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
             format: '$ #,###.##',
-            onEnterKey: this.saveForecast.bind(this, cellObj),
-            onFocusOut: this.saveForecast.bind(this, cellObj)
+            onEnterKey: this.saveForecast.bind(this, cellObj)
         });
+        this.functionButton = new Button(wrapperButton, {
+            iconSrc: 'assets/common/icons/fx.svg',
+            onClick: this.toggelCalculator.bind(this, event),
+            elementAttr: { 'class' : "function-button"}
+        });
+        element.appendChild(this.functionButton.element());
         element.appendChild(this.modifyingCellNumberBox.element());
         this.modifyingCellNumberBox.focus();
         element = null;
-        this.calculatorShowed = true;
     }
 
     removeModifyingCellNumberBox(cellObj) {
         let parent = this.modifyingCellNumberBox.element().parentElement;
         this.modifyingCellNumberBox.dispose();
         this.modifyingCellNumberBox = null;
+        this.functionButton.dispose();
+        this.functionButton = null;
         $(parent).children().show();
         parent.style.padding = this.oldCellPadding;
+        this.closeCalculator();
     }
 
     showTransactionDetail(details) {
@@ -4718,7 +4738,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    closeCalculator(e) {
+    onCloseCalculator(e) {
+        this.closeCalculator();
+    }
+
+    closeCalculator() {
         this.calculatorShowed = false;
+        if (this.modifyingCellNumberBox) {
+            this.modifyingCellNumberBox.focus();
+        }        
+    }
+
+    toggelCalculator(e) {
+        this.calculatorShowed = !this.calculatorShowed;
+    }
+
+    onCalculatorValueChange(value) {
+        this.modifyingCellNumberBox.option('value', value);
     }
 }

@@ -1,14 +1,14 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, Injector } from '@angular/core';
 import { CalculatorService } from './calculator-widget.service';
+import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 
 @Component({
     selector: 'calculator-widget',
     templateUrl: './calculator-widget.component.html',
-    styleUrls: ['./calculator-widget.component.css'],
-    providers: [CalculatorService]
+    styleUrls: ['./calculator-widget.component.css']
 })
 
-export class CalculatorComponent {
+export class CalculatorComponent extends CFOComponentBase {
     private input: string = '';
     lastOperation: string = '';
     private OpenedBrackets: number = 0;
@@ -23,7 +23,8 @@ export class CalculatorComponent {
 
     @ViewChild('calculatorInput') calculatorInputControl: ElementRef;
 
-    constructor(private calculatorService: CalculatorService) {
+    constructor(injector: Injector, private calculatorService: CalculatorService) {
+        super(injector);
         // this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
     }
 
@@ -183,6 +184,8 @@ export class CalculatorComponent {
 
     private ShowTotal() {
         this.input = '$' + this.calcHistory[this.calcHistory.length - 1].Result;
+        let numberResult = Number(this.calcHistory[this.calcHistory.length - 1].Result.replace(',', ''));
+        this.calculatorService.valueChanged(numberResult);
     }
 
     ToggleScienticMode() {

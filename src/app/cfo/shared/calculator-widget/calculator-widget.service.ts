@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class CalculatorService {
@@ -15,9 +17,10 @@ export class CalculatorService {
     public TreeContentLog: string;
     public IsScientificModeEnabled: boolean;
 
-    constructor() {
+    constructor(injector: Injector) {
         this.BracketsPrecedenceLevel = this.BracketsPrecedenceLevelStart;
         this.IsScientificModeEnabled = false;
+        this._value = new Subject<Object>();
     }
 
     // #region "Public Functions"
@@ -262,6 +265,27 @@ export class CalculatorService {
     }
     // #endregion
     // #endregion "Private Functions"
+
+
+    private _value: Subject<Object>;
+    private _subscribers: Array<Subscription> = [];
+    
+    subscribePeriodChange(callback: (value: Object) => any) {
+        this._subscribers.push(
+            this._value.asObservable().subscribe(callback)
+        );
+    }
+
+    valueChanged(value) {
+        this._value.next(value);
+    }
+
+    unsubscribe() {
+        this._subscribers.map((sub) => {
+            return void (sub.unsubscribe());
+        });
+        this._subscribers.length = 0;
+    }
 }
 
 interface ExpressionNode {
