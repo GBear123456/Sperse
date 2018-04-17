@@ -7014,6 +7014,52 @@ export class CustomerTagsServiceProxy {
         }
         return Observable.of<CustomerTagInfoDto[]>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignToCustomer(input: AssignToCustomerInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToCustomer";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToCustomer(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -28790,7 +28836,6 @@ export interface IUpdateCustomerStatusesInput {
 }
 
 export class CustomerTagInfoDto implements ICustomerTagInfoDto {
-    id: number;
     name: string;
 
     constructor(data?: ICustomerTagInfoDto) {
@@ -28804,7 +28849,6 @@ export class CustomerTagInfoDto implements ICustomerTagInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.name = data["name"];
         }
     }
@@ -28817,14 +28861,94 @@ export class CustomerTagInfoDto implements ICustomerTagInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface ICustomerTagInfoDto {
-    id: number;
+    name: string;
+}
+
+export class AssignToCustomerInput implements IAssignToCustomerInput {
+    customerId: number;
+    tags: CustomerTagInput[];
+
+    constructor(data?: IAssignToCustomerInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssignToCustomerInput {
+        let result = new AssignToCustomerInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssignToCustomerInput {
+    customerId: number;
+    tags: CustomerTagInput[];
+}
+
+export class CustomerTagInput implements ICustomerTagInput {
+    name: string;
+
+    constructor(data?: ICustomerTagInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInput {
+        let result = new CustomerTagInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInput {
     name: string;
 }
 
