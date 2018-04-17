@@ -3590,7 +3590,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
-        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && && !this.isCashflowTypeRowTotal(targetCell) && this.cellIsNotHistorical(cellObj) && !this.isAccountingRowTotal(cellObj);
+        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && !this.isCashflowTypeRowTotal(cellObj) && !this.isAccountingRowTotal(cellObj) && this.cellIsNotHistorical(cellObj);
     }
 
     /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
