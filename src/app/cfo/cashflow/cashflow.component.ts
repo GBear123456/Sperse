@@ -3511,6 +3511,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     handleCellsSelecting(cellsToCopy) {
+        this.getElementRef().nativeElement.querySelectorAll('.selectedCell').forEach(cell => {
+            if (cell !== this._cellsCopyingService.copiedCell) {
+                cell.classList.remove('selectedCell');
+            }
+        });
         if (cellsToCopy && cellsToCopy.length) {
             cellsToCopy.forEach(cell => {
                 let cellObj = this.getCellObjectFromCellElement(cell);

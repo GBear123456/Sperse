@@ -121,32 +121,32 @@ export class CellsCopyingService {
                 rightBottom: {x: copiedCellCoords.right + quarterCellWidth, y: copiedCellCoords.bottom + quarterCellHeight}
             };
             let borders = {
-                top: [
+                'top': [
                     startedMovingAreaBoundaries.leftTop.x,
                     startedMovingAreaBoundaries.leftTop.y,
                     startedMovingAreaBoundaries.rightTop.x,
                     startedMovingAreaBoundaries.rightTop.y,
                 ],
-                left: [
+                'left': [
                     startedMovingAreaBoundaries.leftTop.x,
                     startedMovingAreaBoundaries.leftTop.y,
                     startedMovingAreaBoundaries.leftBottom.x,
                     startedMovingAreaBoundaries.leftBottom.y
                 ],
-                right: [
+                'right': [
                     startedMovingAreaBoundaries.rightTop.x,
                     startedMovingAreaBoundaries.rightTop.y,
                     startedMovingAreaBoundaries.rightBottom.x,
                     startedMovingAreaBoundaries.rightBottom.y
                 ],
-                bottom: [
+                'bottom': [
                     startedMovingAreaBoundaries.leftBottom.x,
                     startedMovingAreaBoundaries.leftBottom.y,
                     startedMovingAreaBoundaries.rightBottom.x,
                     startedMovingAreaBoundaries.rightBottom.y,
                 ]
             };
-            let cellsSelectingDirection: 'top' | 'bottom' | 'left' | 'right';
+            let cellsSelectingDirection;
             if (
                 e.clientX > (copiedCellCoords.right + quarterCellWidth) ||
                 e.clientY < (copiedCellCoords.top - quarterCellHeight) ||
@@ -166,7 +166,7 @@ export class CellsCopyingService {
                 ];
                 for (let border in borders) {
                     if (this.getIntersection(mouseVector, borders[border])) {
-                        cellsSelectingDirection = <any>border;
+                        cellsSelectingDirection = this.getDirectionFromBorder(border);
                     }
                 }
             }
@@ -188,22 +188,24 @@ export class CellsCopyingService {
         let targetCellIndex = targetCell.cellIndex;
         let targetRowIndex = targetRow.rowIndex;
 
-        let rowOrCellSelecting: 'row' | 'cell' = cellsSelectingDirection === 'top' || cellsSelectingDirection === 'bottom' ? 'row' : 'cell';
-
-        let startItemIndex = rowOrCellSelecting === 'row' ? copiedRowIndex : copiedCellIndex;
-        let endItemIndex = rowOrCellSelecting === 'row' ? targetRowIndex : targetCellIndex;
-
+        let startItemIndex = cellsSelectingDirection === 'vertical' ? copiedRowIndex : copiedCellIndex;
+        let endItemIndex = cellsSelectingDirection === 'vertical' ? targetRowIndex : targetCellIndex;
         let endItemIsAfter = endItemIndex > startItemIndex;
 
         let i = endItemIsAfter ? startItemIndex + 1 : startItemIndex - 1;
         while (endItemIsAfter ? i <= endItemIndex : i >= endItemIndex) {
             let tbody = <any>targetCell.closest('tbody');
-            let newCell = rowOrCellSelecting === 'row' ? tbody.rows[i].cells[startItemIndex] : tbody.rows[startItemIndex].cells[i];
+            let stableIndex = startItemIndex === copiedRowIndex ? copiedCellIndex : copiedRowIndex;
+            let newCell = cellsSelectingDirection === 'horizontal' ? tbody.rows[stableIndex].cells[i] : tbody.rows[i].cells[stableIndex];
             if (this.selectedCellsToCopy.indexOf(newCell) === -1) {
                 this.selectedCellsToCopy.push(newCell);
             }
-            targetRowIndex > copiedRowIndex ? i++ : i--;
+            endItemIsAfter ? i++ : i--;
         }
+    }
+
+    getDirectionFromBorder(border): 'horizontal' | 'vertical' {
+        return border === 'top' || border === 'bottom' ? 'vertical' : ( border === 'left' || border === 'right' ? 'horizontal' : null );
     }
 
 }
