@@ -33,6 +33,7 @@ import * as _ from 'underscore';
 import * as moment from 'moment';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
+import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 
 @Component({
     'selector': 'app-stats',
@@ -42,6 +43,7 @@ import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
+    @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
     statsData: Array<BankAccountDailyStatDto>;
@@ -230,7 +232,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 items: [
                     {
                         name: 'reportPeriod',
-                        action: this.reportPeriodFilter.bind(this),
+                        action: this.toggleReportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
                             icon: 'assets/common/icons/report-period.svg'
@@ -318,7 +320,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 this.handleCashFlowInitialResult(result[0], result[2]);
 
                 /** Forecast models handling */
-                this.handleForecastModelResult(result[1]);                
+                this.handleForecastModelResult(result[1]);
             });
 
         this.initHeadlineConfig();
@@ -552,8 +554,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
     }
 
-    reportPeriodFilter() {
-        this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
+    toggleReportPeriodFilter() {
+        this.reportPeriodSelector.toggleReportPeriodFilter();
     }
 
     setReportPeriodFilter(period) {
@@ -574,7 +576,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         } else {
             dateFilter.items['to'].setValue('', dateFilter);
         }
-        // debugger;
         this._filtersService.change(dateFilter);
     }
 
@@ -602,20 +603,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             }
             this._filtersService.change(accountFilter);
         }
-    }
-
-    apply() {
-        let period = {
-            start: this.sliderReportPeriod.start,
-            end: this.sliderReportPeriod.end
-        };
-        this.setReportPeriodFilter(period);
-        this.reportPeriodTooltipVisible = false;
-    }
-
-    clear() {
-        this.setReportPeriodFilter({});
-        this.reportPeriodTooltipVisible = false;
     }
 
     toggleBankAccountTooltip() {
