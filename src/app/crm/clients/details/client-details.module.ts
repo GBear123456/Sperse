@@ -6,7 +6,7 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
   MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule, DxDataGridModule,
   DxTextBoxModule, DxValidatorModule, DxValidationGroupModule, DxToolbarModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -16,6 +16,7 @@ import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 
+import { NotesComponent } from './notes/notes.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -47,6 +48,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 
 @NgModule({
   declarations: [
+    NotesComponent,
     PhoneFormatPipe,
     EditContactDialog,
     EditAddressDialog,
@@ -91,6 +93,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxNumberBoxModule,
     DxScrollViewModule,
     DxToolbarModule,
+    DxDataGridModule,
     RoundProgressModule,
     DxValidationGroupModule
   ],

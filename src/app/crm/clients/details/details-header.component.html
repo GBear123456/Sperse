@@ -22,7 +22,6 @@
         <div class="organization_logo">
             <img (click)="showUploadPhotoDialog($event, true)" src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
         </div>
-        <!-- h2>{{ data?.organizationContactInfo?.fullName }}</h2 -->
 
         <h2 *ngIf="data && data?.organizationContactInfo?.fullName">
             <inplace-edit [data]="getNameInplaceEditData('organizationContactInfo')" (valueChanged)="updateCompanyName($event)" (openDialog)="showOrganizationDetails($event)"></inplace-edit>
