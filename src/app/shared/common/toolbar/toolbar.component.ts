@@ -217,13 +217,17 @@ export class ToolBarComponent extends AppComponentBase {
     }
 
     getElementAttr(item) {
-        if (item.name == 'select-box')
+        if (item.name == 'select-box') {
+            var items = item.options['items'];
             return {
                 'select-caption': item.text ? item.text + ':' : '',
-                'select-value': item.options.selectedIndex !== undefined ?
-                                item.options['items'][item.options.selectedIndex].text :
-                                item.options['items'][0].text
+                'select-value': items && items.length ? (
+                                    item.options.selectedIndex !== undefined ?
+                                    item.options['items'][item.options.selectedIndex].text :
+                                    item.options['items'][0].text
+                                ) : ''
             };
+        }
         return item.attr || {};
     }
 
@@ -250,6 +254,7 @@ export class ToolBarComponent extends AppComponentBase {
                 link.html = this.getDropDownItemTemplate(
                     link, item.options['width']);
                 link.onClick = (event) => {
+                    debugger;
                     if (item.name == 'select-box')
                         $('.dx-dropdownmenu-button[select-caption^="' + item.text + '"]')
                             .attr('select-value', event.itemData.text);

@@ -15,7 +15,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 
 import { ClientsComponent } from './clients/clients.component';
-import { CreateClientDialogComponent } from './clients/create-client-dialog.component';
+import { CreateClientDialogComponent } from './shared/create-client-dialog/create-client-dialog.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { EditionsComponent } from './editions/editions.component';

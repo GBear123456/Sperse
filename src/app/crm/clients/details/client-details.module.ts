@@ -30,8 +30,8 @@ import { VerificationChecklistComponent } from './verification-checklist/verific
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { SimilarCustomersDialogComponent } from './similar-customers-dialog/similar-customers-dialog.component';
-import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
 import { ImageCropperComponent } from 'ng2-img-cropper';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 

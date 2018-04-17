@@ -12,7 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import { CreateClientDialogComponent } from './create-client-dialog.component';
+import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { MatDialog } from '@angular/material';
 
 import { AppService } from '@app/app.service';
