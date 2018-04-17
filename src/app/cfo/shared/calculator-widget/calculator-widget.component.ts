@@ -26,6 +26,16 @@ export class CalculatorComponent extends CFOComponentBase {
     constructor(injector: Injector, private calculatorService: CalculatorService) {
         super(injector);
         // this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
+        calculatorService.subscribePeriodChange((value) => {
+            if (value) {
+                let newVal = '$' + value;
+                if (this.input !== newVal) {
+                    this.input = newVal;
+                }
+            } else {
+                this.ClearAll();
+            }
+        });
     }
 
     // For outside consumers

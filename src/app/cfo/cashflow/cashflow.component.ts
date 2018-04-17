@@ -723,6 +723,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Whether the loading of data was performed with filter */
     public filteredLoad = false;
 
+    private modifyingNumberBoxCellObj: any;
+    private modifyingNumberBoxStatsDetailFilter: any;
+
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -2837,8 +2840,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (cellObj.cell.value) {
 
                 /** add selected class */
-                $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
-                targetCell.classList.add('chosenFilterForCashFlow');
+                if (!targetCell.classList.contains('chosenFilterForCashFlow')) {
+                    $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+                    this.hideMoifyingNumberBox();
+                    targetCell.classList.add('chosenFilterForCashFlow');
+                }
                 this.movedCell = cellObj;
 
                 let dragImg = new Image();
@@ -3493,9 +3499,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (cellObj.area === 'data') {
             this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-            
-            $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
-            cellObj.cellElement.classList.add('chosenFilterForCashFlow');
+
+            if (!cellObj.cellElement.classList.contains('chosenFilterForCashFlow')) {
+                $('.chosenFilterForCashFlow').removeClass('chosenFilterForCashFlow');
+                this.hideMoifyingNumberBox();
+                cellObj.cellElement.classList.add('chosenFilterForCashFlow');
+            }
             this.selectedCell = cellObj;
 
             this.handleDoubleSingleClick(cellObj, null, this.handleDataCellDoubleClick.bind(this));
@@ -3691,6 +3700,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         element.appendChild(this.modifyingCellNumberBox.element());
         this.modifyingCellNumberBox.focus();
         element = null;
+        this.modifyingNumberBoxCellObj = cellObj;
+        this.modifyingNumberBoxStatsDetailFilter = this.statsDetailFilter;
     }
 
     removeModifyingCellNumberBox(cellObj) {
@@ -3702,6 +3713,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         $(parent).children().show();
         parent.style.padding = this.oldCellPadding;
         this.closeCalculator();
+        this.modifyingNumberBoxCellObj = null;
+        this.modifyingNumberBoxStatsDetailFilter = null;
     }
 
     showTransactionDetail(details) {
@@ -3734,22 +3747,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     saveForecast() {
         let [savedCellObj, event] = Array.from(arguments);
-        let newValue = event.component.option('value');
-        this.removeModifyingCellNumberBox(savedCellObj);
+        savedCellObj = savedCellObj || this.modifyingNumberBoxCellObj;
+        let newValue = event ? event.component.option('value') : this.modifyingCellNumberBox.option('value');
+       
         if (+newValue !== 0) {
+            abp.ui.setBusy();
             let forecastModel;
             let cashflowTypeId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
             let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
-            let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
+            let forecastedDate = this.modifyingNumberBoxStatsDetailFilter.startDate > moment(0, 'HH') ? this.modifyingNumberBoxStatsDetailFilter.startDate : moment(0, 'HH');
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
-                bankAccountId: this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
+                bankAccountId: this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
 
                 date: forecastedDate,
-                startDate: this.statsDetailFilter.startDate,
-                endDate: this.statsDetailFilter.endDate,
+                startDate: this.modifyingNumberBoxStatsDetailFilter.startDate,
+                endDate: this.modifyingNumberBoxStatsDetailFilter.endDate,
                 cashFlowTypeId: cashflowTypeId,
                 categoryId: subCategoryId || categoryId || -1,
                 transactionDescriptor: transactionDescriptor,
@@ -3777,8 +3792,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload();
+                    abp.ui.clearBusy();
                 });
         }
+        this.removeModifyingCellNumberBox(savedCellObj);
     }
 
     getCategoryValueByPrefix(path, prefix: CategorizationPrefixes) {
@@ -4750,10 +4767,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     toggelCalculator(e) {
-        this.calculatorShowed = !this.calculatorShowed;
+        if (this.calculatorShowed) {
+            this.closeCalculator();
+        } else {
+            this.calculatorShowed = true;
+            let val = this.modifyingCellNumberBox.option('value');
+            this._calculatorService.valueChanged(val);               
+        }            
     }
 
     onCalculatorValueChange(value) {
         this.modifyingCellNumberBox.option('value', value);
+    }
+
+    hideMoifyingNumberBox() {
+        if (this.modifyingNumberBoxCellObj) {
+            this.saveForecast();
+            this.closeCalculator();
+        }
     }
 }

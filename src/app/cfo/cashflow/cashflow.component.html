@@ -169,7 +169,7 @@
             </dx-pivot-grid>
         </div>
     </dx-scroll-view>
-    <div class="sidebar-calculator-widget" *ngIf="calculatorShowed">
+    <div class="sidebar-calculator-widget" [ngClass]="{'calculatorHidden': !calculatorShowed}">
         <dx-scroll-view [showScrollbar]="onHover">
             <div class="calculator-title">
                 <h3>{{l( 'Cell Calculator')}}</h3>
