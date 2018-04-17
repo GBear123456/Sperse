@@ -10095,6 +10095,68 @@ export class LeadServiceProxy {
 }
 
 @Injectable()
+export class LeadTypeServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getLeadTypes(): Observable<LeadTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/LeadType/GetLeadTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetLeadTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetLeadTypes(response_);
+                } catch (e) {
+                    return <Observable<LeadTypeDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<LeadTypeDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetLeadTypes(response: Response): Observable<LeadTypeDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LeadTypeDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<LeadTypeDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -10553,6 +10615,56 @@ export class NotesServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getNoteTypes(): Observable<NoteTypeInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNoteTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetNoteTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetNoteTypes(response_);
+                } catch (e) {
+                    return <Observable<NoteTypeInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<NoteTypeInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetNoteTypes(response: Response): Observable<NoteTypeInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(NoteTypeInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<NoteTypeInfoDto[]>(<any>null);
     }
 }
 
@@ -33848,6 +33960,45 @@ export interface IUpdateNoteInput {
     followUpDateTime: moment.Moment;
     dateTime: moment.Moment;
     addedByUserId: number;
+}
+
+export class NoteTypeInfoDto implements INoteTypeInfoDto {
+    id: string;
+    name: string;
+
+    constructor(data?: INoteTypeInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): NoteTypeInfoDto {
+        let result = new NoteTypeInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface INoteTypeInfoDto {
+    id: string;
+    name: string;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {

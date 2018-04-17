@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
-import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, CreateContactPhotoInput, 
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, SetupInput, TenantHostType, 

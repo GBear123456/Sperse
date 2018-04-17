@@ -8,7 +8,7 @@ import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationCo
     CountryServiceProxy, CountryDto, CountryStateDto, OrganizationTypeServiceProxy,
     ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
 
-import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
 
 import * as moment from 'moment';
 import * as _ from 'underscore';
