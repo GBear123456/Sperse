@@ -595,6 +595,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Marker that change its value after content is fully rendering on cashflow */
     private contentReady = false;
 
+    private gridDataExists = false;
+
     /** List of adjustments on cashflow */
     private adjustmentsList = [];
 
@@ -1206,6 +1208,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Remove cashflow events handlers */
         this.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this._appService.toolbarIsHidden = false;
         super.ngOnDestroy();
     }
 
@@ -1242,7 +1245,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             });
         }
-
+        
         let getStatsObservervables = monthlyStatsObservers.concat(dailyStatsObservers);
         Observable.forkJoin(...getStatsObservervables)
             .subscribe((result: any)  => {
@@ -1256,9 +1259,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             },
             e => {},
             () => {
-                if (!this.cashflowData || !this.cashflowData.length) {
+                if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
                     this._appService.toolbarIsHidden = true;
                 } else {
+                    this.gridDataExists = true;
+                    this._appService.toolbarIsHidden = false;
                     this.dataSource = this.getApiDataSource();
                     /** Init footer toolbar with the gathered data from the previous requests */
                     this.initFooterToolbar();
