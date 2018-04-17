@@ -6955,6 +6955,68 @@ export class CustomersServiceProxy {
 }
 
 @Injectable()
+export class CustomerTagsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTags(): Observable<CustomerTagInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/GetTags";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetTags(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTags(response_);
+                } catch (e) {
+                    return <Observable<CustomerTagInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CustomerTagInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTags(response: Response): Observable<CustomerTagInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CustomerTagInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<CustomerTagInfoDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class DashboardServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -28725,6 +28787,45 @@ export class UpdateCustomerStatusesInput implements IUpdateCustomerStatusesInput
 export interface IUpdateCustomerStatusesInput {
     customerIds: number[];
     statusId: string;
+}
+
+export class CustomerTagInfoDto implements ICustomerTagInfoDto {
+    id: number;
+    name: string;
+
+    constructor(data?: ICustomerTagInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInfoDto {
+        let result = new CustomerTagInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInfoDto {
+    id: number;
+    name: string;
 }
 
 export class AccountTotals implements IAccountTotals {
