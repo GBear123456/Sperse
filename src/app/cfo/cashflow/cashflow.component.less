@@ -139,10 +139,13 @@
                     padding: 0 !important;
                 }
 
-                &.chosenFilterForCashFlow {
+                &.selectedCell {
                     border: 1px double #f9b83a !important;
                     background-color: #fbf3e4 !important;
                     color: #333 !important;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
 
                     span {
                         color: #333 !important;
@@ -690,6 +693,7 @@
                             letter-spacing: 0.2px;
                             line-height: 23px;
                             padding-left: 19px;
+                            position: relative;
 
                             &[class*="next"] {
                                 background: @forecastDataCellBackgroundColor;
@@ -748,7 +752,7 @@
                                 text-align: right;
                             }
 
-                            &.chosenFilterForCashFlow a.dx-link {
+                            &.selectedCell a.dx-link {
                                 display: inline-block;
                             }
 
@@ -809,7 +813,7 @@
                                     background: @startedBalanceDataCellColor;
                                 }
 
-                                &.lowestOpenedCurrent:not(.chosenFilterForCashFlow) {
+                                &.lowestOpenedCurrent:not(.selectedCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                 }
                             }
@@ -818,7 +822,7 @@
                                 td {
                                     background: @startedBalanceDataCellColor;
 
-                                    &.lowestOpenedCurrent:not(.chosenFilterForCashFlow) {
+                                    &.lowestOpenedCurrent:not(.selectedCell) {
                                         background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                     }
                                 }

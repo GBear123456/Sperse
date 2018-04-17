@@ -22,6 +22,7 @@ import {AppUiCustomizationService} from './ui/app-ui-customization.service';
 import {AppAuthService} from './auth/app-auth.service';
 import {AppRouteGuard} from './auth/auth-route-guard';
 import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
+import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
 
 @NgModule({
     declarations: [
@@ -65,7 +66,8 @@ export class CommonModule {
                 AppUrlService,
                 ExportService,
                 ExportGoogleSheetService,
-                AppUiCustomizationService
+                AppUiCustomizationService,
+                CellsCopyingService
             ]
         };
     }
