@@ -3528,7 +3528,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** @todo implement */
         /** Allow copy paste only for the same cashflowTypeId and to the current or forecast periods */
         if ((targetCell.cell.rowPath[0] === PI || targetCell.cell.rowPath[0] === PE) &&
-            this.cellIsNotHistorical(targetCell)
+            this.cellIsNotHistorical(targetCell) && !this.isCashflowTypeRowTotal(targetCell) && !this.isAccountingRowTotal(targetCell)
         ) {
             let forecastsItems = this.getDataItemsByCell(this.copiedCell);
             this.moveOrCopyForecasts(forecastsItems, targetCell, 'copy');
