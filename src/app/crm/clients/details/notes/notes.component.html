@@ -17,7 +17,7 @@
         <dxi-column dataField="addedByUserName" caption="{{l('AddedBy')}}"></dxi-column>
         <dxi-column dataField="typeName" caption="{{l('Type')}}"></dxi-column>
         <dxi-column dataField="contactPhoneNumber" caption="{{l('Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-        <dxi-column dataField="contact" caption="{{l('Contact')}}"></dxi-column>
+        <dxi-column dataField="contactName" caption="{{l('Contact')}}"></dxi-column>
 
         <div *dxTemplate="let cellData of 'dateCell'">
             {{cellData.value | date: formatting.dateTime}}
