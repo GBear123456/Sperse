@@ -1,7 +1,8 @@
 <div class="wrapper">
     <div *ngIf="totalCount">
-        <span class="total-count">{{totalCount}}</span>
-        <span class="percentage">{{percentage}}</span>
+        <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
+        <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
+        <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
         <div class="round-progress">
             <dx-pie-chart [dataSource]="totalsData" 
                 [type]="'doughnut'" 

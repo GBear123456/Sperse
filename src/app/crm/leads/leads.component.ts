@@ -8,6 +8,7 @@ import {
     ViewEncapsulation,
     ViewChild
 } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -29,6 +30,8 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 import { CommonLookupServiceProxy, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+
+import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
@@ -68,22 +71,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         buttons: [
             {
                 enabled: true,
-                action: Function(),
+                action: this.createLead.bind(this),
                 lable: this.l('CreateNewLead')
             }
         ]
     };
 
     constructor(injector: Injector,
+        public dialog: MatDialog,
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _leadService: LeadServiceProxy) {
-        super(injector);
+        private _leadService: LeadServiceProxy
+    ) {
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
         this.dataSource = {
             store: {
@@ -451,5 +455,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+    }
+
+    createLead() {
+        this.dialog.open(CreateClientDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                refreshParent: this.refreshDataGrid.bind(this),
+                isInLeadMode: true
+            }
+        }).afterClosed().subscribe(() => this.refreshDataGrid())
     }
 }

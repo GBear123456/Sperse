@@ -596,6 +596,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Marker that change its value after content is fully rendering on cashflow */
     private contentReady = false;
 
+    private gridDataExists = false;
+
     /** List of adjustments on cashflow */
     private adjustmentsList = [];
 
@@ -1216,6 +1218,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Remove cashflow events handlers */
         this.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this._appService.toolbarIsHidden = false;
         super.ngOnDestroy();
     }
 
@@ -1266,9 +1269,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             },
             e => {},
             () => {
-                if (!this.cashflowData || !this.cashflowData.length) {
+                if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
                     this._appService.toolbarIsHidden = true;
                 } else {
+                    this.gridDataExists = true;
+                    this._appService.toolbarIsHidden = false;
                     this.dataSource = this.getApiDataSource();
                     /** Init footer toolbar with the gathered data from the previous requests */
                     this.initFooterToolbar();
@@ -3585,7 +3590,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
-        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && this.cellIsNotHistorical(cellObj);
+        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && && !this.isCashflowTypeRowTotal(targetCell) && this.cellIsNotHistorical(cellObj) && !this.isAccountingRowTotal(cellObj);
     }
 
     /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
@@ -3742,9 +3747,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (height) {
                 let cashflowWrapElement = <HTMLElement>document.querySelector('.cashflow-wrap');
                 cashflowWrapElement.style.height = height + 'px';
-                this.handleBottomHorizontalScrollPosition();
-                this.handleVerticalScrollPosition();
             }
+            this.handleBottomHorizontalScrollPosition();
+            this.handleVerticalScrollPosition();
         }, 0);
     }
 

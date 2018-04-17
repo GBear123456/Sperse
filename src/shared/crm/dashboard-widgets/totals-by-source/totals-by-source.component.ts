@@ -14,7 +14,15 @@ import * as _ from "underscore";
 export class TotalsBySourceComponent extends AppComponentBase implements OnInit {
     totalsData: any;
     totalCount = 0;
+
+    rangeColors = [
+        '#F9B65C', '#98D66B', '#ED9757', '#5baae0'
+    ];
+
     percentage: string;
+    rangeCount: number;
+    rangeName: string;
+    rangeColor: string;
 
     constructor(
         injector: Injector,
@@ -28,12 +36,15 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
                 period && period.from, period && period.to)
                     .subscribe((result) => {
                         this.totalCount = 0;
-                        result.forEach((item) => {
+                        this.totalsData = result.sort((a, b) => {
+                            return (parseInt(a.companySizeRange) || Infinity) > 
+                                (parseInt(b.companySizeRange) || Infinity) ? 1: -1;
+                        });
+                        this.totalsData.forEach((item) => {
                             if (!item.companySizeRange)
                                 item.companySizeRange = 'Unknown';
                             this.totalCount += item.customerCount;
                         });
-                        this.totalsData = result;
                     }
             )
         });
@@ -50,20 +61,16 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
     }
 
     customizePoint = (data) => {
-        let color = [
-            '#F9B65C',
-            '#98D66B',
-            '#ED9757'
-        ][data.index];
-
-        if (color)
-            return {    
-                color: color
-            }
+        return {    
+            color: this.rangeColors[data.index]
+        }
     }
 
     onPointHoverChanged($event) {
-        this.percentage = $event.target.fullState ? 
-            ($event.target.percent * 100).toFixed(2) + '%': '';
+        let isHoverIn = $event.target.fullState, item = $event.target;
+        this.percentage = isHoverIn ? (item.percent * 100).toFixed(1) + '%': '';
+        this.rangeCount = (isHoverIn ? item.initialValue: this.totalCount).toLocaleString('en'); 
+        this.rangeColor = isHoverIn ? this.rangeColors[item.index]: undefined;
+        this.rangeName = item.argument;
     }
 }

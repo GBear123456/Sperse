@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto, SimilarCustomerOutput, ContactPhotoInput, 
-    PersonInfoDto } from '@shared/service-proxies/service-proxies';
+    PersonInfoDto, LeadTypeServiceProxy} from '@shared/service-proxies/service-proxies';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -13,8 +13,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
-import { UploadPhotoDialogComponent } from './details/upload-photo-dialog/upload-photo-dialog.component';
-import { SimilarCustomersDialogComponent } from './details/similar-customers-dialog/similar-customers-dialog.component';
+import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';
+import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -23,7 +23,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy ]
+    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadTypeServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
@@ -40,10 +40,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     
     saveButtonId: string = 'saveClientOptions';
-    saveContextMenuItems = [
-        {text: this.l('SaveAndAddNew'), selected: false}, 
-        {text: this.l('SaveAndExtend'), selected: false}
-    ];
+    saveContextMenuItems = [];
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
@@ -58,14 +55,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneValidator: any;
 
     emails = {};
-    emailTypeDefault = 'P';
+    emailTypePersonalDefault = 'P';
+    emailTypeBusinessDefault = 'A';
     emailType = {
-        personal: this.emailTypeDefault
+        personal: this.emailTypePersonalDefault,
+        business: this.emailTypeBusinessDefault
     };
     phones = {};
-    phoneTypeDefault = 'M';
+    phoneTypePersonalDefault = 'M';
+    phoneTypeBusinessDefault = 'F';
     phoneType = {
-        personal: this.phoneTypeDefault
+        personal: this.phoneTypePersonalDefault,
+        business: this.phoneTypeBusinessDefault
     };
     phoneExtension = {};
     phoneTypes: any = [];
@@ -103,43 +104,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     similarCustomers: SimilarCustomerOutput[];
     similarCustomersDialog: any;
+    toolbarConfig = [];
+    selectedLeadTypeId: number; 
 
-    toolbarConfig = [
-        {
-            location: 'after', items: [
-            {name: 'assign'},
-            {
-                name: 'status',
-                widget: 'dxDropDownMenu',
-                options: {
-                    hint: 'Status',
-                    items: [
-                        {
-                            action: Function(),
-                            text: 'Active',
-                        }, {
-                            action: Function(),
-                            text: 'Inactive',
-                        }
-                    ]
-                }
-            },
-            {
-                name: 'discard',
-                action: this.resetFullDialog.bind(this)
-            }
-        ]
-        },
-        {
-            location: 'after',
-            areItemsDependent: true,
-            items: [
-                {name: 'folder'},
-                {name: 'pen'}
-            ]
-        }
-    ];
-
+    private leadTypesModel: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private namePattern = AppConsts.regexPatterns.name;
     private validationError: string;
 
@@ -153,6 +121,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
+        private _leadTypeService: LeadTypeServiceProxy,
         private _router: Router,
         private _nameParser: NameParserService
     ) {
@@ -162,10 +131,89 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.googleAutoComplete = Boolean(window['google']);
         this._cacheService = this._cacheService.useStorage(0);
 
+        this.saveContextMenuItems = [
+            {text: this.l('SaveAndAddNew'), selected: false}, 
+            {text: this.l('SaveAndExtend'), selected: false},
+            {text: this.l('SaveAndClose'), selected: false}
+        ];
+
         this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
         this.emailTypesLoad();
+        this.initToolbarConfig();
+    }
+
+    loadLeadTypes() {
+        this.leadTypesModel.items = [ { id: null, text: this.l('LeadTypeNone') } ];
+        this.leadTypesModel.selectedItemIndex = 0;
+        this._leadTypeService.getLeadTypes().subscribe((result) => {
+            result.forEach(leadType => {
+                this.leadTypesModel.items.push({
+                    id: leadType.id,
+                    text: leadType.name
+                });  
+            });
+            this.initToolbarConfig();
+        });
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'after', items: [
+                    {
+                        name: 'select-box',
+                        text: this.l('LeadType'),
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('LeadType'),
+                            items: this.leadTypesModel.items,
+                            selectedIndex: this.leadTypesModel.selectedItemIndex,
+                            width: 230,
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.changeSelectedLeadType(e.itemData);
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                {name: 'assign'},
+                {
+                    name: 'status',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: 'Status',
+                        items: [
+                            {
+                                action: Function(),
+                                text: 'Active',
+                            }, {
+                                action: Function(),
+                                text: 'Inactive',
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: 'discard',
+                    action: this.resetFullDialog.bind(this)
+                }
+            ]
+            },
+            {
+                location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {name: 'folder'},
+                    {name: 'pen'}
+                ]
+            }
+        ];
     }
 
     saveOptionsInit() {
@@ -195,6 +243,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             class: 'primary menu',
             action: this.save.bind(this)
         }];
+        this.loadLeadTypes();
         this.saveOptionsInit();
     }
 
@@ -209,7 +258,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     save(event): void {     
-        if (event.offsetX > 85)
+        if (event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
@@ -219,6 +268,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (!this.person.firstName || !this.person.lastName) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsRequired'));
+        }
+
+        if (this.data.isInLeadMode && !this.selectedLeadTypeId) {
+            return this.notify.error(this.l('LeadTypeIsRequired'));
         }
 
         this.checkAddContactByField('emails');
@@ -255,8 +308,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     this.data.refreshParent();
                     this.resetFullDialog();
                     this.notify.info(this.l('SavedSuccessfully'));
-                } else
+                } else if (this.saveContextMenuItems[1].selected)
                     this.redirectToContactInformation(result.id);
+                else {
+                    this.data.refreshParent();
+                    this.close();
+                }
             }
         );
     }
@@ -596,13 +653,16 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.addButtonVisible[type]['phones'] = false;
             this.contacts.emails[type] = [];
             this.contacts.phones[type] = [];
+            this.phoneExtension[type] = undefined;
             this.contacts.addresses[type] = {};
             this.notes[type] = undefined;
         });
 
-        this.emailType.personal = this.emailTypeDefault;
-        this.phoneType.personal = this.phoneTypeDefault;
-        this.setDefaultTypeValue(this.contacts.addresses, this.addressTypes, 'addressType');
+        this.emailType.personal = this.emailTypePersonalDefault;
+        this.phoneType.personal = this.phoneTypePersonalDefault;
+        this.emailType.business = this.emailTypeBusinessDefault;
+        this.phoneType.business = this.phoneTypeBusinessDefault;
+        this.addressTypesLoad();
         this.data.title = undefined;
         this.data.isTitleValid = true;
         this.company = undefined;
@@ -618,6 +678,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         $event.component.option('selectedItem', option);
 
         this.updateSaveOption(option);
+    }
+
+    changeSelectedLeadType(leadType) {
+        this.selectedLeadTypeId = leadType.id;
     }
 
     onFullNameKeyUp(event) {

@@ -1,7 +1,8 @@
 <div class="synch-progress-wrapper">
     <div class="synch-container">
-        <div *ngIf="!completed && synchData && !syncFailed" id="synchProgressContainer" (mouseenter)="toggleTooltip()">
-            <div class="loadindicator" [class.error]="hasFailedAccounts"></div>
+        <div *ngIf="!syncFailed && ((!completed && synchData) || (completed && hasFailedAccounts))" id="synchProgressContainer" (mouseenter)="toggleTooltip()">
+            <div *ngIf="!completed" class="loadindicator" [class.error]="hasFailedAccounts"></div>
+            <i *ngIf="completed" class="fa fa-exclamation-triangle warning-icon"></i>
             <h3>{{l('Sync_status')}}</h3>
             <dx-progress-bar #progressBar
                              id="progress-bar-status"
@@ -15,7 +16,7 @@
         </div>
         <div *ngIf="syncFailed">
             <i class="fa fa-exclamation-triangle warning-icon"></i>
-            <h3>Synchronization failed</h3>
+            <h3>{{l('Accounts_synchronization_failed')}}</h3>
         </div>
     </div>
 
@@ -34,7 +35,7 @@
                                 <ul class="list-of-synch-accounts">
                                     <li *ngFor="let acc of synchData.accountProgresses"
                                         [class]="'clearfix ' + acc.syncStatus | lowercase"
-                                        [attr.data-errormsg]="acc.syncStatusMessage">
+                                        [attr.data-msg]="acc.syncStatusMessage">
                                         <span class="name">{{ acc.accountName }}:</span>
                                         <span class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
                                     </li>
@@ -61,8 +62,11 @@
 
                             <div class="progress-description">
                                 <div class="progress-description-arrow"></div>
-                                <div class="progress-description-header">{{l('Accounts_synchronization_in_progress')}}</div>
-                                <div class="progress-description-text">{{l('Accounts_synchronization_in_progress_description')}}</div>
+                                <div *ngIf="completed" class="progress-description-header">{{l('Accounts_synchronization_completed')}}</div>
+                                <ng-container *ngIf="!completed">
+                                    <div class="progress-description-header">{{l('Accounts_synchronization_in_progress')}}</div>
+                                    <div class="progress-description-text">{{l('Accounts_synchronization_in_progress_description')}}</div>
+                                </ng-container>
                             </div>
                         </div>
                     </div>

@@ -180,7 +180,6 @@
                 font-weight: 600;
                 line-height: 1.21;
                 color: #35c8a8;
-                margin-bottom: 17px;
             }
 
             .progress-description-text {
@@ -189,6 +188,7 @@
                 font-weight: 300;
                 line-height: 1.5;
                 letter-spacing: 0.2px;
+                margin-top: 17px;
             }
         }
 
@@ -248,24 +248,23 @@
                     .name::before {
                         background-color: #f05b2a;
                     }
+                }
 
-                    &:hover {
-                        &::before {
-                            content: attr(data-errormsg);
-                            background: #fff;
-                            display: block;
-                            width: auto;
-                            height: auto;
-                            padding: 8px;
-                            font-size: 13px;
-                            color: red;
-                            border-radius: 3px;
-                            border: 1px solid #ddd;
-                            position: absolute;
-                            top: 25px;
-                            left: 0;
-                            z-index: 10;
-                        }
+                &:hover {
+                    &::before {
+                        content: attr(data-msg);
+                        background: #fff;
+                        display: block;
+                        width: auto;
+                        height: auto;
+                        padding: 8px;
+                        font-size: 13px;
+                        border-radius: 3px;
+                        border: 1px solid #ddd;
+                        position: absolute;
+                        top: 25px;
+                        left: 0;
+                        z-index: 10;
                     }
                 }
 

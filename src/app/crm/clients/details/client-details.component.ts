@@ -68,6 +68,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         
         this.paramsSubscribe.push(this._route.params
             .subscribe(params => {
+                _customerService['data'].customerInfo = {
+                    id: params['clientId']
+                };
                 this.fillCustomerDetails(params['clientId']);
         }));
 

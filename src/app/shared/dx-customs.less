@@ -86,6 +86,17 @@ input.form-control {
 }
 
 .dx-widget {
+    .dx-header-filter {
+        &:before {
+            content: ''!important;
+            top: 1px;
+            width: 15px;
+            height: 14px;
+            position: relative;
+            display: inline-block;        
+            background: url('../../assets/common/icons/header-filter.svg') no-repeat center;        
+        }
+    }
     .dx-sort-up, .dx-sort-down {
         font: initial!important;
         &:before {
