@@ -2722,7 +2722,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** add draggable and droppable attribute to the cells that can be dragged */
-        if (this.cellCanBeDragged(e)) {
+        if (this.isEnableForecastAdding() && this.cellCanBeDragged(e)) {
             e.cellElement.setAttribute('draggable', 'true');
             e.cellElement.setAttribute('droppable', 'false');
         }
@@ -3590,7 +3590,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
-        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && !this.isCashflowTypeRowTotal(cellObj) && !this.isAccountingRowTotal(cellObj) && this.cellIsNotHistorical(cellObj);
+        return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE)
+            && this.isEnableForecastAdding()
+            && !this.isCashflowTypeRowTotal(cellObj) && !this.isAccountingRowTotal(cellObj) && this.cellIsNotHistorical(cellObj);
     }
 
     /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
