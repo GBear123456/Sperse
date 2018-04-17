@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../dashboard.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -14,6 +14,7 @@ import * as moment from 'moment';
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
+    @Input() waitForBankAccounts = false;
 
     accountsData: any;
     bankAccountIds: number[] = [];
@@ -53,20 +54,24 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
-            .subscribe((result) => {
-                this.accountsData = result;
-            });
+        if (!this.waitForBankAccounts) {
+            this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
+                .subscribe((result) => {
+                    this.accountsData = result;
+                });
+        }
     }
 
     getDailyStats(): void {
-        this.startLoading();
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
-            .subscribe(result => {
-                this.dailyStatsData = result;
-                this.setDailyStatsAmount();
-            }, () => this.finishLoading(),
-               () => this.finishLoading());
+        if (!this.waitForBankAccounts) {
+            this.startLoading();
+            this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
+                .subscribe(result => {
+                    this.dailyStatsData = result;
+                    this.setDailyStatsAmount();
+                }, () => this.finishLoading(),
+                () => this.finishLoading());
+        }
     }
 
     navigateTo() {
@@ -74,6 +79,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
+        this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
         this.getAccountTotals();
 
@@ -89,47 +95,19 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.setDailyStatsAmount();
     }
 
-    onDailyStatsPeriodChanged(value = '') {
-        let startDate: moment.Moment = moment().utc();
-        let endDate: moment.Moment = moment().utc();
+    onDailyStatsPeriodChanged(period) {
+        let currentDate = moment().utc().startOf('day');
 
-        switch (value) {
-            case this.l('Today'):
-                startDate.startOf('day');
-                endDate.startOf('day');
-                break;
-            case this.l('Yesterday'):
-                startDate.subtract(1, 'day').startOf('day');
-                endDate.subtract(1, 'day').endOf('day');
-                break;
-            case this.l('This_Week'):
-                startDate.startOf('week');
-                endDate.startOf('day');
-                break;
-            case this.l('This_Month'):
-                startDate.startOf('month');
-                endDate.startOf('day');
-                break;
-            case this.l('Last_Month'):
-                startDate.subtract(1, 'month').startOf('month');
-                endDate = startDate.clone().endOf('month');
-                break;
-            case this.l('This_Year'):
-                startDate.startOf('year');
-                endDate.startOf('day');
-                break;
-            case this.l('Last_Year'):
-                startDate.subtract(1, 'year').startOf('year');
-                endDate = startDate.clone().endOf('year');
-                break;
-            default:
-                startDate = null;
-                endDate.startOf('day');
-                break;
+        if (period) {
+            this.startDate = period.from ? period.from.startOf('day') : null;
+            this.endDate = period.to ? period.to.startOf('day') : null;
+
+            this.endDate = !this.endDate || currentDate.isBefore(this.endDate) ? currentDate : this.endDate;
+            this.startDate = this.startDate && this.endDate.isBefore(this.startDate) ? this.endDate : this.startDate;
+        } else {
+            this.startDate = null;
+            this.endDate = currentDate;
         }
-
-        this.startDate = startDate;
-        this.endDate = endDate;
 
         this.getDailyStats();
     }

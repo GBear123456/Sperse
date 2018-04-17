@@ -52,7 +52,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     ];
 
     private rootComponent: any;
-    private paramsSubscribe: any;
+    private paramsSubscribe: any = [];
+    private referrerURI: string;
 
     constructor(injector: Injector,
                 private _router: Router,
@@ -63,18 +64,28 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         _customerService['data'] = {customerInfo: null};
         this.rootComponent = this.getRootComponent();
-        this.paramsSubscribe = this._route.params.subscribe(params => {
-            this.fillCustomerDetails(params['clientId']);
-        });
+
+        
+        this.paramsSubscribe.push(this._route.params
+            .subscribe(params => {
+                this.fillCustomerDetails(params['clientId']);
+        }));
+
+        this.paramsSubscribe.push(this._route.queryParams
+            .subscribe(params => {
+                this.referrerURI = params['referrer'];
+        }));
     }
 
     private fillCustomerDetails(customerId) {
+        this.startLoading(true);
         this.customerId = customerId;
         this._customerService.getCustomerInfo(this.customerId).subscribe(responce => {
             this._customerService['data'].customerInfo = responce;
             this.primaryContact = responce.primaryContactInfo;
             this.customerInfo = responce;
             this.initVerificationChecklist();
+            this.finishLoading(true);
         });
     }
 
@@ -130,7 +141,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     close() {
         this._dialog.closeAll();
-        this._router.navigate(['app/crm/clients']);
+        this._router.navigate([this.referrerURI || 'app/crm/clients']);
     }
 
     closeEditDialogs(event) {
@@ -158,7 +169,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     ngOnDestroy() {
         this._dialog.closeAll();
-        this.paramsSubscribe.unsubscribe();
+        this.paramsSubscribe.forEach((sub) => sub.unsubscribe());
         this.rootComponent.overflowHidden();
         this.rootComponent.pageHeaderFixed(true);
     }

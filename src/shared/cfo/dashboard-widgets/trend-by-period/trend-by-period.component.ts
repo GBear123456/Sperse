@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
@@ -25,6 +25,7 @@ import * as moment from 'moment';
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
+    @Input() waitForBankAccounts = false;
     bankAccountIds: number[] = [];
     trendData: Array<BankAccountDailyStatDto>;
     startDate: any;
@@ -176,19 +177,20 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     loadStatsData() {
-        this.startLoading();
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            'USD',
-            this.selectedForecastModelId,
-            undefined,
-            this.bankAccountIds,
-            this.startDate,
-            this.endDate,
-            undefined,
-            this.selectedPeriod.key
-        ).subscribe(result => {
+        if (!this.waitForBankAccounts) {
+            this.startLoading();
+            this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                'USD',
+                this.selectedForecastModelId,
+                undefined,
+                this.bankAccountIds,
+                this.startDate,
+                this.endDate,
+                undefined,
+                this.selectedPeriod.key
+            ).subscribe(result => {
                 if (result) {
                     let historical = [], forecast = [];
                     result.forEach(statsItem => {
@@ -223,8 +225,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     this.finishLoading();
                 }
             },
-            error => { console.log('Error: ' + error); this.finishLoading(); }
-        );
+                error => { console.log('Error: ' + error); this.finishLoading(); }
+                );
+        }
     }
 
     /**
@@ -246,61 +249,26 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             .toArray();
     }
 
-    onSelectChange(value) {
-        let period = 'month';
-        let startDate = moment().utc();
-        let endDate = moment().utc();
-        switch (value) {
-            case this.l('Today'):
-                period = 'day';
-                break;
-            case this.l('Yesterday'):
-                period = 'day';
-                startDate.subtract(1, 'day');
-                endDate.subtract(1, 'day');
-                break;
-            case this.l('This_Week'):
-                period = 'day';
-                startDate.startOf('week');
-                endDate.endOf('week');
-                break;
-            case this.l('This_Month'):
-                period = 'day';
-                startDate.startOf('month');
-                endDate.endOf('month');
-                break;
-            case this.l('Last_Month'):
-                period = 'day';
-                startDate.startOf('month').subtract(1, 'month');
-                endDate.endOf('month').subtract(1, 'month');
-                break;
-            case this.l('This_Year'):
-                startDate.startOf('year');
-                endDate.endOf('year');
-                break;
-            case this.l('Last_Year'):
-                startDate.startOf('year').subtract(1, 'year');
-                endDate.endOf('year').subtract(1, 'year');
-                break;
-            case this.l('All_Periods'):
-                period = 'all';
-                break;
-            default:
-                startDate.subtract(12, 'month');
-                break;
+    onSelectChange(period) {
+        this.startDate = period.from ? period.from.startOf('day') : null;
+        this.endDate = period.to ? period.to.startOf('day') : null;
+
+        let periodName = period.period;
+        if (periodName === 'year' || periodName === 'all') {
+            periodName = 'month';
+        } else {
+            periodName = 'day';
         }
 
-        this.startDate = (period == 'all' ? undefined : startDate.startOf('day'));
-        this.endDate = (period == 'all' ? undefined : endDate.endOf('day'));
-
         this.selectedPeriod = this.periods.find((obj) => {
-            return obj.name === (period == 'all' ? 'month': period);
+            return (obj.name === periodName);
         });
 
         this.loadStatsData();
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
+        this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
         this.loadStatsData();
     }

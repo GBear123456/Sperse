@@ -67,12 +67,12 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
 
     onRefreshClick() {
         this.initIFrame();
-        this.syncComponent.requestSync(true);
+        this.syncComponent.requestSyncAjax(true);
     }
 
     onNextClick() {
         setTimeout(() => {
-            this.syncComponent.requestSync(true);
+            this.syncComponent.requestSyncAjax(true);
             this._cfoService.instanceChangeProcess(() => {
                 this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
             });

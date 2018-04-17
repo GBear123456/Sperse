@@ -501,15 +501,6 @@ button {
     }
 
     .dx-datagrid {
-        .dx-sort::before {
-            font-family: FontAwesome;
-        }
-        .dx-sort-up::before {
-            content: '\f0d8';
-        }
-        .dx-sort-down::before {
-            content: '\f0d7';
-        }
         .dx-link {
             &.dx-link-edit {
                 text-indent: -9999px;
@@ -566,6 +557,7 @@ button {
                 font-weight: 600;
                 border: 0;
                 color: #424c56;
+                text-transform: uppercase;
                 .dx-sort-up{
                     &::before {
                         content: '\f176'

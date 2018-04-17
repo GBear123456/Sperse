@@ -66,6 +66,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     public headlineConfig = {
         names: [this.l('Leads')],
+        onRefresh: this.refreshDataGrid.bind(this),
         icon: 'basket',
         buttons: [
             {
@@ -334,7 +335,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after', items: [
-                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',

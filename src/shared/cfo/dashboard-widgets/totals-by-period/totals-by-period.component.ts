@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import { Component, Injector, OnInit, Input} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
 import {
@@ -17,6 +17,7 @@ import 'rxjs/add/operator/scan';
     providers: [BankAccountsServiceProxy]
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
+    @Input() waitForBankAccounts = false;
     bankAccountIds: number[] = [];
     totalData: any;
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
@@ -41,37 +42,38 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     loadStatsData() {
-        this.startLoading();
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            'USD',
-            undefined,
-            undefined,
-            this.bankAccountIds,
-            this.startDate,
-            this.endDate,
-            undefined,
-            this.selectedPeriod
-        )
-            .mergeMap(x => x)
-            .scan((prevStatsItem, currentStatsItem) => {
-                let credit = currentStatsItem.credit + prevStatsItem.credit;
-                let debit = currentStatsItem.debit + prevStatsItem.debit;
-                let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
-                let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
-                return {
-                    'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
-                    'endingBalance': currentStatsItem.endingBalance,
-                    'credit': credit,
-                    'debit': debit,
-                    'adjustments': adjustments,
-                    'startingBalanceAdjustments': startingBalanceAdjustments,
-                    'netChange': credit - Math.abs(debit),
-                    'date': currentStatsItem.date
-                };
-            }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
-            .subscribe(
+        if (!this.waitForBankAccounts) {
+            this.startLoading();
+            this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                'USD',
+                undefined,
+                undefined,
+                this.bankAccountIds,
+                this.startDate,
+                this.endDate,
+                undefined,
+                this.selectedPeriod
+            )
+                .mergeMap(x => x)
+                .scan((prevStatsItem, currentStatsItem) => {
+                    let credit = currentStatsItem.credit + prevStatsItem.credit;
+                    let debit = currentStatsItem.debit + prevStatsItem.debit;
+                    let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                    let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
+                    return {
+                        'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                        'endingBalance': currentStatsItem.endingBalance,
+                        'credit': credit,
+                        'debit': debit,
+                        'adjustments': adjustments,
+                        'startingBalanceAdjustments': startingBalanceAdjustments,
+                        'netChange': credit - Math.abs(debit),
+                        'date': currentStatsItem.date
+                    };
+                }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
+                .subscribe(
                 result => {
                     this.totalData = result;
                     let maxValue = Math.max(
@@ -85,68 +87,49 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 },
                 e => { this.finishLoading(); },
                 () => this.finishLoading()
-            );
+                );
+        }
     }
 
     getPercentage(maxValue, currValue) {
         return maxValue ? Math.round(Math.abs(currValue) / maxValue * 100) : 0;
     }
 
-    onValueChanged(value): void {
-        let period;
+    onValueChanged(period): void {
         let groupBy;
-        this.currentPeriod = value;
-        let startDate = moment().utc();
-        let endDate = moment().utc();
-        switch (value) {
+        switch (period.name) {
             case this.l('Today'):
-                period = 'day';
                 groupBy = 'Daily';
                 break;
             case this.l('Yesterday'):
-                period = 'day';
                 groupBy = 'Daily';
-                startDate.subtract(1, 'day');
-                endDate.subtract(1, 'day');
                 break;
             case this.l('This_Week'):
-                period = 'week';
                 groupBy = 'Weekly';
                 break;
             case this.l('This_Month'):
-                period = 'month';
                 groupBy = 'Monthly';
                 break;
             case this.l('Last_Month'):
-                period = 'month';
                 groupBy = 'Monthly';
-                startDate.subtract(1, 'month');
-                endDate.subtract(1, 'month');
                 break;
             case this.l('This_Year'):
-                period = 'year';
                 groupBy = 'Yearly';
                 break;
             case this.l('Last_Year'):
-                period = 'year';
                 groupBy = 'Yearly';
-                startDate.subtract(1, 'year');
-                endDate.subtract(1, 'year');
                 break;
             case this.l('All_Periods'):
-                period = 'all';
                 groupBy = 'Yearly';
                 break;
             default:
-                period = 'year';
                 groupBy = 'Yearly';
-                startDate.subtract(1, 'year');
-                endDate.subtract(1, 'year');
                 break;
         }
 
-        this.startDate = period !== 'all' ? startDate.startOf(period) : undefined;
-        this.endDate = period !== 'all' ? endDate.endOf(period) : undefined;
+        this.startDate = period.from ? period.from.startOf('day') : null;
+        this.endDate = period.to ? period.to.startOf('day') : null;
+
         this.selectedPeriod = String(GroupBy[groupBy]).toLowerCase();
         this.loadStatsData();
     }
@@ -160,6 +143,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
+        this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
         this.loadStatsData();
     }

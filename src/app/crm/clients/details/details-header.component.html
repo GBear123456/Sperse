@@ -5,15 +5,12 @@
     </div>
     <div class="personal_info">
         <div class="full_name">
-            <h1 *ngIf="data && data?.primaryContactInfo?.fullName; else loading">
+            <h1 *ngIf="data && data?.primaryContactInfo?.fullName">
                 <inplace-edit [data]="getNameInplaceEditData()" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
             </h1>
             <div *ngIf="data?.contactPersons?.length > 1" class="contact-persons-info" (click)="showContactPersons($event)">
                 <img src="../../../../assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
             </div>
-            <ng-template #loading>
-                <mat-progress-spinner mode="indeterminate" strokeWidth="10"></mat-progress-spinner>
-            </ng-template>
         </div>
         <div class="rating">
             <mat-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
@@ -23,9 +20,14 @@
     <div *ngIf="data?.organizationContactInfo" class="organization_info">
         <div class="delimiter"></div>
         <div class="organization_logo">
-            <img src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+            <img (click)="showUploadPhotoDialog($event, true)" src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto.thumbnail : '../../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
         </div>
-        <h2>{{ data?.organizationContactInfo?.fullName }}</h2>
+        <!-- h2>{{ data?.organizationContactInfo?.fullName }}</h2 -->
+
+        <h2 *ngIf="data && data?.organizationContactInfo?.fullName">
+            <inplace-edit [data]="getNameInplaceEditData('organizationContactInfo')" (valueChanged)="updateCompanyName($event)" (openDialog)="showOrganizationDetails($event)"></inplace-edit>
+        </h2>
+
         <div class="info-icon" (click)="showOrganizationDetails($event)">
             <img src="../../../../assets/common/icons/info-icon.svg" alt="Organization Details">
         </div>

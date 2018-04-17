@@ -91,6 +91,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     periodChanged($event) {
-        this._dashboardService.periodChanged($event.name);
+        this._dashboardService.periodChanged($event);
     }
 }

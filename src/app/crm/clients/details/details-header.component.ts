@@ -6,8 +6,9 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, CreateContactPhotoInput, ContactPhotoDto,
-    SetupInput, TenantHostType, PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, CreateContactPhotoInput, 
+    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, SetupInput, TenantHostType, 
+    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -43,6 +44,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         public dialog: MatDialog,
         private userServiceProxy: UserServiceProxy,
         private instanceServiceProxy: InstanceServiceProxy,
+        private organizationContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
@@ -89,22 +91,25 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    showUploadPhotoDialog(event) {
+    showUploadPhotoDialog(event, isCompany = undefined) {
         this.dialog.closeAll();
         this.dialog.open(UploadPhotoDialogComponent, {
             data: this.data,
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
-                let base64OrigImage = this.getBase64(result.origImage);
-                this.data.primaryContactInfo.primaryPhoto = ContactPhotoDto.fromJS({
-                    original: base64OrigImage
+                let base64OrigImage = this.getBase64(result.origImage),
+                    base64ThumbImage = this.getBase64(result.thumImage),
+                    dataField = (isCompany ? 'organization': 'primary') + 'ContactInfo';
+                this.data[dataField].primaryPhoto = ContactPhotoDto.fromJS({
+                    original: base64OrigImage,
+                    thumbnail: base64ThumbImage
                 });
                 this.contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
-                        contactId: this.data.primaryContactInfo.id,
+                        contactId: this.data[dataField].id,
                         originalImage: base64OrigImage,
-                        thumbnail: this.getBase64(result.thumImage)
+                        thumbnail: base64ThumbImage
                     })
                 ).subscribe((result) => {});
             }
@@ -117,12 +122,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 
-    getNameInplaceEditData() {
-        var primaryContactInfo = this.data && this.data.primaryContactInfo;
-        if (primaryContactInfo)
+    getNameInplaceEditData(field = 'primaryContactInfo') {
+        let contactInfo = this.data && this.data[field];
+        if (contactInfo)
             return {
-                id: primaryContactInfo.id,
-                value: primaryContactInfo.fullName,
+                id: contactInfo.id,
+                value: contactInfo.fullName,
                 validationRules: [],
                 isEditDialogEnabled: true,
                 lEntityName: "Name",
@@ -138,6 +143,17 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             position: this.getDialogPossition(event, 200)
         })
         event.stopPropagation();        
+    }
+
+    updateCompanyName(value) {
+        let data = this.data.organizationContactInfo;
+        data.organization.companyName = value;
+        this.organizationContactService.updateOrganizationInfo(
+            UpdateOrganizationInfoInput.fromJS(
+                _.extend({id: data.id}, data.organization))
+        ).subscribe(result => {
+            data.fullName = value;
+        });
     }
 
     updatePrimaryContactName(value) {

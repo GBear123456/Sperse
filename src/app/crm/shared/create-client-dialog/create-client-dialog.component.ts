@@ -29,6 +29,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
 
+    person = new PersonInfoDto();
+
     emailsPersonal: any;
     emailsBusiness: any;
     phonesPersonal: any;
@@ -38,10 +40,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     
     saveButtonId: string = 'saveClientOptions';
-    saveContextMenuItems = [
-        {text: this.l('SaveAndAddNew'), selected: false}, 
-        {text: this.l('SaveAndExtend'), selected: false}
-    ];
+    saveContextMenuItems = [];
 
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
@@ -127,6 +126,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
         this._cacheService = this._cacheService.useStorage(0);
+
+        this.saveContextMenuItems = [
+            {text: this.l('SaveAndAddNew'), selected: false}, 
+            {text: this.l('SaveAndExtend'), selected: false},
+            {text: this.l('SaveAndClose'), selected: false}
+        ];
 
         this.countriesStateLoad();
         this.addressTypesLoad();
@@ -226,6 +231,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         super.ngOnInit();
 
         this.data.editTitle = true;
+        this.data.titleClearButton = true;
         this.data.placeholder = this.l('Contact.FullName');
         this.data.buttons = [{
             id: this.saveButtonId,
@@ -248,17 +254,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     save(event): void {     
-        if (event.offsetX > 85)
+        if (event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
         if (!this.addressValidator.validate().isValid)
             return ;
-
-        let person = new PersonInfoDto();
-        this._nameParser.parseIntoPerson(this.data.title, person);
         
-        if (!person.firstName || !person.lastName) {
+        if (!this.person.firstName || !this.person.lastName) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsRequired'));
         }
@@ -275,12 +278,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
         this._customersService.createCustomer(
             CreateCustomerInput.fromJS({
-                firstName: person.firstName,
-                middleName: person.middleName,
-                lastName: person.lastName,
-                namePrefix: person.namePrefix,
-                nameSuffix: person.nameSuffix,
-                nickName: person.nickName,
+                firstName: this.person.firstName,
+                middleName: this.person.middleName,
+                lastName: this.person.lastName,
+                namePrefix: this.person.namePrefix,
+                nameSuffix: this.person.nameSuffix,
+                nickName: this.person.nickName,
                 emailAddresses: this.getEmailContactInput(ContactTypes.Personal),
                 phoneNumbers: this.getPhoneContactInput(ContactTypes.Personal),
                 address: this.getAddressContactInput(ContactTypes.Personal),
@@ -301,8 +304,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     this.data.refreshParent();
                     this.resetFullDialog();
                     this.notify.info(this.l('SavedSuccessfully'));
-                } else
+                } else if (this.saveContextMenuItems[1].selected)
                     this.redirectToContactInformation(result.id);
+                else {
+                    this.data.refreshParent();
+                    this.close();
+                }
             }
         );
     }
@@ -397,8 +404,16 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     checkSimilarCustomers() {
-        this._customersService.getSimilarCustomers(null, null, null, null, null, this.company, 
-            this.getCurrentEmails(), this.getCurrentPhones(), null, null, null, null, null)
+        this._customersService.getSimilarCustomers(
+            this.person.namePrefix,
+            this.person.firstName,
+            this.person.middleName,
+            this.person.lastName,
+            this.person.nameSuffix,
+            this.company,
+            this.getCurrentEmails(),
+            this.getCurrentPhones(),
+            null, null, null, null, null)
         .subscribe(response => {
             if (response)
                 this.similarCustomers = response;
@@ -588,6 +603,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.checkSimilarCustomers();
     }
 
+    onCommentKeyUp($event, type) {
+        this.notes[type] = $event.element.getElementsByTagName('textarea')[0].value;
+    }
+
     setComponentToValid(field, type, reset = false) {
         let component = this[field + this.capitalize(type)];
         reset && component.reset();
@@ -656,5 +675,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     changeSelectedLeadType(leadType) {
         this.selectedLeadTypeId = leadType.id;
+    }
+
+    onFullNameKeyUp(event) {
+        this.data.title = event;
+        this._nameParser.parseIntoPerson(this.data.title, this.person);
+        this.checkSimilarCustomers();
     }
 }

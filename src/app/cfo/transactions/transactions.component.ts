@@ -115,6 +115,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Transactions')],
+            onRefresh: this.refreshDataGrid.bind(this),
             iconSrc: 'assets/common/icons/credit-card-icon.svg',
             buttons: [
                 {
@@ -199,7 +200,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             },
             {
                 location: 'after', items: [
-                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',
@@ -618,14 +618,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     applyTotalBankAccountFilter(data) {
         this.setDataSource();
-
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        if (data.bankAccountIds) {
-            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+        if (!accountFilter) {
+            setTimeout(() => {
+                this.applyTotalBankAccountFilter(data);
+            }, 300);
         } else {
-            accountFilter.items['element'].setValue([], accountFilter);
+            if (data.bankAccountIds) {
+                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+            } else {
+                accountFilter.items['element'].setValue([], accountFilter);
+            }
+            this.filtersService.change(accountFilter);
         }
-        this.filtersService.change(accountFilter);
     }
 
     processFilterInternal() {

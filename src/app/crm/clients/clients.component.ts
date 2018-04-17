@@ -62,6 +62,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     public headlineConfig = {
         names: [this.l('Customers')],
         icon: 'people',
+        onRefresh: this.refreshDataGrid.bind(this),
         buttons: [
             {
                 enabled: true,
@@ -325,7 +326,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             },
             {
                 location: 'after', items: [
-                    { name: 'refresh', action: this.refreshDataGrid.bind(this) },
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',

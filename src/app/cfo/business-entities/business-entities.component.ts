@@ -129,24 +129,34 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     updateBankAccounts(bankAccountIdsForLink, bankAccountIdsForRemoveLink) {
-        let linkInput = new BusinessEntityUpdateBankAccountsInput();
-        linkInput.bankAccountIds = bankAccountIdsForLink;
-        linkInput.businessEntityId = this.lastSelectedBusinessEntity.Id;
-        linkInput.isLinked = true;
+        let updateBankAccountsObservable: Observable<void>[] = [];
 
-        let removeLinkInput = new BusinessEntityUpdateBankAccountsInput();
-        removeLinkInput.bankAccountIds = bankAccountIdsForRemoveLink;
-        removeLinkInput.businessEntityId = this.lastSelectedBusinessEntity.Id;
-        removeLinkInput.isLinked = false;
+        if (bankAccountIdsForLink.length) {
+            let linkInput = new BusinessEntityUpdateBankAccountsInput();
+            linkInput.bankAccountIds = bankAccountIdsForLink;
+            linkInput.businessEntityId = this.lastSelectedBusinessEntity.Id;
+            linkInput.isLinked = true;
 
-        Observable.forkJoin(
-            this._businessEntityService.updateBankAccounts(InstanceType[this.instanceType], this.instanceId, linkInput),
-            this._businessEntityService.updateBankAccounts(InstanceType[this.instanceType], this.instanceId, removeLinkInput)
-        )
-            .subscribe((result) => {
-                this.dataGrid.instance.refresh();
-                this.bankAccountSelector.getBankAccounts();
-                this.lastSelectedBusinessEntity = null;
-            });
+            updateBankAccountsObservable.push(this._businessEntityService.updateBankAccounts(InstanceType[this.instanceType], this.instanceId, linkInput));
+        }
+        if (bankAccountIdsForRemoveLink.length) {
+            let removeLinkInput = new BusinessEntityUpdateBankAccountsInput();
+            removeLinkInput.bankAccountIds = bankAccountIdsForRemoveLink;
+            removeLinkInput.businessEntityId = this.lastSelectedBusinessEntity.Id;
+            removeLinkInput.isLinked = false;
+
+            updateBankAccountsObservable.push(this._businessEntityService.updateBankAccounts(InstanceType[this.instanceType], this.instanceId, removeLinkInput));
+        }
+
+        if (updateBankAccountsObservable.length) {
+            Observable.forkJoin(
+                updateBankAccountsObservable
+            )
+                .subscribe((result) => {
+                    this.dataGrid.instance.refresh();
+                    this.bankAccountSelector.getBankAccounts();
+                    this.lastSelectedBusinessEntity = null;
+                });
+        }
     }
 }

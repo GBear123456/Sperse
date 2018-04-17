@@ -839,16 +839,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Cashflow_mainTitle')],
-            iconSrc: 'assets/common/icons/chart-icon.svg',
-            buttons: [
-                {
-                    enabled: this.noRefreshedAfterSync,
-                    action: this.refreshDataGrid.bind(this),
-                    lable: this.l('Refresh'),
-                    icon: 'refresh',
-                    class: 'btn-default back-button'
-                }
-            ]
+            onRefresh: this.refreshDataGrid.bind(this),
+            iconSrc: 'assets/common/icons/chart-icon.svg'
         };
     }
 
@@ -1970,18 +1962,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onScroll(e) {
-        this.handleHeaderPosition(e);
         this.handleBottomHorizontalScrollPosition();
-    }
-
-    handleHeaderPosition(e) {
-        let toolbar = <HTMLElement>document.querySelector('.page-content-wrapper app-toolbar');
-        let dxToolbar = <HTMLElement>toolbar.children[0];
-        let topIntend = toolbar.offsetTop + dxToolbar.offsetHeight;
-        $('.cashflow table.dx-pivotgrid-border > tr:nth-child(3)').offset({top: Math.floor(topIntend), left: 0});
-        let scrollElement = <HTMLElement>document.querySelector('.dx-pivotgrid-area-data .dx-scrollable-scrollbar');
-        scrollElement.style.top = e.scrollOffset + e.element.clientHeight;
-        scrollElement = null;
     }
 
     synchronizeHeaderHeightWithCashflow() {
@@ -2490,7 +2471,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cellCanBeDragged(cellObj) {
         return cellObj.area === 'data' && (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) &&
-               !(cellObj.cell.rowPath.length && cellObj.cell.rowPath.length === 2 && (!cellObj.cell.rowPath[1] || cellObj.cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
+               !(cellObj.cell.rowPath.length && cellObj.cell.rowPath.length === 2 && (cellObj.cell.rowPath[1] && cellObj.cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
                cellObj.cell.rowPath.length !== 1;
     }
 
@@ -2680,7 +2661,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** disable expanding and hide the plus button of the elements that has no children */
-        if (e.area === 'row' && e.cell.path && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
+        if (e.area === 'row' && e.cell.path && !e.cell.isWhiteSpace && e.cell.path.length !== e.component.getDataSource().getAreaFields('row').length) {
             if (!this.hasChildsByPath(e.cell.path)) {
                 this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', e.cell.path);
                 e.cellElement.classList.add('emptyChildren');
@@ -2793,18 +2774,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         textElement.style.whiteSpace = 'nowrap';
         let textWidth: number = textElement.getBoundingClientRect().width;
         /** Get the sum of widths of all cell children except text element width */
-        let anotherChildsElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
+        let anotherChildrendElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
             let computedStyles: CSSStyleDeclaration = getComputedStyle(element);
-            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight ) + parseInt(computedStyles.marginLeft) : 0);
+            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight) + parseInt(computedStyles.marginLeft) : 0);
         }, 0);
-        /** If text size is too big */
-        if ((textWidth + anotherChildsElementsWidth) > cellWidth) {
+        /** If text size is too big - truncate it */
+        if ((textWidth + anotherChildrendElementsWidth) > cellWidth) {
             e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
             textElement.classList.add('truncated');
-            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conficts */
+            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
             textElement.innerHTML = `<span>${textElement.textContent}</span>`;
             /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildsElementsWidth) + 'px';
+            textElement.style.width = (cellWidth - anotherChildrendElementsWidth) + 'px';
         }
     }
 
@@ -2972,8 +2953,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cashflowTypeId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.CashflowType);
         let categoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.Category);
         let subCategoryId = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.SubCategory);
-        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes
-.TransactionDescriptor);
+        let transactionDescriptor = this.getCategoryValueByPrefix(targetCell.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
 
         forecasts.forEach(forecast => {
             date = moment(targetCellDate.startDate);
@@ -2995,7 +2975,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     startDate: targetCellDate.startDate,
                     endDate: targetCellDate.endDate,
                     cashFlowTypeId: cashflowTypeId,
-                    categoryId: subCategoryId || categoryId || -1,
+                    categoryId: subCategoryId || categoryId,
                     transactionDescriptor: transactionDescriptor,
                     currencyId: this.currencyId,
                     amount: forecast.amount
@@ -3006,7 +2986,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     id: forecast.forecastId,
                     date: date,
                     amount: forecast.amount,
-                    categoryId: subCategoryId || categoryId || -1,
+                    categoryId: subCategoryId || categoryId,
                     transactionDescriptor: transactionDescriptor
                 });
             }
@@ -3039,7 +3019,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             /** Change forecast locally */
                             forecastInCashflow.date = moment(targetCellDate.startDate).add(timezoneOffset, 'minutes');
                             forecastInCashflow.initialDate = targetCellDate.startDate;
-                            forecastInCashflow.categoryId = categoryId || subCategoryId || -1;
+                            forecastInCashflow.categoryId = categoryId || subCategoryId;
                             forecastInCashflow.subCategoryId = subCategoryId;
                             forecastInCashflow.transactionDescriptor = transactionDescriptor;
                             forecastsInCashflow[index] = this.addCategorizationLevels(forecastInCashflow);
@@ -3697,15 +3677,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
-
+        
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
             if (height) {
                 let cashflowWrapElement = <HTMLElement>document.querySelector('.cashflow-wrap');
                 cashflowWrapElement.style.height = height + 'px';
-                this.handleBottomHorizontalScrollPosition();
-                this.handleVerticalScrollPosition();
             }
+            this.handleBottomHorizontalScrollPosition();
+            this.handleVerticalScrollPosition();
         }, 0);
     }
 
@@ -3732,7 +3712,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
-                bankAccountId: this.bankAccounts[0].id,
+                bankAccountId: this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
+
                 date: forecastedDate,
                 startDate: this.statsDetailFilter.startDate,
                 endDate: this.statsDetailFilter.endDate,
@@ -3928,7 +3909,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellPath = path.join(',');
         return path.slice(-1)[0] && this.treePathes.some(path => {
             let currentPathIndex = path.indexOf(cellPath);
-            return currentPathIndex !== -1 && !!path[currentPathIndex + cellPath.length];
+            return currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length;
         });
     }
 
@@ -4425,27 +4406,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.closeTransactionsDetail();
         }
     }
+    
+    refreshTransactionDetail(showAll = true) {
+        this.showAllVisible = this.searchValue && !showAll ?  true : false;
+        this.statsDetailFilter.searchTerm = showAll ? '' : this.searchValue;
 
-    showAll(e) {
-        this.showAllVisible = false;
-        this.statsDetailFilter.searchTerm = '';
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
             .subscribe(result => {
                 this.showTransactionDetail(result);
             });
-    }
-
-    showSearchResult(e) {
-        if (this.searchValue) {
-            this.showAllVisible = true;
-            this.statsDetailFilter.searchTerm = this.searchValue;
-            this._cashflowServiceProxy
-                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                .subscribe(result => {
-                    this.showTransactionDetail(result);
-                });
-        }
     }
 
     detailsCellIsEditable(e) {
@@ -4662,12 +4632,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
 
-        if (data.bankAccountIds) {
-            accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+        if (!accountFilter) {
+            setTimeout(() => {
+                this.setBankAccountsFilter(data);
+            }, 300);
         } else {
-            accountFilter.items['element'].setValue([], accountFilter);
+            if (data.bankAccountIds) {
+                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
+            } else {
+                accountFilter.items['element'].setValue([], accountFilter);
+            }
+            this._filtersService.change(accountFilter);
         }
-        this._filtersService.change(accountFilter);
     }
 
     discardDiscrepancy(cellObj) {

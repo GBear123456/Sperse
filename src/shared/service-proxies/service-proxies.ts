@@ -10418,17 +10418,14 @@ export class NotesServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @return Success
      */
-    getNotes(customerId: number, contactId: number): Observable<NoteInfoDto[]> {
+    getNotes(customerId: number): Observable<NoteInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
         if (customerId === undefined || customerId === null)
             throw new Error("The parameter 'customerId' must be defined and cannot be null.");
         else
             url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10618,6 +10615,56 @@ export class NotesServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getNoteTypes(): Observable<NoteTypeInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNoteTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetNoteTypes(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetNoteTypes(response_);
+                } catch (e) {
+                    return <Observable<NoteTypeInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<NoteTypeInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetNoteTypes(response: Response): Observable<NoteTypeInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(NoteTypeInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<NoteTypeInfoDto[]>(<any>null);
     }
 }
 
@@ -33693,8 +33740,12 @@ export interface IRegisterMemberRequest {
 
 export class NoteInfoDto implements INoteInfoDto {
     customerId: number;
-    contactId: number;
+    id: number;
     text: string;
+    dateTime: moment.Moment;
+    addedByUserName: string;
+    typeName: string;
+    contactPhoneNumber: string;
 
     constructor(data?: INoteInfoDto) {
         if (data) {
@@ -33708,8 +33759,12 @@ export class NoteInfoDto implements INoteInfoDto {
     init(data?: any) {
         if (data) {
             this.customerId = data["customerId"];
-            this.contactId = data["contactId"];
+            this.id = data["id"];
             this.text = data["text"];
+            this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
+            this.addedByUserName = data["addedByUserName"];
+            this.typeName = data["typeName"];
+            this.contactPhoneNumber = data["contactPhoneNumber"];
         }
     }
 
@@ -33722,22 +33777,35 @@ export class NoteInfoDto implements INoteInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["customerId"] = this.customerId;
-        data["contactId"] = this.contactId;
+        data["id"] = this.id;
         data["text"] = this.text;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["addedByUserName"] = this.addedByUserName;
+        data["typeName"] = this.typeName;
+        data["contactPhoneNumber"] = this.contactPhoneNumber;
         return data; 
     }
 }
 
 export interface INoteInfoDto {
     customerId: number;
-    contactId: number;
+    id: number;
     text: string;
+    dateTime: moment.Moment;
+    addedByUserName: string;
+    typeName: string;
+    contactPhoneNumber: string;
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
     customerId: number;
-    contactId: number;
     text: string;
+    contactId: number;
+    contactPhoneId: number;
+    typeId: string;
+    followUpDateTime: moment.Moment;
+    dateTime: moment.Moment;
+    addedByUserId: number;
 
     constructor(data?: ICreateNoteInput) {
         if (data) {
@@ -33751,8 +33819,13 @@ export class CreateNoteInput implements ICreateNoteInput {
     init(data?: any) {
         if (data) {
             this.customerId = data["customerId"];
-            this.contactId = data["contactId"];
             this.text = data["text"];
+            this.contactId = data["contactId"];
+            this.contactPhoneId = data["contactPhoneId"];
+            this.typeId = data["typeId"];
+            this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
+            this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
+            this.addedByUserId = data["addedByUserId"];
         }
     }
 
@@ -33765,16 +33838,26 @@ export class CreateNoteInput implements ICreateNoteInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["customerId"] = this.customerId;
-        data["contactId"] = this.contactId;
         data["text"] = this.text;
+        data["contactId"] = this.contactId;
+        data["contactPhoneId"] = this.contactPhoneId;
+        data["typeId"] = this.typeId;
+        data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["addedByUserId"] = this.addedByUserId;
         return data; 
     }
 }
 
 export interface ICreateNoteInput {
     customerId: number;
-    contactId: number;
     text: string;
+    contactId: number;
+    contactPhoneId: number;
+    typeId: string;
+    followUpDateTime: moment.Moment;
+    dateTime: moment.Moment;
+    addedByUserId: number;
 }
 
 export class CreateNoteOutput implements ICreateNoteOutput {
@@ -33813,9 +33896,15 @@ export interface ICreateNoteOutput {
 }
 
 export class UpdateNoteInput implements IUpdateNoteInput {
-    customerId: number;
     id: number;
+    customerId: number;
     text: string;
+    contactId: number;
+    contactPhoneId: number;
+    typeId: string;
+    followUpDateTime: moment.Moment;
+    dateTime: moment.Moment;
+    addedByUserId: number;
 
     constructor(data?: IUpdateNoteInput) {
         if (data) {
@@ -33828,9 +33917,15 @@ export class UpdateNoteInput implements IUpdateNoteInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
             this.id = data["id"];
+            this.customerId = data["customerId"];
             this.text = data["text"];
+            this.contactId = data["contactId"];
+            this.contactPhoneId = data["contactPhoneId"];
+            this.typeId = data["typeId"];
+            this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
+            this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
+            this.addedByUserId = data["addedByUserId"];
         }
     }
 
@@ -33842,17 +33937,68 @@ export class UpdateNoteInput implements IUpdateNoteInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
         data["id"] = this.id;
+        data["customerId"] = this.customerId;
         data["text"] = this.text;
+        data["contactId"] = this.contactId;
+        data["contactPhoneId"] = this.contactPhoneId;
+        data["typeId"] = this.typeId;
+        data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["addedByUserId"] = this.addedByUserId;
         return data; 
     }
 }
 
 export interface IUpdateNoteInput {
-    customerId: number;
     id: number;
+    customerId: number;
     text: string;
+    contactId: number;
+    contactPhoneId: number;
+    typeId: string;
+    followUpDateTime: moment.Moment;
+    dateTime: moment.Moment;
+    addedByUserId: number;
+}
+
+export class NoteTypeInfoDto implements INoteTypeInfoDto {
+    id: string;
+    name: string;
+
+    constructor(data?: INoteTypeInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): NoteTypeInfoDto {
+        let result = new NoteTypeInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface INoteTypeInfoDto {
+    id: string;
+    name: string;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
