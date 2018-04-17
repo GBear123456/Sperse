@@ -55,14 +55,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneValidator: any;
 
     emails = {};
-    emailTypeDefault = 'P';
+    emailTypePersonalDefault = 'P';
+    emailTypeBusinessDefault = 'A';
     emailType = {
-        personal: this.emailTypeDefault
+        personal: this.emailTypePersonalDefault,
+        business: this.emailTypeBusinessDefault
     };
     phones = {};
-    phoneTypeDefault = 'M';
+    phoneTypePersonalDefault = 'M';
+    phoneTypeBusinessDefault = 'F';
     phoneType = {
-        personal: this.phoneTypeDefault
+        personal: this.phoneTypePersonalDefault,
+        business: this.phoneTypeBusinessDefault
     };
     phoneExtension = {};
     phoneTypes: any = [];
@@ -649,13 +653,16 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.addButtonVisible[type]['phones'] = false;
             this.contacts.emails[type] = [];
             this.contacts.phones[type] = [];
+            this.phoneExtension[type] = undefined;
             this.contacts.addresses[type] = {};
             this.notes[type] = undefined;
         });
 
-        this.emailType.personal = this.emailTypeDefault;
-        this.phoneType.personal = this.phoneTypeDefault;
-        this.setDefaultTypeValue(this.contacts.addresses, this.addressTypes, 'addressType');
+        this.emailType.personal = this.emailTypePersonalDefault;
+        this.phoneType.personal = this.phoneTypePersonalDefault;
+        this.emailType.business = this.emailTypeBusinessDefault;
+        this.phoneType.business = this.phoneTypeBusinessDefault;
+        this.addressTypesLoad();
         this.data.title = undefined;
         this.data.isTitleValid = true;
         this.company = undefined;
