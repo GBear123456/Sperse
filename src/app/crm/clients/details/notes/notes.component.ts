@@ -40,7 +40,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, AfterVie
     ngOnInit() {
         this.data = this._customerService['data'];
         this._notesService.getNotes(this.data.customerInfo.id).subscribe((result) => {
-            console.log(result);
             this.dataSource = result;
         });
     }
