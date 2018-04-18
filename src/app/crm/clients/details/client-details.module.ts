@@ -4,10 +4,10 @@ import { CommonModule } from '@angular/common';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
-  MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
+    MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule, DxDataGridModule,
-  DxTextBoxModule, DxValidatorModule, DxValidationGroupModule, DxToolbarModule } from 'devextreme-angular';
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule, DxDataGridModule, DxDateBoxModule,
+    DxTextBoxModule, DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -17,6 +17,7 @@ import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 
 import { NotesComponent } from './notes/notes.component';
+import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -46,8 +47,8 @@ import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
-  ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
-  OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy } from '@shared/service-proxies/service-proxies';
+    ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
+    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { PhoneFormatPipe } from './phone-format.pipe';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -83,7 +84,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     ContactPersonsDialogComponent,
     ImageCropperComponent,
     UploadPhotoDialogComponent,
-    SimilarCustomersDialogComponent
+    SimilarCustomersDialogComponent,
+    NoteAddDialogComponent
   ],
   imports: [
     FormsModule,
@@ -106,6 +108,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxScrollViewModule,
     DxToolbarModule,
     DxDataGridModule,
+    DxTextAreaModule,
+    DxDateBoxModule,
     RoundProgressModule,
     DxValidationGroupModule
   ],
@@ -123,7 +127,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     UploadPhotoDialogComponent,
-    SimilarCustomersDialogComponent
+    SimilarCustomersDialogComponent,
+    NoteAddDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent

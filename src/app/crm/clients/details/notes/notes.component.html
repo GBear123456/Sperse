@@ -29,6 +29,9 @@
         <div *dxTemplate="let data of 'title'">
             <h2 class="title">{{l('Notes')}}</h2>
         </div>
+        <div *dxTemplate="let data of 'addButton'">
+            <button class="add-new-note" (click)="showAddNoteDialog($event)">+&nbsp;{{l('AddNew')}}</button>
+        </div>
 
         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 

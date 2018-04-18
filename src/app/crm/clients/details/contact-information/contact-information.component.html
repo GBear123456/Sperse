@@ -3,15 +3,15 @@
     <dx-scroll-view showScrollbar="onHover">
       <div class="row">
         <div class="col-md-12">
-          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></contacts>
+          <contacts [contactInfoData]="data?.customerInfo?.primaryContactInfo?.details"></contacts>
         </div>
       </div>
       <div class="row">
         <div class="col-md-6">
-          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></addresses>
+          <addresses [contactInfoData]="data?.customerInfo?.primaryContactInfo?.details"></addresses>
         </div>
         <div class="col-md-6">
-          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo.details"></socials>
+          <socials [contactInfoData]="data?.customerInfo?.primaryContactInfo?.details"></socials>
         </div>
       </div>
     </dx-scroll-view>
