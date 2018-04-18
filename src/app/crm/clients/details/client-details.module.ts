@@ -6,7 +6,7 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
   MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule,
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule, DxDataGridModule,
   DxTextBoxModule, DxValidatorModule, DxValidationGroupModule, DxToolbarModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -16,6 +16,7 @@ import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 
+import { NotesComponent } from './notes/notes.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -30,8 +31,8 @@ import { VerificationChecklistComponent } from './verification-checklist/verific
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { SimilarCustomersDialogComponent } from './similar-customers-dialog/similar-customers-dialog.component';
-import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
 import { ImageCropperComponent } from 'ng2-img-cropper';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
@@ -47,6 +48,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 
 @NgModule({
   declarations: [
+    NotesComponent,
     PhoneFormatPipe,
     EditContactDialog,
     EditAddressDialog,
@@ -91,6 +93,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxNumberBoxModule,
     DxScrollViewModule,
     DxToolbarModule,
+    DxDataGridModule,
     RoundProgressModule,
     DxValidationGroupModule
   ],

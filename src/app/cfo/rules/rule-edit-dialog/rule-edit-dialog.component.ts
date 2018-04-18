@@ -533,7 +533,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
     
     onCustomAttributeCreating($event, cell) {
-        cell.setValue($event.text);
+        setTimeout(() => {
+            cell.setValue($event.text);
+        });
+    }
+
+    attributeValueValueChanged($event, cell) {
+        cell.setValue($event.value, $event.value);
     }
 
     onAttributeKeyEnter($event, cell) {

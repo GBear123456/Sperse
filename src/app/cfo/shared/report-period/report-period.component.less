@@ -1,0 +1,43 @@
+.report-period-tooltip-container {
+    font-size: 15px;
+    width: 275px;
+    
+    .title {
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    .start, .end {
+        border: 1px solid #ddd;
+        padding: 0 10px;
+        font-size: 30px;
+        color: #000;
+        margin: 0 10px;
+    }
+    
+    dx-range-slider {
+        margin-top: 15px;
+    }
+    
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+        
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }
+    
+    /deep/ .dx-slider-bar {
+        height: 2px;
+        
+        .dx-slider-handle {
+            width: 9px;
+        }
+    }
+}

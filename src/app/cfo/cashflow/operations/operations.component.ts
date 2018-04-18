@@ -4,6 +4,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { DxRangeSliderComponent } from 'devextreme-angular';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import {ReportPeriodComponent} from "@app/cfo/shared/report-period/report-period.component";
 
 @Component({
     selector: 'cashflow-operations',
@@ -13,6 +14,7 @@ import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select
 
 export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
+    @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     private initTimeout: any;
     private initReportPeriodTimeout: any;
     private initSelectedBankAccountsTimeout: any;
@@ -49,7 +51,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() onSelectedBankAccountsChange: EventEmitter<any> = new EventEmitter();
 
     bankAccountCount = '';
-    reportPeriodTooltipVisible: boolean = false;
     sliderReportPeriod = {
         start: null,
         end: null,
@@ -113,7 +114,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'reportPeriod',
-                        action: this.reportPeriodFilter.bind(this),
+                        action: this.toggleReportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
                             icon: 'assets/common/icons/report-period.svg'
@@ -335,27 +336,12 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         this.onRefresh.emit();
     }
 
-    reportPeriodFilter() {
-        this.reportPeriodTooltipVisible = !this.reportPeriodTooltipVisible;
+    toggleReportPeriodFilter() {
+        this.reportPeriodSelector.toggleReportPeriodFilter();
     }
 
-    reportPeriodChange() {
-        let period = {
-            start: this.sliderReportPeriod.start,
-            end: this.sliderReportPeriod.end
-        };
-
+    reportPeriodChange(period) {
         this.onReportPeriodChange.emit(period);
-    }
-
-    clear() {
-        this.onReportPeriodChange.emit({});
-        this.reportPeriodTooltipVisible = false;
-    }
-
-    apply() {
-        this.reportPeriodChange();
-        this.reportPeriodTooltipVisible = false;
     }
 
     filterByBankAccounts(data) {

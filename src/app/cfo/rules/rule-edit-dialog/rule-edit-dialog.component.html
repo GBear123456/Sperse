@@ -124,6 +124,7 @@
                                            [dataSource]="keyAttributeValuesDataSource"
                                            (onCustomItemCreating)="onCustomAttributeCreating($event, cell)"
                                            (onKeyDown)="onAttributeKeyEnter($event, cell)"
+                                           (onValueChanged)="attributeValueValueChanged($event, cell)"
                                            valueExpr="name"
                                            displayExpr="name"
                                            [value]="cell.value">
