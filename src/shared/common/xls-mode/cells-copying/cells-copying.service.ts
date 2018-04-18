@@ -18,6 +18,9 @@ export class CellsCopyingService {
     /** Prop to restore the old draggable status */
     private copiedCellIsDraggable: boolean;
 
+    /** Marker of the status of copying */
+    private copyingProcessStarted: boolean;
+
     private selectedCellsToCopyChange = new Subject<HTMLTableCellElement[]>();
 
     public selectedCellsToCopyChange$ = this.selectedCellsToCopyChange.asObservable();
@@ -88,23 +91,27 @@ export class CellsCopyingService {
             }
             document.addEventListener('mousemove', this.onMouseMove);
             this.copiedCellTable.style.cursor = 'crosshair';
+            this.copyingProcessStarted = true;
         }
     }
 
     private onMouseUp = e => {
-        /** Logic for copying to a few cells */
-        if (this.selectedCellsToCopy.length) {
-            /** Remove selected clases and crossMovingTriangle element */
-            this.selectedCellsToCopyFinished.next(this.selectedCellsToCopy);
+        if (this.copyingProcessStarted) {
+            /** Logic for copying to a few cells */
+            if (this.selectedCellsToCopy.length) {
+                /** Remove selected clases and crossMovingTriangle element */
+                this.selectedCellsToCopyFinished.next(this.selectedCellsToCopy);
+            }
+            this.selectedCellsToCopy = [];
+            /** To restore draggable status of the copied cell */
+            if (this.copiedCellIsDraggable) {
+                this.copiedCell.setAttribute('draggable', 'true');
+                this.copiedCellIsDraggable = false;
+            }
+            document.removeEventListener('mousemove', this.onMouseMove);
+            this.copiedCellTable.style.cursor = 'default';
+            this.copyingProcessStarted = false;
         }
-        this.selectedCellsToCopy = [];
-        /** To restore draggable status of the copied cell */
-        if (this.copiedCellIsDraggable) {
-            this.copiedCell.setAttribute('draggable', 'true');
-            this.copiedCellIsDraggable = false;
-        }
-        document.removeEventListener('mousemove', this.onMouseMove);
-        this.copiedCellTable.style.cursor = 'default';
     }
 
     onMouseMove = e => {
