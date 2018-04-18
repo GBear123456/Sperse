@@ -4595,18 +4595,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let deferred = $.Deferred();
             e.cancel = deferred.promise();
             forecastMethod.subscribe(res => {
-                deferred.resolve().done(() => {
-                    if (data['amount'] === 0) {
-                        this.statsDetailResult.every((v, index) => {
-                            if (v == e.key) {
-                                this.statsDetailResult.splice(index, 1);
-                                return false;
-                            }
-
-                            return true;
-                        });
-                    }
-                });
                 /** Remove opposite cell */
                 if (paramName === 'debit' || paramName === 'credit') {
                     let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
@@ -4629,7 +4617,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         }
 
                         affectedTransactions.push(item);
-                    } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
+                    } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).utc().isSame(item.date)) {
                         sameDateTransactionExist = true;
                     }
                 }
@@ -4648,8 +4636,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
 
                     if (paramNameForUpdateInput == 'date') {
-                        item[paramNameForUpdateInput] = moment(paramValue);
-                        item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+                        item[paramNameForUpdateInput] = moment(paramValue).utc();
+                        item['initialDate'] = moment(paramValue).utc().subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
                     } else {
                         item[paramNameForUpdateInput] = paramValue;
                     }
@@ -4659,6 +4647,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
 
                 this.pivotGrid.instance.getDataSource().reload();
+                deferred.resolve().done(() => {
+                    if (data['amount'] === 0) {
+                        this.statsDetailResult.every((v, index) => {
+                            if (v == e.key) {
+                                this.statsDetailResult.splice(index, 1);
+                                return false;
+                            }
+
+                            return true;
+                        });
+                    }
+                });
             }, error => {
                 deferred.resolve(true);
                 e.component.cancelEditData();
