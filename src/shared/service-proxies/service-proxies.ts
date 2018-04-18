@@ -28499,6 +28499,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    tags: CustomerTagInput[];
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -28544,6 +28545,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
         }
     }
 
@@ -28588,6 +28594,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -28610,6 +28621,7 @@ export interface ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    tags: CustomerTagInput[];
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -28657,6 +28669,41 @@ export interface IContactPhotoInput {
     thumbnail: string;
     photoSourceId: string;
     comment: string;
+}
+
+export class CustomerTagInput implements ICustomerTagInput {
+    name: string;
+
+    constructor(data?: ICustomerTagInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInput {
+        let result = new CustomerTagInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInput {
+    name: string;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
@@ -28915,41 +28962,6 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
 export interface IAssignToCustomerInput {
     customerId: number;
     tags: CustomerTagInput[];
-}
-
-export class CustomerTagInput implements ICustomerTagInput {
-    name: string;
-
-    constructor(data?: ICustomerTagInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerTagInput {
-        let result = new CustomerTagInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerTagInput {
-    name: string;
 }
 
 export class AccountTotals implements IAccountTotals {
