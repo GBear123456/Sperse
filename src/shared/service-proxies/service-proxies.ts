@@ -30105,6 +30105,7 @@ export class SyncProgressDto implements ISyncProgressDto {
     syncStatusMessage: string;
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
+    lastSyncDate: moment.Moment;
 
     constructor(data?: ISyncProgressDto) {
         if (data) {
@@ -30122,6 +30123,7 @@ export class SyncProgressDto implements ISyncProgressDto {
             this.syncStatusMessage = data["syncStatusMessage"];
             this.progressPercent = data["progressPercent"];
             this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
         }
     }
 
@@ -30138,6 +30140,7 @@ export class SyncProgressDto implements ISyncProgressDto {
         data["syncStatusMessage"] = this.syncStatusMessage;
         data["progressPercent"] = this.progressPercent;
         data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -30148,6 +30151,7 @@ export interface ISyncProgressDto {
     syncStatusMessage: string;
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
+    lastSyncDate: moment.Moment;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
