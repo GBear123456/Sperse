@@ -254,7 +254,6 @@ export class ToolBarComponent extends AppComponentBase {
                 link.html = this.getDropDownItemTemplate(
                     link, item.options['width']);
                 link.onClick = (event) => {
-                    debugger;
                     if (item.name == 'select-box')
                         $('.dx-dropdownmenu-button[select-caption^="' + item.text + '"]')
                             .attr('select-value', event.itemData.text);
@@ -289,7 +288,7 @@ export class ToolBarComponent extends AppComponentBase {
                         options: _.extend({
                             onClick: (e) => this.toolbarItemAction(item, group, e),
                             elementAttr: _.extend({
-                                'button-pressed': Boolean(mergedConfig && 
+                                'button-pressed': Boolean(mergedConfig &&
                                     mergedConfig['checkPressed'] && mergedConfig['checkPressed'].call(this)),
                                 'group-item-position': index ? (isLast ? 'last' : 'inside') : (isLast ? 'single' : 'first'),
                                 'group-item-count': count,

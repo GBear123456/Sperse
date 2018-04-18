@@ -2418,7 +2418,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isCopyable(cellObj) {
-        return cellObj.area === 'data' && (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE);
+        return cellObj.area === 'data' && (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && cellObj.cell.value;
     }
 
     isDayCell(cellObj) {
@@ -3499,12 +3499,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         if (cellObj.area === 'data') {
-            this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-
             $('.selectedCell').removeClass('selectedCell');
             cellObj.cellElement.classList.add('selectedCell');
-            cellObj.cellElement.appendChild(this._cellsCopyingService.getCrossMovingTriangle());
 
+            if (this.isCopyable(cellObj)) {
+                let crossMovingTriangle = this._cellsCopyingService.getCrossMovingTriangle();
+                cellObj.cellElement.appendChild(crossMovingTriangle);
+            } else if (this._cellsCopyingService.elem) {
+                this._cellsCopyingService.elem.remove();
+            }
             this.selectedCell = cellObj;
             this.handleDoubleSingleClick(cellObj, null, this.handleDataCellDoubleClick.bind(this));
         }
@@ -3611,6 +3614,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     handleDataCellDoubleClick(cellObj) {
+        this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
         this._cashflowServiceProxy
             .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
             .subscribe(result => {
