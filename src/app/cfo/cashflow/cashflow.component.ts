@@ -2855,7 +2855,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 /** add selected class */
                 if (!targetCell.classList.contains('selectedCell')) {
-                    $('.chosenFilterForCashFlow').removeClass('selectedCell');
+                    $('.selectedCell').removeClass('selectedCell');
                     this.hideMoifyingNumberBox();
                     targetCell.classList.add('selectedCell');
                 }
@@ -3529,7 +3529,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
 
             if (!cellObj.cellElement.classList.contains('selectedCell')) {
-                $('.chosenFilterForCashFlow').removeClass('selectedCell');
+                $('.selectedCell').removeClass('selectedCell');
                 this.hideMoifyingNumberBox();
                 cellObj.cellElement.classList.add('selectedCell');
             }           
