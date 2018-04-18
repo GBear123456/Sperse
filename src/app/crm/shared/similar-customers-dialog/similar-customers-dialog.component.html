@@ -4,7 +4,7 @@
         <h5>{{l('RelatedOrSimilarContacts')}}</h5>
         <div class="contact-person-info" *ngFor="let similarCustomer of data.similarCustomers" (click)='selectSimilarCustomer(similarCustomer)'>
             <div class="avatar">
-                <img src="{{ similarCustomer?.photo ? 'data:image/png;base64,' + similarCustomer?.photo : person.person_photo_url }}" alt="Person Photo">
+                <img src="{{ getPhoto(similarCustomer?.photo )}}" alt="Person Photo">
             </div>
             <div class="personal-info">
                 <div class="full-name">
