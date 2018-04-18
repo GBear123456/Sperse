@@ -3627,8 +3627,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cellIsNotHistorical(cellObj) &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
-                    /** disallow adding unclassified category, but allow change or add (no descriptor) */
-                    (clickedCellPrefix || cellObj.cell.rowPath.length !== 2) &&
                     /** disallow adding of these levels */
                     clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
@@ -3789,7 +3787,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 startDate: this.statsDetailFilter.startDate,
                 endDate: this.statsDetailFilter.endDate,
                 cashFlowTypeId: cashflowTypeId,
-                categoryId: subCategoryId || categoryId || -1,
+                categoryId: subCategoryId || categoryId,
                 transactionDescriptor: transactionDescriptor,
                 currencyId: this.currencyId,
                 amount: newValue
@@ -4571,79 +4569,96 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.addLocalTimezoneOffset(momentDate);
                 data['date'] = momentDate.toDate();
             }
-            if (data['amount'] === 0) {
-                this._cashFlowForecastServiceProxy
-                    .deleteForecast(
-                    InstanceType10[this.instanceType],
-                    this.instanceId,
-                    data.id
-                    )
-                    .subscribe();
 
-                e.component.deleteRow(e.component.getRowIndexByKey(e.key));
+            let forecastMethod: Observable<void>;
+            if (data['amount'] === 0) {
+                forecastMethod = this._cashFlowForecastServiceProxy
+                    .deleteForecast(
+                        InstanceType10[this.instanceType],
+                        this.instanceId,
+                        data.id
+                    );
 
             } else {
-                this._cashFlowForecastServiceProxy
+                forecastMethod = this._cashFlowForecastServiceProxy
                     .updateForecast(
-                    InstanceType10[this.instanceType],
-                    this.instanceId,
-                    UpdateForecastInput.fromJS(data)
-                    )
-                    .subscribe();
+                        InstanceType10[this.instanceType],
+                        this.instanceId,
+                        UpdateForecastInput.fromJS(data)
+                    );
             }
+            
+            let deferred = $.Deferred();
+            e.cancel = deferred.promise();
+            forecastMethod.subscribe(res => {
+                deferred.resolve().done(() => {
+                    if (data['amount'] === 0) {
+                        this.statsDetailResult.every((v, index) => {
+                            if (v == e.key) {
+                                this.statsDetailResult.splice(index, 1);
+                                return false;
+                            }
 
-            /** Remove opposite cell */
-            if (paramName === 'debit' || paramName === 'credit') {
-                let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
-                if (e.oldData[oppositeParamName] !== null) {
-                    let rowKey = this.cashFlowGrid.instance.getRowIndexByKey(e.key);
-                    /** remove the value of opposite cell */
-                    this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
+                            return true;
+                        });
+                    }
+                });
+                /** Remove opposite cell */
+                if (paramName === 'debit' || paramName === 'credit') {
+                    let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
+                    if (e.oldData[oppositeParamName] !== null) {
+                        let rowKey = this.cashFlowGrid.instance.getRowIndexByKey(e.key);
+                        /** remove the value of opposite cell */
+                        this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
+                    }
                 }
-            }
 
-            /** update CFO grid */
-            let affectedTransactions: TransactionStatsDto[] = [];
-            let sameDateTransactionExist = false;
-            for (let i = this.cashflowData.length - 1; i >= 0; i--) {
-                let item = this.cashflowData[i];
+                /** update CFO grid */
+                let affectedTransactions: TransactionStatsDto[] = [];
+                let sameDateTransactionExist = false;
+                for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+                    let item = this.cashflowData[i];
 
-                if (item.forecastId == e.key.id) {
-                    if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
-                        this.cashflowData.splice(i, 1);
+                    if (item.forecastId == e.key.id) {
+                        if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
+                            this.cashflowData.splice(i, 1);
+                        }
+
+                        affectedTransactions.push(item);
+                    } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
+                        sameDateTransactionExist = true;
+                    }
+                }
+
+                affectedTransactions.forEach(item => {
+                    if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
+                        this.cashflowData.push(
+                            this.createStubTransaction({
+                                date: item.date,
+                                initialDate: (<any>item).initialDate,
+                                amount: 0,
+                                cashflowTypeId: item.cashflowTypeId,
+                                accountId: item.accountId
+                            }));
+                        sameDateTransactionExist = true;
                     }
 
-                    affectedTransactions.push(item);
-                } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
-                    sameDateTransactionExist = true;
-                }
-            }
+                    if (paramNameForUpdateInput == 'date') {
+                        item[paramNameForUpdateInput] = moment(paramValue);
+                        item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+                    } else {
+                        item[paramNameForUpdateInput] = paramValue;
+                    }
 
-            affectedTransactions.forEach(item => {
-                if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
-                    this.cashflowData.push(
-                        this.createStubTransaction({
-                            date: item.date,
-                            initialDate: (<any>item).initialDate,
-                            amount: 0,
-                            cashflowTypeId: item.cashflowTypeId,
-                            accountId: item.accountId
-                        }));
-                    sameDateTransactionExist = true;
-                }
+                    if (paramNameForUpdateInput == 'transactionDescriptor')
+                        this.addCategorizationLevels(item);
+                });
 
-                if (paramNameForUpdateInput == 'date') {
-                    item[paramNameForUpdateInput] = moment(paramValue);
-                    item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
-                } else {
-                    item[paramNameForUpdateInput] = paramValue;
-                }
-
-                if (paramNameForUpdateInput == 'transactionDescriptor')
-                    this.addCategorizationLevels(item);
+                this.pivotGrid.instance.getDataSource().reload();
+            }, error => {
+                deferred.resolve(true);
+                e.component.cancelEditData();
             });
-
-            this.pivotGrid.instance.getDataSource().reload();
         }
     }
 
