@@ -139,10 +139,13 @@
                     padding: 0 !important;
                 }
 
-                &.chosenFilterForCashFlow {
+                &.selectedCell {
                     border: 1px double #f9b83a !important;
                     background-color: #fbf3e4 !important;
                     color: #333 !important;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
 
                     span {
                         color: #333 !important;
@@ -689,7 +692,8 @@
                             font-family: Lato !important;
                             letter-spacing: 0.2px;
                             line-height: 23px;
-                            padding-left: 19px;
+                            padding-left: 26px;
+                            position: relative;
 
                             &[class*="next"] {
                                 background: @forecastDataCellBackgroundColor;
@@ -704,8 +708,7 @@
                             }
 
                             &.red {
-                                &,
-                                & span {
+                                &, & span {
                                     color: red !important;
                                 }
                             }
@@ -748,7 +751,7 @@
                                 text-align: right;
                             }
 
-                            &.chosenFilterForCashFlow a.dx-link {
+                            &.selectedCell a.dx-link {
                                 display: inline-block;
                             }
 
@@ -756,9 +759,8 @@
                                 width: 18px;
                                 display: none;
                                 color: transparent !important;
-                                position: relative;
-                                float: left;
-                                margin-left: -15px;
+                                position: absolute;
+                                left: 3px;
 
                                 &.dx-link-discard {
                                     background: url('../../../assets/common/icons/delete-icon.svg') no-repeat center;
@@ -809,7 +811,7 @@
                                     background: @startedBalanceDataCellColor;
                                 }
 
-                                &.lowestOpenedCurrent:not(.chosenFilterForCashFlow) {
+                                &.lowestOpenedCurrent:not(.selectedCell) {
                                     background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                 }
                             }
@@ -818,7 +820,7 @@
                                 td {
                                     background: @startedBalanceDataCellColor;
 
-                                    &.lowestOpenedCurrent:not(.chosenFilterForCashFlow) {
+                                    &.lowestOpenedCurrent:not(.selectedCell) {
                                         background: linear-gradient(@currentPeriodCellBackgroundColor, @currentPeriodCellBackgroundColor), linear-gradient(@startedBalanceDataCellColor, @startedBalanceDataCellColor);
                                     }
                                 }
@@ -1113,7 +1115,7 @@
         border-left: 1px solid @tableBorderColor;
         padding: 0 15px;
         background: #fff;
-        z-index: 2;
+        z-index: 3;
         transform: translate(0, 0) !important;
 
         .resize-buttons {

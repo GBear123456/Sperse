@@ -37,7 +37,7 @@
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [allowColumnResizing]="true"
-                      [dataSource]="statsDetailResult"
+                      [(dataSource)]="statsDetailResult"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                       (onCellPrepared)="onDetailsCellPrepared($event)"
                       (onCellClick)="onDetailsCellClick($event)"

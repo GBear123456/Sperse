@@ -6955,6 +6955,114 @@ export class CustomersServiceProxy {
 }
 
 @Injectable()
+export class CustomerTagsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTags(): Observable<CustomerTagInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/GetTags";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetTags(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetTags(response_);
+                } catch (e) {
+                    return <Observable<CustomerTagInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CustomerTagInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetTags(response: Response): Observable<CustomerTagInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CustomerTagInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<CustomerTagInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignToCustomer(input: AssignToCustomerInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToCustomer";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToCustomer(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class DashboardServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -28391,6 +28499,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    tags: CustomerTagInput[];
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -28436,6 +28545,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
         }
     }
 
@@ -28480,6 +28594,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -28502,6 +28621,7 @@ export interface ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    tags: CustomerTagInput[];
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -28549,6 +28669,41 @@ export interface IContactPhotoInput {
     thumbnail: string;
     photoSourceId: string;
     comment: string;
+}
+
+export class CustomerTagInput implements ICustomerTagInput {
+    name: string;
+
+    constructor(data?: ICustomerTagInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInput {
+        let result = new CustomerTagInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInput {
+    name: string;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
@@ -28725,6 +28880,88 @@ export class UpdateCustomerStatusesInput implements IUpdateCustomerStatusesInput
 export interface IUpdateCustomerStatusesInput {
     customerIds: number[];
     statusId: string;
+}
+
+export class CustomerTagInfoDto implements ICustomerTagInfoDto {
+    name: string;
+
+    constructor(data?: ICustomerTagInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInfoDto {
+        let result = new CustomerTagInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInfoDto {
+    name: string;
+}
+
+export class AssignToCustomerInput implements IAssignToCustomerInput {
+    customerId: number;
+    tags: CustomerTagInput[];
+
+    constructor(data?: IAssignToCustomerInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssignToCustomerInput {
+        let result = new AssignToCustomerInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssignToCustomerInput {
+    customerId: number;
+    tags: CustomerTagInput[];
 }
 
 export class AccountTotals implements IAccountTotals {

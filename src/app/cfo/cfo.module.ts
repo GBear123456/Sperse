@@ -68,7 +68,8 @@ import {
     DxRangeSliderModule,
     DxSwitchModule
 } from 'devextreme-angular';
-import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
+import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
+import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 
 @NgModule({
     imports: [
@@ -130,7 +131,8 @@ import {DashboardWidgetsModule} from '@shared/cfo/dashboard-widgets/dashboard-wi
         BusinessEntitiesComponent,
         ChartOfAccountsComponent,
         BankAccountsSelectComponent,
-        ChooseResetRulesComponent
+        ChooseResetRulesComponent,
+        ReportPeriodComponent
     ],
     entryComponents: [
         RuleDialogComponent,
