@@ -51,7 +51,7 @@
         }
     }
 
-    .calculatorHidden{
+    .calculatorHidden {
         display: none;
     }
 
@@ -128,6 +128,30 @@
         background: transparent;
         position: absolute;
         z-index: 5;
+    }
+
+    /deep/ .save-forecast-button {
+        border: 0;
+        background: transparent;
+        width: 15px;
+        float: right;
+
+        .dx-button-content {
+            padding-left: 0;
+            width: 27px;
+        }
+    }
+
+    /deep/ .calculator-number-box {
+        padding: 0 !important;
+
+        .dx-numberbox {
+            float: left;
+        }
+
+        input {
+            text-align: right;
+        }
     }
 
     td {
@@ -1240,6 +1264,21 @@
 
     /deep/ #cashflowGridContainer {
         height: 100%;
+
+        /deep/.dx-highlight-outline {
+            padding: 0;
+
+            &::after {
+                content: '';
+                position: absolute;
+                border: 0;
+                top: 0;
+                left: 1px;
+                bottom: 0;
+                right: 0;
+                pointer-events: none;
+            }
+        }
 
         .dx-datagrid-headers {
             .dx-datagrid-content {

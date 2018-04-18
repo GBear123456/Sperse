@@ -43,6 +43,7 @@
                       (onCellClick)="onDetailsCellClick($event)"
                       (onEditingStart)="onDetailsEditingStart($event)"
                       (onRowPrepared)="onDetailsRowPrepared($event)"
+                      (onContentReady)="onTransactionDetailContentReady($event)"
                       (onRowUpdating)="onDetailsRowUpdating($event)">
 
             <dxo-editing mode="cell"
@@ -89,6 +90,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
+                        [allowEditing]="false"
                         alignment="right"
                         [minWidth]="150">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
@@ -99,6 +101,7 @@
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         alignment="right"
+                        [allowEditing]="false"
                         [minWidth]="150">
                 <dxi-validation-rule type="numeric"></dxi-validation-rule>
             </dxi-column>

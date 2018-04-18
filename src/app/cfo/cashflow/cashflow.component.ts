@@ -620,6 +620,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private modifyingCellNumberBox: NumberBox;
 
     private functionButton: any;
+    private saveButton: any;
 
     /** Cell input padding */
     private oldCellPadding: string;
@@ -728,6 +729,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     private modifyingNumberBoxCellObj: any;
     private modifyingNumberBoxStatsDetailFilter: any;
+
+    private detailsModifyingNumberBoxCellObj: any;
 
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
@@ -3736,7 +3739,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let element: HTMLElement = cellObj.cellElement;
         /** if the modifying input has already exists */
         if (this.modifyingCellNumberBox) {
-            this.removeModifyingCellNumberBox(cellObj);
+            this.removeModifyingCellNumberBox();
         }
         if (!element.querySelector('span'))
             $(element).wrapInner('<span></span>');
@@ -3774,17 +3777,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.modifyingNumberBoxStatsDetailFilter = this.statsDetailFilter;
     }
 
-    removeModifyingCellNumberBox(cellObj) {
+    removeModifyingCellNumberBox() {
         let parent = this.modifyingCellNumberBox.element().parentElement;
         this.modifyingCellNumberBox.dispose();
         this.modifyingCellNumberBox = null;
         this.functionButton.dispose();
         this.functionButton = null;
+        if (this.saveButton) {
+            this.saveButton.dispose();
+            this.saveButton = null;
+        }
+        $('.dx-editor-cell.calculator-number-box').removeClass('dx-editor-cell');
+        $('.calculator-number-box').removeClass('calculator-number-box');    
         $(parent).children().show();
         parent.style.padding = this.oldCellPadding;
         this.closeCalculator();
         this.modifyingNumberBoxCellObj = null;
         this.modifyingNumberBoxStatsDetailFilter = null;
+        this.detailsModifyingNumberBoxCellObj = null;
     }
 
     showTransactionDetail(details) {
@@ -3865,7 +3875,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     abp.ui.clearBusy();
                 });
         }
-        this.removeModifyingCellNumberBox(savedCellObj);
+        this.removeModifyingCellNumberBox();
     }
 
     getCategoryValueByPrefix(path, prefix: CategorizationPrefixes) {
@@ -4569,6 +4579,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.detailsCellIsEditable(e)) {
 
         }
+        this.onAmountCellEditStart(e);
     }
 
     /**
@@ -4854,6 +4865,75 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.modifyingNumberBoxCellObj) {
             this.saveForecast();
             this.closeCalculator();
+        } else {
+            if (this.modifyingCellNumberBox) {
+                this.removeModifyingCellNumberBox();
+            }
         }
     }
+
+    onAmountCellEditStart(e) {
+        if (this.detailsModifyingNumberBoxCellObj === e.key)
+            return;
+        else
+            this.hideMoifyingNumberBox();
+
+        if (!(e.data && e.data.forecastId && ['debit', 'credit'].indexOf(e.column.dataField) !== -1)) {            
+            return;
+        }
+
+        let element = e.component.getCellElement(e.component.getRowIndexByKey(e.key), e.column.dataField);
+        $(element).addClass('dx-editor-cell calculator-number-box');
+        if (!element.querySelector('span'))
+            $(element).wrapInner('<span></span>');
+        $(element).children().hide();
+
+        let wrapper = document.createElement('div');
+        wrapper.onclick = function (ev) {
+            ev.stopPropagation();
+        };
+        let wrapperButton = document.createElement('div');
+        wrapperButton.onclick = function (ev) {
+            ev.stopPropagation();
+        };
+        let wrapperSaveButton = document.createElement('div');
+        wrapperButton.onclick = function (ev) {
+            ev.stopPropagation();
+        };
+        this.modifyingCellNumberBox = new NumberBox(wrapper, {
+            value: e.data[e.column.dataField],            
+            format: '$ #,###.##',
+            width: '90%',
+            onEnterKey: this.updateForecastCell.bind(this, e)
+        });
+        this.functionButton = new Button(wrapperButton, {
+            iconSrc: 'assets/common/icons/fx.svg',
+            onClick: this.toggelCalculator.bind(this, event),
+            elementAttr: { 'class': "function-button" }
+        });
+
+        this.saveButton = new Button(wrapperSaveButton, {
+            iconSrc: 'assets/common/icons/check.svg',
+            onClick: this.updateForecastCell.bind(this, e),
+            elementAttr: { 'class': "save-forecast-button" }
+        });
+        element.appendChild(this.functionButton.element());
+        element.appendChild(this.modifyingCellNumberBox.element());
+        element.appendChild(this.saveButton.element());
+        this.modifyingCellNumberBox.focus();
+        element = null;
+
+        this.detailsModifyingNumberBoxCellObj = e.key;
+    }
+
+    updateForecastCell(e) {
+        e.component.cellValue(e.rowIndex, e.columnIndex, this.modifyingCellNumberBox.option('value'));
+        e.component.saveEditData();
+        this.hideMoifyingNumberBox();
+    }
+
+    onTransactionDetailContentReady(e) {
+        this.hideMoifyingNumberBox();
+    }
+    
 }
