@@ -27,13 +27,14 @@ export class CalculatorComponent extends CFOComponentBase {
         super(injector);
         // this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
         calculatorService.subscribePeriodChange((value) => {
+            if (!value || (this.calcHistory.length && Number(this.calcHistory[this.calcHistory.length - 1].Result.replace(',', '')) !== value)) {
+                this.ClearAll();
+            }
             if (value) {
-                let newVal = '$' + value;
+                let newVal = value.toString();
                 if (this.input !== newVal) {
                     this.input = newVal;
                 }
-            } else {
-                this.ClearAll();
             }
         });
     }
