@@ -70,7 +70,6 @@
             </dx-text-box>
             <span [class]="businessEntity.fax && 'clear-contact' || 'hidden'" (click)="businessEntity.fax = ''">+</span>
         </div>
-        <!--<dx-validation-group (onInitialized)="initValidationGroup($event, 'addressValidator')">-->
         <div class="field addr address">
             <label>{{l('BusinessEntity_Address')}}</label>
             <dx-text-box *ngIf="!googleAutoComplete" name="address"
@@ -79,19 +78,6 @@
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'address')">
             </dx-text-box>
-            <!--<input *ngIf="googleAutoComplete" type="text"
-            name="Address"
-            placeholder="{{l('BusinessEntity_Street')}}"
-            [(value)]="businessEntity.address"
-            class="dx-texteditor-input"
-            (country)="businessEntity.country=$event"
-            (street_number)='businessEntity.streetNumber=$event'
-            (street)='businessEntity.address=$event'
-            (city)='businessEntity.city=$event'
-            (state)='businessEntity.stateId=$event'
-            (postal_code)='businessEntity.zip=$event'
-            (setAddress)="onAddressChanged($event)"
-            ng2-google-place-autocomplete />-->
             <span [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="businessEntity.address = ''">+</span>
         </div>
         <div class="field addr">
@@ -143,6 +129,5 @@
             </dx-select-box>
             <span [class]="businessEntity.countryId && 'clear-contact' || 'hidden'" (click)="businessEntity.countryId = ''">+</span>
         </div>
-        <!--</dx-validation-group>-->
     </div>
 </modal-dialog>
