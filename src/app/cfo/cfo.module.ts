@@ -22,6 +22,7 @@ import { BusinessEntitiesComponent } from './business-entities/business-entities
 
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { CalculatorComponent } from 'app/cfo/shared/calculator-widget/calculator-widget.component';
 
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
@@ -69,6 +70,7 @@ import {
     DxSwitchModule
 } from 'devextreme-angular';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
+import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 
 @NgModule({
@@ -132,6 +134,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         ChartOfAccountsComponent,
         BankAccountsSelectComponent,
         ChooseResetRulesComponent,
+        CalculatorComponent,
         ReportPeriodComponent
     ],
     entryComponents: [
@@ -147,7 +150,8 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         CustomersServiceProxy,
         ContactServiceProxy,
         QuovoService,
-        FinancialInformationServiceProxy
+        FinancialInformationServiceProxy,
+        CalculatorService
     ]
 })
 

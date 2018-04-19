@@ -1,0 +1,101 @@
+<table class="calculator">
+    <tbody>
+        <tr>
+            <td colspan="2" class="history">
+                <div>
+                    <table>
+                        <tr>
+                            <td colspan="4" class="ScientificModeToggle">
+                                <input id="chkIsScientificModeEnabled" (click)="ToggleScienticMode()" type="checkbox" data-toggle="toggle" />
+                                <label for="chkIsScientificModeEnabled">Enable Scientific Mode</label>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let history of this.calcHistory">
+                            <td class="tdOperator"><span class="operator">{{ history.Operator }}</span></td>
+                            <td class="tdOperand">{{ history.Operand }}</td>
+                            <td class="tdEquals">
+                                <span *ngIf="history.result != ''">=</span>
+                            </td>
+                            <td class="tdResult">
+                                <span class="result">{{ history.Result }}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="lastOp">
+                {{ lastOperation }}
+            </td>
+            <td class="tdInput">
+                <input #calculatorInput type="text" class="input" name="input" [(value)]="input" autocomplete="off" maxlength="10"
+                       (keydown)="inputKeyPress($event)" autofocus />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table cellspacing="0">
+                    <tr>
+                        <td>
+                            <table class="keypad">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2" class="clearKey" (click)="ClearAll()">C</td>
+                                        <td class="backspace" (click)="BackSpace()">&#8678;</td>
+                                    </tr>
+                                    <tr>
+                                        <td [class.disabled]="!calculatorService.IsScientificModeEnabled" (click)="inputNumber('(')">(</td>
+                                        <td [class.disabled]="!calculatorService.IsScientificModeEnabled" (click)="inputNumber(')')">)</td>
+                                        <td (click)="inputNumber('%')">%</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="inputNumber('7')">7</td>
+                                        <td (click)="inputNumber('8')">8</td>
+                                        <td (click)="inputNumber('9')">9</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="inputNumber('4')">4</td>
+                                        <td (click)="inputNumber('5')">5</td>
+                                        <td (click)="inputNumber('6')">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="inputNumber('1')">1</td>
+                                        <td (click)="inputNumber('2')">2</td>
+                                        <td (click)="inputNumber('3')">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="inputNumber('-')">&plusmn;</td>
+                                        <td (click)="inputNumber('0')">0</td>
+                                        <td (click)="inputNumber('.')">.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="operators">
+                                <tbody>
+                                    <tr>
+                                        <td (click)="selectOperator('/')">&divide;</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="selectOperator('*')">&times;</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="selectOperator('-')">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td (click)="selectOperator('+')">+</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="equalsButton" (click)="selectOperator('=')">=</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>

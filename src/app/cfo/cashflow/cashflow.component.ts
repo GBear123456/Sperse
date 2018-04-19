@@ -38,6 +38,7 @@ import DevExpress from 'devextreme/bundles/dx.all';
 import config from 'devextreme/core/config';
 import TextBox from 'devextreme/ui/text_box';
 import NumberBox from 'devextreme/ui/number_box';
+import Button from 'devextreme/ui/button';
 import Tooltip from 'devextreme/ui/tooltip';
 import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
@@ -73,6 +74,8 @@ import 'rxjs/add/operator/buffer';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { CellsCopyingService } from 'shared/common/xls-mode/cells-copying/cells-copying.service';
+
+import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
@@ -188,6 +191,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Filter by string */
     private filterBy: string;
+    
+    private _calculatorShowed = false;
+    public set calculatorShowed(value: boolean) {
+        if (this._calculatorShowed = value) {
+            //this.filtersService.fixed = false;
+            //this.filtersService.disable();
+        }
+    }
+
+    public get calculatorShowed(): boolean {
+        return this._calculatorShowed;
+    }
 
     /**
      *  Categorization settings for creating categorization tree on cashflow
@@ -604,6 +619,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Text box for modifying of the cell*/
     private modifyingCellNumberBox: NumberBox;
 
+    private functionButton: any;
+    private saveButton: any;
+
     /** Cell input padding */
     private oldCellPadding: string;
 
@@ -709,6 +727,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Whether the loading of data was performed with filter */
     public filteredLoad = false;
 
+    private modifyingNumberBoxCellObj: any;
+    private modifyingNumberBoxStatsDetailFilter: any;
+
+    private detailsModifyingNumberBoxCellObj: any;
+
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -719,12 +742,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService,
                 private _appService: AppService,
+                private _calculatorService: CalculatorService,
                 private _cellsCopyingService: CellsCopyingService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
+        _calculatorService.subscribePeriodChange((value) => {
+            this.onCalculatorValueChange(value);
+        });
         /** Subscribe to copying events */
         this._cellsCopyingService.selectedCellsToCopyChange$.subscribe(data => {
             this.handleCellsSelecting(data);
@@ -2830,8 +2857,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (cellObj.cell.value) {
 
                 /** add selected class */
-                $('.selectedCell').removeClass('selectedCell');
-                targetCell.classList.add('selectedCell');
+                if (!targetCell.classList.contains('selectedCell')) {
+                    $('.selectedCell').removeClass('selectedCell');
+                    this.hideMoifyingNumberBox();
+                    targetCell.classList.add('selectedCell');
+                }
                 this.movedCell = cellObj;
 
                 let dragImg = new Image();
@@ -3499,8 +3529,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         if (cellObj.area === 'data') {
-            $('.selectedCell').removeClass('selectedCell');
-            cellObj.cellElement.classList.add('selectedCell');
+            if (!cellObj.cellElement.classList.contains('selectedCell')) {
+                $('.selectedCell').removeClass('selectedCell');
+                this.hideMoifyingNumberBox();
+                cellObj.cellElement.classList.add('selectedCell');
+            }           
 
             if (this.isCopyable(cellObj)) {
                 let crossMovingTriangle = this._cellsCopyingService.getCrossMovingTriangle();
@@ -3708,7 +3741,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let element: HTMLElement = cellObj.cellElement;
         /** if the modifying input has already exists */
         if (this.modifyingCellNumberBox) {
-            this.removeModifyingCellNumberBox(cellObj);
+            this.removeModifyingCellNumberBox();
         }
         if (!element.querySelector('span'))
             $(element).wrapInner('<span></span>');
@@ -3723,25 +3756,47 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         wrapper.onclick = function(ev) {
             ev.stopPropagation();
         };
-
+        let wrapperButton = document.createElement('div');
+        wrapperButton.onclick = function (ev) {
+            ev.stopPropagation();
+        };
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
             format: '$ #,###.##',
-            onEnterKey: this.saveForecast.bind(this, cellObj),
-            onFocusOut: this.saveForecast.bind(this, cellObj)
+            onEnterKey: this.saveForecast.bind(this, cellObj)
         });
+        this.functionButton = new Button(wrapperButton, {
+            iconSrc: 'assets/common/icons/fx.svg',
+            onClick: this.toggelCalculator.bind(this, event),
+            elementAttr: { 'class' : "function-button"}
+        });
+        element.appendChild(this.functionButton.element());
         element.appendChild(this.modifyingCellNumberBox.element());
         this.modifyingCellNumberBox.focus();
         element = null;
+        this.modifyingNumberBoxCellObj = cellObj;
+        this.modifyingNumberBoxStatsDetailFilter = this.statsDetailFilter;
     }
 
-    removeModifyingCellNumberBox(cellObj) {
+    removeModifyingCellNumberBox() {
         let parent = this.modifyingCellNumberBox.element().parentElement;
         this.modifyingCellNumberBox.dispose();
         this.modifyingCellNumberBox = null;
+        this.functionButton.dispose();
+        this.functionButton = null;
+        if (this.saveButton) {
+            this.saveButton.dispose();
+            this.saveButton = null;
+        }
+        $('.dx-editor-cell.calculator-number-box').removeClass('dx-editor-cell');
+        $('.calculator-number-box').removeClass('calculator-number-box');    
         $(parent).children().show();
         parent.style.padding = this.oldCellPadding;
+        this.closeCalculator();
+        this.modifyingNumberBoxCellObj = null;
+        this.modifyingNumberBoxStatsDetailFilter = null;
+        this.detailsModifyingNumberBoxCellObj = null;
     }
 
     showTransactionDetail(details) {
@@ -3774,22 +3829,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     saveForecast() {
         let [savedCellObj, event] = Array.from(arguments);
-        let newValue = event.component.option('value');
-        this.removeModifyingCellNumberBox(savedCellObj);
+        savedCellObj = savedCellObj || this.modifyingNumberBoxCellObj;
+        let newValue = event ? event.component.option('value') : this.modifyingCellNumberBox.option('value');
+       
         if (+newValue !== 0) {
+            abp.ui.setBusy();
             let forecastModel;
             let cashflowTypeId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
             let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
-            let forecastedDate = this.statsDetailFilter.startDate > moment(0, 'HH') ? this.statsDetailFilter.startDate : moment(0, 'HH');
+            let forecastedDate = this.modifyingNumberBoxStatsDetailFilter.startDate > moment(0, 'HH') ? this.modifyingNumberBoxStatsDetailFilter.startDate : moment(0, 'HH');
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
-                bankAccountId: this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
+                bankAccountId: this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
 
                 date: forecastedDate,
-                startDate: this.statsDetailFilter.startDate,
-                endDate: this.statsDetailFilter.endDate,
+                startDate: this.modifyingNumberBoxStatsDetailFilter.startDate,
+                endDate: this.modifyingNumberBoxStatsDetailFilter.endDate,
                 cashFlowTypeId: cashflowTypeId,
                 categoryId: subCategoryId || categoryId,
                 transactionDescriptor: transactionDescriptor,
@@ -3817,8 +3874,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload();
+                    abp.ui.clearBusy();
                 });
         }
+        this.removeModifyingCellNumberBox();
     }
 
     getCategoryValueByPrefix(path, prefix: CategorizationPrefixes) {
@@ -4522,6 +4581,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.detailsCellIsEditable(e)) {
 
         }
+        this.onAmountCellEditStart(e);
     }
 
     /**
@@ -4595,18 +4655,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let deferred = $.Deferred();
             e.cancel = deferred.promise();
             forecastMethod.subscribe(res => {
-                deferred.resolve().done(() => {
-                    if (data['amount'] === 0) {
-                        this.statsDetailResult.every((v, index) => {
-                            if (v == e.key) {
-                                this.statsDetailResult.splice(index, 1);
-                                return false;
-                            }
-
-                            return true;
-                        });
-                    }
-                });
                 /** Remove opposite cell */
                 if (paramName === 'debit' || paramName === 'credit') {
                     let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
@@ -4629,7 +4677,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         }
 
                         affectedTransactions.push(item);
-                    } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).isSame(item.date)) {
+                    } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).utc().isSame(item.date)) {
                         sameDateTransactionExist = true;
                     }
                 }
@@ -4648,8 +4696,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
 
                     if (paramNameForUpdateInput == 'date') {
-                        item[paramNameForUpdateInput] = moment(paramValue);
-                        item['initialDate'] = moment(paramValue).subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+                        item[paramNameForUpdateInput] = moment(paramValue).utc();
+                        item['initialDate'] = moment(paramValue).utc().subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
                     } else {
                         item[paramNameForUpdateInput] = paramValue;
                     }
@@ -4659,6 +4707,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
 
                 this.pivotGrid.instance.getDataSource().reload();
+                deferred.resolve().done(() => {
+                    if (data['amount'] === 0) {
+                        this.statsDetailResult.every((v, index) => {
+                            if (v == e.key) {
+                                this.statsDetailResult.splice(index, 1);
+                                return false;
+                            }
+
+                            return true;
+                        });
+                    }
+                });
             }, error => {
                 deferred.resolve(true);
                 e.component.cancelEditData();
@@ -4794,4 +4854,105 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
     }
+
+    onCloseCalculator(e) {
+        this.closeCalculator();
+    }
+
+    closeCalculator() {
+        this.calculatorShowed = false;
+        if (this.modifyingCellNumberBox) {
+            this.modifyingCellNumberBox.focus();
+        }        
+    }
+
+    toggelCalculator(e) {
+        if (this.calculatorShowed) {
+            this.closeCalculator();
+        } else {
+            this.calculatorShowed = true;
+            let val = this.modifyingCellNumberBox.option('value');
+            this._calculatorService.valueChanged(val);               
+        }            
+    }
+
+    onCalculatorValueChange(value) {
+        this.modifyingCellNumberBox.option('value', value);
+    }
+
+    hideMoifyingNumberBox() {
+        if (this.modifyingNumberBoxCellObj) {
+            this.saveForecast();
+            this.closeCalculator();
+        } else {
+            if (this.modifyingCellNumberBox) {
+                this.removeModifyingCellNumberBox();
+            }
+        }
+    }
+
+    onAmountCellEditStart(e) {
+        if (this.detailsModifyingNumberBoxCellObj === e.key)
+            return;
+        else
+            this.hideMoifyingNumberBox();
+
+        if (!(e.data && e.data.forecastId && ['debit', 'credit'].indexOf(e.column.dataField) !== -1)) {            
+            return;
+        }
+
+        let element = e.component.getCellElement(e.component.getRowIndexByKey(e.key), e.column.dataField);
+        $(element).addClass('dx-editor-cell calculator-number-box');
+        if (!element.querySelector('span'))
+            $(element).wrapInner('<span></span>');
+        $(element).children().hide();
+
+        let wrapper = document.createElement('div');
+        wrapper.onclick = function (ev) {
+            ev.stopPropagation();
+        };
+        let wrapperButton = document.createElement('div');
+        wrapperButton.onclick = function (ev) {
+            ev.stopPropagation();
+        };
+        let wrapperSaveButton = document.createElement('div');
+        wrapperButton.onclick = function (ev) {
+            ev.stopPropagation();
+        };
+        this.modifyingCellNumberBox = new NumberBox(wrapper, {
+            value: e.data[e.column.dataField],            
+            format: '$ #,###.##',
+            width: '90%',
+            onEnterKey: this.updateForecastCell.bind(this, e)
+        });
+        this.functionButton = new Button(wrapperButton, {
+            iconSrc: 'assets/common/icons/fx.svg',
+            onClick: this.toggelCalculator.bind(this, event),
+            elementAttr: { 'class': "function-button" }
+        });
+
+        this.saveButton = new Button(wrapperSaveButton, {
+            iconSrc: 'assets/common/icons/check.svg',
+            onClick: this.updateForecastCell.bind(this, e),
+            elementAttr: { 'class': "save-forecast-button" }
+        });
+        element.appendChild(this.functionButton.element());
+        element.appendChild(this.modifyingCellNumberBox.element());
+        element.appendChild(this.saveButton.element());
+        this.modifyingCellNumberBox.focus();
+        element = null;
+
+        this.detailsModifyingNumberBoxCellObj = e.key;
+    }
+
+    updateForecastCell(e) {
+        e.component.cellValue(e.rowIndex, e.columnIndex, this.modifyingCellNumberBox.option('value'));
+        e.component.saveEditData();
+        this.hideMoifyingNumberBox();
+    }
+
+    onTransactionDetailContentReady(e) {
+        this.hideMoifyingNumberBox();
+    }
+    
 }
