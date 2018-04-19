@@ -22,6 +22,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @Input() highlightUsedRows = false;
     @Input() showBusinessEntitiesFilter = true;
     @Input() showIsActiveFilter = true;
+    @Input() emitOnlySelectedBankAccounts = false;
 
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
 
@@ -108,7 +109,13 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 'bankAccounts': [], 'isActive': this.isActive, 'selectedBusinessEntityIds': this.selectedBusinessEntityIds
             });
 
-        let data = this.getVisibleBankAccounts();
+        let data = {};
+        if (this.emitOnlySelectedBankAccounts) {
+            data = this.getSelectedBankAccounts();
+        } else {
+            data = this.getVisibleBankAccounts();
+        }
+
         this.onBankAccountsSelected.emit(data);
         this.tooltipVisible = false;
     }
@@ -120,7 +127,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 'bankAccounts': data.bankAccountIds, 'isActive': this.isActive, 'selectedBusinessEntityIds': this.selectedBusinessEntityIds
             });
 
-        if (!data.bankAccountIds.length)
+        if (!this.emitOnlySelectedBankAccounts && !data.bankAccountIds.length)
             data = this.getVisibleBankAccounts();
 
         this.onBankAccountsSelected.emit(data);
@@ -179,7 +186,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                     let data = {
                         bankAccountIds: bankAccountIds
                     };
-                    if (!bankAccountIds.length) {
+                    if (!this.emitOnlySelectedBankAccounts && !bankAccountIds.length) {
                         data = this.getVisibleBankAccounts();
                     }
                     this.onBankAccountsSelected.emit(data);
