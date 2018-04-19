@@ -64,7 +64,7 @@
 
         <bank-accounts-select [highlightUsedRows]="true"
                               [showBusinessEntitiesFilter]="false"
-                              [showIsActiveFilter]="false"
+                              [emitOnlySelectedBankAccounts]="true"
                               (onBankAccountsSelected)="applyBankAccountIds($event)">
         </bank-accounts-select>
     </div>
