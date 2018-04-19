@@ -86,6 +86,13 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.customerId = customerId;
         this._customerService.getCustomerInfo(this.customerId).subscribe(responce => {
             this._customerService['data'].customerInfo = responce;
+            responce.contactPersons.every((contact) => {
+                let isPrimaryContact = (contact.id == responce.primaryContactInfo.id);
+                if (isPrimaryContact)
+                    responce.primaryContactInfo = contact;
+                return !isPrimaryContact;
+            });
+
             this.primaryContact = responce.primaryContactInfo;
             this.customerInfo = responce;
             this.initVerificationChecklist();

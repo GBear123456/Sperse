@@ -15,7 +15,7 @@
                 <label>{{l('Summary') | uppercase }}</label>
                 <dx-text-area [height]="'120px'" [(value)]="summary">
                    <dx-validator>
-                       <dxi-validation-rule type="required" message="{{l('NoteRequired')}}"></dxi-validation-rule>
+                       <dxi-validation-rule type="required" message="{{l('NoteIsRequired')}}"></dxi-validation-rule>
                    </dx-validator>
                 </dx-text-area>
             </div>
@@ -37,14 +37,16 @@
                     [(value)]="followupDate">
                 </dx-date-box>
             </div>
-            <div class="field">
+            <div class="field phone">
                 <label>{{l('Phone') | uppercase }}</label>
                 <dx-select-box
+                    [width]="'325px'"
                     [dataSource]="phones"
                     [displayExpr]="'phoneNumber'"
                     [valueExpr]="'id'"
                     [(value)]="phone">
                 </dx-select-box>
+                <div class="add-phone" (click)="showAddPhoneDialog($event)">+</div>
             </div>
             <span [hidden]="showOrigin" class="show-origin" (click)="showOrigin = true">{{l('Update Origin')}}</span>
             <div [hidden]="!showOrigin">
@@ -59,6 +61,7 @@
                 <div class="field">
                     <label>{{l('AddedBy') | uppercase }}</label>
                     <dx-select-box
+                        [placeholder]="l('EditValuePlaceholder')"
                         [acceptCustomValue]="true"
                         [dataSource]="users"
                         [valueChangeEvent]="'keyup'"
