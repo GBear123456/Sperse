@@ -73,6 +73,9 @@ export class NotesComponent extends AppComponentBase implements OnInit, AfterVie
         }).afterClosed().subscribe(() => {});
     }
 
+    calculateDateCellValue = (data) => {
+        return data.dateTime.format(this.formatting.dateTime.toUpperCase());
+    }
 
     ngAfterViewInit(): void {
     }
