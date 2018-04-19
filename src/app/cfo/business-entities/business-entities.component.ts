@@ -117,7 +117,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     locationColumn_calculateCellValue(rowData) {
-        return rowData.StateId + ', ' + rowData.CountryId;
+        let values = [];
+        if (rowData.StateId) {
+            values.push(rowData.StateId);
+        }
+        if (rowData.CountryId) {
+            values.push(rowData.CountryId);
+        }
+
+        return values.length > 0 ? values.join(', ') : null;
     }
 
     openBankAccountSelectComponent(businessEntity) {
