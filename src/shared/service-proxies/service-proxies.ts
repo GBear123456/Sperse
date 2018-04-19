@@ -28608,6 +28608,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     organizationNote: string;
     organizationUnitId: number;
     tags: CustomerTagInput[];
+    userId: number;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -28658,6 +28659,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 for (let item of data["tags"])
                     this.tags.push(CustomerTagInput.fromJS(item));
             }
+            this.userId = data["userId"];
         }
     }
 
@@ -28707,6 +28709,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             for (let item of this.tags)
                 data["tags"].push(item.toJSON());
         }
+        data["userId"] = this.userId;
         return data; 
     }
 }
@@ -28730,6 +28733,7 @@ export interface ICreateCustomerInput {
     organizationNote: string;
     organizationUnitId: number;
     tags: CustomerTagInput[];
+    userId: number;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
