@@ -28833,6 +28833,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     organizationNote: string;
     organizationUnitId: number;
     tags: CustomerTagInput[];
+    lists: CustomerListInput[];
     userId: number;
 
     constructor(data?: ICreateCustomerInput) {
@@ -28884,6 +28885,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 for (let item of data["tags"])
                     this.tags.push(CustomerTagInput.fromJS(item));
             }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(CustomerListInput.fromJS(item));
+            }
             this.userId = data["userId"];
         }
     }
@@ -28934,6 +28940,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             for (let item of this.tags)
                 data["tags"].push(item.toJSON());
         }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
         data["userId"] = this.userId;
         return data; 
     }
@@ -28958,6 +28969,7 @@ export interface ICreateCustomerInput {
     organizationNote: string;
     organizationUnitId: number;
     tags: CustomerTagInput[];
+    lists: CustomerListInput[];
     userId: number;
 }
 
