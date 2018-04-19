@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountServiceProxy, SendPasswordResetCodeInput, TenantHostType } from '@shared/service-proxies/service-proxies';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { LoginService } from "account/login/login.service";
 
 @Component({
     templateUrl: './forgot-password.component.html',
@@ -17,7 +18,7 @@ export class ForgotPasswordComponent extends AppComponentBase {
 
     constructor (
         injector: Injector, 
-        private _accountService: AccountServiceProxy,
+        private _loginService: LoginService,
         private _appUrlService: AppUrlService,
         private _router: Router
         ) {
@@ -26,13 +27,8 @@ export class ForgotPasswordComponent extends AppComponentBase {
 
     save(): void {
         this.saving = true;
-        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
-        this._accountService.sendPasswordResetCode(this.model)
-            .finally(() => { this.saving = false; })
-            .subscribe(() => {
-                this.message.success(this.l('PasswordResetMailSentMessage'), this.l('MailSent')).done(() => {
-                    this._router.navigate(['account/login']);
-                });
-            });
+
+        this._loginService.resetPasswordModel = this.model;
+        this._loginService.sendPasswordResetCode(() => { this.saving = false; }, true);
     }
 }

@@ -16,10 +16,14 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     currentProgress: number;
     hasFailedAccounts = false;
     syncFailed = false;
+    lastSyncDate;
 
     statusCheckCompleted = false;
     tooltipVisible: boolean;
     timeoutHandler: any;
+
+    readonly maxTryCount = 3;
+    tryCount = 0;
 
     constructor(injector: Injector,
         private _financialInformationServiceProxy: FinancialInformationServiceProxy
@@ -40,8 +44,8 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         };
         this.ajaxRequest('/api/services/CFO/FinancialInformation/SyncAllAccounts?', 'POST', params)
             .done(result => {
+                this.tryCount = 0;
                 this.hasFailedAccounts = false;
-                this.completed = false;
                 this.getSynchProgressAjax();
             }).fail(result => {
                 this.syncFailed = true;
@@ -73,18 +77,16 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                     if (!this.completed) {
                         this.completed = true;
                         this.onComplete.emit();
-                    }
-
-                    if (this.hasFailedAccounts) {
+                    } else if (this.lastSyncDate && this.lastSyncDate < result.lastSyncDate) {
+                            this.onComplete.emit();
+                    } else if (this.tryCount < this.maxTryCount) {
+                        this.tryCount++;
                         this.timeoutHandler = setTimeout(
-                            () => this.requestSyncAjax(), 30 * 1000
-                        );
-                    } else {
-                        this.timeoutHandler = setTimeout(
-                            () => this.getSynchProgressAjax(), 30 * 1000
+                            () => this.getSynchProgressAjax(), 10 * 1000
                         );
                     }
                 }
+                this.lastSyncDate = result.lastSyncDate;
 
                 this._cfoService.instanceType = this.instanceType;
                 if (!this.statusCheckCompleted && result.accountProgresses &&

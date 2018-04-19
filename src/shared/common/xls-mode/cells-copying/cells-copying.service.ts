@@ -6,6 +6,9 @@ export class CellsCopyingService {
 
     constructor() { }
 
+    /** Cross triangle element */
+    public elem;
+
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     public copiedCell;
 
@@ -51,15 +54,15 @@ export class CellsCopyingService {
      * @return {HTMLElement}
      */
     public getCrossMovingTriangle(styles = this.crossMovingTriangleDefaultStyles) {
-        let crossMovingTriangleElement = document.getElementById('crossMovingTriangle');
-        if (!crossMovingTriangleElement) {
-            crossMovingTriangleElement = document.createElement('div');
-            crossMovingTriangleElement.id = 'crossMovingTriangle';
-            Object.assign(crossMovingTriangleElement.style, this.crossMovingTriangleDefaultStyles, styles);
+        this.elem = document.getElementById('crossMovingTriangle');
+        if (!this.elem) {
+            this.elem = document.createElement('div');
+            this.elem.id = 'crossMovingTriangle';
+            Object.assign(this.elem.style, this.crossMovingTriangleDefaultStyles, styles);
             document.addEventListener('mousedown', this.onMouseDown);
             document.addEventListener('mouseup', this.onMouseUp);
         }
-        return crossMovingTriangleElement;
+        return this.elem;
     }
 
     /**

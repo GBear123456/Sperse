@@ -37,7 +37,7 @@
         <dx-data-grid id="cashflowGridContainer"
                       [rowAlternationEnabled]="true"
                       [allowColumnResizing]="true"
-                      [dataSource]="statsDetailResult"
+                      [(dataSource)]="statsDetailResult"
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                       (onCellPrepared)="onDetailsCellPrepared($event)"
                       (onCellClick)="onDetailsCellClick($event)"
@@ -82,7 +82,10 @@
                         [allowEditing]="false"
                         [minWidth]="130">
             </dxi-column>
-            <dxi-column dataField="description" [width]="detailsDescriptionColumnWidth()" [caption]="l('DetailsHeaders_Description')">
+            <dxi-column dataField="description"
+                        [width]="detailsDescriptionColumnWidth()"
+                        [minWidth]="160"
+                        [caption]="l('DetailsHeaders_Description')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
             <dxi-column dataField="debit"
@@ -125,7 +128,8 @@
                         [width]="detailsCommentsColumnWidth()"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        [allowEditing]="false">
+                        [allowEditing]="false"
+                        [minWidth]="220">
             </dxi-column>
 
             <dxo-load-panel [enabled]="true"></dxo-load-panel>

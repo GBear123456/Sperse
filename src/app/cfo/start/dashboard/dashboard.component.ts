@@ -55,6 +55,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
             iconSrc: 'assets/common/icons/pie-chart.svg',
+            onRefresh: this.refreshWidgets.bind(this),
             buttons: []
         };
 
@@ -85,9 +86,13 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.totalsByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
         this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
     }
-
-    onSyncComplete() {
+    
+    refreshWidgets() {
         this.accountsComponent.getAccountTotals();
+        this.accountsComponent.getDailyStats();
+        this.trendByPeriodComponent.loadStatsData();
+        this.totalsByPeriodComponent.loadStatsData();
+        this.categorizationStatusComponent.getCategorizationStatus();
     }
 
     periodChanged($event) {

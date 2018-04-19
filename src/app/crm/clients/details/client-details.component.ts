@@ -68,10 +68,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         
         this.paramsSubscribe.push(this._route.params
             .subscribe(params => {
+                let clientId = params['clientId'];
                 _customerService['data'].customerInfo = {
-                    id: params['clientId']
+                    id: clientId
                 };
-                this.fillCustomerDetails(params['clientId']);
+                this.fillCustomerDetails(clientId);
         }));
 
         this.paramsSubscribe.push(this._route.queryParams
@@ -148,7 +149,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     closeEditDialogs(event) {
-        if (document.body.contains(event.target) &&
+        if (document.body.contains(event.target) && !this._dialog.getDialogById('permanent') &&
             !event.target.closest('.mat-dialog-container, .dx-popup-wrapper')
         )
             this._dialog.closeAll();

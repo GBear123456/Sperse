@@ -28499,6 +28499,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    tags: CustomerTagInput[];
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -28544,6 +28545,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
         }
     }
 
@@ -28588,6 +28594,11 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -28610,6 +28621,7 @@ export interface ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    tags: CustomerTagInput[];
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -28657,6 +28669,41 @@ export interface IContactPhotoInput {
     thumbnail: string;
     photoSourceId: string;
     comment: string;
+}
+
+export class CustomerTagInput implements ICustomerTagInput {
+    name: string;
+
+    constructor(data?: ICustomerTagInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInput {
+        let result = new CustomerTagInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInput {
+    name: string;
 }
 
 export class CreateCustomerOutput implements ICreateCustomerOutput {
@@ -28915,41 +28962,6 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
 export interface IAssignToCustomerInput {
     customerId: number;
     tags: CustomerTagInput[];
-}
-
-export class CustomerTagInput implements ICustomerTagInput {
-    name: string;
-
-    constructor(data?: ICustomerTagInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerTagInput {
-        let result = new CustomerTagInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerTagInput {
-    name: string;
 }
 
 export class AccountTotals implements IAccountTotals {
@@ -30041,6 +30053,7 @@ export interface ISyncAllAccountsOutput {
 }
 
 export class SyncProgressOutput implements ISyncProgressOutput {
+    lastSyncDate: moment.Moment;
     totalProgress: SyncProgressDto;
     accountProgresses: SyncProgressDto[];
 
@@ -30055,6 +30068,7 @@ export class SyncProgressOutput implements ISyncProgressOutput {
 
     init(data?: any) {
         if (data) {
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
             this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
             if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
                 this.accountProgresses = [];
@@ -30072,6 +30086,7 @@ export class SyncProgressOutput implements ISyncProgressOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
         if (this.accountProgresses && this.accountProgresses.constructor === Array) {
             data["accountProgresses"] = [];
@@ -30083,6 +30098,7 @@ export class SyncProgressOutput implements ISyncProgressOutput {
 }
 
 export interface ISyncProgressOutput {
+    lastSyncDate: moment.Moment;
     totalProgress: SyncProgressDto;
     accountProgresses: SyncProgressDto[];
 }
@@ -30093,6 +30109,7 @@ export class SyncProgressDto implements ISyncProgressDto {
     syncStatusMessage: string;
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
+    lastSyncDate: moment.Moment;
 
     constructor(data?: ISyncProgressDto) {
         if (data) {
@@ -30110,6 +30127,7 @@ export class SyncProgressDto implements ISyncProgressDto {
             this.syncStatusMessage = data["syncStatusMessage"];
             this.progressPercent = data["progressPercent"];
             this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
         }
     }
 
@@ -30126,6 +30144,7 @@ export class SyncProgressDto implements ISyncProgressDto {
         data["syncStatusMessage"] = this.syncStatusMessage;
         data["progressPercent"] = this.progressPercent;
         data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -30136,6 +30155,7 @@ export interface ISyncProgressDto {
     syncStatusMessage: string;
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
+    lastSyncDate: moment.Moment;
 }
 
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
