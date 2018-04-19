@@ -52,6 +52,17 @@
         padding-left: 23px;
         padding-right: 0px;
 
+        .add-phone {
+          color: #00aeef;
+          font-size: 32px;
+          font-weight: 100;
+          display: inline-block;      
+          vertical-align: top;
+          padding-left: 7px;
+          cursor: pointer;
+          margin: 0px;
+        }
+
         .show-origin {
             text-align: right;
             padding-right: 23px;
@@ -73,9 +84,16 @@
                 letter-spacing: 0.4px;
                 color: #686f76;
             }
-            /deep/ .dx-widget:not(.dx-state-focused) .dx-placeholder {
-                font-weight: 400;
-                font-size: 16px;
+            &.phone {
+                /deep/ .dx-widget {
+                    display: inline-block;
+                }
+            }            
+            /deep/ .dx-widget {
+                &:not(.dx-state-focused) .dx-placeholder {
+                    font-weight: 400;
+                    font-size: 16px;
+                }
             }
             /deep/ input, /deep/ textarea {
                 font-size: 15px;

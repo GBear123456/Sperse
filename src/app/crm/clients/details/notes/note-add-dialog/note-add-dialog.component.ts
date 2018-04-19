@@ -2,8 +2,11 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { CreateNoteInput, CustomerInfoDto, NotesServiceProxy, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CreateNoteInput, CustomerInfoDto, NotesServiceProxy, ContactPhoneDto,
+    UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '../../phone-format.pipe';
+
+import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -42,9 +45,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     
     constructor(
         injector: Injector,
+        private _dialog: MatDialog,
         private _phoneFormatPipe: PhoneFormatPipe,
         private _notesService: NotesServiceProxy,
-        private _userService: UserServiceProxy
+        private _userService: UserServiceProxy,
+        private _contactPhoneService: ContactPhoneServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -133,8 +138,12 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         }, 500);
     }
 
+    getContactById(id) {
+        return _.findWhere(this.data.customerInfo.contactPersons, {id: id});
+    }
+
     onContactChanged($event) {
-        let contact = _.findWhere(this.data.customerInfo.contactPersons, {id: $event.value});
+        let contact = this.getContactById($event.value);
         this.phones = contact.details.phones.map((phone) => {
             return {
                 id: phone.id,
@@ -147,5 +156,42 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     initValidationGroup($event) {
         this.validator = $event.component;
+    }
+
+    showAddPhoneDialog(event) {
+        let dialogData = {
+            contactId: this.contact,
+            field: 'phoneNumber',
+            name: 'Phone',
+            isConfirmed: false,
+            isActive: false
+        }, shift = '50px';
+        this._dialog.open(EditContactDialog, {
+            data: dialogData,
+            hasBackdrop: true,
+            position: {
+                right: shift, 
+                bottom: shift
+            }
+        }).afterClosed().subscribe(result => {
+            if (result)
+                this.addNewPhone(dialogData);
+        });
+        event.stopPropagation();
+    }
+
+    addNewPhone(data) {
+        this._contactPhoneService.createContactPhone(
+            CreateContactPhoneInput.fromJS(data)
+        ).subscribe(result => {
+            if (result.id) {
+                data.id = result.id;
+                let contact = this.getContactById(this.contact);
+                if (contact) {
+                    contact.details.phones.unshift(ContactPhoneDto.fromJS(data));
+                    this.onContactChanged({value: this.contact});
+                }
+            }
+        }, error => {});
     }
 }
