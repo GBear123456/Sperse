@@ -1,6 +1,8 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { CreateBusinessEntityDialogComponent } from './create-business-entity-dialog/create-business-entity-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -31,6 +33,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     private lastSelectedBusinessEntity;
 
     constructor(injector: Injector,
+            public dialog: MatDialog,
             private _businessEntityService: BusinessEntityServiceProxy,
             private _router: Router) {
         super(injector);
@@ -97,6 +100,20 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     addEntity(e) {
+        this.dialog.open(CreateBusinessEntityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                localization: this.localizationSourceName
+            }
+        }).afterClosed().subscribe(options => {
+            if (options && options.update) {
+                this.refreshDataGrid();
+            }
+        });
     }
 
     locationColumn_calculateCellValue(rowData) {
@@ -158,5 +175,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                     this.lastSelectedBusinessEntity = null;
                 });
         }
+    }
+
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
     }
 }
