@@ -17549,6 +17549,52 @@ export class UserAssignmentServiceProxy {
         }
         return Observable.of<UserInfoDto[]>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignToCustomer(input: AssignToCustomer): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignToCustomer";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToCustomer(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -41914,6 +41960,45 @@ export class UserInfoDto implements IUserInfoDto {
 export interface IUserInfoDto {
     id: number;
     name: string;
+}
+
+export class AssignToCustomer implements IAssignToCustomer {
+    customerId: number;
+    userId: number;
+
+    constructor(data?: IAssignToCustomer) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): AssignToCustomer {
+        let result = new AssignToCustomer();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IAssignToCustomer {
+    customerId: number;
+    userId: number;
 }
 
 export class LinkToUserInput implements ILinkToUserInput {
