@@ -17554,8 +17554,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToCustomer(input: AssignToCustomer): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignToCustomer";
+    assignUserToCustomer(input: AssignUserToCustomerInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignUserToCustomer";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -17569,11 +17569,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignToCustomer(response_);
+            return this.processAssignUserToCustomer(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignToCustomer(response_);
+                    return this.processAssignUserToCustomer(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -17582,7 +17582,7 @@ export class UserAssignmentServiceProxy {
         });
     }
 
-    protected processAssignToCustomer(response: Response): Observable<void> {
+    protected processAssignUserToCustomer(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -41962,11 +41962,11 @@ export interface IUserInfoDto {
     name: string;
 }
 
-export class AssignToCustomer implements IAssignToCustomer {
+export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
     customerId: number;
     userId: number;
 
-    constructor(data?: IAssignToCustomer) {
+    constructor(data?: IAssignUserToCustomerInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -41982,8 +41982,8 @@ export class AssignToCustomer implements IAssignToCustomer {
         }
     }
 
-    static fromJS(data: any): AssignToCustomer {
-        let result = new AssignToCustomer();
+    static fromJS(data: any): AssignUserToCustomerInput {
+        let result = new AssignUserToCustomerInput();
         result.init(data);
         return result;
     }
@@ -41996,7 +41996,7 @@ export class AssignToCustomer implements IAssignToCustomer {
     }
 }
 
-export interface IAssignToCustomer {
+export interface IAssignUserToCustomerInput {
     customerId: number;
     userId: number;
 }
