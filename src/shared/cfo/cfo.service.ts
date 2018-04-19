@@ -50,9 +50,7 @@ export class CFOService extends CFOServiceBase {
                     } else if (i == 1) {
                         item.disabled = !this.initialized;
                     } else {
-                        if (i !== this._appService.topMenu.items.length - 1) {
-                            item.disabled = !this.hasTransactions;
-                        }
+                        item.disabled = !this.hasTransactions;
                     }
                 });
             callback && callback.call(this, this.hasTransactions);

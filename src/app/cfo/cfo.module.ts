@@ -33,6 +33,8 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
+import { StatementsComponent } from './statements/statements.component'
+
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -125,6 +127,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         PreferencesDialogComponent,
         StatsComponent,
         SourceDataComponent,
+        StatementsComponent,
         RuleDialogComponent,
         RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,

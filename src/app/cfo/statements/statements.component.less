@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+:host {
+    position: relative;
+    top: 74px;
+
+    .main-wrapper {
+        border: 1px solid #dfdfdf;
+        max-width: 100vw;
+        display: flex;
+
+        /deep/ #gridContainer .dx-datagrid-rowsview .dx-datagrid-content tr {
+            td, td * {
+                font-family: 'Lato';
+            }
+
+            .positive {
+                color: #61c670;
+            }
+
+            .negative {
+                color: #e7326a;
+            }
+        }
+    }
+}

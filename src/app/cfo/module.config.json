@@ -15,6 +15,6 @@
     [ "Transactions", "", "icon-home", "/app/cfo/:instance/transactions" ],
     [ "Cashflow", "", "icon-home", "/app/cfo/:instance/cashflow" ],
     [ "Stats", "", "icon-home", "/app/cfo/:instance/stats" ],
-    [ "Statements", "", "", "" ]
+    [ "Statements", "", "icon-home", "/app/cfo/:instance/statements" ]
   ]
 }

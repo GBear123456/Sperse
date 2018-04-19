@@ -9,6 +9,7 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { RulesComponent } from './rules/rules.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
+import { StatementsComponent } from './statements/statements.component';
 
 @NgModule({
     imports: [
@@ -24,7 +25,8 @@ import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-acc
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
                     { path: 'stats', component: StatsComponent, data: { permission: '' } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
-                    { path: 'rules', component: RulesComponent, data: { permission: '' } }
+                    { path: 'rules', component: RulesComponent, data: { permission: '' } },
+                    { path: 'statements', component: StatementsComponent, data: { permission: '' } }
                 ]
             }
         ])

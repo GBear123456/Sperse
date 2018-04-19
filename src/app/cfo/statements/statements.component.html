@@ -1,0 +1,40 @@
+<div>
+    <app-headline [config]="headlineConfig">
+        <synch-progress class="synch-progress" (onComplete)="refreshData()"></synch-progress>
+    </app-headline>
+    <div class="main-wrapper">
+        <dx-data-grid id="gridContainer"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig"
+                      [dataSource]="statementsData">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+
+            <dxi-column dataField="date" caption="{{l('Statements_Period')}}" dataType="date" format="MMM y"></dxi-column>
+            <dxi-column dataField="startingBalance" caption="{{l('Statements_StartingPosition')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="inflows" cssClass="positive" caption="{{l('Statements_Inflows')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="outflows" cssClass="negative" caption="{{l('Statements_Outflows')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="endingBalance" caption="{{l('Statements_EndingBalance')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="netChange" caption="{{l('Statements_NetChange')}}" cellTemplate="positiveNegativeTemplate" format="currency" precision="2"></dxi-column>
+            <!--<dxi-column dataField="avgDailyBalance" caption="{{l('Statements_AvgDailyBalance')}}" format="currency" precision="2"></dxi-column>-->
+
+            <ng-container *dxTemplate="let cell of 'positiveNegativeTemplate'">
+                <span [ngClass]="cell.value < 0 ? 'negative' : 'positive'"> {{ cell.text }} </span>
+            </ng-container>
+        </dx-data-grid>
+
+        <app-report-period [sliderReportPeriod]="sliderReportPeriod"
+                           (onPeriodSelected)="setReportPeriodFilter($event)">
+        </app-report-period>
+        <bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
+                              useGlobalCache="true"
+                              (onBankAccountsSelected)="setBankAccountsFilter($event)">
+        </bank-accounts-select>
+    </div>
+</div>
