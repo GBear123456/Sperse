@@ -70,6 +70,7 @@ import {
 } from 'devextreme-angular';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
+import { BankAccountsQuovoComponent } from '../../shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 
 @NgModule({
     imports: [
@@ -132,7 +133,8 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         ChartOfAccountsComponent,
         BankAccountsSelectComponent,
         ChooseResetRulesComponent,
-        ReportPeriodComponent
+        ReportPeriodComponent,
+        BankAccountsQuovoComponent
     ],
     entryComponents: [
         RuleDialogComponent,

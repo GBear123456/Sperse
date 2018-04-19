@@ -5,9 +5,7 @@
     <div class="content-wrap">
         <setup-steps SelectedStepIndex="0"></setup-steps>
         <div class="frame-wrap">
-            <ng-container *ngIf="sourceUrl">
-                <iframe [src]="sourceUrl" width="100%" frameborder="0"></iframe>
-            </ng-container>
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>

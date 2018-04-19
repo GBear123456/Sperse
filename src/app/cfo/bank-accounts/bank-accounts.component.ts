@@ -1,8 +1,6 @@
-import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
-import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
+import { FinancialInformationServiceProxy, BankAccountsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DomSanitizer } from '@angular/platform-browser';
-import { AppConsts } from '@shared/AppConsts';
 import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
@@ -11,19 +9,17 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
     selector: 'bank-accounts',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
-    providers: [ FinancialInformationServiceProxy ]
+    providers: [ FinancialInformationServiceProxy, BankAccountsServiceProxy ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
 
-    sourceUrl: any;
     headlineConfig: any;
+
     private rootComponent: any;
 
     constructor(
         injector: Injector,
-        private sanitizer: DomSanitizer,
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         private _router: Router
     ) {
@@ -32,9 +28,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
 
     ngOnInit() {
         super.ngOnInit();
-
-        this.initIFrame();
-
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_FinancialAccounts')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
@@ -54,19 +47,8 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
             ]
         };
     }
-    initIFrame() {
-        this._financialInformationServiceProxy.getSetupAccountsLink(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',
-            ''
-        ).subscribe((data) => {
-            this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);
-        });
-    }
 
     onRefreshClick() {
-        this.initIFrame();
         this.syncComponent.requestSyncAjax(true);
     }
 
@@ -76,7 +58,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
             this._cfoService.instanceChangeProcess(() => {
                 this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
             });
-        }, 300);        
+        }, 300);
     }
 
     ngAfterViewInit(): void {

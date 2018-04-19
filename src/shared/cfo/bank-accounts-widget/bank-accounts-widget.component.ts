@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Input, ViewChild } from '@angular/core';
-import { SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
-import { AppComponentBase } from 'shared/common/app-component-base';
+import { SyncAccountBankDto, BankAccountsServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
+import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
@@ -10,7 +10,7 @@ import * as _ from 'underscore';
     templateUrl: './bank-accounts-widget.component.html',
     styleUrls: ['./bank-accounts-widget.component.less']
 })
-export class BankAccountsWidgetComponent extends AppComponentBase implements OnInit {
+export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit {
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
@@ -50,7 +50,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     bankAccountIdsForHighlight = [];
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private _bankAccountsService: BankAccountsServiceProxy
     ) {
         super(injector);
         this.allAccountTypesFilter = this.l('AllAccounts');
@@ -58,6 +59,16 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     ngOnInit(): void {
+        if (!this.dataSource) {
+            this.loadBankAccounts();
+        }
+    }
+
+    loadBankAccounts(initial = false): void {
+        this._bankAccountsService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
+        .subscribe((result) => {
+            this.dataSource = result;
+        });
     }
 
     rowPrepared(e) {
