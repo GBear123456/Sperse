@@ -32,7 +32,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
-    private rootComponent: any;
 
     constructor(injector: Injector,
             public dialog: MatDialog,
