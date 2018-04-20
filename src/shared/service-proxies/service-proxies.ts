@@ -19040,6 +19040,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
     endingBalance: number;
     debit: number;
     credit: number;
+    averageDailyBalance: number;
     period: BankAccountDailyStatDtoPeriod;
     isForecast: boolean;
 
@@ -19063,6 +19064,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
             this.endingBalance = data["endingBalance"];
             this.debit = data["debit"];
             this.credit = data["credit"];
+            this.averageDailyBalance = data["averageDailyBalance"];
             this.period = data["period"];
             this.isForecast = data["isForecast"];
         }
@@ -19085,6 +19087,7 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
         data["endingBalance"] = this.endingBalance;
         data["debit"] = this.debit;
         data["credit"] = this.credit;
+        data["averageDailyBalance"] = this.averageDailyBalance;
         data["period"] = this.period;
         data["isForecast"] = this.isForecast;
         return data; 
@@ -19101,6 +19104,7 @@ export interface IBankAccountDailyStatDto {
     endingBalance: number;
     debit: number;
     credit: number;
+    averageDailyBalance: number;
     period: BankAccountDailyStatDtoPeriod;
     isForecast: boolean;
 }
