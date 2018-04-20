@@ -173,6 +173,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Source of the cashflow table (data fields descriptions and data) */
     dataSource;
 
+    dragImg;
+    
     /** Moment.js formats string for different periods */
     private momentFormats = {
         'year':     'Y',
@@ -689,11 +691,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         },
         {
             name: 'mouseover',
-            handler: this.onMouseOver.bind(this)
+            handler: this.onMouseOver.bind(this),
+            useCapture: true
         },
         {
             name: 'mouseout',
-            handler: this.onMouseOut.bind(this)
+            handler: this.onMouseOut.bind(this),
+            useCapture: true
         }
     ];
 
@@ -767,6 +771,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        
+        
+        this.dragImg = new Image();
+        this.dragImg.src = 'assets/common/icons/drag-icon.svg';
+        this.dragImg.style.display = 'none';
+        this.getElementRef().nativeElement.appendChild(this.dragImg);
     }
 
     /**
@@ -1868,8 +1878,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.applyUserPreferencesForAreas();
 
         let pivotDataArea: HTMLElement = this.getElementRef().nativeElement.querySelector('.dx-pivotgrid-area-data');
-        pivotDataArea.removeEventListener('keydown', this.keyDownEventHandler);
-        pivotDataArea.addEventListener('keydown', this.keyDownEventHandler, true);
+        document.removeEventListener('keydown', this.keyDownEventHandler);
+        document.addEventListener('keydown', this.keyDownEventHandler, true);
 
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
@@ -2826,29 +2836,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let targetCell = this.getCellElementFromTarget(e.target);
         if (targetCell && this.elementIsDataCell(targetCell)) {
             let cellObj = this.getCellObjectFromCellElement(targetCell);
-            /** check the target and if target is cashflow cell and could be moved - highlight all cell where this one could be moved */
+          
             if (cellObj.cell.value) {
 
                 /** add selected class */
                 $('.selectedCell').removeClass('selectedCell');
                 targetCell.classList.add('selectedCell');
+
                 this.movedCell = cellObj;
-
-                let dragImg = new Image();
-                dragImg.src = 'assets/common/icons/drag-icon.svg';
-                e.dataTransfer.setData('text/plain', 'moving');
-
-                /** set the draggable image */
-                e.dataTransfer.setDragImage(dragImg, -10, -10);
-                e.dropEffect = 'none';
+                e.dataTransfer.setData('text', 'moving');
+                
+                this.dragImg.style.display = '';
+                e.dataTransfer.setDragImage(this.dragImg, -10, -10);
+                e.dataTransfer.dropEffect = 'none';
 
                 $('[droppable]').attr('droppable', 'false');
-                /** find the dropable area depend on period */
-                /** @todo uncomment to handle moving of historical transactions */
-                /* if ($(targetElement).attr('class').indexOf('prev') !== -1) {
-                        $(`[droppable]:nth-child(${cellIndex + 1}):not(.selectedCell)`).attr('droppable', 'true');
-                    } else*/
-
+       
                 let $targetCell = $(targetCell);
                 let $targetCellParent = $targetCell.parent();
                 let availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
@@ -2857,7 +2860,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     availableRows.find(`[droppable][class*="current"]:not(.selectedCell)`).attr('droppable', 'true');
                     availableRows.find(`[droppable]:not(.selectedCell) > span`).attr('droppable', 'true');
                 }
-            }
+           }
         }
         targetCell = null;
     }
@@ -2872,6 +2875,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             $('[droppable]').attr('droppable', 'false');
         }
         targetCell = null;
+        this.dragImg.style.display = 'none';
     }
 
     onDragEnter(e) {
