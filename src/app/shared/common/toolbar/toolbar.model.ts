@@ -3,6 +3,7 @@ export class ToolbarGroupModelItem {
     action: () => void;
     onSelectionChanged?: () => void;
     options: any;
+    disabled?: boolean;
     widget?: string;
     itemTemplate?: string;
     text?: string;

@@ -1,5 +1,6 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
+    <crm-tags-list [selectedKeys]="selectedClientKeys"></crm-tags-list>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
@@ -14,6 +15,7 @@
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
                                   (onEditingStart)="showClientDetails($event)"
+                                  (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
