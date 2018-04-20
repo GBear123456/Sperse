@@ -7122,6 +7122,52 @@ export class CustomerStarsServiceProxy {
         }
         return Observable.of<CustomerStarInfoDto[]>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    markCustomer(input: MarkCustomerInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerStars/MarkCustomer";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processMarkCustomer(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processMarkCustomer(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processMarkCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -29334,6 +29380,45 @@ export class CustomerStarInfoDto implements ICustomerStarInfoDto {
 export interface ICustomerStarInfoDto {
     id: number;
     name: string;
+}
+
+export class MarkCustomerInput implements IMarkCustomerInput {
+    customerId: number;
+    starId: number;
+
+    constructor(data?: IMarkCustomerInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.starId = data["starId"];
+        }
+    }
+
+    static fromJS(data: any): MarkCustomerInput {
+        let result = new MarkCustomerInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["starId"] = this.starId;
+        return data; 
+    }
+}
+
+export interface IMarkCustomerInput {
+    customerId: number;
+    starId: number;
 }
 
 export class CustomerTagInfoDto implements ICustomerTagInfoDto {
