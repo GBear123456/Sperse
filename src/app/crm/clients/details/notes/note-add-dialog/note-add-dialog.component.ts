@@ -58,7 +58,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.dialogRef = injector.get(MatDialogRef);
 
         if (this.data.customerInfo.contactPersons.length) {
-            this.contacts = this.data.customerInfo.contactPersons;
+            let orgContact = this.data.customerInfo.organizationContactInfo,
+                contacts = this.data.customerInfo.contactPersons;
+            this.contacts = orgContact ? contacts.concat(orgContact): contacts;
             this.onContactChanged({value: this.contacts[0].id});
         }
 
@@ -110,10 +112,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 customerId: this.data.customerInfo.id,
                 text: this.summary,
                 contactId: this.contact,
-                contactPhoneId: this.phone,
+                contactPhoneId: this.phone || undefined,
                 typeId: this.type,
-                followUpDateTime: this.followupDate,
-                dateTime: this.currentDate,
+                followUpDateTime: this.followupDate || undefined,
+                dateTime: this.currentDate || undefined,
                 addedByUserId: parseInt(this.addedBy) || undefined
             })).subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
@@ -139,7 +141,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     getContactById(id) {
-        return _.findWhere(this.data.customerInfo.contactPersons, {id: id});
+        return _.findWhere(this.contacts, {id: id});
     }
 
     onContactChanged($event) {

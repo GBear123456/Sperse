@@ -19,7 +19,7 @@
                    </dx-validator>
                 </dx-text-area>
             </div>
-            <div *ngIf="data.customerInfo.contactPersons.length" class="field">
+            <div *ngIf="contacts.length > 1" class="field">
                 <label>{{l('Contact') | uppercase }}</label>
                 <dx-select-box
                     [dataSource]="contacts"
