@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { CreateBusinessEntityDialogComponent } from './create-business-entity-dialog/create-business-entity-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -25,17 +27,17 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
+    private rootComponent: any;
 
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
     private rootComponent: any;
 
-    constructor(
-        injector: Injector,
-        private _businessEntityService: BusinessEntityServiceProxy,
-        private _router: Router
-    ) {
+    constructor(injector: Injector,
+            public dialog: MatDialog,
+            private _businessEntityService: BusinessEntityServiceProxy,
+            private _router: Router) {
         super(injector);
         this.rootComponent = this.getRootComponent();
     }
@@ -46,6 +48,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_BusinessEntities')],
+            onRefresh: this.refreshDataGrid.bind(this),
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: [
                 {
@@ -78,7 +81,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         e.toolbarOptions.items.unshift(
             {
                 location: 'before',
-                template: 'title'
+                template: 'toolbarTitleTemplate'
             },
             {
                 location: 'after',
@@ -88,6 +91,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                     onClick: this.addEntity.bind(this),
                     bindingOptions: {'disabled': 'isAddButtonDisabled'},
                     elementAttr: {'class': 'link'}
+                }
+            },
+            {
+                location: 'after',
+                widget: 'dxButton',
+                options: {
+                    hint: this.l('ColumnChooser'),
+                    icon: 'column-chooser',
+                    onClick: this.showColumnChooser.bind(this),
                 }
             }
         );
@@ -102,10 +114,32 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     addEntity(e) {
+        this.dialog.open(CreateBusinessEntityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                instanceId: this.instanceId,
+                instanceType: this.instanceType,
+                localization: this.localizationSourceName
+            }
+        }).afterClosed().subscribe(options => {
+            if (options && options.update) {
+                this.refreshDataGrid();
+            }
+        });
     }
 
     locationColumn_calculateCellValue(rowData) {
-        return rowData.StateId + ', ' + rowData.CountryId;
+        let values = [];
+        if (rowData.StateId) {
+            values.push(rowData.StateId);
+        }
+        if (rowData.CountryId) {
+            values.push(rowData.CountryId);
+        }
+
+        return values.length > 0 ? values.join(', ') : null;
     }
 
     openBankAccountSelectComponent(businessEntity) {
@@ -165,6 +199,13 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         }
     }
 
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
+    }
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
     }

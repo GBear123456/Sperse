@@ -77,7 +77,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                     if (!this.completed) {
                         this.completed = true;
                         this.onComplete.emit();
-                    } else if (this.lastSyncDate && this.lastSyncDate < result.lastSyncDate) {
+                    } else if (this.lastSyncDate && this.lastSyncDate < result.totalProgress.lastSyncDate) {
                             this.onComplete.emit();
                     } else if (this.tryCount < this.maxTryCount) {
                         this.tryCount++;
@@ -86,7 +86,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                         );
                     }
                 }
-                this.lastSyncDate = result.lastSyncDate;
+                this.lastSyncDate = result.totalProgress.lastSyncDate;
 
                 this._cfoService.instanceType = this.instanceType;
                 if (!this.statusCheckCompleted && result.accountProgresses &&
