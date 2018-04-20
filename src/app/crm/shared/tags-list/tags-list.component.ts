@@ -28,7 +28,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.tooltipVisible = !this.tooltipVisible;
     }
 
-    apply() {
+    apply(selectedKeys = undefined) {
+        this.selectedKeys = selectedKeys || this.selectedKeys;
         if (this.selectedKeys && this.selectedKeys.length) {
             let tags = this.list.map((item, index) => {
                 return this.listComponent.isItemSelected(index) 

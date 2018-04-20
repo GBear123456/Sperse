@@ -31,7 +31,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
 
-    clientId: number;
     person = new PersonInfoDto();
 
     emailsPersonal: any;
@@ -204,8 +203,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     },
                     {
                         name: 'tags',
-                        accesskey: 'ClientTags'
-                        //action: this.toggleTags.bind(this)
+                        action: this.toggleTags.bind(this),
+                        options: {
+                            accessKey: 'ClientTags'
+                        }
                     },
                     {
                         name: 'discard',
@@ -312,8 +313,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             })
         ).finally(() => {  })
             .subscribe(result => {
-console.log(result);
-//                this.clientId = result;
+                this.tagsComponent.apply([result.id]);
                 if (this.saveContextMenuItems[0].selected) {
                     this.data.refreshParent();
                     this.resetFullDialog();
