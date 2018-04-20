@@ -67,6 +67,12 @@
                         </div>
                     </div>
                 </dx-data-grid>
+
+                <bank-accounts-select [highlightUsedRows]="true"
+                                      [showBusinessEntitiesFilter]="false"
+                                      [emitOnlySelectedBankAccounts]="true"
+                                      (onBankAccountsSelected)="applyBankAccountIds($event)">
+                </bank-accounts-select>
             </div>
         </dx-scroll-view>
     </div>
