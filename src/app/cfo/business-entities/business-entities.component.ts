@@ -44,6 +44,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_BusinessEntities')],
+            onRefresh: this.refreshDataGrid.bind(this),
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
             buttons: [
                 {
@@ -76,7 +77,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         e.toolbarOptions.items.unshift(
             {
                 location: 'before',
-                template: 'title'
+                template: 'toolbarTitleTemplate'
             },
             {
                 location: 'after',
@@ -86,6 +87,15 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                     onClick: this.addEntity.bind(this),
                     bindingOptions: {'disabled': 'isAddButtonDisabled'},
                     elementAttr: {'class': 'link'}
+                }
+            },
+            {
+                location: 'after',
+                widget: 'dxButton',
+                options: {
+                    hint: this.l('ColumnChooser'),
+                    icon: 'column-chooser',
+                    onClick: this.showColumnChooser.bind(this),
                 }
             }
         );
@@ -187,5 +197,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
     }
 }
