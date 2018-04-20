@@ -7063,6 +7063,68 @@ export class CustomersServiceProxy {
 }
 
 @Injectable()
+export class CustomerStarsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getStars(): Observable<CustomerStarInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerStars/GetStars";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetStars(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetStars(response_);
+                } catch (e) {
+                    return <Observable<CustomerStarInfoDto[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CustomerStarInfoDto[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetStars(response: Response): Observable<CustomerStarInfoDto[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CustomerStarInfoDto.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<CustomerStarInfoDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class CustomerTagsServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -29235,6 +29297,45 @@ export interface IUpdateCustomerStatusesInput {
     statusId: string;
 }
 
+export class CustomerStarInfoDto implements ICustomerStarInfoDto {
+    id: number;
+    name: string;
+
+    constructor(data?: ICustomerStarInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerStarInfoDto {
+        let result = new CustomerStarInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerStarInfoDto {
+    id: number;
+    name: string;
+}
+
 export class CustomerTagInfoDto implements ICustomerTagInfoDto {
     name: string;
 
@@ -41065,20 +41166,20 @@ export interface IGetTransactionDetailsOutput {
 }
 
 export class TransactionDetailsDto implements ITransactionDetailsDto {
-    bankAccountName: string;
+    cashflowCategoryId: string;
+    transactionDescriptor: string;
+    comments: TransactionCommentDto[];
     attributes: TransactionAttributeDto[];
     id: number;
     bankAccountBankName: string;
     bankAccountNumber: string;
+    bankAccountName: string;
     date: moment.Moment;
     currency: string;
     amount: number;
     description: string;
     cashFlowTypeId: string;
-    endingBalance: number;
-    isBalanceConfirmed: boolean;
-    cashflowCategoryGroupName: string;
-    cashflowCategoryName: string;
+    transactionStatus: TransactionDetailsDtoTransactionStatus;
 
     constructor(data?: ITransactionDetailsDto) {
         if (data) {
@@ -41091,7 +41192,13 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
 
     init(data?: any) {
         if (data) {
-            this.bankAccountName = data["bankAccountName"];
+            this.cashflowCategoryId = data["cashflowCategoryId"];
+            this.transactionDescriptor = data["transactionDescriptor"];
+            if (data["comments"] && data["comments"].constructor === Array) {
+                this.comments = [];
+                for (let item of data["comments"])
+                    this.comments.push(TransactionCommentDto.fromJS(item));
+            }
             if (data["attributes"] && data["attributes"].constructor === Array) {
                 this.attributes = [];
                 for (let item of data["attributes"])
@@ -41100,15 +41207,13 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
             this.id = data["id"];
             this.bankAccountBankName = data["bankAccountBankName"];
             this.bankAccountNumber = data["bankAccountNumber"];
+            this.bankAccountName = data["bankAccountName"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.currency = data["currency"];
             this.amount = data["amount"];
             this.description = data["description"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.endingBalance = data["endingBalance"];
-            this.isBalanceConfirmed = data["isBalanceConfirmed"];
-            this.cashflowCategoryGroupName = data["cashflowCategoryGroupName"];
-            this.cashflowCategoryName = data["cashflowCategoryName"];
+            this.transactionStatus = data["transactionStatus"];
         }
     }
 
@@ -41120,7 +41225,13 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["bankAccountName"] = this.bankAccountName;
+        data["cashflowCategoryId"] = this.cashflowCategoryId;
+        data["transactionDescriptor"] = this.transactionDescriptor;
+        if (this.comments && this.comments.constructor === Array) {
+            data["comments"] = [];
+            for (let item of this.comments)
+                data["comments"].push(item.toJSON());
+        }
         if (this.attributes && this.attributes.constructor === Array) {
             data["attributes"] = [];
             for (let item of this.attributes)
@@ -41129,34 +41240,71 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
         data["id"] = this.id;
         data["bankAccountBankName"] = this.bankAccountBankName;
         data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankAccountName"] = this.bankAccountName;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["currency"] = this.currency;
         data["amount"] = this.amount;
         data["description"] = this.description;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["endingBalance"] = this.endingBalance;
-        data["isBalanceConfirmed"] = this.isBalanceConfirmed;
-        data["cashflowCategoryGroupName"] = this.cashflowCategoryGroupName;
-        data["cashflowCategoryName"] = this.cashflowCategoryName;
+        data["transactionStatus"] = this.transactionStatus;
         return data; 
     }
 }
 
 export interface ITransactionDetailsDto {
-    bankAccountName: string;
+    cashflowCategoryId: string;
+    transactionDescriptor: string;
+    comments: TransactionCommentDto[];
     attributes: TransactionAttributeDto[];
     id: number;
     bankAccountBankName: string;
     bankAccountNumber: string;
+    bankAccountName: string;
     date: moment.Moment;
     currency: string;
     amount: number;
     description: string;
     cashFlowTypeId: string;
-    endingBalance: number;
-    isBalanceConfirmed: boolean;
-    cashflowCategoryGroupName: string;
-    cashflowCategoryName: string;
+    transactionStatus: TransactionDetailsDtoTransactionStatus;
+}
+
+export class TransactionCommentDto implements ITransactionCommentDto {
+    commentId: number;
+    text: string;
+
+    constructor(data?: ITransactionCommentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.commentId = data["commentId"];
+            this.text = data["text"];
+        }
+    }
+
+    static fromJS(data: any): TransactionCommentDto {
+        let result = new TransactionCommentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["commentId"] = this.commentId;
+        data["text"] = this.text;
+        return data; 
+    }
+}
+
+export interface ITransactionCommentDto {
+    commentId: number;
+    text: string;
 }
 
 export class TransactionTypesAndCategoriesDto implements ITransactionTypesAndCategoriesDto {
@@ -43467,6 +43615,11 @@ export enum RegisterTenantInputTenantHostType {
     PlatformApi = <any>"PlatformApi", 
     PlatformUi = <any>"PlatformUi", 
     FundingUi = <any>"FundingUi", 
+}
+
+export enum TransactionDetailsDtoTransactionStatus {
+    Pending = <any>"Pending", 
+    Settled = <any>"Settled", 
 }
 
 export enum ActivateUserForContactInputTenantHostType {
