@@ -30,6 +30,7 @@ import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.compone
 
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
+import { TagsListComponent } from './shared/tags-list/tags-list.component';
 
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
@@ -39,6 +40,8 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
   MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
 import {
+    DxListModule,
+    DxTooltipModule,
     DxDataGridModule,
     DxToolbarModule,
     DxTemplateModule,
@@ -80,6 +83,8 @@ import {
       DxScrollViewModule,
       DxTextAreaModule,
       DxContextMenuModule,
+      DxTooltipModule,
+      DxListModule,
 
       MatSidenavModule,
       MatProgressBarModule,
@@ -118,7 +123,8 @@ import {
       EditionComboComponent,
       DashboardComponent,
       DashboardMenuComponent,
-      LeadsStatsComponent
+      LeadsStatsComponent,
+      TagsListComponent
     ],
     entryComponents: [
         CreateClientDialogComponent

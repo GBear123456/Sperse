@@ -308,6 +308,8 @@
                         font-size: 13px;
                         line-height: 1.85;
                         letter-spacing: 0.3px;
+                        padding-left: 28px;
+                        background: url('../../../../assets/common/icons/flag-icon.svg') left center no-repeat;
                         color: #677380;
                         display: inline-block;
                         font-family: Montserrat;
@@ -593,6 +595,10 @@
                 &[group-item-count="6"] {
                     right: -5px;
                 }
+
+                &[group-item-count="7"] {
+                    right: -6px;
+                }
             }
 
             &[group-item-position="inside"] {
@@ -614,6 +620,14 @@
                 &[group-item-index="4"] {
                     right: -3px;
                 }
+
+                &[group-item-index="5"] {
+                    right: -4px;
+                }
+
+                &[group-item-index="6"] {
+                    right: -5px;
+                }
             }
 
             &[group-item-position="last"] {
@@ -627,7 +641,11 @@
                 }
             }
 
+            &[aria-label="Rating"],
+            &[aria-label="star-icon"],
+            &[aria-label="List"],
             &[aria-label="More"],
+            &[aria-label="Tags"],
             &[aria-label="pen"],
             &[aria-label="folder"] {
                 &:not(.dx-button-has-text) {

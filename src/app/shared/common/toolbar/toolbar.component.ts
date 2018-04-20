@@ -169,6 +169,22 @@ export class ToolBarComponent extends AppComponentBase {
         addEntity: {
             hint: this.l('AddEntity'),
             icon: this.getImgURI('add-button')
+        },
+        tags: {
+            text: this.l('Tags'),
+            icon: this.getImgURI('pen')
+        },
+        list: {
+            text: this.l('List'),
+            icon: this.getImgURI('folder')
+        },
+        rating: {
+            text: this.l('Rating'),
+            icon: this.getImgURI('flag-icon')
+        },
+        star: {
+            hint: this.l('Star'),
+            icon: this.getImgURI('star-icon')
         }
     };
 
@@ -281,6 +297,7 @@ export class ToolBarComponent extends AppComponentBase {
                 if (item.adaptive === false || !this.showAdaptiveToolbar) {
                     items.push({
                         location: group.location,
+                        disabled: item.disabled,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
                         text: !item.widget && item.text,
                         html: !item.widget && item.html,

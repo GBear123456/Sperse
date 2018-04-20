@@ -1,0 +1,21 @@
+<dx-tooltip height="440"
+            [target]="targetSelector"
+            [(visible)]="tooltipVisible">
+    <div *dxTemplate="let data of 'content'">
+        <div class="tags-tooltip-container">
+            <div class="actions clearfix">
+                <span class="title">{{l('Tags')}}</span>
+                <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+            </div>
+            <dx-list 
+                height="350"
+                [searchEnabled]="true"
+                [selectionMode]="'multiple'"
+                [showSelectionControls]="true"
+                [dataSource]="list"
+                (onInitialized)="onInitialized($event)">
+            </dx-list>
+        </div>
+    </div>
+</dx-tooltip>
