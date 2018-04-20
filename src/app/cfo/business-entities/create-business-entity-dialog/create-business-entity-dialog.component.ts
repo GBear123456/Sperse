@@ -22,13 +22,15 @@ import * as _ from 'underscore';
 })
 export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent implements OnInit {
 
+    types: any;
     states: any;
     countries: any;
 
     masks = AppConsts.masks;
+    maxDate = new Date();
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
-    websiteRegEx = '^(http|https)://((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    dateFormat = AppConsts.formatting.date;
 
     googleAutoComplete = false;
     saving = false;
@@ -45,6 +47,7 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
         super(injector);
 
         this.countriesStateLoad();
+        this.loadTypes();
     }
 
     ngOnInit() {
@@ -83,6 +86,13 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
         });
     }
 
+    loadTypes() {
+        this._businessEntityService.getTypes(InstanceType[this.instanceType], this.instanceId)
+            .subscribe(result => {
+                this.types = result;
+            });
+    }
+
     countriesStateLoad(): void {
         this._countryService.getCountries()
             .subscribe(result => {
@@ -108,7 +118,7 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
 
     validate() {
         if (!this.businessEntity.name) {
-            return this.notify.error(this.l('BusinessEntity_NameIsRequired'));
+            return this.notify.error(this.l('BusinessEntity_NameRequired'));
         }
 
         return true;

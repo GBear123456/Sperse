@@ -94,13 +94,26 @@
                     line-height: 1.79;
                     letter-spacing: 0.3px;
                     color: #424c56;
-                    padding: 0px;
+                    padding: 0px 8px;
                 }
             }
 
             dx-text-box[name="phone"], dx-number-box[name="phoneExtension"] {
                 input {
                     font-family: 'Lato' !important;
+                }
+            }
+
+            dx-date-box {
+                display: inline-block;
+
+                .dx-texteditor-input {
+                    padding: 8px 8px 2px;
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
                 }
             }
 
@@ -112,5 +125,20 @@
                 }
             }
         }
+    }
+
+    /deep/ .dx-placeholder,
+    /deep/ .dx-texteditor-empty.dx-state-focused .dx-placeholder {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.79;
+        letter-spacing: 0.3px;
+        color: #424c56;
+        padding: 0 !important;
+    }
+
+    /deep/ .dx-texteditor-empty.dx-state-focused .dx-placeholder {
+        top: -12px !important;
+        font-size: 11px !important;
     }
 }

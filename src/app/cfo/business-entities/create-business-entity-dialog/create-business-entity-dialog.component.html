@@ -13,14 +13,55 @@
             <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
         </div>
         <div class="field">
+            <label>{{l('BusinessEntity_Industry')}}</label>
+            <dx-text-box name="Industry"
+                         [width]="'360px'"
+                         (onKeyUp)="onKeyUp($event, 'industry')"
+                         [(value)]="businessEntity.industry">
+            </dx-text-box>
+            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+        </div>
+        <div class="field">
+            <label>{{l('BusinessEntity_TaxNumber')}}</label>
+            <dx-text-box class="tabular"
+                         name="TaxNumber"
+                         maskInvalidMessage="{{l('BusinessEntity_TaxNumberIsNotValid')}}"
+                         [mask]="masks.taxNumber"
+                         [width]="'360px'"
+                         (onKeyUp)="onKeyUp($event, 'taxNumber')"
+                         [(value)]="businessEntity.taxNumber">
+            </dx-text-box>
+            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+        </div>
+        <div class="field">
+            <label>{{l('BusinessEntity_Type')}}</label>
+            <dx-select-box [dataSource]="types"
+                           displayExpr="name"
+                           valueExpr="id"
+                           name="type"
+                           [width]="'360px'"
+                           [searchEnabled]="true"
+                           [(value)]="businessEntity.typeId">
+            </dx-select-box>
+            <span [class]="businessEntity.countryId && 'clear-contact' || 'hidden'" (click)="businessEntity.countryId = ''">+</span>
+        </div>
+        <div class="field">
+            <label>{{l('BusinessEntity_DateOpened')}}</label>
+            <dx-date-box name="DateOpened"
+                         [max]="maxDate"
+                         [width]="'360px'"
+                         placeholder="mm/dd/yyyy"
+                         (onKeyUp)="onKeyUp($event, 'dateOpened')"
+                         [(value)]="businessEntity.dateOpened">
+            </dx-date-box>
+            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+        </div>
+        <div class="field">
             <label>{{l('BusinessEntity_Website')}}</label>
             <dx-text-box name="Website"
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'website')"
                          [(value)]="businessEntity.website">
-                <dx-validator>
-                    <dxi-validation-rule type="pattern" [pattern]="websiteRegEx" message="{{l('BusinessEntity_WebsiteIsNotValid')}}."></dxi-validation-rule>
-                </dx-validator>
             </dx-text-box>
             <span [class]="businessEntity.website && 'clear-contact' || 'hidden'" (click)="businessEntity.website = ''">+</span>
         </div>
