@@ -1,11 +1,12 @@
 import { Router } from '@angular/router';
-import { Component, AfterViewInit, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
+import { PeriodComponent } from '@app/shared/common/period/period.component';
 
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 
@@ -19,11 +20,13 @@ import * as moment from 'moment';
     providers: [DashboardWidgetsService]
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
+    @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
 
     public dataEmpty: boolean;
     public headlineConfig = {
       names: [this.l('Dashboard')],
+      onRefresh: this.refresh.bind(this),
       text: this.l('statistics and reports'),
       icon: 'globe',
       buttons: []
@@ -37,6 +40,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+    }
+
+    refresh() {
+        this.periodChanged(this.periodComponent.getDatePeriodFromName(
+            this.periodComponent.selectedPeriod));
     }
 
     checkDataEmpty(data) {      
