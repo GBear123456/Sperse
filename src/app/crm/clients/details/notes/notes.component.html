@@ -12,22 +12,22 @@
         <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
-        <dxi-column dataField="text" caption="{{l('Note')}}" sortOrder="asc"></dxi-column>
-        <dxi-column dataField="dateTime" caption="{{l('Date')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+        <dxi-column dataField="text" caption="{{l('Note')}}" sortOrder="asc" width="350px" cssClass="text-wrap" dataType="string"></dxi-column>
+        <dxi-column dataField="dateTime" caption="{{l('Date')}}" cssClass="tabular" [calculateCellValue]="calculateDateCellValue"></dxi-column>
         <dxi-column dataField="addedByUserName" caption="{{l('AddedBy')}}"></dxi-column>
         <dxi-column dataField="typeName" caption="{{l('Type')}}"></dxi-column>
         <dxi-column dataField="contactPhoneNumber" caption="{{l('Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
         <dxi-column dataField="contactName" caption="{{l('Contact')}}"></dxi-column>
 
-        <div *dxTemplate="let cellData of 'dateCell'">
-            {{cellData.value | date: formatting.dateTime}}
-        </div>
         <div *dxTemplate="let cellData of 'phoneCell'">
             {{cellData.value | phone}}
         </div>
 
         <div *dxTemplate="let data of 'title'">
             <h2 class="title">{{l('Notes')}}</h2>
+        </div>
+        <div *dxTemplate="let data of 'addButton'">
+            <button class="add-new-note" (click)="showAddNoteDialog($event)">+&nbsp;{{l('AddNew')}}</button>
         </div>
 
         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>

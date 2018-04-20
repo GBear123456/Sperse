@@ -57,7 +57,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
 
     private rootComponent: any;
-    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+    private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
 
@@ -114,6 +114,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             visibleIndex: -1,
             width: 40
         });
+        this.toggleDataLayout(DataLayoutType.Grid);
     }
 
     refreshDataGrid() {
@@ -330,7 +331,32 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'before', items: [
-                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                    { name: 'assign' }, { name: 'status' }, 
+                    {
+                        name: 'list',
+                        action: Function()
+                    },
+                    {
+                        name: 'tags',
+                        action: Function(),
+                        disabled: true
+                    },
+                    {
+                        name: 'rating',
+                        action: Function()
+                    },
+                    {
+                        name: 'star',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    {
+                        name: 'delete',
+                        action: Function()
+                    }
                 ]
             },
             {
@@ -359,9 +385,24 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             }, { type: 'downloadOptions' }]
                         }
                     },
+                    { name: 'print', action: Function() }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             },
+            {
+                location: 'after',
+                items: [
+                    { name: 'fullscreen', action: Function() }
+                ]
+            }
+
+/*
             {
                 location: 'after',
                 areItemsDependent: true,
@@ -395,7 +436,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 ]
             }
+*/
         ];
+    }
+
+    showCompactRowsHeight() {
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
     filterByStages(filter: FilterModel) {

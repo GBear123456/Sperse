@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
+import { TagsListComponent } from '../tags-list/tags-list.component';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -26,9 +27,11 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadTypeServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
 
+    clientId: number;
     person = new PersonInfoDto();
 
     emailsPersonal: any;
@@ -182,28 +185,33 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             {
                 location: 'after', items: [
-                {name: 'assign'},
-                {
-                    name: 'status',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: 'Status',
-                        items: [
-                            {
-                                action: Function(),
-                                text: 'Active',
-                            }, {
-                                action: Function(),
-                                text: 'Inactive',
-                            }
-                        ]
+                //{name: 'assign'},
+                    {
+                        name: 'status',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: 'Status',
+                            items: [
+                                {
+                                    action: Function(),
+                                    text: 'Active',
+                                }, {
+                                    action: Function(),
+                                    text: 'Inactive',
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'tags',
+                        accesskey: 'ClientTags'
+                        //action: this.toggleTags.bind(this)
+                    },
+                    {
+                        name: 'discard',
+                        action: this.resetFullDialog.bind(this)
                     }
-                },
-                {
-                    name: 'discard',
-                    action: this.resetFullDialog.bind(this)
-                }
-            ]
+                ]
             },
             {
                 location: 'after',
@@ -304,6 +312,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             })
         ).finally(() => {  })
             .subscribe(result => {
+console.log(result);
+//                this.clientId = result;
                 if (this.saveContextMenuItems[0].selected) {
                     this.data.refreshParent();
                     this.resetFullDialog();
@@ -405,6 +415,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getDialogPossition(event, shiftX) {
         return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+    }
+
+    toggleTags() {
+        this.tagsComponent.toggle();
     }
 
     checkSimilarCustomers() {

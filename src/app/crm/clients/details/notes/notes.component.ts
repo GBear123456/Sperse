@@ -4,6 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { CustomersServiceProxy, CustomerInfoDto, NotesServiceProxy } from '@shared/service-proxies/service-proxies';
+import { MatDialog } from '@angular/material';
+
+import { NoteAddDialogComponent} from './note-add-dialog/note-add-dialog.component';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
@@ -25,6 +28,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, AfterVie
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
+        public dialog: MatDialog,
         private _notesService: NotesServiceProxy,
         private _customerService: CustomersServiceProxy
     ) {
@@ -45,10 +49,32 @@ export class NotesComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onToolbarPreparing($event) {
-        $event.toolbarOptions.items.unshift({
+        $event.toolbarOptions.items.push({
             location: 'before',
             template: 'title'
+        }, {
+            location: 'after',
+            template: 'addButton'
         });
+    }
+
+    showAddNoteDialog($event) {
+        this.dialog.closeAll();
+        this.dialog.open(NoteAddDialogComponent, {
+            id: 'permanent',
+            panelClass: 'note-add-dialog',
+            disableClose: true,
+            closeOnNavigation: false,
+            hasBackdrop: false,
+            data: {
+                refreshParent: this.ngOnInit.bind(this),  
+                customerInfo: this.data.customerInfo
+            }
+        }).afterClosed().subscribe(() => {});
+    }
+
+    calculateDateCellValue = (data) => {
+        return data.dateTime.format(this.formatting.dateTime.toUpperCase());
     }
 
     ngAfterViewInit(): void {

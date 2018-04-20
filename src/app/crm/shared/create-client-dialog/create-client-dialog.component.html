@@ -9,6 +9,7 @@
         target="#{{saveButtonId}}">
     </dx-context-menu>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <crm-tags-list [selectedKeys]="[clientId]" [targetSelector]="'[accesskey=\'ClientTags\']'"></crm-tags-list>
     <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>

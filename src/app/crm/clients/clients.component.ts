@@ -12,6 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -50,6 +51,7 @@ import * as moment from 'moment';
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -59,6 +61,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     private subRouteParams: any;
     private canSendVerificationRequest: boolean = false;
 
+    selectedClientKeys: any = [];
     public headlineConfig = {
         names: [this.l('Customers')],
         icon: 'people',
@@ -106,7 +109,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     setTimeout(() => this.createClient());
             });
 
-        this.initToolbarConfig();
 
         this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
@@ -128,6 +130,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             visibleIndex: -1,
             width: 40
         });
+    }
+
+    onSelectionChanged($event) {
+        this.selectedClientKeys = $event.component.getSelectedRowKeys();
+        this.initToolbarConfig();
     }
 
     refreshDataGrid() {
@@ -319,6 +326,27 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                         }
                     },
                     {
+                        name: 'list',
+                        action: Function()
+                    },
+                    {
+                        name: 'tags',
+                        action: this.toggleTags.bind(this),
+                        disabled: !this.selectedClientKeys.length
+                    },
+                    {
+                        name: 'rating',
+                        action: Function()
+                    },
+                    {
+                        name: 'star',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'before', items: [
+                    {
                         name: 'delete',
                         action: this.deleteClients.bind(this)
                     }
@@ -326,7 +354,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             },
             {
                 location: 'after', items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -351,40 +378,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                             }, { type: 'downloadOptions' }]
                         }
                     },
+                    { name: 'print', action: Function() }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             },
             {
                 location: 'after',
-                areItemsDependent: true,
                 items: [
-                    {
-                        name: 'box',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Box);
-                            },
-                        }
-                    },
-                    {
-                        name: 'pipeline',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Pipeline);
-                            },
-                        }
-                    },
-                    {
-                        name: 'grid',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Grid);
-                            },
-                        }
-                    }
+                    { name: 'fullscreen', action: Function() }
                 ]
             }
         ];
@@ -403,6 +410,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 any: filterInternal
             }
         };
+    }
+
+    toggleTags() {
+        this.tagsComponent.toggle();
     }
 
     filterByZipCode(filter: FilterModel) {
@@ -547,6 +558,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+
+        this.initToolbarConfig();
     }
 
     ngOnDestroy() {
