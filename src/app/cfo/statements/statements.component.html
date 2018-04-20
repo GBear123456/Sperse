@@ -18,8 +18,8 @@
 
             <dxi-column dataField="date" caption="{{l('Statements_Period')}}" dataType="date" format="MMM y"></dxi-column>
             <dxi-column dataField="startingBalance" caption="{{l('Statements_StartingPosition')}}" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="inflows" cssClass="positive" caption="{{l('Statements_Inflows')}}" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="outflows" cssClass="negative" caption="{{l('Statements_Outflows')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="credit" cssClass="positive" caption="{{l('Statements_Inflows')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="debit" cssClass="negative" caption="{{l('Statements_Outflows')}}" format="currency" precision="2"></dxi-column>
             <dxi-column dataField="endingBalance" caption="{{l('Statements_EndingBalance')}}" format="currency" precision="2"></dxi-column>
             <dxi-column dataField="netChange" caption="{{l('Statements_NetChange')}}" cellTemplate="positiveNegativeTemplate" format="currency" precision="2"></dxi-column>
             <dxi-column dataField="averageDailyBalance" caption="{{l('Statements_AvgDailyBalance')}}" format="currency" precision="2"></dxi-column>
