@@ -30,7 +30,6 @@ import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.compone
 
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeatureTreeComponent } from './shared/feature-tree.component';
-import { TagsListComponent } from './shared/tags-list/tags-list.component';
 
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
@@ -123,8 +122,7 @@ import {
       EditionComboComponent,
       DashboardComponent,
       DashboardMenuComponent,
-      LeadsStatsComponent,
-      TagsListComponent
+      LeadsStatsComponent
     ],
     entryComponents: [
         CreateClientDialogComponent

@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 
 @Component({
     selector: 'operations-widget',
@@ -7,12 +8,14 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
     styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+
+    @Input() clientId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
+    @Output() print: EventEmitter<any> = new EventEmitter();
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
-
-    @Output() print: EventEmitter<any> = new EventEmitter();
 
     toolbarConfig = [
         {
@@ -33,6 +36,10 @@ export class OperationsWidgetComponent implements OnInit {
                         }
                     ]
                 }
+            },
+            {
+                name: 'tags',
+                action: this.toggleTags.bind(this)
             },
             {
                 name: 'delete',
@@ -60,6 +67,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
+    }
+
+    toggleTags() {
+        this.tagsComponent.toggle();
     }
 
     constructor() { }

@@ -6,8 +6,9 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
     MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxButtonModule, DxDataGridModule, DxDateBoxModule,
-    DxTextBoxModule, DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule } from 'devextreme-angular';
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, 
+    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule, 
+    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -15,6 +16,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
+
+import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -85,7 +88,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     ImageCropperComponent,
     UploadPhotoDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent
+    NoteAddDialogComponent,
+    TagsListComponent
   ],
   imports: [
     FormsModule,
@@ -110,6 +114,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxDataGridModule,
     DxTextAreaModule,
     DxDateBoxModule,
+    DxTooltipModule,
+    DxListModule,
     RoundProgressModule,
     DxValidationGroupModule
   ],
@@ -118,7 +124,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    PhoneFormatPipe
+    PhoneFormatPipe,
+    TagsListComponent
   ],
   entryComponents: [
     EditContactDialog,
