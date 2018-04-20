@@ -30,6 +30,12 @@ import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
 import { VerificationChecklistComponent } from './verification-checklist/verification-checklist.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
+import { LeadInformationComponent } from './lead-information/lead-information.component';
+import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
+import { ApplicationStatusComponent } from './application-status/application-status.component';
+import { ReferalHistoryComponent } from './referal-history/referal-history.component';
+import { PaymentInformationComponent } from './payment-information/payment-information.component';
+import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
@@ -64,7 +70,13 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     TotalApprovedComponent,
     CreditLinesComponent,
     ContactInformationComponent,
+    LeadInformationComponent,
+    QuestionnaireComponent,
     RequiredDocumentsComponent,
+    ApplicationStatusComponent,
+    ReferalHistoryComponent,
+    PaymentInformationComponent,
+    ActivityLogsComponent,
     VerificationChecklistComponent,
     OperationsWidgetComponent,
     OrganizationDialogComponent,

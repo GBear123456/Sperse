@@ -59,7 +59,7 @@ export class CellsCopyingService {
             this.elem = document.createElement('div');
             this.elem.id = 'crossMovingTriangle';
             Object.assign(this.elem.style, this.crossMovingTriangleDefaultStyles, styles);
-            document.addEventListener('mousedown', this.onMouseDown);
+            document.addEventListener('mousedown', this.onMouseDown, true); 
             document.addEventListener('mouseup', this.onMouseUp);
         }
         return this.elem;
@@ -95,6 +95,7 @@ export class CellsCopyingService {
             document.addEventListener('mousemove', this.onMouseMove);
             this.copiedCellTable.style.cursor = 'crosshair';
             this.copyingProcessStarted = true;
+            e.stopPropagation();
         }
     }
 
