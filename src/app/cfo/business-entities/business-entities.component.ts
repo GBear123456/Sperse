@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
@@ -21,7 +21,7 @@ import * as _ from 'underscore';
     styleUrls: ['./business-entities.component.less'],
     providers: [BusinessEntityServiceProxy]
 })
-export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit {
+export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
@@ -29,15 +29,20 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = false;
     private lastSelectedBusinessEntity;
+    private rootComponent: any;
 
-    constructor(injector: Injector,
-            private _businessEntityService: BusinessEntityServiceProxy,
-            private _router: Router) {
+    constructor(
+        injector: Injector,
+        private _businessEntityService: BusinessEntityServiceProxy,
+        private _router: Router
+    ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
     }
 
     ngOnInit() {
         super.ngOnInit();
+        this.rootComponent.overflowHidden(true);
 
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_BusinessEntities')],
@@ -158,5 +163,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                     this.lastSelectedBusinessEntity = null;
                 });
         }
+    }
+
+    ngOnDestroy(): void {
+        this.rootComponent.overflowHidden();
     }
 }
