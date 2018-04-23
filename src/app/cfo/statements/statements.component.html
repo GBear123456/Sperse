@@ -17,12 +17,12 @@
             <dxo-sorting mode="multiple"></dxo-sorting>
 
             <dxi-column dataField="date" caption="{{l('Statements_Period')}}" dataType="date" format="MMM y"></dxi-column>
-            <dxi-column dataField="startingBalance" caption="{{l('Statements_StartingPosition')}}" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="credit" cssClass="positive" caption="{{l('Statements_Inflows')}}" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="debit" cssClass="negative" caption="{{l('Statements_Outflows')}}" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="endingBalance" caption="{{l('Statements_EndingBalance')}}" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="netChange" caption="{{l('Statements_NetChange')}}" cellTemplate="positiveNegativeTemplate" format="currency" precision="2"></dxi-column>
-            <dxi-column dataField="averageDailyBalance" caption="{{l('Statements_AvgDailyBalance')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="startingBalance" caption="{{l('Statements_StartingPosition')}}" [format]="currencyFormat"></dxi-column>
+            <dxi-column dataField="credit" cssClass="positive" caption="{{l('Statements_Inflows')}}" [format]="currencyFormat"></dxi-column>
+            <dxi-column dataField="debit" cssClass="negative" caption="{{l('Statements_Outflows')}}" [format]="currencyFormat"></dxi-column>
+            <dxi-column dataField="endingBalance" caption="{{l('Statements_EndingBalance')}}" [format]="currencyFormat"></dxi-column>
+            <dxi-column dataField="netChange" caption="{{l('Statements_NetChange')}}" cellTemplate="positiveNegativeTemplate" [format]="currencyFormat"></dxi-column>
+            <dxi-column dataField="averageDailyBalance" caption="{{l('Statements_AvgDailyBalance')}}" [format]="currencyFormat"></dxi-column>
             <dxi-column dataField="creditCount" caption="{{l('Statements_CreditCount')}}"></dxi-column>
             <dxi-column dataField="debitCount" caption="{{l('Statements_DebitCount')}}"></dxi-column>
 

@@ -64,6 +64,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     private requestFilter: StatsFilter;
     private statementsData: BankAccountDailyStatDto[] = [];
 
+    private currencyFormat = {
+        type: 'currency',
+        precision: 2
+    }
+
     initToolbarConfig() {
         this._appService.toolbarConfig = <any>[
             {
@@ -95,29 +100,29 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     }
                 ]
             },
-            //{
-            //    location: 'before',
-            //    items: [
-            //        {
-            //            name: 'select-box',
-            //            text: '',
-            //            widget: 'dxDropDownMenu',
-            //            options: {
-            //                hint: this.l('Scenario'),
-            //                accessKey: 'statsForecastSwitcher',
-            //                items: this.forecastModelsObj.items,
-            //                selectedIndex: this.forecastModelsObj.selectedItemIndex,
-            //                height: 39,
-            //                width: 243,
-            //                onSelectionChanged: (e) => {
-            //                    if (e) {
-            //                        this.refreshData();
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    ]
-            //},
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'select-box',
+                        text: '',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Scenario'),
+                            accessKey: 'statsForecastSwitcher',
+                            items: this.forecastModelsObj.items,
+                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
+                            height: 39,
+                            width: 243,
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.refreshData();
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
             {
                 location: 'before',
                 items: [
@@ -242,7 +247,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             InstanceType[this.instanceType],
             this.instanceId,
             'USD',
-            undefined, //this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
+            this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
             this.requestFilter.bankIds,
             this.requestFilter.accountIds,
             this.requestFilter.startDate,
@@ -253,13 +258,38 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
                 if (result) {
-                    this.statementsData = result.map(statsItem => {
+                    let currentPeriodTransaction: BankAccountDailyStatDto;
+                    let currentPeriodForecast: BankAccountDailyStatDto;
+
+                    for (var i = result.length - 1; i >= 0; i--) {
+                        let statsItem: BankAccountDailyStatDto = result[i];
+
                         statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
                         Object.defineProperties(statsItem, {
                             'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
                         });
-                        return statsItem;
-                    });
+                        
+                        if (!currentPeriodTransaction && !statsItem.isForecast) {
+                            currentPeriodForecast = result[i + 1];
+                            currentPeriodTransaction = statsItem;
+
+                            if (currentPeriodForecast) {
+                                let clone = Object.assign({}, currentPeriodTransaction);
+                                clone.credit += currentPeriodForecast.credit;
+                                clone.creditCount += currentPeriodForecast.creditCount;
+                                clone.debit += currentPeriodForecast.debit;
+                                clone.debitCount += currentPeriodForecast.debitCount;
+                                clone['netChange'] = clone.credit + clone.debit;
+                                clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
+                                clone.endingBalance = currentPeriodForecast.endingBalance;
+
+                                result.splice(i, 2, clone);
+                            }
+                        }
+                    }
+                    
+                    this.statementsData = result;
+
                     /** reinit */
                     this.initHeadlineConfig();
 
