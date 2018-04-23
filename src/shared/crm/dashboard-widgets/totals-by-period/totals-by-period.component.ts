@@ -3,6 +3,7 @@ import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupBy2 } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
+import { AppConsts } from '@shared/AppConsts';
 
 import * as moment from 'moment';
 
@@ -48,7 +49,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit() {

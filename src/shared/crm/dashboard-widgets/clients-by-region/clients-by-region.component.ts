@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GetCustomersByRegionOutput } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { DxVectorMapComponent } from 'devextreme-angular'; 
+import { AppConsts } from '@shared/AppConsts';
 
 import { DecimalPipe } from '@angular/common';
 import DxChart from 'devextreme/viz/chart';
@@ -29,7 +30,7 @@ export class ClientsByReginComponent extends AppComponentBase implements OnInit,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
             _dashboardServiceProxy.getCustomersByRegion(
