@@ -263,8 +263,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
                     for (var i = result.length - 1; i >= 0; i--) {
                         let statsItem: BankAccountDailyStatDto = result[i];
-
-                        statsItem.date.add(statsItem.date.toDate().getTimezoneOffset(), 'minutes');
+                        
                         Object.defineProperties(statsItem, {
                             'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
                         });
@@ -283,6 +282,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                 clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
                                 clone.endingBalance = currentPeriodForecast.endingBalance;
 
+                                currentPeriodTransaction['itemType'] = 'MTD';
+                                currentPeriodForecast['itemType'] = 'Forecast';
+                                clone['sourceData'] = [ currentPeriodTransaction, currentPeriodForecast ];
                                 result.splice(i, 2, clone);
                             }
                         }
@@ -371,6 +373,16 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     toggleReportPeriodFilter() {
         this.reportPeriodSelector.toggleReportPeriodFilter();
+    }
+    
+    expandColapseRow(e) {
+        if (!e.data.sourceData) return;
+
+        if (e.isExpanded) {
+            e.component.collapseRow(e.key);
+        } else {
+            e.component.expandRow(e.key);
+        }
     }
 
     setSliderReportPeriodFilterData(start, end) {
