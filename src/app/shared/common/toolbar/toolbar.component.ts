@@ -174,8 +174,16 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.l('Tags'),
             icon: this.getImgURI('pen')
         },
+        tagsSmall: {
+            hint: this.l('Tags'),
+            icon: this.getImgURI('pen')
+        },
         lists: {
             text: this.l('Lists'),
+            icon: this.getImgURI('folder')
+        },
+        listsSmall: {
+            hint: this.l('Lists'),
             icon: this.getImgURI('folder')
         },
         rating: {

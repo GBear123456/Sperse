@@ -16,6 +16,7 @@ import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.c
 import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
+import { ListsListComponent } from '../lists-list/lists-list.component';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -28,6 +29,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
 
@@ -202,13 +204,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         }
                     },
                     {
-                        name: 'tags',
-                        action: this.toggleTags.bind(this),
-                        options: {
-                            accessKey: 'ClientTags'
-                        }
-                    },
-                    {
                         name: 'discard',
                         action: this.resetFullDialog.bind(this)
                     }
@@ -218,8 +213,20 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 location: 'after',
                 areItemsDependent: true,
                 items: [
-                    {name: 'folder'},
-                    {name: 'pen'}
+                    {
+                        name: 'listsSmall',
+                        action: this.toggleLists.bind(this),
+                        options: {
+                            accessKey: 'ClientLists'
+                        }
+                    },
+                    {
+                        name: 'tagsSmall',
+                        action: this.toggleTags.bind(this),
+                        options: {
+                            accessKey: 'ClientTags'
+                        }
+                    }
                 ]
             }
         ];
@@ -314,6 +321,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         ).finally(() => {  })
             .subscribe(result => {
                 this.tagsComponent.apply([result.id]);
+                this.listsComponent.apply([result.id]);
                 if (this.saveContextMenuItems[0].selected) {
                     this.data.refreshParent();
                     this.resetFullDialog();
@@ -419,6 +427,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     toggleTags() {
         this.tagsComponent.toggle();
+    }
+
+    toggleLists() {
+        this.listsComponent.toggle();
     }
 
     checkSimilarCustomers() {
