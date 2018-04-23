@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CreateNoteInput, CustomerInfoDto, NotesServiceProxy, ContactPhoneDto,
     UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PhoneFormatPipe } from '../../phone-format.pipe';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format.pipe';
 
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 
