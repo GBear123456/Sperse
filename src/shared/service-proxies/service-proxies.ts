@@ -19313,8 +19313,6 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
     debit: number;
     credit: number;
     averageDailyBalance: number;
-    creditCount: number;
-    debitCount: number;
     period: BankAccountDailyStatDtoPeriod;
     isForecast: boolean;
 
@@ -19339,8 +19337,6 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
             this.debit = data["debit"];
             this.credit = data["credit"];
             this.averageDailyBalance = data["averageDailyBalance"];
-            this.creditCount = data["creditCount"];
-            this.debitCount = data["debitCount"];
             this.period = data["period"];
             this.isForecast = data["isForecast"];
         }
@@ -19364,8 +19360,6 @@ export class BankAccountDailyStatDto implements IBankAccountDailyStatDto {
         data["debit"] = this.debit;
         data["credit"] = this.credit;
         data["averageDailyBalance"] = this.averageDailyBalance;
-        data["creditCount"] = this.creditCount;
-        data["debitCount"] = this.debitCount;
         data["period"] = this.period;
         data["isForecast"] = this.isForecast;
         return data; 
@@ -19383,8 +19377,6 @@ export interface IBankAccountDailyStatDto {
     debit: number;
     credit: number;
     averageDailyBalance: number;
-    creditCount: number;
-    debitCount: number;
     period: BankAccountDailyStatDtoPeriod;
     isForecast: boolean;
 }
@@ -34336,6 +34328,7 @@ export interface ILeadTypeDto {
 export class StageDto implements IStageDto {
     id: number;
     name: string;
+    sortOrder: number;
     color: string;
     accessibleActions: ActionDto[];
 
@@ -34352,6 +34345,7 @@ export class StageDto implements IStageDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
             this.color = data["color"];
             if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
                 this.accessibleActions = [];
@@ -34371,6 +34365,7 @@ export class StageDto implements IStageDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
         data["color"] = this.color;
         if (this.accessibleActions && this.accessibleActions.constructor === Array) {
             data["accessibleActions"] = [];
@@ -34384,6 +34379,7 @@ export class StageDto implements IStageDto {
 export interface IStageDto {
     id: number;
     name: string;
+    sortOrder: number;
     color: string;
     accessibleActions: ActionDto[];
 }
