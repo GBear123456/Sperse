@@ -9,6 +9,8 @@ import {
     InstanceType,
     BusinessEntityServiceProxy,
     CreateBusinessEntityDto,
+    UpdateBusinessEntityDto,
+    BusinessEntityInfoDto,
     CountryServiceProxy,
     BusinessEntityDto
 } from '@shared/service-proxies/service-proxies';
@@ -34,10 +36,11 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
 
     googleAutoComplete = false;
     saving = false;
+    isNew = false;
 
     private validationError: string;
 
-    businessEntity = new CreateBusinessEntityDto();
+    businessEntity = new BusinessEntityInfoDto();
 
     constructor(
         injector: Injector,
@@ -46,8 +49,15 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
     ) {
         super(injector);
 
+        this.isNew = !this.data.id;
+
         this.countriesStateLoad();
         this.loadTypes();
+
+        if (!this.isNew) {
+            this._businessEntityService.get(InstanceType[this.instanceType], this.instanceId, this.data.id)
+                .subscribe(result => this.businessEntity = result);
+        }
     }
 
     ngOnInit() {
@@ -58,7 +68,7 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
 
     initHeader(): any {
         this.data = Object.assign(this.data, {
-            title: this.l('BusinessEntity_CreateHeader'),
+            title: this.isNew ? this.l('BusinessEntity_CreateHeader') : this.l('BusinessEntity_EditHeader'),
             editTitle: false,
             buttons: [
                 {
@@ -70,17 +80,7 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
                 }, {
                     title: this.l('BusinessEntity_Save'),
                     class: 'primary',
-                    action: () => {
-                        if (this.validate()) {
-                            this.saving = true;
-                            this._businessEntityService.createBusinessEntity(InstanceType[this.instanceType], this.instanceId, this.businessEntity)
-                                .finally(() => {
-                                    this.saving = false;
-                                }).subscribe(result => {
-                                    this.close(true, { update: true });
-                                });
-                        }
-                    }
+                    action: this.save.bind(this)
                 }
             ]
         });
@@ -122,5 +122,40 @@ export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent
         }
 
         return true;
+    }
+
+    save() {
+        if (this.validate()) {
+            this.saving = true;
+            if (this.isNew) {
+                this._businessEntityService.createBusinessEntity(InstanceType[this.instanceType], this.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
+                    .finally(() => {
+                        this.saving = false;
+                    }).subscribe(result => {
+                        this.close(true, { update: true });
+                    });
+            } else {
+                this._businessEntityService.updateBusinessEntity(InstanceType[this.instanceType], this.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity))
+                    .finally(() => {
+                        this.saving = false;
+                    }).subscribe(result => {
+                        this.close(true, { update: true });
+                    });
+            }
+        }
+    }
+
+    isActive() {
+        return this.isNew || this.businessEntity.statusId == 'A';
+    }
+
+    isActiveChanged(value) {
+        this.businessEntity.statusId = value ? 'A' : 'I';
+    }
+
+    optionalValueChanged(event) {
+        if (!event.value || !event.value.length) {
+            event.component.option('isValid', true);
+        }
     }
 }

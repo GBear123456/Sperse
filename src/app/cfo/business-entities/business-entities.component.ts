@@ -113,6 +113,10 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     addEntity(e) {
+        this.showEditDialog();
+    }
+
+    private showEditDialog(id?) {
         this.dialog.open(CreateBusinessEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
@@ -120,7 +124,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             data: {
                 instanceId: this.instanceId,
                 instanceType: this.instanceType,
-                localization: this.localizationSourceName
+                localization: this.localizationSourceName,
+                id: id
             }
         }).afterClosed().subscribe(options => {
             if (options && options.update) {
@@ -205,7 +210,20 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
+
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
+    }
+
+    onCellClick(event) {
+        let col = event.column;
+        if (col && (col.command || col.name == 'BankAccountIds')) {
+            return;
+        }
+
+        let businessEntityId = event.data && event.data.Id;
+        if (businessEntityId) {
+            this.showEditDialog(businessEntityId);
+        }
     }
 }
