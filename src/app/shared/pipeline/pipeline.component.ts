@@ -47,7 +47,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 result.stages.sort((a, b) => {
                     return a.sortOrder > b.sortOrder ? 1: -1;
                 }).forEach((item) => {
-                    item.index = Math.abs(item.sortOrder);
+                    item['index'] = Math.abs(item.sortOrder);
                 });
                 this.pipeline = result;
             });
