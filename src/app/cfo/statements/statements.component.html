@@ -23,6 +23,8 @@
             <dxi-column dataField="endingBalance" caption="{{l('Statements_EndingBalance')}}" format="currency" precision="2"></dxi-column>
             <dxi-column dataField="netChange" caption="{{l('Statements_NetChange')}}" cellTemplate="positiveNegativeTemplate" format="currency" precision="2"></dxi-column>
             <dxi-column dataField="averageDailyBalance" caption="{{l('Statements_AvgDailyBalance')}}" format="currency" precision="2"></dxi-column>
+            <dxi-column dataField="creditCount" caption="{{l('Statements_CreditCount')}}"></dxi-column>
+            <dxi-column dataField="debitCount" caption="{{l('Statements_DebitCount')}}"></dxi-column>
 
             <ng-container *dxTemplate="let cell of 'positiveNegativeTemplate'">
                 <span [ngClass]="cell.value < 0 ? 'negative' : 'positive'"> {{ cell.text }} </span>
