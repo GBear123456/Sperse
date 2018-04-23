@@ -13,6 +13,7 @@
                             [columnResizingMode]="'widget'"
                             (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                             (onToolbarPreparing)="onToolbarPreparing($event)"
+                            (onCellClick)="onCellClick($event)"
                             (onCellPrepared)="onCellPrepared($event)">
                     <dxo-selection selectAllMode="page"
                                 showCheckBoxesMode="always"
@@ -22,6 +23,7 @@
                                 dataField="Name"
                                 [width]="250"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Accounts')}}"
+                                name="BankAccountIds"
                                 dataField="BankAccountIds"
                                 [width]="200"
                                 cellTemplate="accountsTemplate"></dxi-column>

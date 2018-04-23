@@ -19,7 +19,7 @@ import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.c
 import { RuleDeleteDialogComponent } from './rules/rule-delete-dialog/rule-delete-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
-import { CreateBusinessEntityDialogComponent } from './business-entities/create-business-entity-dialog/create-business-entity-dialog.component';
+import { BusinessEntityEditDialogComponent } from './business-entities/business-entity-edit-dialog/business-entity-edit-dialog.component';
 
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
@@ -135,7 +135,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         RulesComponent,
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
-        CreateBusinessEntityDialogComponent,
+        BusinessEntityEditDialogComponent,
         ChartOfAccountsComponent,
         BankAccountsSelectComponent,
         ChooseResetRulesComponent,
@@ -148,7 +148,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent,
         ChooseResetRulesComponent,
-        CreateBusinessEntityDialogComponent
+        BusinessEntityEditDialogComponent
     ],
     providers: [
         InstanceServiceProxy,
