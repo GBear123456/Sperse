@@ -101,10 +101,10 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
-    width: calc(100% + 36px);
+    width: calc(100% + 35px);
     position: relative;
-    top: -14px;
-    left: -17px;
+    top: -15px;
+    left: -22px;
     padding: 8px 17px;
 }
 .tooltip-item.inflows::before,
@@ -147,3 +147,4 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
+.dxc-tooltip svg path {transform: translate(0, 0) !important; filter: none !important;}
