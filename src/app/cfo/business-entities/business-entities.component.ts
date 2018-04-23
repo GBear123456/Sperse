@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { CreateBusinessEntityDialogComponent } from './create-business-entity-dialog/create-business-entity-dialog.component';
+import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -117,7 +117,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     private showEditDialog(id?) {
-        this.dialog.open(CreateBusinessEntityDialogComponent, {
+        this.dialog.open(BusinessEntityEditDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,

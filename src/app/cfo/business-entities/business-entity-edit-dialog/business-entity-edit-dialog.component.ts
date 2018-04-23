@@ -18,11 +18,11 @@ import {
 import * as _ from 'underscore';
 
 @Component({
-    templateUrl: 'create-business-entity-dialog.component.html',
-    styleUrls: ['create-business-entity-dialog.component.less'],
+    templateUrl: 'business-entity-edit-dialog.component.html',
+    styleUrls: ['business-entity-edit-dialog.component.less'],
     providers: [BusinessEntityServiceProxy, CountryServiceProxy]
 })
-export class CreateBusinessEntityDialogComponent extends CFOModalDialogComponent implements OnInit {
+export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent implements OnInit {
 
     types: any;
     states: any;
