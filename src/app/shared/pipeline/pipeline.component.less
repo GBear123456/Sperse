@@ -38,7 +38,7 @@
                 opacity: 0;
                 transition: .3s;
                 position: absolute;
-                right: 11px;
+                right: 0px;
             }
             &:hover {
                 .edit-button {
@@ -46,31 +46,25 @@
                 }
             }
         }
-        &:first-child {
-            .column-title {
-                border-radius: 3px 0 0 3px;
-            }
-        }
         &:last-child {
             .column-title {
-                border-radius: 0 3px 3px 0;
                 border-right: 1px solid #dfdfdf;
             }
         }
         .column-items {
-            min-height: 40px;
+            min-height: 100%;
             .card {
-                min-height: 105px;
-                padding: 16px 0;
-                margin-bottom: 8px;
-                font-size: 14px;
+                cursor: grab;
+                min-height: 146px;
+                max-height: 146px;
+                padding: 16px 0px 0px 0px;
+                margin-bottom: 11px;
+                font-size: 15px;
                 line-height: 1.4;
                 font-weight: 600; // TODO: need change on 500 when font will be added
                 text-align: left;
-                color: #202b35;
-                border: 1px solid #dfdfdf;
-                border-left: 3px solid #9a7fe7;
-                border-radius: 3px;
+                letter-spacing: 0.3px;
+                color: #424c56;
                 .pipeline-photo-wrap {
                     padding: 0 8px;
                 }
@@ -80,6 +74,60 @@
                 }
                 .row {
                     margin-right: -15px;
+                    &.amount {  
+                        margin: 20px;
+                        span {
+                            font-size: 14px;
+                            font-weight: 500;
+                            font-style: normal;
+                            font-stretch: normal;
+                            line-height: 0.71;
+                            letter-spacing: 0.3px;
+                            text-align: left;
+                            color: #677380;                            
+                        }
+                    }
+                    &.item-data {
+                        position: relative;
+                        bottom: -11px;
+                        padding: 13px 0px 7px;
+                        img {
+                            vertical-align: baseline;
+                            &.email {
+                                padding-bottom: 4px;
+                            }
+                        }
+                        span.delimiter {
+                            display: inline-block;
+                            width: 1px;
+                            height: 21px;
+                            background-color: #dfdfdf;
+                            margin: 0px 10px;
+                        }
+                        .text-right {
+                            white-space: nowrap;
+                        }
+                    }
+                    .full-name {
+                        max-height: 42px;
+                    }
+                    .img-circle {
+                        border-radius: 50%;
+                    }
+                    .days-ago {
+                        span {
+                            font-size: 12px;
+                            font-weight: 300;
+                            font-style: normal;
+                            font-stretch: normal;
+                            line-height: 0.83;
+                            letter-spacing: 0.2px;
+                            text-align: left;
+                            color: #94979a;
+                            padding: 5px;
+                            vertical-align: middle;
+                        }
+                    }                
                 }
                 .row + .row {
                     margin-top: 10px;
@@ -88,40 +136,6 @@
                     font-size: 13px;
                     font-weight: 400;
                 }
-            }
-        }
-        .card {
-            min-height: 105px;
-            padding: 16px 0;
-            margin-bottom: 8px;
-            font-size: 14px;
-            line-height: 1.4;
-            font-weight: 600; // TODO: need change on 500 when font will be added
-            text-align: left;
-            color: #202b35;
-            border: 1px solid #dfdfdf;
-            border-left: 3px solid #9a7fe7;
-            border-radius: 3px;
-            .notes-count,
-            .documents-count {
-                line-height: 14px;
-                img {
-                    margin-right: 5px;
-                }
-            }
-            &.gu-transit {
-                opacity: 1;
-                background: #fafafa;
-            }
-            .row {
-                margin-right: -15px;
-            }
-            .row + .row {
-                margin-top: 10px;
-            }
-            .item-data {
-                font-size: 13px;
-                font-weight: 400;
             }
         }
         &.color-purple {
@@ -197,7 +211,7 @@
     }
 }
 
-.gu-mirror {
+.gu-mirror {    
     opacity: 1;
     background: #fafafa;
     min-height: 105px;
@@ -208,7 +222,59 @@
     font-weight: 600; // TODO: need change on 500 when font will be added
     text-align: left;
     color: #202b35;
+    cursor: grabbing;
     .row + .row {
         margin-top: 10px;
+    }
+    .row {
+        margin-right: -15px;
+        &.amount {  
+            margin: 20px;
+            span {
+                font-size: 14px;
+                font-weight: 500;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 0.71;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: #677380;                            
+            }
+        }
+        &.item-data {
+            position: relative;
+            bottom: -15px;
+            padding: 10px 0px;
+            img {
+                vertical-align: baseline;
+                &.email {
+                    padding-bottom: 4px;
+                }
+            }
+            span.delimiter {
+                display: inline-block;
+                width: 1px;
+                height: 21px;
+                background-color: #dfdfdf;
+                margin: 0px 10px;
+            }
+        }
+        .img-circle {
+            border-radius: 50%;
+        }
+        .days-ago {
+            span {
+                font-size: 12px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 0.83;
+                letter-spacing: 0.2px;
+                text-align: left;
+                color: #94979a;
+                padding: 5px;
+                vertical-align: middle;
+            }
+        }                
     }
 }

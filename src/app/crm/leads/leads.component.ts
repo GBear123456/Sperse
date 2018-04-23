@@ -114,7 +114,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             visibleIndex: -1,
             width: 40
         });
-        this.toggleDataLayout(DataLayoutType.Grid);
     }
 
     refreshDataGrid() {
@@ -397,16 +396,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after',
-                items: [
-                    { name: 'fullscreen', action: Function() }
-                ]
-            }
-
-/*
-            {
-                location: 'after',
                 areItemsDependent: true,
                 items: [
+/*
                     {
                         name: 'box',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
@@ -416,6 +408,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             },
                         }
                     },
+*/
                     {
                         name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
@@ -435,8 +428,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                items: [
+                    { name: 'fullscreen', action: Function() }
+                ]
             }
-*/
         ];
     }
 

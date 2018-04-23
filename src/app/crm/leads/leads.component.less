@@ -6,5 +6,167 @@
         padding: 15px;
         height: calc(~'100vh - 216px');
         overflow-y: auto;
+
+        /deep/ app-pipeline {
+            .column {
+                &.positive {
+                    margin-right: 15px;
+                    .column-title {
+                        background-color: #8dc53e!important;
+                        &:before {
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            border-top: 31px solid transparent;
+                            border-bottom: 31px solid transparent;                        
+                            border-left: 31px solid #FFF;
+                            left: 0px;  
+                            top: 0px;
+                        }
+                        &:after {
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            border-top: 31px solid transparent;
+                            border-bottom: 31px solid transparent;                        
+                            border-left: 31px solid #8dc53e;
+                            right: -31px;  
+                            top: 0px;
+                        }
+                        span {
+                            padding-left: 30px;
+                        }
+                    }
+                }
+                &.negative {
+                    margin-left: 15px;
+                    .column-title {
+                        background-color: #e55e5e!important;
+                        &:before {
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            border-top: 31px solid transparent;
+                            border-bottom: 31px solid transparent;                         
+                            border-right: 31px solid #e55e5e;
+                            left: -31px;
+                            top: 0px;
+                        }
+                        &:after {
+                            content: '';
+                            display: block;
+                            position: absolute;
+                            border-top: 31px solid transparent;
+                            border-bottom: 31px solid transparent;                         
+                            border-right: 31px solid #FFF;
+                            right: 0px;
+                            top: 0px;
+                        }
+                        span {
+                            padding-right: 30px;
+                        }
+                        .edit-button {
+                            left: 0px!important;
+                        }      
+                    }
+                }
+                .column-title {
+                    height: 63px;
+                    border-radius: 0px!important;
+                    position: relative!important;
+                    border: none!important;
+                    padding: 5px!important;
+                    span {
+                        font-size: 15px;
+                        font-weight: 500;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 3.5;
+                        letter-spacing: 1.2px;
+                        color: #ffffff;
+                        text-align: center;
+                    }
+                }
+                .edit-button {
+                    cursor: pointer;
+                }
+                .column-items {
+                    opacity: 0.7;
+                    .card { 
+                        border: solid 1px #dfdfdf!important;
+                    }
+                }
+            }
+            .column0 {
+                z-index: 10;
+                min-width: 250px;
+                margin: 0px 15px;
+                .column-title {
+                    background-color: #00aeef!important;
+                    &:before {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        border-top: 31px solid transparent;
+                        border-bottom: 31px solid transparent;                         
+                        border-right: 31px solid #00aeef;
+                        left: -31px;
+                        top: 0px;
+                    }
+                    &:after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        border-top: 31px solid transparent;
+                        border-bottom: 31px solid transparent;                        
+                        border-left: 31px solid #00aeef;
+                        right: -31px;  
+                        top: 0px;
+                    }
+                }
+            }
+            .focused {
+                .column-items {
+                    opacity: 1!important;
+                    .card { 
+                        box-shadow: 0 0 20px 0 rgba(30, 32, 33, 0.11);
+                        .item-data, span.delimiter {
+                            background-color: #EDF9FE!important;
+                        }
+                    }
+                }          
+                
+            }
+            .column1 {
+                z-index: 9;
+                .column-title {
+                    opacity: 0.2;
+                }
+            }
+            .column2 {
+                z-index: 8;
+                .column-title {
+                    opacity: 0.4;
+                }
+            }
+            .column3 {
+                z-index: 7;
+                .column-title {
+                    opacity: 0.6;
+                }
+            }
+            .column4 {
+                z-index: 6;
+                .column-title {
+                    opacity: 0.8;
+                }
+            }
+            .column5 {
+                z-index: 5;
+                .column-title {
+                    opacity: 1;
+                }
+            }
+        }
     }    
 }

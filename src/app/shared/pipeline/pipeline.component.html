@@ -1,5 +1,5 @@
 <div class="pipeline-wrapper">
-    <div *ngFor="let item of pipeline?.stages; let i = index;" class="column column-{{i}} color-{{item.color}}">
+    <div *ngFor="let item of pipeline?.stages; let i = index;" class="column column{{item.index + ' ' + (item.sortOrder && (item.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{item.color}}">
         <div class="column-title">
             <span>{{item.name}}</span><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
@@ -9,23 +9,26 @@
                     <div class="card">
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="col-sm-9">{{card.FullName}}</div>
                                 <div class="col-sm-3 text-right pipeline-photo-wrap">
                                     <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
                                 </div>
+                                <div class="col-sm-9 full-name">
+                                    <span>{{card.FullName}}</span>
+                                    <div class="days-ago">
+                                        <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>5 days ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row amount"> 
+                                <span>{{card.Amount}}</span>
                             </div>
                             <div class="row item-data">
                                 <div class="col-sm-6">
-                                <span class="price">
-                                    {{card.Amount}}
-                                </span>
-                                    <span class="count">
-                                    {{card.CurrentNumber}}/{{card.TotalNumber}}
-                                </span>
                                 </div>
                                 <div class="col-sm-6 text-right">
-                                    <span class="notes-count"><img src="/assets/common/icons/note-file.svg" alt="note" width="11">{{card.NoteCount}}</span>
-                                    <span class="documents-count"><img src="/assets/common/icons/document-file.svg" alt="document" width="11">{{card.DocumentCount}}</span>
+                                    <img src="/assets/common/icons/phone.svg" class="phone">
+                                    <span class="delimiter"></span>
+                                    <img src="/assets/common/icons/email.svg" class="email">
                                 </div>
                             </div>
                         </div>
