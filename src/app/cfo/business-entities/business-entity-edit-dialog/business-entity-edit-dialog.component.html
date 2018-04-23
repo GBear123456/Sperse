@@ -7,10 +7,16 @@
                          (onKeyUp)="onKeyUp($event, 'name')"
                          [(value)]="businessEntity.name">
                 <dx-validator>
-                    <dxi-validation-rule type="required" message="{{l('BusinessEntity_NameRequired')}}"></dxi-validation-rule>
+                    <dxi-validation-rule type="required" message="{{l('BusinessEntity_NameIsRequired')}}"></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
             <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+        </div>
+        <div class="field checkbox" *ngIf="!isNew">
+            <label>{{l('BusinessEntity_Active')}}</label>
+            <dx-check-box [value]="isActive()"
+                          (onValueChanged)="isActiveChanged($event.value)">
+            </dx-check-box>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_Industry')}}</label>
@@ -19,7 +25,7 @@
                          (onKeyUp)="onKeyUp($event, 'industry')"
                          [(value)]="businessEntity.industry">
             </dx-text-box>
-            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+            <span [class]="businessEntity.industry && 'clear-contact' || 'hidden'" (click)="businessEntity.industry = ''">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_TaxNumber')}}</label>
@@ -29,9 +35,10 @@
                          [mask]="masks.taxNumber"
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'taxNumber')"
-                         [(value)]="businessEntity.taxNumber">
+                         (onValueChanged)="optionalValueChanged($event)"
+                         [value]="businessEntity.taxNumber">
             </dx-text-box>
-            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+            <span [class]="businessEntity.taxNumber && 'clear-contact' || 'hidden'" (click)="businessEntity.taxNumber = ''">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_Type')}}</label>
@@ -43,7 +50,7 @@
                            [searchEnabled]="true"
                            [(value)]="businessEntity.typeId">
             </dx-select-box>
-            <span [class]="businessEntity.countryId && 'clear-contact' || 'hidden'" (click)="businessEntity.countryId = ''">+</span>
+            <span [class]="businessEntity.typeId && 'clear-contact' || 'hidden'" (click)="businessEntity.typeId = ''">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_DateOpened')}}</label>
@@ -54,7 +61,7 @@
                          (onKeyUp)="onKeyUp($event, 'dateOpened')"
                          [(value)]="businessEntity.dateOpened">
             </dx-date-box>
-            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+            <span [class]="businessEntity.dateOpened && 'clear-contact' || 'hidden'" (click)="businessEntity.dateOpened = ''">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_Website')}}</label>
@@ -93,10 +100,12 @@
             <label>{{l('BusinessEntity_Phone')}}</label>
             <dx-text-box class="tabular"
                          name="phone"
-                         maskInvalidMessage="{{l('BusinessEntity_PhoneValidationError')}}"
+                         maskInvalidMessage="{{l('BusinessEntity_PhoneIsNotValid')}}"
                          [mask]="masks.phone"
                          [width]="'360px'"
-                         (onKeyUp)="onKeyUp($event, 'phone')">
+                         (onKeyUp)="onKeyUp($event, 'phone')"
+                         (onValueChanged)="optionalValueChanged($event)"
+                         [(value)]="businessEntity.phone">
             </dx-text-box>
             <span [class]="businessEntity.phone && 'clear-contact' || 'hidden'" (click)="businessEntity.phone = ''">+</span>
         </div>
@@ -104,10 +113,12 @@
             <label>{{l('BusinessEntity_Fax')}}</label>
             <dx-text-box class="tabular"
                          name="fax"
-                         maskInvalidMessage="{{l('BusinessEntity_FaxValidationError')}}"
+                         maskInvalidMessage="{{l('BusinessEntity_FaxIsNotValid')}}"
                          [mask]="masks.phone"
                          [width]="'360px'"
-                         (onKeyUp)="onKeyUp($event, 'fax')">
+                         (onKeyUp)="onKeyUp($event, 'fax')"
+                         (onValueChanged)="optionalValueChanged($event)"
+                         [(value)]="businessEntity.fax">
             </dx-text-box>
             <span [class]="businessEntity.fax && 'clear-contact' || 'hidden'" (click)="businessEntity.fax = ''">+</span>
         </div>

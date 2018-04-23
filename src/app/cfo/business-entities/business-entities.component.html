@@ -13,6 +13,7 @@
                             [columnResizingMode]="'widget'"
                             (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                             (onToolbarPreparing)="onToolbarPreparing($event)"
+                            (onCellClick)="onCellClick($event)"
                             (onCellPrepared)="onCellPrepared($event)">
                     <dxo-selection selectAllMode="page"
                                 showCheckBoxesMode="always"
@@ -22,6 +23,7 @@
                                 dataField="Name"
                                 [width]="250"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Accounts')}}"
+                                name="BankAccountIds"
                                 dataField="BankAccountIds"
                                 [width]="200"
                                 cellTemplate="accountsTemplate"></dxi-column>
@@ -34,6 +36,8 @@
                                 dataField="TaxNumber"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Phone')}}"
                                 dataField="Phone"
+                                cellTemplate="phoneCell"
+                                cssClass="tabular"
                                 [visible]="false"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Type')}}"
                                 dataField="Type"></dxi-column>
@@ -48,6 +52,7 @@
                                 cellTemplate="statusTemplate"></dxi-column>
 
                     <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy'}}</div>
+                    <div *dxTemplate="let data of 'phoneCell'">{{data.value | phone}}</div>
                     <div *dxTemplate="let data of 'toolbarTitleTemplate'" class="title">{{l('BusinessEntities')}}</div>
                     <div *dxTemplate="let data of 'statusTemplate'" class="statusContent">
                         <span [ngClass]="data.value.toLowerCase()">
