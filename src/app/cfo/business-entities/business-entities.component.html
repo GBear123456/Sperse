@@ -34,6 +34,8 @@
                                 dataField="TaxNumber"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Phone')}}"
                                 dataField="Phone"
+                                cellTemplate="phoneCell"
+                                cssClass="tabular"
                                 [visible]="false"></dxi-column>
                     <dxi-column caption="{{l('BusinessEntities_Type')}}"
                                 dataField="Type"></dxi-column>
@@ -48,6 +50,7 @@
                                 cellTemplate="statusTemplate"></dxi-column>
 
                     <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy'}}</div>
+                    <div *dxTemplate="let data of 'phoneCell'">{{data.value | phone}}</div>
                     <div *dxTemplate="let data of 'toolbarTitleTemplate'" class="title">{{l('BusinessEntities')}}</div>
                     <div *dxTemplate="let data of 'statusTemplate'" class="statusContent">
                         <span [ngClass]="data.value.toLowerCase()">

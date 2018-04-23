@@ -12,7 +12,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 
-@Component({    
+@Component({
     templateUrl: './notes.component.html',
     styleUrls: ['./notes.component.less'],
     providers: [NotesServiceProxy]

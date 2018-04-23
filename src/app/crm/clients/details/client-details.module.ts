@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
+import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
@@ -53,13 +54,11 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceP
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy } from '@shared/service-proxies/service-proxies';
 
-import { PhoneFormatPipe } from './phone-format.pipe';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
 @NgModule({
   declarations: [
     NotesComponent,
-    PhoneFormatPipe,
     EditContactDialog,
     EditAddressDialog,
     ClientDetailsComponent,
@@ -94,6 +93,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
   imports: [
     FormsModule,
     CommonModule,
+    ngCommon.CommonModule,
     AppCommonModule,
     MatSidenavModule,
     MatProgressBarModule,
@@ -124,7 +124,6 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    PhoneFormatPipe,
     TagsListComponent
   ],
   entryComponents: [

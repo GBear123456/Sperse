@@ -23,6 +23,7 @@ import {AppAuthService} from './auth/app-auth.service';
 import {AppRouteGuard} from './auth/auth-route-guard';
 import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
+import { PhoneFormatPipe } from './pipes/phone-format.pipe';
 
 @NgModule({
     declarations: [
@@ -30,14 +31,16 @@ import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells
         ConfirmDialogComponent,
         ModalDialogComponent,
         NoDataComponent,
-        BankAccountsWidgetComponent
+        BankAccountsWidgetComponent,
+        PhoneFormatPipe
     ],
     exports: [
         CalendarComponent,
         ConfirmDialogComponent,
         ModalDialogComponent,
         NoDataComponent,
-        BankAccountsWidgetComponent
+        BankAccountsWidgetComponent,
+        PhoneFormatPipe
     ],
     entryComponents: [
         ConfirmDialogComponent,
