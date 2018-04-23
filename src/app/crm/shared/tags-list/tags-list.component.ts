@@ -30,7 +30,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     apply(selectedKeys = undefined) {
         this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.selectedKeys && this.selectedKeys.length) {
+        if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
             let tags = this.list.map((item, index) => {
                 return this.listComponent.isItemSelected(index) 
                     && CustomerTagInput.fromJS({name: item});
