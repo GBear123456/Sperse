@@ -19,6 +19,7 @@ import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
+import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -88,7 +89,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     UploadPhotoDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddDialogComponent,
-    TagsListComponent
+    TagsListComponent,
+    ListsListComponent
   ],
   imports: [
     FormsModule,
@@ -124,7 +126,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    TagsListComponent
+    TagsListComponent,
+    ListsListComponent
   ],
   entryComponents: [
     EditContactDialog,

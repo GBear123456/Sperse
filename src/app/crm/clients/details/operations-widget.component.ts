@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
+import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 
 @Component({
     selector: 'operations-widget',
@@ -9,6 +10,7 @@ import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
 
     @Input() clientId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
@@ -36,6 +38,10 @@ export class OperationsWidgetComponent implements OnInit {
                         }
                     ]
                 }
+            },
+            {
+                name: 'lists',
+                action: this.toggleLists.bind(this)
             },
             {
                 name: 'tags',
@@ -67,6 +73,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
+    }
+
+    toggleLists() {
+        this.listsComponent.toggle();
     }
 
     toggleTags() {

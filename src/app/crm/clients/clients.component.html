@@ -1,6 +1,7 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <crm-tags-list [selectedKeys]="selectedClientKeys"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="selectedClientKeys"></crm-lists-list>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>

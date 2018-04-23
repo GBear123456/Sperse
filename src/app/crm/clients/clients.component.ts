@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
+import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -52,6 +53,7 @@ import * as moment from 'moment';
 export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -326,8 +328,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                         }
                     },
                     {
-                        name: 'list',
-                        action: Function()
+                        name: 'lists',
+                        action: this.toggleLists.bind(this),
+                        disabled: !this.selectedClientKeys.length
                     },
                     {
                         name: 'tags',
@@ -410,6 +413,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 any: filterInternal
             }
         };
+    }
+
+    toggleLists() {
+        this.listsComponent.toggle();
     }
 
     toggleTags() {
