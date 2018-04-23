@@ -289,7 +289,9 @@ export class ToolBarComponent extends AppComponentBase {
             let count = group.items.length;
             group.items.forEach((item, index) => {
                 this.initDropDownMenu(item);
-
+                if ((item.name && item.name == 'filters') || (item.name && item.name == 'search')) {
+                    item.adaptive = false;
+                }
                 let isLast = count == index + 1;
                 let internalConfig = this.supportedButtons[item.name];
                 let mergedConfig = _.extend(internalConfig || {}, item.options);

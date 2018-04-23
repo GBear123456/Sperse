@@ -60,14 +60,12 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     totalCount = 3;
 
     initToolbarConfig() {
-        this._appService.toolbarIsAdaptive = true;
         this._appService.toolbarConfig = [
             {
                 location: 'before',
                 items: [
                     {
                         name: 'filters',
-                        adaptive: false,
                         action: (event) => {
                             setTimeout(this.repaint.bind(this), 1000);
                             this._filtersService.fixed = !this._filtersService.fixed;
@@ -95,7 +93,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 items: [
                     {
                         name: 'search',
-                        adaptive: false,
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
