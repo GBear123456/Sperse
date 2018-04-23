@@ -179,7 +179,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
             this.syncAccountsDataSource.forEach(syncAccount => {
                 let visibleBankAccountsExist = false;
                 syncAccount.bankAccounts.forEach(bankAccount => {
-                    let isBankAccountVisible = !_.contains(this.bankAccountTypesForSelect, bankAccount.type);
+                    let isBankAccountVisible = !_.contains(this.bankAccountTypesForSelect, bankAccount.typeName);
                     bankAccount['visible'] = isBankAccountVisible;
                     if (isBankAccountVisible)
                         visibleBankAccountsExist = true;
@@ -190,7 +190,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
             this.syncAccountsDataSource.forEach(syncAccount => {
                 let visibleBankAccountsExist = false;
                 syncAccount.bankAccounts.forEach(bankAccount => {
-                    let isBankAccountVisible = this.selectedBankAccountType === bankAccount.type;
+                    let isBankAccountVisible = this.selectedBankAccountType === bankAccount.typeName;
                     bankAccount['visible'] = isBankAccountVisible;
                     if (isBankAccountVisible)
                         visibleBankAccountsExist = true;;
