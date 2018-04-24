@@ -1,0 +1,39 @@
+.lists-tooltip-container {
+    font-size: 15px;
+    width: 300px!important;
+    height: 400px!important;
+    overflow: hidden;
+    
+    .title {
+        float: left;
+        font-size: 18px;        
+        font-weight: 500;
+        padding-top: 5px;
+    }
+   
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+        
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }        
+
+    /deep/ .dx-widget {
+       .dx-placeholder {
+            font-weight: 400;
+        }
+        .dx-item-content {  
+            text-align: left;
+        }
+        .dx-icon-clear {
+            right: 0px;
+        }
+    }
+}
