@@ -1,7 +1,8 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
+import { FiltersService } from '@shared/filters/filters.service';
 import { UserAssignmentServiceProxy, AssignUserToCustomerInput, UserInfoDto } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   selector: 'crm-user-assignment-list',
@@ -19,9 +20,12 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
+        private _filtersService: FiltersService,
         private _tagsService: UserAssignmentServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+        this._filtersService.localizationSourceName = this.localizationSourceName;
     }
 
     toggle() {
