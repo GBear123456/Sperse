@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { SyncServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CFOComponentBase } from '../shared/common/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -8,7 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
     selector: 'accounts',
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.less'],
-    providers: [ FinancialInformationServiceProxy ]
+    providers: [ SyncServiceProxy ]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit  {
     sourceUrl: any;
@@ -16,7 +16,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit  {
     constructor(
         injector: Injector,
         private sanitizer: DomSanitizer,
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy
+        private _syncServiceProxy: SyncServiceProxy
     ) {
         super(injector);
     }
@@ -27,7 +27,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit  {
     }
 
     initIFrame() {
-        this._financialInformationServiceProxy.getSetupAccountsLink(
+        this._syncServiceProxy.getSetupAccountsLink(
             InstanceType[this.instanceType],
             this.instanceId,
             AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',

@@ -1,5 +1,5 @@
 import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
-import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { SyncServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
@@ -11,7 +11,7 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
     selector: 'bank-accounts',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
-    providers: [ FinancialInformationServiceProxy ]
+    providers: [ SyncServiceProxy ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
@@ -23,7 +23,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
     constructor(
         injector: Injector,
         private sanitizer: DomSanitizer,
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy,
+        private _syncServiceProxy: SyncServiceProxy,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         private _router: Router
     ) {
@@ -55,7 +55,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         };
     }
     initIFrame() {
-        this._financialInformationServiceProxy.getSetupAccountsLink(
+        this._syncServiceProxy.getSetupAccountsLink(
             InstanceType[this.instanceType],
             this.instanceId,
             AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',

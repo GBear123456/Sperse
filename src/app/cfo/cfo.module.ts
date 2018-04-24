@@ -39,7 +39,7 @@ import { StatementsComponent } from './statements/statements.component'
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
 import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 
@@ -156,7 +156,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         CustomersServiceProxy,
         ContactServiceProxy,
         QuovoService,
-        FinancialInformationServiceProxy,
+        SyncServiceProxy,
         CalculatorService
     ]
 })
