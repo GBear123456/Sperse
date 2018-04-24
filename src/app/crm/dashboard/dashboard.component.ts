@@ -22,7 +22,8 @@ import * as moment from 'moment';
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
-
+    private selectedPeriod: any;
+        
     public dataEmpty: boolean;
     public headlineConfig = {
       names: [this.l('Dashboard')],
@@ -43,8 +44,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     refresh() {
-        this.periodChanged(this.periodComponent.getDatePeriodFromName(
-            this.periodComponent.selectedPeriod));
+        this.periodChanged(this.selectedPeriod);
     }
 
     checkDataEmpty(data) {      
@@ -58,7 +58,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     periodChanged($event) {
-        this._dashboardWidgetsService.periodChanged($event);
+        this._dashboardWidgetsService.periodChanged(
+            this.selectedPeriod = $event
+        );
     }
 
     ngAfterViewInit(): void {

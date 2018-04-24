@@ -36,6 +36,7 @@ export class ClientsByReginComponent extends AppComponentBase implements OnInit,
             _dashboardServiceProxy.getCustomersByRegion(
                 period && period.from, period && period.to)
                     .subscribe((result) => {
+                        this.gdpData = {};
                         result.forEach((val, index) => {
                             if (this.gdpData.hasOwnProperty(val.countryId))
                                 this.gdpData[val.countryId].total += val.customerCount;
