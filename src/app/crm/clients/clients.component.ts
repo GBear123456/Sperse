@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -54,6 +55,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -310,7 +312,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             },
             {
                 location: 'before', items: [
-                    { name: 'assign' },
+                    {
+                        name: 'assign',
+                        action: this.toggleUserAssignment.bind(this),
+                        disabled: !this.selectedClientKeys.length
+                    },
                     {
                         name: 'status',
                         widget: 'dxDropDownMenu',
@@ -414,6 +420,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             }
         };
     }
+
+    toggleUserAssignment() {
+        this.userAssignmentComponent.toggle();
+    }
+
 
     toggleLists() {
         this.listsComponent.toggle();

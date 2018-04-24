@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angu
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 
 @Component({
     selector: 'operations-widget',
@@ -11,6 +12,7 @@ import { ListsListComponent } from '../../shared/lists-list/lists-list.component
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
 
     @Input() clientId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
@@ -22,7 +24,10 @@ export class OperationsWidgetComponent implements OnInit {
     toolbarConfig = [
         {
             location: 'before', items: [
-            {name: 'assign'},
+            {
+                name: 'assign',
+                action: this.toggleUserAssignment.bind(this)
+            },
             {
                 name: 'status',
                 widget: 'dxDropDownMenu',
@@ -73,6 +78,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
+    }
+
+    toggleUserAssignment(dataLayoutType) {
+        this.userAssignmentComponent.toggle();
     }
 
     toggleLists() {

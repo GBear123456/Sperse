@@ -211,6 +211,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     calculateTooltipHeight() {
-        return window.innerHeight / 2;
+        return window.innerHeight / 2.2 - 70;
     }
 }
