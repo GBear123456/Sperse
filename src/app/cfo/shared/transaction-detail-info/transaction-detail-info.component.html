@@ -1,0 +1,96 @@
+<dx-tooltip
+    target=".transactionDetailTarget"
+    [width]="740"
+    [height]="'auto'"
+    [(visible)]="isVisible">
+    <div *dxTemplate="let data = data of 'content'" class="tooltip-template">
+        <header class="container">
+            <h1>{{transactionInfo.transactionDescriptor}}&nbsp;</h1>
+
+            <span class="type" [ngClass]="transactionInfo.cashFlowTypeId == 'I' ? 'inflows' : 'outflows'">
+                <ng-container *ngIf="transactionInfo.cashFlowTypeId == 'I'; else outflowsTemplate">
+                    {{l("Inflows")}}
+                </ng-container>
+                <ng-template #outflowsTemplate>
+                    {{l("Outflows")}}
+                </ng-template>
+            </span>
+
+            <button (click)="closeTooltip()"><i class="dx-icon dx-icon-close"></i></button>
+        </header>
+
+        <main class="text-left container">
+            <div class="row">
+                <div class="col-3 text-right light-gray">{{l("Category")}}</div>
+                <div class="col-6 truncate">
+                    <ng-container *ngIf="transactionInfo.accountingType">
+                        {{transactionInfo.accountingType}} <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </ng-container>
+                    <ng-container *ngIf="transactionInfo.cashflowCategory">
+                        {{transactionInfo.cashflowCategory}} <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </ng-container>
+                    <ng-container *ngIf="transactionInfo.cashflowSubCategory">
+                        {{transactionInfo.cashflowSubCategory}}
+                    </ng-container>
+                    <ng-container *ngIf="!transactionInfo.accountingType && !transactionInfo.cashflowCategory && !transactionInfo.cashflowSubCategory">
+                        {{l("Unclassified")}}
+                    </ng-container>
+                </div>
+                <div class="col-1 text-right light-gray">ID</div>
+                <div class="col-2 text-right tabular">{{transactionInfo.id}}</div>
+            </div>
+            <div class="row">
+                <div class="col-3 text-right light-gray">{{l("Notes")}}</div>
+                <div class="col-9">
+                    <ng-container *ngFor="let item of transactionInfo.comments">
+                        <div>{{item.text}}&nbsp;</div>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-9">
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3 text-right light-gray">{{l("Transaction_Date")}}</div>
+                <div class="col-4">{{transactionInfo.date | date : 'MMM d, y, h:mm a'}}</div>
+                <div class="col-3 text-right light-gray truncate">{{transactionInfo.bankAccountBankName}}</div>
+                <div class="col-2 text-right tabular"><b>{{transactionInfo.bankAccountNumber}}</b></div>
+            </div>
+            <div class="row">
+                <div class="col-3 text-right light-gray">{{l("Amount")}}</div>
+                <div class="col-4 amount">{{transactionInfo.amount | currency:'USD':'symbol':'1.2-2'}}</div>
+                <div class="col-3 text-right light-gray">{{l("Status")}}</div>
+                <div class="col-2 text-right tabular status" ngClass="{{transactionInfo.transactionStatus | lowercase}}">{{transactionInfo.transactionStatus}}</div>
+            </div>
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-9">
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3 text-right light-gray">{{l("Description")}}</div>
+                <div class="col-9 wrap uppercase">{{transactionInfo.description}}</div>
+            </div>
+
+            <ng-container *ngIf="transactionInfo.attributes && transactionInfo.attributes.length">
+                <div class="row">
+                    <div class="col-3"></div>
+                    <div class="col-9">
+                        <hr>
+                    </div>
+                </div>
+                <ng-container></ng-container>
+                <div class="row" *ngFor="let attr of transactionInfo.attributes">
+                    <div class="col-3 text-right light-gray">{{transactionAttributeTypes[attr.typeId].name}}</div>
+                    <div class="col-9">{{attr.value}}</div>
+                </div>
+            </ng-container>
+        </main>
+    </div>
+</dx-tooltip>

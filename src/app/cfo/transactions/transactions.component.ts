@@ -45,7 +45,7 @@ import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rul
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-
+import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -57,11 +57,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
+    @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
 
     noRefreshedAfterSync: boolean;
     items: any;
+    transactionId: any;
     defaultCreditTooltipVisible = false;
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
@@ -805,6 +807,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                 }).afterClosed().subscribe(result => { });
             }
+        }
+        if ($event.rowType === 'data' && $event.column.dataField == 'Description') {
+            $event.cellElement.setAttribute('class', 'transactionDetailTarget'); // @TODO: need update this to dynamicaly target
+            this.transactionId = $event.data.Id;
+            this.transactionInfo.toggleTransactionDetailsInfo();
         }
     }
 

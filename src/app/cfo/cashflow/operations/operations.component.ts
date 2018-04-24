@@ -4,7 +4,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { DxRangeSliderComponent } from 'devextreme-angular';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import {ReportPeriodComponent} from "@app/cfo/shared/report-period/report-period.component";
+import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 
 @Component({
     selector: 'cashflow-operations',

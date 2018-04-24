@@ -76,6 +76,7 @@ import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-
 import { CellsCopyingService } from 'shared/common/xls-mode/cells-copying/cells-copying.service';
 
 import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
+import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
@@ -138,6 +139,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
+    @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
+    transactionId: any;
     selectedBankAccounts;
     sliderReportPeriod = {
         start: null,
@@ -4595,10 +4598,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellClick(e) {
-        if (this.detailsCellIsEditable(e)) {
-
-        }
         this.onAmountCellEditStart(e);
+
+        if (e.rowType === 'data' && e.column.dataField == 'description') {
+            e.cellElement.setAttribute('class', 'transactionDetailTarget'); // @TODO: need update this to dynamicaly target
+            this.transactionId = e.data.id;
+            this.transactionInfo.toggleTransactionDetailsInfo();
+        }
     }
 
     /**

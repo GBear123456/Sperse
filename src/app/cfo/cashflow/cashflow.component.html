@@ -185,13 +185,14 @@
             <calculator-widget> </calculator-widget>
         </dx-scroll-view>
     </div>
-    
+
     <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
     </div>
 
 </div>
 
+<app-transaction-detail-info [transactionId]="transactionId"></app-transaction-detail-info>
 <app-no-data
     *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
     text=""
