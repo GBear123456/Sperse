@@ -53,11 +53,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     firstRefresh = false;
     gridDataSource: any = {};
     collection: any;
-    showPipeline = true;
+    showPipeline = false;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
 
     private rootComponent: any;
-    private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
+    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
 
@@ -109,7 +109,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
-        this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -124,15 +123,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {
+    toggleDataLayout(dataLayoutType) {        
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
-        if (!this.firstRefresh) {
-            this.firstRefresh = true;
-            abp.ui.setBusy(
-                '',
-                this.dataGrid.instance.refresh()
-            );
+        if (!this.showPipeline) {
+            this.gridDataSource.pageSize(20);
+            this.gridDataSource.filter(null);
+            this.gridDataSource.load().then(() => {
+                this.setGridDataLoaded();
+            });
         }
     }
 
@@ -330,24 +329,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'before', items: [
-                    { name: 'assign' }, { name: 'status' }, 
-                    {
-                        name: 'list',
-                        action: Function()
-                    },
+                    { name: 'assign' }, 
+                    { name: 'status' }, 
+                    { name: 'lists' },
                     {
                         name: 'tags',
-                        action: Function(),
                         disabled: true
                     },
-                    {
-                        name: 'rating',
-                        action: Function()
-                    },
-                    {
-                        name: 'star',
-                        action: Function()
-                    }
+                    { name: 'rating' },
+                    { name: 'star' }
                 ]
             },
             {
@@ -489,9 +479,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit(): void {
-        this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+    }
+
+    onGridInitialized($event) {
+        this.gridDataSource = $event.component.getDataSource();
+        this.showPipeline = (this.dataLayoutType == DataLayoutType.Pipeline);
     }
 
     ngOnDestroy() {

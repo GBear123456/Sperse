@@ -1,40 +1,38 @@
 <div class="pipeline-wrapper">
-    <div *ngFor="let item of pipeline?.stages; let i = index;" class="column column{{item.index + ' ' + (item.sortOrder && (item.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{item.color}}">
+    <div *ngFor="let stage of stages; let i = index;" class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{stage.color}}">
         <div class="column-title">
-            <span>{{item.name}}</span><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
+            <span>{{stage?.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
         <div class="column-items" [dragula]='"bag"'>
-            <ng-container *ngFor="let card of pipelineItems">
-                <ng-container *ngIf="card.Stage == item.name">
-                    <div class="card">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-sm-3 text-right pipeline-photo-wrap">
-                                    <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
-                                </div>
-                                <div class="col-sm-6 full-name">
-                                    <span>{{card.FullName}}</span>
-                                    <div class="amount">
-                                        <span>{{(card.Amount || 0) | currency }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row"> 
-                                <div class="days-ago">
-                                    <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ card.CreationTime | timeAgo }}</span>
-                                </div>                                
-                            </div>
-                            <div class="row item-data">                                
-                                <div class="text-right">
-                                    <span class="related-contact">{{l('PipeLine_RelatedContacts', [1])}}</span>
-                                    <img src="/assets/common/icons/phone.svg" class="phone">
-                                    <span class="delimiter"></span>
-                                    <img src="/assets/common/icons/email.svg" class="email">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
+            <ng-container *ngFor="let card of stage?.leads">
+                  <div class="card">
+                      <div class="container-fluid">
+                          <div class="row">
+                              <div class="col-sm-3 text-right pipeline-photo-wrap">
+                                  <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
+                              </div>
+                              <div class="col-sm-9 full-name">
+                                  <span>{{card.FullName}}</span>
+                                  <div class="amount">
+                                      <span>{{(card.Amount || 0) | currency }}</span>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row"> 
+                              <div class="days-ago">
+                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ card.CreationTime | timeAgo }}</span>
+                              </div>                                
+                          </div>
+                          <div class="row item-data">                                
+                              <div class="text-right">
+                                  <span class="related-contact">{{l('PipeLine_RelatedContacts', [1])}}</span>
+                                  <img src="/assets/common/icons/phone.svg" class="phone">
+                                  <span class="delimiter"></span>
+                                  <img src="/assets/common/icons/email.svg" class="email">
+                              </div>
+                          </div>
+                      </div>
+                  </div>
             </ng-container>
         </div>
     </div>
