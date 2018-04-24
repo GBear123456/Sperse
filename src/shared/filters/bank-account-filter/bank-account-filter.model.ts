@@ -58,7 +58,7 @@ export class BankAccountFilterModel extends FilterItemModel {
                 if (bankAccount['selected']) {
                     result.push(<DisplayElement>{
                         item: this,
-                        displayValue: bankAccount.accountName + ':' + bankAccount.accountNumber,
+                        displayValue: (bankAccount.accountName || '') + ':' + bankAccount.accountNumber,
                         args: bankAccount.id,
                         sortField: bankAccount.id
                     });
