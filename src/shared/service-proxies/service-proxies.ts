@@ -8640,344 +8640,6 @@ export class EditionServiceProxy {
 }
 
 @Injectable()
-export class FinancialInformationServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    createProviderUIToken(instanceType: InstanceType69, instanceId: number): Observable<GetProviderUITokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/CreateProviderUIToken?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processCreateProviderUIToken(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCreateProviderUIToken(response_);
-                } catch (e) {
-                    return <Observable<GetProviderUITokenOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<GetProviderUITokenOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCreateProviderUIToken(response: Response): Observable<GetProviderUITokenOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<GetProviderUITokenOutput>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @css (optional) 
-     * @errorPage (optional) 
-     * @return Success
-     */
-    getSetupAccountsLink(instanceType: InstanceType70, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSetupAccountsLink?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (css !== undefined)
-            url_ += "css=" + encodeURIComponent("" + css) + "&"; 
-        if (errorPage !== undefined)
-            url_ += "errorPage=" + encodeURIComponent("" + errorPage) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetSetupAccountsLink(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetSetupAccountsLink(response_);
-                } catch (e) {
-                    return <Observable<GetSetupAccountsLinkOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<GetSetupAccountsLinkOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetSetupAccountsLink(response: Response): Observable<GetSetupAccountsLinkOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetSetupAccountsLinkOutput.fromJS(resultData200) : new GetSetupAccountsLinkOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<GetSetupAccountsLinkOutput>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    syncAllAccounts(instanceType: InstanceType71, instanceId: number, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAllAccounts?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (forcedSync === undefined || forcedSync === null)
-            throw new Error("The parameter 'forcedSync' must be defined and cannot be null.");
-        else
-            url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSyncAllAccounts(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSyncAllAccounts(response_);
-                } catch (e) {
-                    return <Observable<SyncAllAccountsOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<SyncAllAccountsOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSyncAllAccounts(response: Response): Observable<SyncAllAccountsOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SyncAllAccountsOutput.fromJS(resultData200) : new SyncAllAccountsOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<SyncAllAccountsOutput>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    syncAccount(instanceType: InstanceType72, instanceId: number, syncAccountId: number): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/SyncAccount?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (syncAccountId === undefined || syncAccountId === null)
-            throw new Error("The parameter 'syncAccountId' must be defined and cannot be null.");
-        else
-            url_ += "syncAccountId=" + encodeURIComponent("" + syncAccountId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSyncAccount(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSyncAccount(response_);
-                } catch (e) {
-                    return <Observable<boolean>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<boolean>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSyncAccount(response: Response): Observable<boolean> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<boolean>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    getSyncProgress(instanceType: InstanceType73, instanceId: number): Observable<SyncProgressOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/GetSyncProgress?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetSyncProgress(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetSyncProgress(response_);
-                } catch (e) {
-                    return <Observable<SyncProgressOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<SyncProgressOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetSyncProgress(response: Response): Observable<SyncProgressOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<SyncProgressOutput>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    renameSyncAccount(instanceType: InstanceType74, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/FinancialInformation/RenameSyncAccount?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRenameSyncAccount(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRenameSyncAccount(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRenameSyncAccount(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class FriendshipServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9725,7 +9387,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType75, instanceId: number): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType69, instanceId: number): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -9775,7 +9437,7 @@ export class InstanceServiceProxy {
     /**
      * @return Success
      */
-    setup(instanceType: InstanceType76): Observable<SetupOutput> {
+    setup(instanceType: InstanceType70): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -14158,6 +13820,344 @@ export class SubscriptionServiceProxy {
     }
 
     protected processUpgradeTenantToEquivalentEdition(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class SyncServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    createProviderUIToken(instanceType: InstanceType71, instanceId: number): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processCreateProviderUIToken(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateProviderUIToken(response_);
+                } catch (e) {
+                    return <Observable<GetProviderUITokenOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetProviderUITokenOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateProviderUIToken(response: Response): Observable<GetProviderUITokenOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetProviderUITokenOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @css (optional) 
+     * @errorPage (optional) 
+     * @return Success
+     */
+    getSetupAccountsLink(instanceType: InstanceType72, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (css !== undefined)
+            url_ += "css=" + encodeURIComponent("" + css) + "&"; 
+        if (errorPage !== undefined)
+            url_ += "errorPage=" + encodeURIComponent("" + errorPage) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetSetupAccountsLink(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetSetupAccountsLink(response_);
+                } catch (e) {
+                    return <Observable<GetSetupAccountsLinkOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GetSetupAccountsLinkOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetSetupAccountsLink(response: Response): Observable<GetSetupAccountsLinkOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetSetupAccountsLinkOutput.fromJS(resultData200) : new GetSetupAccountsLinkOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<GetSetupAccountsLinkOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    syncAllAccounts(instanceType: InstanceType73, instanceId: number, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (forcedSync === undefined || forcedSync === null)
+            throw new Error("The parameter 'forcedSync' must be defined and cannot be null.");
+        else
+            url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSyncAllAccounts(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSyncAllAccounts(response_);
+                } catch (e) {
+                    return <Observable<SyncAllAccountsOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SyncAllAccountsOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSyncAllAccounts(response: Response): Observable<SyncAllAccountsOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncAllAccountsOutput.fromJS(resultData200) : new SyncAllAccountsOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<SyncAllAccountsOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    syncAccount(instanceType: InstanceType74, instanceId: number, syncAccountId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (syncAccountId === undefined || syncAccountId === null)
+            throw new Error("The parameter 'syncAccountId' must be defined and cannot be null.");
+        else
+            url_ += "syncAccountId=" + encodeURIComponent("" + syncAccountId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<boolean>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSyncAccount(response: Response): Observable<boolean> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<boolean>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getSyncProgress(instanceType: InstanceType75, instanceId: number): Observable<SyncProgressOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSyncProgress?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetSyncProgress(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetSyncProgress(response_);
+                } catch (e) {
+                    return <Observable<SyncProgressOutput>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<SyncProgressOutput>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetSyncProgress(response: Response): Observable<SyncProgressOutput> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<SyncProgressOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    renameSyncAccount(instanceType: InstanceType76, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/RenameSyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRenameSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRenameSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRenameSyncAccount(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -31244,256 +31244,6 @@ export interface ICreateOrUpdateEditionDto {
     featureValues: NameValueDto[];
 }
 
-export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
-    token: string;
-
-    constructor(data?: IGetProviderUITokenOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.token = data["token"];
-        }
-    }
-
-    static fromJS(data: any): GetProviderUITokenOutput {
-        let result = new GetProviderUITokenOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        return data; 
-    }
-}
-
-export interface IGetProviderUITokenOutput {
-    token: string;
-}
-
-export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
-    setupAccountsLink: string;
-
-    constructor(data?: IGetSetupAccountsLinkOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.setupAccountsLink = data["setupAccountsLink"];
-        }
-    }
-
-    static fromJS(data: any): GetSetupAccountsLinkOutput {
-        let result = new GetSetupAccountsLinkOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["setupAccountsLink"] = this.setupAccountsLink;
-        return data; 
-    }
-}
-
-export interface IGetSetupAccountsLinkOutput {
-    setupAccountsLink: string;
-}
-
-export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
-    syncInProgressAccountsCount: number;
-
-    constructor(data?: ISyncAllAccountsOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
-        }
-    }
-
-    static fromJS(data: any): SyncAllAccountsOutput {
-        let result = new SyncAllAccountsOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
-        return data; 
-    }
-}
-
-export interface ISyncAllAccountsOutput {
-    syncInProgressAccountsCount: number;
-}
-
-export class SyncProgressOutput implements ISyncProgressOutput {
-    lastSyncDate: moment.Moment;
-    totalProgress: SyncProgressDto;
-    accountProgresses: SyncProgressDto[];
-
-    constructor(data?: ISyncProgressOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
-            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
-                this.accountProgresses = [];
-                for (let item of data["accountProgresses"])
-                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): SyncProgressOutput {
-        let result = new SyncProgressOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
-        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
-            data["accountProgresses"] = [];
-            for (let item of this.accountProgresses)
-                data["accountProgresses"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ISyncProgressOutput {
-    lastSyncDate: moment.Moment;
-    totalProgress: SyncProgressDto;
-    accountProgresses: SyncProgressDto[];
-}
-
-export class SyncProgressDto implements ISyncProgressDto {
-    accountId: number;
-    accountName: string;
-    syncStatusMessage: string;
-    progressPercent: number;
-    syncStatus: SyncProgressDtoSyncStatus;
-    lastSyncDate: moment.Moment;
-
-    constructor(data?: ISyncProgressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accountId = data["accountId"];
-            this.accountName = data["accountName"];
-            this.syncStatusMessage = data["syncStatusMessage"];
-            this.progressPercent = data["progressPercent"];
-            this.syncStatus = data["syncStatus"];
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SyncProgressDto {
-        let result = new SyncProgressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accountId"] = this.accountId;
-        data["accountName"] = this.accountName;
-        data["syncStatusMessage"] = this.syncStatusMessage;
-        data["progressPercent"] = this.progressPercent;
-        data["syncStatus"] = this.syncStatus;
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISyncProgressDto {
-    accountId: number;
-    accountName: string;
-    syncStatusMessage: string;
-    progressPercent: number;
-    syncStatus: SyncProgressDtoSyncStatus;
-    lastSyncDate: moment.Moment;
-}
-
-export class RenameSyncAccountInput implements IRenameSyncAccountInput {
-    id: number;
-    newName: string;
-
-    constructor(data?: IRenameSyncAccountInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.newName = data["newName"];
-        }
-    }
-
-    static fromJS(data: any): RenameSyncAccountInput {
-        let result = new RenameSyncAccountInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["newName"] = this.newName;
-        return data; 
-    }
-}
-
-export interface IRenameSyncAccountInput {
-    id: number;
-    newName: string;
-}
-
 export class CreateFriendshipRequestInput implements ICreateFriendshipRequestInput {
     userId: number;
     tenantId: number;
@@ -38911,6 +38661,256 @@ export interface IGetUserInformationOutput {
     userName: string;
 }
 
+export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
+    token: string;
+
+    constructor(data?: IGetProviderUITokenOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.token = data["token"];
+        }
+    }
+
+    static fromJS(data: any): GetProviderUITokenOutput {
+        let result = new GetProviderUITokenOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data; 
+    }
+}
+
+export interface IGetProviderUITokenOutput {
+    token: string;
+}
+
+export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
+    setupAccountsLink: string;
+
+    constructor(data?: IGetSetupAccountsLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.setupAccountsLink = data["setupAccountsLink"];
+        }
+    }
+
+    static fromJS(data: any): GetSetupAccountsLinkOutput {
+        let result = new GetSetupAccountsLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["setupAccountsLink"] = this.setupAccountsLink;
+        return data; 
+    }
+}
+
+export interface IGetSetupAccountsLinkOutput {
+    setupAccountsLink: string;
+}
+
+export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
+    syncInProgressAccountsCount: number;
+
+    constructor(data?: ISyncAllAccountsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
+        }
+    }
+
+    static fromJS(data: any): SyncAllAccountsOutput {
+        let result = new SyncAllAccountsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
+        return data; 
+    }
+}
+
+export interface ISyncAllAccountsOutput {
+    syncInProgressAccountsCount: number;
+}
+
+export class SyncProgressOutput implements ISyncProgressOutput {
+    lastSyncDate: moment.Moment;
+    totalProgress: SyncProgressDto;
+    accountProgresses: SyncProgressDto[];
+
+    constructor(data?: ISyncProgressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
+            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
+                this.accountProgresses = [];
+                for (let item of data["accountProgresses"])
+                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SyncProgressOutput {
+        let result = new SyncProgressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
+        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
+            data["accountProgresses"] = [];
+            for (let item of this.accountProgresses)
+                data["accountProgresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISyncProgressOutput {
+    lastSyncDate: moment.Moment;
+    totalProgress: SyncProgressDto;
+    accountProgresses: SyncProgressDto[];
+}
+
+export class SyncProgressDto implements ISyncProgressDto {
+    accountId: number;
+    accountName: string;
+    syncStatusMessage: string;
+    progressPercent: number;
+    syncStatus: SyncProgressDtoSyncStatus;
+    lastSyncDate: moment.Moment;
+
+    constructor(data?: ISyncProgressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountId = data["accountId"];
+            this.accountName = data["accountName"];
+            this.syncStatusMessage = data["syncStatusMessage"];
+            this.progressPercent = data["progressPercent"];
+            this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SyncProgressDto {
+        let result = new SyncProgressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
+        data["accountName"] = this.accountName;
+        data["syncStatusMessage"] = this.syncStatusMessage;
+        data["progressPercent"] = this.progressPercent;
+        data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISyncProgressDto {
+    accountId: number;
+    accountName: string;
+    syncStatusMessage: string;
+    progressPercent: number;
+    syncStatus: SyncProgressDtoSyncStatus;
+    lastSyncDate: moment.Moment;
+}
+
+export class RenameSyncAccountInput implements IRenameSyncAccountInput {
+    id: number;
+    newName: string;
+
+    constructor(data?: IRenameSyncAccountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.newName = data["newName"];
+        }
+    }
+
+    static fromJS(data: any): RenameSyncAccountInput {
+        let result = new RenameSyncAccountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["newName"] = this.newName;
+        return data; 
+    }
+}
+
+export interface IRenameSyncAccountInput {
+    id: number;
+    newName: string;
+}
+
 export class PagedResultDtoOfTenancyListDto implements IPagedResultDtoOfTenancyListDto {
     totalCount: number;
     items: TenancyListDto[];
@@ -44031,6 +44031,18 @@ export enum GroupBy2 {
     Yearly = <any>"Yearly", 
 }
 
+export enum IncomeStatisticsDateInterval {
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+}
+
+export enum IncomeStatisticsDateInterval2 {
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+}
+
 export enum InstanceType69 {
     User = <any>"User", 
     Main = <any>"Main", 
@@ -44039,6 +44051,11 @@ export enum InstanceType69 {
 export enum InstanceType70 {
     User = <any>"User", 
     Main = <any>"Main", 
+}
+
+export enum State {
+    _0 = 0, 
+    _1 = 1, 
 }
 
 export enum InstanceType71 {
@@ -44061,18 +44078,6 @@ export enum InstanceType74 {
     Main = <any>"Main", 
 }
 
-export enum IncomeStatisticsDateInterval {
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-}
-
-export enum IncomeStatisticsDateInterval2 {
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-}
-
 export enum InstanceType75 {
     User = <any>"User", 
     Main = <any>"Main", 
@@ -44081,11 +44086,6 @@ export enum InstanceType75 {
 export enum InstanceType76 {
     User = <any>"User", 
     Main = <any>"Main", 
-}
-
-export enum State {
-    _0 = 0, 
-    _1 = 1, 
 }
 
 export enum SalesSummaryDatePeriod {
@@ -44337,13 +44337,6 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     NoPayment = <any>"NoPayment", 
 }
 
-export enum SyncProgressDtoSyncStatus {
-    InProgress = <any>"InProgress", 
-    Completed = <any>"Completed", 
-    Failed = <any>"Failed", 
-    Unavailable = <any>"Unavailable", 
-}
-
 export enum GetStatusOutputStatus {
     NotInitialized = <any>"NotInitialized", 
     Active = <any>"Active", 
@@ -44477,6 +44470,13 @@ export enum ExecutePaymentDtoPaymentPeriodType {
 export enum TenantLoginInfoDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum SyncProgressDtoSyncStatus {
+    InProgress = <any>"InProgress", 
+    Completed = <any>"Completed", 
+    Failed = <any>"Failed", 
+    Unavailable = <any>"Unavailable", 
 }
 
 export enum CreateTenancyInputTenantHostType {
