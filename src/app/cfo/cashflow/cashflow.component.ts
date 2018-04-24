@@ -166,7 +166,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     yearsAmount = 0;
 
     /** The string paths of cashflow data */
-    private treePathes: string[] = [];
+    private treePathes = {};
 
     cashflowTypes: any;
 
@@ -1564,7 +1564,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Update pathes for the filtering
      * @param transactionObj
      */
-    updateTreePathes(transactionObj) {
+    updateTreePathes(transactionObj, removePath = false) {
         let fullPath = [];
         for (let i = 0; i < 5; i++) {
             let levelValue = transactionObj[`level${i}`];
@@ -1572,9 +1572,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 fullPath.push(levelValue);
             }
         }
+
         let stringPath = fullPath.join(',');
-        if (this.treePathes.indexOf(stringPath) === -1) {
-            this.treePathes.push(stringPath);
+        if (!this.treePathes.hasOwnProperty(stringPath)) {
+            this.treePathes[stringPath] = 1;
+        }
+        else {
+            if (removePath) {
+                this.treePathes[stringPath]--;
+                if (!this.treePathes[stringPath])
+                    delete this.treePathes[stringPath];
+            }
+            else {
+                this.treePathes[stringPath]++;
+            }
         }
     }
 
@@ -4043,7 +4054,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     hasChildsByPath(path): boolean {
         let cellPath = path.join(',');
-        return path.slice(-1)[0] && this.treePathes.some(path => {
+
+        let keys = Object.keys(this.treePathes);
+        return path.slice(-1)[0] && keys.some(path => {
             let currentPathIndex = path.indexOf(cellPath);
             return currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length;
         });
@@ -4133,7 +4146,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let result = false;
         /** add the rowInfo to cash to avoid checking for every cell */
         if (!this.cachedRowsFitsToFilter.has(rowInfo) || !rowInfo) {
-            this.treePathes.forEach(strPath => {
+            Object.keys(this.treePathes).forEach(strPath => {
                 let arrPath = strPath.split(',');
                 if (arrPath.indexOf(rowInfo) !== -1) {
                     /** Handle for uncategorized */
@@ -4632,6 +4645,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 id: e.key.id,
                 [paramNameForUpdateInput]: paramValue
             };
+
             if (data['date']) {
                 let momentDate = moment(data['date']);
                 this.addLocalTimezoneOffset(momentDate);
@@ -4648,6 +4662,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     );
 
             } else {
+                /* Set descriptor */
+                if (paramName != 'description') {
+                    data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
+                }
+                /* Set forecast category */
+                let forecastData = this.cashflowData.find(x => x.forecastId == e.key.id);
+                data['categoryId'] = forecastData.subCategoryId || forecastData.categoryId;
+
                 forecastMethod = this._cashFlowForecastServiceProxy
                     .updateForecast(
                         InstanceType10[this.instanceType],
@@ -4699,6 +4721,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         sameDateTransactionExist = true;
                     }
 
+                    if (paramNameForUpdateInput == 'transactionDescriptor') {
+                        this.updateTreePathes(item, true);
+                    }
+
                     if (paramNameForUpdateInput == 'date') {
                         item[paramNameForUpdateInput] = moment(paramValue).utc();
                         item['initialDate'] = moment(paramValue).utc().subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
@@ -4706,8 +4732,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         item[paramNameForUpdateInput] = paramValue;
                     }
 
-                    if (paramNameForUpdateInput == 'transactionDescriptor')
+                    if (paramNameForUpdateInput == 'transactionDescriptor') {
                         this.addCategorizationLevels(item);
+                    }
                 });
 
                 this.pivotGrid.instance.getDataSource().reload();
