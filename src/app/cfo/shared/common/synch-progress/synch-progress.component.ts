@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild } from '@angular/core';
-import { FinancialInformationServiceProxy, SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
+import { SyncServiceProxy, SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
@@ -7,7 +7,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
     templateUrl: './synch-progress.component.html',
     styleUrls: ['./synch-progress.component.less'],
     selector: 'synch-progress',
-    providers: [FinancialInformationServiceProxy]
+    providers: [SyncServiceProxy]
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @Output() onComplete = new EventEmitter();
@@ -26,7 +26,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     tryCount = 0;
 
     constructor(injector: Injector,
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy
+        private _syncServiceProxy: SyncServiceProxy
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -42,7 +42,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         let params = {
             forcedSync: forcedSync
         };
-        this.ajaxRequest('/api/services/CFO/FinancialInformation/SyncAllAccounts?', 'POST', params)
+        this.ajaxRequest('/api/services/CFO/Sync/SyncAllAccounts?', 'POST', params)
             .done(result => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
@@ -53,7 +53,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     private getSynchProgressAjax() {
-        this.ajaxRequest('/api/services/CFO/FinancialInformation/GetSyncProgress?', 'GET', {})
+        this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {})
             .done((result: SyncProgressOutput) => {
                 this.currentProgress = result.totalProgress.progressPercent;
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { InstanceType, FinancialInformationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 
 declare const Quovo: any;
 
@@ -11,13 +11,13 @@ export class QuovoHandler {
 @Injectable()
 export class QuovoService {
     constructor(
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy
+        private _syncServiceProxy: SyncServiceProxy
     ) {}
 
     getQuovoHandler(instanceType: string, instanceId: number) {
         let quovoHandler = new QuovoHandler();
         jQuery.getScript('https://app.quovo.com/ui.js', () => {
-            this._financialInformationServiceProxy.createProviderUIToken(InstanceType[instanceType], instanceId)
+            this._syncServiceProxy.createProviderUIToken(InstanceType[instanceType], instanceId)
                 .subscribe((data) => {
                     quovoHandler.handler = this.createQuovoHandler(data.token, () => quovoHandler.isLoaded = true);
                 });

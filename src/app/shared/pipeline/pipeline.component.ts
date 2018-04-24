@@ -1,6 +1,7 @@
 ﻿import {Component, Injector, Input, OnInit, AfterViewInit} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 import { PipelineDto, PipelineServiceProxy, PipelineData } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 import DataSource from 'devextreme/data/data_source';
 
@@ -18,7 +19,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
 
     constructor(injector: Injector,
                 private _pipelineService: PipelineServiceProxy) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit(): void {
