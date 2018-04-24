@@ -4721,7 +4721,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         sameDateTransactionExist = true;
                     }
 
-                    if (paramNameForUpdateInput == 'transactionDescriptor') {
+                    if (paramNameForUpdateInput == 'transactionDescriptor' || (paramNameForUpdateInput == 'amount' && paramValue == 0)) {
                         this.updateTreePathes(item, true);
                     }
 
