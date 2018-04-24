@@ -67,6 +67,7 @@
                 color: #424c56;
                 .pipeline-photo-wrap {
                     padding: 0 8px;
+                    min-width: 56px;
                 }
                 &.gu-transit {
                     opacity: 1;
@@ -74,23 +75,10 @@
                 }
                 .row {
                     margin-right: -15px;
-                    &.amount {  
-                        margin: 20px;
-                        span {
-                            font-size: 14px;
-                            font-weight: 500;
-                            font-style: normal;
-                            font-stretch: normal;
-                            line-height: 0.71;
-                            letter-spacing: 0.3px;
-                            text-align: left;
-                            color: #677380;                            
-                        }
-                    }
                     &.item-data {
                         position: relative;
                         bottom: -11px;
-                        padding: 13px 0px 7px;
+                        padding: 10px 0px 3px;
                         img {
                             vertical-align: baseline;
                             &.email {
@@ -108,15 +96,48 @@
                             width: 100%;
                             white-space: nowrap;                    
                             padding-right: 10px;
+                            .related-contact {
+                                float: left;
+                                padding-left: 10px;
+                                font-size: 12px;
+                                font-weight: 300;
+                                font-style: normal;
+                                font-stretch: normal;
+                                letter-spacing: 0.2px;
+                                text-align: left;
+                                color: #94979a;
+                            }
                         }
                     }
                     .full-name {
                         max-height: 42px;
+                        width: 100%;
+                        padding: 0px 10px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        span {
+                            white-space: nowrap;
+                        }
+                        .amount {  
+                            span {
+                                font-size: 14px;
+                                font-weight: 500;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 0.71;
+                                letter-spacing: 0.3px;
+                                text-align: left;
+                                color: #677380;                            
+                            }
+                        }
                     }
                     .img-circle {
                         border-radius: 50%;
                     }
                     .days-ago {
+                        padding-left: 17px;
+                        text-overflow: ellipsis;
+                        overflow: hidden;
                         span {
                             font-size: 12px;
                             font-weight: 300;
@@ -128,11 +149,12 @@
                             color: #94979a;
                             padding: 5px;
                             vertical-align: middle;
+                            white-space: nowrap;
                         }
                     }                
                 }
                 .row + .row {
-                    margin-top: 10px;
+                    margin-top: 6px;
                 }
                 .item-data {
                     font-size: 13px;
@@ -228,21 +250,15 @@
     .row + .row {
         margin-top: 10px;
     }
+    .pipeline-photo-wrap {
+        padding: 0 8px;
+        min-width: 56px;
+    }
+    .related-contact {  
+        display: none;
+    }
     .row {
         margin-right: -15px;
-        &.amount {  
-            margin: 20px;
-            span {
-                font-size: 14px;
-                font-weight: 500;
-                font-style: normal;
-                font-stretch: normal;
-                line-height: 0.71;
-                letter-spacing: 0.3px;
-                text-align: left;
-                color: #677380;                            
-            }
-        }
         &.item-data {
             position: relative;
             bottom: -15px;
@@ -266,13 +282,35 @@
                 padding-right: 10px;
             }
         }
+        .full-name {
+            max-height: 42px;
+            width: 100%;
+            padding: 0px 10px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            span {
+                white-space: nowrap;
+            }
+            .amount {  
+                span {
+                    font-size: 14px;
+                    font-weight: 500;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 0.71;
+                    letter-spacing: 0.3px;
+                    text-align: left;
+                    color: #677380;                            
+                }
+            }
+        }
         .img-circle {
             border-radius: 50%;
         }
-        .full-name {
-            max-height: 42px;
-        }
         .days-ago {
+            padding-left: 17px;
+            text-overflow: ellipsis;
+            overflow: hidden;
             span {
                 font-size: 12px;
                 font-weight: 300;
@@ -284,6 +322,7 @@
                 color: #94979a;
                 padding: 5px;
                 vertical-align: middle;
+                white-space: nowrap;
             }
         }                
     }

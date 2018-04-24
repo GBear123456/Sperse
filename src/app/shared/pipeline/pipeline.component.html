@@ -12,18 +12,21 @@
                                 <div class="col-sm-3 text-right pipeline-photo-wrap">
                                     <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
                                 </div>
-                                <div class="col-sm-9 full-name">
+                                <div class="col-sm-6 full-name">
                                     <span>{{card.FullName}}</span>
-                                    <div class="days-ago">
-                                        <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>5 days ago</span>
+                                    <div class="amount">
+                                        <span>{{(card.Amount || 0) | currency }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row amount"> 
-                                <span>{{card.Amount}}</span>
+                            <div class="row"> 
+                                <div class="days-ago">
+                                    <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ card.CreationTime | timeAgo }}</span>
+                                </div>                                
                             </div>
-                            <div class="row item-data">
+                            <div class="row item-data">                                
                                 <div class="text-right">
+                                    <span class="related-contact">{{l('PipeLine_RelatedContacts', [1])}}</span>
                                     <img src="/assets/common/icons/phone.svg" class="phone">
                                     <span class="delimiter"></span>
                                     <img src="/assets/common/icons/email.svg" class="email">
