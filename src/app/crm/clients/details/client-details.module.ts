@@ -9,7 +9,7 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, 
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule, 
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule } from 'devextreme-angular';
+    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -21,6 +21,7 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '../../shared/rating/rating.component';
 
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -92,7 +93,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     NoteAddDialogComponent,
     TagsListComponent,
     ListsListComponent,
-    UserAssignmentComponent
+    UserAssignmentComponent,
+    RatingComponent
   ],
   imports: [
     FormsModule,
@@ -120,6 +122,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxDateBoxModule,
     DxTooltipModule,
     DxListModule,
+    DxSliderModule,
     RoundProgressModule,
     DxValidationGroupModule
   ],
@@ -130,7 +133,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     RequiredDocumentsComponent,
     TagsListComponent,
     ListsListComponent,
-    UserAssignmentComponent
+    UserAssignmentComponent,
+    RatingComponent
   ],
   entryComponents: [
     EditContactDialog,

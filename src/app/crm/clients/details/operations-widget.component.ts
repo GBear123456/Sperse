@@ -3,6 +3,7 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '../../shared/rating/rating.component';
 
 @Component({
     selector: 'operations-widget',
@@ -13,6 +14,7 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
 
     @Input() clientId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
@@ -53,6 +55,10 @@ export class OperationsWidgetComponent implements OnInit {
                 action: this.toggleTags.bind(this)
             },
             {
+                name: 'rating',
+                action: this.toggleRating.bind(this),
+            },
+            {
                 name: 'delete',
                 action: this.delete.bind(this)
             }
@@ -90,6 +96,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     toggleTags() {
         this.tagsComponent.toggle();
+    }
+
+    toggleRating() {
+        this.ratingComponent.toggle();
     }
 
     constructor() { }
