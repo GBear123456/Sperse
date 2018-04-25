@@ -1,0 +1,148 @@
+*:not(.fa) {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    color: #424c56;
+}
+
+.tooltip-template {
+    margin: -12px -17px;
+    width: auto !important;
+    height: calc(~"100% + 24px") !important;
+}
+
+.light-gray {
+    color: #677380;
+    font-weight: 300;
+}
+
+.wrap {
+    white-space: normal;
+}
+
+.row {
+    padding: 2px 0;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.amount {
+    font-size: 17px;
+    font-weight: 500;
+    color: #61c670;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status {
+    span {
+        padding-left: 20px;
+        position: relative;
+        display: inline-block;
+        color: rgb(246, 147, 30);
+
+        &::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: rgb(246, 147, 30);
+            display: block;
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &.settled {
+            color: #61c670;
+
+            &::before {
+                background-color: #61c670 ;
+            }
+        }
+
+    }
+}
+
+header {
+    display: flex;
+    align-items: center;
+    background-color: rgb(243, 247, 250);
+    padding: 5px 15px;
+
+    h1 {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 2.47;
+        margin-bottom: 0;
+        color: #202b35;
+    }
+
+    .type {
+        margin-left: auto;
+        line-height: 24px;
+        height: 26px;
+        border-radius: 13px;
+        font-size: 13px;
+        font-weight: 300;
+        letter-spacing: 0.3px;
+        text-align: center;
+        padding: 0 16px;
+
+        &.inflows {
+            color: #61c670;
+            background-color: #EDF7E8;
+        }
+
+        &.outflows {
+            color: #e7326a;
+            background-color: #FFF5F7;
+        }
+    }
+
+    button {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        text-align: center;
+        outline: none;
+        cursor: pointer;
+
+        i {
+            font: 15px/1 DXIcons;
+            margin-right: 0;
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    height: calc(~"100% - 51px");
+    justify-content: flex-start;
+    padding: 15px;
+}
+
+/deep/ .dx-tooltip-wrapper {
+    .dx-overlay-content {
+        .dx-popup-content {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+}

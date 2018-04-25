@@ -15,6 +15,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '../shared/rating/rating.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -56,6 +57,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -345,7 +347,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     },
                     {
                         name: 'rating',
-                        action: Function()
+                        action: this.toggleRating.bind(this),
+                        disabled: !this.selectedClientKeys.length
                     },
                     {
                         name: 'star',
@@ -432,6 +435,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
     toggleTags() {
         this.tagsComponent.toggle();
+    }
+
+    toggleRating() {
+        this.ratingComponent.toggle();
     }
 
     filterByZipCode(filter: FilterModel) {

@@ -83,6 +83,7 @@
                         [minWidth]="130">
             </dxi-column>
             <dxi-column dataField="description"
+                        cellTemplate="descriptionTemplate"
                         [width]="detailsDescriptionColumnWidth()"
                         [minWidth]="160"
                         [caption]="l('DetailsHeaders_Description')">
@@ -137,6 +138,9 @@
 
             <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
             <div *dxTemplate="let cellData of 'typeCell'">{{this.cashflowTypes[cellData.value]}}</div>
+            <div *dxTemplate="let cellData of 'descriptionTemplate'">
+                <span id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
+            </div>
             <div *dxTemplate="let headerCellData of 'twoRowsHeaderCellTemplate'">
                 <div class="firstLine">{{headerCellData.column.caption.slice(0, headerCellData.column.caption.indexOf(' '))}}</div>
                 <div>{{headerCellData.column.caption.slice(headerCellData.column.caption.indexOf(' ') + 1)}}</div>
@@ -180,18 +184,19 @@
         <dx-scroll-view [showScrollbar]="onHover">
             <div class="calculator-title">
                 <h3>{{l( 'Cell Calculator')}}</h3>
-                <span class="close" (click)="closeCalculator($event)"></span>                
+                <span class="close" (click)="closeCalculator($event)"></span>
             </div>
             <calculator-widget> </calculator-widget>
         </dx-scroll-view>
     </div>
-    
+
     <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
         <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
     </div>
 
 </div>
 
+<app-transaction-detail-info [transactionId]="transactionId"></app-transaction-detail-info>
 <app-no-data
     *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
     text=""

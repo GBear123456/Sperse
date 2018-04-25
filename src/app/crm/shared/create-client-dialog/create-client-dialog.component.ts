@@ -17,6 +17,7 @@ import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
+import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -30,6 +31,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
 
@@ -186,7 +188,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             {
                 location: 'after', items: [
-                //{name: 'assign'},
+                    {
+                        name: 'assign',
+                        action: this.toggleUserAssignmen.bind(this),
+                        options: {
+                            accessKey: 'ClientAssign'
+                        }
+                    },
                     {
                         name: 'status',
                         widget: 'dxDropDownMenu',
@@ -322,6 +330,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             .subscribe(result => {
                 this.tagsComponent.apply([result.id]);
                 this.listsComponent.apply([result.id]);
+                this.userAssignmentComponent.apply([result.id]);
                 if (this.saveContextMenuItems[0].selected) {
                     this.data.refreshParent();
                     this.resetFullDialog();
@@ -431,6 +440,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     toggleLists() {
         this.listsComponent.toggle();
+    }
+
+    toggleUserAssignmen() {
+        this.userAssignmentComponent.toggle();
     }
 
     checkSimilarCustomers() {
