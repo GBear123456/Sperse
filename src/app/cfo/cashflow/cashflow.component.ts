@@ -3681,8 +3681,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds)
                             .subscribe(result => {
                                 let temp = {};
-                                forecastIds.forEach((id, i) => { });
-
                                 for (let i = this.cashflowData.length - 1; i >= 0; i--) {
                                     let item = this.cashflowData[i];
 
