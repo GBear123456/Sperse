@@ -10561,6 +10561,52 @@ export class LeadServiceProxy {
         }
         return Observable.of<LeadFiltersInitialData>(<any>null);
     }
+
+    /**
+     * @updateLeadStageInfo (optional) 
+     * @return Success
+     */
+    updateLeadStage(updateLeadStageInfo: UpdateLeadStageInfo): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadStage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(updateLeadStageInfo);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateLeadStage(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateLeadStage(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateLeadStage(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -34850,6 +34896,45 @@ export interface IActionDto {
     name: string;
     sysId: string;
     targetStageId: number;
+}
+
+export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
+    leadId: number;
+    stageId: number;
+
+    constructor(data?: IUpdateLeadStageInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.stageId = data["stageId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadStageInfo {
+        let result = new UpdateLeadStageInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["stageId"] = this.stageId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadStageInfo {
+    leadId: number;
+    stageId: number;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
