@@ -596,7 +596,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             );
         });
 
-        this.filtersService.apply(() => {   
+        this.filtersService.apply(() => {
             this.initToolbarConfig();
             let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
             if (this.selectedCashflowCategoryKey && classifiedFilter.items['no'].value === true && classifiedFilter.items['yes'].value !== true) {
@@ -809,8 +809,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             }
         }
         if ($event.rowType === 'data' && $event.column.dataField == 'Description') {
-            $event.cellElement.setAttribute('class', 'transactionDetailTarget'); // @TODO: need update this to dynamicaly target
             this.transactionId = $event.data.Id;
+            this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();
         }
     }

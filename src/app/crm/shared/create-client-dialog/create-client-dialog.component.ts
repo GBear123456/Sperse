@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef, OnDestroy } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
@@ -28,7 +28,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     styleUrls: ['create-client-dialog.component.less'],
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadTypeServiceProxy ]
 })
-export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit {
+export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
@@ -727,5 +727,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.data.title = event;
         this._nameParser.parseIntoPerson(this.data.title, this.person);
         this.checkSimilarCustomers();
+    }
+
+    ngOnDestroy(): void {
+        if (this.similarCustomersDialog)
+            this.similarCustomersDialog.close();
     }
 }

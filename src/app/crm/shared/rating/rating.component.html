@@ -1,0 +1,25 @@
+<dx-tooltip height="150"
+            [target]="targetSelector"
+            [(visible)]="tooltipVisible">
+    <div *dxTemplate="let data of 'content'">
+        <div class="slider-tooltip-container">
+            <div class="actions clearfix">
+                <span class="title">{{l('Rating')}}</span>
+                <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+            </div>
+            <dx-slider
+                [min]="ratingMin"
+                [max]="ratingMax"
+                [(value)]="ratingValue"
+                [step]="ratingStep"
+                (onInitialized)="onInitialized($event)">
+                <dxo-tooltip
+                    [enabled]="true"
+                    [format]="format"
+                    position="bottom">
+                </dxo-tooltip>
+            </dx-slider>
+        </div>
+    </div>
+</dx-tooltip>
