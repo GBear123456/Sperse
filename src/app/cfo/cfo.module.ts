@@ -36,7 +36,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 
-import { StatementsComponent } from './statements/statements.component'
+import { StatementsComponent } from './statements/statements.component';
 
 import { MatTabsModule, MatDialogModule } from '@angular/material';
 
@@ -44,7 +44,6 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
-
 
 import {
     DxButtonModule,
@@ -77,7 +76,7 @@ import {
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
-import { BankAccountsQuovoComponent } from '../../shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
+import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 
 @NgModule({
     imports: [

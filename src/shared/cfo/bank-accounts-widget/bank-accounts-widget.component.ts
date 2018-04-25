@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, TemplateRef } from '@angular/core';
 import { SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -13,9 +13,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
+    @ViewChild('emptyRowTemplate', { read: TemplateRef }) emptyRowTemplate: TemplateRef<any>;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
-    @Input() tableWidth = 755;
     @Input() nameColumnWidth = 170;
     @Input() height;
     @Input() showColumnHeaders = false;

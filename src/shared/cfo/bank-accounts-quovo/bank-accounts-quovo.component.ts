@@ -1,5 +1,5 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit } from '@angular/core';
+import { SyncServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CFOService } from '@shared/cfo/cfo.service.ts';
@@ -14,7 +14,7 @@ export class BankAccountsQuovoComponent implements OnInit  {
     /** Quovo source url */
     sourceUrl: any;
     constructor(
-        private _financialInformationServiceProxy: FinancialInformationServiceProxy,
+        private _syncServiceProxy: SyncServiceProxy,
         private sanitizer: DomSanitizer,
         private _cfoSerfice: CFOService
     ) {}
@@ -24,7 +24,7 @@ export class BankAccountsQuovoComponent implements OnInit  {
     }
 
     initIFrame() {
-        this._financialInformationServiceProxy.getSetupAccountsLink(
+        this._syncServiceProxy.getSetupAccountsLink(
             InstanceType[this._cfoSerfice.instanceType],
             this._cfoSerfice.instanceId,
             AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',

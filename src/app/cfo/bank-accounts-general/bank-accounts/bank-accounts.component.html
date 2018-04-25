@@ -13,7 +13,6 @@
 </div>
 <div class="bank-accounts">
     <bank-accounts-widget
-        [tableWidth]="'auto'"
         [height]="'100%'"
         [dataSource]="bankAccounts$ | async"
         (selectionChanged)="selectedAccountsChange($event)">

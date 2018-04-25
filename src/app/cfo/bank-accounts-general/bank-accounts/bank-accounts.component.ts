@@ -1,8 +1,7 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BankAccountsServiceProxy, BusinessEntityServiceProxy, DashboardServiceProxy, FinancialInformationServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { BankAccountsServiceProxy, BusinessEntityServiceProxy, DashboardServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/pluck';
@@ -13,7 +12,7 @@ import 'rxjs/add/operator/reduce';
     selector: 'bank-accounts',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
-    providers: [ FinancialInformationServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     initialBankAccounts$;
@@ -42,7 +41,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
                                 });
         this.initialBankAccounts$ = this.bankAccounts$;
         this.accountsAmount$ = this.bankAccounts$
-            .flatMap(data => data)
+            .mergeMap(data => data)
             .reduce((amount, bank) => bank.bankAccounts.length + amount, 0);
         this.syncAccountsAmount$ = this.bankAccounts$.pluck('length');
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
@@ -84,9 +83,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     getTotalNetWorth(syncAccounts) {
         return syncAccounts.reduce((sum, syncAccount) => {
-            return syncAccount.selectedBankAccounts.reduce((sum, bankAccount) => {
-                return bankAccount.balance + sum;
-            }, 0) + sum;
+            return syncAccount.selectedBankAccounts.reduce((sum, bankAccount) => bankAccount.balance + sum, 0) + sum;
         }, 0);
     }
 

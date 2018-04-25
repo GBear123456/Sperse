@@ -7,9 +7,8 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 @Component({
     selector: 'bank-accounts',
-    templateUrl: './bank-accounts.component.html',
-    styleUrls: ['./bank-accounts.component.less'],
-    providers: [ SyncServiceProxy ]
+    templateUrl: './bank-accounts-general.component.html',
+    styleUrls: ['./bank-accounts-general.component.less']
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
@@ -19,7 +18,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     constructor(
         injector: Injector,
-        private _syncServiceProxy: SyncServiceProxy,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         private _router: Router
     ) {
