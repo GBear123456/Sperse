@@ -1,4 +1,4 @@
-﻿import {Component, Injector, Input, OnInit, AfterViewInit} from '@angular/core';
+﻿import {Component, Injector, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 import { PipelineDto, PipelineServiceProxy, PipelineData } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -15,11 +15,13 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['./pipeline.component.less'],
     providers: [PipelineServiceProxy]
 })
-export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @Input() dataSource: DataSource;
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
-    stages: any = [];
+    stages: any = [];    
+
+    dragulaName = 'stage';
 
     constructor(injector: Injector,
         private _pipelineService: PipelineServiceProxy,
@@ -37,7 +39,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 el.classList.remove('drop-area');
             })
         });
-        _dragulaService.setOptions('stage', {
+        _dragulaService.setOptions(this.dragulaName, {
             moves: (el, source) => {
               let stage = this.getStageByElement(source);
               if (stage)
@@ -145,5 +147,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         this.dataSource.pageIndex(
             this.dataSource.pageIndex() + 1);
         this.loadStagesLeads(0);
+    }
+
+    ngOnDestroy() {
+        this._dragulaService.destroy(this.dragulaName);
     }
 }
