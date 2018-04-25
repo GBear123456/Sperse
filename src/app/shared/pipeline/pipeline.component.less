@@ -1,244 +1,271 @@
-.pipeline-wrapper {
-    width: 100%;
+:host {
+    vertical-align: bottom;
+    vertical-align: bottom;
     display: flex;
-    height: 100%;
-    .column {
-        min-height: 50px;
+    flex-flow: wrap;
+    justify-content: flex-end;
+
+    .load-more {
+        z-index: 10;    
+        color: #00aeef;
+        cursor: pointer;
+        float: right;
+        padding: 20px;
+        text-decoration: underline;
+        font-weight: 500;
+    }
+    .pipeline-wrapper {
         width: 100%;
-        min-width: 80px;
-        margin: 0;
-        padding: 0;
-        .column-title {
-            min-height: 40px;
-            padding: 15px 36px 15px 15px;
-            background-color: #fff;
-            border: 1px solid #dfdfdf;
-            border-right: 0;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            font-size: 13px;
-            font-weight: 600; // 500
-            letter-spacing: 0.5px;
-            color: #4b657e;
-            position: relative;
-            div {
-                width: 100%;
-                bottom: 15px;
-                color: #FFF;
-                font-size: 12px;
-                font-weight: 500;
-                position: relative;
-                text-align: center;
-            }
-            span {
-                display: block;
-                width: 100%;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            .edit-button {
-                padding: 0;
-                border: 0;
-                background: transparent;
-                top: 50%;
-                transform: translateY(-50%);
-                outline: none;
-                opacity: 0;
-                transition: .3s;
-                position: absolute;
-                right: 0px;
-            }
-            &:hover {
-                .edit-button {
-                    opacity: 1;
-                }
-            }
-        }
-        &:last-child {
+        display: flex;
+        height: 100%;
+        .column {
+            min-height: 50px;
+            width: 100%;
+            min-width: 80px;
+            margin: 0;
+            padding: 0;
             .column-title {
-                border-right: 1px solid #dfdfdf;
+                min-height: 40px;
+                padding: 15px 36px 15px 15px;
+                background-color: #fff;
+                border: 1px solid #dfdfdf;
+                border-right: 0;
+                margin-bottom: 12px;
+                text-transform: uppercase;
+                font-size: 13px;
+                font-weight: 600; // 500
+                letter-spacing: 0.5px;
+                color: #4b657e;
+                position: relative;
+                div {
+                    width: 100%;
+                    bottom: 15px;
+                    color: #FFF;
+                    font-size: 12px;
+                    font-weight: 500;
+                    position: relative;
+                    text-align: center;
+                }
+                span {
+                    display: block;
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .edit-button {
+                    padding: 0;
+                    border: 0;
+                    background: transparent;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    outline: none;
+                    opacity: 0;
+                    transition: .3s;
+                    position: absolute;
+                    right: 0px;
+                }
+                &:hover {
+                    .edit-button {
+                        opacity: 1;
+                    }
+                }
             }
-        }
-        .column-items {
-            min-height: 100%;
-            .card {
-                cursor: grab;
-                min-height: 146px;
-                max-height: 146px;
-                padding: 16px 0px 0px 0px;
-                margin-bottom: 11px;
-                font-size: 15px;
-                line-height: 1.4;
-                font-weight: 600; // TODO: need change on 500 when font will be added
-                text-align: left;
-                letter-spacing: 0.3px;
-                color: #424c56;
-                overflow: hidden;
-                .pipeline-photo-wrap {
-                    padding: 0 8px;
-                    min-width: 56px;
+            &:last-child {
+                .column-title {
+                    border-right: 1px solid #dfdfdf;
                 }
-                &.gu-transit {
-                    opacity: 1;
-                    background: #fafafa;
+            }
+            .column-items {
+                min-height: 100%;
+                &.drop-area {
+                    border: 1px dashed#DFDFDF;
+                    border-radius: 5px;
+                    padding: 1px;
                 }
-                .row {
-                    margin-right: -15px;
-                    &.item-data {
-                        position: relative;
-                        bottom: -11px;
-                        padding: 10px 0px 3px;
-                        img {
-                            vertical-align: baseline;
-                            &.email {
-                                padding-bottom: 4px;
+                &.drag-allowed {
+                    .card {
+                        cursor: grab!important;
+                    }
+                }
+                .card {
+                    cursor: not-allowed;
+                    min-height: 146px;
+                    max-height: 146px;
+                    padding: 16px 0px 0px 0px;
+                    margin-bottom: 11px;
+                    font-size: 15px;
+                    line-height: 1.4;
+                    font-weight: 600; // TODO: need change on 500 when font will be added
+                    text-align: left;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                    overflow: hidden;
+                    .pipeline-photo-wrap {
+                        padding: 0 8px;
+                        min-width: 56px;
+                    }
+                    &.gu-transit {
+                        opacity: 1;
+                        background: #fafafa;
+                    }
+                    .row {
+                        margin-right: -15px;
+                        &.item-data {
+                            position: relative;
+                            bottom: -11px;
+                            padding: 10px 0px 3px;
+                            img {
+                                vertical-align: baseline;
+                                &.email {
+                                    padding-bottom: 4px;
+                                }
+                            }
+                            span.delimiter {
+                                display: inline-block;
+                                width: 1px;
+                                height: 21px;
+                                background-color: #dfdfdf;
+                                margin: 0px 10px;
+                            }
+                            .text-right {
+                                width: 100%;
+                                white-space: nowrap;                    
+                                padding-right: 10px;
+                                .related-contact {
+                                    float: left;
+                                    padding-left: 10px;
+                                    font-size: 12px;
+                                    font-weight: 300;
+                                    font-style: normal;
+                                    font-stretch: normal;
+                                    letter-spacing: 0.2px;
+                                    text-align: left;
+                                    color: #94979a;
+                                }
                             }
                         }
-                        span.delimiter {
-                            display: inline-block;
-                            width: 1px;
-                            height: 21px;
-                            background-color: #dfdfdf;
-                            margin: 0px 10px;
-                        }
-                        .text-right {
+                        .full-name {
+                            max-height: 42px;
                             width: 100%;
-                            white-space: nowrap;                    
-                            padding-right: 10px;
-                            .related-contact {
-                                float: left;
-                                padding-left: 10px;
+                            padding: 0px 10px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            span {
+                                white-space: nowrap;
+                            }
+                            .amount {  
+                                span {
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    font-style: normal;
+                                    font-stretch: normal;
+                                    line-height: 0.71;
+                                    letter-spacing: 0.3px;
+                                    text-align: left;
+                                    color: #677380;                            
+                                }
+                            }
+                        }
+                        .img-circle {
+                            border-radius: 50%;
+                        }
+                        .days-ago {
+                            padding-left: 17px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            span {
                                 font-size: 12px;
                                 font-weight: 300;
                                 font-style: normal;
                                 font-stretch: normal;
+                                line-height: 0.83;
                                 letter-spacing: 0.2px;
                                 text-align: left;
                                 color: #94979a;
+                                padding: 5px;
+                                vertical-align: middle;
+                                white-space: nowrap;
                             }
-                        }
+                        }                
                     }
-                    .full-name {
-                        max-height: 42px;
-                        width: 100%;
-                        padding: 0px 10px;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        span {
-                            white-space: nowrap;
-                        }
-                        .amount {  
-                            span {
-                                font-size: 14px;
-                                font-weight: 500;
-                                font-style: normal;
-                                font-stretch: normal;
-                                line-height: 0.71;
-                                letter-spacing: 0.3px;
-                                text-align: left;
-                                color: #677380;                            
-                            }
-                        }
+                    .row + .row {
+                        margin-top: 6px;
                     }
-                    .img-circle {
-                        border-radius: 50%;
+                    .item-data {
+                        font-size: 13px;
+                        font-weight: 400;
                     }
-                    .days-ago {
-                        padding-left: 17px;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        span {
-                            font-size: 12px;
-                            font-weight: 300;
-                            font-style: normal;
-                            font-stretch: normal;
-                            line-height: 0.83;
-                            letter-spacing: 0.2px;
-                            text-align: left;
-                            color: #94979a;
-                            padding: 5px;
-                            vertical-align: middle;
-                            white-space: nowrap;
-                        }
-                    }                
-                }
-                .row + .row {
-                    margin-top: 6px;
-                }
-                .item-data {
-                    font-size: 13px;
-                    font-weight: 400;
                 }
             }
-        }
-        &.color-purple {
-            .column-title {
-                color: #7458c5;
-            }
-            .column-items {
-                .card {
-                    border-left-color: #7458c5;
+            &.color-purple {
+                .column-title {
+                    color: #7458c5;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: #7458c5;
+                    }
                 }
             }
-        }
-        &.color-green {
-            .column-title {
-                color: #6ce686;
-            }
-            .column-items {
-                .card {
-                    border-left-color: #6ce686;
+            &.color-green {
+                .column-title {
+                    color: #6ce686;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: #6ce686;
+                    }
                 }
             }
-        }
-        &.color-orange {
-            .column-title {
-                color: orange;
-            }
-            .column-items {
-                .card {
-                    border-left-color: orange;
+            &.color-orange {
+                .column-title {
+                    color: orange;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: orange;
+                    }
                 }
             }
-        }
-        &.color-yellow {
-            .column-title {
-                color: gold;
-            }
-            .column-items {
-                .card {
-                    border-left-color: gold;
+            &.color-yellow {
+                .column-title {
+                    color: gold;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: gold;
+                    }
                 }
             }
-        }
-        &.color-black {
-            .column-title {
-                color: #000;
-            }
-            .column-items {
-                .card {
-                    border-left-color: #000;
+            &.color-black {
+                .column-title {
+                    color: #000;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: #000;
+                    }
                 }
             }
-        }
-        &.color-blue {
-            .column-title {
-                color: blue;
-            }
-            .column-items {
-                .card {
-                    border-left-color: blue;
+            &.color-blue {
+                .column-title {
+                    color: blue;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: blue;
+                    }
                 }
             }
-        }
-        &.color-gray {
-            .column-title {
-                color: gray;
-            }
-            .column-items {
-                .card {
-                    border-left-color: gray;
+            &.color-gray {
+                .column-title {
+                    color: gray;
+                }
+                .column-items {
+                    .card {
+                        border-left-color: gray;
+                    }
                 }
             }
         }

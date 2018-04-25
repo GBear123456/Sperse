@@ -1,11 +1,11 @@
 <div class="pipeline-wrapper">
     <div *ngFor="let stage of stages; let i = index;" class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{stage.color}}">
         <div class="column-title">
-            <span>{{stage?.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
+            <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
-        <div class="column-items" [dragula]='"bag"'>
+        <div class="column-items {{stage.dragAllowed ? 'drag-allowed': ''}}" [dragula]="'stage'" accessKey="{{stage.name}}">
             <ng-container *ngFor="let card of stage?.leads">
-                  <div class="card">
+                  <div class="card" accessKey="{{card.Id}}">
                       <div class="container-fluid">
                           <div class="row">
                               <div class="col-sm-3 text-right pipeline-photo-wrap">
@@ -37,3 +37,4 @@
         </div>
     </div>
 </div>
+<span class="load-more" [hidden]="!stages.length" (click)="loadMore()">l('Load More')</span>
