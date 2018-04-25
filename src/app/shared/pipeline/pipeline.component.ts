@@ -33,7 +33,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 oldStage = this.getAccessKey(value[3]);
             if (newStage != oldStage)
                 this.updateLeadStage(leadId, newStage);
-            document.querySelectorAll('.drop-area').forEach((el) => {
+            [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
                 el.classList.remove('drop-area');
             })
         });
