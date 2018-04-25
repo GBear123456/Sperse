@@ -1,11 +1,13 @@
 import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 import { Router } from '@angular/router';
-import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';
+import { setTimeout } from 'timers';
 
 @Component({
     selector: 'setup',
@@ -19,19 +21,40 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     public headlineConfig;
     isDisabled = false;
 
+    quovoHandler: any;
+
     constructor(injector: Injector,
         private _appService: AppService,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private _router: Router
+        private _router: Router,
+        private _quovoService: QuovoService,
+        private _syncService: SyncServiceProxy
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
     }
 
     private finishSetup() {
-        this._cfoService.instanceChangeProcess();
-        this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
-}
+        this._cfoService.instanceChangeProcess(() => this.addAccount());
+    }
+
+    private addAccount() {
+        if (!this.quovoHandler) {
+            this.initQuovoHandler();
+        }
+        if (this.quovoHandler.isLoaded) {
+            if (this.loading) {
+                this.finishLoading(true);
+            }
+            this.quovoHandler.handler.open();
+            return;
+        } else {
+            if (!this.loading) {
+                this.startLoading(true);
+            }
+            setTimeout(() => this.addAccount(), 100);
+        }
+    }
 
     ngOnInit(): void {
         super.ngOnInit();
@@ -59,5 +82,27 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
         this.rootComponent.overflowHidden();
+    }
+
+    onQuovoHandlerClose() {
+        if (this.quovoHandler.addedConnections.length) {
+            this.startLoading(true);
+            this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true)
+                .finally(() => {
+                    this.isDisabled = false;
+                })
+                .subscribe(() => {
+                    this.finishLoading(true);
+                    this._cfoService.instanceChangeProcess(() => this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']));
+                });
+        } else {
+            this.isDisabled = false;
+        }
+    }
+
+    initQuovoHandler() {
+        if (!this.quovoHandler) {
+            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId, () => this.onQuovoHandlerClose());
+        }
     }
 }
