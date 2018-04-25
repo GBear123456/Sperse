@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 declare const Quovo: any;
 
@@ -29,6 +30,7 @@ export class QuovoService {
     private createQuovoHandler(token, onLoad) {
         return Quovo.create({
             token: token,
+            userCss: AppConsts.appBaseUrl + '/assets/cfo-css/quovo.css',
             search: {
                 testInstitutions: true
             },
