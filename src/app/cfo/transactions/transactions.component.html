@@ -45,7 +45,7 @@
                         <dxo-sorting mode="multiple"></dxo-sorting>
 
                         <dxi-column dataField="Date" cssClass="tabular" caption="{{l('Transactions_Date')}}" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column dataField="Description" caption="{{l('Transactions_Description')}}" [width]="450"></dxi-column>
+                        <dxi-column dataField="Description" cellTemplate="descriptionTemplate" caption="{{l('Transactions_Description')}}" [width]="450"></dxi-column>
                         <dxi-column caption="{{l('Transactions_CashflowCategoryName')}}"
                                     dataField="CashflowCategoryName"
                                     cellTemplate="CashflowCategoryNameTemplate"
@@ -95,6 +95,9 @@
                             <ng-container *ngIf="cell.text">
                                 <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
                             </ng-container>
+                        </div>
+                        <div *dxTemplate="let cell of 'descriptionTemplate'">
+                            <span id="transactionDetailTarget-{{cell.data.Id}}">{{cell.text}}</span>
                         </div>
 
                         <div *dxTemplate="let data of 'CashflowCategoryNameTemplate'">

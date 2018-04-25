@@ -10,6 +10,7 @@ import { InstanceType, TransactionDetailsDto, TransactionsServiceProxy } from '@
 })
 export class TransactionDetailInfoComponent extends CFOComponentBase implements OnInit {
     @Input() transactionId: any;
+    @Input() targetDetailInfoTooltip = '';
     isVisible = false;
     transactionInfo = new TransactionDetailsDto();
     transactionAttributeTypes: any;
