@@ -14,8 +14,8 @@
     (onSearchValueChange)="searchValueChange($event)"
     (onRefresh)="refreshDataGrid()"
     (onReportPeriodChange)="setReportPeriodFilter($event)"
-    (onSelectedBankAccountsChange)="setBankAccountsFilter($event)"
-></cashflow-operations>
+    (onSelectedBankAccountsChange)="setBankAccountsFilter($event)">
+</cashflow-operations>
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">

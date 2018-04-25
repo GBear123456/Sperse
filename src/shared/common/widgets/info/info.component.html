@@ -1,0 +1,5 @@
+<div class="account-item networth">
+    <div class="icon" *ngIf="imageSource"><img [src]="imageSource"></div>
+    <div class="value">{{value}}</div>
+    <div class="description" *ngIf="description">{{description}}<span *ngIf="showFilteredSign" class="filtered">*</span></div>
+</div>

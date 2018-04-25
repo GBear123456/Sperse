@@ -14,14 +14,16 @@ import {ExportGoogleSheetService} from './export/export-google-sheets/export-goo
 import {ModalDialogComponent} from './dialogs/modal/modal-dialog.component';
 import {ConfirmDialogComponent} from './dialogs/confirm/confirm-dialog.component';
 import {CalendarComponent} from './widgets/calendar/calendar.component';
-import {NoDataComponent} from './no-data/no-data.component';
+import { NoDataComponent } from './widgets/no-data/no-data.component';
 
-import {DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule, DxTabsModule, DxDataGridModule} from 'devextreme-angular';
+import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule, DxTabsModule, DxDataGridModule, DxTagBoxModule } from 'devextreme-angular';
 
-import {AppUiCustomizationService} from './ui/app-ui-customization.service';
-import {AppAuthService} from './auth/app-auth.service';
-import {AppRouteGuard} from './auth/auth-route-guard';
+import { AppUiCustomizationService } from './ui/app-ui-customization.service';
+import { AppAuthService } from './auth/app-auth.service';
+import { AppRouteGuard } from './auth/auth-route-guard';
 import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
+import { SelectionFilterComponent } from '@shared/common/widgets/selection-filter/selection-filter.component';
+import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
 
 @NgModule({
@@ -30,14 +32,18 @@ import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells
         ConfirmDialogComponent,
         ModalDialogComponent,
         NoDataComponent,
-        BankAccountsWidgetComponent
+        BankAccountsWidgetComponent,
+        SelectionFilterComponent,
+        InfoComponent
     ],
     exports: [
         CalendarComponent,
         ConfirmDialogComponent,
         ModalDialogComponent,
         NoDataComponent,
-        BankAccountsWidgetComponent
+        BankAccountsWidgetComponent,
+        SelectionFilterComponent,
+        InfoComponent
     ],
     entryComponents: [
         ConfirmDialogComponent,
@@ -50,6 +56,7 @@ import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells
         DxDataGridModule,
         MatDialogModule,
         DxTabsModule,
+        DxTagBoxModule,
         ngCommon.CommonModule,
         AbpModule,
         RouterModule

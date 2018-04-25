@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Route } from '@angular/router';
 import { StartComponent } from './start/start.component';
-import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
-import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
+import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
+import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { StatsComponent } from './stats/stats.component';
@@ -23,11 +23,11 @@ import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-acc
                     {
                         path: 'linkaccounts',
                         data: { permission: '' },
-                        component: BankAccountsComponent,
+                        component: BankAccountsGeneralComponent,
                         children: [
                             {
                                 path: '',
-                                component: BankAccountsWidgetComponent
+                                component: BankAccountsComponent
                             },
                             {
                                 path: 'quovo',

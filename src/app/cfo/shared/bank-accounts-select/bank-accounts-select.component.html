@@ -21,7 +21,7 @@
                                                     placeholder="All Entities"
                                                     showSelectionControls="true"
                                                     tagTemplate="customTagTemplate"
-                                                    (onClosed)="businessEntitySelectedChange($event)"                                                    
+                                                    (onClosed)="businessEntitySelectedChange($event)"
                                                     [(value)]="selectedBusinessEntityIds">
 
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
@@ -34,7 +34,6 @@
                         </div>
                     </ng-container>
                     <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
-                    <span class="filter-clear" (click)="bankAccountsClear()">{{l('Clear')}}</span>
                 </div>
                 <br />
                 <ng-container *ngIf="showIsActiveFilter">
