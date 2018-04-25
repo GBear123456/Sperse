@@ -16,6 +16,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
@@ -56,7 +57,15 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
         if (!this.isNew) {
             this._businessEntityService.get(InstanceType[this.instanceType], this.instanceId, this.data.id)
-                .subscribe(result => this.businessEntity = result);
+                .subscribe(result => {
+                    this.businessEntity = result;
+                    Object.keys(this.businessEntity).forEach(key => {
+                        let component = this[key + 'Component'];
+                        if (component) {
+                            component.option('value', this.businessEntity[key]);
+                        }
+                    });
+                });
         }
     }
 
@@ -113,12 +122,13 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
     onKeyUp($event, propName) {
         let value = $event.element.getElementsByTagName('input')[0].value;
+        console.log('keyUp', this.businessEntity[propName]);
         this.businessEntity[propName] = value;
     }
 
     validate() {
         if (!this.businessEntity.name) {
-            return this.notify.error(this.l('BusinessEntity_NameRequired'));
+            return this.notify.error(this.l('BusinessEntity_NameIsRequired'));
         }
 
         return true;
@@ -157,5 +167,18 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
         if (!event.value || !event.value.length) {
             event.component.option('isValid', true);
         }
+    }
+
+    onComponentInitialized(event, propName) {
+        this[propName + 'Component'] = event.component;
+        event.component.option('value', this.businessEntity[propName]);
+    }
+
+    emptyValue(propName) {
+        let component = this[propName + 'Component'];
+        if (component) {
+            component.option('value', '');
+        }
+        this.businessEntity[propName] = null;
     }
 }

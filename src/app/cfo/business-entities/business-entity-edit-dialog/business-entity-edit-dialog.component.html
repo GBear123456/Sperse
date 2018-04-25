@@ -10,7 +10,7 @@
                     <dxi-validation-rule type="required" message="{{l('BusinessEntity_NameIsRequired')}}"></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
-            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+            <span [class]="businessEntity.name && 'clear-contact' || 'hidden'" (click)="emptyValue('name')">+</span>
         </div>
         <div class="field checkbox" *ngIf="!isNew">
             <label>{{l('BusinessEntity_Active')}}</label>
@@ -25,20 +25,20 @@
                          (onKeyUp)="onKeyUp($event, 'industry')"
                          [(value)]="businessEntity.industry">
             </dx-text-box>
-            <span [class]="businessEntity.industry && 'clear-contact' || 'hidden'" (click)="businessEntity.industry = ''">+</span>
+            <span [class]="businessEntity.industry && 'clear-contact' || 'hidden'" (click)="emptyValue('industry')">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_TaxNumber')}}</label>
             <dx-text-box class="tabular"
-                         name="TaxNumber"
+                         name="taxNumber"
                          maskInvalidMessage="{{l('BusinessEntity_TaxNumberIsNotValid')}}"
                          [mask]="masks.taxNumber"
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'taxNumber')"
                          (onValueChanged)="optionalValueChanged($event)"
-                         [value]="businessEntity.taxNumber">
+                         (onInitialized)="onComponentInitialized($event, 'taxNumber')">
             </dx-text-box>
-            <span [class]="businessEntity.taxNumber && 'clear-contact' || 'hidden'" (click)="businessEntity.taxNumber = ''">+</span>
+            <span [class]="businessEntity.taxNumber && 'clear-contact' || 'hidden'" (click)="emptyValue('taxNumber')">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_Type')}}</label>
@@ -50,7 +50,7 @@
                            [searchEnabled]="true"
                            [(value)]="businessEntity.typeId">
             </dx-select-box>
-            <span [class]="businessEntity.typeId && 'clear-contact' || 'hidden'" (click)="businessEntity.typeId = ''">+</span>
+            <span [class]="businessEntity.typeId && 'clear-contact' || 'hidden'" (click)="emptyValue('typeId')">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_DateOpened')}}</label>
@@ -61,7 +61,7 @@
                          (onKeyUp)="onKeyUp($event, 'dateOpened')"
                          [(value)]="businessEntity.dateOpened">
             </dx-date-box>
-            <span [class]="businessEntity.dateOpened && 'clear-contact' || 'hidden'" (click)="businessEntity.dateOpened = ''">+</span>
+            <span [class]="businessEntity.dateOpened && 'clear-contact' || 'hidden'" (click)="emptyValue('dateOpened')">+</span>
         </div>
         <div class="field">
             <label>{{l('BusinessEntity_Website')}}</label>
@@ -70,31 +70,31 @@
                          (onKeyUp)="onKeyUp($event, 'website')"
                          [(value)]="businessEntity.website">
             </dx-text-box>
-            <span [class]="businessEntity.website && 'clear-contact' || 'hidden'" (click)="businessEntity.website = ''">+</span>
+            <span [class]="businessEntity.website && 'clear-contact' || 'hidden'" (click)="emptyValue('website')">+</span>
         </div>
         <div class="field email">
             <label>{{l('BusinessEntity_Email')}}</label>
             <dx-text-box name="email"
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'email')"
-                         [value]="businessEntity.email">
+                         (onInitialized)="onComponentInitialized($event, 'email')">
                 <dx-validator>
                     <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('BusinessEntity_EmailIsNotValid')}}."></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
-            <span [class]="businessEntity.email && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+            <span [class]="businessEntity.email && 'clear-contact' || 'hidden'" (click)="emptyValue('email')">+</span>
         </div>
         <div class="field email">
             <label>{{l('BusinessEntity_AlternativeEmail')}}</label>
             <dx-text-box name="alternativeEmail"
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'alternativeEmail')"
-                         [value]="businessEntity.alternativeEmail">
+                         (onInitialized)="onComponentInitialized($event, 'alternativeEmail')">
                 <dx-validator>
                     <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('BusinessEntity_EmailIsNotValid')}}."></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
-            <span [class]="businessEntity.alternativeEmail && 'clear-contact' || 'hidden'" (click)="businessEntity.name = ''">+</span>
+            <span [class]="businessEntity.alternativeEmail && 'clear-contact' || 'hidden'" (click)="emptyValue('alternativeEmail')">+</span>
         </div>
         <div class="field phone">
             <label>{{l('BusinessEntity_Phone')}}</label>
@@ -105,9 +105,9 @@
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'phone')"
                          (onValueChanged)="optionalValueChanged($event)"
-                         [(value)]="businessEntity.phone">
+                         (onInitialized)="onComponentInitialized($event, 'phone')">
             </dx-text-box>
-            <span [class]="businessEntity.phone && 'clear-contact' || 'hidden'" (click)="businessEntity.phone = ''">+</span>
+            <span [class]="businessEntity.phone && 'clear-contact' || 'hidden'" (click)="emptyValue('phone')">+</span>
         </div>
         <div class="field phone">
             <label>{{l('BusinessEntity_Fax')}}</label>
@@ -118,9 +118,9 @@
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'fax')"
                          (onValueChanged)="optionalValueChanged($event)"
-                         [(value)]="businessEntity.fax">
+                         (onInitialized)="onComponentInitialized($event, 'fax')">
             </dx-text-box>
-            <span [class]="businessEntity.fax && 'clear-contact' || 'hidden'" (click)="businessEntity.fax = ''">+</span>
+            <span [class]="businessEntity.fax && 'clear-contact' || 'hidden'" (click)="emptyValue('fax')">+</span>
         </div>
         <div class="field addr address">
             <label>{{l('BusinessEntity_Address')}}</label>
@@ -130,7 +130,7 @@
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'address')">
             </dx-text-box>
-            <span [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="businessEntity.address = ''">+</span>
+            <span [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="emptyValue('address')">+</span>
         </div>
         <div class="field addr">
             <label></label>
@@ -141,7 +141,7 @@
                          (onKeyUp)="onKeyUp($event, 'city')"
                          [value]="businessEntity.city">
             </dx-text-box>
-            <span [class]="businessEntity.city && 'clear-contact' || 'hidden'" (click)="businessEntity.city = ''">+</span>
+            <span [class]="businessEntity.city && 'clear-contact' || 'hidden'" (click)="emptyValue('city')">+</span>
         </div>
         <div class="field addr">
             <label></label>
@@ -154,7 +154,7 @@
                            [searchEnabled]="true"
                            [(value)]="businessEntity.stateId">
             </dx-select-box>
-            <span [class]="businessEntity.stateId && 'clear-contact' || 'hidden'" (click)="businessEntity.stateId = ''">+</span>
+            <span [class]="businessEntity.stateId && 'clear-contact' || 'hidden'" (click)="emptyValue('stateId')">+</span>
         </div>
         <div class="field addr">
             <label></label>
@@ -165,7 +165,7 @@
                          [width]="'360px'"
                          [(value)]="businessEntity.zip">
             </dx-text-box>
-            <span [class]="businessEntity.zip && 'clear-contact' || 'hidden'" (click)="businessEntity.zip = ''">+</span>
+            <span [class]="businessEntity.zip && 'clear-contact' || 'hidden'" (click)="emptyValue('zip')">+</span>
         </div>
         <div class="field">
             <label></label>
@@ -179,7 +179,7 @@
                            [(value)]="businessEntity.countryId"
                            (onValueChanged)="onCountryChange($event)">
             </dx-select-box>
-            <span [class]="businessEntity.countryId && 'clear-contact' || 'hidden'" (click)="businessEntity.countryId = ''">+</span>
+            <span [class]="businessEntity.countryId && 'clear-contact' || 'hidden'" (click)="emptyValue('countryId')">+</span>
         </div>
     </div>
 </modal-dialog>
