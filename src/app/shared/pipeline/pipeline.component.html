@@ -8,10 +8,10 @@
                   <div class="card" accessKey="{{card.Id}}">
                       <div class="container-fluid">
                           <div class="row">
-                              <div class="col-sm-3 text-right pipeline-photo-wrap">
+                              <div class="text-right pipeline-photo-wrap">
                                   <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
                               </div>
-                              <div class="col-sm-9 full-name">
+                              <div class="full-name">
                                   <span>{{card.FullName}}</span>
                                   <div class="amount">
                                       <span>{{(card.Amount || 0) | currency }}</span>
