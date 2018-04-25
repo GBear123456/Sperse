@@ -1,7 +1,6 @@
-import { Component, OnInit, Injector, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 import { SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
-
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 
@@ -18,15 +17,19 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     @Input() highlightUsedRows = false;
     @Input() tableWidth = 755;
     @Input() nameColumnWidth = 170;
+    @Input() height;
+    @Input() showColumnHeaders = false;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
         this.initBankAccountsTimeout = setTimeout(() => {
             this.syncAccountsDataSource = dataSource;
-            this.getExistBankAccountTypes();
-            this.filterByBankAccountType();
-            this.setSelectedIfNot();
-            this.setHighlighted();
+            if (this.syncAccountsDataSource) {
+                this.getExistBankAccountTypes();
+                this.filterByBankAccountType();
+                this.setSelectedIfNot();
+                this.setHighlighted();
+            }
             if (this.mainDataGrid)
                 this.mainDataGrid.instance.refresh();
         }, 300);
@@ -41,6 +44,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
                 this.mainDataGrid.instance.refresh();
         }, 300);
     }
+    @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
+
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
     allAccountTypesFilter: string;
@@ -48,6 +53,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     existBankAccountTypes = [];
     selectedBankAccountType: string = null;
     bankAccountIdsForHighlight = [];
+    expandChangedRow = null;
 
     constructor(
         injector: Injector
@@ -57,8 +63,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         this.selectedBankAccountType = this.allAccountTypesFilter;
     }
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     rowPrepared(e) {
         if (e.rowType === 'data') {
@@ -70,6 +75,14 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
                 e.rowElement.classList.add('used-row');
             }
         }
+    }
+
+    addEmptyRow(rowElement) {
+        /** Add row with padding */
+        let emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = '<td></td>';
+        emptyRow.className = 'emptyRow';
+        rowElement.parentElement.insertBefore(emptyRow, rowElement.nextElementSibling);
     }
 
     setHighlighted() {
@@ -91,8 +104,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     masterRowExpandChange(e) {
-        if (e.columnIndex !== 0 && e.row) {
-            if (e.row.isExpanded) {
+        if (e.rowType === 'data') {
+            this.expandChangedRow = e.rowElement;
+            if (e.isExpanded) {
                 e.component.collapseRow(e.key);
             } else {
                 e.component.expandRow(e.key);
@@ -106,6 +120,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         row.data.bankAccounts.forEach(bankAccount => {
             bankAccount['selected'] = isSelected;
         });
+        this.selectedAccountsChanged();
     }
 
     bankAccountSelectionChanged(e) {
@@ -119,14 +134,16 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
             if (selectedBankAccountCount === 0) {
                 syncAccount['selected'] = false;
             } else {
-                if (selectedBankAccountCount === syncAccount.bankAccounts.length) {
-                    syncAccount['selected'] = true;
-                } else {
-                    syncAccount['selected'] = null;
-                }
+                syncAccount['selected'] = selectedBankAccountCount === syncAccount.bankAccounts.length ? true : null;
             }
             this.mainDataGrid.instance.repaintRows([this.mainDataGrid.instance.getRowIndexByKey(syncAccount.syncAccountId)]);
         });
+        this.selectedAccountsChanged();
+    }
+
+    selectedAccountsChanged() {
+        let selectedSyncAccounts = this.mainDataGrid.instance.getVisibleRows().filter(row => row.rowType === 'data');
+        this.selectionChanged.emit(selectedSyncAccounts);
     }
 
     setSelectedIfNot() {
@@ -193,7 +210,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
                     let isBankAccountVisible = this.selectedBankAccountType === bankAccount.typeName;
                     bankAccount['visible'] = isBankAccountVisible;
                     if (isBankAccountVisible)
-                        visibleBankAccountsExist = true;;
+                        visibleBankAccountsExist = true;
                 });
                 syncAccount['visible'] = visibleBankAccountsExist;
             });
@@ -212,5 +229,25 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
 
     calculateTooltipHeight() {
         return window.innerHeight / 2.2 - 70;
+    }
+
+    /**
+     * Added empty rows to add space between rows (hack to avoid spacing between row and details)
+     */
+    addEmptyRows() {
+        $('.emptyRow').remove();
+        let rowsWithoutDetails = document.querySelectorAll('.dx-datagrid-content tr:not(.emptyRow):not(.dx-master-detail-row)');
+        for (let i = 0; i < rowsWithoutDetails.length; i++) {
+            let row = rowsWithoutDetails[i];
+            if (row.nextElementSibling === rowsWithoutDetails[i + 1] ||
+                (row.nextElementSibling && row.nextElementSibling.classList.contains('dx-state-invisible'))) {
+                /** @todo rewrite to avoid memory leask */
+                this.addEmptyRow(row);
+            }
+        }
+    }
+
+    contentReady() {
+        this.addEmptyRows();
     }
 }

@@ -6,7 +6,8 @@ import { CfoRoutingModule } from './cfo-routing.module';
 import { StartComponent } from './start/start.component';
 import { SetupComponent } from './start/setup/setup.component';
 import { DashboardComponent } from './start/dashboard/dashboard.component';
-import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
+import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
+import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
 import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
@@ -76,6 +77,7 @@ import {
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
+import { BankAccountsQuovoComponent } from '../../shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 
 @NgModule({
     imports: [
@@ -120,6 +122,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         SetupComponent,
         DashboardComponent,
         BankAccountsComponent,
+        BankAccountsGeneralComponent,
         TransactionsComponent,
         CategorizationComponent,
         SetupStepComponent,
@@ -142,7 +145,8 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
         ChooseResetRulesComponent,
         CalculatorComponent,
         TransactionDetailInfoComponent,
-        ReportPeriodComponent
+        ReportPeriodComponent,
+        BankAccountsQuovoComponent
     ],
     entryComponents: [
         RuleDialogComponent,

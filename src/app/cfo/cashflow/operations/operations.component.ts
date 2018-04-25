@@ -2,7 +2,6 @@ import { Component, Injector, Input, Output, EventEmitter, OnDestroy, ViewChild 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
-import { DxRangeSliderComponent } from 'devextreme-angular';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 
@@ -291,7 +290,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         private _appService: AppService
     ) {
         super(injector);
-
         this.initToolbarConfig();
     }
 

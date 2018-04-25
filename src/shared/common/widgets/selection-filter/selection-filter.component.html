@@ -1,0 +1,22 @@
+<div class="label"><span>{{title}}</span></div>
+<div class="selectionList">
+    <ng-container *ngIf="!selectionList">
+        <div class="label-container">
+            <span class="tag-value">{{allItemsText}}</span>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="selectionList && selectionList.length">
+        <dx-tag-box [dataSource]="selectionList"
+                    displayExpr="name"
+                    valueExpr="id"
+                    placeholder="All Entities"
+                    showSelectionControls="true"
+                    tagTemplate="customTagTemplate"
+                    (onClosed)="selectedItemsChange()"
+                    [(value)]="selectedItems">
+            <div *dxTemplate="let tag of 'customTagTemplate'">
+                <span class="tag-value">{{tag.name}}</span>
+            </div>
+        </dx-tag-box>
+    </ng-container>
+</div>
