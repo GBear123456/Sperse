@@ -21468,6 +21468,7 @@ export interface ICashflowGridVisualSettingsDto {
 
 export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     numberFormatting: string;
+    currency: string;
 
     constructor(data?: ILocalizationAndCurrencyDto) {
         if (data) {
@@ -21481,6 +21482,7 @@ export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     init(data?: any) {
         if (data) {
             this.numberFormatting = data["numberFormatting"];
+            this.currency = data["currency"];
         }
     }
 
@@ -21493,12 +21495,14 @@ export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["numberFormatting"] = this.numberFormatting;
+        data["currency"] = this.currency;
         return data; 
     }
 }
 
 export interface ILocalizationAndCurrencyDto {
     numberFormatting: string;
+    currency: string;
 }
 
 export class ForecastModelDto implements IForecastModelDto {
