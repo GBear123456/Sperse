@@ -2,7 +2,8 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
-import { PipelineDto, PipelineServiceProxy, PipelineData, LeadServiceProxy, CancelLeadInfo } from '@shared/service-proxies/service-proxies';
+import { PipelineDto, PipelineServiceProxy, PipelineData, 
+    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 import { DragulaService } from 'ng2-dragula';
@@ -112,28 +113,26 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                                     cancellationReasonId: result.reasonId,
                                     comment: result.comment
                                 })
-                            ).subscribe((result) => {
-                              
-                            });
+                            ).subscribe((result) => { });
                         } else
-                            this.softRefresh();
+                            this.moveLeadTo(leadId, toStage, fromStage);
                     });
-                else if (action.sysId == 'CRM.UpdateLeadStage') {
-                } else if (action.sysId == 'CRM.ProcessLead') {
+                else if (action.sysId == 'CRM.UpdateLeadStage')
+                    this._leadService.updateLeadStage(
+                        UpdateLeadStageInfo.fromJS({
+                            leadId: leadId, 
+                            stageId: toStage.id
+                        })
+                    ).subscribe((res) => { });
+                else if (action.sysId == 'CRM.ProcessLead') {
                 }
             }
         }
     }
 
-    softRefresh() {
-        this.stages = [];
-        setTimeout(() => {
-            this.stages = this.pipeline.stages;
-        });
-    }
-
-    hardRefresh() {
-        this.ngOnInit();
+    moveLeadTo(leadId, sourceStage, targetStage) {
+        let itemIndex = _.findIndex(sourceStage.leads, {id: leadId}), lead;
+        targetStage.leads.unshift(sourceStage.leads.splice(itemIndex, 1).pop());
     }
 
     getStageByElement(el) {
@@ -169,11 +168,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
-            if (leads.length) {
-                stages[index]['leads'] = 
-                    (stages[index]['leads'] || []).concat(leads);
-                stages[index]['total'] = this.dataSource.totalCount();
-            }
+            stages[index]['leads'] = 
+                (stages[index]['leads'] || []).concat(leads);
+            stages[index]['total'] = this.dataSource.totalCount();
             if (this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {

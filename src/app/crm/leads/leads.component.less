@@ -2,7 +2,7 @@
     position: relative;
     top: 74px;
 
-    .pipepline-wrapper {
+    .funnel-wrapper {
         padding: 15px;
         height: calc(~'100vh - 216px');
         overflow-x: hidden;
@@ -10,6 +10,27 @@
 
         /deep/ app-pipeline {
             .column {
+                &:first-child {
+                    .column-title {
+                        &:before {  
+                            content: none!important;
+                        }
+                        .edit-button {
+                            margin-left: 10px;
+                        }
+                    }
+                }
+                &:last-child {
+                    .column-title {
+                        &:after {  
+                            content: none!important;
+                        }
+                        .edit-button {
+                            margin-right: 10px;
+                        }
+                    }
+                }
+
                 &.positive {
                     margin-right: 15px;
                     .column-title {
