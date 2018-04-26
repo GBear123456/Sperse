@@ -12,11 +12,20 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class StarsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
+    @Input()
+    set selectedItemKey(value) {
+        this.selectedItemKeys = [value];
+        this.editClientMode = true;
+    }
+
+    selectedItems = [];
+    selectedItemKeys = [];
     @Input() targetSelector = "[aria-label='star-icon']";
     list: any;
 
     listComponent: any;
     tooltipVisible = false;
+    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -30,6 +39,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
+        if (!this.editClientMode && this.listComponent)
+            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
@@ -45,7 +56,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
                     starId: starId
                 })).subscribe((result) => {});
             });
-            this.listComponent.unselectAll();
+            if (this.editClientMode)
+                this.selectedItemKeys = [starId];
         }
         this.tooltipVisible = false;
     }

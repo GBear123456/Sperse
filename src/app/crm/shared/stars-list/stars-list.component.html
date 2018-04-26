@@ -13,6 +13,8 @@
                 [selectionMode]="'single'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
+                [keyExpr]="'id'"
+                [selectedItemKeys]="selectedItemKeys"
                 (onInitialized)="onInitialized($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div [class]="'star star-' + data.name | lowercase"></div>
