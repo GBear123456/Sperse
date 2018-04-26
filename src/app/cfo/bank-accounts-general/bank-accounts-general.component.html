@@ -1,0 +1,11 @@
+<div>
+    <app-headline [config]="headlineConfig">
+        <synch-progress class="synch-progress"></synch-progress>
+    </app-headline>
+    <div class="content-wrap">
+        <setup-steps SelectedStepIndex="0"></setup-steps>
+        <div class="frame-wrap">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

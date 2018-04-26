@@ -17,6 +17,8 @@ import { SubscriptionManagementComponent } from './subscription-management/subsc
 import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
 import { DemoUiComponentsComponent } from './demo-ui-components/demo-ui-components.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
+import { EditionsComponent } from './editions/editions.component';
+import { TenantsComponent } from './tenants/tenants.component';
 
 @NgModule({
     imports: [
@@ -41,7 +43,9 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } },
                     { path: 'demo-ui-components', component: DemoUiComponentsComponent, data: { permission: 'Pages.DemoUiComponents' } },
                     { path: 'install', component: InstallComponent },
-                    { path: 'ui-customization', component: UiCustomizationComponent }
+                    { path: 'ui-customization', component: UiCustomizationComponent },
+                    { path: 'products', component: EditionsComponent, data: { permission: 'Pages.Editions' } },
+                    { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } }
                 ]
             }
         ])

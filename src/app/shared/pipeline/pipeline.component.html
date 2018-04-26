@@ -3,15 +3,15 @@
         <div class="column-title">
             <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
-        <div class="column-items {{stage.dragAllowed ? 'drag-allowed': ''}}" [dragula]="dragulaName" accessKey="{{stage.name}}">
+        <div class="column-items {{stage.dragAllowed ? 'drag-allowed': ''}}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage.name}}">
             <ng-container *ngFor="let card of stage?.leads">
                   <div class="card" accessKey="{{card.Id}}">
                       <div class="container-fluid">
                           <div class="row">
-                              <div class="col-sm-3 text-right pipeline-photo-wrap">
+                              <div class="text-right pipeline-photo-wrap">
                                   <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
                               </div>
-                              <div class="col-sm-9 full-name">
+                              <div class="full-name">
                                   <span>{{card.FullName}}</span>
                                   <div class="amount">
                                       <span>{{(card.Amount || 0) | currency }}</span>

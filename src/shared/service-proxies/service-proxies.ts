@@ -10229,56 +10229,6 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @input (optional) 
-     * @return Success
-     */
-    createLead(input: CreateLeadInput): Observable<CreateLeadOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/CreateLead";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processCreateLead(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCreateLead(response_);
-                } catch (e) {
-                    return <Observable<CreateLeadOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CreateLeadOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCreateLead(response: Response): Observable<CreateLeadOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateLeadOutput.fromJS(resultData200) : new CreateLeadOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<CreateLeadOutput>(<any>null);
-    }
-
-    /**
      * @cancelLeadInfo (optional) 
      * @return Success
      */
@@ -10645,6 +10595,52 @@ export class LeadServiceProxy {
     }
 
     protected processUpdateLeadStage(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @processLeadInput (optional) 
+     * @return Success
+     */
+    processLead(processLeadInput: ProcessLeadInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(processLeadInput);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processProcessLead(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processProcessLead(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processProcessLead(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -33653,208 +33649,6 @@ export interface IUpdateLanguageTextInput {
     value: string;
 }
 
-export class CreateLeadInput implements ICreateLeadInput {
-    leadTypeId: number;
-    namePrefix: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    nameSuffix: string;
-    nickName: string;
-    emailAddresses: CreateContactEmailInput[];
-    phoneNumbers: CreateContactPhoneInput[];
-    address: CreateContactAddressInput;
-    companyName: string;
-    organizationEmailAddresses: CreateContactEmailInput[];
-    organizationPhoneNumbers: CreateContactPhoneInput[];
-    organizationAddress: CreateContactAddressInput;
-    photo: ContactPhotoInput;
-    note: string;
-    organizationNote: string;
-    organizationUnitId: number;
-    tags: CustomerTagInput[];
-    lists: CustomerListInput[];
-    userId: number;
-
-    constructor(data?: ICreateLeadInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadTypeId = data["leadTypeId"];
-            this.namePrefix = data["namePrefix"];
-            this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
-            this.lastName = data["lastName"];
-            this.nameSuffix = data["nameSuffix"];
-            this.nickName = data["nickName"];
-            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
-                this.emailAddresses = [];
-                for (let item of data["emailAddresses"])
-                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
-            }
-            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
-                this.phoneNumbers = [];
-                for (let item of data["phoneNumbers"])
-                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
-            }
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
-            this.companyName = data["companyName"];
-            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
-                this.organizationEmailAddresses = [];
-                for (let item of data["organizationEmailAddresses"])
-                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
-            }
-            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
-                this.organizationPhoneNumbers = [];
-                for (let item of data["organizationPhoneNumbers"])
-                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
-            }
-            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
-            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
-            this.note = data["note"];
-            this.organizationNote = data["organizationNote"];
-            this.organizationUnitId = data["organizationUnitId"];
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(CustomerTagInput.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(CustomerListInput.fromJS(item));
-            }
-            this.userId = data["userId"];
-        }
-    }
-
-    static fromJS(data: any): CreateLeadInput {
-        let result = new CreateLeadInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadTypeId"] = this.leadTypeId;
-        data["namePrefix"] = this.namePrefix;
-        data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
-        data["lastName"] = this.lastName;
-        data["nameSuffix"] = this.nameSuffix;
-        data["nickName"] = this.nickName;
-        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
-            data["emailAddresses"] = [];
-            for (let item of this.emailAddresses)
-                data["emailAddresses"].push(item.toJSON());
-        }
-        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
-            data["phoneNumbers"] = [];
-            for (let item of this.phoneNumbers)
-                data["phoneNumbers"].push(item.toJSON());
-        }
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["companyName"] = this.companyName;
-        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
-            data["organizationEmailAddresses"] = [];
-            for (let item of this.organizationEmailAddresses)
-                data["organizationEmailAddresses"].push(item.toJSON());
-        }
-        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
-            data["organizationPhoneNumbers"] = [];
-            for (let item of this.organizationPhoneNumbers)
-                data["organizationPhoneNumbers"].push(item.toJSON());
-        }
-        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        data["note"] = this.note;
-        data["organizationNote"] = this.organizationNote;
-        data["organizationUnitId"] = this.organizationUnitId;
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        data["userId"] = this.userId;
-        return data; 
-    }
-}
-
-export interface ICreateLeadInput {
-    leadTypeId: number;
-    namePrefix: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    nameSuffix: string;
-    nickName: string;
-    emailAddresses: CreateContactEmailInput[];
-    phoneNumbers: CreateContactPhoneInput[];
-    address: CreateContactAddressInput;
-    companyName: string;
-    organizationEmailAddresses: CreateContactEmailInput[];
-    organizationPhoneNumbers: CreateContactPhoneInput[];
-    organizationAddress: CreateContactAddressInput;
-    photo: ContactPhotoInput;
-    note: string;
-    organizationNote: string;
-    organizationUnitId: number;
-    tags: CustomerTagInput[];
-    lists: CustomerListInput[];
-    userId: number;
-}
-
-export class CreateLeadOutput implements ICreateLeadOutput {
-    id: number;
-    customerId: number;
-
-    constructor(data?: ICreateLeadOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.customerId = data["customerId"];
-        }
-    }
-
-    static fromJS(data: any): CreateLeadOutput {
-        let result = new CreateLeadOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["customerId"] = this.customerId;
-        return data; 
-    }
-}
-
-export interface ICreateLeadOutput {
-    id: number;
-    customerId: number;
-}
-
 export class CancelLeadInfo implements ICancelLeadInfo {
     leadId: number;
     cancellationReasonId: string;
@@ -35187,6 +34981,41 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
 export interface IUpdateLeadStageInfo {
     leadId: number;
     stageId: number;
+}
+
+export class ProcessLeadInput implements IProcessLeadInput {
+    leadId: number;
+
+    constructor(data?: IProcessLeadInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+        }
+    }
+
+    static fromJS(data: any): ProcessLeadInput {
+        let result = new ProcessLeadInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        return data; 
+    }
+}
+
+export interface IProcessLeadInput {
+    leadId: number;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {

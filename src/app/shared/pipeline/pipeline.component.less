@@ -1,6 +1,5 @@
 :host {
-    vertical-align: bottom;
-    vertical-align: bottom;
+    margin: 0px 0px;
     display: flex;
     flex-flow: wrap;
     justify-content: flex-end;
@@ -79,7 +78,7 @@
             .column-items {
                 min-height: 100%;
                 &.drop-area {
-                    border: 1px dashed#DFDFDF;
+                    border: 2px dashed #DFDFDF;
                     border-radius: 5px;
                     padding: 1px;
                 }
@@ -90,9 +89,8 @@
                 }
                 .card {
                     cursor: not-allowed;
-                    min-height: 146px;
-                    max-height: 146px;
-                    padding: 16px 0px 0px 0px;
+                    min-height: 130px;
+                    padding: 13px 0px 0px 0px;
                     margin-bottom: 11px;
                     font-size: 15px;
                     line-height: 1.4;
@@ -146,8 +144,9 @@
                             }
                         }
                         .full-name {
+                            max-width: calc(~"100% - 56px");
+                            display: inline-block;
                             max-height: 42px;
-                            width: 100%;
                             padding: 0px 10px;
                             text-overflow: ellipsis;
                             overflow: hidden;
@@ -188,9 +187,6 @@
                                 white-space: nowrap;
                             }
                         }                
-                    }
-                    .row + .row {
-                        margin-top: 6px;
                     }
                     .item-data {
                         font-size: 13px;
@@ -284,9 +280,6 @@
     text-align: left;
     color: #202b35;
     cursor: grabbing;
-    .row + .row {
-        margin-top: 10px;
-    }
     .pipeline-photo-wrap {
         padding: 0 8px;
         min-width: 56px;
@@ -321,6 +314,7 @@
         }
         .full-name {
             max-height: 42px;
+            max-width: calc(~"100% - 56px");
             width: 100%;
             padding: 0px 10px;
             text-overflow: ellipsis;
