@@ -9,7 +9,6 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -35,15 +34,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
 
-    quovoUIToken: string;
-    quovoHandler: any;
-
     constructor(
         injector: Injector,
         private _router: Router,
         private _dashboardService: DashboardService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
-        private _quovoService: QuovoService
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -58,10 +53,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             onRefresh: this.refreshWidgets.bind(this),
             buttons: []
         };
-
-        if (!this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
-        }
     }
 
     ngAfterViewInit(): void {
@@ -72,12 +63,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.rootComponent.overflowHidden();
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
         this._dashboardService.unsubscribe();
-    }
-
-    addAccount() {
-        if (this.quovoHandler.isLoaded) {
-            this.quovoHandler.handler.open();
-        }
     }
 
     filterByBankAccounts(data) {

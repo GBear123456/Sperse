@@ -181,13 +181,11 @@
         </div>
     </dx-scroll-view>
     <div class="sidebar-calculator-widget" [ngClass]="{'calculatorHidden': !calculatorShowed}">
-        <dx-scroll-view [showScrollbar]="onHover">
-            <div class="calculator-title">
-                <h3>{{l( 'Cell Calculator')}}</h3>
-                <span class="close" (click)="closeCalculator($event)"></span>
-            </div>
-            <calculator-widget> </calculator-widget>
-        </dx-scroll-view>
+        <div class="calculator-title">
+            <h3>{{l( 'Cell Calculator')}}</h3>
+            <span class="close" (click)="closeCalculator($event)"></span>
+        </div>
+        <calculator-widget></calculator-widget>
     </div>
 
     <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">

@@ -14315,62 +14315,10 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    renameSyncAccount(instanceType: InstanceType77, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/RenameSyncAccount?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRenameSyncAccount(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRenameSyncAccount(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRenameSyncAccount(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType78, instanceId: number, syncAccountIds: number[]): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType77, instanceId: number, syncAccountIds: number[]): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14419,6 +14367,70 @@ export class SyncServiceProxy {
         }
         return Observable.of<number>(<any>null);
     }
+}
+
+@Injectable()
+export class SyncAccountServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    renameSyncAccount(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/RenameSyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRenameSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRenameSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRenameSyncAccount(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 
     /**
      * @instanceType (optional) 
@@ -14426,7 +14438,7 @@ export class SyncServiceProxy {
      * @return Success
      */
     deleteSyncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/DeleteSyncAccount?";
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/DeleteSyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -21468,6 +21480,7 @@ export interface ICashflowGridVisualSettingsDto {
 
 export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     numberFormatting: string;
+    currency: string;
 
     constructor(data?: ILocalizationAndCurrencyDto) {
         if (data) {
@@ -21481,6 +21494,7 @@ export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     init(data?: any) {
         if (data) {
             this.numberFormatting = data["numberFormatting"];
+            this.currency = data["currency"];
         }
     }
 
@@ -21493,12 +21507,14 @@ export class LocalizationAndCurrencyDto implements ILocalizationAndCurrencyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["numberFormatting"] = this.numberFormatting;
+        data["currency"] = this.currency;
         return data; 
     }
 }
 
 export interface ILocalizationAndCurrencyDto {
     numberFormatting: string;
+    currency: string;
 }
 
 export class ForecastModelDto implements IForecastModelDto {
@@ -30005,7 +30021,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -30061,7 +30077,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
         }
     }
 
@@ -30116,7 +30132,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         return data; 
     }
 }
@@ -30141,7 +30157,7 @@ export interface ICreateCustomerInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -33720,7 +33736,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -33777,7 +33793,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
         }
     }
 
@@ -33833,7 +33849,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         return data; 
     }
 }
@@ -33859,7 +33875,7 @@ export interface ICreateLeadInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {

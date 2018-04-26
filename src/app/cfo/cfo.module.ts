@@ -77,6 +77,7 @@ import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
+import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-account-button/add-account-button.component';
 
 @NgModule({
     imports: [
@@ -145,7 +146,8 @@ import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank
         CalculatorComponent,
         TransactionDetailInfoComponent,
         ReportPeriodComponent,
-        BankAccountsQuovoComponent
+        BankAccountsQuovoComponent,
+        AddAccountButtonComponent
     ],
     entryComponents: [
         RuleDialogComponent,

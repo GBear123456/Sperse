@@ -13,7 +13,7 @@
                         <h2 class="dashboard-title">
                             {{l('Accounts_Summary')}}
                         </h2>
-                        <a (click)="addAccount()" class="dashboard-link">+ {{l('Add_account')}}</a>
+                        <add-account-button class="dashboard-link"></add-account-button>
                     </header>
                     <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()" waitForBankAccounts="true"></app-accounts>
                     <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
