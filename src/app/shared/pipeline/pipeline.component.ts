@@ -118,6 +118,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                         } else
                             this.softRefresh();
                     });
+                else if (action.sysId == 'CRM.UpdateLeadStage') {
+                } else if (action.sysId == 'CRM.ProcessLead') {
+                }
             }
         }
     }
@@ -159,11 +162,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
             });
     }
 
-    loadStagesLeads(index) {
+    loadStagesLeads(index, page = 0) {
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(5);
         this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
         this.dataSource.sort({getter: 'CreationTime', desc: true});
+        this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
             if (leads.length) {
                 stages[index]['leads'] = 
@@ -171,20 +175,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 stages[index]['total'] = this.dataSource.totalCount();
             }
             if (this.pipeline.stages[++index])
-                this.loadStagesLeads(index);
+                this.loadStagesLeads(index, page);
             else {
                 this.stages = this.pipeline.stages;
                 this.finishLoading(true);
             }
         });
-
     }
 
     loadMore() {
         this.startLoading(true);
-        this.dataSource.pageIndex(
+        this.loadStagesLeads(0, 
             this.dataSource.pageIndex() + 1);
-        this.loadStagesLeads(0);
     }
 
     ngOnDestroy() {
