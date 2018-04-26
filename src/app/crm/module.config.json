@@ -9,7 +9,6 @@
     ["Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders"],
     ["Partners", "", "icon-layers", ""],
     ["Reports", "", "", ""],
-    ["Products", "", "", ""],
-    ["Editions", "Pages.Editions", "icon-grid", "/app/crm/editions"]
+    ["Products", "", "", ""]    
   ]
 }
