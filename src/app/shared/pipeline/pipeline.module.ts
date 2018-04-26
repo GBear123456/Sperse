@@ -9,6 +9,8 @@ import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm
 
 import { MatDialogModule } from '@angular/material';
 
+import { PipelineService } from './pipeline.service';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -30,7 +32,8 @@ import { MatDialogModule } from '@angular/material';
         LeadCancelDialogComponent
     ],
     providers: [
-        LeadServiceProxy
+        LeadServiceProxy,
+        PipelineService
     ]
 })
 export class PipelineModule {

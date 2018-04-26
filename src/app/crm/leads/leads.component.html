@@ -13,7 +13,8 @@
                                       [hoverStateEnabled]="true"
                                       [pager]="defaultGridPagerConfig"
                                       (onInitialized)="onGridInitialized($event)"
-                                      (onContentReady)="onContentReady($event)"                                    
+                                      (onContentReady)="onContentReady($event)"                    
+                                      (onSelectionChanged)="onSelectionChanged($event)"                
                                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                             <dxo-selection
                                 selectAllMode="page"
@@ -48,7 +49,7 @@
                     </div>
                 </div>
                 <div *ngIf="showPipeline" class="funnel-wrapper">
-                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId">
+                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>
                 </div>
