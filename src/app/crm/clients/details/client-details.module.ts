@@ -22,6 +22,7 @@ import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
+import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
 
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -94,7 +95,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     TagsListComponent,
     ListsListComponent,
     UserAssignmentComponent,
-    RatingComponent
+    RatingComponent,
+    StarsListComponent
   ],
   imports: [
     FormsModule,
@@ -134,7 +136,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     TagsListComponent,
     ListsListComponent,
     UserAssignmentComponent,
-    RatingComponent
+    RatingComponent,
+    StarsListComponent
   ],
   entryComponents: [
     EditContactDialog,
