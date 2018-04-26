@@ -8,8 +8,10 @@
                 <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                 <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
             </div>
+            <span class="add-button" [hidden]="!showAddButton" (click)="addNewTag()">+</span>
             <dx-list 
                 height="350"
+                [searchEditorOptions]="{onInput: onSearch}"
                 [searchEnabled]="true"
                 [selectionMode]="'multiple'"
                 [showSelectionControls]="true"

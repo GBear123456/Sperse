@@ -16,6 +16,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     listComponent: any;
     tooltipVisible = false;
+    showAddButton = false;
 
     constructor(
         injector: Injector,
@@ -60,5 +61,16 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this._tagsService.getTags().subscribe((result) => {
             this.list = result.map((obj) => obj.name);
         });
+    }
+
+    addNewTag() {
+        this.list.push(this.searchValue);
+        this.showAddButton = false;
+    }
+
+    onSearch = ($event) => {
+        this.searchValue = $event.event.target.value;
+        this.showAddButton = this.list.every((item) => !item.includes(this.searchValue));
+        $event.component.option('showClearButton', !this.showAddButton);
     }
 }
