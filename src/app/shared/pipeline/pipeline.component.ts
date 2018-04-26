@@ -2,7 +2,7 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
-import { PipelineDto, PipelineServiceProxy, PipelineData, 
+import { PipelineDto, PipelineServiceProxy, PipelineData, ProcessLeadInput,
     LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -41,10 +41,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 oldStage = this.getAccessKey(value[3]);
             if (newStage != oldStage)
                 this.updateLeadStage(leadId, oldStage, newStage);
-
+        });
+        _dragulaService.dragend.subscribe((value) => {
             [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
                 el.classList.remove('drop-area');
-            })
+            });
         });
         _dragulaService.setOptions(this.dragulaName, {
             moves: (el, source) => {
@@ -124,8 +125,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                             stageId: toStage.id
                         })
                     ).subscribe((res) => { });
-                else if (action.sysId == 'CRM.ProcessLead') {
-                }
+                else if (action.sysId == 'CRM.ProcessLead')
+                   this._leadService.processLead(
+                        ProcessLeadInput.fromJS({
+                            leadId: leadId
+                        })
+                    ).subscribe((res) => { }); 
             }
         }
     }
