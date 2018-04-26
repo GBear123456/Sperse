@@ -10607,6 +10607,52 @@ export class LeadServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @processLeadInput (optional) 
+     * @return Success
+     */
+    processLead(processLeadInput: ProcessLeadInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(processLeadInput);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processProcessLead(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processProcessLead(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processProcessLead(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -34935,6 +34981,41 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
 export interface IUpdateLeadStageInfo {
     leadId: number;
     stageId: number;
+}
+
+export class ProcessLeadInput implements IProcessLeadInput {
+    leadId: number;
+
+    constructor(data?: IProcessLeadInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+        }
+    }
+
+    static fromJS(data: any): ProcessLeadInput {
+        let result = new ProcessLeadInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        return data; 
+    }
+}
+
+export interface IProcessLeadInput {
+    leadId: number;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
