@@ -30005,7 +30005,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -30061,7 +30061,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
         }
     }
 
@@ -30116,7 +30116,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         return data; 
     }
 }
@@ -30141,7 +30141,7 @@ export interface ICreateCustomerInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -33720,7 +33720,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -33777,7 +33777,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
         }
     }
 
@@ -33833,7 +33833,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         return data; 
     }
 }
@@ -33859,7 +33859,7 @@ export interface ICreateLeadInput {
     organizationUnitId: number;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
-    userId: number;
+    assignedUserId: number;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
