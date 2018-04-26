@@ -7,32 +7,34 @@
             </dx-tabs>
         </div>
     </div>
-    <dx-scroll-view [showScrollbar]="onHover" [height]="calculateTooltipHeight()" [width]="'100%'">
+    <dx-scroll-view [showScrollbar]="onHover" [height]="height || calculateTooltipHeight()" [width]="'100%'">
         <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
             <dx-data-grid id="gridContainer"
                           [width]="'100%'"
                           [dataSource]="syncAccountsDataSource"
                           [masterDetail]="{ enabled: false, template: 'detail' }"
                           keyExpr="syncAccountId"
-                          [showColumnHeaders]="false"
+                          [showColumnHeaders]="showColumnHeaders"
                           [columnAutoWidth]="true"
                           [showBorders]="false"
                           [showColumnLines]="false"
                           [showRowLines]="false"
                           (onRowUpdated)="masterSelectionChanged($event)"
-                          (onCellClick)="masterRowExpandChange($event)"
-                          (onRowPrepared)="rowPrepared($event)">
+                          (onRowClick)="masterRowExpandChange($event)"
+                          (onRowPrepared)="rowPrepared($event)"
+                          (onSelectionChanged)="selectionChanged($event)"
+                          (onContentReady)="contentReady()">
 
                 <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
                 <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                 <dxo-filter-row [visible]="false"></dxo-filter-row>
                 <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
-                <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean"></dxi-column>
-                <dxi-column dataField="name" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
-                <dxi-column dataField="syncAccountStatus" [width]="150" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
+                <dxi-column dataField="name" caption="{{l('Account')}}" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
+                <dxi-column dataField="syncAccountStatus" caption="{{l('BankAccountsWidget_Sync_status')}}" [width]="150" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
                 <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
-                <dxi-column dataField="lastSyncDate" alignment="left" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-                <dxi-column dataField="balance" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
+                <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
                 <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
 
                 <div *dxTemplate="let syncAccount of 'detail'">
@@ -45,12 +47,12 @@
                                       [columnAutoWidth]="true"
                                       (onRowUpdated)="bankAccountSelectionChanged($event)"
                                       [selectionFilter]="['selected', '=', true]"
-                                      (onRowPrepared)="rowPrepared($event)">
+                                      (onRowPrepared)="rowPrepared($event)"
+                                      (onSelectionChanged)="selectionChanged($event)">
                             <dxo-scrolling showScrollbar="never"></dxo-scrolling>
                             <dxo-editing mode="cell" [allowUpdating]="true">
                             </dxo-editing>
-                            <dxo-selection [deferred]="true">
-                            </dxo-selection>
+                            <dxo-selection [deferred]="true"></dxo-selection>
                             <dxo-filter-row [visible]="false"></dxo-filter-row>
                             <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
                             <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
@@ -100,3 +102,7 @@
         </div>
     </dx-scroll-view>
 </div>
+
+<ng-template #emptyRowTemplate>
+    <tr class="emptyRow"><td></td></tr>
+</ng-template>

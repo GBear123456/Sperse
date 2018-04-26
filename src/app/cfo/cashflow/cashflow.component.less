@@ -51,10 +51,6 @@
         }
     }
 
-    .calculatorHidden {
-        display: none;
-    }
-
     .sidebar-calculator-widget {
         position: absolute;
         top: 0;
@@ -62,28 +58,31 @@
         border: 1px solid #e5e9ec;
         height: calc(~"100vh - 148px");
         background-color: #fff;
-        margin-bottom: 300px;
         z-index: 5;
-
+        display: flex;
+        flex-direction: column;
 
         .calculator-title {
-            padding-right: 30px;
+            padding: 25px 30px 25px 10px;
             font-size: 15px;
             line-height: 1.6;
             letter-spacing: 0.3px;
             color: #212c36;
-            display: inline-block;
             width: 100%;
             font-weight: 500;
-            margin-left: 9px;
-            margin-top: 5px;
+            margin: 0;
+            display: inline-block;
 
             h3 {
                 float: left;
                 margin-bottom: 0;
-                font-size: 16px;
-                line-height: 2.18;
+                font-size: 20px;
                 letter-spacing: 0.4px;
+                font-weight: 500;
+                font-style: normal;
+                font-stretch: normal;
+                text-align: left;
+                color: rgb(32, 43, 53);
             }
 
             img {
@@ -93,8 +92,8 @@
             }
 
             .close {
-                top: 8px;
-                right: -10px;
+                top: 2px;
+                right: -20px;
                 width: 20px;
                 height: 20px;
                 float: right;
@@ -103,10 +102,10 @@
 
                 &:after, &:before {
                     position: absolute;
-                    top: 0px;
+                    top: 0;
                     left: 8px;
-                    content: ' ';
-                    height: 20px;
+                    content: '';
+                    height: 17px;
                     width: 2px;
                     background-color: #1b1b1b;
                 }
@@ -119,6 +118,15 @@
                     transform: rotate(-45deg);
                 }
             }
+        }
+
+        calculator-widget {
+            // display: block;
+            height: calc(~"100% - 72px");
+        }
+
+        &.calculatorHidden {
+            display: none;
         }
     }
 
@@ -1303,7 +1311,7 @@
                         line-height: 24px;
                         color: #686f76;
                         vertical-align: middle;
-                        
+
                         &[aria-sort='none'] {
                             color: @middleGrayColor;
                         }

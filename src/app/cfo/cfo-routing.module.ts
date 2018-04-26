@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Route } from '@angular/router';
 import { StartComponent } from './start/start.component';
-import { BankAccountsComponent } from './bank-accounts/bank-accounts.component';
+import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
+import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
+import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { StatsComponent } from './stats/stats.component';
 import { TransactionsComponent } from './transactions/transactions.component';
@@ -19,7 +21,21 @@ import { StatementsComponent } from './statements/statements.component';
                 path: '',
                 children: [
                     { path: 'start', component: StartComponent, data: { permission: '' } },
-                    { path: 'linkaccounts', component: BankAccountsComponent, data: { permission: '' } },
+                    {
+                        path: 'linkaccounts',
+                        data: { permission: '' },
+                        component: BankAccountsGeneralComponent,
+                        children: [
+                            {
+                                path: '',
+                                component: BankAccountsComponent
+                            },
+                            {
+                                path: 'quovo',
+                                component: BankAccountsQuovoComponent
+                            }
+                        ]
+                    },
                     { path: 'business-entities', component: BusinessEntitiesComponent, data: { permission: '' } },
                     { path: 'chart-of-accounts', component: ChartOfAccountsComponent, data: { permission: '' } },
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },

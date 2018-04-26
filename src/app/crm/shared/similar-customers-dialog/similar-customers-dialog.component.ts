@@ -39,7 +39,8 @@ export class SimilarCustomersDialogComponent extends AppComponentBase {
     selectSimilarCustomer(similarCustomer: SimilarCustomerOutput): void {
         this.data.componentRef.close();
         this.dialogRef.close();
-        this._router.navigate(['app/crm/client/' + similarCustomer.id + '/contact-information']);
+        this._router.navigate(['app/crm/client/' + similarCustomer.id + '/contact-information'],
+            { queryParams: { referrer: this._router.url } });
     }
 
     closeSimilarCustomersDialog() {

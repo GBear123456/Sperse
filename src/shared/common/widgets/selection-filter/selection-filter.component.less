@@ -1,0 +1,37 @@
+:host {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    height: 100%;
+
+    .label {
+        font-size: 17px;
+        font-weight: 500;
+        padding-right: 5px;
+        color: #202b35;
+    }
+
+    /deep/ .selectionList {
+        min-width: 200px;
+
+        .tag-value,
+        .dx-placeholder {
+            font-size: 17px;
+            line-height: 1.21;
+            letter-spacing: 0.3px;
+            color: #00AEEF;
+            padding: 0 5px;
+            height: auto !important;
+            font-weight: 500;
+            top: 0;
+            bottom: 0;
+        }
+
+        .dx-texteditor-container {
+            padding-top: 0;
+            .dx-tag {
+                max-width: initial;
+            }
+        }
+    }
+}

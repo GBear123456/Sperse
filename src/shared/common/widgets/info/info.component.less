@@ -1,0 +1,46 @@
+:host {
+    padding: 5px 20px 5px 110px;
+    border: 1px solid #E5E9EC;
+    border-radius: 4px;
+    position: relative;
+
+    .icon {
+        position: absolute;
+        left: 48px;
+        top: 0;
+        bottom: 0;
+        img {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+        }
+    }
+
+    .value {
+        color: #212C36;
+        font-size: 26px;
+        font-weight: 500;
+        cursor: pointer;
+        display: block;
+        padding-right: 20px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .description {
+        color: #677380;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 0.2px;
+        line-height: 20px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        .filtered {
+            color: red;
+        }
+    }
+}

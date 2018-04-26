@@ -1,9 +1,13 @@
-﻿import {Component, Injector, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
-import { PipelineDto, PipelineServiceProxy, PipelineData } from '@shared/service-proxies/service-proxies';
+﻿import { Component, Injector, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+
+import { PipelineDto, PipelineServiceProxy, PipelineData, ProcessLeadInput,
+    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 import { DragulaService } from 'ng2-dragula';
+import { MatDialog } from '@angular/material';
 
 import * as _ from 'underscore';
 
@@ -24,6 +28,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     dragulaName = 'stage';
 
     constructor(injector: Injector,
+        private _dialog: MatDialog,
+        private _leadService: LeadServiceProxy,
         private _pipelineService: PipelineServiceProxy,
         private _dragulaService: DragulaService
     ) {
@@ -34,10 +40,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
             if (newStage != oldStage)
-                this.updateLeadStage(leadId, newStage);
+                this.updateLeadStage(leadId, oldStage, newStage);
+        });
+        _dragulaService.dragend.subscribe((value) => {
             [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
                 el.classList.remove('drop-area');
-            })
+            });
         });
         _dragulaService.setOptions(this.dragulaName, {
             moves: (el, source) => {
@@ -80,8 +88,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         this._pipelineService
             .getPipelinesData(this.pipelinePurposeId)
             .subscribe((result: PipelineData[]) => {
-                if (result.length > 0)
-                {
+                if (result.length > 0) {
                     this.getPipelineDefinition(result[0].id);
                 }
         });
@@ -90,7 +97,47 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     ngAfterViewInit(): void {
     }
 
-    updateLeadStage(leadId, newStage) {
+    updateLeadStage(leadId, oldStage, newStage) {
+        let fromStage = _.findWhere(this.stages, {name: oldStage}),
+            toStage = _.findWhere(this.stages, {name: newStage});
+        if (fromStage && toStage) {
+            let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id})
+            if (action) {
+                if (action.sysId == 'CRM.CancelLead')
+                    this._dialog.open(LeadCancelDialogComponent, {
+                        data: { }
+                    }).afterClosed().subscribe(result => {
+                        if (result) {
+                            this._leadService.cancelLead(
+                                CancelLeadInfo.fromJS({
+                                    leadId: leadId,
+                                    cancellationReasonId: result.reasonId,
+                                    comment: result.comment
+                                })
+                            ).subscribe((result) => { });
+                        } else
+                            this.moveLeadTo(leadId, toStage, fromStage);
+                    });
+                else if (action.sysId == 'CRM.UpdateLeadStage')
+                    this._leadService.updateLeadStage(
+                        UpdateLeadStageInfo.fromJS({
+                            leadId: leadId, 
+                            stageId: toStage.id
+                        })
+                    ).subscribe((res) => { });
+                else if (action.sysId == 'CRM.ProcessLead')
+                   this._leadService.processLead(
+                        ProcessLeadInput.fromJS({
+                            leadId: leadId
+                        })
+                    ).subscribe((res) => { }); 
+            }
+        }
+    }
+
+    moveLeadTo(leadId, sourceStage, targetStage) {
+        let itemIndex = _.findIndex(sourceStage.leads, {id: leadId}), lead;
+        targetStage.leads.unshift(sourceStage.leads.splice(itemIndex, 1).pop());
     }
 
     getStageByElement(el) {
@@ -119,34 +166,29 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
             });
     }
 
-    loadStagesLeads(index) {
+    loadStagesLeads(index, page = 0) {
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(5);
         this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
         this.dataSource.sort({getter: 'CreationTime', desc: true});
+        this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
-            if (leads.length) {
-                stages[index]['leads'] = 
-                    (stages[index]['leads'] || []).concat(leads);
-                stages[index]['total'] = 
-                    (stages[index]['total'] || 0) +
-                    this.dataSource.totalCount();
-            }
+            stages[index]['leads'] = 
+                (stages[index]['leads'] || []).concat(leads);
+            stages[index]['total'] = this.dataSource.totalCount();
             if (this.pipeline.stages[++index])
-                this.loadStagesLeads(index);
+                this.loadStagesLeads(index, page);
             else {
                 this.stages = this.pipeline.stages;
                 this.finishLoading(true);
             }
         });
-
     }
 
     loadMore() {
         this.startLoading(true);
-        this.dataSource.pageIndex(
+        this.loadStagesLeads(0, 
             this.dataSource.pageIndex() + 1);
-        this.loadStagesLeads(0);
     }
 
     ngOnDestroy() {
