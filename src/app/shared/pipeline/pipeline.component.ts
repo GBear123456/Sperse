@@ -1,13 +1,13 @@
-﻿import { Component, Injector, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
 import { PipelineDto, PipelineServiceProxy, PipelineData, ProcessLeadInput,
     LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
-import { AppConsts } from '@shared/AppConsts';
 
+import { AppConsts } from '@shared/AppConsts';
+import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
-import { MatDialog } from '@angular/material';
 
 import * as _ from 'underscore';
 
@@ -20,6 +20,8 @@ import DataSource from 'devextreme/data/data_source';
     providers: [PipelineServiceProxy]
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
+
     @Input() dataSource: DataSource;
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
@@ -28,10 +30,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     dragulaName = 'stage';
 
     constructor(injector: Injector,
-        private _dialog: MatDialog,
         private _leadService: LeadServiceProxy,
-        private _pipelineService: PipelineServiceProxy,
-        private _dragulaService: DragulaService
+        private _pipelineServiceProxy: PipelineServiceProxy,
+        private _dragulaService: DragulaService,
+        private _pipelineService: PipelineService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -40,7 +42,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
             if (newStage != oldStage)
-                this.updateLeadStage(leadId, oldStage, newStage);
+                _pipelineService.updateLeadStage(leadId, oldStage, newStage);
         });
         _dragulaService.dragend.subscribe((value) => {
             [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
@@ -85,7 +87,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
 
     ngOnInit(): void {
         this.startLoading(true);
-        this._pipelineService
+        this._pipelineServiceProxy
             .getPipelinesData(this.pipelinePurposeId)
             .subscribe((result: PipelineData[]) => {
                 if (result.length > 0) {
@@ -95,49 +97,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     }
 
     ngAfterViewInit(): void {
-    }
-
-    updateLeadStage(leadId, oldStage, newStage) {
-        let fromStage = _.findWhere(this.stages, {name: oldStage}),
-            toStage = _.findWhere(this.stages, {name: newStage});
-        if (fromStage && toStage) {
-            let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id})
-            if (action) {
-                if (action.sysId == 'CRM.CancelLead')
-                    this._dialog.open(LeadCancelDialogComponent, {
-                        data: { }
-                    }).afterClosed().subscribe(result => {
-                        if (result) {
-                            this._leadService.cancelLead(
-                                CancelLeadInfo.fromJS({
-                                    leadId: leadId,
-                                    cancellationReasonId: result.reasonId,
-                                    comment: result.comment
-                                })
-                            ).subscribe((result) => { });
-                        } else
-                            this.moveLeadTo(leadId, toStage, fromStage);
-                    });
-                else if (action.sysId == 'CRM.UpdateLeadStage')
-                    this._leadService.updateLeadStage(
-                        UpdateLeadStageInfo.fromJS({
-                            leadId: leadId, 
-                            stageId: toStage.id
-                        })
-                    ).subscribe((res) => { });
-                else if (action.sysId == 'CRM.ProcessLead')
-                   this._leadService.processLead(
-                        ProcessLeadInput.fromJS({
-                            leadId: leadId
-                        })
-                    ).subscribe((res) => { }); 
-            }
-        }
-    }
-
-    moveLeadTo(leadId, sourceStage, targetStage) {
-        let itemIndex = _.findIndex(sourceStage.leads, {id: leadId}), lead;
-        targetStage.leads.unshift(sourceStage.leads.splice(itemIndex, 1).pop());
     }
 
     getStageByElement(el) {
@@ -150,7 +109,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     }
 
     getPipelineDefinition(pipelineId: number): void {        
-        this._pipelineService
+        this._pipelineServiceProxy
             .getPipelineDefinition(pipelineId)
             .subscribe(result => {
                 result.stages.sort((a, b) => {
@@ -162,6 +121,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                     });
                 });
                 this.pipeline = result;
+                this.onStagesLoaded.emit(result.stages);
                 this.loadStagesLeads(0);
             });
     }
@@ -179,7 +139,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
             if (this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
-                this.stages = this.pipeline.stages;
+                this._pipelineService.stages = 
+                    this.stages = this.pipeline.stages;
                 this.finishLoading(true);
             }
         });

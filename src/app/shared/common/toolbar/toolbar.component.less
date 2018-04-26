@@ -297,7 +297,7 @@
                 }
             }
 
-            &[accesskey="status"] {
+            &[accesskey="status"], &[accesskey="stage"] {
                 .dx-button-content {
                     text-align: left;
                     padding: 6px 20px 6px 11px;
@@ -317,6 +317,14 @@
 
                     &::after {
                         right: 8px;
+                    }
+                }
+            }
+
+            &[accesskey="stage"] {
+                .dx-button-content {
+                    &::before {
+                        content: 'Stage';
                     }
                 }
             }
