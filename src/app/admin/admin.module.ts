@@ -23,6 +23,11 @@ import { OrganizationUnitsTreeComponent } from './shared/organization-unit-tree.
 import { RolesComponent } from './roles/roles.component';
 import { CreateOrEditRoleModalComponent } from './roles/create-or-edit-role-modal.component';
 
+import { EditionsComponent } from './editions/editions.component';
+import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal.component';
+
+import { EditionComboComponent } from './shared/edition-combo.component';
+import { FeatureTreeComponent } from './shared/feature-tree.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 
@@ -60,6 +65,10 @@ import { DemoUiInputMaskComponent } from './demo-ui-components/demo-ui-input-mas
 import { DemoUiEditorComponent } from './demo-ui-components/demo-ui-editor.component';
 import { InputMaskModule } from 'primeng/primeng';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
+import { TenantsComponent } from './tenants/tenants.component';
+import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
+import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
+import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 
 @NgModule({
     imports: [
@@ -126,10 +135,22 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
         DemoUiFileUploadComponent,
         DemoUiInputMaskComponent,
         DemoUiEditorComponent,
-        UiCustomizationComponent
+        UiCustomizationComponent,
+        EditionsComponent,
+        CreateOrEditEditionModalComponent,
+        FeatureTreeComponent,
+        EditionComboComponent,
+        TenantsComponent,
+        CreateTenantModalComponent,
+        EditTenantModalComponent,
+        TenantFeaturesModalComponent, 
     ],
     exports: [
-        AddMemberModalComponent
+        AddMemberModalComponent,
+        EditionsComponent,
+        CreateOrEditEditionModalComponent,
+        FeatureTreeComponent,
+        EditionComboComponent
     ]
 })
 

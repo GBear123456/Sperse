@@ -3,7 +3,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { TenantServiceProxy, UpdateTenantFeaturesInput, TenantEditDto, EntityDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { FeatureTreeComponent } from '../shared/feature-tree.component';
+import { FeatureTreeComponent } from '@admin/shared/feature-tree.component';
 
 import * as _ from 'lodash';
 
