@@ -29,7 +29,7 @@
             <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
             <dxi-column dataField="name" caption="{{l('Account')}}" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
-            <dxi-column dataField="syncAccountStatus" caption="{{l('BankAccountsWidget_Sync_status')}}" [width]="150" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+            <dxi-column dataField="syncAccountStatus" caption="{{l('BankAccountsWidget_Sync_status')}}" [width]="200" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
             <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
             <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
@@ -105,7 +105,7 @@
             <div *dxTemplate="let cell of 'statusTemplate'">
                 <ng-container *ngIf="(cell.text)">
                     <div [class]="'account-status ' + cell.text | lowercase">
-                        {{cell.text | uppercase}}
+                        {{l('SyncStatus_' + cell.text) | uppercase}}
                     </div>
                 </ng-container>
             </div>

@@ -7,6 +7,7 @@ import Form from 'devextreme/ui/form';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -78,7 +79,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
         this.cfoService = injector.get(CFOService, null);
