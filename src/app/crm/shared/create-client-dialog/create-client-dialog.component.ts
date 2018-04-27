@@ -331,7 +331,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
 
-        if (this.data.isInLeadMode && !this.websiteValidator.validate().isValid)
+        if (!this.websiteValidator.validate().isValid)
             return false;
 
         return true;
