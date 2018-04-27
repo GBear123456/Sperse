@@ -8,9 +8,9 @@
     <add-account-button class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
 </div>
 <div class="accountsSummary">
-    <info-component imageSource="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: accountsData?.currency : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
-    <info-component imageSource="assets/common/icons/total-icon.svg" [value]="syncAccountsAmount$ | async" [description]="l('Institutions')"></info-component>
-    <info-component imageSource="assets/common/icons/total-icon.svg" [value]="accountsAmount$ | async" [description]="l('Accounts')"></info-component>
+    <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: 'USD' : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
+    <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="syncAccountsAmount$ | async" [description]="l('Institutions')"></info-component>
+    <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="accountsAmount$ | async" [description]="l('Accounts')"></info-component>
 </div>
 <div class="bank-accounts">
     <bank-accounts-widget

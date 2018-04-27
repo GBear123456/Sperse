@@ -1,4 +1,4 @@
-<div class="filter-actions">
+<div class="filter-actions" #filterActions>
     <div class="filter-by-types">
         <dx-tabs [dataSource]="bankAccountTypesForSelect"
                  [selectedItem]="selectedBankAccountType"
@@ -6,7 +6,7 @@
         </dx-tabs>
     </div>
 </div>
-<dx-scroll-view [showScrollbar]="onHover" [height]="height || calculateTooltipHeight()" [width]="'100%'">
+<dx-scroll-view [showScrollbar]="onHover" [height]="calculateHeight()" [width]="'100%'">
     <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
         <dx-data-grid id="gridContainer"
                       [width]="'100%'"

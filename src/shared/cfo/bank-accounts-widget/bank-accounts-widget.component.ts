@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, ViewChild, EventEmitter, ElementRef } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountBankDto, UpdateBankAccountDto } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -18,6 +18,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
+    @ViewChild('filterActions', { read: ElementRef }) filterActions: ElementRef;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 170;
@@ -242,10 +243,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         }
     }
 
-    calculateTooltipHeight() {
-        return window.innerHeight / 2.2 - 70;
-    }
-
     /**
      * Added empty rows to add space between rows (hack to avoid spacing between row and details)
      */
@@ -382,5 +379,11 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     updateAccountInfo(id) {
         this.onUpdateAccount.emit({ id: id });
+    }
+
+    calculateHeight(e) {
+        /** Get bottom position of previous element */
+        let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
+        return window.innerHeight - filtersBottomPosition - 20;
     }
 }
