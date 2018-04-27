@@ -36,10 +36,20 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         '-$1.000.000,0'
     ];
     currencies = [
-        '$ USD US Dollars',
-        '$ CAD Canadian Dollars', 
-        '$ AUD Australian Dollars', 
-        '€ EUR Euros'
+        '€ EUR European Euro',
+        '£ GBP British Pound',
+        '₹ INR Indian Rupee',
+        '¥ JPY Japanese Yen',
+        '₪ ILS Israeli Shekel',
+        '₽ RUB Russian Ruble',
+        'C CHF Swiss Franc',
+        '$ SGD Singapore Dollar',
+        '$ AUD Australian Dollar',
+        '$ CAD Canadian Dollar',
+        '$ HKD Hong Kong Dollar',
+        '$ MXN Mexico Peso',
+        '$ NZD New Zealand Dollar',
+        '$ USD US Dollar'
     ];
     constructor(
         injector: Injector,

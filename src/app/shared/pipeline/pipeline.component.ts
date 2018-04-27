@@ -74,8 +74,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                   return false; // elements can't be dropped in any of the `containers` by default
             },
             invalid: (el) => {
-              let stage = this.getStageByElement(el);
-              if (stage && stage.accessibleActions.length)
+              let stage = this.getStageByElement(el),
+                  lead = this.getLeadByElement(el, stage);
+              if (lead && !lead.locked && stage && stage.accessibleActions.length)
                   return stage.accessibleActions.every((action) => { 
                       return !action.targetStageId;
                   });
@@ -97,6 +98,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     }
 
     ngAfterViewInit(): void {
+    }
+
+    getLeadByElement(el, stage) {
+        return stage && _.findWhere(stage.leads, {Id: 
+            parseInt(this.getAccessKey(el.closest('.card')))});
     }
 
     getStageByElement(el) {
