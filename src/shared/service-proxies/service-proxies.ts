@@ -30059,6 +30059,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -30107,6 +30109,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.title = data["title"];
+            this.organizationWebSite = data["organizationWebSite"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -30162,6 +30166,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["title"] = this.title;
+        data["organizationWebSite"] = this.organizationWebSite;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -30195,6 +30201,8 @@ export interface ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -33774,6 +33782,8 @@ export class CreateLeadInput implements ICreateLeadInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -33823,6 +33833,8 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.title = data["title"];
+            this.organizationWebSite = data["organizationWebSite"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -33879,6 +33891,8 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["title"] = this.title;
+        data["organizationWebSite"] = this.organizationWebSite;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -33913,6 +33927,8 @@ export interface ICreateLeadInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
