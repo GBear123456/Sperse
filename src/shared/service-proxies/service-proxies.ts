@@ -14315,10 +14315,62 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    renameSyncAccount(instanceType: InstanceType77, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/RenameSyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRenameSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRenameSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRenameSyncAccount(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType77, instanceId: number, syncAccountIds: number[]): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType78, instanceId: number, syncAccountIds: number[]): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14367,70 +14419,6 @@ export class SyncServiceProxy {
         }
         return Observable.of<number>(<any>null);
     }
-}
-
-@Injectable()
-export class SyncAccountServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    renameSyncAccount(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/RenameSyncAccount?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRenameSyncAccount(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRenameSyncAccount(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRenameSyncAccount(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
 
     /**
      * @instanceType (optional) 
@@ -14438,7 +14426,7 @@ export class SyncAccountServiceProxy {
      * @return Success
      */
     deleteSyncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/DeleteSyncAccount?";
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/DeleteSyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -29151,6 +29139,11 @@ export interface IRateCustomerInput {
 export class CustomerInfoDto implements ICustomerInfoDto {
     id: number;
     status: string;
+    assignedUserId: number;
+    starId: number;
+    ratingId: number;
+    tags: string[];
+    lists: string[];
     score: number;
     primaryContactInfo: PersonContactInfoDto;
     organizationContactInfo: OrganizationContactInfoDto;
@@ -29172,6 +29165,19 @@ export class CustomerInfoDto implements ICustomerInfoDto {
         if (data) {
             this.id = data["id"];
             this.status = data["status"];
+            this.assignedUserId = data["assignedUserId"];
+            this.starId = data["starId"];
+            this.ratingId = data["ratingId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(item);
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(item);
+            }
             this.score = data["score"];
             this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
             this.organizationContactInfo = data["organizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["organizationContactInfo"]) : <any>undefined;
@@ -29196,6 +29202,19 @@ export class CustomerInfoDto implements ICustomerInfoDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["status"] = this.status;
+        data["assignedUserId"] = this.assignedUserId;
+        data["starId"] = this.starId;
+        data["ratingId"] = this.ratingId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item);
+        }
         data["score"] = this.score;
         data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
         data["organizationContactInfo"] = this.organizationContactInfo ? this.organizationContactInfo.toJSON() : <any>undefined;
@@ -29214,6 +29233,11 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 export interface ICustomerInfoDto {
     id: number;
     status: string;
+    assignedUserId: number;
+    starId: number;
+    ratingId: number;
+    tags: string[];
+    lists: string[];
     score: number;
     primaryContactInfo: PersonContactInfoDto;
     organizationContactInfo: OrganizationContactInfoDto;

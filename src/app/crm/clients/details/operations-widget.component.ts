@@ -5,6 +5,7 @@ import { ListsListComponent } from '../../shared/lists-list/lists-list.component
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
+import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'operations-widget',
@@ -18,6 +19,7 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
 
+    @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();

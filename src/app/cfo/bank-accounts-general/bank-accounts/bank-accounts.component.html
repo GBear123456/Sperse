@@ -5,6 +5,7 @@
         (selectionChanged)="entitiesItemsChanged($event)"
         [selectionList]="businessEntities$ | async">
     </selection-filter>
+    <add-account-button class="add-link"></add-account-button>
 </div>
 <div class="accountsSummary">
     <info-component imageSource="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: accountsData?.currency : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>

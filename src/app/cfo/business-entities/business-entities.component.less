@@ -32,19 +32,22 @@
 
             &.status {
                 .dx-template-wrapper {
-                    width: 115px;
+                    width: 100%;
+                    max-width: 100%;
                     font-size: 13px;
                     font-weight: 500;
                     letter-spacing: 0.3px;
                     text-align: center;
                     line-height: 26px;
                     border-radius: 13px;
-                    padding: 0 15px;
-                    background-color: rgb(244, 246, 247);
+                    padding: 0 10px 0 20px;
+                    background-color: #f3f7fa;
+                    color: #424c56;
                     position: relative;
 
-                    .active {
-                        &:before {
+                    .active,
+                    .inactive {
+                        &::before {
                             content: "";
                             background: rgb(41, 214, 84);
                             width: 8px;
@@ -53,23 +56,14 @@
                             display: block;
                             position: absolute;
                             transform: translateY(-50%);
-                            left: 5;
+                            left: 10px;
                             top: 50%;
                         }
                     }
 
                     .inactive {
                         &:before {
-                            content: "";
-                            background: rgb(218, 219, 218);
-                            width: 8px;
-                            height: 8px;
-                            border-radius: 50%;
-                            display: block;
-                            position: absolute;
-                            transform: translateY(-50%);
-                            left: 5;
-                            top: 50%;
+                            background: red;
                         }
                     }
                 }
@@ -114,12 +108,6 @@
 
         .dx-datagrid-rowsview {
             border-top: 0;
-        }
-
-        .inactive {
-            td {
-                color: rgb(212, 216, 218);
-            }
         }
     }
 
