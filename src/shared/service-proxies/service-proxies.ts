@@ -14315,62 +14315,10 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    renameSyncAccount(instanceType: InstanceType77, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/RenameSyncAccount?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRenameSyncAccount(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRenameSyncAccount(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRenameSyncAccount(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType78, instanceId: number, syncAccountIds: number[]): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType77, instanceId: number, syncAccountIds: number[]): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14419,6 +14367,70 @@ export class SyncServiceProxy {
         }
         return Observable.of<number>(<any>null);
     }
+}
+
+@Injectable()
+export class SyncAccountServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    renameSyncAccount(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/RenameSyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRenameSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRenameSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRenameSyncAccount(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 
     /**
      * @instanceType (optional) 
@@ -14426,7 +14438,7 @@ export class SyncServiceProxy {
      * @return Success
      */
     deleteSyncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/DeleteSyncAccount?";
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/DeleteSyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -19685,6 +19697,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
+    syncRef: string;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -19708,6 +19721,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
                     this.bankAccounts.push(BankAccountDto.fromJS(item));
             }
             this.syncAccountStatus = data["syncAccountStatus"];
+            this.syncRef = data["syncRef"];
         }
     }
 
@@ -19730,6 +19744,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
                 data["bankAccounts"].push(item.toJSON());
         }
         data["syncAccountStatus"] = this.syncAccountStatus;
+        data["syncRef"] = this.syncRef;
         return data; 
     }
 }
@@ -19742,6 +19757,7 @@ export interface ISyncAccountBankDto {
     lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
+    syncRef: string;
 }
 
 export class BankAccountDto implements IBankAccountDto {
