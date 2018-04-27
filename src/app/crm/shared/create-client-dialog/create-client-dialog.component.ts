@@ -162,7 +162,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                             accessKey: 'ClientAssign'
                         }
                     },
-                    {
+                    this.data.isInLeadMode ? { 
+                        widget: 'dxDropDownMenu',
+                        disabled: true,
+                        name: 'stage', 
+                        options: {
+                            hint: this.l('Stage'),
+                            items: []
+                        }
+                    }: {
                         name: 'status',
                         widget: 'dxDropDownMenu',
                         options: {
@@ -177,7 +185,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                                 }
                             ]
                         }
-                    },
+                    }, 
                     {
                         name: 'discard',
                         action: this.resetFullDialog.bind(this)
