@@ -162,7 +162,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                             accessKey: 'ClientAssign'
                         }
                     },
-                    {
+                    this.data.isInLeadMode ? { 
+                        widget: 'dxDropDownMenu',
+                        disabled: true,
+                        name: 'stage', 
+                        options: {
+                            hint: this.l('Stage'),
+                            items: []
+                        }
+                    }: {
                         name: 'status',
                         widget: 'dxDropDownMenu',
                         options: {
@@ -177,7 +185,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                                 }
                             ]
                         }
-                    },
+                    }, 
                     {
                         name: 'discard',
                         action: this.resetFullDialog.bind(this)
@@ -331,7 +339,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
 
-        if (this.data.isInLeadMode && !this.websiteValidator.validate().isValid)
+        if (!this.websiteValidator.validate().isValid)
             return false;
 
         return true;

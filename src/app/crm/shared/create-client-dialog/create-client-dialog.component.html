@@ -27,7 +27,7 @@
                   </dx-text-box>
                   <span [class]="company && 'clear-contact' || 'hidden'" (click)="company = ''">+</span>
               </div>
-              <div class="field" *ngIf="data.isInLeadMode && type == 'business'">
+              <div class="field" *ngIf="type == 'business'">
                 <label>{{l('Title')}}</label>
                 <dx-text-box #titleComponent
                     name="title"
@@ -100,7 +100,7 @@
               <div class="field" *ngFor="let phone of contacts.phones[type]; index as i">
                   <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
               </div>
-              <dx-validation-group *ngIf="data.isInLeadMode && type == 'business'" (onInitialized)="initValidationGroup($event, 'websiteValidator')">
+              <dx-validation-group *ngIf="type == 'business'" (onInitialized)="initValidationGroup($event, 'websiteValidator')">
                 <div class="field">
                     <label>{{l('Website')}}</label>
                     <dx-text-box #websiteComponent
@@ -211,7 +211,7 @@
                           </dx-validator>
                       </dx-select-box>
                   </div>
-                  <div class="field" *ngIf="!data.isInLeadMode || type == 'personal'">
+                  <div class="field" *ngIf="type == 'personal'">
                       <label class="comment">{{l('Notes')}}</label>
                       <dx-text-area
                         name="comment"
