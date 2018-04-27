@@ -1,4 +1,4 @@
-﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
@@ -19,7 +19,7 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['./pipeline.component.less'],
     providers: [PipelineServiceProxy]
 })
-export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() dataSource: DataSource;
@@ -97,7 +97,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         });
     }
 
-    ngAfterViewInit(): void {
+    refresh() {
+        this.ngOnInit();
     }
 
     getLeadByElement(el, stage) {

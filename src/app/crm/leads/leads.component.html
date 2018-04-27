@@ -48,7 +48,7 @@
                         </dx-data-grid>
                     </div>
                 </div>
-                <div *ngIf="showPipeline" class="funnel-wrapper">
+                <div [hidden]="!showPipeline" class="funnel-wrapper">
                     <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>
