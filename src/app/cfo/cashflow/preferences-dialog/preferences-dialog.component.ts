@@ -32,8 +32,8 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         'Light Dark Theme'
     ];
     numberFormats = [
-        '-$1,000,000.0',
-        '-$1.000.000,0'
+        '1,000,000.0',
+        '1.000.000,0'
     ];
     currencies = [
         { value: 'EUR', caption: '€ EUR European Euro' },
@@ -41,6 +41,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         { value: 'INR', caption: '₹ INR Indian Rupee' },
         { value: 'JPY', caption: '¥ JPY Japanese Yen' },
         { value: 'ILS', caption: '₪ ILS Israeli Shekel' },
+        { value: 'UAH', caption: '‎₴ UAH Ukrainian Hryvnia' },
         { value: 'RUB', caption: '₽ RUB Russian Ruble' },
         { value: 'CHF', caption: 'C CHF Swiss Franc' },
         { value: 'SGD', caption: '$ SGD Singapore Dollar' },
