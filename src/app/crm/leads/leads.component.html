@@ -1,4 +1,9 @@
 <app-headline [config]="headlineConfig"></app-headline>
+<crm-tags-list [selectedKeys]="selectedClientKeys"></crm-tags-list>
+<crm-lists-list [selectedKeys]="selectedClientKeys"></crm-lists-list>
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys"></crm-user-assignment-list>
+<crm-rating [selectedKeys]="selectedClientKeys"></crm-rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys"></crm-stars-list>
 <div [hidden]="isDataLoaded && !totalRowCount" [@routerTransition]>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">

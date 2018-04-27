@@ -191,6 +191,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     };
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
+    currencySymbol = '$';
 
     private filterByChangeTimeout: any;
 
@@ -456,13 +457,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         localizationAndCurrency: {
             applyTo: 'cells',
             preferences: {
-                numberFormatting: {
-                    areas: ['data'],
-                    handleMethod: this.reformatCell
-                },
                 currency: {
                     areas: ['data'],
                     handleMethod: this.changeCurrency
+                },
+                numberFormatting: {
+                    areas: ['data'],
+                    handleMethod: this.reformatCell
                 }
             }
         },
@@ -1214,6 +1215,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cashflowSettingsResult;
+
+        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: this.cashflowGridSettings.localizationAndCurrency.currency});
+        this.currencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
+        this.currencySymbol = (777).toLocaleString('en-EN', {style: 'currency', currency: this.currencyId}).substr(0, 1);
+
         let thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
         /** Changed thousands and decimal separators */
         config({
@@ -1824,6 +1830,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.handleGetCashflowGridSettingsResult(result);
             this.closeTransactionsDetail();
             this.startLoading();
+
             /** @todo refactor - move to the showNetChangeRow and call here all
              *  appliedTo data methods before reloading the cashflow
              */
@@ -3240,12 +3247,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     changeCurrency(cellObj, preference) {
         let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue});
-        this.currencyId = getCurrency.indexOf('$') < 0 ? preference.sourceValue : 'USD';
+        this.currencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? preference.sourceValue : 'USD';
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
         if (!locale)
-            locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? 'tr' : 'en-EN';
+            locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 1 ? 'tr' : 'en-EN';
         value = value > -0.01 && value < 0.01 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
@@ -3866,10 +3873,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         wrapperButton.onclick = function (ev) {
             ev.stopPropagation();
         };
+        console.log(cellObj);
+
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
-            format: '$ #,###.##',
+            format: this.currencySymbol + ' #,###.##',
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
