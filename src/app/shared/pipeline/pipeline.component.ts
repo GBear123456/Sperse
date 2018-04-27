@@ -29,6 +29,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     dragulaName = 'stage';
 
+    private readonly STAGE_PAGE_COUNT = 5;
+
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
         private _pipelineServiceProxy: PipelineServiceProxy,
@@ -135,13 +137,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     loadStagesLeads(index, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
-        this.dataSource.pageSize(5);
+        this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
         this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
             stages[index]['leads'] = 
-                (stages[index]['leads'] || []).concat(leads);
+                _.uniq((stages[index]['leads'] || []).concat(leads));
             stages[index]['total'] = this.dataSource.totalCount();
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
@@ -156,7 +158,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     loadMore(stageIndex) {
         this.startLoading(true);
         this.loadStagesLeads(stageIndex, 
-            this.dataSource.pageIndex() + 1, true);
+            Math.floor(this.stages[stageIndex].leads.length 
+                / this.STAGE_PAGE_COUNT), true);
     }
 
     ngOnDestroy() {
