@@ -36,7 +36,7 @@ export class PipelineService {
                                     comment: result.comment
                                 })
                             ).subscribe((result) => { 
-                                lead.Stage = toStage.name;
+                                this.completeLeadUpdate(lead, fromStage, toStage);
                             });
                         } else
                             this.moveLeadTo(leadId, toStage, fromStage);
@@ -48,7 +48,7 @@ export class PipelineService {
                             stageId: toStage.id
                         })
                     ).finally(() => lead.locked = false).subscribe((res) => { 
-                        lead.Stage = toStage.name;
+                        this.completeLeadUpdate(lead, fromStage, toStage);
                     });
                 else if (action.sysId == 'CRM.ProcessLead')
                    this._leadService.processLead(
@@ -56,7 +56,7 @@ export class PipelineService {
                             leadId: leadId
                         })
                     ).finally(() => lead.locked = false).subscribe((res) => { 
-                        lead.Stage = toStage.name;
+                        this.completeLeadUpdate(lead, fromStage, toStage);
                     }); 
             } else
                 this.moveLeadTo(leadId, toStage, fromStage);
@@ -70,5 +70,11 @@ export class PipelineService {
             lead = sourceStage.leads.splice(itemIndex, 1).pop();
         targetStage.leads.unshift(lead);
         lead.Stage = targetStage.name;
+    }
+
+    completeLeadUpdate(lead, fromStage, toStage) {
+        lead.Stage = toStage.name;
+        fromStage.total--;
+        toStage.total++;
     }
 }
