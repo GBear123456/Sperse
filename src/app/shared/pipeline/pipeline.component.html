@@ -5,7 +5,7 @@
         </div>
         <div class="column-items {{stage.dragAllowed ? 'drag-allowed': ''}}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage.name}}">
             <ng-container *ngFor="let card of stage?.leads">
-                  <div class="card" accessKey="{{card.Id}}">
+                  <div class="card {{card.locked ? 'locked': ''}}" accessKey="{{card.Id}}">
                       <div class="container-fluid">
                           <div class="row">
                               <div class="text-right pipeline-photo-wrap">

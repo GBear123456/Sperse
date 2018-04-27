@@ -77,10 +77,11 @@
             }
             .column-items {
                 min-height: 100%;
+                padding: 1px;
+                border: 2px dashed transparent;
+                border-radius: 5px;
                 &.drop-area {
                     border: 2px dashed #DFDFDF;
-                    border-radius: 5px;
-                    padding: 1px;
                 }
                 &.drag-allowed {
                     .card {
@@ -99,13 +100,16 @@
                     letter-spacing: 0.3px;
                     color: #424c56;
                     overflow: hidden;
-                    .pipeline-photo-wrap {
-                        padding: 0 8px;
-                        min-width: 56px;
+                    &.locked {
+                        opacity: 0.3;
                     }
                     &.gu-transit {
                         opacity: 1;
                         background: #fafafa;
+                    }
+                    .pipeline-photo-wrap {
+                        padding: 0 8px;
+                        min-width: 56px;
                     }
                     .row {
                         margin-right: -15px;
