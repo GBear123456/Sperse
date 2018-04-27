@@ -380,12 +380,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         return data;
     }
 
-    detailCellPrepared(cell) {
-        if (cell.column.dataField === 'accountName') {
-            cell.cellElement.classList.add(cell.column.dataField);
-        }
-    }
-
     updateAccountInfo(id) {
         this.onUpdateAccount.emit({ id: id });
     }
