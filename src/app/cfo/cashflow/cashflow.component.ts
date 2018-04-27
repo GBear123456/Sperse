@@ -459,6 +459,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 numberFormatting: {
                     areas: ['data'],
                     handleMethod: this.reformatCell
+                },
+                currency: {
+                    areas: ['data'],
+                    handleMethod: this.changeCurrency
                 }
             }
         },
@@ -3229,10 +3233,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     reformatCell(cellObj, preference) {
         if (!cellObj.cellElement.classList.contains('hideZeroActivity') &&
-            !cellObj.cellElement.classList.contains('hideZeroValues') &&
-            cellObj.cell.value) {
+            !cellObj.cellElement.classList.contains('hideZeroValues')) {
             cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(cellObj.cell.value);
         }
+    }
+
+    changeCurrency(cellObj, preference) {
+        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currencyDisplay: 'symbol', currency: preference.sourceValue.substr(2, 3)});
+        this.currencyId = getCurrency.indexOf('$') < 0 ? preference.sourceValue.substr(2, 3) : 'USD';
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
@@ -3241,6 +3249,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         value = value > -0.01 && value < 0.01 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
+            currencyDisplay: 'symbol',
             currency: this.currencyId,
             maximumFractionDigits: fractionDigits,
             minimumFractionDigits: fractionDigits
