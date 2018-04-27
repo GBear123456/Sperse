@@ -2,6 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, DashboardServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/pluck';
@@ -27,10 +28,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
         private _dashboardProxy: DashboardServiceProxy,
-        private _bankAccountsService: BankAccountsService
+        private _bankAccountsService: BankAccountsService,
+        private _quovoService: QuovoService
     ) {
         super(injector);
     }
+
+    quovoHandler: any;
 
     ngOnInit() {
         this.bankAccounts$ = this._bankAccountsServiceProxy
@@ -46,6 +50,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         this.syncAccountsAmount$ = this.bankAccounts$.pluck('length');
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
         this.accountsDataTotalNetWorth$ = this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, []).pluck('totalNetWorth');
+        this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
     }
 
     entitiesItemsChanged(selectedEntities) {
@@ -92,5 +97,17 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             account['selected'] = true;
             account.bankAccounts.forEach(bankAccount => bankAccount['selected'] = true);
         });
+    }
+
+    onUpdateAccount(event) {
+        if (this.quovoHandler.isLoaded) {
+            this.quovoHandler.open(null, event.id);
+        }
+    }
+
+    addAccountClose(event) {
+        if (event.addedIds.length) {
+            console.log('forse sync and grid refresh should be here');
+        }
     }
 }

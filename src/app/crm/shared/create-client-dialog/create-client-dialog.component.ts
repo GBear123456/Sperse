@@ -53,12 +53,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     emailRegEx = AppConsts.regexPatterns.email;
 
     company: string;
+    title: string;
+    website: string;
     notes = {};
 
     addressTypes: any = [];
     addressValidator: any;
     emailValidator: any;
     phoneValidator: any;
+    websiteValidator: any;
 
     emails = {};
     emailTypePersonalDefault = 'P';
@@ -257,6 +260,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             phoneNumbers: this.getPhoneContactInput(ContactTypes.Personal),
             address: this.getAddressContactInput(ContactTypes.Personal),
             companyName: this.company,
+            title: this.title,
+            organizationWebSite: this.website,
             organizationEmailAddresses: this.getEmailContactInput(ContactTypes.Business),
             organizationPhoneNumbers: this.getPhoneContactInput(ContactTypes.Business),
             organizationAddress: this.getAddressContactInput(ContactTypes.Business),
@@ -325,7 +330,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
           ) && !this.company
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
-        return true;            
+
+        if (this.data.isInLeadMode && !this.websiteValidator.validate().isValid)
+            return false;
+
+        return true;
     }
 
     checkAddContactByField(field) {

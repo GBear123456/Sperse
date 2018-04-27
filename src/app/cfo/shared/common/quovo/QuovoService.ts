@@ -15,12 +15,24 @@ export class QuovoHandler {
 
     onClose: Function;
 
-    open(onClose: Function = null) {
+    open(onClose: Function = null, connectionId: number = null) {
         if (!this.isLoaded || this.isOpened) { return; }
 
         this.onClose = onClose;
         this.addedConnectionIds.length = 0;
-        this.handler.open();
+        if (connectionId) {
+            if (typeof (connectionId) !== 'number') {
+                connectionId = parseInt(connectionId);
+            }
+
+            this.handler.open(
+                {
+                    connectionId: connectionId
+                });
+
+        } else {
+            this.handler.open();
+        }
     }
 
     close() {

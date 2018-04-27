@@ -19,6 +19,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     @Input() nameColumnWidth = 170;
     @Input() height;
     @Input() showColumnHeaders = false;
+    @Input() allowUpdateAccount = false;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
@@ -45,6 +46,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         }, 300);
     }
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
@@ -249,5 +251,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
 
     contentReady() {
         this.addEmptyRows();
+    }
+
+    updateAccountInfo(id) {
+        this.onUpdateAccount.emit({ id: id });
     }
 }

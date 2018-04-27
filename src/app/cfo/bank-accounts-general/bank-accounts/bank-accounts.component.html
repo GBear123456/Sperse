@@ -5,7 +5,7 @@
         (selectionChanged)="entitiesItemsChanged($event)"
         [selectionList]="businessEntities$ | async">
     </selection-filter>
-    <add-account-button class="add-link"></add-account-button>
+    <add-account-button class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
 </div>
 <div class="accountsSummary">
     <info-component imageSource="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: accountsData?.currency : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
@@ -16,6 +16,8 @@
     <bank-accounts-widget
         [height]="'100%'"
         [dataSource]="bankAccounts$ | async"
-        (selectionChanged)="selectedAccountsChange($event)">
+        (selectionChanged)="selectedAccountsChange($event)"
+        [allowUpdateAccount]="true"
+        (onUpdateAccount)="onUpdateAccount($event)">
     </bank-accounts-widget>
 </div>

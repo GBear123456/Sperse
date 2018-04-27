@@ -35,6 +35,7 @@
                 <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
                 <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
                 <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+                <dxi-column dataField="syncRef" caption="" cellTemplate="syncRefTemplate" [width]="150" alignment="center" [allowEditing]="false" [(visible)]="allowUpdateAccount"></dxi-column>
                 <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
 
                 <div *dxTemplate="let syncAccount of 'detail'">
@@ -97,6 +98,9 @@
                     </ng-container>
                 </div>
                 <div *dxTemplate="let cell of 'invisibleTemplate'">
+                </div>
+                <div *dxTemplate="let cell of 'syncRefTemplate'">
+                    <a (click)="updateAccountInfo(cell.text)">Update Info</a>
                 </div>
             </dx-data-grid>
         </div>
