@@ -3239,8 +3239,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     changeCurrency(cellObj, preference) {
-        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue.substr(2, 3)});
-        this.currencyId = getCurrency.indexOf('$') < 0 ? preference.sourceValue.substr(2, 3) : 'USD';
+        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue});
+        this.currencyId = getCurrency.indexOf('$') < 0 ? preference.sourceValue : 'USD';
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
