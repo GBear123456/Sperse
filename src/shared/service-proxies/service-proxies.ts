@@ -44824,9 +44824,10 @@ export enum SendEmailActivationLinkInputTenantHostType {
 
 export enum SyncAccountBankDtoSyncAccountStatus {
     InProgress = <any>"InProgress", 
-    Completed = <any>"Completed", 
-    Failed = <any>"Failed", 
+    ActionRequired = <any>"ActionRequired", 
+    SyncPending = <any>"SyncPending", 
     Unavailable = <any>"Unavailable", 
+    Completed = <any>"Completed", 
 }
 
 export enum BankAccountDailyStatDtoPeriod {
@@ -45138,9 +45139,10 @@ export enum TenantLoginInfoDtoPaymentPeriodType {
 
 export enum SyncProgressDtoSyncStatus {
     InProgress = <any>"InProgress", 
-    Completed = <any>"Completed", 
-    Failed = <any>"Failed", 
+    ActionRequired = <any>"ActionRequired", 
+    SyncPending = <any>"SyncPending", 
     Unavailable = <any>"Unavailable", 
+    Completed = <any>"Completed", 
 }
 
 export enum CreateTenancyInputTenantHostType {
