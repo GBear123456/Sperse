@@ -133,7 +133,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    loadStagesLeads(index, page = 0) {
+    loadStagesLeads(index, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(5);
         this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
@@ -143,7 +143,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stages[index]['leads'] = 
                 (stages[index]['leads'] || []).concat(leads);
             stages[index]['total'] = this.dataSource.totalCount();
-            if (this.pipeline.stages[++index])
+            if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
                 this._pipelineService.stages = 
@@ -153,10 +153,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    loadMore() {
+    loadMore(stageIndex) {
         this.startLoading(true);
-        this.loadStagesLeads(0, 
-            this.dataSource.pageIndex() + 1);
+        this.loadStagesLeads(stageIndex, 
+            this.dataSource.pageIndex() + 1, true);
     }
 
     ngOnDestroy() {

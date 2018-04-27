@@ -35,7 +35,7 @@ export class PipelineService {
                                     cancellationReasonId: result.reasonId,
                                     comment: result.comment
                                 })
-                            ).subscribe((result) => { 
+                            ).finally(() => lead.locked = false).subscribe((result) => { 
                                 this.completeLeadUpdate(lead, fromStage, toStage);
                             });
                         } else
