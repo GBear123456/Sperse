@@ -11,9 +11,12 @@
             <dx-list
                 height="350"
                 [searchEnabled]="true"
+                [searchExpr]="'name'"
                 [selectionMode]="'single'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
+                [keyExpr]="'id'"
+                [selectedItemKeys]="selectedItemKeys"
                 (onInitialized)="onInitialized($event)">
                 <div *dxTemplate="let data of 'item'">
                     {{data.name}}

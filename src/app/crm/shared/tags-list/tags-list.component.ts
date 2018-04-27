@@ -12,10 +12,18 @@ import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput } fro
 export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
+    @Input()
+    set selectedItems(value) {
+        this.selectedTags = value;
+        this.editClientMode = true;
+    }
     list: any;
+    selectedTags = [];
 
     listComponent: any;
     tooltipVisible = false;
+    showAddButton = false;
+    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -26,13 +34,15 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
+        if (!this.editClientMode && this.listComponent)
+            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
         this.selectedKeys = selectedKeys || this.selectedKeys;
         if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
             let tags = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) 
+                return this.listComponent.isItemSelected(index)
                     && CustomerTagInput.fromJS({name: item});
             }).filter(Boolean);
 
@@ -42,7 +52,11 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                     tags: tags
                 })).subscribe((result) => {});
             });
-            this.listComponent.unselectAll();
+            if (this.editClientMode) {
+                this.selectedTags = tags.map((item) => {
+                    return item.name;
+                });
+            }
         }
         this.tooltipVisible = false;
     }
@@ -60,5 +74,16 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this._tagsService.getTags().subscribe((result) => {
             this.list = result.map((obj) => obj.name);
         });
+    }
+
+    addNewTag() {
+        this.list.push(this.searchValue);
+        this.showAddButton = false;
+    }
+
+    onSearch = ($event) => {
+        this.searchValue = $event.event.target.value;
+        this.showAddButton = this.list.every((item) => !item.includes(this.searchValue));
+        $event.component.option('showClearButton', !this.showAddButton);
     }
 }

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{l('Lead cancel confirmation')}}</h2>
+<mat-dialog-content>
+    <dx-radio-group 
+        [dataSource]="reasons"
+        [displayExpr]="'name'"
+        [valueExpr]="'id'"
+        [(value)]="reasonId">
+    </dx-radio-group>
+    <dx-text-area
+        [placeholder]="l('Comment')"
+        [(value)]="comment">
+    </dx-text-area>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+  <button md-button (click)="confirm($event)" class="button-layout button-primary">{{l('Confirm')}}</button>
+</mat-dialog-actions>

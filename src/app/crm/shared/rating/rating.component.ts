@@ -13,6 +13,11 @@ import { AppConsts } from '@shared/AppConsts';
 export class RatingComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Rating']";
+    @Input()
+    set selectedItemKey(value) {
+        this.ratingValue = value;
+        this.editClientMode = true;
+    }
 
     ratingMin: number;
     ratingMax: number;
@@ -21,6 +26,7 @@ export class RatingComponent extends AppComponentBase implements OnInit {
 
     sliederComponent: any;
     tooltipVisible = false;
+    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -33,8 +39,9 @@ export class RatingComponent extends AppComponentBase implements OnInit {
     }
 
     toggle() {
-        this.ratingValue = this.ratingMin;
         this.tooltipVisible = !this.tooltipVisible;
+        if (!this.editClientMode)
+            this.ratingValue = this.ratingMin;
     }
 
     apply(selectedKeys = undefined) {
@@ -53,6 +60,7 @@ export class RatingComponent extends AppComponentBase implements OnInit {
     clear() {
         this.ratingValue = undefined;
         this.apply();
+        this.ratingValue = this.ratingMin;
     }
 
     onInitialized($event) {
@@ -64,7 +72,8 @@ export class RatingComponent extends AppComponentBase implements OnInit {
             if (result.length) {
                 this.ratingMin = result[0].id;
                 this.ratingMax = result[result.length - 1].id;
-                this.ratingValue = this.ratingMin;
+                if (!this.ratingValue)
+                    this.ratingValue = this.ratingMin;
             }
         });
     }

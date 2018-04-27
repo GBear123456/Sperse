@@ -3,6 +3,22 @@
         padding: 0 20px;
         border-bottom: 1px solid #ddd;
         height: 60px;
+
+        .add-link {
+            color: #00AEEF;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            font-weight: 500;
+            margin-left: auto;
+            cursor: pointer;
+            transition: .2s;
+            float: right;
+
+            &:hover {
+                color: lighten(#00AEEF, 20%);
+            }
+        }
     }
 
     .bank-accounts {
@@ -13,7 +29,10 @@
     .accountsSummary {
         display: flex;
         padding: 20px;
+        padding-top: 0px;
         justify-content: space-between;
+        clear: both;
+
         info-component {
             max-width: 32%;
             width: 100%;

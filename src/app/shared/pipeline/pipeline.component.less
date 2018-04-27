@@ -1,18 +1,22 @@
 :host {
-    vertical-align: bottom;
-    vertical-align: bottom;
+    margin: 0px 0px;
     display: flex;
     flex-flow: wrap;
     justify-content: flex-end;
 
     .load-more {
         z-index: 10;    
-        color: #00aeef;
         cursor: pointer;
-        float: right;
-        padding: 20px;
-        text-decoration: underline;
-        font-weight: 500;
+        display: inline-block;
+        width: 100%;
+        height: 30px;
+        box-shadow: 0 0 20px 0 rgba(30, 32, 33, 0.11);
+        background-color: #f3f7fa;
+        border: solid 1px #e5e9ec;
+        text-align: center;
+        img {
+            padding: 10px;
+        }
     }
     .pipeline-wrapper {
         width: 100%;
@@ -78,10 +82,11 @@
             }
             .column-items {
                 min-height: 100%;
+                padding: 1px;
+                border: 2px dashed transparent;
+                border-radius: 5px;
                 &.drop-area {
-                    border: 1px dashed#DFDFDF;
-                    border-radius: 5px;
-                    padding: 1px;
+                    border: 2px dashed #DFDFDF;
                 }
                 &.drag-allowed {
                     .card {
@@ -89,10 +94,15 @@
                     }
                 }
                 .card {
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none; 
                     cursor: not-allowed;
-                    min-height: 146px;
-                    max-height: 146px;
-                    padding: 16px 0px 0px 0px;
+                    min-height: 95px;
+                    padding: 13px 0px 0px 0px;
                     margin-bottom: 11px;
                     font-size: 15px;
                     line-height: 1.4;
@@ -101,17 +111,21 @@
                     letter-spacing: 0.3px;
                     color: #424c56;
                     overflow: hidden;
-                    .pipeline-photo-wrap {
-                        padding: 0 8px;
-                        min-width: 56px;
+                    &.locked {
+                        opacity: 0.3;
                     }
                     &.gu-transit {
                         opacity: 1;
                         background: #fafafa;
                     }
+                    .pipeline-photo-wrap {
+                        padding: 0 8px;
+                        min-width: 56px;
+                    }
                     .row {
                         margin-right: -15px;
                         &.item-data {
+                            display: none;
                             position: relative;
                             bottom: -11px;
                             padding: 10px 0px 3px;
@@ -146,17 +160,20 @@
                             }
                         }
                         .full-name {
+                            max-width: calc(~"100% - 56px");
+                            display: inline-block;
                             max-height: 42px;
-                            width: 100%;
                             padding: 0px 10px;
                             text-overflow: ellipsis;
                             overflow: hidden;
                             span {
                                 white-space: nowrap;
                             }
-                            .amount {  
+                            .company-name {  
+                                overflow: hidden;
+                                text-overflow: ellipsis;
                                 span {
-                                    font-size: 14px;
+                                    font-size: 12px;
                                     font-weight: 500;
                                     font-style: normal;
                                     font-stretch: normal;
@@ -171,6 +188,7 @@
                             border-radius: 50%;
                         }
                         .days-ago {
+                            height: 20px;
                             padding-left: 17px;
                             text-overflow: ellipsis;
                             overflow: hidden;
@@ -185,12 +203,8 @@
                                 color: #94979a;
                                 padding: 5px;
                                 vertical-align: middle;
-                                white-space: nowrap;
                             }
                         }                
-                    }
-                    .row + .row {
-                        margin-top: 6px;
                     }
                     .item-data {
                         font-size: 13px;
@@ -284,9 +298,6 @@
     text-align: left;
     color: #202b35;
     cursor: grabbing;
-    .row + .row {
-        margin-top: 10px;
-    }
     .pipeline-photo-wrap {
         padding: 0 8px;
         min-width: 56px;
@@ -297,6 +308,7 @@
     .row {
         margin-right: -15px;
         &.item-data {
+            display: none;
             position: relative;
             bottom: -15px;
             padding: 10px 0px;
@@ -321,6 +333,7 @@
         }
         .full-name {
             max-height: 42px;
+            max-width: calc(~"100% - 56px");
             width: 100%;
             padding: 0px 10px;
             text-overflow: ellipsis;
@@ -328,9 +341,11 @@
             span {
                 white-space: nowrap;
             }
-            .amount {  
+            .company-name {  
+                overflow: hidden;
+                text-overflow: ellipsis;
                 span {
-                    font-size: 14px;
+                    font-size: 12px;
                     font-weight: 500;
                     font-style: normal;
                     font-stretch: normal;
@@ -345,6 +360,7 @@
             border-radius: 50%;
         }
         .days-ago {
+            height: 20px;
             padding-left: 17px;
             text-overflow: ellipsis;
             overflow: hidden;
@@ -359,7 +375,6 @@
                 color: #94979a;
                 padding: 5px;
                 vertical-align: middle;
-                white-space: nowrap;
             }
         }                
     }

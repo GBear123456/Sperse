@@ -23,7 +23,7 @@
                       (onRowClick)="dataRowClick($event)"
                       (onCellClick)="dataCellClick($event)">
 
-            <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
+            <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
             <dxo-scrolling showScrollbar="never"></dxo-scrolling>
             <dxo-filter-row [visible]="false"></dxo-filter-row>
             <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
@@ -33,12 +33,12 @@
             <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
             <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+            <dxi-column dataField="syncRef" caption="" cellTemplate="syncRefTemplate" [width]="150" alignment="center" [allowEditing]="false" [(visible)]="allowUpdateAccount"></dxi-column>
             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
 
             <div *dxTemplate="let syncAccount of 'detail'">
                 <div class="bank-accounts-grid-container">
-                    <dx-data-grid [dataSource]="syncAccount.data.bankAccounts"
-                                  [showBorders]="false"
+                    <dx-data-grid [showBorders]="false"
                                   [width]="'100%'"
                                   [showColumnLines]="false"
                                   [showRowLines]="false"
@@ -56,30 +56,28 @@
                             mode="popup"
                             [allowUpdating]="false">
                             <dxo-popup #editingPopup
-                                accessKey="accountsEditingPopup"
-                                [height]="340"
-                                [width]="700"
-                                [deferRendering]="true">
+                                       accessKey="accountsEditingPopup"
+                                       [height]="340"
+                                       [width]="700"
+                                       [deferRendering]="true">
                             </dxo-popup>
                         </dxo-editing>
                         <dxo-selection [deferred]="true"></dxo-selection>
                         <dxo-filter-row [visible]="false"></dxo-filter-row>
-                        <dxi-column dataField="highlighted" [allowEditing]="false" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
-                        <dxi-column dataField="selected" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                        <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="true"></dxi-column>
-                        <dxi-column dataField="visible" [allowEditing]="false" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption=""
+                        <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column dataField="selected" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
+                        <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="false"></dxi-column>
+                        <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption=""
                                     cellTemplate="invisibleTemplate"></dxi-column>
-                        <dxi-column dataField="accountNumber" [allowEditing]="false" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="true"></dxi-column>
+                        <dxi-column dataField="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="false"></dxi-column>
                         <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                     cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-
                         <dxi-column dataField="businessEntityId" [allowEditing]="true" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
-
                         <dxi-column dataField="isActive" [allowEditing]="true" [visible]="false"></dxi-column>
-
                         <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate"
                                     [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
-
+                        <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate"
+                                    [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text)">
                                 <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
@@ -89,16 +87,6 @@
                             <span [attr.data-text]="cell.text | lowercase">{{cell.text}}</span>
                         </div>
                         <div *dxTemplate="let cell of 'invisibleTemplate'"></div>
-                        <div *dxTemplate="let cell of 'businessEntityEditSelect'">
-                            <dx-select-box #selectBox
-                                [items]="businessEntities"
-                                displayExpr="name"
-                                displayValue="id"
-                                valueExpr="id"
-                                [(value)]="cell.value"
-                                (onValueChanged)="cell.setValue($event.value)">
-                            </dx-select-box>
-                        </div>
                     </dx-data-grid>
                 </div>
             </div>
@@ -122,8 +110,22 @@
                     <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y '}}</div>
                 </ng-container>
             </div>
-            <div *dxTemplate="let cell of 'invisibleTemplate'">
+            <div *dxTemplate="let cell of 'invisibleTemplate'"></div>
+            <div *dxTemplate="let cell of 'businessEntityEditSelect'">
+                <dx-select-box #selectBox
+                               [items]="businessEntities"
+                               displayExpr="name"
+                               displayValue="id"
+                               valueExpr="id"
+                               [(value)]="cell.value"
+                               (onValueChanged)="cell.setValue($event.value)">
+                </dx-select-box>
+            </div>
+            <div *dxTemplate="let cell of 'syncRefTemplate'">
+                <a (click)="updateAccountInfo(cell.text)">Update Info</a>
             </div>
         </dx-data-grid>
     </div>
 </dx-scroll-view>
+
+

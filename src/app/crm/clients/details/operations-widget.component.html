@@ -1,7 +1,8 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <crm-tags-list [selectedKeys]="[clientId]"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="[clientId]"></crm-lists-list>
-    <crm-user-assignment-list [selectedKeys]="[clientId]"></crm-user-assignment-list>
-    <crm-rating [selectedKeys]="[clientId]"></crm-rating>
+    <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.tags"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.lists"></crm-lists-list>
+    <crm-user-assignment-list [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.assignedUserId"></crm-user-assignment-list>
+    <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.ratingId"></crm-rating>
+    <crm-stars-list [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.starId"></crm-stars-list>
 </div>

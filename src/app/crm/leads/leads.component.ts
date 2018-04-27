@@ -32,7 +32,8 @@ import { CommonLookupServiceProxy, LeadServiceProxy } from '@shared/service-prox
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
-
+import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
 
@@ -49,12 +50,15 @@ import * as moment from 'moment';
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
 
     firstRefresh = false;
     gridDataSource: any = {};
     collection: any;
     showPipeline = false;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+    selectedLeads = [];
+    stages = [];
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -79,6 +83,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
@@ -116,7 +121,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     refreshDataGrid() {
-        this.dataGrid.instance.refresh();
+        if (this.showPipeline)
+            this.pipelineComponent.refresh();
+        else
+            this.dataGrid.instance.refresh();
     }
 
     showColumnChooser() {
@@ -330,7 +338,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 location: 'before', items: [
                     { name: 'assign' }, 
-                    { name: 'status' }, 
+                    { 
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.selectedLeads.length,
+                        name: 'stage', 
+                        options: {
+                            hint: this.l('Stage'),
+                            items: this.stages
+                        }
+                    }, 
                     { name: 'lists' },
                     {
                         name: 'tags',
@@ -505,5 +521,32 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 isInLeadMode: true
             }
         }).afterClosed().subscribe(() => this.refreshDataGrid())
+    }
+
+    onSelectionChanged($event) {
+        this.selectedLeads = $event.component.getSelectedRowsData();
+        this.initToolbarConfig();
+    }
+
+    onStagesLoaded($event) {
+        this.stages = $event.map((stage) => {
+            return {
+                text: stage.name, 
+                action: this.updateLeadsStage.bind(this)  
+            };
+        });
+        this.initToolbarConfig();
+    }
+
+    updateLeadsStage($event) {
+        let targetStage = $event.itemData.text,
+            ignoredStages = [];
+        this.selectedLeads.forEach((lead) => {
+            if (!this._pipelineService.updateLeadStage(lead.Id, lead.Stage, targetStage))
+                ignoredStages.push(lead.Stage);
+        });
+        if (ignoredStages.length)
+            this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
+        this.refreshDataGrid();
     }
 }

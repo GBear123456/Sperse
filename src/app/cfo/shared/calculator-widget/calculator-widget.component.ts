@@ -5,7 +5,7 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 @Component({
     selector: 'calculator-widget',
     templateUrl: './calculator-widget.component.html',
-    styleUrls: ['./calculator-widget.component.css']
+    styleUrls: ['./calculator-widget.component.less']
 })
 
 export class CalculatorComponent extends CFOComponentBase {

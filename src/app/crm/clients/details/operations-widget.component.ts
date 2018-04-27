@@ -4,6 +4,8 @@ import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
+import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
+import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'operations-widget',
@@ -15,7 +17,9 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
 
+    @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
@@ -59,6 +63,10 @@ export class OperationsWidgetComponent implements OnInit {
                 action: this.toggleRating.bind(this),
             },
             {
+                name: 'star',
+                action: this.toggleStars.bind(this),
+            },
+            {
                 name: 'delete',
                 action: this.delete.bind(this)
             }
@@ -100,6 +108,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     toggleRating() {
         this.ratingComponent.toggle();
+    }
+
+    toggleStars() {
+        this.starsListComponent.toggle();
     }
 
     constructor() { }

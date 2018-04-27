@@ -1,8 +1,12 @@
-﻿import {Component, Injector, Input, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
-import { PipelineDto, PipelineServiceProxy, PipelineData } from '@shared/service-proxies/service-proxies';
-import { AppConsts } from '@shared/AppConsts';
+﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
+import { PipelineDto, PipelineServiceProxy, PipelineData, ProcessLeadInput,
+    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
+
+import { AppConsts } from '@shared/AppConsts';
+import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
 
 import * as _ from 'underscore';
@@ -15,7 +19,9 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['./pipeline.component.less'],
     providers: [PipelineServiceProxy]
 })
-export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
+
     @Input() dataSource: DataSource;
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
@@ -24,8 +30,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     dragulaName = 'stage';
 
     constructor(injector: Injector,
-        private _pipelineService: PipelineServiceProxy,
-        private _dragulaService: DragulaService
+        private _leadService: LeadServiceProxy,
+        private _pipelineServiceProxy: PipelineServiceProxy,
+        private _dragulaService: DragulaService,
+        private _pipelineService: PipelineService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -34,10 +42,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
             if (newStage != oldStage)
-                this.updateLeadStage(leadId, newStage);
+                _pipelineService.updateLeadStage(leadId, oldStage, newStage);
+        });
+        _dragulaService.dragend.subscribe((value) => {
             [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
                 el.classList.remove('drop-area');
-            })
+            });
         });
         _dragulaService.setOptions(this.dragulaName, {
             moves: (el, source) => {
@@ -64,8 +74,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                   return false; // elements can't be dropped in any of the `containers` by default
             },
             invalid: (el) => {
-              let stage = this.getStageByElement(el);
-              if (stage && stage.accessibleActions.length)
+              let stage = this.getStageByElement(el),
+                  lead = this.getLeadByElement(el, stage);
+              if (lead && !lead.locked && stage && stage.accessibleActions.length)
                   return stage.accessibleActions.every((action) => { 
                       return !action.targetStageId;
                   });
@@ -77,20 +88,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
 
     ngOnInit(): void {
         this.startLoading(true);
-        this._pipelineService
+        this._pipelineServiceProxy
             .getPipelinesData(this.pipelinePurposeId)
             .subscribe((result: PipelineData[]) => {
-                if (result.length > 0)
-                {
+                if (result.length > 0) {
                     this.getPipelineDefinition(result[0].id);
                 }
         });
     }
 
-    ngAfterViewInit(): void {
+    refresh() {
+        this.ngOnInit();
     }
 
-    updateLeadStage(leadId, newStage) {
+    getLeadByElement(el, stage) {
+        return stage && _.findWhere(stage.leads, {Id: 
+            parseInt(this.getAccessKey(el.closest('.card')))});
     }
 
     getStageByElement(el) {
@@ -103,7 +116,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     }
 
     getPipelineDefinition(pipelineId: number): void {        
-        this._pipelineService
+        this._pipelineServiceProxy
             .getPipelineDefinition(pipelineId)
             .subscribe(result => {
                 result.stages.sort((a, b) => {
@@ -115,38 +128,35 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                     });
                 });
                 this.pipeline = result;
+                this.onStagesLoaded.emit(result.stages);
                 this.loadStagesLeads(0);
             });
     }
 
-    loadStagesLeads(index) {
+    loadStagesLeads(index, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(5);
         this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
         this.dataSource.sort({getter: 'CreationTime', desc: true});
+        this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
-            if (leads.length) {
-                stages[index]['leads'] = 
-                    (stages[index]['leads'] || []).concat(leads);
-                stages[index]['total'] = 
-                    (stages[index]['total'] || 0) +
-                    this.dataSource.totalCount();
-            }
-            if (this.pipeline.stages[++index])
-                this.loadStagesLeads(index);
+            stages[index]['leads'] = 
+                (stages[index]['leads'] || []).concat(leads);
+            stages[index]['total'] = this.dataSource.totalCount();
+            if (!oneStageOnly && this.pipeline.stages[++index])
+                this.loadStagesLeads(index, page);
             else {
-                this.stages = this.pipeline.stages;
+                this._pipelineService.stages = 
+                    this.stages = this.pipeline.stages;
                 this.finishLoading(true);
             }
         });
-
     }
 
-    loadMore() {
+    loadMore(stageIndex) {
         this.startLoading(true);
-        this.dataSource.pageIndex(
-            this.dataSource.pageIndex() + 1);
-        this.loadStagesLeads(0);
+        this.loadStagesLeads(stageIndex, 
+            this.dataSource.pageIndex() + 1, true);
     }
 
     ngOnDestroy() {

@@ -46,7 +46,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
             if (this.loading) {
                 this.finishLoading(true);
             }
-            this.quovoHandler.handler.open();
+            this.quovoHandler.open(e => this.onQuovoHandlerClose(e));
             return;
         } else {
             if (!this.loading) {
@@ -84,8 +84,8 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.rootComponent.overflowHidden();
     }
 
-    onQuovoHandlerClose() {
-        if (this.quovoHandler.addedConnections.length) {
+    onQuovoHandlerClose(e) {
+        if (e.addedIds.length) {
             this.startLoading(true);
             this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true)
                 .finally(() => {
@@ -102,7 +102,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
 
     initQuovoHandler() {
         if (!this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId, () => this.onQuovoHandlerClose());
+            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
         }
     }
 }

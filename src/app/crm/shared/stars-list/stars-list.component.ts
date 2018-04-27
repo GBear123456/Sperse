@@ -1,25 +1,27 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { UserAssignmentServiceProxy, AssignUserToCustomerInput, UserInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomerStarsServiceProxy, MarkCustomerInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
-  selector: 'crm-user-assignment-list',
-  templateUrl: './user-assignment-list.component.html',
-  styleUrls: ['./user-assignment-list.component.less'],
-  providers: [UserAssignmentServiceProxy]
+  selector: 'crm-stars-list',
+  templateUrl: './stars-list.component.html',
+  styleUrls: ['./stars-list.component.less'],
+  providers: [CustomerStarsServiceProxy]
 })
-export class UserAssignmentComponent extends AppComponentBase implements OnInit {
+export class StarsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Assign']";
     @Input()
     set selectedItemKey(value) {
         this.selectedItemKeys = [value];
         this.editClientMode = true;
     }
-    list: any;
+
+    selectedItems = [];
     selectedItemKeys = [];
+    @Input() targetSelector = "[aria-label='star-icon']";
+    list: any;
 
     listComponent: any;
     tooltipVisible = false;
@@ -28,7 +30,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _tagsService: UserAssignmentServiceProxy
+        private _starsService: CustomerStarsServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -47,15 +49,15 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             let selectedItems = this.list.map((item, index) => {
                 return this.listComponent.isItemSelected(index) && item;
             }).filter(Boolean);
-            let userId = selectedItems.length > 0 ? selectedItems[0].id : undefined;
+            let starId = selectedItems.length > 0 ? selectedItems[0].id : undefined;
             this.selectedKeys.forEach((key) => {
-                this._tagsService.assignUserToCustomer(AssignUserToCustomerInput.fromJS({
+                this._starsService.markCustomer(MarkCustomerInput.fromJS({
                     customerId: key,
-                    userId: userId
+                    starId: starId
                 })).subscribe((result) => {});
             });
             if (this.editClientMode)
-                this.selectedItemKeys = [userId];
+                this.selectedItemKeys = [starId];
         }
         this.tooltipVisible = false;
     }
@@ -70,7 +72,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
-        this._tagsService.getUsers().subscribe((result) => {
+        this._starsService.getStars().subscribe((result) => {
             this.list = result;
         });
     }

@@ -18,12 +18,12 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
-    @ViewChild('selectBox') selectBox;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 170;
     @Input() height;
     @Input() showColumnHeaders = false;
+    @Input() allowUpdateAccount = false;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
@@ -52,6 +52,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     @Input() allowBankAccountsEditing = false;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
@@ -385,5 +386,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         }
     }
 
-
+    updateAccountInfo(id) {
+        this.onUpdateAccount.emit({ id: id });
+    }
 }

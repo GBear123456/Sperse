@@ -1,6 +1,6 @@
 <table class="calculator">
     <tbody>
-        <tr>
+        <tr class="top">
             <td colspan="2" class="history">
                 <div>
                     <table>
@@ -12,7 +12,9 @@
                         </tr>
                         <tr *ngFor="let history of this.calcHistory">
                             <td class="tdOperator"><span class="operator">{{ history.Operator }}</span></td>
-                            <td class="tdOperand">{{ history.Operand }}</td>
+                            <td class="tdOperand">
+                                <span class="inputed">{{ history.Operand }}</span>
+                            </td>
                             <td class="tdEquals">
                                 <span *ngIf="history.result != ''">=</span>
                             </td>
@@ -24,7 +26,7 @@
                 </div>
             </td>
         </tr>
-        <tr>
+        <tr class="middle">
             <td class="lastOp">
                 {{ lastOperation }}
             </td>
@@ -33,7 +35,7 @@
                        (keydown)="inputKeyPress($event)" autofocus />
             </td>
         </tr>
-        <tr>
+        <tr class="footer">
             <td colspan="2">
                 <table cellspacing="0">
                     <tr>

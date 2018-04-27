@@ -16,6 +16,7 @@ import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../shared/rating/rating.component';
+import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { MatDialog } from '@angular/material';
 
@@ -58,6 +59,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -322,6 +324,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     {
                         name: 'status',
                         widget: 'dxDropDownMenu',
+                        disabled: !this.selectedClientKeys.length,
                         options: {
                             hint: 'Status',
                             items: [
@@ -352,7 +355,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     },
                     {
                         name: 'star',
-                        action: Function()
+                        action: this.toggleStars.bind(this),
+                        disabled: !this.selectedClientKeys.length
                     }
                 ]
             },
@@ -360,7 +364,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                 location: 'before', items: [
                     {
                         name: 'delete',
-                        action: this.deleteClients.bind(this)
+                        action: this.deleteClients.bind(this),
+                        disabled: !this.selectedClientKeys.length
                     }
                 ]
             },
@@ -439,6 +444,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
     toggleRating() {
         this.ratingComponent.toggle();
+    }
+
+    toggleStars() {
+        this.starsListComponent.toggle();
     }
 
     filterByZipCode(filter: FilterModel) {

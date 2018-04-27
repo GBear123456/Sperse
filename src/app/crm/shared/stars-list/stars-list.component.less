@@ -1,0 +1,73 @@
+.lists-tooltip-container {
+    font-size: 15px;
+    width: 180px!important;
+    height: 315px!important;
+    overflow: hidden;
+    
+    .title {
+        float: left;
+        font-size: 18px;        
+        font-weight: 500;
+        padding-top: 5px;
+    }
+   
+    .actions {
+        padding-bottom: 10px;
+    }
+
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+        
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }        
+
+    /deep/ .dx-widget {
+       .dx-placeholder {
+            font-weight: 400;
+        }
+        .dx-item-content {  
+            text-align: left;
+        }
+        .dx-icon-clear {
+            right: 0px;
+        }
+    }
+
+    .star {
+        width: 25px;
+        height: 25px;
+        margin-bottom: 2px;
+        margin-left: 20px;
+        -webkit-mask-image: url(../../../../assets/common/icons/star-icon.svg);
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-size: 25px;
+
+        &.star-yellow {
+            background-color: rgb(230, 230, 0);
+        }
+
+        &.star-blue {
+            background-color: blue;
+        }
+
+        &.star-green {
+            background-color: green;
+        }
+
+        &.star-purple {
+            background-color: purple;
+        }
+
+        &.star-red {
+            background-color: red;
+        }
+    }
+}

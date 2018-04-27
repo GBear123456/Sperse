@@ -36,10 +36,21 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         '-$1.000.000,0'
     ];
     currencies = [
-        { text: '$ USD US Dollars' },
-        { text: '$ CAD Canadian Dollars', disabled: true },
-        { text: '$ AUD Australian Dollars', disabled: true },
-        { text: '€ EUR Euros', disabled: true }
+        { value: 'EUR', caption: '€ EUR European Euro' },
+        { value: 'GBP', caption: '£ GBP British Pound' },
+        { value: 'INR', caption: '₹ INR Indian Rupee' },
+        { value: 'JPY', caption: '¥ JPY Japanese Yen' },
+        { value: 'ILS', caption: '₪ ILS Israeli Shekel' },
+        { value: 'RUB', caption: '₽ RUB Russian Ruble' },
+        { value: 'CHF', caption: 'C CHF Swiss Franc' },
+        { value: 'SGD', caption: '$ SGD Singapore Dollar' },
+        { value: 'AUD', caption: '$ AUD Australian Dollar' },
+        { value: 'CAD', caption: '$ CAD Canadian Dollar' },
+        { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
+        { value: 'MXN', caption: '$ MXN Mexico Peso' },
+        { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
+        { value: 'GBP', caption: '£ GBP British Pound' },
+        { value: 'USD', caption: '$ USD US Dollar' }
     ];
     constructor(
         injector: Injector,

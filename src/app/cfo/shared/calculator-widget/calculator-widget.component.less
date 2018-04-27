@@ -1,0 +1,241 @@
+/* CSS used here will be applied after bootstrap.css */
+html, body, table, td {
+    font-family: "Montserrat Light", sans-serif;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.63;
+    letter-spacing: normal;
+    color: #686f76;
+    margin-bottom: 0;
+}
+
+table {
+    &.calculator,
+    &.keypad,
+    &.operators {
+        border-spacing: 0;
+    }
+
+    &.calculator {
+        width: 280px;
+        height: 100%;
+        border: 1px solid #ccc;
+
+        .top {
+            height: auto;
+        }
+
+        .middle {
+            height: 72px;
+        }
+
+        .footer {
+            height: 362px;
+
+            > td {
+                vertical-align: top;
+
+                > table {
+                    height: auto;
+                }
+            }
+        }
+
+        td {
+            padding: 0;
+
+            &.history {
+                div {
+                    // height: 200px;
+                    height: 100%;
+                    overflow-y: auto;
+                    padding-right: 5px;
+                    font-size: 13px;
+                }
+
+                table {
+                    width: 100%;
+
+                    td {
+                        font-size: 16px;
+                        font-weight: 500;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1.63;
+                        letter-spacing: normal;
+                        text-align: right;
+                        padding: 5px 8px;
+                        vertical-align: bottom;
+
+                        span.inputed {
+                            padding-bottom: 4px;
+                            border-bottom: 1px solid #d8d8d8;
+                        }
+                        span.result {
+                            min-width: 61px;
+                            padding-bottom: 4px;
+                            border-bottom: 1px dashed #d8d8d8;
+                            font-size: 13px;
+                            font-weight: 300;
+                        }
+                    }
+
+                    tr:nth-child(even) .tdOperator {
+                        color: #f9af07;
+                    }
+
+                    tr:nth-child(odd) .tdOperator {
+                        color: #57be65;
+                    }
+
+                    tr:nth-child(even) .tdOperand {
+                        color: #00aeef;
+                    }
+
+                    tr:nth-child(odd) .tdOperand {
+                        color: #686f76;
+                    }
+
+                    td {
+                        text-align: right;
+
+                        &.ScientificModeToggle {
+                            padding: 6px 10px;
+                            text-align: left;
+                            color: #686f76;
+                            border-bottom: 1px solid #ccc;
+
+                            input {
+                                position: relative;
+                                top: 1px;
+                            }
+
+                            label {
+                                font-size: 15px;
+                            }
+                        }
+
+                        &.tdOperator {
+                            text-align: left;
+
+                            span.operator {
+                                font-size: 18px;
+                                font-family: Arial, Ubuntu, Helvetica, sans-serif;
+                            }
+                        }
+
+                        &.tdOperand {
+                            font-weight: 600;
+                        }
+
+                        &.tdEquals {
+                            width: 20px;
+                            color: #999;
+                        }
+
+                        &.tdResult {
+                            width: 10px;
+                        }
+                    }
+                }
+
+                .result {
+                    color: #999;
+                }
+            }
+        }
+
+        .tdInput,
+        .lastOp {
+            padding: 14px 0;
+            background-color: #f6f6f6;
+        }
+
+        .lastOp {
+            width: 30px;
+            height: 40px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .input {
+            border: 0;
+            background: none;
+            font-weight: 600;
+            width: 98%;
+            /*direction  : rtl;*/
+            text-align: right;
+            padding-right: 2%;
+            outline: none;
+
+            font-size: 34px;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 0.76;
+            letter-spacing: normal;
+            color: rgb(30, 38, 46);
+        }
+    }
+
+    &.keypad {
+        td {
+            width: 70px;
+            height: 50px;
+            border: 1px solid #efefef;
+            padding: 0;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #1e262e;
+            vertical-align: middle;
+
+            &:hover {
+                background-color: #eeeeee;
+            }
+
+            &.disabled {
+                background-color: #f6f6f6;
+                color: #999;
+                cursor: auto;
+            }
+        }
+
+        .backspace,
+        .clearKey {
+            background-color: #ffffff;
+            font-size: 20px;
+            color: #d1251f;
+        }
+    }
+
+    &.operators {
+        td {
+            width: 70px;
+            height: 50px;
+            border: 1px solid #efefef;
+            padding: 0;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            background-color: #d7eff9;
+            font-size: 32px;
+            color: #1e262e;
+            vertical-align: middle;
+
+            &:hover {
+                background-color: #b5e2f9;
+            }
+
+            &.equalsButton {
+                height: 100px;
+            }
+        }
+    }
+}

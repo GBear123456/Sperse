@@ -125,22 +125,6 @@
 
                         <dxo-paging [pageSize]="20"></dxo-paging>
 
-                        <div *dxTemplate="let data of 'bankAccountTotal'">
-                            <div class="informer" (click)="bankAccountSelector.toggleBankAccountTooltip()">
-                                <h2 class="count">{{bankAccountCount | number}}</h2>
-                                <span class="name">
-                                    {{l('Accounts')}}
-                                    <i id="subaccountsDetails" class="arrow"></i>
-                                </span>
-
-                                <bank-accounts-select targetBankAccountsTooltip="#subaccountsDetails"
-                                                      [highlightedBankAccountIds]="bankAccounts"
-                                                      useGlobalCache="true"
-                                                      (onBankAccountsSelected)="applyTotalBankAccountFilter($event)">
-                                </bank-accounts-select>
-                            </div>
-                        </div>
-
                         <div *dxTemplate="let data of 'startBalanceTotal'">
                             <div class="informer starting-balance">
                                 <h2 class="count">
@@ -287,4 +271,9 @@
         </div>
     </div>
 </div>
+<bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
+                      [highlightedBankAccountIds]="bankAccounts"
+                      useGlobalCache="true"
+                      (onBankAccountsSelected)="applyTotalBankAccountFilter($event)">
+</bank-accounts-select>
 <app-transaction-detail-info [transactionId]="transactionId"></app-transaction-detail-info>
