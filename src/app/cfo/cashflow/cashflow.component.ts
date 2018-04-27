@@ -3239,7 +3239,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     changeCurrency(cellObj, preference) {
-        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currencyDisplay: 'symbol', currency: preference.sourceValue.substr(2, 3)});
+        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue.substr(2, 3)});
         this.currencyId = getCurrency.indexOf('$') < 0 ? preference.sourceValue.substr(2, 3) : 'USD';
     }
 
@@ -3249,7 +3249,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         value = value > -0.01 && value < 0.01 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
-            currencyDisplay: 'symbol',
             currency: this.currencyId,
             maximumFractionDigits: fractionDigits,
             minimumFractionDigits: fractionDigits
@@ -3675,7 +3674,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     result.length !== 0 &&
                     clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountName                   
+                    clickedCellPrefix !== CategorizationPrefixes.AccountName
                 ) {
                     let forecastIds: number[] = [];
                     let forecastDates = [];
@@ -3724,16 +3723,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                                 }));
 
                                             this.updateTreePathes(item, true);
-                                            
+
                                         });
                                     });
-                                });                                
+                                });
 
                                 this.pivotGrid.instance.getDataSource().reload();
                                 this.notify.success(this.l('Cell_deleted'));
                             });
                     }
-                } 
+                }
             });
     }
 
