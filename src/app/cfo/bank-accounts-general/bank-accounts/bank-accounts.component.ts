@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, DashboardServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
@@ -22,6 +22,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     syncAccountsAmount$;
     accountsAmount$;
     selectedSyncAccounts = [];
+    selectedBusinessEntities = [];
     constructor(
         injector: Injector,
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
@@ -37,6 +38,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
                                 .getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
                                 .map(syncAccounts => {
                                     this.setItemsSelected(syncAccounts);
+                                    this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
                                     return syncAccounts;
                                 });
         this.initialBankAccounts$ = this.bankAccounts$;
@@ -49,11 +51,18 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     entitiesItemsChanged(selectedEntities) {
+        this.selectedBusinessEntities = selectedEntities;
+        this.reloadGrid();
+    }
+
+    reloadGrid(cancelIfAllEntities = false) {
+        if (cancelIfAllEntities && this.selectedBusinessEntities.length === 0) {
+            return false;
+        }
         this.bankAccounts$ = this.initialBankAccounts$
             .map(syncAccounts => {
                 let selectedAccountsIds = this.selectedSyncAccounts.reduce((accounts, syncAccount) => accounts.concat(syncAccount.selectedBankAccounts.map(account => account.id)), []);
-                /** @todo check last argument */
-                let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, selectedEntities, selectedAccountsIds);
+                let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, this.selectedBusinessEntities, selectedAccountsIds);
                 this.selectedAccountsChange(filteredData);
                 return filteredData;
             });

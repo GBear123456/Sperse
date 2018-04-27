@@ -1,4 +1,4 @@
-.bank-account-filter-container {
+:host {
     text-align: start;
 
     .filter-actions {
@@ -74,7 +74,6 @@
         padding-top: 7px;
     }
 
-
     /deep/ #gridContainer {
         height: 100% !important;
         font-size: 12px;
@@ -84,16 +83,16 @@
             border-bottom: 0;
         }
 
-        /deep/ .dx-datagrid-rowsview,
+        .dx-datagrid-rowsview,
         .dx-datagrid-rowsview .dx-selection.dx-row > td {
             border: 0;
         }
 
-        /deep/ tr[aria-selected ="true"] {
+        tr[aria-selected ="true"] {
             background-color: transparent;
         }
 
-        /deep/ table.dx-datagrid-table {
+        table.dx-datagrid-table {
             border-spacing: 0;
             .dx-master-detail-row {
                 position: relative;
@@ -213,7 +212,7 @@
                 }
             }
 
-            /deep/ .dx-datagrid-rowsview {
+            .dx-datagrid-rowsview {
                 .dx-datagrid-content tr td.tabular {
                     font-family: 'Lato', sans-serif !important;
                 }
@@ -229,6 +228,11 @@
 
                     .dx-checkbox-icon {
                         margin-top: 4px;
+                    }
+
+                    .dx-checkbox-container,
+                    &.dx-editor-cell {
+                        text-overflow: clip;
                     }
                 }
             }
@@ -298,3 +302,21 @@
         font-weight: 600 !important;
     }
 }
+
+/deep/ [accesskey="accountsEditingPopup"] {
+    .dx-item-content {
+        display: block !important;
+        .dx-field-item {
+            padding: 0;
+            .dx-field-item-label-location-left {
+                width: 30%;
+                padding-right: 0;
+            }
+            .dx-field-item-content-location-right {
+                width: 70%;
+                padding-left: 0;
+            }
+        }
+    }
+}
+

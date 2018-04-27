@@ -15,6 +15,8 @@
     <bank-accounts-widget
         [height]="'100%'"
         [dataSource]="bankAccounts$ | async"
-        (selectionChanged)="selectedAccountsChange($event)">
+        (selectionChanged)="selectedAccountsChange($event)"
+        [allowBankAccountsEditing]="true"
+        (accountsEntitiesBindingChanged)="reloadGrid(true)">
     </bank-accounts-widget>
 </div>
