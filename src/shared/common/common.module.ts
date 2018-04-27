@@ -16,7 +16,7 @@ import {ConfirmDialogComponent} from './dialogs/confirm/confirm-dialog.component
 import {CalendarComponent} from './widgets/calendar/calendar.component';
 import { NoDataComponent } from './widgets/no-data/no-data.component';
 
-import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule, DxTabsModule, DxDataGridModule, DxTagBoxModule } from 'devextreme-angular';
+import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule, DxTabsModule, DxDataGridModule, DxTagBoxModule, DxSelectBoxModule, DxSelectBoxComponent } from 'devextreme-angular';
 
 import { AppUiCustomizationService } from './ui/app-ui-customization.service';
 import { AppAuthService } from './auth/app-auth.service';
@@ -35,7 +35,6 @@ import { PhoneFormatPipe } from './pipes/phone-format.pipe';
         NoDataComponent,
         BankAccountsWidgetComponent,
         PhoneFormatPipe,
-        BankAccountsWidgetComponent,
         SelectionFilterComponent,
         InfoComponent
     ],
@@ -44,11 +43,11 @@ import { PhoneFormatPipe } from './pipes/phone-format.pipe';
         ConfirmDialogComponent,
         ModalDialogComponent,
         NoDataComponent,
-        BankAccountsWidgetComponent,
         PhoneFormatPipe,
         BankAccountsWidgetComponent,
         SelectionFilterComponent,
-        InfoComponent
+        InfoComponent,
+        DxSelectBoxComponent
     ],
     entryComponents: [
         ConfirmDialogComponent,
@@ -59,6 +58,7 @@ import { PhoneFormatPipe } from './pipes/phone-format.pipe';
         DxTextBoxModule,
         DxScrollViewModule,
         DxDataGridModule,
+        DxSelectBoxModule,
         MatDialogModule,
         DxTabsModule,
         DxTagBoxModule,

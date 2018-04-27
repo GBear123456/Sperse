@@ -1,9 +1,9 @@
 <div class="entity-selection">
     <selection-filter
-        [title]="l('Financial_Accounts_For')"
         [allItemsText]="l('All_Entities')"
-        (selectionChanged)="entitiesItemsChanged($event)"
-        [selectionList]="businessEntities$ | async">
+        [title]="l('Financial_Accounts_For')"
+        [selectionList]="businessEntities$ | async"
+        (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
     <add-account-button class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
 </div>
@@ -14,10 +14,12 @@
 </div>
 <div class="bank-accounts">
     <bank-accounts-widget
-        [height]="'100%'"
-        [dataSource]="bankAccounts$ | async"
-        (selectionChanged)="selectedAccountsChange($event)"
+        [allowBankAccountsEditing]="true"
         [allowUpdateAccount]="true"
+        [dataSource]="bankAccounts$ | async"
+        [height]="'100%'"
+        (accountsEntitiesBindingChanged)="reloadGrid(true)"
+        (selectionChanged)="selectedAccountsChange($event)"
         (onUpdateAccount)="onUpdateAccount($event)">
     </bank-accounts-widget>
 </div>
