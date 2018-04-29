@@ -14573,8 +14573,8 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    renameSyncAccount(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/RenameSyncAccount?";
+    rename(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14592,11 +14592,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRenameSyncAccount(response_);
+            return this.processRename(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processRenameSyncAccount(response_);
+                    return this.processRename(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -14605,7 +14605,7 @@ export class SyncAccountServiceProxy {
         });
     }
 
-    protected processRenameSyncAccount(response: Response): Observable<void> {
+    protected processRename(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -14624,8 +14624,8 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteSyncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/DeleteSyncAccount?";
+    delete(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14644,11 +14644,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processDeleteSyncAccount(response_);
+            return this.processDelete(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processDeleteSyncAccount(response_);
+                    return this.processDelete(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -14657,7 +14657,7 @@ export class SyncAccountServiceProxy {
         });
     }
 
-    protected processDeleteSyncAccount(response: Response): Observable<void> {
+    protected processDelete(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
