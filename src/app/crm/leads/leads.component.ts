@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { AppService } from '@app/app.service';
@@ -81,6 +81,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private _router: Router,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
@@ -543,5 +544,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
         this.refreshDataGrid();
+    }
+
+    showLeadDetails(event) {
+        let leadId = event.data && event.data.Id;
+        let clientId = event.data && event.data.CustomerId;
+        if (!leadId || !clientId)
+            return;
+
+        event.component.cancelEditData();
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'lead-information'], 
+            { queryParams: { referrer: this._router.url } });
+    }
+
+    onCellClick($event) {
+        let col = $event.column;
+        if (col && col.command)
+            return;
+        this.showLeadDetails($event);
     }
 }

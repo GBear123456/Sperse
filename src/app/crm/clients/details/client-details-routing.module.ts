@@ -30,6 +30,22 @@ import { NotesComponent } from './notes/notes.component';
                   {path: 'activity-logs', component: ActivityLogsComponent },
                   {path: 'notes', component: NotesComponent }
                 ]
+            },
+            {
+                path: 'client/:clientId/lead/:leadId',
+                component: ClientDetailsComponent,
+                children: [
+                  {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                  {path: 'contact-information', component: ContactInformationComponent },
+                  {path: 'lead-information', component: LeadInformationComponent },
+                  {path: 'questionnaire', component: QuestionnaireComponent },
+                  {path: 'required-documents', component: RequiredDocumentsComponent },
+                  {path: 'application-status', component: ApplicationStatusComponent },
+                  {path: 'referal-history', component: ReferalHistoryComponent },
+                  {path: 'payment-information', component: PaymentInformationComponent },
+                  {path: 'activity-logs', component: ActivityLogsComponent },
+                  {path: 'notes', component: NotesComponent }
+                ]
             }
         ])
     ],

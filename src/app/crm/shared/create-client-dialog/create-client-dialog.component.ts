@@ -271,14 +271,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .finally(() => {  })
-                .subscribe(result => this.afterSave(result.customerId));
+                .subscribe(result => this.afterSave(result.customerId, result.id));
         else
             this._customersService.createCustomer(CreateCustomerInput.fromJS(dataObj))
                 .finally(() => {  })
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(customerId: number): void
+    private afterSave(customerId: number, leadId?: number): void
     {
         this.tagsComponent.apply([customerId]);
         this.listsComponent.apply([customerId]);
@@ -288,7 +288,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
         } else if (this.saveContextMenuItems[1].selected)
-            this.redirectToContactInformation(customerId);
+            this.redirectToClientDetails(customerId, leadId);
         else {
             this.data.refreshParent();
             this.close();
@@ -382,8 +382,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         } as CreateContactAddressInput: undefined;
     }
 
-    redirectToContactInformation(id: number) {
-        let path = `app/crm/client/${id}/${this.data.isInLeadMode ? 'lead-information' : 'contact-information'}`;
+    redirectToClientDetails(id: number, leadId?: number) {
+        let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
         this._router.navigate([path], { queryParams: { referrer: this._router.url } });
         this.close();
     }
