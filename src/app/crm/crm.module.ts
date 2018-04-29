@@ -18,8 +18,6 @@ import { ClientsComponent } from './clients/clients.component';
 import { CreateClientDialogComponent } from './shared/create-client-dialog/create-client-dialog.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
-import { EditionsComponent } from '@admin/editions/editions.component';
-import { CreateOrEditEditionModalComponent } from '@admin/editions/create-or-edit-edition-modal.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
 import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
@@ -56,7 +54,6 @@ import {
     DxContextMenuModule,
     DxSliderModule
 } from 'devextreme-angular';
-import { AdminModule } from 'app/admin/admin.module';
 
 @NgModule({
     imports: [

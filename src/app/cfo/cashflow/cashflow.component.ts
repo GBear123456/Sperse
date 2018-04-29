@@ -452,6 +452,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     forecastModelsObj: { items: any[], selectedItemIndex: number };
     selectedForecastModel;
     currencyId = 'USD';
+    preferenceCurrencyId = 'USD';
     /** @todo create model */
     userPreferencesHandlers = {
         localizationAndCurrency: {
@@ -1217,8 +1218,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cashflowGridSettings = cashflowSettingsResult;
 
         let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: this.cashflowGridSettings.localizationAndCurrency.currency});
-        this.currencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
-        this.currencySymbol = (777).toLocaleString('en-EN', {style: 'currency', currency: this.currencyId}).substr(0, 1);
+        this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
+        this.currencySymbol = (777).toLocaleString('en-EN', { style: 'currency', currency: this.preferenceCurrencyId}).substr(0, 1);
 
         let thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
         /** Changed thousands and decimal separators */
@@ -3031,7 +3032,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         targetsData.forEach((target, index) => {
             forecasts.forEach(forecast => {
-                date = this.getDateForForecast(target.caption, target.date.startDate, forecast.initialDate);
+                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, forecast.initialDate);
                 let forecastModel;
                 if (operation === 'copy') {
                     forecastModel = new AddForecastInput({
@@ -3118,11 +3119,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let date = moment(targetStartDate);
         /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
         if (['year', 'quarter', 'month'].indexOf(targetCaption) !== -1) {
-            let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
-            date.date(dayNumber);
+            if (targetCaption === 'quarter') {
+                date.month(date.month() + (forecastDate.month() % 3));
+            }
             if (targetCaption === 'year') {
                 date.month(forecastDate.month());
-            }
+            }  
+            let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
+            date.date(dayNumber);                     
         }
         return date;
     }
@@ -3247,7 +3251,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     changeCurrency(cellObj, preference) {
         let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue});
-        this.currencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? preference.sourceValue : 'USD';
+        this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? preference.sourceValue : 'USD';
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
@@ -3256,7 +3260,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         value = value > -0.01 && value < 0.01 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
-            currency: this.currencyId,
+            currency: this.preferenceCurrencyId,
             maximumFractionDigits: fractionDigits,
             minimumFractionDigits: fractionDigits
         });
@@ -3670,77 +3674,81 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellObj = this.selectedCell;
 
         this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-        this._cashflowServiceProxy
-            .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-            .subscribe(result => {
-                let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
-                let columnFields = this.getColumnFields();
-                let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
-                if (
-                    this.cellIsNotHistorical(cellObj) &&
-                    result.length !== 0 &&
-                    clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountName
-                ) {
-                    let forecastIds: number[] = [];
-                    let forecastDates = [];
-                    result.forEach((item, i) => {
-                        if (item.forecastId) {
-                            forecastIds.push(item.forecastId);
-                            forecastDates.push(item.forecastDate);
-                        }
-                    });
-                    if (forecastIds.length) {
-                        this._cashFlowForecastServiceProxy
-                            .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds)
-                            .subscribe(result => {
-                                let temp = {};
-                                for (let i = this.cashflowData.length - 1; i >= 0; i--) {
-                                    let item = this.cashflowData[i];
+        let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
+        let columnFields = this.getColumnFields();
+        let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
 
-                                    if (underscore.contains(forecastIds, item.forecastId)) {
-                                        this.cashflowData.splice(i, 1);
-                                        if (!temp[item.forecastId])
-                                            temp[item.forecastId] = {'affectedTransactions': []};
+        if (
+            this.cellIsNotHistorical(cellObj) &&
+            clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
+            clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
+            clickedCellPrefix !== CategorizationPrefixes.AccountName
+        ) {
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .subscribe(result => {
 
-                                        temp[item.forecastId]['affectedTransactions'].push(item);
-                                    } else {
-                                        let itemForRemoveIndex = 0;
-                                        forecastDates.forEach((date, i) => {
-                                            if (moment(date).utc().isSame(item.date)) {
-                                                itemForRemoveIndex = i;
-                                            }
-                                        });
-                                        if (itemForRemoveIndex)
-                                            forecastDates.splice(itemForRemoveIndex, 1);
+                    if (result.length !== 0) {
+                        let forecastIds: number[] = [];
+                        let forecastDates = [];
+                        result.forEach((item, i) => {
+                            if (item.forecastId) {
+                                forecastIds.push(item.forecastId);
+                                if (!underscore.contains(forecastDates, item.forecastDate)) 
+                                    forecastDates.push(item.forecastDate);
+                            }
+                        });
+                        if (forecastIds.length) {
+                            this._cashFlowForecastServiceProxy
+                                .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds)
+                                .subscribe(result => {
+                                    let temp = {};
+                                    for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+                                        let item = this.cashflowData[i];
+
+                                        if (underscore.contains(forecastIds, item.forecastId)) {
+                                            this.cashflowData.splice(i, 1);
+                                            if (!temp[item.forecastId])
+                                                temp[item.forecastId] = { 'affectedTransactions': [] };
+
+                                            temp[item.forecastId]['affectedTransactions'].push(item);
+                                        } else {
+                                            let itemForRemoveIndex = 0;
+                                            forecastDates.forEach((date, i) => {
+                                                if (moment(date).utc().isSame(item.date)) {
+                                                    itemForRemoveIndex = i;
+                                                }
+                                            });
+                                            if (itemForRemoveIndex)
+                                                forecastDates.splice(itemForRemoveIndex, 1);
+                                        }
                                     }
-                                }
 
-                                forecastDates.forEach((date, i) => {
-                                    forecastIds.forEach((id, i) => {
-                                        temp[id]['affectedTransactions'].forEach(item => {
-                                            this.cashflowData.push(
-                                                this.createStubTransaction({
-                                                    date: item.date,
-                                                    initialDate: (<any>item).initialDate,
-                                                    amount: 0,
-                                                    cashflowTypeId: item.cashflowTypeId,
-                                                    accountId: item.accountId
-                                                }));
+                                    forecastDates.forEach((date, i) => {
+                                        forecastIds.forEach((id, i) => {
+                                            temp[id]['affectedTransactions'].forEach(item => {
+                                                this.cashflowData.push(
+                                                    this.createStubTransaction({
+                                                        date: item.date,
+                                                        initialDate: (<any>item).initialDate,
+                                                        amount: 0,
+                                                        cashflowTypeId: item.cashflowTypeId,
+                                                        accountId: item.accountId
+                                                    }));
 
-                                            this.updateTreePathes(item, true);
+                                                this.updateTreePathes(item, true);
 
+                                            });
                                         });
                                     });
-                                });
 
-                                this.pivotGrid.instance.getDataSource().reload();
-                                this.notify.success(this.l('Cell_deleted'));
-                            });
+                                    this.pivotGrid.instance.getDataSource().reload();
+                                    this.notify.success(this.l('Cell_deleted'));
+                                });
+                        }
                     }
-                }
-            });
+                });
+        }
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
