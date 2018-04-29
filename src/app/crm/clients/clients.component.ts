@@ -28,8 +28,9 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
@@ -193,66 +194,75 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     ngOnInit(): void {
-        this._filtersService.setup(
-            this.filters = [
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'name',
-                    items: { FullName: new FilterItemModel()}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'email',
-                    items: { Email: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: {from: 'ge', to: 'le'},
-                    caption: 'creation',
-                    field: 'CreationTime',
-                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                    options: {method: 'getFilterByDate'}
-                }),
-                new FilterModel({
-                    component: FilterCBoxesComponent,
-                    caption: 'status',
-                    field: 'StatusId',
-                    items: {active: new FilterItemModel(), inactive: new FilterItemModel()}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'phone',
-                    items: { Phone: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterStatesComponent,
-                    caption: 'states',
-                    items: {
-                        countryStates: new FilterStatesModel()
-                    }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'city',
-                    items: { City: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'streetAddress',
-                    items: { StreetAddress: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'zipCode',
-                    items: { ZipCode: new FilterItemModel() }
-                })
-            ]
+        this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
+            this._filtersService.setup(
+                this.filters = [
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'name',
+                        items: { FullName: new FilterItemModel()}
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'email',
+                        items: { Email: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterCalendarComponent,
+                        operator: {from: 'ge', to: 'le'},
+                        caption: 'creation',
+                        field: 'CreationTime',
+                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                        options: {method: 'getFilterByDate'}
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'status',
+                        field: 'StatusId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.statuses,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'phone',
+                        items: { Phone: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterStatesComponent,
+                        caption: 'states',
+                        items: {
+                            countryStates: new FilterStatesModel()
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'city',
+                        items: { City: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'streetAddress',
+                        items: { StreetAddress: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'zipCode',
+                        items: { ZipCode: new FilterItemModel() }
+                    })
+                ]
+            )
         );
 
         this._filtersService.apply(() => {
@@ -485,14 +495,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     filterByStatus(filter: FilterModel) {
-        let isActive = filter.items.active.value;
-        let isInactive = filter.items.inactive.value;
+        let data = {};
+        let element = filter.items.element;
+        if (element && element.value) {
+            let filterData = _.map(element.value, x => {
+                let el = {};
+                el[filter.field] = x;
+                return el;
+            });
 
-        if (isActive ^ isInactive) {
-            let obj = {};
-            obj[filter.field] = filter.items.active.value ? 'A' : 'I';
-            return obj;
+            data = {
+                or: filterData
+            };
         }
+        return data;
     }
 
     filterByPhone(filter: FilterModel) {
