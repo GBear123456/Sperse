@@ -127,7 +127,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         if (e.isExpanded) {
             this.mainDataGrid.instance.collapseRow(e.key);
         } else {
-            this.mainDataGrid.instance.expandRow(e.key);
+            if (e.data.bankAccounts.length) {
+                this.mainDataGrid.instance.expandRow(e.key);
+            }
         }
     }
 
