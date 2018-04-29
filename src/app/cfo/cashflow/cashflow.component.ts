@@ -452,6 +452,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     forecastModelsObj: { items: any[], selectedItemIndex: number };
     selectedForecastModel;
     currencyId = 'USD';
+    preferenceCurrencyId = 'USD';
     /** @todo create model */
     userPreferencesHandlers = {
         localizationAndCurrency: {
@@ -1217,8 +1218,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cashflowGridSettings = cashflowSettingsResult;
 
         let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: this.cashflowGridSettings.localizationAndCurrency.currency});
-        this.currencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
-        this.currencySymbol = (777).toLocaleString('en-EN', {style: 'currency', currency: this.currencyId}).substr(0, 1);
+        this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
+        this.currencySymbol = (777).toLocaleString('en-EN', { style: 'currency', currency: this.preferenceCurrencyId}).substr(0, 1);
 
         let thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
         /** Changed thousands and decimal separators */
@@ -3250,7 +3251,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     changeCurrency(cellObj, preference) {
         let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue});
-        this.currencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? preference.sourceValue : 'USD';
+        this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? preference.sourceValue : 'USD';
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
@@ -3259,7 +3260,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         value = value > -0.01 && value < 0.01 ? 0 : value;
         return value.toLocaleString(locale, {
             style: 'currency',
-            currency: this.currencyId,
+            currency: this.preferenceCurrencyId,
             maximumFractionDigits: fractionDigits,
             minimumFractionDigits: fractionDigits
         });
