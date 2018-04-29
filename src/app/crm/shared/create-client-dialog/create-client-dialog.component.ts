@@ -173,6 +173,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     }: {
                         name: 'status',
                         widget: 'dxDropDownMenu',
+                        disabled: true,
                         options: {
                             hint: 'Status',
                             items: [
