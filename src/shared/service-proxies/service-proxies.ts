@@ -7435,6 +7435,52 @@ export class CustomersServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getFiltersInitialData(): Observable<CustomerFiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetFiltersInitialData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetFiltersInitialData(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetFiltersInitialData(response_);
+                } catch (e) {
+                    return <Observable<CustomerFiltersInitialData>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<CustomerFiltersInitialData>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetFiltersInitialData(response: Response): Observable<CustomerFiltersInitialData> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CustomerFiltersInitialData.fromJS(resultData200) : new CustomerFiltersInitialData();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<CustomerFiltersInitialData>(<any>null);
+    }
 }
 
 @Injectable()
@@ -14573,8 +14619,8 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    renameSyncAccount(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/RenameSyncAccount?";
+    rename(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14592,11 +14638,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRenameSyncAccount(response_);
+            return this.processRename(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processRenameSyncAccount(response_);
+                    return this.processRename(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -14605,7 +14651,7 @@ export class SyncAccountServiceProxy {
         });
     }
 
-    protected processRenameSyncAccount(response: Response): Observable<void> {
+    protected processRename(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -14624,8 +14670,8 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteSyncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/DeleteSyncAccount?";
+    delete(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14644,11 +14690,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processDeleteSyncAccount(response_);
+            return this.processDelete(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processDeleteSyncAccount(response_);
+                    return this.processDelete(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -14657,7 +14703,7 @@ export class SyncAccountServiceProxy {
         });
     }
 
-    protected processDeleteSyncAccount(response: Response): Observable<void> {
+    protected processDelete(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -30651,6 +30697,88 @@ export class UpdateCustomerStatusesInput implements IUpdateCustomerStatusesInput
 export interface IUpdateCustomerStatusesInput {
     customerIds: number[];
     statusId: string;
+}
+
+export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
+    statuses: CustomerStatusDto[];
+
+    constructor(data?: ICustomerFiltersInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["statuses"] && data["statuses"].constructor === Array) {
+                this.statuses = [];
+                for (let item of data["statuses"])
+                    this.statuses.push(CustomerStatusDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CustomerFiltersInitialData {
+        let result = new CustomerFiltersInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.statuses && this.statuses.constructor === Array) {
+            data["statuses"] = [];
+            for (let item of this.statuses)
+                data["statuses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICustomerFiltersInitialData {
+    statuses: CustomerStatusDto[];
+}
+
+export class CustomerStatusDto implements ICustomerStatusDto {
+    id: string;
+    name: string;
+
+    constructor(data?: ICustomerStatusDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerStatusDto {
+        let result = new CustomerStatusDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerStatusDto {
+    id: string;
+    name: string;
 }
 
 export class CustomerStarInfoDto implements ICustomerStarInfoDto {
