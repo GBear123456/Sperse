@@ -61,7 +61,8 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
                 let hasFailed = false;
                 this.synchData.accountProgresses.forEach(value => {
-                    if (value.syncStatus == SyncProgressDtoSyncStatus.Failed) {
+                    if (value.syncStatus == SyncProgressDtoSyncStatus.ActionRequired
+                        || value.syncStatus == SyncProgressDtoSyncStatus.SyncPending) {
                         hasFailed = true;
                     }
                 });

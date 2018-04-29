@@ -53,12 +53,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     emailRegEx = AppConsts.regexPatterns.email;
 
     company: string;
+    title: string;
+    website: string;
     notes = {};
 
     addressTypes: any = [];
     addressValidator: any;
     emailValidator: any;
     phoneValidator: any;
+    websiteValidator: any;
 
     emails = {};
     emailTypePersonalDefault = 'P';
@@ -159,7 +162,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                             accessKey: 'ClientAssign'
                         }
                     },
-                    {
+                    this.data.isInLeadMode ? { 
+                        widget: 'dxDropDownMenu',
+                        disabled: true,
+                        name: 'stage', 
+                        options: {
+                            hint: this.l('Stage'),
+                            items: []
+                        }
+                    }: {
                         name: 'status',
                         widget: 'dxDropDownMenu',
                         options: {
@@ -174,7 +185,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                                 }
                             ]
                         }
-                    },
+                    }, 
                     {
                         name: 'discard',
                         action: this.resetFullDialog.bind(this)
@@ -244,8 +255,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return state && state['code'];
     }
 
-    private createEntity(): void
-    {
+    private createEntity(): void {
+        let assignedUserId = this.userAssignmentComponent.selectedItemKey;
+        let lists = this.listsComponent.selectedItems;
+        let tags = this.tagsComponent.selectedItems;
         let dataObj = {
             firstName: this.person.firstName,
             middleName: this.person.middleName,
@@ -257,6 +270,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             phoneNumbers: this.getPhoneContactInput(ContactTypes.Personal),
             address: this.getAddressContactInput(ContactTypes.Personal),
             companyName: this.company,
+            title: this.title,
+            organizationWebSite: this.website,
             organizationEmailAddresses: this.getEmailContactInput(ContactTypes.Business),
             organizationPhoneNumbers: this.getPhoneContactInput(ContactTypes.Business),
             organizationAddress: this.getAddressContactInput(ContactTypes.Business),
@@ -265,7 +280,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 thumbnail: this.getBase64(this.photoThumbnailData)
             }) : null,
             note: this.notes[ContactTypes.Personal],
-            organizationNote: this.notes[ContactTypes.Business]
+            organizationNote: this.notes[ContactTypes.Business],
+            assignedUserId: assignedUserId,
+            lists: lists,
+            tags: tags
         };
         
         if (this.data.isInLeadMode)
@@ -280,9 +298,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     private afterSave(customerId: number, leadId?: number): void
     {
-        this.tagsComponent.apply([customerId]);
-        this.listsComponent.apply([customerId]);
-        this.userAssignmentComponent.apply([customerId]);
         if (this.saveContextMenuItems[0].selected) {
             this.data.refreshParent();
             this.resetFullDialog();
@@ -325,7 +340,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
           ) && !this.company
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
-        return true;            
+
+        if (!this.websiteValidator.validate().isValid)
+            return false;
+
+        return true;
     }
 
     checkAddContactByField(field) {

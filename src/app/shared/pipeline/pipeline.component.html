@@ -4,8 +4,8 @@
             <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
         <div class="column-items {{stage.dragAllowed ? 'drag-allowed': ''}}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage.name}}">
-            <ng-container *ngFor="let card of stage?.leads">
-                  <div class="card" accessKey="{{card.Id}}">
+            <ng-container *ngFor="let card of stage.leads">
+                  <div class="card {{card.locked ? 'locked': ''}}" accessKey="{{card.Id}}">
                       <div class="container-fluid">
                           <div class="row">
                               <div class="text-right pipeline-photo-wrap">
@@ -34,7 +34,7 @@
                       </div>
                   </div>
             </ng-container>
+            <span class="load-more" [hidden]="!stage.leads.length || stage.total == stage.leads.length" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
         </div>
     </div>
 </div>
-<span class="load-more" [hidden]="!stages.length" (click)="loadMore()">{{l('Load More')}}</span>

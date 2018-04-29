@@ -1,4 +1,4 @@
-﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
@@ -19,7 +19,7 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['./pipeline.component.less'],
     providers: [PipelineServiceProxy]
 })
-export class PipelineComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() dataSource: DataSource;
@@ -28,6 +28,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
     stages: any = [];    
 
     dragulaName = 'stage';
+
+    private readonly STAGE_PAGE_COUNT = 5;
 
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
@@ -74,8 +76,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
                   return false; // elements can't be dropped in any of the `containers` by default
             },
             invalid: (el) => {
-              let stage = this.getStageByElement(el);
-              if (stage && stage.accessibleActions.length)
+              let stage = this.getStageByElement(el),
+                  lead = this.getLeadByElement(el, stage);
+              if (lead && !lead.locked && stage && stage.accessibleActions.length)
                   return stage.accessibleActions.every((action) => { 
                       return !action.targetStageId;
                   });
@@ -96,7 +99,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         });
     }
 
-    ngAfterViewInit(): void {
+    refresh() {
+        this.ngOnInit();
+    }
+
+    getLeadByElement(el, stage) {
+        return stage && _.findWhere(stage.leads, {Id: 
+            parseInt(this.getAccessKey(el.closest('.card')))});
     }
 
     getStageByElement(el) {
@@ -126,17 +135,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
             });
     }
 
-    loadStagesLeads(index, page = 0) {
+    loadStagesLeads(index, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
-        this.dataSource.pageSize(5);
+        this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
         this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
             stages[index]['leads'] = 
-                (stages[index]['leads'] || []).concat(leads);
+                _.uniq((stages[index]['leads'] || []).concat(leads));
             stages[index]['total'] = this.dataSource.totalCount();
-            if (this.pipeline.stages[++index])
+            if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
                 this._pipelineService.stages = 
@@ -146,10 +155,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, After
         });
     }
 
-    loadMore() {
+    loadMore(stageIndex) {
         this.startLoading(true);
-        this.loadStagesLeads(0, 
-            this.dataSource.pageIndex() + 1);
+        this.loadStagesLeads(stageIndex, 
+            Math.floor(this.stages[stageIndex].leads.length 
+                / this.STAGE_PAGE_COUNT), true);
     }
 
     ngOnDestroy() {

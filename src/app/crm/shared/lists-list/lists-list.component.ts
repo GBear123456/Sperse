@@ -12,17 +12,20 @@ import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInpu
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Lists']";
-    @Input()
-    set selectedItems(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItems(value) {
         this.selectedLists = value;
-        this.editClientMode = true;
     }
+    get selectedItems() {
+        return this.selectedLists.map(item => {
+            return CustomerListInput.fromJS({name: item});
+        });
+    }
+    private selectedLists = [];
     list: any;
-    selectedLists = [];
 
     listComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -33,28 +36,24 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
-        this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
-            let lists = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index)
-                    && CustomerListInput.fromJS({name: item});
+        if (this.listComponent) {
+            this.selectedLists = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(index) && item;
             }).filter(Boolean);
-            this.selectedKeys.forEach((key) => {
-                this._tagsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
-                    customerId: key,
-                    lists: lists
-                })).subscribe((result) => {});
-            });
-            if (this.editClientMode) {
-                this.selectedLists = lists.map((item) => {
-                    return item.name;
+            this.selectedKeys = selectedKeys || this.selectedKeys;
+            if (this.selectedKeys && this.selectedKeys.length) {
+                this.selectedKeys.forEach((key) => {
+                    this._tagsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
+                        customerId: key,
+                        lists: this.selectedItems
+                    })).subscribe((result) => {});
                 });
             }
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }

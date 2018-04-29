@@ -27,6 +27,15 @@
                   </dx-text-box>
                   <span [class]="company && 'clear-contact' || 'hidden'" (click)="company = ''">+</span>
               </div>
+              <div class="field" *ngIf="type == 'business'">
+                <label>{{l('Title')}}</label>
+                <dx-text-box #titleComponent
+                    name="title"
+                    [width]="'360px'"
+                    [(value)]="title">
+                </dx-text-box>
+                <span [class]="title && 'clear-contact' || 'hidden'" (click)="title = ''">+</span>
+              </div>
               <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidator')">
                   <div class="field email">
                       <label>{{l('Email')}}</label>
@@ -91,6 +100,20 @@
               <div class="field" *ngFor="let phone of contacts.phones[type]; index as i">
                   <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
               </div>
+              <dx-validation-group *ngIf="type == 'business'" (onInitialized)="initValidationGroup($event, 'websiteValidator')">
+                <div class="field">
+                    <label>{{l('Website')}}</label>
+                    <dx-text-box #websiteComponent
+                        name="website"
+                        [width]="'360px'"
+                        [(value)]="website">
+                        <dx-validator>
+                            <dxi-validation-rule type="pattern" pattern="(http://|https://)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-box>
+                    <span [class]="website && 'clear-contact' || 'hidden'" (click)="website = ''">+</span>
+                </div>
+              </dx-validation-group>
               <dx-validation-group (onInitialized)="initValidationGroup($event, 'addressValidator')">
                   <div class="field addr address H">
                       <label>{{l('Address')}}</label>                   
@@ -188,7 +211,7 @@
                           </dx-validator>
                       </dx-select-box>
                   </div>
-                  <div class="field">
+                  <div class="field" *ngIf="type == 'personal'">
                       <label class="comment">{{l('Notes')}}</label>
                       <dx-text-area
                         name="comment"

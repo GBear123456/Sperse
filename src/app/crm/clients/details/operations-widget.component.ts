@@ -73,14 +73,6 @@ export class OperationsWidgetComponent implements OnInit {
         ]
         },
         {
-            location: 'after',
-            areItemsDependent: true,
-            items: [
-                {name: 'folder'},
-                {name: 'pen'}
-            ]
-        },
-        {
             location: 'after', items: [
             {
                 name: 'print',

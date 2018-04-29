@@ -1,21 +1,25 @@
 <div class="entity-selection">
     <selection-filter
-        [title]="l('Financial_Accounts_For')"
         [allItemsText]="l('All_Entities')"
-        (selectionChanged)="entitiesItemsChanged($event)"
-        [selectionList]="businessEntities$ | async">
+        [title]="l('Financial_Accounts_For')"
+        [selectionList]="businessEntities$ | async"
+        (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
-    <add-account-button class="add-link"></add-account-button>
+    <add-account-button class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
 </div>
 <div class="accountsSummary">
-    <info-component imageSource="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: accountsData?.currency : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
-    <info-component imageSource="assets/common/icons/total-icon.svg" [value]="syncAccountsAmount$ | async" [description]="l('Institutions')"></info-component>
-    <info-component imageSource="assets/common/icons/total-icon.svg" [value]="accountsAmount$ | async" [description]="l('Accounts')"></info-component>
+    <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: 'USD' : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
+    <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="syncAccountsAmount$ | async" [description]="l('Institutions')"></info-component>
+    <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="accountsAmount$ | async" [description]="l('Accounts')"></info-component>
 </div>
 <div class="bank-accounts">
     <bank-accounts-widget
-        [height]="'100%'"
+        [allowBankAccountsEditing]="true"
+        [allowUpdateAccount]="true"
         [dataSource]="bankAccounts$ | async"
-        (selectionChanged)="selectedAccountsChange($event)">
+        [height]="'100%'"
+        (accountsEntitiesBindingChanged)="reloadGrid(true)"
+        (selectionChanged)="selectedAccountsChange($event)"
+        (onUpdateAccount)="onUpdateAccount($event)">
     </bank-accounts-widget>
 </div>

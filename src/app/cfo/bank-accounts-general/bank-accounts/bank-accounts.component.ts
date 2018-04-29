@@ -1,7 +1,8 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, DashboardServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/pluck';
@@ -15,45 +16,56 @@ import 'rxjs/add/operator/reduce';
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit {
-    initialBankAccounts$;
+    initialBankAccounts;
     bankAccounts$;
     businessEntities$;
     accountsDataTotalNetWorth$;
     syncAccountsAmount$;
     accountsAmount$;
     selectedSyncAccounts = [];
+    selectedBusinessEntities = [];
     constructor(
         injector: Injector,
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
         private _dashboardProxy: DashboardServiceProxy,
-        private _bankAccountsService: BankAccountsService
+        private _bankAccountsService: BankAccountsService,
+        private _quovoService: QuovoService
     ) {
         super(injector);
     }
+
+    quovoHandler: any;
 
     ngOnInit() {
         this.bankAccounts$ = this._bankAccountsServiceProxy
                                 .getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
                                 .map(syncAccounts => {
+                                    this.initialBankAccounts = syncAccounts;
+                                    this.accountsAmount$ = Observable.of(syncAccounts.reduce((amount, bank) => bank.bankAccounts.length + amount, 0));
+                                    this.syncAccountsAmount$ = Observable.of(syncAccounts.length);
                                     this.setItemsSelected(syncAccounts);
+                                    this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
                                     return syncAccounts;
                                 });
-        this.initialBankAccounts$ = this.bankAccounts$;
-        this.accountsAmount$ = this.bankAccounts$
-            .mergeMap(data => data)
-            .reduce((amount, bank) => bank.bankAccounts.length + amount, 0);
-        this.syncAccountsAmount$ = this.bankAccounts$.pluck('length');
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
         this.accountsDataTotalNetWorth$ = this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, []).pluck('totalNetWorth');
+        this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
     }
 
     entitiesItemsChanged(selectedEntities) {
-        this.bankAccounts$ = this.initialBankAccounts$
+        this.selectedBusinessEntities = selectedEntities;
+        this.reloadGrid();
+    }
+
+    reloadGrid(cancelIfAllEntities = false) {
+        if (cancelIfAllEntities && this.selectedBusinessEntities.length === 0) {
+            return false;
+        }
+        this.bankAccounts$ = Observable.of(this.initialBankAccounts)
             .map(syncAccounts => {
                 let selectedAccountsIds = this.selectedSyncAccounts.reduce((accounts, syncAccount) => accounts.concat(syncAccount.selectedBankAccounts.map(account => account.id)), []);
-                /** @todo check last argument */
-                let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, selectedEntities, selectedAccountsIds);
+                let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, this.selectedBusinessEntities, selectedAccountsIds);
                 this.selectedAccountsChange(filteredData);
                 return filteredData;
             });
@@ -92,5 +104,17 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             account['selected'] = true;
             account.bankAccounts.forEach(bankAccount => bankAccount['selected'] = true);
         });
+    }
+
+    onUpdateAccount(event) {
+        if (this.quovoHandler.isLoaded) {
+            this.quovoHandler.open(null, event.id);
+        }
+    }
+
+    addAccountClose(event) {
+        if (event.addedIds.length) {
+            console.log('forse sync and grid refresh should be here');
+        }
     }
 }

@@ -32,14 +32,26 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         'Light Dark Theme'
     ];
     numberFormats = [
-        '-$1,000,000.0',
-        '-$1.000.000,0'
+        '1,000,000.0',
+        '1.000.000,0'
     ];
     currencies = [
-        '$ USD US Dollars',
-        '$ CAD Canadian Dollars', 
-        '$ AUD Australian Dollars', 
-        '€ EUR Euros'
+        { value: 'EUR', caption: '€ EUR European Euro' },
+        { value: 'GBP', caption: '£ GBP British Pound' },
+        { value: 'INR', caption: '₹ INR Indian Rupee' },
+        { value: 'JPY', caption: '¥ JPY Japanese Yen' },
+        { value: 'ILS', caption: '₪ ILS Israeli Shekel' },
+        { value: 'UAH', caption: '‎₴ UAH Ukrainian Hryvnia' },
+        { value: 'RUB', caption: '₽ RUB Russian Ruble' },
+        { value: 'CHF', caption: 'C CHF Swiss Franc' },
+        { value: 'SGD', caption: '$ SGD Singapore Dollar' },
+        { value: 'AUD', caption: '$ AUD Australian Dollar' },
+        { value: 'CAD', caption: '$ CAD Canadian Dollar' },
+        { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
+        { value: 'MXN', caption: '$ MXN Mexico Peso' },
+        { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
+        { value: 'GBP', caption: '£ GBP British Pound' },
+        { value: 'USD', caption: '$ USD US Dollar' }
     ];
     constructor(
         injector: Injector,

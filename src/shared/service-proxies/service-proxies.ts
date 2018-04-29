@@ -10799,6 +10799,97 @@ export class LeadServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    deleteLead(leadId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLead?";
+        if (leadId === undefined || leadId === null)
+            throw new Error("The parameter 'leadId' must be defined and cannot be null.");
+        else
+            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteLead(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteLead(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteLead(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @leadIds (optional) 
+     * @return Success
+     */
+    deleteLeads(leadIds: number[]): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLeads?";
+        if (leadIds !== undefined)
+            leadIds && leadIds.forEach(item => { url_ += "leadIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDeleteLeads(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDeleteLeads(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDeleteLeads(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -19793,6 +19884,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
+    syncRef: string;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -19816,6 +19908,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
                     this.bankAccounts.push(BankAccountDto.fromJS(item));
             }
             this.syncAccountStatus = data["syncAccountStatus"];
+            this.syncRef = data["syncRef"];
         }
     }
 
@@ -19838,6 +19931,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
                 data["bankAccounts"].push(item.toJSON());
         }
         data["syncAccountStatus"] = this.syncAccountStatus;
+        data["syncRef"] = this.syncRef;
         return data; 
     }
 }
@@ -19850,6 +19944,7 @@ export interface ISyncAccountBankDto {
     lastSyncDate: moment.Moment;
     bankAccounts: BankAccountDto[];
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus;
+    syncRef: string;
 }
 
 export class BankAccountDto implements IBankAccountDto {
@@ -30151,6 +30246,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -30199,6 +30296,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.title = data["title"];
+            this.organizationWebSite = data["organizationWebSite"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -30254,6 +30353,8 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["title"] = this.title;
+        data["organizationWebSite"] = this.organizationWebSite;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -30287,6 +30388,8 @@ export interface ICreateCustomerInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -33866,6 +33969,8 @@ export class CreateLeadInput implements ICreateLeadInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -33915,6 +34020,8 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.note = data["note"];
             this.organizationNote = data["organizationNote"];
             this.organizationUnitId = data["organizationUnitId"];
+            this.title = data["title"];
+            this.organizationWebSite = data["organizationWebSite"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -33971,6 +34078,8 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["note"] = this.note;
         data["organizationNote"] = this.organizationNote;
         data["organizationUnitId"] = this.organizationUnitId;
+        data["title"] = this.title;
+        data["organizationWebSite"] = this.organizationWebSite;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -34005,6 +34114,8 @@ export interface ICreateLeadInput {
     note: string;
     organizationNote: string;
     organizationUnitId: number;
+    title: string;
+    organizationWebSite: string;
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
@@ -45026,9 +45137,10 @@ export enum SendEmailActivationLinkInputTenantHostType {
 
 export enum SyncAccountBankDtoSyncAccountStatus {
     InProgress = <any>"InProgress", 
-    Completed = <any>"Completed", 
-    Failed = <any>"Failed", 
+    ActionRequired = <any>"ActionRequired", 
+    SyncPending = <any>"SyncPending", 
     Unavailable = <any>"Unavailable", 
+    Completed = <any>"Completed", 
 }
 
 export enum BankAccountDailyStatDtoPeriod {
@@ -45340,9 +45452,10 @@ export enum TenantLoginInfoDtoPaymentPeriodType {
 
 export enum SyncProgressDtoSyncStatus {
     InProgress = <any>"InProgress", 
-    Completed = <any>"Completed", 
-    Failed = <any>"Failed", 
+    ActionRequired = <any>"ActionRequired", 
+    SyncPending = <any>"SyncPending", 
     Unavailable = <any>"Unavailable", 
+    Completed = <any>"Completed", 
 }
 
 export enum CreateTenancyInputTenantHostType {

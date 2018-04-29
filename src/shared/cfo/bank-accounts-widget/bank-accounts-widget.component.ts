@@ -1,24 +1,31 @@
-import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, TemplateRef } from '@angular/core';
-import { SyncAccountBankDto } from 'shared/service-proxies/service-proxies';
+import { Component, Injector, Input, Output, ViewChild, EventEmitter, ElementRef } from '@angular/core';
+import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountBankDto, UpdateBankAccountDto } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
+import Form from 'devextreme/ui/form';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'bank-accounts-widget',
     templateUrl: './bank-accounts-widget.component.html',
-    styleUrls: ['./bank-accounts-widget.component.less']
+    styleUrls: ['./bank-accounts-widget.component.less'],
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
-export class BankAccountsWidgetComponent extends AppComponentBase implements OnInit {
+export class BankAccountsWidgetComponent extends AppComponentBase {
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
-    @ViewChild('emptyRowTemplate', { read: TemplateRef }) emptyRowTemplate: TemplateRef<any>;
+    @ViewChild('filterActions', { read: ElementRef }) filterActions: ElementRef;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 170;
     @Input() height;
     @Input() showColumnHeaders = false;
+    @Input() allowUpdateAccount = false;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
@@ -44,7 +51,10 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
                 this.mainDataGrid.instance.refresh();
         }, 300);
     }
+    @Input() allowBankAccountsEditing = false;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
@@ -53,17 +63,27 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     existBankAccountTypes = [];
     selectedBankAccountType: string = null;
     bankAccountIdsForHighlight = [];
-    expandChangedRow = null;
+    editingStarted = false;
+
+    /** Editing form instance */
+    dxFormInstance: Form;
+
+    instanceType;
+    instanceId;
+    businessEntities;
+    accountsTypes;
+    cfoService: CFOService;
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private _bankAccountsServiceProxy: BankAccountsServiceProxy,
+        private _businessEntityService: BusinessEntityServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
+        this.cfoService = injector.get(CFOService, null);
     }
-
-    ngOnInit(): void {}
 
     rowPrepared(e) {
         if (e.rowType === 'data') {
@@ -104,18 +124,15 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
     }
 
     masterRowExpandChange(e) {
-        if (e.rowType === 'data') {
-            this.expandChangedRow = e.rowElement;
-            if (e.isExpanded) {
-                e.component.collapseRow(e.key);
-            } else {
-                e.component.expandRow(e.key);
-            }
+        if (e.isExpanded) {
+            this.mainDataGrid.instance.collapseRow(e.key);
+        } else {
+            this.mainDataGrid.instance.expandRow(e.key);
         }
     }
 
     masterSelectionChanged(e) {
-        let row = e.component.getVisibleRows()[e.component.getRowIndexByKey(e.key)];
+        let row = e.component.getVisibleRows()[e.rowIndex];
         let isSelected = e.data.selected;
         row.data.bankAccounts.forEach(bankAccount => {
             bankAccount['selected'] = isSelected;
@@ -227,27 +244,147 @@ export class BankAccountsWidgetComponent extends AppComponentBase implements OnI
         }
     }
 
-    calculateTooltipHeight() {
-        return window.innerHeight / 2.2 - 70;
-    }
-
     /**
      * Added empty rows to add space between rows (hack to avoid spacing between row and details)
      */
     addEmptyRows() {
         $('.emptyRow').remove();
-        let rowsWithoutDetails = document.querySelectorAll('.dx-datagrid-content tr:not(.emptyRow):not(.dx-master-detail-row)');
-        for (let i = 0; i < rowsWithoutDetails.length; i++) {
-            let row = rowsWithoutDetails[i];
-            if (row.nextElementSibling === rowsWithoutDetails[i + 1] ||
-                (row.nextElementSibling && row.nextElementSibling.classList.contains('dx-state-invisible'))) {
-                /** @todo rewrite to avoid memory leask */
-                this.addEmptyRow(row);
+        let visibleRows = this.mainDataGrid.instance.getVisibleRows();
+        for (let i = 0; i < visibleRows.length; i++) {
+            /** if next row is not detail row - add empty row */
+            if (visibleRows[i + 1] && visibleRows[i + 1].rowType !== 'detail') {
+                this.addEmptyRow(this.mainDataGrid.instance.getRowElement(i)[0]);
             }
         }
     }
 
     contentReady() {
         this.addEmptyRows();
+    }
+
+    dataRowClick(e) {
+        this.masterRowExpandChange(e);
+    }
+
+    dataCellClick(cell) {
+        /** If to click for checkbox */
+        if (cell.column.dataField === 'selected') {
+            cell.data.selected = !cell.data.selected;
+            this.masterSelectionChanged(cell);
+            cell.event.stopImmediatePropagation();
+        }
+    }
+
+    detailCellClick(cell) {
+        if (cell.column.dataField === 'accountName' && this.allowBankAccountsEditing && this.cfoService) {
+            this.openEditPopup(cell);
+            return false;
+        }
+
+        /** If to click for checkbox */
+        if (cell.column.dataField === 'selected') {
+            cell.data.selected = !cell.data.selected;
+            this.bankAccountSelectionChanged(cell);
+        }
+    }
+
+    openEditPopup(cell) {
+        cell.component.editRow(cell.rowIndex);
+    }
+
+    editingStart(e) {
+        this.editingStarted = true;
+        if (this.allowBankAccountsEditing && this.cfoService && !this.businessEntities && !this.accountsTypes) {
+            this.instanceType = <any>this.cfoService.instanceType;
+            this.instanceId = <any>this.cfoService.instanceId;
+            let businessEntitiesObservable = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
+            /** @todo update when api will be ready */
+            //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
+            Observable.forkJoin(businessEntitiesObservable/*, accountsTypesObservable*/)
+                        .subscribe(result => {
+                            this.businessEntities = result[0];
+                            //this.accountsTypes = result[1];
+                        });
+        }
+    }
+
+    detailContentReady() {
+        if (this.dxFormInstance) {
+            this.dxFormInstance.option('items').forEach(item => {
+                if (!item.column.allowEditing) {
+                    item.visible = true;
+                }
+            });
+            this.dxFormInstance = null;
+        }
+        this.editingStarted = false;
+    }
+
+    /** Hack to avoid showing of the fields that shouldn't be shown in editing form */
+    editorPrepared(e) {
+        /** Changed visible options for all columns when first column is preparing */
+        if (this.editingStarted && e.index === 0) {
+            /** Get the form instance */
+            let formController = e.editorElement.closest('[role="form"]');
+            this.dxFormInstance = <any>Form.getInstance(formController);
+            /** For each column set visible false if it's not allowing editing */
+            this.dxFormInstance.option('items').forEach(item => {
+                if (!item.column.allowEditing) {
+                    item.visible = false;
+                }
+            });
+            let scrollWidget = e.component.$element().find('.dx-scrollable').last().dxScrollable('instance');
+
+            /** Set timeout to avoid "this._contentReadyAction is not a function" error */
+            setTimeout(() => {
+                this.dxFormInstance.option('items', this.dxFormInstance.option('items'));
+                /** Refresh to avoid unnecessary scrolls */
+                scrollWidget._refresh();
+            }, 0);
+        }
+    }
+
+    detailsRowUpdating(e) {
+        let deferred = $.Deferred();
+        e.cancel = deferred.promise();
+        let bankAccount: UpdateBankAccountDto = UpdateBankAccountDto.fromJS({
+            ...this.getMappedDataForUpdate(e.oldData),
+            ...this.getMappedDataForUpdate(e.newData)
+        });
+        /** Send update request */
+        this._bankAccountsServiceProxy
+            .updateBankAccount(this.instanceType, this.instanceId, bankAccount)
+            .subscribe(
+                res => {
+                    deferred.resolve(false);
+                    /** If business entity id changed - emit that binding of accounts to entities change to parents components */
+                    /** @todo add advanced check to avoid unnecessary reload */
+                    if (e.newData.businessEntityId) {
+                        this.accountsEntitiesBindingChanged.emit();
+                    }
+                },
+                error => deferred.resolve(true)
+            );
+    }
+
+    getMappedDataForUpdate(data) {
+        /** Param names that not correspond to each other for get and update api methods */
+        let mappings = { 'accountName': 'name' };
+        for (let param in mappings) {
+            if (data.hasOwnProperty(param)) {
+                data[mappings[param]] = data[param];
+            }
+        }
+        return data;
+    }
+
+    updateAccountInfo(id) {
+        this.onUpdateAccount.emit({ id: id });
+    }
+
+    calculateHeight(e) {
+        /** Get bottom position of previous element */
+        let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
+        return window.innerHeight - filtersBottomPosition - 20;
     }
 }
