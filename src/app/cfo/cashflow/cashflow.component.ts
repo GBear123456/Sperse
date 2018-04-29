@@ -3670,77 +3670,81 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cellObj = this.selectedCell;
 
         this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-        this._cashflowServiceProxy
-            .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-            .subscribe(result => {
-                let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
-                let columnFields = this.getColumnFields();
-                let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
-                if (
-                    this.cellIsNotHistorical(cellObj) &&
-                    result.length !== 0 &&
-                    clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountName
-                ) {
-                    let forecastIds: number[] = [];
-                    let forecastDates = [];
-                    result.forEach((item, i) => {
-                        if (item.forecastId) {
-                            forecastIds.push(item.forecastId);
-                            forecastDates.push(item.forecastDate);
-                        }
-                    });
-                    if (forecastIds.length) {
-                        this._cashFlowForecastServiceProxy
-                            .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds)
-                            .subscribe(result => {
-                                let temp = {};
-                                for (let i = this.cashflowData.length - 1; i >= 0; i--) {
-                                    let item = this.cashflowData[i];
+        let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
+        let columnFields = this.getColumnFields();
+        let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
 
-                                    if (underscore.contains(forecastIds, item.forecastId)) {
-                                        this.cashflowData.splice(i, 1);
-                                        if (!temp[item.forecastId])
-                                            temp[item.forecastId] = {'affectedTransactions': []};
+        if (
+            this.cellIsNotHistorical(cellObj) &&
+            clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
+            clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
+            clickedCellPrefix !== CategorizationPrefixes.AccountName
+        ) {
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .subscribe(result => {
 
-                                        temp[item.forecastId]['affectedTransactions'].push(item);
-                                    } else {
-                                        let itemForRemoveIndex = 0;
-                                        forecastDates.forEach((date, i) => {
-                                            if (moment(date).utc().isSame(item.date)) {
-                                                itemForRemoveIndex = i;
-                                            }
-                                        });
-                                        if (itemForRemoveIndex)
-                                            forecastDates.splice(itemForRemoveIndex, 1);
+                    if (result.length !== 0) {
+                        let forecastIds: number[] = [];
+                        let forecastDates = [];
+                        result.forEach((item, i) => {
+                            if (item.forecastId) {
+                                forecastIds.push(item.forecastId);
+                                if (!underscore.contains(forecastDates, item.forecastDate)) 
+                                    forecastDates.push(item.forecastDate);
+                            }
+                        });
+                        if (forecastIds.length) {
+                            this._cashFlowForecastServiceProxy
+                                .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds)
+                                .subscribe(result => {
+                                    let temp = {};
+                                    for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+                                        let item = this.cashflowData[i];
+
+                                        if (underscore.contains(forecastIds, item.forecastId)) {
+                                            this.cashflowData.splice(i, 1);
+                                            if (!temp[item.forecastId])
+                                                temp[item.forecastId] = { 'affectedTransactions': [] };
+
+                                            temp[item.forecastId]['affectedTransactions'].push(item);
+                                        } else {
+                                            let itemForRemoveIndex = 0;
+                                            forecastDates.forEach((date, i) => {
+                                                if (moment(date).utc().isSame(item.date)) {
+                                                    itemForRemoveIndex = i;
+                                                }
+                                            });
+                                            if (itemForRemoveIndex)
+                                                forecastDates.splice(itemForRemoveIndex, 1);
+                                        }
                                     }
-                                }
 
-                                forecastDates.forEach((date, i) => {
-                                    forecastIds.forEach((id, i) => {
-                                        temp[id]['affectedTransactions'].forEach(item => {
-                                            this.cashflowData.push(
-                                                this.createStubTransaction({
-                                                    date: item.date,
-                                                    initialDate: (<any>item).initialDate,
-                                                    amount: 0,
-                                                    cashflowTypeId: item.cashflowTypeId,
-                                                    accountId: item.accountId
-                                                }));
+                                    forecastDates.forEach((date, i) => {
+                                        forecastIds.forEach((id, i) => {
+                                            temp[id]['affectedTransactions'].forEach(item => {
+                                                this.cashflowData.push(
+                                                    this.createStubTransaction({
+                                                        date: item.date,
+                                                        initialDate: (<any>item).initialDate,
+                                                        amount: 0,
+                                                        cashflowTypeId: item.cashflowTypeId,
+                                                        accountId: item.accountId
+                                                    }));
 
-                                            this.updateTreePathes(item, true);
+                                                this.updateTreePathes(item, true);
 
+                                            });
                                         });
                                     });
-                                });
 
-                                this.pivotGrid.instance.getDataSource().reload();
-                                this.notify.success(this.l('Cell_deleted'));
-                            });
+                                    this.pivotGrid.instance.getDataSource().reload();
+                                    this.notify.success(this.l('Cell_deleted'));
+                                });
+                        }
                     }
-                }
-            });
+                });
+        }
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
