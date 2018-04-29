@@ -3031,7 +3031,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         targetsData.forEach((target, index) => {
             forecasts.forEach(forecast => {
-                date = this.getDateForForecast(target.caption, target.date.startDate, forecast.initialDate);
+                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, forecast.initialDate);
                 let forecastModel;
                 if (operation === 'copy') {
                     forecastModel = new AddForecastInput({
@@ -3118,11 +3118,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let date = moment(targetStartDate);
         /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
         if (['year', 'quarter', 'month'].indexOf(targetCaption) !== -1) {
-            let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
-            date.date(dayNumber);
+            if (targetCaption === 'quarter') {
+                date.month(date.month() + (forecastDate.month() % 3));
+            }
             if (targetCaption === 'year') {
                 date.month(forecastDate.month());
-            }
+            }  
+            let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
+            date.date(dayNumber);                     
         }
         return date;
     }
