@@ -16,8 +16,13 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() set selectedItems(value) {
         this.selectedLists = value;
     }
+    get selectedItems() {
+        return this.selectedLists.map(item => {
+            return CustomerListInput.fromJS({name: item});
+        });
+    }
+    private selectedLists = [];
     list: any;
-    selectedLists = [];
 
     listComponent: any;
     tooltipVisible = false;
@@ -34,18 +39,19 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     apply(selectedKeys = undefined) {
-        this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
-            let lists = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index)
-                    && CustomerListInput.fromJS({name: item});
+        if (this.listComponent) {
+            this.selectedLists = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(index) && item;
             }).filter(Boolean);
-            this.selectedKeys.forEach((key) => {
-                this._tagsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
-                    customerId: key,
-                    lists: lists
-                })).subscribe((result) => {});
-            });
+            this.selectedKeys = selectedKeys || this.selectedKeys;
+            if (this.selectedKeys && this.selectedKeys.length) {
+                this.selectedKeys.forEach((key) => {
+                    this._tagsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
+                        customerId: key,
+                        lists: this.selectedItems
+                    })).subscribe((result) => {});
+                });
+            }
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }

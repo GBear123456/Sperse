@@ -16,8 +16,13 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() set selectedItems(value) {
         this.selectedTags = value;
     }
+    get selectedItems() {
+        return this.selectedTags.map(item => {
+            return CustomerTagInput.fromJS({name: item});
+        });
+    }
+    private selectedTags = [];
     list: any;
-    selectedTags = [];
 
     listComponent: any;
     tooltipVisible = false;
@@ -35,19 +40,19 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     apply(selectedKeys = undefined) {
-        this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
-            let tags = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index)
-                    && CustomerTagInput.fromJS({name: item});
+        if (this.listComponent) {
+            this.selectedTags = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(index) && item;
             }).filter(Boolean);
-
-            this.selectedKeys.forEach((key) => {
-                this._tagsService.assignToCustomer(AssignToCustomerInput.fromJS({
-                    customerId: key,
-                    tags: tags
-                })).subscribe((result) => {});
-            });
+            this.selectedKeys = selectedKeys || this.selectedKeys;
+            if (this.selectedKeys && this.selectedKeys.length) {
+                this.selectedKeys.forEach((key) => {
+                    this._tagsService.assignToCustomer(AssignToCustomerInput.fromJS({
+                        customerId: key,
+                        tags: this.selectedItems
+                    })).subscribe((result) => {});
+                });
+            }
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }

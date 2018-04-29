@@ -17,6 +17,9 @@ export class RatingComponent extends AppComponentBase implements OnInit {
     @Input() set selectedItemKey(value) {
         this.ratingValue = value;
     }
+    get selectedItemKey() {
+        return this.ratingValue;
+    }
 
     ratingMin: number;
     ratingMax: number;

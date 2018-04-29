@@ -255,8 +255,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return state && state['code'];
     }
 
-    private createEntity(): void
-    {
+    private createEntity(): void {
+        let assignedUserId = this.userAssignmentComponent.selectedItemKey;
+        let lists = this.listsComponent.selectedItems;
+        let tags = this.tagsComponent.selectedItems;
         let dataObj = {
             firstName: this.person.firstName,
             middleName: this.person.middleName,
@@ -278,7 +280,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 thumbnail: this.getBase64(this.photoThumbnailData)
             }) : null,
             note: this.notes[ContactTypes.Personal],
-            organizationNote: this.notes[ContactTypes.Business]
+            organizationNote: this.notes[ContactTypes.Business],
+            assignedUserId: assignedUserId,
+            lists: lists,
+            tags: tags
         };
         
         if (this.data.isInLeadMode)
@@ -291,11 +296,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(customerId: number): void
-    {
-        this.tagsComponent.apply([customerId]);
-        this.listsComponent.apply([customerId]);
-        this.userAssignmentComponent.apply([customerId]);
+    private afterSave(customerId: number): void {
         if (this.saveContextMenuItems[0].selected) {
             this.data.refreshParent();
             this.resetFullDialog();
