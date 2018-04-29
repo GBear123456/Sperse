@@ -13,10 +13,9 @@ import { AppConsts } from '@shared/AppConsts';
 export class RatingComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Rating']";
-    @Input()
-    set selectedItemKey(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItemKey(value) {
         this.ratingValue = value;
-        this.editClientMode = true;
     }
 
     ratingMin: number;
@@ -26,7 +25,6 @@ export class RatingComponent extends AppComponentBase implements OnInit {
 
     sliederComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -40,8 +38,6 @@ export class RatingComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode)
-            this.ratingValue = this.ratingMin;
     }
 
     apply(selectedKeys = undefined) {
@@ -53,6 +49,8 @@ export class RatingComponent extends AppComponentBase implements OnInit {
                     ratingId: this.ratingValue
                 })).subscribe((result) => {});
             });
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.ratingValue = this.ratingMin; }, 500);
         }
         this.tooltipVisible = false;
     }

@@ -13,17 +13,15 @@ import { AppConsts } from '@shared/AppConsts';
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
-    @Input()
-    set selectedItemKey(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
-        this.editClientMode = true;
     }
     list: any;
     selectedItemKeys = [];
 
     listComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -37,8 +35,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
@@ -54,8 +50,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     userId: userId
                 })).subscribe((result) => {});
             });
-            if (this.editClientMode)
-                this.selectedItemKeys = [userId];
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }

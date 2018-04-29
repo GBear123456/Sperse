@@ -12,10 +12,9 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class StarsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
-    @Input()
-    set selectedItemKey(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
-        this.editClientMode = true;
     }
 
     selectedItems = [];
@@ -25,7 +24,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     listComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -39,8 +37,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
@@ -56,8 +52,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
                     starId: starId
                 })).subscribe((result) => {});
             });
-            if (this.editClientMode)
-                this.selectedItemKeys = [starId];
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }

@@ -12,17 +12,15 @@ import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInpu
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Lists']";
-    @Input()
-    set selectedItems(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItems(value) {
         this.selectedLists = value;
-        this.editClientMode = true;
     }
     list: any;
     selectedLists = [];
 
     listComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -33,8 +31,6 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
@@ -50,11 +46,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     lists: lists
                 })).subscribe((result) => {});
             });
-            if (this.editClientMode) {
-                this.selectedLists = lists.map((item) => {
-                    return item.name;
-                });
-            }
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }

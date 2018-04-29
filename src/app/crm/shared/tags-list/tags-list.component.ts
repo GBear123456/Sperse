@@ -12,10 +12,9 @@ import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput } fro
 export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
-    @Input()
-    set selectedItems(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItems(value) {
         this.selectedTags = value;
-        this.editClientMode = true;
     }
     list: any;
     selectedTags = [];
@@ -23,7 +22,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     listComponent: any;
     tooltipVisible = false;
     showAddButton = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -34,8 +32,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
@@ -52,11 +48,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                     tags: tags
                 })).subscribe((result) => {});
             });
-            if (this.editClientMode) {
-                this.selectedTags = tags.map((item) => {
-                    return item.name;
-                });
-            }
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
