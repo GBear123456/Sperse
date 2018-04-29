@@ -163,7 +163,7 @@ export class ToolBarComponent extends AppComponentBase {
             icon: this.getImgURI('add-button')
         },
         showCompactRowsHeight: {
-            hint: this.l('Compact View'),
+            hint: this.l('CompactView'),
             icon: this.getImgURI('ic_format_line_spacing')
         },
         reportPeriod: {
