@@ -29387,6 +29387,7 @@ export interface IRateCustomerInput {
 
 export class CustomerInfoDto implements ICustomerInfoDto {
     id: number;
+    statusId: string;
     status: string;
     assignedUserId: number;
     starId: number;
@@ -29413,6 +29414,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.statusId = data["statusId"];
             this.status = data["status"];
             this.assignedUserId = data["assignedUserId"];
             this.starId = data["starId"];
@@ -29450,6 +29452,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["statusId"] = this.statusId;
         data["status"] = this.status;
         data["assignedUserId"] = this.assignedUserId;
         data["starId"] = this.starId;
@@ -29481,6 +29484,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
 
 export interface ICustomerInfoDto {
     id: number;
+    statusId: string;
     status: string;
     assignedUserId: number;
     starId: number;

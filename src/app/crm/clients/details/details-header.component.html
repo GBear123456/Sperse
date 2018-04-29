@@ -36,7 +36,7 @@
     </div>
 
     <div class="header_buttons">
-        <ng-container *ngIf="canSendVerificationRequest">
+        <ng-container *ngIf="canSendVerificationRequest && !isClientProspective()">
             <button class="btn btn-layout" (click)="requestVerification()">{{l('ClientDetails_RequestVerification')}}</button>
         </ng-container>
     </div>

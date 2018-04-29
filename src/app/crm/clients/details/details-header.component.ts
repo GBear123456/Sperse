@@ -171,4 +171,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 _.extend({id:  person.contactId},  person))
         ).subscribe(result => {});
     }
+
+    isClientProspective() {
+        return this.data ? this.data.statusId == 'P' : true;
+    }
 }
