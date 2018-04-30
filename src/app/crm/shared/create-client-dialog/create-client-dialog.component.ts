@@ -65,14 +65,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     emails = {};
     emailTypePersonalDefault = 'P';
-    emailTypeBusinessDefault = 'A';
+    emailTypeBusinessDefault = 'W';
     emailType = {
         personal: this.emailTypePersonalDefault,
         business: this.emailTypeBusinessDefault
     };
     phones = {};
     phoneTypePersonalDefault = 'M';
-    phoneTypeBusinessDefault = 'F';
+    phoneTypeBusinessDefault = 'W';
     phoneType = {
         personal: this.phoneTypePersonalDefault,
         business: this.phoneTypeBusinessDefault

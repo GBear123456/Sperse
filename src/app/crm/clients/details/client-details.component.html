@@ -28,7 +28,7 @@
       </div>
       <dx-scroll-view showScrollbar="onHover">
         <nav mat-tab-nav-bar>
-            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active ? 'active': ''" [queryParams]="referrerParams" [disabled]="!link.active">{{link.label}}</a>
+            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active ? 'active': ''" [queryParams]="{referrer: referrerURI}" [disabled]="!link.active">{{link.label}}</a>
         </nav>
       </dx-scroll-view>
     </mat-sidenav>
