@@ -1,4 +1,4 @@
-﻿ import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
+ import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
@@ -10,6 +10,7 @@ import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 import DataSource from 'devextreme/data/data_source';
 
@@ -162,5 +163,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         this._dragulaService.destroy(this.dragulaName);
+    }
+
+    dateOf(utcDateTime) {
+        if (utcDateTime)
+            return moment(utcDateTime).add(-(new Date(<any>utcDateTime).getTimezoneOffset()), 'minutes');
     }
 }
