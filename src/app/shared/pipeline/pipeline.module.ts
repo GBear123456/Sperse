@@ -1,4 +1,5 @@
-﻿import { NgModule } from '@angular/core';
+﻿import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragulaModule } from 'ng2-dragula/ng2-dragula';
 import { PipelineComponent } from './pipeline.component';
@@ -18,7 +19,8 @@ import { PipelineService } from './pipeline.service';
         DxDataGridModule,
         DxRadioGroupModule,
         DxTextAreaModule,
-        MatDialogModule
+        MatDialogModule,
+        RouterModule
     ],
     declarations: [
         TimeAgoPipe,
