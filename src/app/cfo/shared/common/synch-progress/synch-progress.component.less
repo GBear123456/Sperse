@@ -14,9 +14,16 @@
         display: flex;
         align-items: center;
 
-        .warning-icon {
-            color: orange;
-            margin-right: 7.77px;
+        .red-icon {
+            visibility: hidden;
+            color: red;
+            margin-bottom: 3px;
+        }
+    }
+
+    &:hover {
+        .red-icon {
+            visibility: visible !important;
         }
     }
 
@@ -83,7 +90,7 @@
 
                 .dx-progressbar-range {
                     border: 0;
-                    background-color: #35c8a8;
+                    background-color: orange;
                     border-radius: 4px 0 0 4px;
                     margin-top: 0;
                 }
@@ -223,6 +230,10 @@
                     overflow: hidden;
                     padding-right: 5px;
 
+                    &.full-width {
+                        width: 100% !important;
+                    }
+
                     &::before {
                         content: '';
                         width: 10px;
@@ -248,7 +259,12 @@
                 &.syncpending,
                 &.unavailable {
                     .name::before {
-                        background-color: #f05b2a;
+                        content: '\f071';
+                        font-family: FontAwesome !important;
+                        color: orange;
+                        background: none;
+                        top: 6px;
+                        left: 5px;
                     }
                 }
 
