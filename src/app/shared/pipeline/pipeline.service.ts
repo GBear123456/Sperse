@@ -53,8 +53,8 @@ export class PipelineService {
         let fromStage = _.findWhere(this.stages, {name: oldStageName}),
             toStage = _.findWhere(this.stages, {name: newStageName});
         if (fromStage && toStage) {
-            let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});            
-            if (action) {
+            let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
+            if (action && lead && !lead.locked) {
                 lead.locked = true;
                 if (action.sysId == 'CRM.CancelLead')
                     this._dialog.open(LeadCancelDialogComponent, {
@@ -101,6 +101,7 @@ export class PipelineService {
         if (targetStage.leads)
             targetStage.leads.unshift(lead);
         lead.Stage = targetStage.name;
+        lead.locked = false;
     }
 
     completeLeadUpdate(lead, fromStage, toStage) {
