@@ -701,6 +701,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.similarCustomers = [];
         this.photoOriginalData = undefined;
         this.photoThumbnailData = undefined;
+        this.title = undefined;
+        this.website = undefined;
     }
 
     onSaveOptionSelectionChanged($event) {
