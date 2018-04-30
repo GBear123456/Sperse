@@ -29401,6 +29401,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
     creationDate: moment.Moment;
     userContextOrderId: number;
     userContextOrderType: string;
+    lastLeadInfo: LeadInfoDto;
 
     constructor(data?: ICustomerInfoDto) {
         if (data) {
@@ -29440,6 +29441,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
             this.userContextOrderId = data["userContextOrderId"];
             this.userContextOrderType = data["userContextOrderType"];
+            this.lastLeadInfo = data["lastLeadInfo"] ? LeadInfoDto.fromJS(data["lastLeadInfo"]) : <any>undefined;
         }
     }
 
@@ -29478,6 +29480,7 @@ export class CustomerInfoDto implements ICustomerInfoDto {
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["userContextOrderId"] = this.userContextOrderId;
         data["userContextOrderType"] = this.userContextOrderType;
+        data["lastLeadInfo"] = this.lastLeadInfo ? this.lastLeadInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -29498,6 +29501,7 @@ export interface ICustomerInfoDto {
     creationDate: moment.Moment;
     userContextOrderId: number;
     userContextOrderType: string;
+    lastLeadInfo: LeadInfoDto;
 }
 
 export class PersonContactInfoDto implements IPersonContactInfoDto {
@@ -29632,6 +29636,77 @@ export interface IOrganizationContactInfoDto {
     primaryAddress: ContactAddressDto;
     details: ContactInfoDetailsDto;
     comment: string;
+}
+
+export class LeadInfoDto implements ILeadInfoDto {
+    id: number;
+    stage: string;
+    amount: number;
+    creationDate: moment.Moment;
+    modificationDate: moment.Moment;
+    sourceCode: string;
+    campaignCode: string;
+    affiliateCode: string;
+    channelCode: string;
+    comments: string;
+
+    constructor(data?: ILeadInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.stage = data["stage"];
+            this.amount = data["amount"];
+            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.modificationDate = data["modificationDate"] ? moment(data["modificationDate"].toString()) : <any>undefined;
+            this.sourceCode = data["sourceCode"];
+            this.campaignCode = data["campaignCode"];
+            this.affiliateCode = data["affiliateCode"];
+            this.channelCode = data["channelCode"];
+            this.comments = data["comments"];
+        }
+    }
+
+    static fromJS(data: any): LeadInfoDto {
+        let result = new LeadInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["stage"] = this.stage;
+        data["amount"] = this.amount;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["modificationDate"] = this.modificationDate ? this.modificationDate.toISOString() : <any>undefined;
+        data["sourceCode"] = this.sourceCode;
+        data["campaignCode"] = this.campaignCode;
+        data["affiliateCode"] = this.affiliateCode;
+        data["channelCode"] = this.channelCode;
+        data["comments"] = this.comments;
+        return data; 
+    }
+}
+
+export interface ILeadInfoDto {
+    id: number;
+    stage: string;
+    amount: number;
+    creationDate: moment.Moment;
+    modificationDate: moment.Moment;
+    sourceCode: string;
+    campaignCode: string;
+    affiliateCode: string;
+    channelCode: string;
+    comments: string;
 }
 
 export class PersonInfoDto implements IPersonInfoDto {
@@ -35659,77 +35734,6 @@ export class ProcessLeadInput implements IProcessLeadInput {
 
 export interface IProcessLeadInput {
     leadId: number;
-}
-
-export class LeadInfoDto implements ILeadInfoDto {
-    id: number;
-    stage: string;
-    amount: number;
-    creationDate: moment.Moment;
-    modificationDate: moment.Moment;
-    sourceCode: string;
-    campaignCode: string;
-    affiliateCode: string;
-    channelCode: string;
-    comments: string;
-
-    constructor(data?: ILeadInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.stage = data["stage"];
-            this.amount = data["amount"];
-            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
-            this.modificationDate = data["modificationDate"] ? moment(data["modificationDate"].toString()) : <any>undefined;
-            this.sourceCode = data["sourceCode"];
-            this.campaignCode = data["campaignCode"];
-            this.affiliateCode = data["affiliateCode"];
-            this.channelCode = data["channelCode"];
-            this.comments = data["comments"];
-        }
-    }
-
-    static fromJS(data: any): LeadInfoDto {
-        let result = new LeadInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["stage"] = this.stage;
-        data["amount"] = this.amount;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["modificationDate"] = this.modificationDate ? this.modificationDate.toISOString() : <any>undefined;
-        data["sourceCode"] = this.sourceCode;
-        data["campaignCode"] = this.campaignCode;
-        data["affiliateCode"] = this.affiliateCode;
-        data["channelCode"] = this.channelCode;
-        data["comments"] = this.comments;
-        return data; 
-    }
-}
-
-export interface ILeadInfoDto {
-    id: number;
-    stage: string;
-    amount: number;
-    creationDate: moment.Moment;
-    modificationDate: moment.Moment;
-    sourceCode: string;
-    campaignCode: string;
-    affiliateCode: string;
-    channelCode: string;
-    comments: string;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {

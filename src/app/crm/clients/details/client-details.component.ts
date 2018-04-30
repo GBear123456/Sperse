@@ -144,6 +144,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         else
             customerInfoObservable.subscribe(result => {
                 this.fillCustomerDetails(result);
+                this.fillLeadDetails(result.lastLeadInfo);
                 this.finishLoading(true);
             });
     }
