@@ -70,7 +70,10 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     instanceType;
     instanceId;
-    businessEntities;
+
+    /** Default empty business entity */
+    businessEntities = [{ id: null, name: ''}];
+
     accountsTypes;
     cfoService: CFOService;
 
@@ -296,7 +299,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     editingStart(e) {
         this.editingStarted = true;
-        if (this.allowBankAccountsEditing && this.cfoService && !this.businessEntities && !this.accountsTypes) {
+        if (this.allowBankAccountsEditing && this.cfoService && this.businessEntities.length === 1 && !this.accountsTypes) {
             this.instanceType = <any>this.cfoService.instanceType;
             this.instanceId = <any>this.cfoService.instanceId;
             let businessEntitiesObservable = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
@@ -304,7 +307,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
             Observable.forkJoin(businessEntitiesObservable/*, accountsTypesObservable*/)
                         .subscribe(result => {
-                            this.businessEntities = result[0];
+                            this.businessEntities = this.businessEntities.concat(result[0]);
                             //this.accountsTypes = result[1];
                         });
         }
