@@ -150,6 +150,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (!this.showPipeline) {
             this.gridDataSource.pageSize(20);
             this.gridDataSource.filter(null);
+            this.gridDataSource['_store']['_url'] =
+                this.getODataURL(this.dataSourceURI);
             this.gridDataSource.load().then(() => {
                 this.setGridDataLoaded();
             });
