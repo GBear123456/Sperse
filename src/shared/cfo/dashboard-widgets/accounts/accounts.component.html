@@ -39,8 +39,8 @@
             </div>
         </div>
     </div>
-    <div class="account-item total-accounts" id="totalaccounts">
-        <a (click)="totalAccountsMouseenter()" class="view-details">{{l('Select')}}</a>
+    <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseenter()">
+        <a class="view-details">{{l('Select')}}</a>
         <div class="value">{{ bankAccountIds.length && accountsData && bankAccountIds.length !== accountsData.bankAccountCount ? bankAccountIds.length + ' of ': ''}}{{ accountsData?.bankAccountCount }}</div>
         <div class="name">
             {{l((bankAccountIds.length ? '': 'Total_') + 'Accounts')}}
