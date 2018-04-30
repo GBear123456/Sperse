@@ -13,7 +13,7 @@ import { AppConsts } from '@shared/AppConsts';
     selector: 'bank-accounts-widget',
     templateUrl: './bank-accounts-widget.component.html',
     styleUrls: ['./bank-accounts-widget.component.less'],
-    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy ]
+    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends AppComponentBase {
     private initBankAccountsTimeout: any;
@@ -100,9 +100,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
-        this.cfoService = injector.get(CFOService, null);
-        this.instanceType = <any>this.cfoService.instanceType;
-        this.instanceId = <any>this.cfoService.instanceId;
+        this.cfoService = injector.get(CFOService, null);       
     }
 
     rowPrepared(e) {
@@ -317,6 +315,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     editingStart(e) {
         this.editingStarted = true;
         if (this.allowBankAccountsEditing && this.cfoService && this.businessEntities.length === 1 && !this.accountsTypes) {
+            this.instanceType = <any>this.cfoService.instanceType;
+            this.instanceId = <any>this.cfoService.instanceId;
             let businessEntitiesObservable = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
             /** @todo update when api will be ready */
             //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
@@ -449,6 +449,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         this.bankAccountInfo.id = this.syncAccountId;
         this.bankAccountInfo.newName = cellObj.data.name;
         this.isContextMenuVisible = true;
+        this.instanceType = <any>this.cfoService.instanceType;
+        this.instanceId = <any>this.cfoService.instanceId;
     }
 
     actionsItemClick(e) {
