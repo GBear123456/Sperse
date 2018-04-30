@@ -137,9 +137,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     }
 
     masterSelectionChanged(e) {
-        let row = e.component.getVisibleRows()[e.rowIndex];
         let isSelected = e.data.selected;
-        row.data.bankAccounts.forEach(bankAccount => {
+        e.data.bankAccounts.forEach(bankAccount => {
             bankAccount['selected'] = isSelected;
         });
         this.selectedAccountsChanged();
