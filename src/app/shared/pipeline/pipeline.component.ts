@@ -1,4 +1,4 @@
-﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
+﻿ import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
@@ -9,7 +9,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
 
-import * as _ from 'underscore';
+import * as _ from 'lodash';
 
 import DataSource from 'devextreme/data/data_source';
 
@@ -29,7 +29,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     dragulaName = 'stage';
 
+    private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
+    private readonly dataSourceURI = 'Lead';
 
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
@@ -57,8 +59,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
               if (stage)
                   stage.accessibleActions.forEach((action) => {
                       if (action.targetStageId) {
-                          let target = _.findWhere(this.stages, {id: action.targetStageId}),
-                              targetElm = document.querySelector('[accessKey="' + target.name + '"]');
+                          let target = _.find(this.stages, (stage) => {
+                              return stage.id == action.targetStageId;
+                          }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
                           targetElm && targetElm.classList.add('drop-area');
                       }
                   });
@@ -104,13 +107,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getLeadByElement(el, stage) {
-        return stage && _.findWhere(stage.leads, {Id: 
-            parseInt(this.getAccessKey(el.closest('.card')))});
+        return stage && _.find(stage.leads, (lead) => {
+            return lead.Id == parseInt(this.getAccessKey(el.closest('.card')));
+        });
     }
 
     getStageByElement(el) {
-        return _.findWhere(this.stages, {name: 
-            this.getAccessKey(el.closest('.column-items'))});
+        return _.find(this.stages, (stage) => {
+            return stage.name == this.getAccessKey(el.closest('.column-items'));
+        });
     }
 
     getAccessKey(elm) {
@@ -131,28 +136,39 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 });
                 this.pipeline = result;
                 this.onStagesLoaded.emit(result.stages);
-                this.loadStagesLeads(0);
+                this.loadStagesLeads();
             });
     }
 
-    loadStagesLeads(index, page = 0, oneStageOnly = false) {
+    loadStagesLeads(index = 0, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
-        this.dataSource.filter(['Stage', '=', this.pipeline.stages[index].name]);
+        this.dataSource['_store']['_url'] =
+            this.getODataURL(this.dataSourceURI, 
+                this.queryWithSearch.concat({or: [{Stage: stages[index].name}]}));
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
-            stages[index]['leads'] = 
-                _.uniq((stages[index]['leads'] || []).concat(leads));
+            stages[index]['leads'] = oneStageOnly ? _.uniqBy(
+                (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']): leads;
             stages[index]['total'] = this.dataSource.totalCount();
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
                 this._pipelineService.stages = 
-                    this.stages = this.pipeline.stages;
+                    this.stages = stages;
                 this.finishLoading(true);
             }
         });
+    }
+
+    advancedODataFilter(grid: any, uri: string, query: any[]) {
+        this.queryWithSearch = query.concat(this.getSearchFilter());
+
+        this.startLoading(true);
+        this.loadStagesLeads();
+    
+        return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {

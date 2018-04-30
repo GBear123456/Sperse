@@ -144,7 +144,7 @@ export abstract class AppComponentBase {
         this.isDataLoaded = false;
         return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
-                return getCheckCustom(filter) ||
+                return getCheckCustom && getCheckCustom(filter) ||
                     filter.getODataFilterObject();
             })
         );

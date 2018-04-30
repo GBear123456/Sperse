@@ -34,7 +34,7 @@
                       </div>
                   </div>
             </ng-container>
-            <span class="load-more" [hidden]="!stage.leads.length || stage.total == stage.leads.length" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
+            <span class="load-more" [hidden]="!stage.leads.length || stage.total <= stage.leads.length" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
         </div>
     </div>
 </div>
