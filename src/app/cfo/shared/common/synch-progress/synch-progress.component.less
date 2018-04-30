@@ -61,14 +61,18 @@
         animation: rotation .6s infinite linear;
 
         &.error {
-            border-top-color: red;
-            border-right-color: red;
+            border-top-color: orange;
+            border-right-color: orange;
         }
     }
 
     /deep/ .dx-progressbar {
         &::before {
             content: none;
+        }
+
+        &.error .dx-progressbar-range {
+            background-color: orange !important;
         }
     }
 
@@ -90,7 +94,7 @@
 
                 .dx-progressbar-range {
                     border: 0;
-                    background-color: orange;
+                    background-color: #35C8A8;
                     border-radius: 4px 0 0 4px;
                     margin-top: 0;
                 }
