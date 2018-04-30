@@ -12,9 +12,9 @@
                                   <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams"><img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.FullName}}" class="img-responsive img-circle" width="40"></a>
                               </div>
                               <div class="full-name">
-                                  <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams">{{lead?.FullName}}</a>
+                                  <span>{{lead?.FullName}}</span>
                                   <div class="company-name">
-                                      <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams">{{ lead?.CompanyName || 'no company'}}</a>
+                                      <span>{{ lead?.CompanyName || 'no company'}}</span>
                                   </div>
                               </div>
                           </div>
