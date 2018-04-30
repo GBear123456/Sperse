@@ -311,8 +311,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }
     }
 
-    save(event): void {     
-        if (event.offsetX > 195)
+    save(event?): void {     
+        if (event && event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
@@ -710,6 +710,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         $event.component.option('selectedItem', option);
 
         this.updateSaveOption(option);
+        this.save();
     }
 
     onFullNameKeyUp(event) {
