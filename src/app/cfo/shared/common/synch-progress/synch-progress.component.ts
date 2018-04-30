@@ -14,10 +14,11 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @Output() completed = true;
     synchData: SyncProgressOutput;
     currentProgress: number;
+    showComponent = true;
     hasFailedAccounts = false;
     syncFailed = false;
     lastSyncDate;
-
+    
     statusCheckCompleted = false;
     tooltipVisible: boolean;
     timeoutHandler: any;
@@ -79,7 +80,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                         this.completed = true;
                         this.onComplete.emit();
                     } else if (this.lastSyncDate && this.lastSyncDate < result.totalProgress.lastSyncDate) {
-                            this.onComplete.emit();
+                        this.onComplete.emit();
                     } else if (this.tryCount < this.maxTryCount) {
                         this.tryCount++;
                         this.timeoutHandler = setTimeout(
@@ -119,6 +120,11 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         } else {
             return 550;
         }
+    }
+
+    toggleComponent() {
+        this.showComponent = !this.showComponent;
+        this.tooltipVisible = false;
     }
 
     toggleTooltip() {
