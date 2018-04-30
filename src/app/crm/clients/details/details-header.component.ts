@@ -2,6 +2,7 @@ import { Component, OnInit, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { CustomerStatus } from '@shared/AppEnums';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
@@ -173,6 +174,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     isClientProspective() {
-        return this.data ? this.data.statusId == 'P' : true;
+        return this.data ? this.data.statusId == CustomerStatus.Prospective : true;
     }
 }

@@ -119,3 +119,8 @@ export class ContactTypes {
     static Business = 'business';
 }
 
+export class CustomerStatus {
+    static Prospective = 'P';
+    static Active = 'A';
+    static Inactive = 'I'; 
+}
