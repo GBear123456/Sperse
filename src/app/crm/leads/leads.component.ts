@@ -95,6 +95,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _router: Router,
+        private _route: ActivatedRoute,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
@@ -105,7 +106,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-
+        this._route.queryParams.subscribe(params => {
+            if (params['dataLayoutType']) {
+                this.dataLayoutType = params['dataLayoutType'];
+            }
+        });
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -144,7 +149,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {        
+    toggleDataLayout(dataLayoutType) {
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         if (!this.showPipeline) {
@@ -358,7 +363,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         widget: 'dxDropDownMenu',
                         disabled: !this.selectedLeads.length,
-                        name: 'stage', 
+                        name: 'stage',
                         options: {
                             hint: this.l('Stage'),
                             items: this.stages
@@ -521,8 +526,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
 
         let context = this.showPipeline ? this.pipelineComponent: this;
-        context.processODataFilter.call(context, 
-            this.dataGrid.instance, this.dataSourceURI, 
+        context.processODataFilter.call(context,
+            this.dataGrid.instance, this.dataSourceURI,
                 this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
@@ -574,8 +579,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onStagesLoaded($event) {
         this.stages = $event.map((stage) => {
             return {
-                text: stage.name, 
-                action: this.updateLeadsStage.bind(this)  
+                text: stage.name,
+                action: this.updateLeadsStage.bind(this)
             };
         });
         this.initToolbarConfig();
@@ -600,8 +605,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
 
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], 
-            { queryParams: { referrer: this._router.url } });
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'],
+            { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
     }
 
     onCellClick($event) {

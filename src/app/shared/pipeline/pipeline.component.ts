@@ -1,7 +1,7 @@
-﻿ import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
-
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineDto, PipelineData, ProcessLeadInput,
     LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
 
@@ -90,7 +90,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return false; // elements can't be dropped in any of the `containers` by default
               }
         });
-        this.leadDetailQueryParams = this._router.url;
+        this.leadDetailQueryParams = {
+            referrer: 'app/crm/leads',
+            dataLayoutType: DataLayoutType.Pipeline
+        };
     }
 
     ngOnInit(): void {
