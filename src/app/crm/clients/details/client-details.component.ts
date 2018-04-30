@@ -6,13 +6,16 @@ import {
     CustomerInfoDto,
     PersonContactInfoDto,
     UpdateCustomerStatusInput,
-    LeadServiceProxy
+    LeadServiceProxy,
+    StageDto,
+    LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     selector: 'client-details',
@@ -27,6 +30,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     customerInfo: CustomerInfoDto;
     primaryContact: PersonContactInfoDto;
     verificationChecklist: VerificationChecklistItem[];
+    leadId: number;
+    leadInfo: LeadInfoDto;
+    leadStages = [];
 
     person: any = {
         id: 1,
@@ -57,13 +63,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private rootComponent: any;
     private paramsSubscribe: any = [];
     private referrerURI: string;
+    private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     constructor(injector: Injector,
                 private _router: Router,
                 private _dialog: MatDialog,
                 private _route: ActivatedRoute,
                 private _customerService: CustomersServiceProxy,
-                private _leadService: LeadServiceProxy) {
+                private _leadService: LeadServiceProxy,
+                private _pipelineService: PipelineService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _customerService['data'] = {customerInfo: null, leadInfo: null};
@@ -78,10 +86,21 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 };
 
                 let leadId = params['leadId'];
-                if (leadId)
+                if (leadId) {
+                    this.leadId = leadId;
                     _customerService['data'].leadInfo = {
                         id: leadId
                     };
+                    _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+                        .subscribe(result => {
+                            this.leadStages = result.stages.map((stage) => {
+                                return {
+                                    text: stage.name, 
+                                    action: this.updateLeadStage.bind(this)  
+                                };
+                            });
+                        });
+                }
                 this.loadCustomerAndLeadDetails(clientId, leadId);
             }));
 
@@ -107,6 +126,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     private fillLeadDetails(result) {
         this._customerService['data'].leadInfo = result;
+        this.leadInfo = result;
     }
 
     private loadCustomerAndLeadDetails(customerId, leadId) {
@@ -246,5 +266,17 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this.getVerificationChecklistItem(VerificationChecklistItemType.Employment),
             this.getVerificationChecklistItem(VerificationChecklistItemType.Income)
         ];
+    }
+
+    updateLeadStage($event) {
+        if (!this.leadId || !this.leadInfo)
+            return;
+
+        let sourceStage = this.leadInfo.stage;
+        let targetStage = $event.itemData.text;
+        if (this._pipelineService.updateLeadStage(this.leadInfo, sourceStage, targetStage))
+            this.leadInfo.stage = targetStage;
+        else
+            this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
     }
 }

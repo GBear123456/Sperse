@@ -21,66 +21,92 @@ export class OperationsWidgetComponent implements OnInit {
 
     @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
+    @Input() leadId: number;
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
+    private _stages: any[] = [];
+
+    get stages(): any[] {
+        return this._stages;
+    }
+
+    @Input() 
+    set stages(stages: any[]) {
+        this._stages = stages;
+        this.initToolbarConfig();
+    }
+
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
-    toolbarConfig = [
-        {
-            location: 'before', items: [
+    toolbarConfig = [];
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
             {
-                name: 'assign',
-                action: this.toggleUserAssignment.bind(this)
-            },
-            {
-                name: 'status',
-                widget: 'dxDropDownMenu',
-                options: {
-                    hint: 'Status',
-                    items: [
-                        {
-                            action: this.updateStatus.bind(this, 'A'),
-                            text: 'Active',
-                        }, {
-                            action: this.updateStatus.bind(this, 'I'),
-                            text: 'Inactive',
-                        }
-                    ]
+                location: 'before', items: [
+                {
+                    name: 'assign',
+                    action: this.toggleUserAssignment.bind(this)
+                },
+                this.leadId ? { 
+                    widget: 'dxDropDownMenu',
+                    disabled: !this.stages.length,
+                    name: 'stage', 
+                    options: {
+                        hint: 'Stage',
+                        items: this.stages
+                    }
+                } : 
+                {
+                    name: 'status',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: 'Status',
+                        items: [
+                            {
+                                action: this.updateStatus.bind(this, 'A'),
+                                text: 'Active',
+                            }, {
+                                action: this.updateStatus.bind(this, 'I'),
+                                text: 'Inactive',
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: 'lists',
+                    action: this.toggleLists.bind(this)
+                },
+                {
+                    name: 'tags',
+                    action: this.toggleTags.bind(this)
+                },
+                {
+                    name: 'rating',
+                    action: this.toggleRating.bind(this),
+                },
+                {
+                    name: 'star',
+                    action: this.toggleStars.bind(this),
+                },
+                {
+                    name: 'delete',
+                    action: this.delete.bind(this)
                 }
+            ]
             },
             {
-                name: 'lists',
-                action: this.toggleLists.bind(this)
-            },
-            {
-                name: 'tags',
-                action: this.toggleTags.bind(this)
-            },
-            {
-                name: 'rating',
-                action: this.toggleRating.bind(this),
-            },
-            {
-                name: 'star',
-                action: this.toggleStars.bind(this),
-            },
-            {
-                name: 'delete',
-                action: this.delete.bind(this)
+                location: 'after', items: [
+                {
+                    name: 'print',
+                    action: this.print.emit.bind(this.print)
+                }
+            ]
             }
-        ]
-        },
-        {
-            location: 'after', items: [
-            {
-                name: 'print',
-                action: this.print.emit.bind(this.print)
-            }
-        ]
-        }
-    ];
+        ];
+    }
 
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
@@ -109,6 +135,7 @@ export class OperationsWidgetComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
+        this.initToolbarConfig();
     }
 
     delete() {
