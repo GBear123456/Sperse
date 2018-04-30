@@ -54,40 +54,41 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
         });
         _dragulaService.setOptions(this.dragulaName, {
+            ignoreInputTextSelection: false,
             moves: (el, source) => {
-              let stage = this.getStageByElement(source);
-              if (stage)
-                  stage.accessibleActions.forEach((action) => {
-                      if (action.targetStageId) {
-                          let target = _.find(this.stages, (stage) => {
-                              return stage.id == action.targetStageId;
-                          }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
-                          targetElm && targetElm.classList.add('drop-area');
-                      }
-                  });
-              return true; // elements are always draggable by default
+                let stage = this.getStageByElement(source);                    
+                setTimeout(() => {
+                    if (stage)
+                        stage.accessibleActions.forEach((action) => {
+                            if (action.targetStageId) {
+                                let target = _.find(this.stages, (stage) => {
+                                    return stage.id == action.targetStageId;
+                                }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
+                                targetElm && targetElm.classList.add('drop-area');
+                            }
+                        });
+                });
+
+                if (stage && stage.accessibleActions.length) {
+                    let lead = this.getLeadByElement(el, stage);
+                    return lead && !lead.locked && !stage.accessibleActions.every((action) => { 
+                        return !action.targetStageId;
+                    });
+                } else
+                    return false;
+
             },
             accepts: (el, target, source) => {
-              let stageSource = this.getStageByElement(source),
-                  stageTarget = this.getStageByElement(target);
-              if (stageSource && stageTarget) {
-                  return (stageSource.name == stageTarget.name) || 
-                      !stageSource.accessibleActions.every((action) => {
-                          return action.targetStageId != stageTarget.id;
-                      });
-              } else
-                  return false; // elements can't be dropped in any of the `containers` by default
-            },
-            invalid: (el) => {
-              let stage = this.getStageByElement(el),
-                  lead = this.getLeadByElement(el, stage);
-              if (lead && !lead.locked && stage && stage.accessibleActions.length)
-                  return stage.accessibleActions.every((action) => { 
-                      return !action.targetStageId;
-                  });
-              else
-                  return true; // prevent any drags from initiating by default
-            }
+                let stageSource = this.getStageByElement(source),
+                    stageTarget = this.getStageByElement(target);
+                if (stageSource && stageTarget) {
+                    return (stageSource.name == stageTarget.name) || 
+                        !stageSource.accessibleActions.every((action) => {
+                            return action.targetStageId != stageTarget.id;
+                        });
+                } else
+                    return false; // elements can't be dropped in any of the `containers` by default
+              }
         });
     }
 
@@ -108,13 +109,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     getLeadByElement(el, stage) {
         return stage && _.find(stage.leads, (lead) => {
-            return lead.Id == parseInt(this.getAccessKey(el.closest('.card')));
+            return lead && (lead.Id == parseInt(this.getAccessKey(el.closest('.card'))));
         });
     }
 
     getStageByElement(el) {
         return _.find(this.stages, (stage) => {
-            return stage.name == this.getAccessKey(el.closest('.column-items'));
+            return stage && (stage.name == this.getAccessKey(el.closest('.column-items')));
         });
     }
 
