@@ -3,34 +3,34 @@
         <div class="column-title">
             <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
-        <div class="column-items {{stage.dragAllowed ? 'drag-allowed': ''}}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage.name}}">
-            <ng-container *ngFor="let card of stage.leads">
-                  <div class="card {{card.locked ? 'locked': ''}}" accessKey="{{card.Id}}">
+        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.name}}">
+            <ng-container *ngFor="let lead of stage.leads">
+                  <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id">
                       <div class="container-fluid">
                           <div class="row">
                               <div class="text-right pipeline-photo-wrap">
-                                  <img [src]="getPhoto(card.Photo, card.Gender)" alt="{{card.FullName}}" class="img-responsive img-circle" width="40">
+                                  <img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.FullName}}" class="img-responsive img-circle" width="40">
                               </div>
                               <div class="full-name">
-                                  <span>{{card.FullName}}</span>
+                                  <span>{{lead?.FullName}}</span>
                                   <div class="company-name">
-                                      <span>{{ card.CompanyName || 'no company'}}</span>
+                                      <span>{{ lead?.CompanyName || 'no company'}}</span>
                                   </div>
                               </div>
                           </div>
                           <div class="row"> 
                               <div class="days-ago">
-                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ card.CreationTime | timeAgo }}</span>
+                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ lead?.CreationTime | timeAgo }}</span>
                               </div>                                
                           </div>
-                          <div class="row item-data">                                
+                          <!-- div class="row item-data">                                
                               <div class="text-right">
                                   <span class="related-contact">{{l('PipeLine_RelatedContacts', [1])}}</span>
                                   <img src="/assets/common/icons/phone.svg" class="phone">
                                   <span class="delimiter"></span>
                                   <img src="/assets/common/icons/email.svg" class="email">
                               </div>
-                          </div>
+                          </div -->
                       </div>
                   </div>
             </ng-container>
