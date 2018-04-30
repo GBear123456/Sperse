@@ -44,13 +44,15 @@ export class PipelineService {
 
     updateLeadStageByLeadId(leadId, oldStageName, newStageName) {
         let fromStage = _.findWhere(this.stages, {name: oldStageName});
-        let lead = _.findWhere(fromStage.leads, {Id: parseInt(leadId)});
-        return this.updateLeadStage(lead, oldStageName, newStageName);
+        if (fromStage) {
+            let lead = _.findWhere(fromStage.leads, {Id: parseInt(leadId)});
+            return lead && this.updateLeadStage(lead, oldStageName, newStageName);
+        }
     }
 
     updateLeadStage(lead, oldStageName, newStageName) {
-        let leadId = lead.Id || lead.id;
-        let fromStage = _.findWhere(this.stages, {name: oldStageName}),
+        let leadId = lead['Id'] || lead['id'],
+            fromStage = _.findWhere(this.stages, {name: oldStageName}),
             toStage = _.findWhere(this.stages, {name: newStageName});
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});

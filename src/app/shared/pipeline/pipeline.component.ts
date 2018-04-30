@@ -16,8 +16,7 @@ import DataSource from 'devextreme/data/data_source';
 @Component({
     selector: 'app-pipeline',
     templateUrl: './pipeline.component.html',
-    styleUrls: ['./pipeline.component.less'],
-    providers: [PipelineService]
+    styleUrls: ['./pipeline.component.less']    
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -133,9 +132,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
-            stages[index]['leads'] = oneStageOnly ? _.uniqBy(
+            let stage = stages[index];
+            stage['leads'] = oneStageOnly ? _.uniqBy(
                 (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
-            stages[index]['total'] = this.dataSource.totalCount();
+            stage['total'] = this.dataSource.totalCount();
+            stage['full'] = stage.total <= stage.leads.length;
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
