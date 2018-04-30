@@ -16,7 +16,7 @@ import {ConfirmDialogComponent} from './dialogs/confirm/confirm-dialog.component
 import {CalendarComponent} from './widgets/calendar/calendar.component';
 import { NoDataComponent } from './widgets/no-data/no-data.component';
 
-import { DxCheckBoxModule, DxTextBoxModule, DxScrollViewModule, DxTabsModule, DxDataGridModule, DxTagBoxModule, DxSelectBoxModule, DxSelectBoxComponent } from 'devextreme-angular';
+import { DxCheckBoxModule, DxContextMenuModule, DxPopupModule, DxTextBoxModule, DxScrollViewModule, DxTabsModule, DxDataGridModule, DxTagBoxModule, DxSelectBoxModule, DxSelectBoxComponent } from 'devextreme-angular';
 
 import { AppUiCustomizationService } from './ui/app-ui-customization.service';
 import { AppAuthService } from './auth/app-auth.service';
@@ -60,8 +60,10 @@ import { PhoneFormatPipe } from './pipes/phone-format.pipe';
         DxDataGridModule,
         DxSelectBoxModule,
         MatDialogModule,
+        DxContextMenuModule,
         DxTabsModule,
         DxTagBoxModule,
+        DxPopupModule,
         ngCommon.CommonModule,
         AbpModule,
         RouterModule

@@ -20,7 +20,7 @@
                           </div>
                           <div class="row">
                               <div class="days-ago">
-                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ lead?.CreationTime | timeAgo }}</span>
+                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ dateOf(lead?.CreationTime) | timeAgo }}</span>
                               </div>
                           </div>
                           <!-- div class="row item-data">

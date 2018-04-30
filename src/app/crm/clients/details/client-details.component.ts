@@ -62,7 +62,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     private rootComponent: any;
     private paramsSubscribe: any = [];
-    private referrerURI: string;
+    private referrerParams;
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     constructor(injector: Injector,
@@ -104,7 +104,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         this.paramsSubscribe.push(this._route.queryParams
             .subscribe(params => {
-                this.referrerURI = params['referrer'];
+                this.referrerParams = params;
         }));
     }
 
@@ -197,7 +197,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     close() {
         this._dialog.closeAll();
-        this._router.navigate([this.referrerURI || 'app/crm/clients']);
+        this._router.navigate(
+            [this.referrerParams.referrer || 'app/crm/clients'],
+            { queryParams: this.referrerParams }
+        );
     }
 
     closeEditDialogs(event) {

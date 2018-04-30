@@ -95,6 +95,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _router: Router,
+        private _route: ActivatedRoute,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
@@ -105,7 +106,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-
+        this._route.queryParams.subscribe(params => {
+            if (params['dataLayoutType']) {
+                this.dataLayoutType = params['dataLayoutType'];
+            }
+        });
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -144,7 +149,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {        
+    toggleDataLayout(dataLayoutType) {
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         if (!this.showPipeline) {
@@ -162,6 +167,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._leadService.getFiltersInitialData().subscribe(result => {
             this._filtersService.setup(this.filters = [
                 new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Name',
+                    items: { FullName: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Email',
+                    items: { Email: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'creation',
+                    field: 'CreationTime',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
+                }),
+                new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'stages',
                     items: {
@@ -174,120 +199,29 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 }),
                 new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'LeadType',
-                    field: 'LeadTypeId',
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource: result.leadTypes,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'SourceCode',
                     items: { SourceCode: new FilterItemModel() }
                 }),
                 new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'creation',
-                    field: 'CreationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'updating',
-                    field: 'UpdatingTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Industry',
+                    items: { Industry: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
-                    caption: 'product',
-                    items: { product: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterDropDownComponent,
-                    caption: 'paymentType',
-                    items: {
-                        paymentType: new FilterDropDownModel({
-                            displayName: 'Payment Type',
-                            elements: null,
-                            filterField: 'paymentTypeId',
-                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items['paymentType'].value = value;
-                            }
-                        })
-                    }
+                    caption: 'Owner',
+                    items: { Owner: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
-                    caption: 'priceRange',
-                    items: {}
+                    caption: 'Campaign',
+                    items: { Campaign: new FilterItemModel() }
                 }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'currencies',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'regions',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'referringAffiliates',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'referringWebsites',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'utmSources',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'utmMediums',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'UtmCampaings',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'entryPages',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'salesAgents',
-                    items: {}
-                })
             ], this._activatedRoute.snapshot.queryParams);
         });
 
@@ -360,7 +294,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         widget: 'dxDropDownMenu',
                         disabled: !this.selectedLeads.length,
-                        name: 'stage', 
+                        name: 'stage',
                         options: {
                             hint: this.l('Stage'),
                             items: this.stages
@@ -523,8 +457,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
 
         let context = this.showPipeline ? this.pipelineComponent: this;
-        context.processODataFilter.call(context, 
-            this.dataGrid.instance, this.dataSourceURI, 
+        context.processODataFilter.call(context,
+            this.dataGrid.instance, this.dataSourceURI,
                 this.filters, (filter) => {
                     let filterMethod = this['filterBy' +
                         this.capitalize(filter.caption)];
@@ -576,8 +510,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onStagesLoaded($event) {
         this.stages = $event.map((stage) => {
             return {
-                text: stage.name, 
-                action: this.updateLeadsStage.bind(this)  
+                text: stage.name,
+                action: this.updateLeadsStage.bind(this)
             };
         });
         this.initToolbarConfig();
@@ -602,8 +536,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
 
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], 
-            { queryParams: { referrer: this._router.url } });
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'],
+            { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
     }
 
     onCellClick($event) {

@@ -1,7 +1,7 @@
-﻿ import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
-
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineDto, PipelineData, ProcessLeadInput,
     LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
 
@@ -10,6 +10,7 @@ import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 import DataSource from 'devextreme/data/data_source';
 
@@ -89,7 +90,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return false; // elements can't be dropped in any of the `containers` by default
               }
         });
-        this.leadDetailQueryParams = this._router.url;
+        this.leadDetailQueryParams = {
+            referrer: 'app/crm/leads',
+            dataLayoutType: DataLayoutType.Pipeline
+        };
     }
 
     ngOnInit(): void {
@@ -163,5 +167,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         this._dragulaService.destroy(this.dragulaName);
+    }
+
+    dateOf(utcDateTime) {
+        if (utcDateTime)
+            return moment(utcDateTime).add(-(new Date(<any>utcDateTime).getTimezoneOffset()), 'minutes');
     }
 }
