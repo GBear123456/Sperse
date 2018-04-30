@@ -8,7 +8,7 @@ import { PipelineDto, PipelineData, ProcessLeadInput,
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
-
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import DataSource from 'devextreme/data/data_source';
@@ -25,8 +25,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input() dataSource: DataSource;
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
-    stages: any = [];    
-
+    stages: any = [];
+    leadDetailQueryParams;
     dragulaName = 'stage';
 
     private queryWithSearch: any = [];
@@ -36,7 +36,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
         private _dragulaService: DragulaService,
-        private _pipelineService: PipelineService
+        private _pipelineService: PipelineService,
+        private _router: Router
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -55,7 +56,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         _dragulaService.setOptions(this.dragulaName, {
             ignoreInputTextSelection: false,
             moves: (el, source) => {
-                let stage = this.getStageByElement(source);                    
+                let stage = this.getStageByElement(source);
                 setTimeout(() => {
                     if (stage)
                         stage.accessibleActions.forEach((action) => {
@@ -70,7 +71,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                 if (stage && stage.accessibleActions.length) {
                     let lead = this.getLeadByElement(el, stage);
-                    return lead && !lead.locked && !stage.accessibleActions.every((action) => { 
+                    return lead && !lead.locked && !stage.accessibleActions.every((action) => {
                         return !action.targetStageId;
                     });
                 } else
@@ -81,7 +82,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 let stageSource = this.getStageByElement(source),
                     stageTarget = this.getStageByElement(target);
                 if (stageSource && stageTarget) {
-                    return (stageSource.name == stageTarget.name) || 
+                    return (stageSource.name == stageTarget.name) ||
                         !stageSource.accessibleActions.every((action) => {
                             return action.targetStageId != stageTarget.id;
                         });
@@ -89,6 +90,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return false; // elements can't be dropped in any of the `containers` by default
               }
         });
+        this.leadDetailQueryParams = this._router.url;
     }
 
     ngOnInit(): void {
@@ -126,13 +128,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
         this.dataSource['_store']['_url'] =
-            this.getODataURL(this.dataSourceURI, 
+            this.getODataURL(this.dataSourceURI,
                 this.queryWithSearch.concat({or: [{Stage: stages[index].name}]}));
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().then((leads) => {
             stages[index]['leads'] = oneStageOnly ? _.uniqBy(
-                (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']): leads;
+                (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
             stages[index]['total'] = this.dataSource.totalCount();
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
@@ -148,14 +150,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
         this.startLoading(true);
         this.loadStagesLeads();
-    
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {
         this.startLoading(true);
-        this.loadStagesLeads(stageIndex, 
-            Math.floor(this.stages[stageIndex].leads.length 
+        this.loadStagesLeads(stageIndex,
+            Math.floor(this.stages[stageIndex].leads.length
                 / this.STAGE_PAGE_COUNT), true);
     }
 

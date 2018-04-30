@@ -143,7 +143,7 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
-        TenantFeaturesModalComponent, 
+        TenantFeaturesModalComponent
     ],
     exports: [
         AddMemberModalComponent

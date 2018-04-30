@@ -4,7 +4,8 @@ import { QuovoService, QuovoHandler } from '@app/cfo/shared/common/quovo/QuovoSe
 
 @Component({
     selector: 'add-account-button',
-    templateUrl: './add-account-button.component.html'
+    templateUrl: './add-account-button.component.html',
+    styleUrls: ['./add-account-button.component.less'],
 })
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();

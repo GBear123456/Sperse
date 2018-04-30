@@ -1594,14 +1594,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let stringPath = fullPath.join(',');
         if (!this.treePathes.hasOwnProperty(stringPath)) {
             this.treePathes[stringPath] = 1;
-        }
-        else {
+        } else {
             if (removePath) {
                 this.treePathes[stringPath]--;
                 if (!this.treePathes[stringPath])
                     delete this.treePathes[stringPath];
-            }
-            else {
+            } else {
                 this.treePathes[stringPath]++;
             }
         }
@@ -2903,7 +2901,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** add selected class */
                 if (!targetCell.classList.contains('selectedCell')) {
                     $('.selectedCell').removeClass('selectedCell');
-                    this.hideMoifyingNumberBox();
+                    this.hideModifyingNumberBox();
                     targetCell.classList.add('selectedCell');
                 }
 
@@ -3576,7 +3574,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (cellObj.area === 'data') {
             if (!cellObj.cellElement.classList.contains('selectedCell')) {
                 $('.selectedCell').removeClass('selectedCell');
-                this.hideMoifyingNumberBox();
+                this.hideModifyingNumberBox();
                 cellObj.cellElement.classList.add('selectedCell');
             }
 
@@ -3893,7 +3891,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.functionButton = new Button(wrapperButton, {
             iconSrc: 'assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
-            elementAttr: { 'class' : "function-button"}
+            elementAttr: { 'class' : 'function-button'}
         });
         element.appendChild(this.functionButton.element());
         element.appendChild(this.modifyingCellNumberBox.element());
@@ -5026,7 +5024,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.modifyingCellNumberBox.option('value', value);
     }
 
-    hideMoifyingNumberBox() {
+    hideModifyingNumberBox() {
         if (this.modifyingNumberBoxCellObj) {
             this.saveForecast();
             this.closeCalculator();
@@ -5041,7 +5039,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.detailsModifyingNumberBoxCellObj === e.key)
             return;
         else
-            this.hideMoifyingNumberBox();
+            this.hideModifyingNumberBox();
 
         if (!(e.data && e.data.forecastId && ['debit', 'credit'].indexOf(e.column.dataField) !== -1)) {
             return;
@@ -5074,13 +5072,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.functionButton = new Button(wrapperButton, {
             iconSrc: 'assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
-            elementAttr: { 'class': "function-button" }
+            elementAttr: { 'class': 'function-button' }
         });
 
         this.saveButton = new Button(wrapperSaveButton, {
             iconSrc: 'assets/common/icons/check.svg',
             onClick: this.updateForecastCell.bind(this, e),
-            elementAttr: { 'class': "save-forecast-button" }
+            elementAttr: { 'class': 'save-forecast-button' }
         });
         element.appendChild(this.functionButton.element());
         element.appendChild(this.modifyingCellNumberBox.element());
@@ -5094,11 +5092,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     updateForecastCell(e) {
         e.component.cellValue(e.rowIndex, e.columnIndex, this.modifyingCellNumberBox.option('value'));
         e.component.saveEditData();
-        this.hideMoifyingNumberBox();
+        this.hideModifyingNumberBox();
     }
 
     onTransactionDetailContentReady(e) {
-        this.hideMoifyingNumberBox();
+        this.hideModifyingNumberBox();
     }
 
 }
