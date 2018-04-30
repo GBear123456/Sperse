@@ -1471,7 +1471,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'comment': null,
             'date': null,
             'initialDate': null,
-            'forecastId': null
+            'forecastId': null,
+            'isStub': true
         };
         if (path && path.length) {
             path.forEach(pathItem => {
@@ -1735,7 +1736,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     getStubsInterval(minDate: moment.Moment, maxDate: moment.Moment, existingPeriods: string[], periodFormat: string): { startDate: moment.Moment, endDate: moment.Moment } {
 
-        let currentDate = moment.tz( moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
+        let currentDate = this.getUtcCurrentDate();
         let filterStart = this.requestFilter.startDate;
         let filterEnd = this.requestFilter.endDate;
 
@@ -2113,9 +2114,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getDataItemsByCell(cellObj) {
         return this.cashflowData.filter(cashflowItem => {
-            let rowPathPropertyName = cellObj.area === 'data' ? 'rowPath' : 'path';
-            let columnPathPropertyName = cellObj.area === 'data' ? 'columnPath' : 'path';
-            return (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
+            let rowPathPropertyName = 'rowPath' || 'path';
+            let columnPathPropertyName = 'columnPath' || 'path';
+            return  !cashflowItem.isStub &&
+                    (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
                     (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
@@ -3102,8 +3104,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             accountId: forecastModel.bankAccountId,
                             count: 1,
                             amount: forecastModel.amount,
-                            date: moment(forecastModel.startDate).add(timezoneOffset, 'minutes'),
-                            initialDate: forecastModel.startDate,
+                            date: moment(forecastModel.date).add(timezoneOffset, 'minutes'),
+                            initialDate: forecastModel.date,
                             forecastId: updatedForecastsIds[index]
                         }, targetCells[forecastModel.targetCellIndex].cell.rowPath));
                     });
@@ -3802,10 +3804,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
     }
 
-    isLastDayOfMonth(date: moment.Moment): boolean {
-        return date.date() === date.daysInMonth();
-    }
-
     getDetailFilterFromCell(cellObj) {
         const datePeriod = this.formattingDate(cellObj.cell.columnPath);
 
@@ -3964,12 +3962,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let categoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
             let transactionDescriptor = this.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
-            let forecastedDate = this.modifyingNumberBoxStatsDetailFilter.startDate > moment(0, 'HH') ? this.modifyingNumberBoxStatsDetailFilter.startDate : moment(0, 'HH');
+            let currentDate = this.getUtcCurrentDate();
+            let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
+            let accountId = this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id;
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
-                bankAccountId: this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id,
-
-                date: forecastedDate,
+                bankAccountId: accountId,
+                date: targetDate,
                 startDate: this.modifyingNumberBoxStatsDetailFilter.startDate,
                 endDate: this.modifyingNumberBoxStatsDetailFilter.endDate,
                 cashFlowTypeId: cashflowTypeId,
@@ -3985,16 +3984,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 forecastModel
             ).subscribe(
                 res => {
-                    let cellDate = this.formattingDate(savedCellObj.cell.columnPath);
-                    let date = cellDate.startDate > moment() ? moment(cellDate.startDate).add(new Date(<any>cellDate.startDate).getTimezoneOffset(), 'minutes') : moment().add(new Date().getTimezoneOffset());
-                    let initialDate = cellDate.startDate > moment() ? cellDate.startDate : moment();
+                    let dateWithOffset = moment(targetDate).add(new Date(<any>targetDate).getTimezoneOffset(), 'minutes');
                     /** Update data locally */
                     this.cashflowData.push(this.createStubTransaction({
-                        accountId: this.bankAccounts[0].id,
+                        accountId: accountId,
                         count: 1,
                         amount: newValue,
-                        date: date,
-                        initialDate: initialDate,
+                        date: dateWithOffset,
+                        initialDate: targetDate,
                         forecastId: res
                     }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
@@ -4003,6 +4000,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
         }
         this.removeModifyingCellNumberBox();
+    }
+
+    getUtcCurrentDate(): moment.Moment {
+        return moment.tz( moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
     }
 
     getCategoryValueByPrefix(path, prefix: CategorizationPrefixes) {
@@ -4078,7 +4079,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this.formatAsCurrencyWithLocale(parseInt(value));
     }
 
-    formattingDate(path) {
+    formattingDate(path): { startDate: moment.Moment, endDate: moment.Moment } {
         let columnFields = {};
         this.getColumnFields().forEach(item => {
             columnFields[item.caption.toLowerCase()] = item.areaIndex;
