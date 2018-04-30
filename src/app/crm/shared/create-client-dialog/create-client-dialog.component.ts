@@ -51,6 +51,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
+    urlRegEx = AppConsts.regexPatterns.url;
 
     company: string;
     title: string;
@@ -65,14 +66,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     emails = {};
     emailTypePersonalDefault = 'P';
-    emailTypeBusinessDefault = 'A';
+    emailTypeBusinessDefault = 'W';
     emailType = {
         personal: this.emailTypePersonalDefault,
         business: this.emailTypeBusinessDefault
     };
     phones = {};
     phoneTypePersonalDefault = 'M';
-    phoneTypeBusinessDefault = 'F';
+    phoneTypeBusinessDefault = 'W';
     phoneType = {
         personal: this.phoneTypePersonalDefault,
         business: this.phoneTypeBusinessDefault
@@ -311,8 +312,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }
     }
 
-    save(event): void {     
-        if (event.offsetX > 195)
+    save(event?): void {     
+        if (event && event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
@@ -701,6 +702,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.similarCustomers = [];
         this.photoOriginalData = undefined;
         this.photoThumbnailData = undefined;
+        this.title = undefined;
+        this.website = undefined;
     }
 
     onSaveOptionSelectionChanged($event) {
@@ -710,6 +713,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         $event.component.option('selectedItem', option);
 
         this.updateSaveOption(option);
+        this.save();
     }
 
     onFullNameKeyUp(event) {

@@ -1,4 +1,4 @@
-﻿<div class="container-fluid" [@routerTransition]>
+<div class="container-fluid" [@routerTransition]>
     <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
             <h1 class="d-none d-md-block">{{l("SperseLogin")}}</h1>
@@ -8,7 +8,7 @@
 
                 <div class="form-group clearfix">
                     <!--<label class="control-label visible-ie8 visible-ie9">{{l("UserNameOrEmail")}}</label>-->
-                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('UserNameOrEmail')}}" name="userNameOrEmailAddress" required tabindex="1" />
+                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress" required tabindex="1" />
 
                     <div class="form-group clearfix">
                         <div class="mt-checkbox-list pull-right">

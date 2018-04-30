@@ -3,7 +3,7 @@
 <div class="box-shadow-wrapper">
   <div class="under-header">
     <div class="general-links">
-      <i class="fa fa-envelope-o" aria-hidden="true"></i>        
+      <i class="fa fa-envelope-o" aria-hidden="true"></i>
       <i class="fa fa-phone" aria-hidden="true"></i>
       <a [routerLink]="'notes'"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
     </div>
@@ -23,16 +23,16 @@
         <div class="small-phones">
           <div class="phone" *ngFor="let phone of primaryContact?.phones">
             <i class="icons phone type-{{phone.usageTypeId || 'P'}}"></i>{{phone.phoneNumber | phone}}
-          </div>        
+          </div>
         </div>
       </div>
       <dx-scroll-view showScrollbar="onHover">
         <nav mat-tab-nav-bar>
-            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active ? 'active': ''" [disabled]="!link.active">{{link.label}}</a>
+            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active ? 'active': ''" [queryParams]="referrerParams" [disabled]="!link.active">{{link.label}}</a>
         </nav>
       </dx-scroll-view>
     </mat-sidenav>
-    <div class="main-content">    
+    <div class="main-content">
       <router-outlet></router-outlet>
     </div>
     <mat-sidenav class="right_sidenav" mode="side" align="end" opened="true">

@@ -20,6 +20,7 @@ export class httpConfiguration extends AbpHttpConfiguration {
 
     handleUnAuthorizedRequest(messagePromise: any, targetUrl?: string) {
         sessionStorage.setItem('redirectUrl', location.href);
+        abp.multiTenancy.setTenantIdCookie();
 
         super.handleUnAuthorizedRequest(messagePromise, targetUrl);
     }

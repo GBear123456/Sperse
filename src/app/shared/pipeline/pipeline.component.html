@@ -9,21 +9,21 @@
                       <div class="container-fluid">
                           <div class="row">
                               <div class="text-right pipeline-photo-wrap">
-                                  <img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.FullName}}" class="img-responsive img-circle" width="40">
+                                  <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams"><img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.FullName}}" class="img-responsive img-circle" width="40"></a>
                               </div>
                               <div class="full-name">
-                                  <span>{{lead?.FullName}}</span>
+                                  <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams">{{lead?.FullName}}</a>
                                   <div class="company-name">
-                                      <span>{{ lead?.CompanyName || 'no company'}}</span>
+                                      <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams">{{ lead?.CompanyName || 'no company'}}</a>
                                   </div>
                               </div>
                           </div>
-                          <div class="row"> 
+                          <div class="row">
                               <div class="days-ago">
-                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ lead?.CreationTime | timeAgo }}</span>
-                              </div>                                
+                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ dateOf(lead?.CreationTime) | timeAgo }}</span>
+                              </div>
                           </div>
-                          <!-- div class="row item-data">                                
+                          <!-- div class="row item-data">
                               <div class="text-right">
                                   <span class="related-contact">{{l('PipeLine_RelatedContacts', [1])}}</span>
                                   <img src="/assets/common/icons/phone.svg" class="phone">
@@ -34,7 +34,7 @@
                       </div>
                   </div>
             </ng-container>
-            <span class="load-more" [hidden]="!stage.leads.length || stage.total <= stage.leads.length" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
+            <span class="load-more" [hidden]="stage.full" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
         </div>
     </div>
 </div>
