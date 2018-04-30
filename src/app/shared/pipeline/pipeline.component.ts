@@ -2,7 +2,7 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
-import { PipelineDto, PipelineServiceProxy, PipelineData, ProcessLeadInput,
+import { PipelineDto, PipelineData, ProcessLeadInput,
     LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
@@ -17,7 +17,7 @@ import DataSource from 'devextreme/data/data_source';
     selector: 'app-pipeline',
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less'],
-    providers: [PipelineServiceProxy]
+    providers: [PipelineService]
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -35,7 +35,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
-        private _pipelineServiceProxy: PipelineServiceProxy,
         private _dragulaService: DragulaService,
         private _pipelineService: PipelineService
     ) {
@@ -46,7 +45,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
             if (leadId && newStage != oldStage)
-                _pipelineService.updateLeadStage(leadId, oldStage, newStage);
+                _pipelineService.updateLeadStageByLeadId(leadId, oldStage, newStage);
         });
         _dragulaService.dragend.subscribe((value) => {
             [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
@@ -98,13 +97,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     refresh() {
         this.startLoading(true);
-        this._pipelineServiceProxy
-            .getPipelinesData(this.pipelinePurposeId)
-            .subscribe((result: PipelineData[]) => {
-                if (result.length > 0) {
-                    this.getPipelineDefinition(result[0].id);
-                }
-        })
+        this._pipelineService
+            .getPipelineDefinitionObservable(this.pipelinePurposeId)
+            .subscribe((result: PipelineDto) => {
+                this.pipeline = result;
+                this.onStagesLoaded.emit(result.stages);
+                this.loadStagesLeads();
+            });
     }
 
     getLeadByElement(el, stage) {
@@ -123,24 +122,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return elm && elm.getAttribute('accessKey');
     }
 
-    getPipelineDefinition(pipelineId: number): void {        
-        this._pipelineServiceProxy
-            .getPipelineDefinition(pipelineId)
-            .subscribe(result => {
-                result.stages.sort((a, b) => {
-                    return a.sortOrder > b.sortOrder ? 1: -1;
-                }).forEach((item) => {
-                    item['index'] = Math.abs(item.sortOrder);
-                    item['dragAllowed'] = !item.accessibleActions.every((action) => {
-                        return !action.targetStageId;
-                    });
-                });
-                this.pipeline = result;
-                this.onStagesLoaded.emit(result.stages);
-                this.loadStagesLeads();
-            });
-    }
-
     loadStagesLeads(index = 0, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
         this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
@@ -156,8 +137,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
-                this._pipelineService.stages = 
-                    this.stages = stages;
+                this.stages = stages;
                 this.finishLoading(true);
             }
         });
