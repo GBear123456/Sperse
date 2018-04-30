@@ -279,5 +279,6 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this.leadInfo.stage = targetStage;
         else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
+        $event.stopPropagation();
     }
 }
