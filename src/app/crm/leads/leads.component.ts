@@ -162,6 +162,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._leadService.getFiltersInitialData().subscribe(result => {
             this._filtersService.setup(this.filters = [
                 new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Name',
+                    items: { FullName: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Email',
+                    items: { Email: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'creation',
+                    field: 'CreationTime',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: {method: 'getFilterByDate'}
+                }),
+                new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'stages',
                     items: {
@@ -174,120 +194,29 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 }),
                 new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'LeadType',
-                    field: 'LeadTypeId',
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource: result.leadTypes,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
                     caption: 'SourceCode',
                     items: { SourceCode: new FilterItemModel() }
                 }),
                 new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'creation',
-                    field: 'CreationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'updating',
-                    field: 'UpdatingTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Industry',
+                    items: { Industry: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
-                    caption: 'product',
-                    items: { product: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterDropDownComponent,
-                    caption: 'paymentType',
-                    items: {
-                        paymentType: new FilterDropDownModel({
-                            displayName: 'Payment Type',
-                            elements: null,
-                            filterField: 'paymentTypeId',
-                            onElementSelect: (value, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items['paymentType'].value = value;
-                            }
-                        })
-                    }
+                    caption: 'Owner',
+                    items: { Owner: new FilterItemModel() }
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
                     operator: 'contains',
-                    caption: 'priceRange',
-                    items: {}
+                    caption: 'Campaign',
+                    items: { Campaign: new FilterItemModel() }
                 }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'currencies',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'regions',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'referringAffiliates',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'referringWebsites',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'utmSources',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'utmMediums',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'UtmCampaings',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'entryPages',
-                    items: {}
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'salesAgents',
-                    items: {}
-                })
             ], this._activatedRoute.snapshot.queryParams);
         });
 
