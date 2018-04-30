@@ -1,4 +1,4 @@
-﻿import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -109,5 +109,9 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     externalLogin(provider: ExternalLoginProvider) {
         this.loginService.externalAuthenticate(provider);
+    }
+
+    getLoginPlaceholder(): string {
+        return abp.session.tenantId ? this.l('UserNameOrEmail') : this.l('EmailAddress');
     }
 }
