@@ -1,10 +1,10 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
-    <crm-tags-list [selectedKeys]="selectedClientKeys"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="selectedClientKeys"></crm-lists-list>
-    <crm-user-assignment-list [selectedKeys]="selectedClientKeys"></crm-user-assignment-list>
-    <crm-rating [selectedKeys]="selectedClientKeys"></crm-rating>
-    <crm-stars-list [selectedKeys]="selectedClientKeys"></crm-stars-list>
+    <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-lists-list>
+    <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-user-assignment-list>
+    <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-rating>
+    <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-stars-list>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>

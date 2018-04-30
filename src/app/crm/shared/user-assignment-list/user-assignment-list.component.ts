@@ -13,17 +13,18 @@ import { AppConsts } from '@shared/AppConsts';
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
-    @Input()
-    set selectedItemKey(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
-        this.editClientMode = true;
     }
+    get selectedItemKey() {
+        return this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined;
+    }
+    private selectedItemKeys = [];
     list: any;
-    selectedItemKeys = [];
 
     listComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -37,25 +38,24 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
-        this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
-            let selectedItems = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item;
+        if (this.listComponent) {
+            this.selectedItemKeys = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(index) && item.id;
             }).filter(Boolean);
-            let userId = selectedItems.length > 0 ? selectedItems[0].id : undefined;
-            this.selectedKeys.forEach((key) => {
-                this._tagsService.assignUserToCustomer(AssignUserToCustomerInput.fromJS({
-                    customerId: key,
-                    userId: userId
-                })).subscribe((result) => {});
-            });
-            if (this.editClientMode)
-                this.selectedItemKeys = [userId];
+            this.selectedKeys = selectedKeys || this.selectedKeys;
+            if (this.selectedKeys && this.selectedKeys.length) {
+                this.selectedKeys.forEach((key) => {
+                    this._tagsService.assignUserToCustomer(AssignUserToCustomerInput.fromJS({
+                        customerId: key,
+                        userId: this.selectedItemKey
+                    })).subscribe((result) => {});
+                });
+            }
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }

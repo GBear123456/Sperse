@@ -94,6 +94,7 @@
 
         table.dx-datagrid-table {
             border-spacing: 0;
+
             .dx-master-detail-row {
                 position: relative;
 
@@ -199,12 +200,15 @@
                         background: #37d749;
                     }
                 }
+
                 &.inprogress {
                     &::before {
                         background: #f9af47;
                     }
                 }
-                &.failed,
+
+                &.actionrequired,
+                &.syncpending,
                 &.unavailable {
                     &::before {
                         background: #f45a34;

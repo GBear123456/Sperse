@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { AppService } from '@app/app.service';
@@ -35,6 +35,11 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { TagsListComponent } from '../shared/tags-list/tags-list.component';
+import { ListsListComponent } from '../shared/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '../shared/rating/rating.component';
+import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
@@ -51,6 +56,11 @@ import * as moment from 'moment';
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
 
     firstRefresh = false;
     gridDataSource: any = {};
@@ -59,6 +69,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedLeads = [];
     stages = [];
+    selectedClientKeys = [];
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -83,6 +94,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private _router: Router,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
@@ -96,6 +108,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this.dataSource = {
             store: {
+                key: 'Id',
                 type: 'odata',
                 url: this.getODataURL(this.dataSourceURI),
                 version: this.getODataVersion(),
@@ -337,8 +350,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'before', items: [
-                    { name: 'assign' }, 
-                    { 
+                    {
+                        name: 'assign',
+                        disabled: !this.selectedClientKeys.length,
+                        action: this.toggleUserAssignment.bind(this)
+                    },
+                    {
                         widget: 'dxDropDownMenu',
                         disabled: !this.selectedLeads.length,
                         name: 'stage', 
@@ -346,21 +363,35 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             hint: this.l('Stage'),
                             items: this.stages
                         }
-                    }, 
-                    { name: 'lists' },
+                    },
+                    {
+                        name: 'lists',
+                        disabled: !this.selectedClientKeys.length,
+                        action: this.toggleLists.bind(this)
+                    },
                     {
                         name: 'tags',
-                        disabled: true
+                        disabled: !this.selectedClientKeys.length,
+                        action: this.toggleTags.bind(this)
                     },
-                    { name: 'rating' },
-                    { name: 'star' }
+                    {
+                        name: 'rating',
+                        disabled: !this.selectedClientKeys.length,
+                        action: this.toggleRating.bind(this)
+                    },
+                    {
+                        name: 'star',
+                        disabled: !this.selectedClientKeys.length,
+                        action: this.toggleStars.bind(this)
+                    }
                 ]
             },
             {
                 location: 'before', items: [
                     {
                         name: 'delete',
-                        action: Function()
+                        disabled: !this.selectedLeads.length,
+                        action: this.deleteLeads.bind(this)
                     }
                 ]
             },
@@ -532,6 +563,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onSelectionChanged($event) {
         this.selectedLeads = $event.component.getSelectedRowsData();
+        this.selectedClientKeys = [];
+        this.selectedLeads.forEach((item) => {
+            if (item.CustomerId)
+                this.selectedClientKeys.push(item.CustomerId);
+        });
         this.initToolbarConfig();
     }
 
@@ -555,5 +591,61 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
         this.refreshDataGrid();
+    }
+
+    showLeadDetails(event) {
+        let leadId = event.data && event.data.Id;
+        let clientId = event.data && event.data.CustomerId;
+        if (!leadId || !clientId)
+            return;
+
+        event.component.cancelEditData();
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'lead-information'], 
+            { queryParams: { referrer: this._router.url } });
+    }
+
+    onCellClick($event) {
+        let col = $event.column;
+        if (col && col.command)
+            return;
+        this.showLeadDetails($event);
+    }
+
+    toggleUserAssignment() {
+        this.userAssignmentComponent.toggle();
+    }
+
+    toggleLists() {
+        this.listsComponent.toggle();
+    }
+
+    toggleTags() {
+        this.tagsComponent.toggle();
+    }
+
+    toggleRating() {
+        this.ratingComponent.toggle();
+    }
+
+    toggleStars() {
+        this.starsListComponent.toggle();
+    }
+
+    deleteLeads() {
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        this.message.confirm(
+            this.l('LeadsDeleteWarningMessage'),
+            isConfirmed => {
+                if (isConfirmed)
+                    this.deleteClientsInternal(selectedIds);
+            }
+        );
+    }
+
+    private deleteClientsInternal(selectedIds: number[]) {
+        this._leadService.deleteLeads(selectedIds).subscribe(() => {
+            this.notify.success(this.l('SuccessfullyDeleted'));
+            this.refreshDataGrid();
+        });
     }
 }

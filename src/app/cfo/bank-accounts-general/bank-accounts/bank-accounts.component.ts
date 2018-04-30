@@ -16,7 +16,7 @@ import 'rxjs/add/operator/reduce';
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit {
-    initialBankAccounts$;
+    initialBankAccounts;
     bankAccounts$;
     businessEntities$;
     accountsDataTotalNetWorth$;
@@ -41,15 +41,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         this.bankAccounts$ = this._bankAccountsServiceProxy
                                 .getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
                                 .map(syncAccounts => {
+                                    this.initialBankAccounts = syncAccounts;
+                                    this.accountsAmount$ = Observable.of(syncAccounts.reduce((amount, bank) => bank.bankAccounts.length + amount, 0));
+                                    this.syncAccountsAmount$ = Observable.of(syncAccounts.length);
                                     this.setItemsSelected(syncAccounts);
                                     this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
                                     return syncAccounts;
                                 });
-        this.initialBankAccounts$ = this.bankAccounts$;
-        this.accountsAmount$ = this.bankAccounts$
-            .mergeMap(data => data)
-            .reduce((amount, bank) => bank.bankAccounts.length + amount, 0);
-        this.syncAccountsAmount$ = this.bankAccounts$.pluck('length');
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
         this.accountsDataTotalNetWorth$ = this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, []).pluck('totalNetWorth');
         this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
@@ -64,7 +62,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         if (cancelIfAllEntities && this.selectedBusinessEntities.length === 0) {
             return false;
         }
-        this.bankAccounts$ = this.initialBankAccounts$
+        this.bankAccounts$ = Observable.of(this.initialBankAccounts)
             .map(syncAccounts => {
                 let selectedAccountsIds = this.selectedSyncAccounts.reduce((accounts, syncAccount) => accounts.concat(syncAccount.selectedBankAccounts.map(account => account.id)), []);
                 let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, this.selectedBusinessEntities, selectedAccountsIds);

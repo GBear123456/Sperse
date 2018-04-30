@@ -146,11 +146,7 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         TenantFeaturesModalComponent, 
     ],
     exports: [
-        AddMemberModalComponent,
-        EditionsComponent,
-        CreateOrEditEditionModalComponent,
-        FeatureTreeComponent,
-        EditionComboComponent
+        AddMemberModalComponent
     ]
 })
 

@@ -8,7 +8,7 @@
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
     <dx-validation-group>        
         <dx-text-box [placeholder]="l(data?.lEditPlaceholder)" [(value)]="valueOriginal">
-            <dx-validator [validationRules]="data?.validationRules"></dx-validator>
+            <dx-validator *ngIf="data?.validationRules?.length" [validationRules]="data?.validationRules"></dx-validator>
         </dx-text-box>
         <dx-button class="button-update" icon="todo" (onClick)="updateItem($event)"></dx-button>
         <dx-button class="button-exit" icon="refresh" (onClick)="setEditModeEnabled(false)"></dx-button>

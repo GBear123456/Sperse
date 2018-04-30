@@ -5,10 +5,13 @@ import {
     CustomersServiceProxy,
     CustomerInfoDto,
     PersonContactInfoDto,
-    UpdateCustomerStatusInput
+    UpdateCustomerStatusInput,
+    LeadServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 
 @Component({
@@ -59,10 +62,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _router: Router,
                 private _dialog: MatDialog,
                 private _route: ActivatedRoute,
-                private _customerService: CustomersServiceProxy) {
+                private _customerService: CustomersServiceProxy,
+                private _leadService: LeadServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        _customerService['data'] = {customerInfo: null};
+        _customerService['data'] = {customerInfo: null, leadInfo: null};
         this.rootComponent = this.getRootComponent();
 
         
@@ -72,8 +76,14 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 _customerService['data'].customerInfo = {
                     id: clientId
                 };
-                this.fillCustomerDetails(clientId);
-        }));
+
+                let leadId = params['leadId'];
+                if (leadId)
+                    _customerService['data'].leadInfo = {
+                        id: leadId
+                    };
+                this.loadCustomerAndLeadDetails(clientId, leadId);
+            }));
 
         this.paramsSubscribe.push(this._route.queryParams
             .subscribe(params => {
@@ -81,23 +91,41 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         }));
     }
 
-    private fillCustomerDetails(customerId) {
+    private fillCustomerDetails(result) {
+        this._customerService['data'].customerInfo = result;
+        result.contactPersons.every((contact) => {
+            let isPrimaryContact = (contact.id == result.primaryContactInfo.id);
+            if (isPrimaryContact)
+            result.primaryContactInfo = contact;
+            return !isPrimaryContact;
+        });
+
+        this.primaryContact = result.primaryContactInfo;
+        this.customerInfo = result;
+        this.initVerificationChecklist();
+    }
+
+    private fillLeadDetails(result) {
+        this._customerService['data'].leadInfo = result;
+    }
+
+    private loadCustomerAndLeadDetails(customerId, leadId) {
         this.startLoading(true);
         this.customerId = customerId;
-        this._customerService.getCustomerInfo(this.customerId).subscribe(responce => {
-            this._customerService['data'].customerInfo = responce;
-            responce.contactPersons.every((contact) => {
-                let isPrimaryContact = (contact.id == responce.primaryContactInfo.id);
-                if (isPrimaryContact)
-                    responce.primaryContactInfo = contact;
-                return !isPrimaryContact;
+        let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
+        if (leadId) {
+            let leadInfoObservable = this._leadService.getLeadInfo(leadId);
+            Observable.forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
+                this.fillCustomerDetails(result[0]);
+                this.fillLeadDetails(result[1]);
+                this.finishLoading(true);
             });
-
-            this.primaryContact = responce.primaryContactInfo;
-            this.customerInfo = responce;
-            this.initVerificationChecklist();
-            this.finishLoading(true);
-        });
+        }
+        else
+            customerInfoObservable.subscribe(result => {
+                this.fillCustomerDetails(result);
+                this.finishLoading(true);
+            });
     }
 
     private getCustomerName() {

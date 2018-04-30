@@ -1,19 +1,26 @@
 <app-headline [config]="headlineConfig"></app-headline>
+<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-tags-list>
+<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-lists-list>
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-user-assignment-list>
+<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-stars-list>
 <div [hidden]="isDataLoaded && !totalRowCount" [@routerTransition]>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div [hidden]="showPipeline">
-                    <div id="ClientsTable">
+                    <div id="LeadsTable">
                         <dx-data-grid id="gridContainer"
                                       [dataSource]="dataSource"
                                       [allowColumnReordering]="true"
-                                      [columnAutoWidth]="false"
+                                      [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
                                       [pager]="defaultGridPagerConfig"
                                       (onInitialized)="onGridInitialized($event)"
-                                      (onContentReady)="onContentReady($event)"                    
+                                      (onContentReady)="onContentReady($event)"
+                                      (onCellClick)="onCellClick($event)"
+                                      (onEditingStart)="showLeadDetails($event)"                    
                                       (onSelectionChanged)="onSelectionChanged($event)"                
                                       (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                             <dxo-selection
@@ -21,10 +28,7 @@
                                 showCheckBoxesMode="always"
                                 mode="multiple">
                             </dxo-selection>
-                            <dxo-editing
-                                mode="popup"
-                                [allowUpdating]="true">
-                            </dxo-editing>
+                            <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
                             <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>

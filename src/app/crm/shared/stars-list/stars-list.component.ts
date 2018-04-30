@@ -12,20 +12,20 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class StarsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
-    @Input()
-    set selectedItemKey(value) {
+    @Input() bulkUpdateMode = false;
+    @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
-        this.editClientMode = true;
     }
+    get selectedItemKey() {
+        return this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined;
+    }
+    private selectedItemKeys = [];
 
-    selectedItems = [];
-    selectedItemKeys = [];
     @Input() targetSelector = "[aria-label='star-icon']";
     list: any;
 
     listComponent: any;
     tooltipVisible = false;
-    editClientMode = false;
 
     constructor(
         injector: Injector,
@@ -39,25 +39,24 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
-        if (!this.editClientMode && this.listComponent)
-            this.listComponent.unselectAll();
     }
 
     apply(selectedKeys = undefined) {
-        this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.listComponent && this.selectedKeys && this.selectedKeys.length) {
-            let selectedItems = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item;
+        if (this.listComponent) {
+            this.selectedItemKeys = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(index) && item.id;
             }).filter(Boolean);
-            let starId = selectedItems.length > 0 ? selectedItems[0].id : undefined;
-            this.selectedKeys.forEach((key) => {
-                this._starsService.markCustomer(MarkCustomerInput.fromJS({
-                    customerId: key,
-                    starId: starId
-                })).subscribe((result) => {});
-            });
-            if (this.editClientMode)
-                this.selectedItemKeys = [starId];
+            this.selectedKeys = selectedKeys || this.selectedKeys;
+            if (this.selectedKeys && this.selectedKeys.length) {
+                this.selectedKeys.forEach((key) => {
+                    this._starsService.markCustomer(MarkCustomerInput.fromJS({
+                        customerId: key,
+                        starId: this.selectedItemKey
+                    })).subscribe((result) => {});
+                });
+            }
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }

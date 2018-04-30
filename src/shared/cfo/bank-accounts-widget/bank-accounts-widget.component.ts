@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, ViewChild, EventEmitter, ElementRef } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountBankDto, UpdateBankAccountDto } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -7,6 +7,7 @@ import Form from 'devextreme/ui/form';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -18,6 +19,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
+    @ViewChild('filterActions', { read: ElementRef }) filterActions: ElementRef;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 170;
@@ -77,7 +79,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
         this.cfoService = injector.get(CFOService, null);
@@ -125,7 +127,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         if (e.isExpanded) {
             this.mainDataGrid.instance.collapseRow(e.key);
         } else {
-            this.mainDataGrid.instance.expandRow(e.key);
+            if (e.data.bankAccounts.length) {
+                this.mainDataGrid.instance.expandRow(e.key);
+            }
         }
     }
 
@@ -240,10 +244,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             if (this.mainDataGrid)
                 this.mainDataGrid.instance.refresh();
         }
-    }
-
-    calculateTooltipHeight() {
-        return window.innerHeight / 2.2 - 70;
     }
 
     /**
@@ -380,13 +380,13 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         return data;
     }
 
-    detailCellPrepared(cell) {
-        if (cell.column.dataField === 'accountName') {
-            cell.cellElement.classList.add(cell.column.dataField);
-        }
-    }
-
     updateAccountInfo(id) {
         this.onUpdateAccount.emit({ id: id });
+    }
+
+    calculateHeight(e) {
+        /** Get bottom position of previous element */
+        let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
+        return window.innerHeight - filtersBottomPosition - 20;
     }
 }
