@@ -1281,6 +1281,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Clear cache of loaded days */
         this.monthsDaysLoadedPathes = [];
+        this.treePathes = {};
 
         /** Clear cache for rows sparklines */
         this.cachedRowsSparkLines.forEach(sparkLine => {
