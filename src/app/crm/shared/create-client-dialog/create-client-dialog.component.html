@@ -108,7 +108,7 @@
                         [width]="'360px'"
                         [(value)]="website">
                         <dx-validator>
-                            <dxi-validation-rule type="pattern" pattern="(http://|https://)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-box>
                     <span [class]="website && 'clear-contact' || 'hidden'" (click)="website = ''">+</span>

@@ -51,6 +51,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     masks = AppConsts.masks;
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
+    urlRegEx = AppConsts.regexPatterns.url;
 
     company: string;
     title: string;
