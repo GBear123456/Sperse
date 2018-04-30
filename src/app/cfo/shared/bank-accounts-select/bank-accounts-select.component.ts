@@ -52,14 +52,23 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         super.ngOnInit();
         this.getBusinessEntities();
         let initIsActive = true;
+        let needEmitSelectedBankAccounts = true;
         if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
             let cacheData = this._cacheService.get(this.bankAccountsCacheKey);
             initIsActive = cacheData['isActive'] ? true : false;
             this.selectedBusinessEntityIds = cacheData['selectedBusinessEntityIds'];
             this.selectedBankAccounts = cacheData['bankAccounts'] || [];
+           
+            if (this.emitOnlySelectedBankAccounts || this.selectedBankAccounts.length) {
+                let data = {
+                    bankAccountIds: this.selectedBankAccounts
+                };
+                this.onBankAccountsSelected.emit(data);
+                needEmitSelectedBankAccounts = false;
+            }            
         }
         this.isActive = initIsActive;
-        this.getBankAccounts(true);
+        this.getBankAccounts(needEmitSelectedBankAccounts);
     }
 
     isActiveChanged() {
@@ -166,13 +175,13 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this.tooltipVisible = !this.tooltipVisible;
     }
 
-    getBankAccounts(initial = false): void {
+    getBankAccounts(needEmitSelectedAccounts = false): void {
         this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
             .subscribe((result) => {
                 this.initDataSource = result;
                 this.filterDataSource();
 
-                if (this.useGlobalCache && initial) {
+                if (this.useGlobalCache && needEmitSelectedAccounts) {
                     let bankAccountIds = this._cacheService.exists(this.bankAccountsCacheKey)
                         ? this._cacheService.get(this.bankAccountsCacheKey)['bankAccounts']
                         : [];
