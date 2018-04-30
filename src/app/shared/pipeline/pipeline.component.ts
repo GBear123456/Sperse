@@ -45,7 +45,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             let leadId = this.getAccessKey(value[1]),
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
-            if (newStage != oldStage)
+            if (leadId && newStage != oldStage)
                 _pipelineService.updateLeadStage(leadId, oldStage, newStage);
         });
         _dragulaService.dragend.subscribe((value) => {
@@ -93,6 +93,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit(): void {
+        this.refresh();
+    }
+
+    refresh() {
         this.startLoading(true);
         this._pipelineServiceProxy
             .getPipelinesData(this.pipelinePurposeId)
@@ -100,11 +104,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (result.length > 0) {
                     this.getPipelineDefinition(result[0].id);
                 }
-        });
-    }
-
-    refresh() {
-        this.ngOnInit();
+        })
     }
 
     getLeadByElement(el, stage) {

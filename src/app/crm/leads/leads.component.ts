@@ -558,7 +558,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 refreshParent: this.refreshDataGrid.bind(this),
                 isInLeadMode: true
             }
-        }).afterClosed().subscribe(() => this.refreshDataGrid())
+        });
     }
 
     onSelectionChanged($event) {
