@@ -4,11 +4,13 @@
         [dataSource]="reasons"
         [displayExpr]="'name'"
         [valueExpr]="'id'"
-        [(value)]="reasonId">
+        [(value)]="reasonId"
+        (onValueChanged)="validateReason(comment)">
     </dx-radio-group>
     <dx-text-area
         [placeholder]="l('Comment')"
-        [(value)]="comment">
+        [(value)]="comment"
+        (onKeyUp)="onCommentKeyUp($event)">
     </dx-text-area>
 </mat-dialog-content>
 <mat-dialog-actions>

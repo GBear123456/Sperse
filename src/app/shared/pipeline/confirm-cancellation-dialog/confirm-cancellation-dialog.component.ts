@@ -34,16 +34,36 @@ export class LeadCancelDialogComponent extends ConfirmDialogComponent implements
     }
         
     confirm($event) {
-        let reason = _.findWhere(this.reasons, {id: this.reasonId});
-        if (!reason)
-            return this.radioComponent.instance.option('isValid', false);
-
-        if (reason.isCommentRequired && !this.comment)
-            return this.textComponent.instance.option('isValid', false);            
+        if (!this.validateReason(this.comment))
+            return;
 
         this.dialogRef.close({
             reasonId: this.reasonId,
             comment: this.comment
         });
+    }
+
+    validateReason(comment) {
+        let reason = _.findWhere(this.reasons, {id: this.reasonId});
+        if (!reason) {
+            this.radioComponent.instance.option('isValid', false);
+            return false;
+        } else {
+            this.radioComponent.instance.option('isValid', true);
+        }
+
+        if (reason.isCommentRequired && !comment) {
+            this.textComponent.instance.option('isValid', false);
+            return false;
+        } else {
+            this.textComponent.instance.option('isValid', true);
+        }
+
+        return true;
+    }
+
+    onCommentKeyUp(event) {
+        let comment = event.element.getElementsByTagName('textarea')[0].value;
+        this.validateReason(comment);
     }
 }
