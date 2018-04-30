@@ -76,8 +76,6 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         _customerService['data'] = {customerInfo: null, leadInfo: null};
         this.rootComponent = this.getRootComponent();
-
-        
         this.paramsSubscribe.push(this._route.params
             .subscribe(params => {
                 let clientId = params['clientId'];
@@ -95,8 +93,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                         .subscribe(result => {
                             this.leadStages = result.stages.map((stage) => {
                                 return {
-                                    text: stage.name, 
-                                    action: this.updateLeadStage.bind(this)  
+                                    text: stage.name,
+                                    action: this.updateLeadStage.bind(this)
                                 };
                             });
                         });
@@ -140,8 +138,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 this.fillLeadDetails(result[1]);
                 this.finishLoading(true);
             });
-        }
-        else
+        } else
             customerInfoObservable.subscribe(result => {
                 this.fillCustomerDetails(result);
                 this.finishLoading(true);
@@ -172,7 +169,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         });
     }
 
-    private getVerificationChecklistItem(type: VerificationChecklistItemType, 
+    private getVerificationChecklistItem(type: VerificationChecklistItemType,
         status?: VerificationChecklistItemStatus, confirmedCount?, totalCount?): VerificationChecklistItem {
         return {
             type: type,
@@ -182,7 +179,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         } as VerificationChecklistItem;
     }
 
-    private getVerificationChecklistItemByMultipleValues(items: any[], 
+    private getVerificationChecklistItemByMultipleValues(items: any[],
         type: VerificationChecklistItemType
     ): VerificationChecklistItem {
         let confirmedCount = 0;
@@ -255,9 +252,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         let contactDetails = this.primaryContact.details;
         this.verificationChecklist = [
             this.getVerificationChecklistItem(
-                VerificationChecklistItemType.Identity, 
-                this.primaryContact.person.identityConfirmationDate 
-                    ? VerificationChecklistItemStatus.success 
+                VerificationChecklistItemType.Identity,
+                this.primaryContact.person.identityConfirmationDate
+                    ? VerificationChecklistItemStatus.success
                     : VerificationChecklistItemStatus.unsuccess
             ),
             this.getVerificationChecklistItemByMultipleValues(contactDetails.emails, VerificationChecklistItemType.Email),
