@@ -59,6 +59,8 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceP
     OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
+import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -126,7 +128,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     DxListModule,
     DxSliderModule,
     RoundProgressModule,
-    DxValidationGroupModule
+    DxValidationGroupModule,
+    PipelineModule
   ],
   exports: [
     UploadPhotoDialogComponent,
@@ -147,7 +150,8 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
     ContactPersonsDialogComponent,
     UploadPhotoDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent
+    NoteAddDialogComponent,
+    LeadCancelDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent

@@ -558,7 +558,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 refreshParent: this.refreshDataGrid.bind(this),
                 isInLeadMode: true
             }
-        }).afterClosed().subscribe(() => this.refreshDataGrid())
+        }).afterClosed().subscribe(() => {})
     }
 
     onSelectionChanged($event) {
@@ -585,7 +585,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let targetStage = $event.itemData.text,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead.Id, lead.Stage, targetStage))
+            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage))
                 ignoredStages.push(lead.Stage);
         });
         if (ignoredStages.length)
@@ -600,7 +600,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
 
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'lead-information'], 
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], 
             { queryParams: { referrer: this._router.url } });
     }
 

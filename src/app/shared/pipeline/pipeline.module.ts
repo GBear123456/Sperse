@@ -4,7 +4,7 @@ import { DragulaModule } from 'ng2-dragula/ng2-dragula';
 import { PipelineComponent } from './pipeline.component';
 import { DxDataGridModule, DxRadioGroupModule, DxTextAreaModule } from 'devextreme-angular';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, PipelineServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
 import { MatDialogModule } from '@angular/material';
@@ -26,13 +26,15 @@ import { PipelineService } from './pipeline.service';
         LeadCancelDialogComponent
     ],
     exports: [
-        PipelineComponent
+        PipelineComponent,
+        LeadCancelDialogComponent
     ],
     entryComponents: [
         LeadCancelDialogComponent
     ],
     providers: [
         LeadServiceProxy,
+        PipelineServiceProxy,
         PipelineService
     ]
 })
