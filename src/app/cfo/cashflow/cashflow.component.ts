@@ -807,8 +807,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this.createDragImage();
+    }
 
-
+    createDragImage() {
         this.dragImg = new Image();
         this.dragImg.src = 'assets/common/icons/drag-icon.svg';
         this.dragImg.style.display = 'none';
@@ -3124,9 +3126,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             if (targetCaption === 'year') {
                 date.month(forecastDate.month());
-            }  
+            }
             let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
-            date.date(dayNumber);                     
+            date.date(dayNumber);
         }
         return date;
     }
@@ -3694,7 +3696,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         result.forEach((item, i) => {
                             if (item.forecastId) {
                                 forecastIds.push(item.forecastId);
-                                if (!underscore.contains(forecastDates, item.forecastDate)) 
+                                if (!underscore.contains(forecastDates, item.forecastDate))
                                     forecastDates.push(item.forecastDate);
                             }
                         });
@@ -3754,7 +3756,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     cellCanBeTargetOfCopy(cellObj): boolean {
         return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE)
             && this.isEnableForecastAdding()
-            && !this.isCashflowTypeRowTotal(cellObj) && !this.isAccountingRowTotal(cellObj) && this.cellIsNotHistorical(cellObj);
+            && !this.isCashflowTypeRowTotal(cellObj) && !this.isAccountingRowTotal(cellObj) && this.cellIsNotHistorical(cellObj) &&
+            cellObj.cell.columnType !== Total;
     }
 
     /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
@@ -3881,7 +3884,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         wrapperButton.onclick = function (ev) {
             ev.stopPropagation();
         };
-        console.log(cellObj);
 
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
