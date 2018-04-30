@@ -10,7 +10,7 @@
     <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
         <dx-data-grid id="gridContainer"
                       [width]="'100%'"
-                      [dataSource]="syncAccountsDataSource"
+                      [(dataSource)]="syncAccountsDataSource"
                       [masterDetail]="{ enabled: false, template: 'detail' }"
                       keyExpr="syncAccountId"
                       [showColumnHeaders]="showColumnHeaders"
@@ -33,7 +33,7 @@
             <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate"></dxi-column>
             <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
-            <dxi-column dataField="syncRef" caption="" cellTemplate="syncRefTemplate" [width]="150" alignment="center" [allowEditing]="false" [(visible)]="allowUpdateAccount"></dxi-column>
+            <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
 
             <div *dxTemplate="let syncAccount of 'detail'">
@@ -112,15 +112,47 @@
             <div *dxTemplate="let cell of 'expandTemplate'">
                 <div class="expand-div"></div>
             </div>
+            <div *dxTemplate="let cell of 'actionsTemplate'">
+                <a class="dx-link dx-link-edit options-button"
+                   (click)="openActionsMenu(cell)">&nbsp;</a>
+            </div>
             <div *dxTemplate="let cell of 'syncDateTemplate'">
                 <ng-container *ngIf="(cell.text)">
                     <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y '}}</div>
                 </ng-container>
             </div>
             <div *dxTemplate="let cell of 'invisibleTemplate'"></div>
-            <div *dxTemplate="let cell of 'syncRefTemplate'">
-                <a (click)="updateAccountInfo(cell.text)">Update Info</a>
-            </div>
+
         </dx-data-grid>
     </div>
+    <dx-context-menu
+        [items]="contextMenuItems"
+        target=".options-button"
+        showEvent="dxclick"
+        (onItemClick)="actionsItemClick($event)"
+        [visible]="isContextMenuVisible">
+
+        <div *dxTemplate="let e of 'item'">
+            <div class="action-menu-item" ngClass="{{e.text | lowercase}}">
+                {{e.text}}
+            </div>
+        </div>
+    </dx-context-menu>
+    <dx-popup
+        class="popup"
+        [width]="350"
+        [height]="250"
+        [showTitle]="true"
+        title="{{l('Edit_Bank_Account_Name')}}"
+        [dragEnabled]="false"
+        [closeOnOutsideClick]="true"
+        [(visible)]="popupVisible">
+        <div *dxTemplate="let data of 'content'">
+            <div class="form-group">
+                <label for="bankAccountName">Bank Account Name</label>
+                <input type="email" class="form-control" id="bankAccountName" #bankName [(value)]="bankAccountInfo.newName">
+            </div>
+            <button (click)="submitNewBankAccountName(bankName.value)" class="btn btn-layout">{{l("Save")}}</button>
+        </div>
+    </dx-popup>
 </dx-scroll-view>
