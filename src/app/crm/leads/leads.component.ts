@@ -526,7 +526,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
-        this.refreshDataGrid();
+        if (this.selectedLeads.length)
+            setTimeout(() => { //!!VP temporary solution for grid refresh 
+                this.refreshDataGrid();
+            }, 1000);
     }
 
     showLeadDetails(event) {
