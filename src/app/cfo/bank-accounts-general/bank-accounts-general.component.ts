@@ -29,14 +29,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_FinancialAccounts')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg',
+            onRefresh: this.onRefreshClick.bind(this),
             buttons: [
                 {
-                    enabled: this._cfoService.initialized,
-                    action: this.onRefreshClick.bind(this),
-                    lable: this.l('Refresh'),
-                    icon: 'refresh',
-                    class: 'btn-default back-button'
-                }, {
                     enabled: true,
                     action: this.onNextClick.bind(this),
                     lable: this.l('Continue'),
