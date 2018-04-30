@@ -140,7 +140,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stage['leads'] = oneStageOnly ? _.uniqBy(
                 (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
             stage['total'] = this.dataSource.totalCount();
-            stage['full'] = stage.total <= stage.leads.length;
+            stage['full'] = stage['total'] <= stage['leads'].length;
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
