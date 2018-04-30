@@ -106,7 +106,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             .getPipelineDefinitionObservable(this.pipelinePurposeId)
             .subscribe((result: PipelineDto) => {
                 this.pipeline = result;
-                this.onStagesLoaded.emit(result.stages);
+                this.onStagesLoaded.emit(result);
                 this.loadStagesLeads();
             });
     }

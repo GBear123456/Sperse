@@ -109,8 +109,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._route.queryParams.subscribe(params => {
             if (params['dataLayoutType']) {
                 this.dataLayoutType = params['dataLayoutType'];
+                if (this.dataLayoutType == DataLayoutType.Grid)
+                    _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+                        .subscribe(this.onStagesLoaded.bind(this));
             }
-        });
+        });       
+
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -508,7 +512,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onStagesLoaded($event) {
-        this.stages = $event.map((stage) => {
+        this.stages = $event.stages.map((stage) => {
             return {
                 text: stage.name,
                 action: this.updateLeadsStage.bind(this)
