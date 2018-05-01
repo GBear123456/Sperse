@@ -2115,9 +2115,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this.cashflowData.filter(cashflowItem => {
             let rowPathPropertyName = 'rowPath' || 'path';
             let columnPathPropertyName = 'columnPath' || 'path';
-            return  !cashflowItem.isStub &&
-                    (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
-                    (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
+            return cashflowItem.amount &&
+                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
+                   (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
                             return this.projectedSelector(cashflowItem) === fieldValue;
@@ -2128,7 +2128,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 cashflowItem.initialDate[dateMethod]() + 1 :
                                 cashflowItem.initialDate[dateMethod]()
                                ) === fieldValue;
-                    }));
+                   }));
         });
     }
 
