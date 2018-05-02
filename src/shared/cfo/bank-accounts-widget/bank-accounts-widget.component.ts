@@ -100,7 +100,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
-        this.cfoService = injector.get(CFOService, null);       
+        this.cfoService = injector.get(CFOService, null);
     }
 
     rowPrepared(e) {
@@ -125,7 +125,6 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     setHighlighted() {
         this.syncAccountsDataSource.forEach(syncAccount => {
-            this.syncAccountIds.push(syncAccount.syncAccountId);
             let highlightedBankAccountExist = false;
             syncAccount.bankAccounts.forEach(bankAccount => {
                 let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);
@@ -448,6 +447,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         this.syncAccountId = cellObj.data.syncAccountId;
         this.bankAccountInfo.id = this.syncAccountId;
         this.bankAccountInfo.newName = cellObj.data.name;
+        this.syncAccountIds = [];
+        this.syncAccountIds.push(this.syncAccountId);
         this.isContextMenuVisible = true;
         this.instanceType = <any>this.cfoService.instanceType;
         this.instanceId = <any>this.cfoService.instanceId;
