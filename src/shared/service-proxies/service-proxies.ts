@@ -14386,7 +14386,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType74, instanceId: number, forcedSync: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType74, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14396,6 +14396,10 @@ export class SyncServiceProxy {
             throw new Error("The parameter 'forcedSync' must be defined and cannot be null.");
         else
             url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
+        if (newOnly === undefined || newOnly === null)
+            throw new Error("The parameter 'newOnly' must be defined and cannot be null.");
+        else
+            url_ += "newOnly=" + encodeURIComponent("" + newOnly) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
