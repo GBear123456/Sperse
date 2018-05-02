@@ -2255,8 +2255,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getYearHistoricalSelectorWithCurrent(): any {
         return data => {
-            let currentYear = new Date().getFullYear(),
-                itemYear = new Date(data.date).getFullYear(),
+            let currentYear = moment().year(),
+                itemYear = data.initialDate.year(),
                 result = Periods.Historical;
             if (currentYear < itemYear) {
                 result = Periods.Forecast;
@@ -2677,7 +2677,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (chartData.length > 1) {
                     let spanChart = document.createElement('div');
                     spanChart.className = 'chart';
-                    e.cellElement.append(spanChart);
+                    e.cellElement.appendChild(spanChart);
                     let chartOptions = {
                         dataSource: chartData,
                         type: 'area',
