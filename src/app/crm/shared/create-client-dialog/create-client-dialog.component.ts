@@ -58,6 +58,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     website: string;
     notes = {};
 
+    addressTypePersonalDefault = 'H';
+    addressTypeBusinessDefault = 'W';
     addressTypes: any = [];
     addressValidator: any;
     emailValidator: any;
@@ -537,7 +539,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     addressTypesLoad() {
         this._contactAddressService.getAddressUsageTypes().subscribe(result => {
             this.addressTypes = result.items;
-            this.setDefaultTypeValue(this.contacts.addresses, result.items, 'addressType');
+            this.contacts.addresses.personal.addressType = this.addressTypePersonalDefault;
+            this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
     }
 
