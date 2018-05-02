@@ -1923,7 +1923,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
          *  current for year to current for the grouping period */
         let lowestOpenedCurrentInterval = this.getLowestOpenedCurrentInterval();
         $('.lowestOpenedCurrent').removeClass('lowestOpenedCurrent');
-        $(`.current${_.capitalize(lowestOpenedCurrentInterval)}`).addClass('lowestOpenedCurrent');
+        let targetCell = lowestOpenedCurrentInterval === 'year' && $(`.dx-pivotgrid-expanded.current${_.capitalize(lowestOpenedCurrentInterval)}`).length ?
+                         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}.dx-total`) :
+                         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}:not(.dx-pivotgrid-expanded)`);
+        targetCell.addClass('lowestOpenedCurrent');
 
         this.changeHistoricalColspans(lowestOpenedCurrentInterval);
         this.hideProjectedFields();
@@ -4552,7 +4555,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return (summaryCell.field('row') !== null && summaryCell.value(summaryCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation)) ||
             (parentCell !== null && parentCell.value(parentCell.field('row')) === (CategorizationPrefixes.CashflowType + Reconciliation));
     }
-
 
     cellRowIsNotEmpty(summaryCell) {
         return summaryCell.field('row') &&
