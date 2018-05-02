@@ -1,58 +1,62 @@
-<app-headline [config]="headlineConfig"></app-headline>
-<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-tags-list>
-<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-lists-list>
-<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-user-assignment-list>
-<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-rating>
-<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-stars-list>
-<div [hidden]="isDataLoaded && !totalRowCount" [@routerTransition]>
-    <div class="portlet light no-padding margin-bottom-0">
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig"></app-headline>
+    <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-lists-list>
+    <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-user-assignment-list>
+    <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-rating>
+    <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-stars-list>
+    <div [hidden]="(isDataLoaded && !totalRowCount) || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
-                <div [hidden]="showPipeline">
-                    <div id="LeadsTable">
-                        <dx-data-grid id="gridContainer"
-                                      [dataSource]="dataSource"
-                                      [allowColumnReordering]="true"
-                                      [columnAutoWidth]="true"
-                                      [allowColumnResizing]="true"
-                                      [hoverStateEnabled]="true"
-                                      [pager]="defaultGridPagerConfig"
-                                      (onInitialized)="onGridInitialized($event)"
-                                      (onContentReady)="onContentReady($event)"
-                                      (onCellClick)="onCellClick($event)"
-                                      (onEditingStart)="showLeadDetails($event)"                    
-                                      (onSelectionChanged)="onSelectionChanged($event)"                
-                                      (onDataErrorOccurred)="httpConfig.handleError($event.error)">
-                            <dxo-selection
-                                selectAllMode="page"
-                                showCheckBoxesMode="always"
-                                mode="multiple">
-                            </dxo-selection>
-                            <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
-                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                            <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
-                            <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
-                            <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
-                            <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
-                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
-                            <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
-                            <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
-                            <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
-                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                            <div *dxTemplate="let cellData of 'phoneCell'">
-                                {{cellData.value | phone}}
-                            </div>
-                            <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.dateTime}}
-                            </div>
+                <div id="LeadsTable">
+                    <dx-data-grid id="gridContainer"
+                                [dataSource]="dataSource"
+                                [allowColumnReordering]="true"
+                                [columnAutoWidth]="true"
+                                [allowColumnResizing]="true"
+                                [hoverStateEnabled]="true"
+                                [pager]="defaultGridPagerConfig"
+                                (onInitialized)="onGridInitialized($event)"
+                                (onContentReady)="onContentReady($event)"
+                                (onCellClick)="onCellClick($event)"
+                                (onEditingStart)="showLeadDetails($event)"                    
+                                (onSelectionChanged)="onSelectionChanged($event)"                
+                                (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                        <dxo-selection
+                            selectAllMode="page"
+                            showCheckBoxesMode="always"
+                            mode="multiple">
+                        </dxo-selection>
+                        <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
+                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
+                        <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
+                        <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <div *dxTemplate="let cellData of 'phoneCell'">
+                            {{cellData.value | phone}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: formatting.dateTime}}
+                        </div>
 
-                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
-                            <dxo-group-panel [visible]="true"></dxo-group-panel>
-                            <dxo-sorting mode="multiple"></dxo-sorting>
-                        </dx-data-grid>
-                    </div>
+                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                    </dx-data-grid>
                 </div>
-                <div *ngIf="showPipeline" class="funnel-wrapper">
+            </div>
+        </div>
+    </div>
+    <div *ngIf="showPipeline" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div class="funnel-wrapper">
                     <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>

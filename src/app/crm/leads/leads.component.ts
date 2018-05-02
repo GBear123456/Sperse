@@ -146,7 +146,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.showPipeline)
             this.pipelineComponent.refresh();
         else
-            this.dataGrid.instance.refresh();
+            this.dataGrid.instance.refresh().then(() => {
+                this.setGridDataLoaded();
+            });
     }
 
     showColumnChooser() {
