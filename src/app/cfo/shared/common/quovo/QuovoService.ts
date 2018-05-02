@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 declare const Quovo: any;
 
@@ -9,6 +10,16 @@ export class QuovoHandler {
     private addedConnectionIds = [];
     private _isLoaded = false;
     private _isOpened = false;
+
+    private _instanceType: string;
+    private _instanceId: number;
+    private onAdd: Function;
+
+    constructor(instanceType: string, instanceId: number, onAccountAdd) {
+        this._instanceType = instanceType;
+        this._instanceId = instanceId;
+        this.onAdd = onAccountAdd;
+    }
 
     get isLoaded(): boolean { return this._isLoaded; }
     get isOpened(): boolean { return this._isOpened; }
@@ -67,14 +78,22 @@ export class QuovoHandler {
 
     private onHandlerConnectionAdd(id) {
         this.addedConnectionIds.push(id);
+        if (this.onAdd) {
+            this.onAdd(this._instanceType, this._instanceId, id);
+        }
     }
 }
 
 @Injectable()
 export class QuovoService {
+    _cfoService: CFOService;
+
     constructor(
-        private _syncServiceProxy: SyncServiceProxy
-    ) {}
+        injector: Injector,
+        private _syncService: SyncServiceProxy,
+    ) {
+        this._cfoService = injector.get(CFOService);
+    }
 
     private quovoHandlers: { [id: string]: QuovoHandler } = {};
 
@@ -83,11 +102,11 @@ export class QuovoService {
         let quovoHandler = this.quovoHandlers[handlerId];
 
         if (!quovoHandler) {
-            quovoHandler = new QuovoHandler();
+            quovoHandler = new QuovoHandler(instanceType, instanceId, (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id));
             this.quovoHandlers[handlerId] = quovoHandler;
 
             jQuery.getScript('https://app.quovo.com/ui.js', () => {
-                this._syncServiceProxy.createProviderUIToken(InstanceType[instanceType], instanceId)
+                this._syncService.createProviderUIToken(InstanceType[instanceType], instanceId)
                     .subscribe((data) => {
                         quovoHandler.createHandler(this.createQuovoHandler, data.token);
                     });
@@ -95,6 +114,15 @@ export class QuovoService {
         }
 
         return quovoHandler;
+    }
+
+    private onAccountAdd(instanceType: string, instanceId: number, accountId) {
+        this._syncService.syncAllAccounts(InstanceType[instanceType], instanceId, true, true)
+            .subscribe(() => {
+                if (this._cfoService.instanceType === instanceType && this._cfoService.instanceId === instanceId) {
+                    this._cfoService.instanceChangeProcess();
+                }
+            });
     }
 
     private createQuovoHandler(token, onLoad, onOpen, onClose, onAdd) {

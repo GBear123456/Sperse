@@ -26,6 +26,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     @Input() height;
     @Input() showColumnHeaders = false;
     @Input() allowUpdateAccount = false;
+    @Input() showSyncAccountWithoutBankAccounts = true;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
@@ -225,8 +226,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             this.syncAccountsDataSource.forEach(syncAccount => {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     bankAccount['visible'] = true;
-                });
-                syncAccount['visible'] = true;
+                });               
+                syncAccount['visible'] = this.showSyncAccountWithoutBankAccounts || syncAccount.bankAccounts.length > 0;
             });
         } else if (this.selectedBankAccountType === this.l('Other')) {
             this.syncAccountsDataSource.forEach(syncAccount => {
