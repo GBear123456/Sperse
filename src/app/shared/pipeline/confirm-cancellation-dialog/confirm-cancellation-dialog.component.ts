@@ -46,16 +46,14 @@ export class LeadCancelDialogComponent extends ConfirmDialogComponent implements
     validateReason(comment) {
         let reason = _.findWhere(this.reasons, {id: this.reasonId});
 
-        this.setIsValidOption(this.radioComponent, reason);
-        if (!reason)
+        let isReasonSelected = reason ? true : false;
+        this.setIsValidOption(this.radioComponent, isReasonSelected);
+        if (!isReasonSelected)
             return false;
 
         let isCommentValid = !reason.isCommentRequired || comment;
         this.setIsValidOption(this.textComponent, isCommentValid);
-        if (!isCommentValid)
-            return false;
-
-        return true;
+        return isCommentValid;
     }
 
     setIsValidOption(component, value) {
