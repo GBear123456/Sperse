@@ -87,7 +87,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     onQuovoHandlerClose(e) {
         if (e.addedIds.length) {
             this.startLoading(true);
-            this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true)
+            this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
                 .finally(() => {
                     this.isDisabled = false;
                 })
