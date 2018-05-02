@@ -17,7 +17,14 @@ export class StatsService {
 
     getTooltipInfoHtml(data, fields, pointInfo) {
         let html = '';
-        let pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument);
+        let pointDataObject;
+
+        if (pointInfo.seriesName.indexOf('forecast') != -1) {
+            pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument && item.isForecast);
+        } else {
+            pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument && !item.isForecast);
+        }
+
 
         moment.tz.setDefault(undefined);
         let date = moment(pointInfo.argument);
