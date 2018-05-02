@@ -421,6 +421,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
+    filterByEmail(filter: FilterModel) {
+        let filterField = filter.items.Email;
+        let filterValue = filterField && filterField.value;
+        if (filterValue)
+            return {
+                Email: { contains: filterValue }
+            };
+    }
+
     filterByStages(filter: FilterModel) {
         let data = {};
         if (filter.items.element) {
