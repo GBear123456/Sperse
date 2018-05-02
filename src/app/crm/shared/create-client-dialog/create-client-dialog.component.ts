@@ -58,6 +58,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     website: string;
     notes = {};
 
+    addressTypePersonalDefault = 'H';
+    addressTypeBusinessDefault = 'W';
     addressTypes: any = [];
     addressValidator: any;
     emailValidator: any;
@@ -288,13 +290,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             tags: tags
         };
         
+        let saveButton: any = document.getElementById(this.saveButtonId);
+        saveButton.disabled = true;
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
-                .finally(() => {  })
+                .finally(() => { saveButton.disabled = false; })
                 .subscribe(result => this.afterSave(result.customerId, result.id));
         else
             this._customersService.createCustomer(CreateCustomerInput.fromJS(dataObj))
-                .finally(() => {  })
+                .finally(() => { saveButton.disabled = false; })
                 .subscribe(result => this.afterSave(result.id));
     }
 
@@ -312,8 +316,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }
     }
 
-    save(event): void {     
-        if (event.offsetX > 195)
+    save(event?): void {     
+        if (event && event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
@@ -535,7 +539,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     addressTypesLoad() {
         this._contactAddressService.getAddressUsageTypes().subscribe(result => {
             this.addressTypes = result.items;
-            this.setDefaultTypeValue(this.contacts.addresses, result.items, 'addressType');
+            this.contacts.addresses.personal.addressType = this.addressTypePersonalDefault;
+            this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
     }
 
@@ -713,6 +718,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         $event.component.option('selectedItem', option);
 
         this.updateSaveOption(option);
+        this.save();
     }
 
     onFullNameKeyUp(event) {

@@ -20867,6 +20867,7 @@ export class StatsFilter implements IStatsFilter {
     forecastModelId: number;
     showResolvedComments: boolean = false;
     groupByPeriod: StatsFilterGroupByPeriod = StatsFilterGroupByPeriod.Daily;
+    dailyPeriods: DailyPeriod[];
     calculateStartingBalance: boolean = true;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -20889,6 +20890,11 @@ export class StatsFilter implements IStatsFilter {
             this.forecastModelId = data["forecastModelId"];
             this.showResolvedComments = data["showResolvedComments"] !== undefined ? data["showResolvedComments"] : false;
             this.groupByPeriod = data["groupByPeriod"] !== undefined ? data["groupByPeriod"] : StatsFilterGroupByPeriod.Daily;
+            if (data["dailyPeriods"] && data["dailyPeriods"].constructor === Array) {
+                this.dailyPeriods = [];
+                for (let item of data["dailyPeriods"])
+                    this.dailyPeriods.push(DailyPeriod.fromJS(item));
+            }
             this.calculateStartingBalance = data["calculateStartingBalance"] !== undefined ? data["calculateStartingBalance"] : true;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
@@ -20922,6 +20928,11 @@ export class StatsFilter implements IStatsFilter {
         data["forecastModelId"] = this.forecastModelId;
         data["showResolvedComments"] = this.showResolvedComments;
         data["groupByPeriod"] = this.groupByPeriod;
+        if (this.dailyPeriods && this.dailyPeriods.constructor === Array) {
+            data["dailyPeriods"] = [];
+            for (let item of this.dailyPeriods)
+                data["dailyPeriods"].push(item.toJSON());
+        }
         data["calculateStartingBalance"] = this.calculateStartingBalance;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
@@ -20949,6 +20960,7 @@ export interface IStatsFilter {
     forecastModelId: number;
     showResolvedComments: boolean;
     groupByPeriod: StatsFilterGroupByPeriod;
+    dailyPeriods: DailyPeriod[];
     calculateStartingBalance: boolean;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -20956,6 +20968,45 @@ export interface IStatsFilter {
     bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
+}
+
+export class DailyPeriod implements IDailyPeriod {
+    start: moment.Moment;
+    end: moment.Moment;
+
+    constructor(data?: IDailyPeriod) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.start = data["start"] ? moment(data["start"].toString()) : <any>undefined;
+            this.end = data["end"] ? moment(data["end"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DailyPeriod {
+        let result = new DailyPeriod();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["start"] = this.start ? this.start.toISOString() : <any>undefined;
+        data["end"] = this.end ? this.end.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IDailyPeriod {
+    start: moment.Moment;
+    end: moment.Moment;
 }
 
 export class CashFlowStatsDto implements ICashFlowStatsDto {
