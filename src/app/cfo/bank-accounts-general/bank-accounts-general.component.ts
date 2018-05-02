@@ -4,6 +4,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { BankAccountsComponent } from '@app/cfo/bank-accounts-general/bank-accounts/bank-accounts.component';
 
 @Component({
     selector: 'bank-accounts',
@@ -12,6 +13,7 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
+    @ViewChild(BankAccountsComponent) bankAccountsComponent: BankAccountsComponent;
 
     headlineConfig: any;
     private rootComponent: any;
@@ -42,7 +44,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     }
 
     onRefreshClick() {
-        this.syncComponent.requestSyncAjax(true);
+        this.bankAccountsComponent.loadBankAccounts();
     }
 
     onNextClick() {

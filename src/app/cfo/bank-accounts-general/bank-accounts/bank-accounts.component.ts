@@ -10,7 +10,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/reduce';
 
 @Component({
-    selector: 'bank-accounts',
+    selector: 'bank-accounts-grid',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
