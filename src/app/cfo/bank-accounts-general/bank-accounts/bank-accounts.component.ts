@@ -38,19 +38,27 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     quovoHandler: any;
 
     ngOnInit() {
-        this.bankAccounts$ = this._bankAccountsServiceProxy
-                                .getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
-                                .map(syncAccounts => {
-                                    this.initialBankAccounts = syncAccounts;
-                                    this.accountsAmount$ = Observable.of(syncAccounts.reduce((amount, bank) => bank.bankAccounts.length + amount, 0));
-                                    this.syncAccountsAmount$ = Observable.of(syncAccounts.length);
-                                    this.setItemsSelected(syncAccounts);
-                                    this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
-                                    return syncAccounts;
-                                });
+        this.loadBankAccounts();
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
-        this.accountsDataTotalNetWorth$ = this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, []).pluck('totalNetWorth');
         this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
+    }
+
+    refreshBankAccounts() {
+        this.loadBankAccounts();
+    }
+
+    loadBankAccounts() {
+        this.bankAccounts$ = this._bankAccountsServiceProxy
+            .getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
+            .map(syncAccounts => {
+                this.initialBankAccounts = syncAccounts;
+                this.accountsAmount$ = Observable.of(syncAccounts.reduce((amount, bank) => bank.bankAccounts.length + amount, 0));
+                this.syncAccountsAmount$ = Observable.of(syncAccounts.length);
+                this.setItemsSelected(syncAccounts);
+                this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
+                return syncAccounts;
+            });
+        this.accountsDataTotalNetWorth$ = this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, []).pluck('totalNetWorth');
     }
 
     entitiesItemsChanged(selectedEntities) {
@@ -114,7 +122,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     addAccountClose(event) {
         if (event.addedIds.length) {
-            console.log('forse sync and grid refresh should be here');
+            this.refreshBankAccounts();
         }
     }
 }
