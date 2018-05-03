@@ -26,6 +26,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     listComponent: any;
     tooltipVisible = false;
+    showAddButton = false;
 
     constructor(
         injector: Injector,
@@ -40,9 +41,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedLists = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item;
-            }).filter(Boolean);
+            this.selectedLists = this.listComponent.option('selectedItems');
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 this.selectedKeys.forEach((key) => {
@@ -71,5 +70,16 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         this._tagsService.getLists().subscribe((result) => {
             this.list = result.map((obj) => obj.name);
         });
+    }
+
+    addNewList() {
+        this.list.push(this.searchValue);
+        this.showAddButton = false;
+    }
+
+    onSearch = ($event) => {
+        this.searchValue = $event.event.target.value;
+        this.showAddButton = this.searchValue && this.list.every((item) => item != this.searchValue);
+        $event.component.option('showClearButton', !this.showAddButton);
     }
 }
