@@ -13,36 +13,58 @@ export class QuovoHandler {
 
     private _instanceType: string;
     private _instanceId: number;
+    private _connectFunc: Function;
     private onAdd: Function;
 
-    constructor(instanceType: string, instanceId: number, onAccountAdd) {
+    constructor(instanceType: string, instanceId: number, connectFunc, onAccountAdd) {
         this._instanceType = instanceType;
         this._instanceId = instanceId;
+        this._connectFunc = connectFunc;
         this.onAdd = onAccountAdd;
     }
 
+    get instanceType(): string { return this._instanceType; }
+    get instanceId(): number { return this._instanceId; }
     get isLoaded(): boolean { return this._isLoaded; }
     get isOpened(): boolean { return this._isOpened; }
 
     onClose: Function;
+
+    connect() {
+        this._connectFunc(this);
+    }
 
     open(onClose: Function = null, connectionId: number = null) {
         if (!this.isLoaded || this.isOpened) { return; }
 
         this.onClose = onClose;
         this.addedConnectionIds.length = 0;
-        if (connectionId) {
-            if (typeof (connectionId) !== 'number') {
-                connectionId = parseInt(connectionId);
+        try {
+            if (connectionId) {
+                if (typeof (connectionId) !== 'number') {
+                    connectionId = parseInt(connectionId);
+                }
+
+                this.handler.open(
+                    {
+                        connectionId: connectionId
+                    });
+
+            } else {
+                this.handler.open();
             }
-
-            this.handler.open(
-                {
-                    connectionId: connectionId
-                });
-
-        } else {
-            this.handler.open();
+        } catch (err) {
+            if (err instanceof Quovo.TokenError) {
+                console.log('Quovo.TokenError', err, 'reconnecting...');
+                this.reconnect();
+            } else if (err instanceof Quovo.EventOriginError) {
+                console.log('Quovo.EventOriginError', err, 'reconnecting...');
+                this.reconnect();
+            } else if (err instanceof Quovo.ConnectError) {
+                console.error('Quovo.ConnectError', err);
+            } else {
+                console.error('non-Connect related error', err);
+            }
         }
     }
 
@@ -56,6 +78,16 @@ export class QuovoHandler {
             () => this.onHandlerOpen(),
             () => this.onHandlerClose(),
             (id) => this.onHandlerConnectionAdd(id));
+    }
+
+    private reconnect() {
+        this._isLoaded = false;
+        if (this.isOpened) {
+            this._isOpened = false;
+            this.close();
+        }
+        this.handler = null;
+        this.connect();
     }
 
     private onHandlerLoad() {
@@ -99,21 +131,28 @@ export class QuovoService {
 
     getQuovoHandler(instanceType: string, instanceId: number) {
         let handlerId = instanceType + instanceId;
+        console.log(handlerId);
         let quovoHandler = this.quovoHandlers[handlerId];
 
         if (!quovoHandler) {
-            quovoHandler = new QuovoHandler(instanceType, instanceId, (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id));
+            quovoHandler = new QuovoHandler(instanceType, instanceId,
+                (handler) => this.connect(handler),
+                (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id));
             this.quovoHandlers[handlerId] = quovoHandler;
 
             jQuery.getScript('https://app.quovo.com/ui.js', () => {
-                this._syncService.createProviderUIToken(InstanceType[instanceType], instanceId)
-                    .subscribe((data) => {
-                        quovoHandler.createHandler(this.createQuovoHandler, data.token);
-                    });
+                this.connect(quovoHandler);
             });
         }
 
         return quovoHandler;
+    }
+
+    public connect(quovoHandler: QuovoHandler) {
+        this._syncService.createProviderUIToken(InstanceType[quovoHandler.instanceType], quovoHandler.instanceId)
+            .subscribe((data) => {
+                quovoHandler.createHandler(this.createQuovoHandler, data.token);
+            });
     }
 
     private onAccountAdd(instanceType: string, instanceId: number, accountId) {
