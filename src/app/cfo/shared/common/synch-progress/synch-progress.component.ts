@@ -18,7 +18,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     hasFailedAccounts = false;
     syncFailed = false;
     lastSyncDate;
-    
     statusCheckCompleted = false;
     tooltipVisible: boolean;
     timeoutHandler: any;
@@ -140,12 +139,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         }
 
         requestParams = { ...requestParams, ...params };
-        var paramKeys = Object.keys(requestParams);
+        let paramKeys = Object.keys(requestParams);
         paramKeys.forEach(key => {
             if (key && requestParams[key] !== undefined)
-                _url += key + "=" + encodeURIComponent("" + requestParams[key]) + "&";
+                _url += key + '=' + encodeURIComponent('' + requestParams[key]) + '&';
         });
-        _url = _url.replace(/[?&]$/, "");
+        _url = _url.replace(/[?&]$/, '');
 
         return abp.ajax({
             url: _url,

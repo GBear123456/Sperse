@@ -114,7 +114,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
 
         this.subRouteParams = _activatedRoute.queryParams
             .subscribe(params => {
-                if ('addNewClient' == params['action'])
+                if ('addNew' == params['action'])
                     setTimeout(() => this.createClient());
             });
 
