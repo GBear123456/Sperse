@@ -103,8 +103,10 @@ export class PipelineService {
                     }).subscribe((res) => { 
                         this.completeLeadUpdate(lead, fromStage, toStage);
                     }); 
-                else
+                else {
+                    lead.locked = false;
                     complete && complete();
+                }
             } else {
                 this.moveLeadTo(lead, toStage, fromStage);
                 complete && complete();
