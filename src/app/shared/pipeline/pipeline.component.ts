@@ -178,7 +178,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._dragulaService.destroy(this.dragulaName);
     }
 
-    dateOf(utcDateTime) {
+    removeTimezoneOffset(utcDateTime) {
         if (utcDateTime)
             return moment(utcDateTime).add(-(new Date(<any>utcDateTime).getTimezoneOffset()), 'minutes');
     }
