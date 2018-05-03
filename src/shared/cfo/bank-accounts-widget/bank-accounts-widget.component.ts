@@ -458,13 +458,13 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     actionsItemClick(e) {
         switch (e.itemData.text) {
-            case 'Edit Name':
+            case this.l('Edit_Name'):
                 this.changeBankAccountName();
                 break;
-            case 'Sync Now':
+            case this.l('Sync_Now'):
                 this.requestSyncForAccounts();
                 break;
-            case 'Update Info':
+            case this.l('Update_Info'):
                 this.updateAccountInfo(this.syncRef);
                 break;
             case this.l('Delete'):

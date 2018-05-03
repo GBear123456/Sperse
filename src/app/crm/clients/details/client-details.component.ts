@@ -104,7 +104,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         this.paramsSubscribe.push(this._route.queryParams
             .subscribe(params => {
-                this.referrerParams = params;
+                this.referrerParams = { referrer: params['referrer'] };
         }));
     }
 

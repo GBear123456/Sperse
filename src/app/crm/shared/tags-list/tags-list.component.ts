@@ -84,4 +84,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.showAddButton = this.list.every((item) => !item.includes(this.searchValue));
         $event.component.option('showClearButton', !this.showAddButton);
     }
+
+    reset() {
+        this.selectedItems = [];
+    }
 }

@@ -31,7 +31,7 @@ export class DashboardMenuComponent extends AppComponentBase {
             elem.component && this._router.navigate(
                 ['/app/crm' + elem.component]);
         else if (event.target.classList.contains('add-button'))
-            this._router.navigate(['/app/crm/clients'], 
-                { queryParams: { action: 'addNewClient' } });
+            this._router.navigate(['/app/crm' + elem.component], 
+                { queryParams: { action: 'addNew' } });
     }
 }
