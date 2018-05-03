@@ -122,13 +122,26 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     onUpdateAccount(event) {
         if (this.quovoHandler.isLoaded) {
+            if (this.loading) {
+                this.finishLoading(true);
+            }
             this.quovoHandler.open(null, event.id);
+        } else {
+            if (!this.loading) {
+                this.startLoading(true);
+            }
+            setTimeout(() => this.onUpdateAccount({ id: event.id }), 100);
         }
     }
 
     addAccountClose(event) {
         if (event.addedIds.length) {
             this.loadBankAccounts();
+            this._synchProgress.refreshSyncComponent();
         }
+    }
+
+    bankAccountDataChanged() {
+        this._synchProgress.refreshSyncComponent();
     }
 }
