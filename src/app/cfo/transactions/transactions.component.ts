@@ -651,7 +651,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     applyTotalBankAccountFilter(data) {
-        this.setDataSource();
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (!accountFilter) {
             setTimeout(() => {
@@ -663,6 +662,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             } else {
                 accountFilter.items['element'].setValue([], accountFilter);
             }
+            this.setDataSource();
             this.filtersService.change(accountFilter);
         }
     }
