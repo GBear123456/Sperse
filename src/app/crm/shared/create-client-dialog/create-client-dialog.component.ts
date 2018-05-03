@@ -691,11 +691,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.addButtonVisible[type]['phones'] = false;
             this.contacts.emails[type] = [];
             this.contacts.phones[type] = [];
+            this.emails[type] = [];
+            this.phones[type] = [];
             this.phoneExtension[type] = undefined;
             this.contacts.addresses[type] = {};
             this.notes[type] = undefined;
         });
 
+        this.person = new PersonInfoDto();
         this.emailType.personal = this.emailTypePersonalDefault;
         this.phoneType.personal = this.phoneTypePersonalDefault;
         this.emailType.business = this.emailTypeBusinessDefault;
@@ -709,6 +712,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.photoThumbnailData = undefined;
         this.title = undefined;
         this.website = undefined;
+        this.tagsComponent.reset();
+        this.listsComponent.reset();
+        this.userAssignmentComponent.reset();
     }
 
     onSaveOptionSelectionChanged($event) {
