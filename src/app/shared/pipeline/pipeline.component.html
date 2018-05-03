@@ -1,9 +1,9 @@
-<div class="pipeline-wrapper">
+<div class="pipeline-wrapper" [ngClass]="{disabled: disabled}">
     <div *ngFor="let stage of stages; let i = index;" class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{stage.color}}">
         <div class="column-title">
             <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="/assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
-        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.name}}">
+        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.name}}" (click)="onCardClick($event)">
             <ng-container *ngFor="let lead of stage.leads">
                   <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id">
                       <div class="container-fluid">

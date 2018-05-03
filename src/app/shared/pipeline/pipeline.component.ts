@@ -1,4 +1,4 @@
-import { Component, Injector, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -20,6 +20,7 @@ import DataSource from 'devextreme/data/data_source';
     styleUrls: ['./pipeline.component.less']    
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() dataSource: DataSource;
@@ -32,6 +33,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
     private readonly dataSourceURI = 'Lead';
+    private subscribers = [];
 
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
@@ -41,18 +43,24 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        _dragulaService.drop.subscribe((value) => {
+        this.subscribers.push(_dragulaService.drop.subscribe((value) => {
             let leadId = this.getAccessKey(value[1]),
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
-            if (leadId && newStage != oldStage)
-                _pipelineService.updateLeadStageByLeadId(leadId, oldStage, newStage);
-        });
-        _dragulaService.dragend.subscribe((value) => {
-            [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
-                el.classList.remove('drop-area');
-            });
-        });
+            if (leadId && newStage != oldStage) {
+                this.disabled = true;
+                _pipelineService.updateLeadStageByLeadId(
+                    leadId, oldStage, newStage, () => {
+                        this.disabled = false;
+                    }
+                );
+            }
+        }));
+        this.subscribers.push(
+            _dragulaService.dragend.subscribe((value) => {
+                this.hideStageHighlighting();
+            }
+        ));
         _dragulaService.setOptions(this.dragulaName, {
             ignoreInputTextSelection: false,
             moves: (el, source) => {
@@ -88,7 +96,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         });
                 } else
                     return false; // elements can't be dropped in any of the `containers` by default
-              }
+            }
         });
         this.leadDetailQueryParams = {
             referrer: 'app/crm/leads',
@@ -132,10 +140,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
         this.dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
-                this.queryWithSearch.concat({or: [{Stage: stages[index].name}]}));
+                this.queryWithSearch.concat({or: [{StageId: stages[index].id}]}));
         this.dataSource.sort({getter: 'CreationTime', desc: true});
         this.dataSource.pageIndex(page);
-        this.dataSource.load().then((leads) => {
+        this.dataSource.load().done((leads) => {
             let stage = stages[index];
             stage['leads'] = oneStageOnly ? _.uniqBy(
                 (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
@@ -166,11 +174,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnDestroy() {
+        this.subscribers.forEach((sub) => sub.unsubscribe());
         this._dragulaService.destroy(this.dragulaName);
     }
 
     dateOf(utcDateTime) {
         if (utcDateTime)
             return moment(utcDateTime).add(-(new Date(<any>utcDateTime).getTimezoneOffset()), 'minutes');
+    }
+
+    hideStageHighlighting() {
+        [].forEach.call(document.querySelectorAll('.drop-area'), (el) => {
+            el.classList.remove('drop-area');
+        });
+    }
+
+    onCardClick($event) {
+        this.hideStageHighlighting();
     }
 }
