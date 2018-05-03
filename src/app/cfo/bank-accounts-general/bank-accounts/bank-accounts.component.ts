@@ -62,9 +62,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
                 this.syncAccountsAmount$ = Observable.of(syncAccounts.length);
                 this.setItemsSelected(syncAccounts);
                 this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
+                let newTotalNetWorth = this.getTotalNetWorth(this.selectedSyncAccounts);
+                this.accountsDataTotalNetWorth$ = Observable.of(newTotalNetWorth);
                 return syncAccounts;
             });
-        this.accountsDataTotalNetWorth$ = this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, []).pluck('totalNetWorth');
     }
 
     entitiesItemsChanged(selectedEntities) {
