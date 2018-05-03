@@ -96,7 +96,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
-        private _syncServiceProxy: SyncServiceProxy
+        private _syncServiceProxy: SyncServiceProxy,
+
     ) {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
@@ -226,7 +227,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             this.syncAccountsDataSource.forEach(syncAccount => {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     bankAccount['visible'] = true;
-                });               
+                });
                 syncAccount['visible'] = this.showSyncAccountWithoutBankAccounts || syncAccount.bankAccounts.length > 0;
             });
         } else if (this.selectedBankAccountType === this.l('Other')) {
@@ -466,7 +467,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             case 'Update Info':
                 this.updateAccountInfo(this.syncRef);
                 break;
-            case 'Delete':
+            case this.l('Delete'):
                 this.removeAccount(this.syncAccountId);
                 break;
         }

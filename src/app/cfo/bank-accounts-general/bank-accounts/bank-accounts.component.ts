@@ -8,9 +8,11 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/pluck';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/reduce';
+import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
+import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
 
 @Component({
-    selector: 'bank-accounts-grid',
+    selector: 'bank-accounts-component',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
@@ -30,9 +32,17 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         private _businessEntityService: BusinessEntityServiceProxy,
         private _dashboardProxy: DashboardServiceProxy,
         private _bankAccountsService: BankAccountsService,
-        private _quovoService: QuovoService
+        private _quovoService: QuovoService,
+        private _synchProgress: SynchProgressService,
+        private _bankAccountsGeneralService: BankAccountsGeneralService
     ) {
         super(injector);
+        this._synchProgress.syncCompleted$.subscribe(() => {
+            this.loadBankAccounts();
+        });
+        this._bankAccountsGeneralService.refresh$.subscribe( () => {
+            this.loadBankAccounts();
+        });
     }
 
     quovoHandler: any;
@@ -41,10 +51,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         this.loadBankAccounts();
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
         this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
-    }
-
-    refreshBankAccounts() {
-        this.loadBankAccounts();
     }
 
     loadBankAccounts() {
@@ -122,7 +128,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     addAccountClose(event) {
         if (event.addedIds.length) {
-            this.refreshBankAccounts();
+            this.loadBankAccounts();
         }
     }
 }
