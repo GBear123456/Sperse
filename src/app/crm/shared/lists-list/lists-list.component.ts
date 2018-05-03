@@ -29,7 +29,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _tagsService: CustomerListsServiceProxy
+        private _listsService: CustomerListsServiceProxy
     ) {
         super(injector);
     }
@@ -46,7 +46,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 this.selectedKeys.forEach((key) => {
-                    this._tagsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
+                    this._listsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
                         customerId: key,
                         lists: this.selectedItems
                     })).subscribe((result) => {});
@@ -68,8 +68,12 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._tagsService.getLists().subscribe((result) => {
+        this._listsService.getLists().subscribe((result) => {
             this.list = result.map((obj) => obj.name);
         });
+    }
+
+    reset() {
+        this.selectedItems = [];
     }
 }

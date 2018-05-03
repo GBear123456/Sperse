@@ -74,4 +74,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this.list = result;
         });
     }
+
+    reset() {
+        this.selectedItemKey = null;
+    }
 }

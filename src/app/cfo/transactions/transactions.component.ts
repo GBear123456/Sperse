@@ -194,7 +194,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) )? true : false,
+                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) ) ? true : false,
                             'custaccesskey': 'search-container'
                         }
                     }
