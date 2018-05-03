@@ -16,7 +16,6 @@
                                 [allowColumnResizing]="true"
                                 [hoverStateEnabled]="true"
                                 [pager]="defaultGridPagerConfig"
-                                (onInitialized)="onGridInitialized($event)"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
                                 (onEditingStart)="showLeadDetails($event)"                    
@@ -44,7 +43,6 @@
                         <div *dxTemplate="let cellData of 'dateCell'">
                             {{cellData.value | date: formatting.dateTime}}
                         </div>
-
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>

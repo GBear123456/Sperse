@@ -42,15 +42,15 @@ export class PipelineService {
             });
     }
 
-    updateLeadStageByLeadId(leadId, oldStageName, newStageName) {
+    updateLeadStageByLeadId(leadId, oldStageName, newStageName, complete = null) {
         let fromStage = _.findWhere(this.stages, {name: oldStageName});
         if (fromStage) {
             let lead = _.findWhere(fromStage.leads, {Id: parseInt(leadId)});
-            return lead && this.updateLeadStage(lead, oldStageName, newStageName);
+            return lead && this.updateLeadStage(lead, oldStageName, newStageName, complete);
         }
     }
 
-    updateLeadStage(lead, oldStageName, newStageName) {
+    updateLeadStage(lead, oldStageName, newStageName, complete = null) {
         let leadId = lead['Id'] || lead['id'],
             fromStage = _.findWhere(this.stages, {name: oldStageName}),
             toStage = _.findWhere(this.stages, {name: newStageName});
@@ -69,11 +69,16 @@ export class PipelineService {
                                     cancellationReasonId: result.reasonId,
                                     comment: result.comment
                                 })
-                            ).finally(() => lead.locked = false).subscribe((result) => { 
+                            ).finally(() => {
+                                lead.locked = false;
+                                complete && complete();
+                            }).subscribe((result) => { 
                                 this.completeLeadUpdate(lead, fromStage, toStage);
                             });
-                        } else
+                        } else {
                             this.moveLeadTo(lead, toStage, fromStage);
+                            complete && complete();
+                        }
                     });
                 else if (action.sysId == 'CRM.UpdateLeadStage')
                     this._leadService.updateLeadStage(
@@ -81,7 +86,10 @@ export class PipelineService {
                             leadId: leadId, 
                             stageId: toStage.id
                         })
-                    ).finally(() => lead.locked = false).subscribe((res) => { 
+                    ).finally(() => {
+                        lead.locked = false;
+                        complete && complete();
+                    }).subscribe((res) => { 
                         this.completeLeadUpdate(lead, fromStage, toStage);
                     });
                 else if (action.sysId == 'CRM.ProcessLead')
@@ -89,14 +97,22 @@ export class PipelineService {
                         ProcessLeadInput.fromJS({
                             leadId: leadId
                         })
-                    ).finally(() => lead.locked = false).subscribe((res) => { 
+                    ).finally(() => {
+                        lead.locked = false;
+                        complete && complete();
+                    }).subscribe((res) => { 
                         this.completeLeadUpdate(lead, fromStage, toStage);
                     }); 
-            } else
+                else
+                    complete && complete();
+            } else {
                 this.moveLeadTo(lead, toStage, fromStage);
+                complete && complete();
+            }
                 
             return action;
-        }
+        } else
+            complete && complete();
     }
 
     moveLeadTo(lead, sourceStage, targetStage) {

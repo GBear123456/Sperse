@@ -11,6 +11,11 @@
     -ms-user-select: none;
     user-select: none; 
 
+    &.disabled {
+        pointer-events: none!important;
+        opacity: 0.5!important;
+    }
+
     .load-more {
         z-index: 10;    
         cursor: pointer;
