@@ -20867,7 +20867,7 @@ export class StatsFilter implements IStatsFilter {
     forecastModelId: number;
     showResolvedComments: boolean = false;
     groupByPeriod: StatsFilterGroupByPeriod = StatsFilterGroupByPeriod.Daily;
-    dailyPeriods: DailyPeriod[];
+    dailyPeriods: Period[];
     calculateStartingBalance: boolean = true;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -20893,7 +20893,7 @@ export class StatsFilter implements IStatsFilter {
             if (data["dailyPeriods"] && data["dailyPeriods"].constructor === Array) {
                 this.dailyPeriods = [];
                 for (let item of data["dailyPeriods"])
-                    this.dailyPeriods.push(DailyPeriod.fromJS(item));
+                    this.dailyPeriods.push(Period.fromJS(item));
             }
             this.calculateStartingBalance = data["calculateStartingBalance"] !== undefined ? data["calculateStartingBalance"] : true;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
@@ -20960,7 +20960,7 @@ export interface IStatsFilter {
     forecastModelId: number;
     showResolvedComments: boolean;
     groupByPeriod: StatsFilterGroupByPeriod;
-    dailyPeriods: DailyPeriod[];
+    dailyPeriods: Period[];
     calculateStartingBalance: boolean;
     startDate: moment.Moment;
     endDate: moment.Moment;
@@ -20970,11 +20970,11 @@ export interface IStatsFilter {
     businessEntityIds: number[];
 }
 
-export class DailyPeriod implements IDailyPeriod {
+export class Period implements IPeriod {
     start: moment.Moment;
     end: moment.Moment;
 
-    constructor(data?: IDailyPeriod) {
+    constructor(data?: IPeriod) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20990,8 +20990,8 @@ export class DailyPeriod implements IDailyPeriod {
         }
     }
 
-    static fromJS(data: any): DailyPeriod {
-        let result = new DailyPeriod();
+    static fromJS(data: any): Period {
+        let result = new Period();
         result.init(data);
         return result;
     }
@@ -21004,7 +21004,7 @@ export class DailyPeriod implements IDailyPeriod {
     }
 }
 
-export interface IDailyPeriod {
+export interface IPeriod {
     start: moment.Moment;
     end: moment.Moment;
 }
