@@ -5,6 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { LoginService } from './../login/login.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     templateUrl: './complete-tenant-registration.component.html',
@@ -23,16 +24,13 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
         private _activatedRoute: ActivatedRoute,
         public loginService: LoginService,
         private _tenantRegistrationService: TenantRegistrationServiceProxy,
+        private _authService: AppAuthService
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        //Prevent to create tenant in a tenant context
-        if (this.appSession.tenant != null) {
-            this._router.navigate(['account/login']);
-            return;
-        }
+        this._authService.logout(false);
 
         this.model.leadRequestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
         this.registerTenant();
