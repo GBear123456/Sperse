@@ -141,7 +141,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
                 this.queryWithSearch.concat({or: [{StageId: stages[index].id}]}));
-        this.dataSource.sort({getter: 'CreationTime', desc: true});
+        this.dataSource.sort({getter: 'Id', desc: true});
         this.dataSource.pageIndex(page);
         this.dataSource.load().done((leads) => {
             let stage = stages[index];
