@@ -20,6 +20,7 @@
         [height]="'100%'"
         (accountsEntitiesBindingChanged)="reloadGrid(true)"
         (selectionChanged)="selectedAccountsChange($event)"
-        (onUpdateAccount)="onUpdateAccount($event)">
+        (onUpdateAccount)="onUpdateAccount($event)"
+        (reloadDataSource)="loadBankAccounts()">
     </bank-accounts-widget>
 </div>

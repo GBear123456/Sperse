@@ -56,6 +56,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
+    @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
@@ -96,7 +97,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
-        private _syncServiceProxy: SyncServiceProxy
+        private _syncServiceProxy: SyncServiceProxy,
+
     ) {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
@@ -413,7 +415,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(res => {
                 this.syncAccountsDataSource = this.syncAccountsDataSource.filter(item => item.syncAccountId != syncAccountId);
-                this.refreshGrid();
+                this.reloadDataSource.emit();
             });
     }
 
@@ -421,7 +423,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         this._syncServiceProxy
             .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds)
             .subscribe(res => {
-                this.refreshGrid();
+                this.reloadDataSource.emit();
             });
     }
 

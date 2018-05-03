@@ -1,19 +1,19 @@
 import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
-import { SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { BankAccountsComponent } from '@app/cfo/bank-accounts-general/bank-accounts/bank-accounts.component';
+import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
+import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
 
 @Component({
     selector: 'bank-accounts',
     templateUrl: './bank-accounts-general.component.html',
-    styleUrls: ['./bank-accounts-general.component.less']
+    styleUrls: ['./bank-accounts-general.component.less'],
+    providers: [ SynchProgressService, BankAccountsGeneralService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
-    @ViewChild(BankAccountsComponent) bankAccountsComponent: BankAccountsComponent;
 
     headlineConfig: any;
     private rootComponent: any;
@@ -21,7 +21,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     constructor(
         injector: Injector,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
-        private _router: Router
+        private _router: Router,
+        private _synchProgress: SynchProgressService,
+        private _bankAccountsGeneralService: BankAccountsGeneralService
     ) {
         super(injector);
     }
@@ -44,7 +46,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     }
 
     onRefreshClick() {
-        this.bankAccountsComponent.loadBankAccounts();
+        this._bankAccountsGeneralService.refreshBankAccounts();
     }
 
     onNextClick() {
@@ -65,5 +67,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+    }
+
+    progressCompleted() {
+        this._synchProgress.syncProgressCompleted();
     }
 }
