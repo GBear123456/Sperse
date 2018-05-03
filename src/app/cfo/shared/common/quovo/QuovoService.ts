@@ -131,7 +131,6 @@ export class QuovoService {
 
     getQuovoHandler(instanceType: string, instanceId: number) {
         let handlerId = instanceType + instanceId;
-        console.log(handlerId);
         let quovoHandler = this.quovoHandlers[handlerId];
 
         if (!quovoHandler) {
