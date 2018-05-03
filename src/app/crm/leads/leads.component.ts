@@ -139,6 +139,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
+        this.gridDataSource = event.component.getDataSource();
+        this.showPipeline = (this.dataLayoutType == DataLayoutType.Pipeline);
+
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -489,11 +492,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-    }
-
-    onGridInitialized($event) {
-        this.gridDataSource = $event.component.getDataSource();
-        this.showPipeline = (this.dataLayoutType == DataLayoutType.Pipeline);
     }
 
     ngOnDestroy() {

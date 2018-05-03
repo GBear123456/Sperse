@@ -57,6 +57,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
     @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
+    @Output() onDataChange: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
@@ -416,6 +417,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             .subscribe(res => {
                 this.syncAccountsDataSource = this.syncAccountsDataSource.filter(item => item.syncAccountId != syncAccountId);
                 this.reloadDataSource.emit();
+                this.onDataChange.emit();
+
             });
     }
 
@@ -424,6 +427,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds)
             .subscribe(res => {
                 this.reloadDataSource.emit();
+                this.onDataChange.emit();
             });
     }
 
@@ -432,6 +436,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             .rename(this.instanceType, this.instanceId, this.bankAccountInfo)
             .subscribe(res => {
                 this.refreshGrid();
+                this.onDataChange.emit();
             });
     }
 

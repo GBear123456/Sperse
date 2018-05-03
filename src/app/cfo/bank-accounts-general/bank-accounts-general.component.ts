@@ -26,6 +26,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         private _bankAccountsGeneralService: BankAccountsGeneralService
     ) {
         super(injector);
+        this._synchProgress.needRefreshSync$.subscribe(() => {
+            this.syncComponent.requestSyncAjax();
+        });
     }
 
     ngOnInit() {

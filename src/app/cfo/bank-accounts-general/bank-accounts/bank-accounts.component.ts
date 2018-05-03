@@ -129,6 +129,11 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     addAccountClose(event) {
         if (event.addedIds.length) {
             this.loadBankAccounts();
+            this._synchProgress.refreshSyncComponent();
         }
+    }
+
+    bankAccountDataChanged() {
+        this._synchProgress.refreshSyncComponent();
     }
 }
