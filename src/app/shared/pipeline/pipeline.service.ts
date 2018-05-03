@@ -115,9 +115,10 @@ export class PipelineService {
             complete && complete();
     }
 
-    moveLeadTo(lead, sourceStage, targetStage) {
-        if (targetStage.leads)
-            targetStage.leads.unshift(lead);
+    moveLeadTo(lead, sourceStage, targetStage) {        
+        targetStage.leads.unshift(
+            sourceStage.leads.splice(
+                sourceStage.leads.indexOf(lead), 1).pop());
         lead.Stage = targetStage.name;
         lead.locked = false;
     }

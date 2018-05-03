@@ -79,7 +79,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                 if (stage && stage.accessibleActions.length) {
                     let lead = this.getLeadByElement(el, stage);
-                    return lead && !lead.locked && !stage.accessibleActions.every((action) => {
+                    return lead && !stage.accessibleActions.every((action) => {
                         return !action.targetStageId;
                     });
                 } else
