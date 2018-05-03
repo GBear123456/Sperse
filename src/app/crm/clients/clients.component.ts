@@ -321,11 +321,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             },
             {
                 location: 'before', items: [
-                    { name: 'back' }
-                ]
-            },
-            {
-                location: 'before', items: [
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),

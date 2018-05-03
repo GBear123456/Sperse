@@ -290,11 +290,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'before', items: [
-                    { name: 'back' }
-                ]
-            },
-            {
-                location: 'before', items: [
                     {
                         name: 'assign',
                         disabled: !this.selectedClientKeys.length,
