@@ -1,4 +1,4 @@
-import {Component, OnInit, Injector, ViewChild, ViewChildren, QueryList, OnDestroy, AfterViewInit} from '@angular/core';
+import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
@@ -10,7 +10,7 @@ import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-
     selector: 'bank-accounts',
     templateUrl: './bank-accounts-general.component.html',
     styleUrls: ['./bank-accounts-general.component.less'],
-    providers: [ BankAccountsGeneralService ]
+    providers: [ SynchProgressService, BankAccountsGeneralService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
