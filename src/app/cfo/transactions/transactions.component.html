@@ -97,7 +97,7 @@
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'descriptionTemplate'">
-                            <span id="transactionDetailTarget-{{cell.data.Id}}">{{cell.text}}</span>
+                            <span class="transaction-target" id="transactionDetailTarget-{{cell.data.Id}}" title="{{cell.text}}">{{cell.text}}</span>
                         </div>
 
                         <div *dxTemplate="let data of 'CashflowCategoryNameTemplate'">

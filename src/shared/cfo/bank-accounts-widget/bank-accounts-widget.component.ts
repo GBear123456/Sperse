@@ -56,6 +56,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() accountsEntitiesBindingChanged: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateAccount: EventEmitter<any> = new EventEmitter();
+    @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
+    @Output() onDataChange: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
@@ -96,7 +98,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
-        private _syncServiceProxy: SyncServiceProxy
+        private _syncServiceProxy: SyncServiceProxy,
+
     ) {
         super(injector, AppConsts.localization.CFOLocalizationSourceName);
         this.allAccountTypesFilter = this.l('AllAccounts');
@@ -226,7 +229,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             this.syncAccountsDataSource.forEach(syncAccount => {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     bankAccount['visible'] = true;
-                });               
+                });
                 syncAccount['visible'] = this.showSyncAccountWithoutBankAccounts || syncAccount.bankAccounts.length > 0;
             });
         } else if (this.selectedBankAccountType === this.l('Other')) {
@@ -413,7 +416,9 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(res => {
                 this.syncAccountsDataSource = this.syncAccountsDataSource.filter(item => item.syncAccountId != syncAccountId);
-                this.refreshGrid();
+                this.reloadDataSource.emit();
+                this.onDataChange.emit();
+
             });
     }
 
@@ -421,7 +426,8 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         this._syncServiceProxy
             .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds)
             .subscribe(res => {
-                this.refreshGrid();
+                this.reloadDataSource.emit();
+                this.onDataChange.emit();
             });
     }
 
@@ -430,6 +436,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             .rename(this.instanceType, this.instanceId, this.bankAccountInfo)
             .subscribe(res => {
                 this.refreshGrid();
+                this.onDataChange.emit();
             });
     }
 
@@ -457,16 +464,16 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     actionsItemClick(e) {
         switch (e.itemData.text) {
-            case 'Edit Name':
+            case this.l('Edit_Name'):
                 this.changeBankAccountName();
                 break;
-            case 'Sync Now':
+            case this.l('Sync_Now'):
                 this.requestSyncForAccounts();
                 break;
-            case 'Update Info':
+            case this.l('Update_Info'):
                 this.updateAccountInfo(this.syncRef);
                 break;
-            case 'Delete':
+            case this.l('Delete'):
                 this.removeAccount(this.syncAccountId);
                 break;
         }

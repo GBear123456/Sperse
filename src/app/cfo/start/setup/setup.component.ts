@@ -70,6 +70,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
 
     onStart(): void {
         this.isDisabled = true;
+        this.startLoading(true);
         if (this._cfoService.instanceId != null)
             this.finishSetup();
         else

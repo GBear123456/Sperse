@@ -17,6 +17,8 @@ import 'rxjs/add/observable/forkJoin';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
+import * as _ from 'underscore';
+
 @Component({
     selector: 'client-details',
     templateUrl: './client-details.component.html',
@@ -200,7 +202,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this._dialog.closeAll();
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: this.referrerParams }
+            { queryParams: _.mapObject(this.referrerParams, 
+                (val, key) => {
+                    return (key == 'referrer'? undefined: val)
+                }) 
+            }
         );
     }
 

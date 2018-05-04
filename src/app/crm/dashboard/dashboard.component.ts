@@ -53,7 +53,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     addClient() {
         this._router.navigate(['app/crm/clients'], 
-            { queryParams: { action: 'addNewClient' } });
+            { queryParams: { action: 'addNew' } });
     }
 
     periodChanged($event) {

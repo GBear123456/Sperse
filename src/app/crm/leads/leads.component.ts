@@ -113,6 +113,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
                         .subscribe(this.onStagesLoaded.bind(this));
             }
+
+            if ('addNew' == params['action'])
+                setTimeout(() => this.createLead());
         });       
 
         this.dataSource = {

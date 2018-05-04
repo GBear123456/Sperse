@@ -17,6 +17,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     };
 
     private paramsSubscribe: any = [];
+    private formatting = AppConsts.formatting;
     
     isEditAllowed = false;
 
@@ -89,7 +90,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         if (!value)
             return null;
 
-        return value instanceof moment ? value.format('MM-DD-YYYY') : value;
+        return value instanceof moment ? value.format(this.formatting.date) : value;
     }
     
     updateValue(value, item) {

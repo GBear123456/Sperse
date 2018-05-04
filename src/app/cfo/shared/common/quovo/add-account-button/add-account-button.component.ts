@@ -28,7 +28,17 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
     }
 
     addAccount(): void {
-        this.quovoHandler.open((e) => this.onQuovoHanderClose(e));
+        if (this.quovoHandler.isLoaded) {
+            if (this.loading) {
+                this.finishLoading(true);
+            }
+            this.quovoHandler.open((e) => this.onQuovoHanderClose(e));
+        } else {
+            if (!this.loading) {
+                this.startLoading(true);
+            }
+            setTimeout(() => this.addAccount(), 100);
+        }
     }
 
     private onQuovoHanderClose(e) {
