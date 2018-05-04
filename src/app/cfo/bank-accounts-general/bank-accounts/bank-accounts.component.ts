@@ -26,6 +26,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     accountsAmount$;
     selectedSyncAccounts = [];
     selectedBusinessEntities = [];
+    bankAccountIds = [];
+    isActive = true;
+
     constructor(
         injector: Injector,
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
@@ -66,6 +69,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
                 this.accountsDataTotalNetWorth$ = Observable.of(newTotalNetWorth);
                 return syncAccounts;
             });
+
     }
 
     entitiesItemsChanged(selectedEntities) {
@@ -117,7 +121,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     setItemsSelected(accounts) {
         accounts.forEach(account => {
             account['selected'] = true;
-            account.bankAccounts.forEach(bankAccount => bankAccount['selected'] = true);
+            account.bankAccounts.forEach(bankAccount => {
+                bankAccount['selected'] = true;
+                this.bankAccountIds.push(bankAccount.id);
+            });
         });
     }
 
@@ -144,5 +151,14 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     bankAccountDataChanged() {
         this._synchProgress.refreshSyncComponent();
+    }
+
+    filterDataSource() {
+        let getNewData = this._bankAccountsService.filterDataSource(this.initialBankAccounts, this.selectedBusinessEntities, this.bankAccountIds, this.isActive);
+        this.bankAccounts$ = Observable.from([getNewData]);
+    }
+
+    isActiveChanged(e) {
+        this.filterDataSource();
     }
 }
