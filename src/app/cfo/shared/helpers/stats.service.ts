@@ -20,9 +20,9 @@ export class StatsService {
         let pointDataObject;
 
         if (pointInfo.seriesName.indexOf('forecast') != -1) {
-            pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument && item.isForecast);
+            pointDataObject = data.find(item => item.isForecast && item.date.toDate().toString() == pointInfo.argument);
         } else {
-            pointDataObject = data.find(item => item.date.toDate().toString() == pointInfo.argument && !item.isForecast);
+            pointDataObject = data.find(item => !item.isForecast && item.date.toDate().toString() == pointInfo.argument);
         }
 
 
