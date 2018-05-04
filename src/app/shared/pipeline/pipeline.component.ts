@@ -27,7 +27,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
     stages: any = [];
-    leadDetailQueryParams;
     dragulaName = 'stage';
 
     private queryWithSearch: any = [];
@@ -98,10 +97,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return false; // elements can't be dropped in any of the `containers` by default
             }
         });
-        this.leadDetailQueryParams = {
-            referrer: 'app/crm/leads',
-            dataLayoutType: DataLayoutType.Pipeline
-        };
     }
 
     ngOnInit(): void {
@@ -192,4 +187,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     onCardClick($event) {
         this.hideStageHighlighting();
     }
+            
+    openDetails(leadId, clientId) {
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], {queryParams: {
+            referrer: 'app/crm/leads',
+            dataLayoutType: DataLayoutType.Pipeline
+        }});        
+    }                
 }
