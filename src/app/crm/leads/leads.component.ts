@@ -532,8 +532,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let targetStage = $event.itemData.text,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage))
-                ignoredStages.push(lead.Stage);
+            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage) 
+                && ignoredStages.indexOf(lead.Stage) < 0)
+                    ignoredStages.push(lead.Stage);
         });
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
