@@ -26,4 +26,41 @@
             width: 100%;
         }
     }
+
+    .filter-actions-is-active {
+        margin-top: 5px;
+        position: relative;
+
+        .is-active-filter {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.21;
+            letter-spacing: 0.3px;
+            color: #677380;
+
+            position: absolute;
+            right: 0;
+            z-index: 10;
+
+            /deep/ .dx-switch-on,
+            /deep/ .dx-switch-off {
+                color: transparent;
+            }
+
+            /deep/ .dx-switch-container {
+                border-color: #e2f5fe;
+                background-color: #e2f5fe;
+                border-radius: 12px;
+                height: 20px;
+            }
+
+            /deep/ .dx-switch-handle {
+                &::before {
+                    background-color: #30bff2;
+                    border-radius: 14px;
+                    height: 14px;
+                }
+            }
+        }
+    }
 }
