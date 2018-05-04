@@ -18,6 +18,7 @@ import 'rxjs/add/operator/scan';
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
     @Input() waitForBankAccounts = false;
+    @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
     totalData: any;
     selectedPeriod: any = String(GroupBy['Yearly']).toLowerCase();
@@ -42,7 +43,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     }
 
     loadStatsData() {
-        if (!this.waitForBankAccounts) {
+        if (!this.waitForBankAccounts && !this.waitForPeriods) {
             this.startLoading();
             this._bankAccountService.getStats(
                 InstanceType[this.instanceType],
@@ -131,6 +132,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         this.endDate = period.to ? period.to.startOf('day') : null;
 
         this.selectedPeriod = String(GroupBy[groupBy]).toLowerCase();
+        this.waitForPeriods = false;
         this.loadStatsData();
     }
 

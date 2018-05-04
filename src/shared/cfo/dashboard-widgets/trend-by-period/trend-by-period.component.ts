@@ -26,6 +26,7 @@ import * as moment from 'moment';
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     @Input() waitForBankAccounts = false;
+    @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
     trendData: Array<BankAccountDailyStatDto>;
     startDate: any;
@@ -177,7 +178,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     loadStatsData() {
-        if (!this.waitForBankAccounts) {
+        if (!this.waitForBankAccounts && !this.waitForPeriods) {
             this.startLoading();
             this._bankAccountService.getStats(
                 InstanceType[this.instanceType],
@@ -264,12 +265,14 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             return (obj.name === periodName);
         });
 
+        this.waitForPeriods = false;
         this.loadStatsData();
     }
 
     filterByBankAccounts(bankAccountIds: number[]) {
         this.waitForBankAccounts = false;
         this.bankAccountIds = bankAccountIds;
+
         this.loadStatsData();
     }
 
