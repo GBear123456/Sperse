@@ -167,6 +167,8 @@ export class QuovoService {
         return Quovo.create({
             token: token,
             userCss: AppConsts.appBaseUrl + '/assets/cfo-css/quovo.css',
+            topInstitutions: 'banks',
+            confirmClose: false,
             search: {
                 testInstitutions: true
             },
