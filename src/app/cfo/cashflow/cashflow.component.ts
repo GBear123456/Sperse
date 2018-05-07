@@ -195,6 +195,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     };
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     statsDetailResult: any;
+
+    /** Whether stats details contains historical data */
+    detailsContainsHistorical: 'always' | 'none' = 'none';
+
     currencySymbol = '$';
 
     private filterByChangeTimeout: any;
@@ -4005,6 +4009,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
+        this.detailsContainsHistorical = this.statsDetailResult.some(item => !item.forecastId) ? 'always' : 'none';
 
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
