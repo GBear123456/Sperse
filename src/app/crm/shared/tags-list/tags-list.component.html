@@ -11,12 +11,12 @@
             <span class="add-button" [hidden]="!showAddButton" (click)="addNewTag()">+</span>
             <dx-list 
                 height="350"
+                [dataSource]="list"
                 [searchEditorOptions]="{onInput: onSearch}"
                 [searchEnabled]="true"
                 [selectionMode]="'multiple'"
                 [showSelectionControls]="true"
-                [selectedItems]="selectedTags"
-                [dataSource]="list"
+                [(selectedItems)]="selectedTags"
                 (onInitialized)="onInitialized($event)">
             </dx-list>
         </div>

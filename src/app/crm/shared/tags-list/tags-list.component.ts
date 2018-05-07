@@ -40,10 +40,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     apply(selectedKeys = undefined) {
-        if (this.listComponent) {
-            this.selectedTags = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item;
-            }).filter(Boolean);
+        if (this.listComponent && this.selectedTags.length) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 this.selectedKeys.forEach((key) => {
@@ -84,7 +81,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.showAddButton = this.list.every((item) => !item.includes(this.searchValue));
         $event.component.option('showClearButton', !this.showAddButton);
     }
-
     reset() {
         this.selectedItems = [];
     }
