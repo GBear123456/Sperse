@@ -1,4 +1,4 @@
-import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -19,11 +19,18 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less']    
 })
-export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class PipelineComponent extends AppComponentBase implements OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
-    @Input() dataSource: DataSource;
+    private _dataSource: DataSource;
+
+    @Input('dataSource') 
+    set dataSource(dataSource: DataSource) {
+        this._dataSource = dataSource;
+        if (this._dataSource)
+            this.refresh();
+    }
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
     stages: any = [];
@@ -99,10 +106,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    ngOnInit(): void {
-        this.refresh();
-    }
-
     refresh() {
         this.startLoading(true);
         this._pipelineService
@@ -132,17 +135,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     loadStagesLeads(index = 0, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
-        this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
-        this.dataSource['_store']['_url'] =
+        this._dataSource.pageSize(this.STAGE_PAGE_COUNT);
+        this._dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
                 this.queryWithSearch.concat({or: [{StageId: stages[index].id}]}));
-        this.dataSource.sort({getter: 'Id', desc: true});
-        this.dataSource.pageIndex(page);
-        this.dataSource.load().done((leads) => {
+        this._dataSource.sort({getter: 'Id', desc: true});
+        this._dataSource.pageIndex(page);
+        this._dataSource.load().done((leads) => {
             let stage = stages[index];
             stage['leads'] = oneStageOnly ? _.uniqBy(
                 (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
-            stage['total'] = this.dataSource.totalCount();
+            stage['total'] = this._dataSource.totalCount();
             stage['full'] = stage['total'] <= stage['leads'].length;
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);

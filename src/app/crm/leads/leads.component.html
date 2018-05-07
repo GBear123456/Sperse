@@ -10,7 +10,7 @@
             <div>
                 <div id="LeadsTable">
                     <dx-data-grid id="gridContainer"
-                                [dataSource]="dataSource"
+                                [dataSource]="gridDataSource"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [allowColumnResizing]="true"
@@ -51,11 +51,11 @@
             </div>
         </div>
     </div>
-    <div *ngIf="showPipeline" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
-                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
+                    <app-pipeline [dataSource]="pipelineDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>
                 </div>
