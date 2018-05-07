@@ -2657,8 +2657,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         let getCellOptionsStarted = performance.now();
 
-        let options = this.getCellOptionsFromCell(e.cell, e.area, e.type, e.rowIndex, e.isWhiteSpace);
+        let options = this.getCellOptionsFromCell(e.cell, e.area, e.rowIndex, e.isWhiteSpace);
         this.preparingSpeed += performance.now() - getCellOptionsStarted;
+
+        /** added charts near row titles */
+        if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
+            this.addChartToRow(e);
+        }
 
         //let applyingOptionsStarted = performance.now();
         /** Apply all cell options to the cellElement */
@@ -2698,6 +2703,56 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         //console.log('applying other options', performance.now() - otherOptions);
     }
 
+    addChartToRow(e) {
+        let rowKey = e.cell.path.toString();
+        let cachedSparkLine = this.cachedRowsSparkLines.get(rowKey);
+        if (cachedSparkLine) {
+            e.cellElement.appendChild(cachedSparkLine.element());
+        } else {
+            let allData: any;
+            allData = this.pivotGrid.instance.getDataSource().getData();
+            let chartData = [];
+            for (let i in allData.columns) {
+                if (allData.columns[i].children) {
+                    let years = allData.columns[i].children;
+                    years.forEach(obj => {
+                        let rObj = {};
+                        let value = allData.values[e.cell.dataSourceIndex][obj.index];
+                        rObj['year'] = obj.value;
+                        rObj['value'] = value.length ? Math.abs(value[0]) : Math.abs(value);
+                        chartData.push(rObj);
+                    });
+                }
+            }
+            if (chartData.length > 1) {
+                let spanChart = document.createElement('div');
+                spanChart.className = 'chart';
+                e.cellElement.appendChild(spanChart);
+                let chartOptions = {
+                    dataSource: chartData,
+                    type: 'area',
+                    argumentField: 'year',
+                    valueField: 'value',
+                    lineWidth: 1,
+                    lineColor: '#fab800',
+                    showMinMax: false,
+                    showFirstLast: false,
+                    tooltip: {
+                        enabled: false
+                    }
+                };
+                if (e.cell.path[0] === PI) {
+                    chartOptions.lineColor = '#61c670';
+                }
+                if (e.cell.path[0] === PE) {
+                    chartOptions.lineColor = '#e7326a';
+                }
+                let sparkLineInstance = new SparkLine(spanChart, chartOptions);
+                this.cachedRowsSparkLines.set(rowKey, sparkLineInstance);
+            }
+        }
+    }
+
     getFieldObjectByPath(path) {
         let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false);
         let columnNumber = path.length ? path.length  - 1 : 0;
@@ -2725,7 +2780,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getCellOptionsFromCell = underscore.memoize(
-        (cell, area: 'row' | 'column' | 'data', type, rowIndex: number, isWhiteSpace: boolean) => {
+        (cell, area: 'row' | 'column' | 'data', rowIndex: number, isWhiteSpace: boolean) => {
             let options = {
                 classes: [],
                 parentClasses: [],
@@ -2736,85 +2791,34 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 eventsToTrigger: []
             };
 
-        /** Add day (MON, TUE etc) to the day header cells */
+            /** Add day (MON, TUE etc) to the day header cells */
             if ((area === 'column' || area === 'data') && cell.text !== undefined && this.isDayCell(cell)) {
                 let path = cell.path || cell.columnPath;
-            let date = this.formattingDate(path);
+                let date = this.formattingDate(path);
                 options.attributes['data-is-weekend'] = this.isWeekend(date.startDate);
-        }
-
-        /** added charts near row titles */
-            if (area === 'row' && type === 'D' && cell.path.length > 1 && !cell.expanded && !cell.isWhiteSpace) {
-                let rowKey = cell.path.toString();
-            let cachedSparkLine = this.cachedRowsSparkLines.get(rowKey);
-            if (cachedSparkLine) {
-                    options.elementsToAppend.push(cachedSparkLine.element());
-            } else {
-                let allData: any;
-                allData = this.pivotGrid.instance.getDataSource().getData();
-                let chartData = [];
-                for (let i in allData.columns) {
-                    if (allData.columns[i].children) {
-                        let years = allData.columns[i].children;
-                        years.forEach(obj => {
-                            let rObj = {};
-                                let value = allData.values[cell.dataSourceIndex][obj.index];
-                            rObj['year'] = obj.value;
-                            rObj['value'] = value.length ? Math.abs(value[0]) : Math.abs(value);
-                            chartData.push(rObj);
-                        });
-                    }
-                }
-                if (chartData.length > 1) {
-                    let spanChart = document.createElement('div');
-                    spanChart.className = 'chart';
-                    let chartOptions = {
-                        dataSource: chartData,
-                        type: 'area',
-                        argumentField: 'year',
-                        valueField: 'value',
-                        lineWidth: 1,
-                        lineColor: '#fab800',
-                        showMinMax: false,
-                        showFirstLast: false,
-                        tooltip: {
-                            enabled: false
-                        }
-                    };
-                        if (cell.path[0] === PI) {
-                        chartOptions.lineColor = '#61c670';
-                    }
-                        if (cell.path[0] === PE) {
-                        chartOptions.lineColor = '#e7326a';
-                    }
-                    let sparkLineInstance = new SparkLine(spanChart, chartOptions);
-                        options.elementsToAppend.push(spanChart);
-                    this.cachedRowsSparkLines.set(rowKey, sparkLineInstance);
-                }
             }
-        }
 
             if (this.isStartingBalanceWhiteSpace(cell)) {
                 options.classes.push('startedBalanceWhiteSpace');
-        }
+            }
 
-        /** If cell is cashflow type header total row - add css classes to parent tr */
+            /** If cell is cashflow type header total row - add css classes to parent tr */
             if (this.isCashflowTypeRowTotal(area, cell)) {
                 let path = cell.path || cell.rowPath;
                 options.parentClasses.push(path[0].slice(2).toLowerCase() + 'Row', 'totalRow');
-        }
+            }
 
             if (this.isAccountingRowTotal(area, cell)) {
                 options.parentClasses.push('totalRow');
-        }
+            }
 
-        /** added css class to the income and outcomes columns */
+            /** added css class to the income and outcomes columns */
             if (this.isIncomeOrExpensesChildCell(area, cell)) {
                 let cssClass = `${cell.path[0] === PI ? 'income' : 'expenses'}ChildRow`;
                 options.parentClasses.push(cssClass);
-        }
+            }
 
-        /** add account number to the cell */
+            /** add account number to the cell */
             if (this.isAccountHeaderCell(area, cell)) {
                 let accountId = cell.path[1].slice(2);
             let account = this.bankAccounts.find(account => account.id == accountId);
@@ -2827,20 +2831,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        /** add current classes for the cells that belongs to the current periods */
+            /** add current classes for the cells that belongs to the current periods */
             if (area === 'data' || (area === 'column' || rowIndex >= 1)) {
                 let currentPeriodClass = this.getCurrentPeriodsClass(cell);
                 if (currentPeriodClass) {
                     options.classes.push(currentPeriodClass);
                 }
-        }
+            }
 
-        /** add zeroValue class for the data cells that have zero values to style them with grey color */
+            /** add zeroValue class for the data cells that have zero values to style them with grey color */
             if (area === 'data' && cell.value === 0) {
                 options.classes.push('zeroValue');
         }
 
-        /** disable expanding and hide the plus button of the elements that has no children */
+            /** disable expanding and hide the plus button of the elements that has no children */
             if (area === 'row' && cell.path && !cell.isWhiteSpace && cell.path.length !== this.pivotGrid.instance.getDataSource().getAreaFields('row', true).length) {
                 if (!this.hasChildsByPath(cell.path)) {
                     this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', cell.path);
@@ -2852,54 +2856,54 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
-        /** If there are some cells to click - click it! */
-            if (area === 'column' && cell.path) {
-            if (this.fieldPathsToClick.length) {
-                let index;
-                    this.fieldPathsToClick.forEach((path, arrIndex) => { if (path.toString() === cell.path.toString()) index = arrIndex; });
-                if (index !== undefined) {
-                    delete this.fieldPathsToClick[index];
-                        if (!cell.expanded) {
-                            options.eventsToTrigger.push('click');
+            /** If there are some cells to click - click it! */
+                if (area === 'column' && cell.path) {
+                    if (this.fieldPathsToClick.length) {
+                    let index;
+                        this.fieldPathsToClick.forEach((path, arrIndex) => { if (path.toString() === cell.path.toString()) index = arrIndex; });
+                    if (index !== undefined) {
+                        delete this.fieldPathsToClick[index];
+                            if (!cell.expanded) {
+                                options.eventsToTrigger.push('click');
+                        }
                     }
                 }
             }
-        }
 
-        /** Show descriptors in Italic */
+            /** Show descriptors in Italic */
             if (this.isTransactionDetailHeader(area, cell)) {
                 options.classes.push('descriptor');
-        }
+            }
 
-        /** add draggable and droppable attribute to the cells that can be dragged */
+            /** add draggable and droppable attribute to the cells that can be dragged */
             if (this.isEnableForecastAdding() && this.cellCanBeDragged(area, cell)) {
                 options.attributes['draggable'] = 'true';
                 options.attributes['droppable'] = 'false';
-        }
+            }
 
             if (this.isReconciliationRows(cell) && cell.value !== 0) {
                 let actionButton = this.createActionButton('discard');
                 options.elementsToAppend.push(actionButton);
-        }
+            }
 
             if (this.isStartingBalanceDataColumn(area, cell) && cell.value == 0) {
-            let elements = this.adjustmentsList.filter(cashflowItem => {
-                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
-                        cell.columnPath.every((fieldValue, index) => {
-                        let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
-                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
-                            return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cell.columnPath[index];
-                    });
-            });
-            if (elements.length) {
-                let sum = elements.reduce((x, y) => x + y.amount, 0);
+                let elements = this.adjustmentsList.filter(cashflowItem => {
+                        return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
+                            cell.columnPath.every((fieldValue, index) => {
+                            let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
+                            let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
+                                return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cell.columnPath[index];
+                        });
+                });
+                if (elements.length) {
+                    let sum = elements.reduce((x, y) => x + y.amount, 0);
                     options.classes.push('containsInfo');
                     let infoElement = this.createActionButton('info', {
-                    'data-sum': sum
-                });
+                        'data-sum': sum
+                    });
                     options.elementsToAppend.push(infoElement);
+                }
             }
-        }
 
             /** headers manipulation (adding css classes and appending 'Totals text') */
             if (area === 'column' && cell.type !== GrandTotal && cell.path) {
