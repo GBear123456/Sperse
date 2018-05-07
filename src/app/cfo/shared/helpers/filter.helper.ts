@@ -35,7 +35,6 @@ export class FilterHelpers {
     static filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {        
         if (filter.items && filter.items.element) {
             requestFilter.accountIds = [];
-            requestFilter.bankIds = [];
             filter.items.element['dataSource'].forEach((syncAccount, i) => {
                 syncAccount.bankAccounts.forEach((bankAccount, i) => {
                     if (bankAccount['selected']) {

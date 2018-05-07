@@ -50,7 +50,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 this.instanceId,
                 'USD',
                 undefined,
-                undefined,
                 this.bankAccountIds,
                 this.startDate,
                 this.endDate,

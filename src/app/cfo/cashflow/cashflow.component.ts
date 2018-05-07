@@ -3834,7 +3834,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             startDate: startDate,
             endDate: endDate,
             currencyId: this.currencyId,
-            bankIds: this.requestFilter.bankIds || [],
             accountIds: accountsIds,
             businessEntityIds: this.requestFilter.businessEntityIds || [],
             searchTerm: '',
@@ -4659,7 +4658,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
                 currencyId: this.currencyId,
-                bankIds: this.requestFilter.bankIds || [],
                 accountIds: this.requestFilter.accountIds || [],
                 businessEntityIds: this.requestFilter.businessEntityIds || [],
                 searchTerm: this.searchValue
@@ -4962,7 +4960,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 let filterDetails = this.statsDetailFilter;
                 let discardDiscrepanciesInput = DiscardDiscrepanciesInput.fromJS({
-                    bankIds: filterDetails.bankIds,
                     bankAccountIds: filterDetails.accountIds,
                     currencyId: filterDetails.currencyId,
                     startDate: filterDetails.startDate,
