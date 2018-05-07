@@ -1,4 +1,4 @@
-import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
@@ -16,6 +16,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { OperationsWidgetComponent } from './operations-widget.component';
 
 import * as _ from 'underscore';
 
@@ -28,6 +29,8 @@ import * as _ from 'underscore';
     }
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+
     customerId: number;
     customerInfo: CustomerInfoDto;
     primaryContact: PersonContactInfoDto;
@@ -285,6 +288,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this.leadInfo.stage = targetStage;
         else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
-        $event.stopPropagation();
+
+        this.toolbarComponent.refresh();
+        $event.event.stopPropagation();
     }
 }
