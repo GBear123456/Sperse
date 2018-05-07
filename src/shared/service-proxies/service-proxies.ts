@@ -21546,6 +21546,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     forecastId: number;
     forecastDate: moment.Moment;
     status: CashFlowStatsDetailDtoStatus;
+    bankAccountId: number;
 
     constructor(data?: ICashFlowStatsDetailDto) {
         if (data) {
@@ -21573,6 +21574,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.forecastId = data["forecastId"];
             this.forecastDate = data["forecastDate"] ? moment(data["forecastDate"].toString()) : <any>undefined;
             this.status = data["status"];
+            this.bankAccountId = data["bankAccountId"];
         }
     }
 
@@ -21599,6 +21601,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["forecastId"] = this.forecastId;
         data["forecastDate"] = this.forecastDate ? this.forecastDate.toISOString() : <any>undefined;
         data["status"] = this.status;
+        data["bankAccountId"] = this.bankAccountId;
         return data; 
     }
 }
@@ -21619,6 +21622,7 @@ export interface ICashFlowStatsDetailDto {
     forecastId: number;
     forecastDate: moment.Moment;
     status: CashFlowStatsDetailDtoStatus;
+    bankAccountId: number;
 }
 
 export class CashFlowGridSettingsDto implements ICashFlowGridSettingsDto {
@@ -31076,7 +31080,6 @@ export interface IAssignToCustomerInput {
 }
 
 export class AccountTotals implements IAccountTotals {
-    syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
     totalPending: number;
@@ -31093,7 +31096,6 @@ export class AccountTotals implements IAccountTotals {
 
     init(data?: any) {
         if (data) {
-            this.syncAccountCount = data["syncAccountCount"];
             this.bankAccountCount = data["bankAccountCount"];
             this.totalNetWorth = data["totalNetWorth"];
             this.totalPending = data["totalPending"];
@@ -31109,7 +31111,6 @@ export class AccountTotals implements IAccountTotals {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["syncAccountCount"] = this.syncAccountCount;
         data["bankAccountCount"] = this.bankAccountCount;
         data["totalNetWorth"] = this.totalNetWorth;
         data["totalPending"] = this.totalPending;
@@ -31119,7 +31120,6 @@ export class AccountTotals implements IAccountTotals {
 }
 
 export interface IAccountTotals {
-    syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
     totalPending: number;

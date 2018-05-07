@@ -3001,6 +3001,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 targetCell.appendChild(infoTooltip);
                 this.infoTooltip.show();
             }
+
+            /** To avoid issues with dx events */
+            if (!targetCell.classList.contains('dx-area-data-cell')) {
+                $('.dx-skip-gesture-event').removeClass('dx-skip-gesture-event');
+                targetCell.classList.add('dx-skip-gesture-event');
+            }
         }
     }
 
