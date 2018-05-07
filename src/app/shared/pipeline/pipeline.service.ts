@@ -3,6 +3,7 @@ import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { MatDialog } from '@angular/material';
 
+import { AppConsts } from '@shared/AppConsts';
 import { Observable } from "rxjs";
 import 'rxjs/add/operator/switchMap';
 import * as _ from "underscore";
@@ -58,7 +59,7 @@ export class PipelineService {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && lead && !lead.locked) {
                 lead.locked = true;
-                if (action.sysId == 'CRM.CancelLead')
+                if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_LEAD)
                     this._dialog.open(LeadCancelDialogComponent, {
                         data: { }
                     }).afterClosed().subscribe(result => {
@@ -80,7 +81,7 @@ export class PipelineService {
                             complete && complete();
                         }
                     });
-                else if (action.sysId == 'CRM.UpdateLeadStage')
+                else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
                     this._leadService.updateLeadStage(
                         UpdateLeadStageInfo.fromJS({
                             leadId: leadId, 
@@ -92,7 +93,7 @@ export class PipelineService {
                     }).subscribe((res) => { 
                         this.completeLeadUpdate(lead, fromStage, toStage);
                     });
-                else if (action.sysId == 'CRM.ProcessLead')
+                else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
                    this._leadService.processLead(
                         ProcessLeadInput.fromJS({
                             leadId: leadId
@@ -118,10 +119,11 @@ export class PipelineService {
     }
 
     moveLeadTo(lead, sourceStage, targetStage) {        
-        targetStage.leads.unshift(
-            sourceStage.leads.splice(
-                sourceStage.leads.indexOf(lead), 1).pop());
-        lead.Stage = targetStage.name;
+        if (sourceStage.leads && targetStage.leads)
+            targetStage.leads.unshift(
+                sourceStage.leads.splice(
+                    sourceStage.leads.indexOf(lead), 1).pop());
+        lead.stage = lead.Stage = targetStage.name;
         lead.locked = false;
     }
 

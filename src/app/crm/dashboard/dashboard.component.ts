@@ -49,7 +49,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {      
         this.dataEmpty = !data.length;
-        this.finishLoading(true);
     }
 
     addClient() {
@@ -67,7 +66,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         AppComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        this.startLoading(true);
     }
 
     ngOnDestroy() {

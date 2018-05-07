@@ -29,7 +29,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _tagsService: UserAssignmentServiceProxy
+        private _userAssignmentService: UserAssignmentServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -48,7 +48,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 this.selectedKeys.forEach((key) => {
-                    this._tagsService.assignUserToCustomer(AssignUserToCustomerInput.fromJS({
+                    this._userAssignmentService.assignUserToCustomer(AssignUserToCustomerInput.fromJS({
                         customerId: key,
                         userId: this.selectedItemKey
                     })).subscribe((result) => {});
@@ -70,7 +70,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
-        this._tagsService.getUsers().subscribe((result) => {
+        this._userAssignmentService.getUsers().subscribe((result) => {
             this.list = result;
         });
     }

@@ -248,7 +248,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.instanceId,
             'USD',
             this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
-            this.requestFilter.bankIds,
             this.requestFilter.accountIds,
             this.requestFilter.startDate,
             this.requestFilter.endDate,

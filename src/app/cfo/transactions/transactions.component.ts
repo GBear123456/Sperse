@@ -77,6 +77,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public transactionsFilterQuery: any[];
 
     public dragInProgress = false;
+    private draggedTransactionRow;
     public selectedCashflowCategoryKey: any;
 
     public bankAccountCount: number;
@@ -796,29 +797,35 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onSelectionChanged($event, initial = false) {
-        let img = new Image(),
-            transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
-        img.src = 'assets/common/icons/drag-icon.svg';
+        let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
+
+        let img = new Image();
+        img.src = 'assets/common/icons/drag-icon.svg';
+
         let element = <any>$($event.element);
-        element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
-            .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
-                this.dragInProgress = true;
-                e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
-                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                e.originalEvent.dropEffect = 'move';
-            }).on('dragend', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+        let affectedRows = element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend');
+        if (transactionKeys.length)
+            affectedRows = affectedRows.filter('.dx-selection');
+        affectedRows.attr('draggable', true).on('dragstart', (e) => {
+            if (!transactionKeys.length)
+                this.draggedTransactionRow = this.dataGrid.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+            this.dragInProgress = true;
+            e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
+            e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+            e.originalEvent.dropEffect = 'move';
+        }).on('dragend', (e) => {
+            e.originalEvent.preventDefault();
+            e.originalEvent.stopPropagation();
 
-                this.dragInProgress = false;
-            }).on('click', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+            this.draggedTransactionRow = null;
+            this.dragInProgress = false;
+        }).on('click', (e) => {
+            this.draggedTransactionRow = null;
+            this.dragInProgress = false;
+        });
 
-                this.dragInProgress = false;
-            });
         this.getTotalValues();
     }
 
@@ -870,9 +877,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     categorizeTransactions($event) {
-        let transactions = this.dataGrid
+        let transactions: any[] = this.dataGrid
             .instance.getSelectedRowKeys();
+        if (!transactions.length && this.draggedTransactionRow)
+            transactions = [this.draggedTransactionRow];
         let transactionIds = transactions.map(t => t.Id);
+        let isSingleDraggedTransaction = !!this.draggedTransactionRow;
 
         if ($event.categoryId) {
             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
@@ -924,7 +934,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             }
                         );
 
-                        this.dataGrid.instance.selectRows(gridItems, false);
+                        if (!isSingleDraggedTransaction)
+                            this.dataGrid.instance.selectRows(gridItems, false);
                         this.dataGrid.instance.repaintRows(selectedRowIndexes);
 
                         this.getTotalValues();

@@ -42,7 +42,7 @@ import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import query from 'devextreme/data/query';
 
-import 'devextreme/data/odata/store';
+import DataSource from 'devextreme/data/data_source';
 
 import * as _ from 'underscore';
 import * as moment from 'moment';
@@ -63,9 +63,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
 
     firstRefresh = false;
-    gridDataSource: any = {};
+    gridDataSource: any;
+    pipelineDataSource: any;
     collection: any;
-    showPipeline = false;
+    showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedLeads = [];
     stages = [];
@@ -108,10 +109,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this._route.queryParams.subscribe(params => {
             if (params['dataLayoutType']) {
-                this.dataLayoutType = params['dataLayoutType'];
-                if (this.dataLayoutType == DataLayoutType.Grid)
-                    _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                        .subscribe(this.onStagesLoaded.bind(this));
+                let dataLayoutType = params['dataLayoutType'];
+                if (dataLayoutType != this.dataLayoutType) {
+                    if (dataLayoutType == DataLayoutType.Grid)
+                        _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+                            .subscribe(this.onStagesLoaded.bind(this));
+                    this.toggleDataLayout(dataLayoutType);
+                }
             }
 
             if ('addNew' == params['action'])
@@ -119,6 +123,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });       
 
         this.dataSource = {
+            requireTotalCount: true,
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -130,7 +135,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 paginate: true
             }
-        };
+        };      
 
         this.initToolbarConfig();
 
@@ -139,9 +144,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
-        this.gridDataSource = event.component.getDataSource();
-        this.showPipeline = (this.dataLayoutType == DataLayoutType.Pipeline);
-
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -164,15 +166,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     toggleDataLayout(dataLayoutType) {
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
-        if (!this.showPipeline) {
-            this.gridDataSource.pageSize(20);
-            this.gridDataSource.filter(null);
-            this.gridDataSource['_store']['_url'] =
-                this.getODataURL(this.dataSourceURI);
-            this.gridDataSource.load().then(() => {
-                this.setGridDataLoaded();
-            });
-        }
+        this.initDataSource();
     }
 
     ngOnInit(): void {
@@ -289,11 +283,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             }
                         }
                     }
-                ]
-            },
-            {
-                location: 'before', items: [
-                    { name: 'back' }
                 ]
             },
             {
@@ -492,6 +481,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        this.initDataSource();
+    }
+
+    initDataSource() {
+        if (this.showPipeline) {
+            if (!this.pipelineDataSource)
+                this.pipelineDataSource = new DataSource(this.dataSource);
+        } else {  
+            if (!this.gridDataSource)
+                this.gridDataSource = this.dataSource;
+        }
     }
 
     ngOnDestroy() {
@@ -537,8 +537,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let targetStage = $event.itemData.text,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage))
-                ignoredStages.push(lead.Stage);
+            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage) 
+                && ignoredStages.indexOf(lead.Stage) < 0)
+                    ignoredStages.push(lead.Stage);
         });
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));

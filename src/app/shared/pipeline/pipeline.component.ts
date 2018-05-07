@@ -1,4 +1,4 @@
-import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -19,21 +19,29 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less']    
 })
-export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class PipelineComponent extends AppComponentBase implements OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
-    @Input() dataSource: DataSource;
+    private _dataSource: DataSource;
+
+    @Input('dataSource') 
+    set dataSource(dataSource: DataSource) {
+        this._dataSource = dataSource;
+        if (this._dataSource)
+            this.refresh();
+    }
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
     stages: any = [];
-    leadDetailQueryParams;
     dragulaName = 'stage';
 
     private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
     private readonly dataSourceURI = 'Lead';
     private subscribers = [];
+
+    private mainContainerSelector = '.funnel-wrapper';
 
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
@@ -98,18 +106,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return false; // elements can't be dropped in any of the `containers` by default
             }
         });
-        this.leadDetailQueryParams = {
-            referrer: 'app/crm/leads',
-            dataLayoutType: DataLayoutType.Pipeline
-        };
-    }
-
-    ngOnInit(): void {
-        this.refresh();
     }
 
     refresh() {
-        this.startLoading(true);
+        this.startLoading(true, this.mainContainerSelector);
         this._pipelineService
             .getPipelineDefinitionObservable(this.pipelinePurposeId)
             .subscribe((result: PipelineDto) => {
@@ -137,23 +137,23 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     loadStagesLeads(index = 0, page = 0, oneStageOnly = false) {
         let stages = this.pipeline.stages;
-        this.dataSource.pageSize(this.STAGE_PAGE_COUNT);
-        this.dataSource['_store']['_url'] =
+        this._dataSource.pageSize(this.STAGE_PAGE_COUNT);
+        this._dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
                 this.queryWithSearch.concat({or: [{StageId: stages[index].id}]}));
-        this.dataSource.sort({getter: 'Id', desc: true});
-        this.dataSource.pageIndex(page);
-        this.dataSource.load().done((leads) => {
+        this._dataSource.sort({getter: 'Id', desc: true});
+        this._dataSource.pageIndex(page);
+        this._dataSource.load().done((leads) => {
             let stage = stages[index];
             stage['leads'] = oneStageOnly ? _.uniqBy(
                 (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
-            stage['total'] = this.dataSource.totalCount();
+            stage['total'] = this._dataSource.totalCount();
             stage['full'] = stage['total'] <= stage['leads'].length;
             if (!oneStageOnly && this.pipeline.stages[++index])
                 this.loadStagesLeads(index, page);
             else {
                 this.stages = stages;
-                this.finishLoading(true);
+                this.finishLoading(true, this.mainContainerSelector);
             }
         });
     }
@@ -161,13 +161,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     advancedODataFilter(grid: any, uri: string, query: any[]) {
         this.queryWithSearch = query.concat(this.getSearchFilter());
 
-        this.startLoading(true);
+        this.startLoading(true, this.mainContainerSelector);
         this.loadStagesLeads();
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {
-        this.startLoading(true);
+        this.startLoading(true, this.mainContainerSelector);
         this.loadStagesLeads(stageIndex,
             Math.floor(this.stages[stageIndex].leads.length
                 / this.STAGE_PAGE_COUNT), true);
@@ -178,7 +178,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._dragulaService.destroy(this.dragulaName);
     }
 
-    dateOf(utcDateTime) {
+    removeTimezoneOffset(utcDateTime) {
         if (utcDateTime)
             return moment(utcDateTime).add(-(new Date(<any>utcDateTime).getTimezoneOffset()), 'minutes');
     }
@@ -192,4 +192,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     onCardClick($event) {
         this.hideStageHighlighting();
     }
+            
+    openDetails(leadId, clientId) {
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], {queryParams: {
+            referrer: 'app/crm/leads',
+            dataLayoutType: DataLayoutType.Pipeline
+        }});        
+    }                
 }

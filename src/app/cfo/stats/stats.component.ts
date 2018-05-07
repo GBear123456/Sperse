@@ -465,13 +465,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
-        let { startDate, endDate, accountIds = [], bankIds = [] } = this.requestFilter;
+        let { startDate, endDate, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
             'USD',
             this.selectedForecastModel.id,
-            bankIds,
             accountIds,
             startDate,
             endDate,

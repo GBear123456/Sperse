@@ -821,14 +821,13 @@ export class BankAccountsServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @forecastModelId (optional) 
-     * @banks (optional) 
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, banks: number[], accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -840,8 +839,6 @@ export class BankAccountsServiceProxy {
             url_ += "Currency=" + encodeURIComponent("" + currency) + "&"; 
         if (forecastModelId !== undefined)
             url_ += "ForecastModelId=" + encodeURIComponent("" + forecastModelId) + "&"; 
-        if (banks !== undefined)
-            banks && banks.forEach(item => { url_ += "Banks=" + encodeURIComponent("" + item) + "&"; });
         if (accounts !== undefined)
             accounts && accounts.forEach(item => { url_ += "Accounts=" + encodeURIComponent("" + item) + "&"; });
         if (startDate !== undefined)
@@ -20867,12 +20864,11 @@ export class StatsFilter implements IStatsFilter {
     forecastModelId: number;
     showResolvedComments: boolean = false;
     groupByPeriod: StatsFilterGroupByPeriod = StatsFilterGroupByPeriod.Daily;
-    dailyPeriods: DailyPeriod[];
+    dailyPeriods: Period[];
     calculateStartingBalance: boolean = true;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -20893,17 +20889,12 @@ export class StatsFilter implements IStatsFilter {
             if (data["dailyPeriods"] && data["dailyPeriods"].constructor === Array) {
                 this.dailyPeriods = [];
                 for (let item of data["dailyPeriods"])
-                    this.dailyPeriods.push(DailyPeriod.fromJS(item));
+                    this.dailyPeriods.push(Period.fromJS(item));
             }
             this.calculateStartingBalance = data["calculateStartingBalance"] !== undefined ? data["calculateStartingBalance"] : true;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
-            if (data["bankIds"] && data["bankIds"].constructor === Array) {
-                this.bankIds = [];
-                for (let item of data["bankIds"])
-                    this.bankIds.push(item);
-            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -20937,11 +20928,6 @@ export class StatsFilter implements IStatsFilter {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
-        if (this.bankIds && this.bankIds.constructor === Array) {
-            data["bankIds"] = [];
-            for (let item of this.bankIds)
-                data["bankIds"].push(item);
-        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -20960,21 +20946,20 @@ export interface IStatsFilter {
     forecastModelId: number;
     showResolvedComments: boolean;
     groupByPeriod: StatsFilterGroupByPeriod;
-    dailyPeriods: DailyPeriod[];
+    dailyPeriods: Period[];
     calculateStartingBalance: boolean;
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
 
-export class DailyPeriod implements IDailyPeriod {
+export class Period implements IPeriod {
     start: moment.Moment;
     end: moment.Moment;
 
-    constructor(data?: IDailyPeriod) {
+    constructor(data?: IPeriod) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -20990,8 +20975,8 @@ export class DailyPeriod implements IDailyPeriod {
         }
     }
 
-    static fromJS(data: any): DailyPeriod {
-        let result = new DailyPeriod();
+    static fromJS(data: any): Period {
+        let result = new Period();
         result.init(data);
         return result;
     }
@@ -21004,7 +20989,7 @@ export class DailyPeriod implements IDailyPeriod {
     }
 }
 
-export interface IDailyPeriod {
+export interface IPeriod {
     start: moment.Moment;
     end: moment.Moment;
 }
@@ -21434,7 +21419,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -21459,11 +21443,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
-            if (data["bankIds"] && data["bankIds"].constructor === Array) {
-                this.bankIds = [];
-                for (let item of data["bankIds"])
-                    this.bankIds.push(item);
-            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -21495,11 +21474,6 @@ export class StatsDetailFilter implements IStatsDetailFilter {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
-        if (this.bankIds && this.bankIds.constructor === Array) {
-            data["bankIds"] = [];
-            for (let item of this.bankIds)
-                data["bankIds"].push(item);
-        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -21525,7 +21499,6 @@ export interface IStatsDetailFilter {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
@@ -23760,7 +23733,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -23783,11 +23755,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
-            if (data["bankIds"] && data["bankIds"].constructor === Array) {
-                this.bankIds = [];
-                for (let item of data["bankIds"])
-                    this.bankIds.push(item);
-            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -23817,11 +23784,6 @@ export class StatsDetailFilterBase implements IStatsDetailFilterBase {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
-        if (this.bankIds && this.bankIds.constructor === Array) {
-            data["bankIds"] = [];
-            for (let item of this.bankIds)
-                data["bankIds"].push(item);
-        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -23845,7 +23807,6 @@ export interface IStatsDetailFilterBase {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
@@ -24593,7 +24554,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 
@@ -24618,11 +24578,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
-            if (data["bankIds"] && data["bankIds"].constructor === Array) {
-                this.bankIds = [];
-                for (let item of data["bankIds"])
-                    this.bankIds.push(item);
-            }
             if (data["accountIds"] && data["accountIds"].constructor === Array) {
                 this.accountIds = [];
                 for (let item of data["accountIds"])
@@ -24654,11 +24609,6 @@ export class CreateCashFlowCommentThreadInput implements ICreateCashFlowCommentT
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
-        if (this.bankIds && this.bankIds.constructor === Array) {
-            data["bankIds"] = [];
-            for (let item of this.bankIds)
-                data["bankIds"].push(item);
-        }
         if (this.accountIds && this.accountIds.constructor === Array) {
             data["accountIds"] = [];
             for (let item of this.accountIds)
@@ -24684,7 +24634,6 @@ export interface ICreateCashFlowCommentThreadInput {
     startDate: moment.Moment;
     endDate: moment.Moment;
     currencyId: string;
-    bankIds: number[];
     accountIds: number[];
     businessEntityIds: number[];
 }
@@ -31076,7 +31025,6 @@ export interface IAssignToCustomerInput {
 }
 
 export class AccountTotals implements IAccountTotals {
-    syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
     totalPending: number;
@@ -31093,7 +31041,6 @@ export class AccountTotals implements IAccountTotals {
 
     init(data?: any) {
         if (data) {
-            this.syncAccountCount = data["syncAccountCount"];
             this.bankAccountCount = data["bankAccountCount"];
             this.totalNetWorth = data["totalNetWorth"];
             this.totalPending = data["totalPending"];
@@ -31109,7 +31056,6 @@ export class AccountTotals implements IAccountTotals {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["syncAccountCount"] = this.syncAccountCount;
         data["bankAccountCount"] = this.bankAccountCount;
         data["totalNetWorth"] = this.totalNetWorth;
         data["totalPending"] = this.totalPending;
@@ -31119,7 +31065,6 @@ export class AccountTotals implements IAccountTotals {
 }
 
 export interface IAccountTotals {
-    syncAccountCount: number;
     bankAccountCount: number;
     totalNetWorth: number;
     totalPending: number;
