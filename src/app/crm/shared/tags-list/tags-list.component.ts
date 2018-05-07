@@ -1,5 +1,6 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 
 import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput } from '@shared/service-proxies/service-proxies';
 
@@ -32,7 +33,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _tagsService: CustomerTagsServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     toggle() {
