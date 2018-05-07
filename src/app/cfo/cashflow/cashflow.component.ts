@@ -2640,7 +2640,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
         options.elementsToAppend.length && options.elementsToAppend.forEach(appendElement => element.appendChild(appendElement));
         options.childrenSelectorsToRemove.length && options.childrenSelectorsToRemove.forEach(selectorToRemove => element.querySelector(selectorToRemove).remove());
-        if (Object.keys(options.eventListeners)) {
+        if (Object.keys(options.eventListeners).length) {
             for (let listener in options.eventListeners) {
                 element['listener'] = options.eventListeners['listener'];
             }
@@ -2656,6 +2656,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onCellPrepared(e) {
 
         let getCellOptionsStarted = performance.now();
+
+        /** Apply user preferences to the data showing */
+        this.applyUserPreferencesForCells(e);
 
         let options = this.getCellOptionsFromCell(e.cell, e.area, e.rowIndex, e.isWhiteSpace);
         this.preparingSpeed += performance.now() - getCellOptionsStarted;
@@ -2696,9 +2699,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.truncateCellText(e);
             this.truncatingSpeed += performance.now() - trancatingSpeed;
         }
-
-        /** Apply user preferences to the data showing */
-        this.applyUserPreferencesForCells(e);
 
         //console.log('applying other options', performance.now() - otherOptions);
     }
