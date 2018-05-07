@@ -55,7 +55,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        if (!this.waitForBankAccounts && !this.waitForPeriods) {
+        if (!this.waitForBankAccounts) {
             this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
                 .subscribe((result) => {
                     this.accountsData = result;
