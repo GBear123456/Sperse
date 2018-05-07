@@ -2625,7 +2625,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         options.parentClasses.length && element.parentElement.classList.add(...options.parentClasses);
         if (Object.keys(options.attributes).length) {
             for (let attribute in options.attributes) {
-                element.setAttribute(attribute, options.attributes.attribute);
+                element.setAttribute(attribute, options.attributes[attribute]);
             }
         }
         options.elementsToAppend.length && options.elementsToAppend.forEach(appendElement => element.appendChild(appendElement));
@@ -3047,10 +3047,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** To avoid issues with dx events */
-            if (!targetCell.classList.contains('dx-area-data-cell')) {
-                $('.dx-skip-gesture-event').removeClass('dx-skip-gesture-event');
-                targetCell.classList.add('dx-skip-gesture-event');
-            }
+            // if (!targetCell.classList.contains('dx-area-data-cell')) {
+            //     $('.dx-skip-gesture-event').removeClass('dx-skip-gesture-event');
+            //     targetCell.classList.add('dx-skip-gesture-event');
+            // }
         }
     }
 
