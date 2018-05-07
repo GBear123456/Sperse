@@ -177,6 +177,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Bank accounts of user */
     private bankAccounts: BankAccountDto[];
 
+    preparingSpeed = 0;
+    truncatingSpeed = 0;
+
     /** Source of the cashflow table (data fields descriptions and data) */
     dataSource;
 
@@ -809,6 +812,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this.createDragImage();
+
+        document.addEventListener('keydown', this.keyDownEventHandler, true);
     }
 
     createDragImage() {
@@ -1271,6 +1276,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Remove cashflow events handlers */
         this.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this._appService.toolbarIsHidden = false;
+
+        document.removeEventListener('keydown', this.keyDownEventHandler);
         super.ngOnDestroy();
     }
 
@@ -1888,6 +1895,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     onContentReady(event) {
 
+        let contentReadyStart = performance.now();
+
         /** If amount of years is 1 and it is collapsed - expand it to the month */
         if (this.allYears && this.allYears.length && this.allYears.length === 1 && this.yearsAmount === 1) {
             /** Check if the year was expanded, if no - expand to months for better user experience */
@@ -1920,10 +1929,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cachedColumnActivity.clear();
         this.applyUserPreferencesForAreas();
 
-        let pivotDataArea: HTMLElement = this.getElementRef().nativeElement.querySelector('.dx-pivotgrid-area-data');
-        document.removeEventListener('keydown', this.keyDownEventHandler);
-        document.addEventListener('keydown', this.keyDownEventHandler, true);
-
         this.synchronizeHeaderHeightWithCashflow();
         this.handleBottomHorizontalScrollPosition();
 
@@ -1938,6 +1943,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
         }
+
+        console.log('preparing speed', this.preparingSpeed);
+        console.log('truncating speed', this.truncatingSpeed);
+        this.preparingSpeed = this.truncatingSpeed = 0;
+        console.log('conent ready speed', performance.now() - contentReadyStart);
     }
 
     keyDownListener(e) {
@@ -2645,54 +2655,73 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     onCellPrepared(e) {
 
-        //let getCellOptionsStarted = performance.now();
+        let getCellOptionsStarted = performance.now();
 
         let options = this.getCellOptionsFromCell(e.cell, e.area, e.type, e.rowIndex, e.isWhiteSpace);
-        //console.log('getting options from cell', performance.now() - getCellOptionsStarted);
+        this.preparingSpeed += performance.now() - getCellOptionsStarted;
 
         //let applyingOptionsStarted = performance.now();
         /** Apply all cell options to the cellElement */
         this.applyOptionsToElement(e.cellElement, options);
 
         //console.log('applying options to cell', performance.now() - applyingOptionsStarted);
-
         //let otherOptions = performance.now();
-        /** headers manipulation (adding css classes and appending 'Totals text') */
-        if (e.area === 'column' && e.cell.type !== GrandTotal) {
-            this.prepareColumnCell(e);
+
+        if (e.area === 'column' && e.cell.type !== GrandTotal && e.cell.path) {
+            let fieldObj = this.getFieldObjectByPath(e.cell.path);
+            let fieldName = fieldObj.groupInterval;
+            /** Added 'Total' text to the year and quarter headers */
+            if (fieldName === 'year' || fieldName === 'quarter') {
+                let hideHead = (e.cellElement.classList.contains('dx-pivotgrid-expanded') &&
+                    (fieldName === 'quarter' || e.cellElement.parentElement.children.length >= 6)) ||
+                    (fieldName === 'quarter' && this.quarterHeadersAreCollapsed) ||
+                    (fieldName === 'year' && this.yearHeadersAreCollapsed);
+                e.cellElement.onclick = this.headerExpanderClickHandler;
+                e.cellElement.innerHTML = this.getMarkupForExtendedHeaderCell(e, hideHead, fieldName);
+            }
         }
 
         if (this.filterBy && this.filterBy.length && e.area === 'row' && e.cell.text && e.cell.isLast) {
-            let filterByLower = this.filterBy.toLocaleLowerCase();
-            let cellText = e.cell.text.toLocaleLowerCase();
-            if (cellText.includes(filterByLower)) {
-                let resultElement = '';
-                let usedPosition = 0;
-                let position = cellText.indexOf(filterByLower);
-                while (position > -1) {
-                    resultElement = resultElement + e.cell.text.substr(usedPosition, position)
-                        + '<span class="filter-text">' + e.cell.text.substr(usedPosition + position, filterByLower.length) + '</span>';
-                    usedPosition = usedPosition + position + filterByLower.length;
-                    cellText = cellText.substr(position + filterByLower.length);
-                    position = cellText.indexOf(filterByLower);
-                }
-                resultElement = resultElement + e.cell.text.substr(usedPosition);
-
-                /** @todo check how to figure */
-                $(e.cellElement).find('> span:first-of-type').text('');
-                $(e.cellElement).find('> span:first-of-type').before(resultElement);
-            }
+            this.highlightFilteredResult(e);
         }
 
         /** hide long text for row headers and show '...' instead with the hover and long text */
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
+            let trancatingSpeed = performance.now();
             this.truncateCellText(e);
+            this.truncatingSpeed += performance.now() - trancatingSpeed;
         }
 
         /** Apply user preferences to the data showing */
         this.applyUserPreferencesForCells(e);
 
         //console.log('applying other options', performance.now() - otherOptions);
+    }
+
+    getFieldObjectByPath(path) {
+        let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false);
+        let columnNumber = path.length ? path.length  - 1 : 0;
+        return columnFields.find(field => field.areaIndex === columnNumber);
+    }
+
+    highlightFilteredResult(e) {
+        let filterByLower = this.filterBy.toLocaleLowerCase();
+        let cellText = e.cell.text.toLocaleLowerCase();
+        if (cellText.includes(filterByLower)) {
+            let resultElement = '';
+            let usedPosition = 0;
+            let position = cellText.indexOf(filterByLower);
+            while (position > -1) {
+                resultElement = resultElement + e.cell.text.substr(usedPosition, position)
+                    + '<span class="filter-text">' + e.cell.text.substr(usedPosition + position, filterByLower.length) + '</span>';
+                usedPosition = usedPosition + position + filterByLower.length;
+                cellText = cellText.substr(position + filterByLower.length);
+                position = cellText.indexOf(filterByLower);
+            }
+            resultElement = resultElement + e.cell.text.substr(usedPosition);
+            $(e.cellElement).find('> span:first-of-type').text('');
+            $(e.cellElement).find('> span:first-of-type').before(resultElement);
+        }
     }
 
     getCellOptionsFromCell = underscore.memoize(
@@ -2872,6 +2901,48 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
+            /** headers manipulation (adding css classes and appending 'Totals text') */
+            if (area === 'column' && cell.type !== GrandTotal && cell.path) {
+                let fieldName, fieldObj = this.getFieldObjectByPath(cell.path);
+                let columnNumber = cell.path.length ? cell.path.length  - 1 : 0;
+                let fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
+                if (fieldGroup === 'dateField') {
+                    fieldName = fieldObj.groupInterval;
+
+                    if (fieldName === 'day') {
+                        let dayNumber = cell.path.slice(-1)[0],
+                            dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
+
+                        let dayEndingElement = document.createElement('span');
+                        dayEndingElement.innerText = dayEnding;
+                        dayEndingElement.className = 'dayEnding';
+                        options.elementsToAppend.push(dayEndingElement);
+
+                        let date = this.formattingDate(cell.path);
+                        let dayNameElement = document.createElement('span');
+                        dayNameElement.innerText = date.startDate.format('ddd').toUpperCase();
+                        dayNameElement.className = 'dayName';
+                        /** Add day name */
+                        options.elementsToAppend.push(dayNameElement);
+                    }
+                } else if (fieldGroup === 'historicalField') {
+                    fieldName = 'historical';
+                } else if (fieldGroup === 'projectedField') {
+                    fieldName = Projected[cell.path[columnNumber]];
+                }
+
+                /** add class to the cell */
+                options.classes.push(fieldGroup, fieldName);
+
+                /** hide projected field for not current months for mdk and projected */
+                if (fieldGroup === 'projectedField') {
+                    fieldName = 'projected';
+                }
+
+                /** add class to the whole row */
+                options.parentClasses.push(`${fieldName}Row`);
+            }
+
             return options;
         },
         input => JSON.stringify(input)
@@ -2890,18 +2961,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         textElement.style.whiteSpace = 'nowrap';
         let textWidth: number = textElement.getBoundingClientRect().width;
         /** Get the sum of widths of all cell children except text element width */
-        let anotherChildrendElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
+        let anotherChildrenElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
             let computedStyles: CSSStyleDeclaration = getComputedStyle(element);
             return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight) + parseInt(computedStyles.marginLeft) : 0);
         }, 0);
         /** If text size is too big - truncate it */
-        if ((textWidth + anotherChildrendElementsWidth) > cellWidth) {
+        if ((textWidth + anotherChildrenElementsWidth) > cellWidth) {
             e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
             textElement.classList.add('truncated');
             /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
             textElement.innerHTML = `<span>${textElement.textContent}</span>`;
             /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildrendElementsWidth) + 'px';
+            textElement.style.width = (cellWidth - anotherChildrenElementsWidth) + 'px';
         }
     }
 
@@ -3341,55 +3412,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
         return cellType;
-    }
-
-    /**
-     * remove css from the cell text, add css as a class, and add the totals text for the fields
-     * if it is year or quarter cells
-     * @param cellObj
-     */
-    prepareColumnCell(cellObj) {
-        if (cellObj.cell.path) {
-            let fieldName, columnFields = this.pivotGrid.instance.getDataSource().getAreaFields('column', false);
-            let columnNumber = cellObj.cell.path.length ? cellObj.cell.path.length  - 1 : 0;
-            let fieldObj = columnFields.find(field => field.areaIndex === columnNumber);
-            let fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
-            if (fieldGroup === 'dateField') {
-                fieldName = fieldObj.groupInterval;
-                /** Added 'Total' text to the year and quarter headers */
-                if (fieldName === 'year' || fieldName === 'quarter') {
-                    let hideHead = (cellObj.cellElement.classList.contains('dx-pivotgrid-expanded') &&
-                        (fieldName === 'quarter' || cellObj.cellElement.parentElement.children.length >= 6)) ||
-                        (fieldName === 'quarter' && this.quarterHeadersAreCollapsed) ||
-                        (fieldName === 'year' && this.yearHeadersAreCollapsed);
-                    cellObj.cellElement.onclick = this.headerExpanderClickHandler;
-                    cellObj.cellElement.innerHTML = this.getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName);
-                }
-                if (fieldName === 'day') {
-                    let dayNumber = cellObj.cell.path.slice(-1)[0],
-                        dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
-                    cellObj.cellElement.insertAdjacentHTML('beforeEnd', `<span class="dayEnding">${dayEnding}</span>`);
-                    let date = this.formattingDate(cellObj.cell.path);
-                    /** Add day name */
-                    cellObj.cellElement.insertAdjacentHTML('beforeEnd', `<span class="dayName">${date.startDate.format('ddd').toUpperCase()}</span>`);
-                }
-            } else if (fieldGroup === 'historicalField') {
-                fieldName = 'historical';
-            } else if (fieldGroup === 'projectedField') {
-                fieldName = Projected[cellObj.cell.path[columnNumber]];
-            }
-
-            /** add class to the cell */
-            cellObj.cellElement.classList.add(fieldGroup, fieldName);
-
-            /** hide projected field for not current months for mdk and projected */
-            if (fieldGroup === 'projectedField') {
-                fieldName = 'projected';
-            }
-
-            /** add class to the whole row */
-            cellObj.cellElement.parentElement.classList.add(`${fieldName}Row`);
-        }
     }
 
     getMarkupForExtendedHeaderCell(cellObj, hideHead, fieldName) {
