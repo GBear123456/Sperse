@@ -243,13 +243,13 @@ export abstract class AppComponentBase {
         return 'assets/common/images/no-photo.png';
     }
 
-    startLoading(globally = false) {
+    startLoading(globally = false, elementSelector?) {
         this.loading = true;
-        abp.ui.setBusy(globally ? undefined : this.getElementRef().nativeElement);
+        abp.ui.setBusy(globally ? elementSelector : this.getElementRef().nativeElement);
     }
 
-    finishLoading(globally = false) {
-        abp.ui.clearBusy(globally ? undefined : this.getElementRef().nativeElement);
+    finishLoading(globally = false, elementSelector?) {
+        abp.ui.clearBusy(globally ? elementSelector : this.getElementRef().nativeElement);
         this.loading = false;
     }
 
