@@ -2625,7 +2625,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         options.parentClasses.length && element.parentElement.classList.add(...options.parentClasses);
         if (Object.keys(options.attributes).length) {
             for (let attribute in options.attributes) {
-                element.setAttribute(attribute, options.attributes.attribute);
+                element.setAttribute(attribute, options.attributes[attribute]);
             }
         }
         options.elementsToAppend.length && options.elementsToAppend.forEach(appendElement => element.appendChild(appendElement));
@@ -3047,10 +3047,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** To avoid issues with dx events */
-            if (!targetCell.classList.contains('dx-area-data-cell')) {
-                $('.dx-skip-gesture-event').removeClass('dx-skip-gesture-event');
-                targetCell.classList.add('dx-skip-gesture-event');
-            }
+            // if (!targetCell.classList.contains('dx-area-data-cell')) {
+            //     $('.dx-skip-gesture-event').removeClass('dx-skip-gesture-event');
+            //     targetCell.classList.add('dx-skip-gesture-event');
+            // }
         }
     }
 
@@ -3112,11 +3112,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             result => {
                 /** Get ids from the server in a case of creation or from the local in a case of update */
                 let updatedForecastsIds = result || forecastModels.forecasts.map(forecast => forecast.id);
-                let timezoneOffset = targetsData[0].date.startDate.toDate().getTimezoneOffset();
                 /** if the operation is update - then also remove the old objects (income or expense, net change and total balance) */
                 if (operation === 'move') {
                     /** @todo change if we have to handle moving into multiple cells */
                     forecastModels.forecasts.forEach(forecastModel => {
+                        let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
                         let forecastsInCashflow = this.cashflowData.filter(item => item.forecastId === forecastModel.id);
                         forecastsInCashflow.forEach((forecastInCashflow, index) => {
 
@@ -3137,6 +3137,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     });
                 } else if (operation === 'copy') {
                     forecastModels.forecasts.forEach((forecastModel, index) => {
+                        let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
                         this.cashflowData.push(this.createStubTransaction({
                             accountId: forecastModel.bankAccountId,
                             count: 1,
