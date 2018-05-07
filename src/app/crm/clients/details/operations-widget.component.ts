@@ -145,4 +145,8 @@ export class OperationsWidgetComponent implements OnInit {
     updateStatus(statusId: string) {
         this.onUpdateStatus.emit(statusId);
     }
+
+    refresh() {
+        this.initToolbarConfig();
+    }
 }
