@@ -22,7 +22,7 @@
           [hideSubmenuOnMouseLeave]="true"
           [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
           [showSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"
-          (onItemClick)="navigate($event, i)">
+          (onItemClick)="navigate($event)">
         </dx-menu>
       </dxi-item>
   </dx-nav-bar>
@@ -30,11 +30,11 @@
 
 <div class="adaptive-menu" [hidden]="!showAdaptiveMenu">
   <dx-menu
-    [accessKey]="nav-menu"
+    accessKey="nav-menu"
     [dataSource]="menu.items"
-    [selectionMode]="single"
+    selectionMode="single"
     [hoverStateEnabled]="true"
-    [submenuDirection]="rightOrBottom"
+    submenuDirection="rightOrBottom"
     [hideSubmenuOnMouseLeave]="true"
     [adaptivityEnabled]="true"
     [showFirstSubmenuMode]="{name: 'onHover', delay: {hide:0, show: 0}}"

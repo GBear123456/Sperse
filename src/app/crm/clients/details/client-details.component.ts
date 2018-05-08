@@ -33,7 +33,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     customerId: number;
     customerInfo: CustomerInfoDto;
-    primaryContact: PersonContactInfoDto;
+    primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
     leadId: number;
     leadInfo: LeadInfoDto;
@@ -207,10 +207,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this._dialog.closeAll();
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: _.mapObject(this.referrerParams, 
+            { queryParams: _.mapObject(this.referrerParams,
                 (val, key) => {
                     return (key == 'referrer'? undefined: val)
-                }) 
+                })
             }
         );
     }

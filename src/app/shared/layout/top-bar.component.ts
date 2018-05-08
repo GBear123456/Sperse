@@ -74,7 +74,7 @@ export class TopBarComponent extends AppComponentBase {
         return navList;
     }
 
-    navigate(event, index) {
+    navigate(event) {
         if (event.itemData.route)
             this.router.navigate([event.itemData.route]);
     }

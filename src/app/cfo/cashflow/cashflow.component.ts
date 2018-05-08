@@ -808,10 +808,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 /** Handle the get cashflow grid settings response*/
                 this.handleGetCashflowGridSettingsResult(result[3]);
+
+                this.initFiltering();
             });
 
         this.initHeadlineConfig();
-        this.initFiltering();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
@@ -4818,8 +4819,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onDetailsCellClick(e) {
         this.onAmountCellEditStart(e);
-
-        if (e.rowType === 'data' && e.column.dataField == 'description') {
+        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId) {
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();

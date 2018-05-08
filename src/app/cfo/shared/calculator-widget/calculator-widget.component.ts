@@ -9,10 +9,10 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 })
 
 export class CalculatorComponent extends CFOComponentBase {
-    private input: string = '';
-    lastOperation: string = '';
-    private OpenedBrackets: number = 0;
-    private ClosedBrackets: number = 0;
+    input = '';
+    lastOperation = '';
+    private OpenedBrackets = 0;
+    private ClosedBrackets = 0;
 
     calcHistory: CalcHistory[] = [];
 
@@ -23,7 +23,10 @@ export class CalculatorComponent extends CFOComponentBase {
 
     @ViewChild('calculatorInput') calculatorInputControl: ElementRef;
 
-    constructor(injector: Injector, private calculatorService: CalculatorService) {
+    constructor(
+        injector: Injector,
+        public calculatorService: CalculatorService
+    ) {
         super(injector);
         // this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
         calculatorService.subscribePeriodChange((value) => {
@@ -158,7 +161,7 @@ export class CalculatorComponent extends CFOComponentBase {
         console.log('Expression Value: ' + this.calculatorService.GetExpressionValue());
     }
 
-    private ClearAll(): void {
+    ClearAll(): void {
         this.calculatorInputControl.nativeElement.focus();
         this.lastOperation = '';
         this.input = '';

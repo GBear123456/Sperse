@@ -12,7 +12,7 @@
 <div>
     <dx-chart
         [hidden]="!totalsData || !totalsData.length"
-        id="bar"        
+        id="bar"
         [dataSource]="totalsData"
         animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
@@ -51,7 +51,7 @@
             <dxo-label [customizeText]="customizeAxisValues">
                 <dxo-format
                     type="number largeNumber"
-                    [currency]="number">
+                    currency="number">
                 </dxo-format>
             </dxo-label>
             <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>

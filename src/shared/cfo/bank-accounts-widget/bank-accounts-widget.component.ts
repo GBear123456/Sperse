@@ -405,7 +405,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         this.onUpdateAccount.emit({ id: id });
     }
 
-    calculateHeight(e) {
+    calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
         return window.innerHeight - filtersBottomPosition - 20;

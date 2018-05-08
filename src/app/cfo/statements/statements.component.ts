@@ -42,20 +42,12 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Statements')],
-            onRefresh: this.refreshData.bind(this),
-            iconSrc: 'assets/common/icons/credit-card-icon.svg'
-        };
-    }
-
-    private headlineConfig;
+    public headlineConfig;
     private bankAccountCount = '';
     visibleAccountCount = 0;
     private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private filters: FilterModel[] = new Array<FilterModel>();
-    private sliderReportPeriod = {
+    public sliderReportPeriod = {
         start: null,
         end: null,
         minDate: moment().utc().subtract(10, 'year').year(),
@@ -63,11 +55,19 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     };
 
     private requestFilter: StatsFilter;
-    private statementsData: BankAccountDailyStatDto[] = [];
+    public statementsData: BankAccountDailyStatDto[] = [];
 
-    private currencyFormat = {
+    public currencyFormat = {
         type: 'currency',
         precision: 2
+    };
+
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            names: [this.l('Statements')],
+            onRefresh: this.refreshData.bind(this),
+            iconSrc: 'assets/common/icons/credit-card-icon.svg'
+        };
     }
 
     initToolbarConfig() {
@@ -261,13 +261,13 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     let currentPeriodTransaction: BankAccountDailyStatDto;
                     let currentPeriodForecast: BankAccountDailyStatDto;
 
-                    for (var i = result.length - 1; i >= 0; i--) {
+                    for (let i = result.length - 1; i >= 0; i--) {
                         let statsItem: BankAccountDailyStatDto = result[i];
-                        
+
                         Object.defineProperties(statsItem, {
                             'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
                         });
-                        
+
                         if (!currentPeriodTransaction && !statsItem.isForecast) {
                             currentPeriodForecast = result[i + 1];
                             currentPeriodTransaction = statsItem;
@@ -289,7 +289,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             }
                         }
                     }
-                    
+
                     this.statementsData = result;
 
                     /** reinit */
@@ -376,7 +376,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     toggleReportPeriodFilter() {
         this.reportPeriodSelector.toggleReportPeriodFilter();
     }
-    
+
     expandColapseRow(e) {
         if (!e.data.sourceData) return;
 

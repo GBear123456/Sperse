@@ -24,16 +24,17 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     private get contactId() {
         return this._contactInfoBehaviorSubject.getValue();
     }
-    private contactEmploymentInfo: ContactEmploymentInfo;
+    // public contactEmploymentInfo: ContactEmploymentInfo;
+    public contactEmploymentInfo: any;
     private organizations: OrganizationShortInfoDto[];
     private organizationAddress: ContactAddressDto;
     private organizationWebsiteUrl: string;
     private organizationPhoneNumber: string;
     private organizationMobilePhoneNumber: string;
 
-    private isEditOrgDetailsAllowed: boolean;
+    public isEditOrgDetailsAllowed: boolean;
 
-    private masks = AppConsts.masks;
+    public masks = AppConsts.masks;
 
     private _contactInfoBehaviorSubject = new BehaviorSubject<number>(0);
     private _isEditAllowed = false;

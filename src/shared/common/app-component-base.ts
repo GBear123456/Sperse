@@ -30,7 +30,7 @@ export abstract class AppComponentBase {
     totalRowCount: number;
     totalDataSource: any;
     localization: LocalizationService;
-    protected permission: PermissionCheckerService;
+    permission: PermissionCheckerService;
     protected feature: FeatureCheckerService;
     notify: NotifyService;
     setting: SettingService;
@@ -292,7 +292,7 @@ export abstract class AppComponentBase {
                 webWidget: {
                     launcher: {
                         label: {
-                            '*': abp.localization.localize('QuestionsOrFeedback', 
+                            '*': abp.localization.localize('QuestionsOrFeedback',
                                 AppConsts.localization.defaultLocalizationSourceName)
                         }
                     }
