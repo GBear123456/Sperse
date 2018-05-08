@@ -60,13 +60,15 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
             this.selectedBusinessEntityIds = cacheData['selectedBusinessEntityIds'];
             this.selectedBankAccounts = cacheData['bankAccounts'] || null;
             this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || null;
-            let data = {
-                bankAccountIds: this.selectedBankAccounts || [],
-                isActive: initIsActive,
-                visibleAccountCount: this.storedVisibleBankAccountIds ? this.storedVisibleBankAccountIds.length : 0
-            };
-            this.onBankAccountsSelected.emit(data);
-            needEmitSelectedBankAccounts = false;      
+            if (this.storedVisibleBankAccountIds && this.storedVisibleBankAccountIds.length) {
+                let data = {
+                    bankAccountIds: this.selectedBankAccounts || [],
+                    isActive: initIsActive,
+                    visibleAccountCount: this.storedVisibleBankAccountIds ? this.storedVisibleBankAccountIds.length : 0
+                };
+                this.onBankAccountsSelected.emit(data);
+                needEmitSelectedBankAccounts = false;
+            }
         }
         this.isActive = initIsActive;
         this.getBankAccounts(needEmitSelectedBankAccounts);
