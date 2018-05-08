@@ -4189,7 +4189,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     customCurrency = value => {
-        return this.formatAsCurrencyWithLocale(parseInt(value));
+        return this.formatAsCurrencyWithLocale(value);
     }
 
     formattingDate(path): { startDate: moment.Moment, endDate: moment.Moment } {
