@@ -29,7 +29,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     accountsAmount$;
     selectedSyncAccounts = [];
     selectedBusinessEntities = [];
-    bankAccountIds = [];
+    bankAccountIds = null;
     storedVisibleBankAccountIds = [];
     isActive = true;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;    
@@ -180,7 +180,8 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
                 bankAccountIds.push(bankAccount.id)
             });
         });
-
+        this.bankAccountIds = selectedBankAccountIds;
+        this.storedVisibleBankAccountIds = bankAccountIds;
         this._cacheService.set(this.bankAccountsCacheKey, {
             'bankAccounts': selectedBankAccountIds,
             'isActive': this.isActive,

@@ -35,7 +35,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     selectedBusinessEntityIds: any[] = [];
     businessEntities = [];
     isActive = true;
-    selectedBankAccounts = [];
+    selectedBankAccounts = null;
     storedVisibleBankAccountIds = [];
 
     constructor(
