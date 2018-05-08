@@ -603,5 +603,5 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.refreshDataGrid();
         });
-    }
+    }    
 }

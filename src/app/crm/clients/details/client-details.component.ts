@@ -83,12 +83,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
             .subscribe(params => {
-                let clientId = params['clientId'];
+                let clientId = params['clientId'],
+                    leadId = params['leadId'];
                 _customerService['data'].customerInfo = {
                     id: clientId
                 };
 
-                let leadId = params['leadId'];
+                if (clientId)
+                    clientId = this.loadCustomerAndLeadDetails(clientId, leadId);
+
                 if (leadId) {
                     this.leadId = leadId;
                     _customerService['data'].leadInfo = {
@@ -102,9 +105,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                                     action: this.updateLeadStage.bind(this)
                                 };
                             });
-                        });
+                        });                    
                 }
-                this.loadCustomerAndLeadDetails(clientId, leadId);
             }));
 
         this.paramsSubscribe.push(this._route.queryParams

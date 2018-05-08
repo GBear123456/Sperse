@@ -192,6 +192,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     }
             
     openDetails(leadId, clientId) {
+        this.hideStageHighlighting();
         this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], {queryParams: {
             referrer: 'app/crm/leads',
             dataLayoutType: DataLayoutType.Pipeline
