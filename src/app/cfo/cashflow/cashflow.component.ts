@@ -2255,7 +2255,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getYearHistoricalSelectorWithCurrent(): any {
         return data => {
             let currentYear = moment().year();
-            let itemYear = data.initialDate.year();
+            let itemYear = data.initialDate ? data.initialDate.year() : data.date.year();
             let result = Periods.Historical;
             if (currentYear < itemYear) {
                 result = Periods.Forecast;
