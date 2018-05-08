@@ -24,7 +24,7 @@ export class FiltersService {
         this.subjectFilterDisable = new Subject();
     }
 
-    setup(filters: FilterModel[], initialValues?: any) {
+    setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true) {
         this.subjectFilters.next(this.filters = filters);
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
@@ -39,7 +39,8 @@ export class FiltersService {
                     });
                 }
             });
-            this.change(<FilterModel>{});
+            if (applyFilterImmediately)
+                this.change(<FilterModel>{});
         }
     }
 
