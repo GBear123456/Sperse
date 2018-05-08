@@ -3033,9 +3033,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     availableRows.find(`[droppable][class*="current"]:not(.selectedCell)`).attr('droppable', 'true');
                     availableRows.find(`[droppable]:not(.selectedCell) > span`).attr('droppable', 'true');
                 }
+
+                document.addEventListener('dxpointermove', this.stopPropagation, true);
            }
         }
         targetCell = null;
+    }
+
+    stopPropagation(e) {
+        e.stopPropagation();
     }
 
     onDragEnd(e) {
@@ -3049,6 +3055,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
         targetCell = null;
         this.dragImg.style.display = 'none';
+        document.removeEventListener('dxpointermove', this.stopPropagation);
     }
 
     onDragEnter(e) {
