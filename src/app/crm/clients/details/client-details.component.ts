@@ -247,10 +247,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     delete() {
         this.message.confirm(
-            this.l('ClientDeleteWarningMessage', this.getCustomerName()),
+            this.l('LeadDeleteWarningMessage', this.getCustomerName()),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._customerService.deleteCustomer(this.customerId).subscribe(() => {
+                    this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
                         this.close();
                     });

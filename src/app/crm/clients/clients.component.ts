@@ -369,15 +369,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             },
             {
-                location: 'before', items: [
-                    {
-                        name: 'delete',
-                        action: this.deleteClients.bind(this),
-                        disabled: !this.selectedClientKeys.length
-                    }
-                ]
-            },
-            {
                 location: 'after', items: [
                     {
                         name: 'download',
@@ -541,28 +532,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     return filterMethod.call(this, filter);
             }
         );
-    }
-
-    private deleteClientsInternal(selectedIds: number[]) {
-        this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => {
-            this.notify.success(this.l('SuccessfullyDeleted'));
-            this.refreshDataGrid();
-        });
-    }
-
-    deleteClients() {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        if (selectedIds && selectedIds.length) {
-            this.message.confirm(
-                this.l('ClientsDeleteWarningMessage'),
-                isConfirmed => {
-                    if (isConfirmed)
-                        this.deleteClientsInternal(selectedIds);
-                }
-            );
-        } else {
-            this.message.warn(this.l('NoRecordsToDelete'));
-        }
     }
 
     updateClientStatuses (statusId: string) {
