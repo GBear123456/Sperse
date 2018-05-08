@@ -150,12 +150,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     refreshDataGrid() {
-        if (this.showPipeline)
-            this.pipelineComponent.refresh();
-        else
+        setTimeout(() => {
+            this.pipelineComponent.refresh(!this.showPipeline);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
+        });
     }
 
     showColumnChooser() {
@@ -622,5 +622,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
     }
 }

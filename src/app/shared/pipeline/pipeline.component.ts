@@ -53,15 +53,19 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    refresh() {
-        this.startLoading(true, this.mainContainerSelector);
-        this._pipelineService
-            .getPipelineDefinitionObservable(this.pipelinePurposeId)
-            .subscribe((result: PipelineDto) => {
-                this.pipeline = result;
-                this.onStagesLoaded.emit(result);
-                this.loadStagesLeads();
-            });
+    refresh(quiet = false) {
+        if (quiet)
+            this.loadStagesLeads();
+        else {
+            this.startLoading(true, this.mainContainerSelector);
+            this._pipelineService
+                .getPipelineDefinitionObservable(this.pipelinePurposeId)
+                .subscribe((result: PipelineDto) => {
+                    this.pipeline = result;
+                    this.onStagesLoaded.emit(result);
+                    this.loadStagesLeads();
+                });
+        }
     }
 
     getLeadByElement(el, stage) {

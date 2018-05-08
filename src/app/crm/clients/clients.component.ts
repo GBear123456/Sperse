@@ -601,4 +601,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();   
     }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
+    }
 }
