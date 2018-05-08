@@ -52,6 +52,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     private headlineConfig;
     private bankAccountCount = '';
+    visibleAccountCount = 0;
     private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private filters: FilterModel[] = new Array<FilterModel>();
     private sliderReportPeriod = {
@@ -344,7 +345,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);              
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -359,11 +360,13 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         });
     }
 
-    setBankAccountCount(bankAccountIds) {
+    setBankAccountCount(bankAccountIds, visibleAccountCount) {
         if (!bankAccountIds || !bankAccountIds.length)
             this.bankAccountCount = '';
-        else
+        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
             this.bankAccountCount = bankAccountIds.length;
+        else
+            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     toggleBankAccountTooltip() {
@@ -427,6 +430,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             } else {
                 accountFilter.items['element'].setValue([], accountFilter);
             }
+            this.visibleAccountCount = data.visibleAccountCount;
+            this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this._filtersService.change(accountFilter);
         }
     }

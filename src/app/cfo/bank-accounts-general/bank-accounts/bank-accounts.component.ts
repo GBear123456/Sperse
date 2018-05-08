@@ -108,11 +108,18 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
             let newTotalNetWorth = this.getTotalNetWorth(this.selectedSyncAccounts);
             this.accountsDataTotalNetWorth$ = Observable.of(newTotalNetWorth);
-            this.syncAccountsAmount$ = Observable.of(`${this.selectedSyncAccounts.length} of ${syncAccounts.length}`);
-            this.accountsAmount$ = Observable.of(`${this.selectedSyncAccounts.reduce((amount, syncAccount) => amount + syncAccount.selectedBankAccounts.length, 0)} of ${syncAccounts.reduce((amount, syncAccount) => {
+            this.syncAccountsAmount$ = this.selectedSyncAccounts.length === syncAccounts.length
+                ? Observable.of(`${this.selectedSyncAccounts.length}`)
+                : Observable.of(`${this.selectedSyncAccounts.length} of ${syncAccounts.length}`);
+            let selectedBankAccountCount = this.selectedSyncAccounts.reduce((amount, syncAccount) => amount + syncAccount.selectedBankAccounts.length, 0);
+            let bankAccountCount = syncAccounts.reduce((amount, syncAccount) => {
                 let bankAccounts = syncAccount.data && syncAccount.data.bankAccounts ? syncAccount.data.bankAccounts : syncAccount.bankAccounts;
                 return amount + bankAccounts.length;
-            }, 0)}`);
+            }, 0);
+
+            this.accountsAmount$ = selectedBankAccountCount === bankAccountCount
+                ? Observable.of(`${selectedBankAccountCount}`)
+                : Observable.of(`${selectedBankAccountCount} of ${bankAccountCount}`);
             this.updateCache();
         }
     }
