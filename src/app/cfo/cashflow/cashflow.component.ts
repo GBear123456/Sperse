@@ -4819,8 +4819,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onDetailsCellClick(e) {
         this.onAmountCellEditStart(e);
-
-        if (e.rowType === 'data' && e.column.dataField == 'description') {
+        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId) {
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();
