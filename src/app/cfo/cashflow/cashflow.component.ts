@@ -1835,6 +1835,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
              */
             /** @todo move to the userPreferencesHandlers to avoid if else structure */
             if (updateWithDiscrepancyChange) {
+                this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
             }
             if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange) {
@@ -2649,7 +2650,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         options.childrenSelectorsToRemove.length && options.childrenSelectorsToRemove.forEach(selectorToRemove => element.querySelector(selectorToRemove).remove());
         if (Object.keys(options.eventListeners).length) {
             for (let listener in options.eventListeners) {
-                element['listener'] = options.eventListeners['listener'];
+                element[listener] = options.eventListeners[listener];
             }
         }
         options.eventsToTrigger.length && options.eventsToTrigger.forEach(eventName => element[eventName]());
@@ -3240,6 +3241,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             },
             e => { console.log(e); this.notify.error(e); },
             () => {
+                this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
                 this.notify.success(this.l('Cell_pasted'));
             }
@@ -3838,6 +3840,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                         });
                                     });
 
+                                    /** Refactor clearing of cache */
+                                    this.getCellOptionsFromCell.cache = {};
                                     this.pivotGrid.instance.getDataSource().reload();
                                     this.notify.success(this.l('Cell_deleted'));
                                 });
@@ -4941,6 +4945,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 });
 
+                this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
                 deferred.resolve().done(() => {
                     if (data['amount'] === 0) {
