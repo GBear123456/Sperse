@@ -80,7 +80,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private draggedTransactionRow;
     public selectedCashflowCategoryKey: any;
 
-    public bankAccountCount: number;
+    public bankAccountCount;
+    visibleAccountCount = 0;
     public bankAccounts: number[];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
@@ -325,7 +326,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             });
             this.bankAccounts = _.uniq(bankAccounts);
-            this.bankAccountCount = this.bankAccounts.length;
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -346,10 +346,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionCount = totals[0].debitCount;
                 this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
                 if (totals[0].bankAccounts) {
-                    this.bankAccountCount = totals[0].bankAccounts.length;
                     this.bankAccounts = totals[0].bankAccounts;
                 } else {
-                    this.bankAccountCount = 0;
                     this.bankAccounts = [];
                 }
 
@@ -365,7 +363,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = 0;
                 this.debitTransactionCount = 0;
 
-                this.bankAccountCount = 0;
                 this.bankAccounts = [];
 
                 this.transactionTotal = 0;
@@ -617,7 +614,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value);
                 }
 
                 if (filter.caption.toLowerCase() === 'classified') {
@@ -644,11 +640,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
-    setBankAccountCount(bankAccountIds) {
+    setBankAccountCount(bankAccountIds, visibleAccountCount) {
         if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = null;
-        else
+            this.bankAccountCount = '';
+        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
             this.bankAccountCount = bankAccountIds.length;
+        else
+            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     applyTotalBankAccountFilter(data) {
@@ -664,6 +662,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 accountFilter.items['element'].setValue([], accountFilter);
             }
             this.setDataSource();
+            this.visibleAccountCount = data.visibleAccountCount;
+            this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this.filtersService.change(accountFilter);
         }
     }
@@ -674,6 +674,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);
                 }
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
