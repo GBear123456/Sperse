@@ -41,6 +41,8 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     private readonly dataSourceURI = 'Lead';
     private subscribers = [];
 
+    private mainContainerSelector = '.funnel-wrapper';
+
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
         private _dragulaService: DragulaService,
@@ -107,7 +109,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     }
 
     refresh() {
-        this.startLoading(true);
+        this.startLoading(true, this.mainContainerSelector);
         this._pipelineService
             .getPipelineDefinitionObservable(this.pipelinePurposeId)
             .subscribe((result: PipelineDto) => {
@@ -151,7 +153,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
                 this.loadStagesLeads(index, page);
             else {
                 this.stages = stages;
-                this.finishLoading(true);
+                this.finishLoading(true, this.mainContainerSelector);
             }
         });
     }
@@ -159,13 +161,13 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     advancedODataFilter(grid: any, uri: string, query: any[]) {
         this.queryWithSearch = query.concat(this.getSearchFilter());
 
-        this.startLoading(true);
+        this.startLoading(true, this.mainContainerSelector);
         this.loadStagesLeads();
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {
-        this.startLoading(true);
+        this.startLoading(true, this.mainContainerSelector);
         this.loadStagesLeads(stageIndex,
             Math.floor(this.stages[stageIndex].leads.length
                 / this.STAGE_PAGE_COUNT), true);

@@ -30,10 +30,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             clearTimeout(this.initSelectedBankAccountsTimeout);
             this.initSelectedBankAccountsTimeout = setTimeout(() => {
                 this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
-                if (!selectedBankAccounts.length)
-                    this.bankAccountCount = '';
-                else
-                    this.bankAccountCount = selectedBankAccounts.length;
+                this.setBankAccountCount(selectedBankAccounts, this.visibleAccountCount);
                 this.initToolbarConfig();
             }, 300);
         }
@@ -50,6 +47,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() onSelectedBankAccountsChange: EventEmitter<any> = new EventEmitter();
 
     bankAccountCount = '';
+    visibleAccountCount = 0;
     sliderReportPeriod = {
         start: null,
         end: null,
@@ -340,7 +338,18 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     }
 
     filterByBankAccounts(data) {
+        this.visibleAccountCount = data.visibleAccountCount;
+        this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
         this.onSelectedBankAccountsChange.emit(data);
+    }
+
+    setBankAccountCount(bankAccountIds, visibleAccountCount) {
+        if (!bankAccountIds || !bankAccountIds.length)
+            this.bankAccountCount = '';
+        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
+            this.bankAccountCount = bankAccountIds.length;
+        else
+            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     toggleBankAccountTooltip() {

@@ -50,7 +50,6 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
         { value: 'MXN', caption: '$ MXN Mexico Peso' },
         { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
-        { value: 'GBP', caption: '£ GBP British Pound' },
         { value: 'USD', caption: '$ USD US Dollar' }
     ];
     constructor(

@@ -10,6 +10,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/reduce';
 import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
 import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
+import { CacheService } from '../../../../../node_modules/ng2-cache-service';
+import * as _ from 'underscore';
 
 @Component({
     selector: 'bank-accounts-component',
@@ -19,6 +21,7 @@ import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     initialBankAccounts;
+    filteredBankAccounts;
     bankAccounts$;
     businessEntities$;
     accountsDataTotalNetWorth$;
@@ -26,8 +29,11 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     accountsAmount$;
     selectedSyncAccounts = [];
     selectedBusinessEntities = [];
-    bankAccountIds = [];
+    bankAccountIds = null;
+    storedVisibleBankAccountIds = [];
     isActive = true;
+    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;    
+    private readonly LOCAL_STORAGE = 0;
 
     constructor(
         injector: Injector,
@@ -37,9 +43,12 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
         private _bankAccountsService: BankAccountsService,
         private _quovoService: QuovoService,
         private _synchProgress: SynchProgressService,
-        private _bankAccountsGeneralService: BankAccountsGeneralService
+        private _bankAccountsGeneralService: BankAccountsGeneralService,
+        private _cacheService: CacheService
     ) {
         super(injector);
+        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
+
         this._synchProgress.syncCompleted$.subscribe(() => {
             this.loadBankAccounts();
         });
@@ -51,9 +60,18 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     quovoHandler: any;
 
     ngOnInit() {
-        this.loadBankAccounts();
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
         this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
+
+        if (this._cacheService.exists(this.bankAccountsCacheKey)) {
+            let cacheData = this._cacheService.get(this.bankAccountsCacheKey);
+            this.isActive = cacheData['isActive'] ? true : false;
+            this.selectedBusinessEntities = cacheData['selectedBusinessEntityIds'];
+            this.bankAccountIds = cacheData['bankAccounts'] || null;
+            this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || null;
+        }
+
+        this.loadBankAccounts();        
     }
 
     loadBankAccounts() {
@@ -61,33 +79,28 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             .getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
             .map(syncAccounts => {
                 this.initialBankAccounts = syncAccounts;
-                this.accountsAmount$ = Observable.of(syncAccounts.reduce((amount, bank) => bank.bankAccounts.length + amount, 0));
-                this.syncAccountsAmount$ = Observable.of(syncAccounts.length);
-                this.setItemsSelected(syncAccounts);
-                this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
-                let newTotalNetWorth = this.getTotalNetWorth(this.selectedSyncAccounts);
-                this.accountsDataTotalNetWorth$ = Observable.of(newTotalNetWorth);
-                return syncAccounts;
+                let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, this.selectedBusinessEntities, this.bankAccountIds, this.storedVisibleBankAccountIds, this.isActive);
+                this.filteredBankAccounts = filteredData;
+                this.selectedAccountsChange(filteredData);
+                return filteredData;
             });
 
     }
 
     entitiesItemsChanged(selectedEntities) {
-        this.selectedBusinessEntities = selectedEntities;
-        this.reloadGrid();
+        if ((this.selectedBusinessEntities.length !== selectedEntities.length)
+            || (_.intersection(this.selectedBusinessEntities, selectedEntities).length !== selectedEntities.length)) {
+            this.selectedBusinessEntities = selectedEntities;
+            this.bankAccountIds = null;
+            this.reloadGrid();
+        }
     }
 
     reloadGrid(cancelIfAllEntities = false) {
         if (cancelIfAllEntities && this.selectedBusinessEntities.length === 0) {
             return false;
         }
-        this.bankAccounts$ = Observable.of(this.initialBankAccounts)
-            .map(syncAccounts => {
-                let selectedAccountsIds = this.selectedSyncAccounts.reduce((accounts, syncAccount) => accounts.concat(syncAccount.selectedBankAccounts.map(account => account.id)), []);
-                let filteredData = this._bankAccountsService.filterDataSource(syncAccounts, this.selectedBusinessEntities, selectedAccountsIds);
-                this.selectedAccountsChange(filteredData);
-                return filteredData;
-            });
+        this.filterDataSource();
     }
 
     selectedAccountsChange(syncAccounts) {
@@ -95,16 +108,24 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             this.selectedSyncAccounts = this.getSelectedSyncAccounts(syncAccounts);
             let newTotalNetWorth = this.getTotalNetWorth(this.selectedSyncAccounts);
             this.accountsDataTotalNetWorth$ = Observable.of(newTotalNetWorth);
-            this.syncAccountsAmount$ = Observable.of(`${this.selectedSyncAccounts.length} of ${syncAccounts.length}`);
-            this.accountsAmount$ = Observable.of(`${this.selectedSyncAccounts.reduce((amount, syncAccount) => amount + syncAccount.selectedBankAccounts.length, 0)} of ${syncAccounts.reduce((amount, syncAccount) => {
+            this.syncAccountsAmount$ = this.selectedSyncAccounts.length === syncAccounts.length
+                ? Observable.of(`${this.selectedSyncAccounts.length}`)
+                : Observable.of(`${this.selectedSyncAccounts.length} of ${syncAccounts.length}`);
+            let selectedBankAccountCount = this.selectedSyncAccounts.reduce((amount, syncAccount) => amount + syncAccount.selectedBankAccounts.length, 0);
+            let bankAccountCount = syncAccounts.reduce((amount, syncAccount) => {
                 let bankAccounts = syncAccount.data && syncAccount.data.bankAccounts ? syncAccount.data.bankAccounts : syncAccount.bankAccounts;
                 return amount + bankAccounts.length;
-            }, 0)}`);
+            }, 0);
+
+            this.accountsAmount$ = selectedBankAccountCount === bankAccountCount
+                ? Observable.of(`${selectedBankAccountCount}`)
+                : Observable.of(`${selectedBankAccountCount} of ${bankAccountCount}`);
+            this.updateCache();
         }
     }
 
     getSelectedSyncAccounts(syncAccounts) {
-        let selectedSyncAccounts = syncAccounts.filter(row => row.selected || (row.data && (row.data.selected || row.data.selected === null)));
+        let selectedSyncAccounts = syncAccounts.filter(row => (!row.data && row.selected != false) || (row.data && (row.data.selected || row.data.selected === null)));
         selectedSyncAccounts.forEach(syncAccount => {
             let bankAccounts = syncAccount.data && syncAccount.data.bankAccounts ? syncAccount.data.bankAccounts : syncAccount.bankAccounts;
             syncAccount.selectedBankAccounts = bankAccounts.filter(account => account.selected);
@@ -117,17 +138,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             return syncAccount.selectedBankAccounts.reduce((sum, bankAccount) => bankAccount.balance + sum, 0) + sum;
         }, 0);
     }
-
-    setItemsSelected(accounts) {
-        accounts.forEach(account => {
-            account['selected'] = true;
-            account.bankAccounts.forEach(bankAccount => {
-                bankAccount['selected'] = true;
-                this.bankAccountIds.push(bankAccount.id);
-            });
-        });
-    }
-
+    
     onUpdateAccount(event) {
         if (this.quovoHandler.isLoaded) {
             if (this.loading) {
@@ -154,11 +165,35 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     filterDataSource() {
-        let getNewData = this._bankAccountsService.filterDataSource(this.initialBankAccounts, this.selectedBusinessEntities, this.bankAccountIds, this.isActive);
+        let getNewData = this._bankAccountsService.filterDataSource(this.initialBankAccounts, this.selectedBusinessEntities, this.bankAccountIds, this.storedVisibleBankAccountIds, this.isActive);
+        this.selectedAccountsChange(getNewData);
+        this.filteredBankAccounts = getNewData;
         this.bankAccounts$ = Observable.from([getNewData]);
     }
 
     isActiveChanged(e) {
-        this.filterDataSource();
+        this.bankAccountIds = null;
+        this.filterDataSource();        
+    }
+    
+    updateCache() {
+        let selectedBankAccountIds = [];
+        let bankAccountIds = [];
+        this.filteredBankAccounts.forEach(syncAccount => {
+            syncAccount.bankAccounts.forEach(bankAccount => {
+                if (bankAccount.selected) {
+                    selectedBankAccountIds.push(bankAccount.id);
+                }
+                bankAccountIds.push(bankAccount.id)
+            });
+        });
+        this.bankAccountIds = selectedBankAccountIds;
+        this.storedVisibleBankAccountIds = bankAccountIds;
+        this._cacheService.set(this.bankAccountsCacheKey, {
+            'bankAccounts': selectedBankAccountIds,
+            'isActive': this.isActive,
+            'selectedBusinessEntityIds': this.selectedBusinessEntities,
+            'visibleBankAccountIds': bankAccountIds
+        });
     }
 }
