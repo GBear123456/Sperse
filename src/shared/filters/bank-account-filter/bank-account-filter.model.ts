@@ -50,7 +50,7 @@ export class BankAccountFilterModel extends FilterItemModel {
     setValue(value: any, filter: FilterModel) {
         this.value = value;
     }
-    
+
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         this.dataSource.forEach((syncAccount, i) => {
@@ -89,8 +89,8 @@ export class BankAccountFilterModel extends FilterItemModel {
                     }
                 }
             });
-        }
-        else
+        } else {
             this.setValue([], filter);
+        }
     }
 }

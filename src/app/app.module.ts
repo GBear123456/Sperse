@@ -13,6 +13,8 @@ import {AppConsts} from '@shared/AppConsts';
 
 import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';
 import {CacheService} from 'ng2-cache-service';
+import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
+import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -36,6 +38,10 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     providers: [
         AppService,
         CacheService,
+        {
+            provide: CacheStorageAbstract,
+            useClass: CacheMemoryStorage
+        },
         ImpersonationService,
         ngxZendeskWebwidgetService
     ]

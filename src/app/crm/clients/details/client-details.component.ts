@@ -33,7 +33,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     customerId: number;
     customerInfo: CustomerInfoDto;
-    primaryContact: PersonContactInfoDto;
+    primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
     leadId: number;
     leadInfo: LeadInfoDto;
@@ -207,10 +207,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this._dialog.closeAll();
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: _.mapObject(this.referrerParams, 
+            { queryParams: _.mapObject(this.referrerParams,
                 (val, key) => {
                     return (key == 'referrer'? undefined: val)
-                }) 
+                })
             }
         );
     }
@@ -247,10 +247,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     delete() {
         this.message.confirm(
-            this.l('ClientDeleteWarningMessage', this.getCustomerName()),
+            this.l('LeadDeleteWarningMessage', this.getCustomerName()),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._customerService.deleteCustomer(this.customerId).subscribe(() => {
+                    this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
                         this.close();
                     });

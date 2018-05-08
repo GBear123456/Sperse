@@ -90,10 +90,6 @@ export class OperationsWidgetComponent implements OnInit {
                 {
                     name: 'star',
                     action: this.toggleStars.bind(this),
-                },
-                {
-                    name: 'delete',
-                    action: this.delete.bind(this)
                 }
             ]
             },
@@ -106,6 +102,13 @@ export class OperationsWidgetComponent implements OnInit {
             ]
             }
         ];
+
+        if (this.leadId) {
+            this.toolbarConfig[0]['items'].push({
+                name: 'delete',
+                action: this.delete.bind(this)
+            });
+        }
     }
 
     toggleDataLayout(dataLayoutType) {

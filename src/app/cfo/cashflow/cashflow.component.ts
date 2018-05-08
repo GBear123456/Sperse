@@ -808,10 +808,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 /** Handle the get cashflow grid settings response*/
                 this.handleGetCashflowGridSettingsResult(result[3]);
+
+                this.initFiltering();
             });
 
         this.initHeadlineConfig();
-        this.initFiltering();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
@@ -1949,10 +1950,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.finishLoading();
         }
 
-        console.log('preparing speed', this.preparingSpeed);
-        console.log('truncating speed', this.truncatingSpeed);
+        //console.log('preparing speed', this.preparingSpeed);
+        //console.log('truncating speed', this.truncatingSpeed);
         this.preparingSpeed = this.truncatingSpeed = 0;
-        console.log('conent ready speed', performance.now() - contentReadyStart);
+        //console.log('conent ready speed', performance.now() - contentReadyStart);
     }
 
     keyDownListener(e) {
@@ -2672,7 +2673,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.preparingSpeed += performance.now() - getCellOptionsStarted;
 
         /** added charts near row titles */
-        if (e.area === 'row' && e.cell.type === 'D' && e.cell.path.length > 1 && !e.cell.expanded && !e.cell.isWhiteSpace) {
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
             this.addChartToRow(e);
         }
 
@@ -2984,7 +2985,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
             textElement.innerHTML = `<span>${textElement.textContent}</span>`;
             /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildrenElementsWidth) + 'px';
+            textElement.style.width = (cellWidth - anotherChildrenElementsWidth - 1) + 'px';
         }
     }
 
@@ -3733,7 +3734,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             });
 
-            this.moveOrCopyForecasts(forecastsItems, targetCells, 'copy');
+            if (targetCells.length) {
+                this.moveOrCopyForecasts(forecastsItems, targetCells, 'copy');
+            }
         }
     }
 
@@ -4189,7 +4192,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     customCurrency = value => {
-        return this.formatAsCurrencyWithLocale(parseInt(value));
+        return this.formatAsCurrencyWithLocale(value);
     }
 
     formattingDate(path): { startDate: moment.Moment, endDate: moment.Moment } {
@@ -4818,8 +4821,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onDetailsCellClick(e) {
         this.onAmountCellEditStart(e);
-
-        if (e.rowType === 'data' && e.column.dataField == 'description') {
+        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId) {
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();
