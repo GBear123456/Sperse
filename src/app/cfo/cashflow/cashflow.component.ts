@@ -3020,25 +3020,35 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     targetCell.classList.add('selectedCell');
                 };
 
-                this.movedCell = cellObj;
-                e.dataTransfer.setData('text', 'moving');
+                let items = this.getDataItemsByCell(cellObj);
+                /** If there are some forecasts for this cell */
+                if (items.some(item => item.forecastId)) {
+                    this.movedCell = cellObj;
+                    e.dataTransfer.setData('text', 'moving');
 
-                this.dragImg.style.display = '';
-                e.dataTransfer.setDragImage(this.dragImg, -10, -10);
-                e.dataTransfer.dropEffect = 'none';
+                    this.dragImg.style.display = '';
+                    e.dataTransfer.setDragImage(this.dragImg, -10, -10);
+                    e.dataTransfer.dropEffect = 'none';
 
-                $('[droppable]').attr('droppable', 'false');
+                    $('[droppable]').attr('droppable', 'false');
 
-                let $targetCell = $(targetCell);
-                let $targetCellParent = $targetCell.parent();
-                let availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
-                if (targetCell.getAttribute('class').indexOf('next') !== -1 || targetCell.className.indexOf('current') !== -1) {
-                    availableRows.find(`[droppable][class*="next"]:not(.selectedCell)`).attr('droppable', 'true');
-                    availableRows.find(`[droppable][class*="current"]:not(.selectedCell)`).attr('droppable', 'true');
-                    availableRows.find(`[droppable]:not(.selectedCell) > span`).attr('droppable', 'true');
+                    let $targetCell = $(targetCell);
+                    let $targetCellParent = $targetCell.parent();
+                    let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
+
+                    if (targetCell.className.indexOf('next') !== -1 || targetCell.className.indexOf('current') !== -1) {
+                        /** Exclude next current total row from droppable */
+                        let closestYearColumnTotalSelector = !$targetCell.hasClass('dx-total')
+                            ? `:not(:nth-child(${$targetCell.nextAll('.dx-total').index() + 1}))`
+                            : '';
+                        let nextCellsSelectors = `[droppable][class*="next"]:not(.selectedCell)${closestYearColumnTotalSelector}`;
+                        $availableRows.find(nextCellsSelectors).attr('droppable', 'true');
+                        $availableRows.find(`[droppable][class*="current"]:not(.selectedCell):not(.currentYear.dx-total)`).attr('droppable', 'true');
+                        $availableRows.find(`[droppable]:not(.selectedCell) > span`).attr('droppable', 'true');
+                    }
+
+                    document.addEventListener('dxpointermove', this.stopPropagation, true);
                 }
-
-                document.addEventListener('dxpointermove', this.stopPropagation, true);
            }
         }
         targetCell = null;
