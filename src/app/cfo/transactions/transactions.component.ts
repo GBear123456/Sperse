@@ -606,7 +606,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         caption: 'Reference',
                         //items: { BusinessEntity: '' }
                     })
-                ], this._activatedRoute.snapshot.queryParams
+                ], this._activatedRoute.snapshot.queryParams, false
             );
         });
 
