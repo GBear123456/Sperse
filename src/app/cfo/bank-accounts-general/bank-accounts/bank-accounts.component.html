@@ -3,6 +3,7 @@
         [allItemsText]="l('All_Entities')"
         [title]="l('Financial_Accounts_For')"
         [selectionList]="businessEntities$ | async"
+        [selectedItems]="selectedBusinessEntities"
         (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
     <add-account-button class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
