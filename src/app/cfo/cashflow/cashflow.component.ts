@@ -2673,7 +2673,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.preparingSpeed += performance.now() - getCellOptionsStarted;
 
         /** added charts near row titles */
-        if (e.area === 'row' && !e.cell.isWhiteSpace) {
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path) {
             this.addChartToRow(e);
         }
 
