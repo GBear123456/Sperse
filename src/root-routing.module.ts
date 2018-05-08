@@ -1,8 +1,43 @@
-import { NgModule, ApplicationRef, Injector, AfterViewInit } from '@angular/core';
-import { Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
+import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
+import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppRootComponent } from 'root.components';
+
+@Injectable()
+export class CustomReuseStrategy implements RouteReuseStrategy {
+    private handlers: {[key: string]: DetachedRouteHandle} = {};
+
+    private getKey(route: ActivatedRouteSnapshot) {
+        return route && route.routeConfig.path;
+    }
+    
+    shouldDetach(route: ActivatedRouteSnapshot): boolean {
+        return route.routeConfig.data && route.routeConfig.data.reuse;
+    }
+
+    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
+        if (handle && (<any>handle).componentRef.instance.deactivate) {        
+            (<any>handle).componentRef.instance.deactivate(); 
+            this.handlers[this.getKey(route)] = handle;            
+        }
+    }
+
+    shouldAttach(route: ActivatedRouteSnapshot): boolean {
+        return Boolean(this.handlers[this.getKey(route)]);
+    }
+
+    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
+        let handle = <any>this.handlers[this.getKey(route)];
+        if (handle && handle.componentRef.instance.activate)
+            handle.componentRef.instance.activate();
+        return handle;
+    }
+
+    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+        return (future.routeConfig === curr.routeConfig);
+    }
+}
 
 const routes: Routes = [{
     path: '',
