@@ -1,4 +1,4 @@
-import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnDestroy } from '@angular/core';
+import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -19,7 +19,7 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less']    
 })
-export class PipelineComponent extends AppComponentBase implements OnDestroy {
+export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
@@ -50,62 +50,6 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
         private _router: Router
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this.subscribers.push(_dragulaService.drop.subscribe((value) => {
-            let leadId = this.getAccessKey(value[1]),
-                newStage = this.getAccessKey(value[2]),
-                oldStage = this.getAccessKey(value[3]);
-            if (leadId && newStage != oldStage) {
-                this.disabled = true;
-                _pipelineService.updateLeadStageByLeadId(
-                    leadId, oldStage, newStage, () => {
-                        this.disabled = false;
-                    }
-                );
-            }
-        }));
-        this.subscribers.push(
-            _dragulaService.dragend.subscribe((value) => {
-                this.hideStageHighlighting();
-            }
-        ));
-        _dragulaService.setOptions(this.dragulaName, {
-            ignoreInputTextSelection: false,
-            moves: (el, source) => {
-                let stage = this.getStageByElement(source);
-                setTimeout(() => {
-                    if (stage)
-                        stage.accessibleActions.forEach((action) => {
-                            if (action.targetStageId) {
-                                let target = _.find(this.stages, (stage) => {
-                                    return stage.id == action.targetStageId;
-                                }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
-                                targetElm && targetElm.classList.add('drop-area');
-                            }
-                        });
-                });
-
-                if (stage && stage.accessibleActions.length) {
-                    let lead = this.getLeadByElement(el, stage);
-                    return lead && !stage.accessibleActions.every((action) => {
-                        return !action.targetStageId;
-                    });
-                } else
-                    return false;
-
-            },
-            accepts: (el, target, source) => {
-                let stageSource = this.getStageByElement(source),
-                    stageTarget = this.getStageByElement(target);
-                if (stageSource && stageTarget) {
-                    return (stageSource.name == stageTarget.name) ||
-                        !stageSource.accessibleActions.every((action) => {
-                            return action.targetStageId != stageTarget.id;
-                        });
-                } else
-                    return false; // elements can't be dropped in any of the `containers` by default
-            }
-        });
     }
 
     refresh() {
@@ -173,9 +117,70 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
                 / this.STAGE_PAGE_COUNT), true);
     }
 
+    ngOnInit() {
+         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
+            let leadId = this.getAccessKey(value[1]),
+                newStage = this.getAccessKey(value[2]),
+                oldStage = this.getAccessKey(value[3]);
+            if (leadId && newStage != oldStage) {
+                this.disabled = true;                    
+                this._pipelineService.updateLeadStageByLeadId(
+                    leadId, oldStage, newStage, () => {
+                        this.disabled = false;                            
+                    }
+                );
+            }
+        }));
+        this.subscribers.push(
+            this._dragulaService.dragend.subscribe((value) => {
+                this.hideStageHighlighting();
+            }
+        ));
+
+        this._dragulaService.setOptions(this.dragulaName, {
+            ignoreInputTextSelection: false,
+            moves: (el, source) => {
+                let stage = this.getStageByElement(source);
+                setTimeout(() => {
+                    if (stage)
+                        stage.accessibleActions.forEach((action) => {
+                            if (action.targetStageId) {
+                                let target = _.find(this.stages, (stage) => {
+                                    return stage.id == action.targetStageId;
+                                }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
+                                targetElm && targetElm.classList.add('drop-area');
+                            }
+                        });
+                });
+
+                if (stage && stage.accessibleActions.length) {
+                    let lead = this.getLeadByElement(el, stage);
+                    return lead && !stage.accessibleActions.every((action) => {
+                        return !action.targetStageId;
+                    });
+                } else
+                    return false;
+
+            },
+            accepts: (el, target, source) => {
+                let stageSource = this.getStageByElement(source),
+                    stageTarget = this.getStageByElement(target);
+                if (stageSource && stageTarget) {
+                    return (stageSource.name == stageTarget.name) ||
+                        !stageSource.accessibleActions.every((action) => {
+                            return action.targetStageId != stageTarget.id;
+                        });
+                } else
+                    return false; // elements can't be dropped in any of the `containers` by default
+            }
+        });
+
+    }
+    
     ngOnDestroy() {
-        this.subscribers.forEach((sub) => sub.unsubscribe());
+        this.deactivate();
         this._dragulaService.destroy(this.dragulaName);
+        this.subscribers.forEach((sub) => sub.unsubscribe());
     }
 
     removeTimezoneOffset(utcDateTime) {
@@ -199,5 +204,5 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
             referrer: 'app/crm/leads',
             dataLayoutType: DataLayoutType.Pipeline
         }});        
-    }                
+    }
 }

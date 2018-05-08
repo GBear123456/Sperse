@@ -621,7 +621,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.initFilterConfig();        
         this._filtersService.localizationSourceName = this.localizationSourceName;
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);    
+        this.rootComponent.overflowHidden(true);
     }
     
     deactivate() {

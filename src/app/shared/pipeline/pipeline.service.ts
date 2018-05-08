@@ -11,6 +11,7 @@ import * as _ from "underscore";
 @Injectable()
 export class PipelineService {
     private stages = [];
+    private pipeline: PipelineDto;
 
     constructor(
         injector: Injector,
@@ -24,7 +25,8 @@ export class PipelineService {
         return this._pipelineServiceProxy
             .getPipelinesData(pipelinePurposeId)
             .switchMap(result => {
-                if (result.length > 0)
+                let pipelineId = result[0].id;
+                if ((!this.pipeline || pipelineId != this.pipeline.id) && result.length > 0)
                     return this._pipelineServiceProxy.getPipelineDefinition(result[0].id)
                         .map(result => {
                             result.stages.sort((a, b) => {
@@ -35,11 +37,14 @@ export class PipelineService {
                                     return !action.targetStageId;
                                 });
                             });
+                            
+                            this.pipeline = result; 
                             this.stages = result.stages;
+                            
                             return result;
                         });
                 else
-                    return Observable.of(null);
+                    return Observable.of(this.pipeline);
             });
     }
 
