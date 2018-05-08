@@ -1950,10 +1950,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.finishLoading();
         }
 
-        console.log('preparing speed', this.preparingSpeed);
-        console.log('truncating speed', this.truncatingSpeed);
+        //console.log('preparing speed', this.preparingSpeed);
+        //console.log('truncating speed', this.truncatingSpeed);
         this.preparingSpeed = this.truncatingSpeed = 0;
-        console.log('conent ready speed', performance.now() - contentReadyStart);
+        //console.log('conent ready speed', performance.now() - contentReadyStart);
     }
 
     keyDownListener(e) {
@@ -3734,7 +3734,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             });
 
-            this.moveOrCopyForecasts(forecastsItems, targetCells, 'copy');
+            if (targetCells.length) {
+                this.moveOrCopyForecasts(forecastsItems, targetCells, 'copy');
+            }
         }
     }
 
