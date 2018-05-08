@@ -815,18 +815,24 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
             e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
             e.originalEvent.dropEffect = 'move';
+            document.addEventListener('dxpointermove', this.stopPropagation, true);
         }).on('dragend', (e) => {
             e.originalEvent.preventDefault();
             e.originalEvent.stopPropagation();
 
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
+            document.removeEventListener('dxpointermove', this.stopPropagation);
         }).on('click', (e) => {
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
         });
 
         this.getTotalValues();
+    }
+
+    stopPropagation(e) {
+        e.stopPropagation();
     }
 
     onCellClick($event) {
