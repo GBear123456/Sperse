@@ -61,7 +61,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
             this.selectedBankAccounts = cacheData['bankAccounts'] || null;
             this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || null;
             let data = {
-                bankAccountIds: this.selectedBankAccounts || []
+                bankAccountIds: this.selectedBankAccounts || [],
+                isActive: initIsActive,
+                visibleAccountCount: this.storedVisibleBankAccountIds ? this.storedVisibleBankAccountIds.length : 0
             };
             this.onBankAccountsSelected.emit(data);
             needEmitSelectedBankAccounts = false;      
@@ -129,15 +131,16 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
     bankAccountsSelected() {
         let data = this.getSelectedBankAccounts();
-
-        let visibleBankAccountIds = this.getVisibleBankAccounts();
+        
+        let visibleBankAccountIds = this.getVisibleBankAccounts().bankAccountIds;
+        data.visibleAccountCount = visibleBankAccountIds ? visibleBankAccountIds.length : 0;
 
         if (this.useGlobalCache)
             this._cacheService.set(this.bankAccountsCacheKey, {
                 'bankAccounts': data.bankAccountIds,
                 'isActive': this.isActive,
                 'selectedBusinessEntityIds': this.selectedBusinessEntityIds,
-                'visibleBankAccountIds': visibleBankAccountIds.bankAccountIds
+                'visibleBankAccountIds': visibleBankAccountIds
             });
 
         this.onBankAccountsSelected.emit(data);
@@ -168,7 +171,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
         let data = {
             bankAccountIds: result,
-            usedBankAccountIds: usedResult
+            usedBankAccountIds: usedResult,
+            isActive: this.isActive,
+            visibleAccountCount: 0
         };
         return data;
     }
@@ -190,11 +195,15 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 if (this.useGlobalCache && needEmitSelectedAccounts) {
                     let bankAccountIds = this.selectedBankAccounts || [] ;
                     let data = {
-                        bankAccountIds: bankAccountIds
+                        bankAccountIds: bankAccountIds,
+                        isActive: this.isActive,
+                        visibleAccountCount: 0
                     };
+                    let getVisibleAccountsResult = this.getVisibleBankAccounts();
                     if (!this.emitOnlySelectedBankAccounts && !bankAccountIds.length) {
-                        data = this.getVisibleBankAccounts();
+                        data = getVisibleAccountsResult;
                     }
+                    data.visibleAccountCount = getVisibleAccountsResult.bankAccountIds.length;
                     this.onBankAccountsSelected.emit(data);
                 }
             });
