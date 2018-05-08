@@ -4,4 +4,5 @@ export class HeadLineConfigModel {
   icon?: string;
   iconSrc?: string;
   buttons: any[];
+  onRefresh: () => void;
 }

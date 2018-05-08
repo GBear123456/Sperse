@@ -1,5 +1,5 @@
 <div class="left-menu">
-    <p class="title"><a [routerLink]="headerLink">{{l('CRMDashboardMenu_Header')}}</a></p>
+    <p class="title"><a routerLink="headerLink">{{l('CRMDashboardMenu_Header')}}</a></p>
     <ul class="wrapper">
         <ng-template ngFor let-item [ngForOf]="items" let-i="index">
             <li class="item {{item.disabled && 'disabled'}}">

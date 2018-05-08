@@ -808,10 +808,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 /** Handle the get cashflow grid settings response*/
                 this.handleGetCashflowGridSettingsResult(result[3]);
+
+                this.initFiltering();
             });
 
         this.initHeadlineConfig();
-        this.initFiltering();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
         this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);

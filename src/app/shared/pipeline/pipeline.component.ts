@@ -3,7 +3,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineDto, PipelineData, ProcessLeadInput,
-    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo } from '@shared/service-proxies/service-proxies';
+    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, StageDto
+} from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -17,7 +18,7 @@ import DataSource from 'devextreme/data/data_source';
 @Component({
     selector: 'app-pipeline',
     templateUrl: './pipeline.component.html',
-    styleUrls: ['./pipeline.component.less']    
+    styleUrls: ['./pipeline.component.less']
 })
 export class PipelineComponent extends AppComponentBase implements OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
@@ -25,7 +26,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
 
     private _dataSource: DataSource;
 
-    @Input('dataSource') 
+    @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
         if (this._dataSource)
@@ -33,7 +34,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     }
     @Input() pipelinePurposeId: string;
     pipeline: PipelineDto;
-    stages: any = [];
+    stages: StageDto[];
     dragulaName = 'stage';
 
     private queryWithSearch: any = [];
@@ -121,7 +122,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
 
     getLeadByElement(el, stage) {
         return stage && _.find(stage.leads, (lead) => {
-            return lead && (lead.Id == parseInt(this.getAccessKey(el.closest('.card'))));
+            return lead && (lead['Id'] == parseInt(this.getAccessKey(el.closest('.card'))));
         });
     }
 
@@ -169,7 +170,7 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     loadMore(stageIndex) {
         this.startLoading(true, this.mainContainerSelector);
         this.loadStagesLeads(stageIndex,
-            Math.floor(this.stages[stageIndex].leads.length
+            Math.floor(this.stages[stageIndex]['leads'].length
                 / this.STAGE_PAGE_COUNT), true);
     }
 
@@ -192,12 +193,12 @@ export class PipelineComponent extends AppComponentBase implements OnDestroy {
     onCardClick($event) {
         this.hideStageHighlighting();
     }
-            
+
     openDetails(leadId, clientId) {
         this.hideStageHighlighting();
         this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], {queryParams: {
             referrer: 'app/crm/leads',
             dataLayoutType: DataLayoutType.Pipeline
-        }});        
-    }                
+        }});
+    }
 }
