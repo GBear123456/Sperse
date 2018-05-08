@@ -3173,7 +3173,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         targetsData.forEach((target, index) => {
             forecasts.forEach(forecast => {
-                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, forecast.initialDate);
+                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, forecast.initialDate);
                 let forecastModel;
                 if (operation === 'copy') {
                     forecastModel = new AddForecastInput({
@@ -3258,7 +3258,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         );
     }
 
-    getDateForForecast(targetCaption, targetStartDate, forecastDate) {
+    getDateForForecast(targetCaption, targetStartDate, targetEndDate, forecastDate) {
         let date = moment(targetStartDate);
         /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
         if (['year', 'quarter', 'month'].indexOf(targetCaption) !== -1) {
@@ -3271,6 +3271,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
             date.date(dayNumber);
         }
+
+        /** If current date is in target interval and is bigger then forecast date - then use current date as current */
+        let currentDate = this.getUtcCurrentDate();
+        if ((currentDate.isBetween(targetStartDate, targetEndDate) || currentDate.isSame(targetEndDate)) && date.isBefore(currentDate)) {
+            date = currentDate;
+        }
+
         return date;
     }
 
