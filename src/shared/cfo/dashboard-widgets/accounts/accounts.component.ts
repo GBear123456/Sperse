@@ -35,6 +35,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsText: string;
     dailyStatsSliderSelected = 1;
     dailyStatsPeriodSelected: string = this.l('All_Periods');
+    isActive = null;
+    visibleAccountCount = 0;
 
     constructor(
         injector: Injector,
@@ -79,9 +81,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
     }
 
-    filterByBankAccounts(bankAccountIds: number[]) {
+    filterByBankAccounts(bankAccountData) {
         this.waitForBankAccounts = false;
-        this.bankAccountIds = bankAccountIds;
+        this.isActive = bankAccountData.isActive;
+        this.visibleAccountCount = bankAccountData.visibleAccountCount;
+        this.bankAccountIds = bankAccountData.bankAccountIds;
         this.getAccountTotals();
         this.getDailyStats();
     }
