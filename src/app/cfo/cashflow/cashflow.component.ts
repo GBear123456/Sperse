@@ -2984,7 +2984,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
             textElement.innerHTML = `<span>${textElement.textContent}</span>`;
             /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildrenElementsWidth) + 'px';
+            textElement.style.width = (cellWidth - anotherChildrenElementsWidth - 1) + 'px';
         }
     }
 
