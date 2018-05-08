@@ -149,9 +149,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    refreshDataGrid() {
+    refreshDataGrid(quiet = false) {
         setTimeout(() => {
-            this.pipelineComponent.refresh(!this.showPipeline);
+            this.pipelineComponent.refresh(quiet || !this.showPipeline);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
@@ -599,14 +599,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     
     ngAfterViewInit() {
         this.initDataSource();
+        this.paramsSubscribe();
     }
     
     ngOnDestroy() {
         this.deactivate();
+        this.subRouteParams.unsubscribe();
     }
 
     activate() {
-        this.paramsSubscribe();
         this.initToolbarConfig();
         this.initFilterConfig();
         this._filtersService.localizationSourceName = 
@@ -616,7 +617,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
     
     deactivate() {
-        this.subRouteParams.unsubscribe();
         this._appService.toolbarConfig = null;
         this._filtersService.localizationSourceName = 
             AppConsts.localization.defaultLocalizationSourceName;

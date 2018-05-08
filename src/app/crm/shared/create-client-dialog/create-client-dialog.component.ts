@@ -307,9 +307,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
-        } else if (this.saveContextMenuItems[1].selected)
+        } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(customerId, leadId);
-        else
+            return this.data.refreshParent(true);
+        } else 
             this.close();
         this.data.refreshParent();
     }
@@ -406,8 +407,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     redirectToClientDetails(id: number, leadId?: number) {
-        let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
-        this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
+        setTimeout(() => {
+            let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
+            this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
+        }, 1000);
         this.close();
     }
 
