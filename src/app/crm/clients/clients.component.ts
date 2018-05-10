@@ -419,21 +419,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         ];
     }
 
-    private filterByAddressPart(filter: FilterModel, partName: string){
-        let filterField = filter.items[partName];
-        let filterValue = filterField && filterField.value;
-        if (!filterValue)
-            return;
-
-        let filterInternal = {};
-        filterInternal[partName] = { contains: filterValue };
-        return {
-            Addresses: {
-                any: filterInternal
-            }
-        };
-    }
-
     toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
     }
@@ -455,19 +440,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.starsListComponent.toggle();
     }
 
-    filterByZipCode(filter: FilterModel) {
-        return this.filterByAddressPart(filter, 'ZipCode');
-    }
-
-    filterByCity(filter: FilterModel) {
-        return this.filterByAddressPart(filter, 'City');
-    }
-
-    filterByStreetAddress(filter: FilterModel){
-        return this.filterByAddressPart(filter, 'StreetAddress');
-    }
-
     filterByStates(filter: FilterModel) {
+        let data ={};
         let filterData = [];
         if (filter.items.countryStates && filter.items.countryStates.value) {
             filter.items.countryStates.value.forEach((val) => {
@@ -477,16 +451,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     StateId: parts[1]
                 } : {CountryId: val});
             });
-        }
 
-        if (filterData.length)
-            return {
-                Addresses: {
-                    any: {
-                        or: filterData
-                    }
-                }
+            data = {
+                or: filterData
             };
+        }
+        return data;
     }
 
     filterByStatus(filter: FilterModel) {
@@ -504,24 +474,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             };
         }
         return data;
-    }
-
-    filterByPhone(filter: FilterModel) {
-        let filterField = filter.items.Phone;
-        let filterValue = filterField && filterField.value;
-        if (filterValue)
-            return {
-                PhoneNumbers: { any: 'contains(p,\'' + filterValue + '\')' }
-            };
-    }
-
-    filterByEmail(filter: FilterModel) {
-        let filterField = filter.items.Email;
-        let filterValue = filterField && filterField.value;
-        if (filterValue)
-            return {
-                EmailAddresses: { any: 'contains(e,\'' + filterValue + '\')' }
-            };
     }
 
     searchValueChange(e: object) {
