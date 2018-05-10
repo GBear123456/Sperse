@@ -827,7 +827,7 @@ export class BankAccountsServiceProxy {
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy, calculateAverageDailyBalance: boolean): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -851,6 +851,10 @@ export class BankAccountsServiceProxy {
             throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
         else
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
+        if (calculateAverageDailyBalance === undefined || calculateAverageDailyBalance === null)
+            throw new Error("The parameter 'calculateAverageDailyBalance' must be defined and cannot be null.");
+        else
+            url_ += "CalculateAverageDailyBalance=" + encodeURIComponent("" + calculateAverageDailyBalance) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
