@@ -7,6 +7,7 @@ import { AppRootComponent } from 'root.components';
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
     private handlers: {[key: string]: DetachedRouteHandle} = {};
+    private activateTimeout: any;
 
     private getKey(route: ActivatedRouteSnapshot) {
         return route && route.routeConfig.path;
@@ -29,8 +30,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
         let handle = <any>this.handlers[this.getKey(route)];
-        if (handle && handle.componentRef.instance.activate)
-            handle.componentRef.instance.activate();
+        if (handle && handle.componentRef.instance.activate) {
+            clearTimeout(this.activateTimeout);
+            this.activateTimeout = setTimeout(() => 
+                handle.componentRef.instance.activate());
+        }
         return handle;
     }
 
