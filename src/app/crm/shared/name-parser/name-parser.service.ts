@@ -8,15 +8,21 @@ export class NameParserService {
     constructor() { }
 
     parseIntoPerson(value: string, person: PersonInfoDto) {
-        if (!value)
-            return
-
-        let res = parseFullName.parseFullName(value.trim());
-        person.namePrefix = res.title;
-        person.firstName = res.first;
-        person.middleName = res.middle;
-        person.lastName = res.last;
-        person.nameSuffix = res.suffix;
-        person.nickName = res.nick;
+        if (value) {
+            let res = parseFullName.parseFullName(value.trim());
+            person.namePrefix = res.title;
+            person.firstName = res.first;
+            person.middleName = res.middle;
+            person.lastName = res.last;
+            person.nameSuffix = res.suffix;
+            person.nickName = res.nick;
+        } else {
+            person.namePrefix = undefined;
+            person.firstName = undefined;
+            person.middleName = undefined;
+            person.lastName = undefined;
+            person.nameSuffix = undefined;
+            person.nickName = undefined;
+        }
     }
 }
