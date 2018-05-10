@@ -54,7 +54,7 @@ import * as moment from 'moment';
     animations: [appModuleAnimation()],
     providers: [ InstanceServiceProxy, ClientService ]
 })
-export class ClientsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -95,9 +95,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         private _customersServiceProxy: CustomersServiceProxy,
         private _clientService: ClientService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this._filtersService.localizationSourceName = this.localizationSourceName;
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);       
 
         this.dataSource = {
             store: {
@@ -112,18 +110,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             }
         };
 
-        this.subRouteParams = _activatedRoute.queryParams
-            .subscribe(params => {
-                if ('addNew' == params['action'])
-                    setTimeout(() => this.createClient());
-            });
-
-
         this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
         this.searchValue = '';
 
         this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
     }
+    
+    private paramsSubscribe() {
+        this.subRouteParams = this._activatedRoute.queryParams
+            .subscribe(params => {
+                if ('addNew' == params['action'])
+                    setTimeout(() => this.createClient());
+        });
+    } 
 
     private checkCFOClientAccessPermission() {
         return this.isGranted('Pages.CFO.ClientAccess');
@@ -173,7 +172,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
             return;
 
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId]);
+        this._router.navigate(['app/crm/client', clientId], 
+            { queryParams: { referrer: 'app/crm/clients'} });
     }
 
     redirectToCFO(event, userId) {
@@ -193,77 +193,80 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.dataLayoutType = dataLayoutType;
     }
 
-    ngOnInit(): void {
-        this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
-            this._filtersService.setup(
-                this.filters = [
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'name',
-                        items: { FullName: new FilterItemModel()}
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'email',
-                        items: { Email: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterCalendarComponent,
-                        operator: {from: 'ge', to: 'le'},
-                        caption: 'creation',
-                        field: 'CreationTime',
-                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate'}
-                    }),
-                    new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'status',
-                        field: 'StatusId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource: result.statuses,
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'phone',
-                        items: { Phone: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterStatesComponent,
-                        caption: 'states',
-                        items: {
-                            countryStates: new FilterStatesModel()
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'city',
-                        items: { City: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'streetAddress',
-                        items: { StreetAddress: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'zipCode',
-                        items: { ZipCode: new FilterItemModel() }
-                    })
-                ]
-            )
-        );
+    initFilterConfig() {
+        if (this.filters)
+            this._filtersService.setup(this.filters);
+        else     
+            this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
+                this._filtersService.setup(
+                    this.filters = [
+                        new FilterModel({
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'name',
+                            items: { FullName: new FilterItemModel()}
+                        }),
+                        new FilterModel({
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'email',
+                            items: { Email: new FilterItemModel() }
+                        }),
+                        new FilterModel({
+                            component: FilterCalendarComponent,
+                            operator: {from: 'ge', to: 'le'},
+                            caption: 'creation',
+                            field: 'CreationTime',
+                            items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                            options: {method: 'getFilterByDate'}
+                        }),
+                        new FilterModel({
+                            component: FilterCheckBoxesComponent,
+                            caption: 'status',
+                            field: 'StatusId',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: result.statuses,
+                                        nameField: 'name',
+                                        keyExpr: 'id'
+                                    })
+                            }
+                        }),
+                        new FilterModel({
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'phone',
+                            items: { Phone: new FilterItemModel() }
+                        }),
+                        new FilterModel({
+                            component: FilterStatesComponent,
+                            caption: 'states',
+                            items: {
+                                countryStates: new FilterStatesModel()
+                            }
+                        }),
+                        new FilterModel({
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'city',
+                            items: { City: new FilterItemModel() }
+                        }),
+                        new FilterModel({
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'streetAddress',
+                            items: { StreetAddress: new FilterItemModel() }
+                        }),
+                        new FilterModel({
+                            component: FilterInputsComponent,
+                            operator: 'contains',
+                            caption: 'zipCode',
+                            items: { ZipCode: new FilterItemModel() }
+                        })
+                    ]
+                )
+            );
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
@@ -361,15 +364,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.selectedClientKeys.length
-                    }
-                ]
-            },
-            {
-                location: 'before', items: [
-                    {
-                        name: 'delete',
-                        action: this.deleteClients.bind(this),
                         disabled: !this.selectedClientKeys.length
                     }
                 ]
@@ -492,28 +486,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         );
     }
 
-    private deleteClientsInternal(selectedIds: number[]) {
-        this._customersServiceProxy.deleteCustomers(selectedIds).subscribe(() => {
-            this.notify.success(this.l('SuccessfullyDeleted'));
-            this.refreshDataGrid();
-        });
-    }
-
-    deleteClients() {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        if (selectedIds && selectedIds.length) {
-            this.message.confirm(
-                this.l('ClientsDeleteWarningMessage'),
-                isConfirmed => {
-                    if (isConfirmed)
-                        this.deleteClientsInternal(selectedIds);
-                }
-            );
-        } else {
-            this.message.warn(this.l('NoRecordsToDelete'));
-        }
-    }
-
     updateClientStatuses (statusId: string) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         if (selectedIds && selectedIds.length) {
@@ -552,22 +524,38 @@ export class ClientsComponent extends AppComponentBase implements OnInit, AfterV
         this.showClientDetails($event);
     }
 
-    ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-
-        this.initToolbarConfig();
+    ngOnInit() {
+        this.activate();
     }
 
     ngOnDestroy() {
-        this.subRouteParams.unsubscribe();
-        this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
+        this.deactivate();
     }
 
     requestVerification(contactId: number) {
         this._clientService.requestVerification(contactId);
+    }
+    
+    activate() {
+        this.paramsSubscribe();
+        this.initToolbarConfig();
+        this.initFilterConfig();        
+        this._filtersService.localizationSourceName = this.localizationSourceName;
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+    
+    deactivate() {
+        this.subRouteParams.unsubscribe();
+        this._appService.toolbarConfig = null;
+        this._filtersService.localizationSourceName = 
+            AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();   
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
     }
 }

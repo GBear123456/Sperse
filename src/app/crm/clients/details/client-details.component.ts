@@ -1,4 +1,4 @@
-import { Component, Input, Injector, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
@@ -16,6 +16,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { OperationsWidgetComponent } from './operations-widget.component';
 
 import * as _ from 'underscore';
 
@@ -28,9 +29,11 @@ import * as _ from 'underscore';
     }
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+
     customerId: number;
     customerInfo: CustomerInfoDto;
-    primaryContact: PersonContactInfoDto;
+    primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
     leadId: number;
     leadInfo: LeadInfoDto;
@@ -80,12 +83,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
             .subscribe(params => {
-                let clientId = params['clientId'];
+                let clientId = params['clientId'],
+                    leadId = params['leadId'];
                 _customerService['data'].customerInfo = {
                     id: clientId
                 };
 
-                let leadId = params['leadId'];
+                if (clientId)
+                    clientId = this.loadCustomerAndLeadDetails(clientId, leadId);
+
                 if (leadId) {
                     this.leadId = leadId;
                     _customerService['data'].leadInfo = {
@@ -99,9 +105,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                                     action: this.updateLeadStage.bind(this)
                                 };
                             });
-                        });
+                        });                    
                 }
-                this.loadCustomerAndLeadDetails(clientId, leadId);
             }));
 
         this.paramsSubscribe.push(this._route.queryParams
@@ -202,10 +207,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this._dialog.closeAll();
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: _.mapObject(this.referrerParams, 
+            { queryParams: _.mapObject(this.referrerParams,
                 (val, key) => {
                     return (key == 'referrer'? undefined: val)
-                }) 
+                })
             }
         );
     }
@@ -242,10 +247,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     delete() {
         this.message.confirm(
-            this.l('ClientDeleteWarningMessage', this.getCustomerName()),
+            this.l('LeadDeleteWarningMessage', this.getCustomerName()),
             isConfirmed => {
                 if (isConfirmed) {
-                    this._customerService.deleteCustomer(this.customerId).subscribe(() => {
+                    this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
                         this.close();
                     });
@@ -285,6 +290,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this.leadInfo.stage = targetStage;
         else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
-        $event.stopPropagation();
+
+        this.toolbarComponent.refresh();
+        $event.event.stopPropagation();
     }
 }

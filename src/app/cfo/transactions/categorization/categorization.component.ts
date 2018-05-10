@@ -86,7 +86,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     private _expandedRowKeys = [];
     private readonly MIN_PADDING = 7;
     private readonly MAX_PADDING = 17;
-    private settings = {
+    settings = {
         showCID: true, /* Category ID */
         showTC: false, /* Transaction Count */
         showAT: true, /* Accounting types */
@@ -404,7 +404,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                     e.originalEvent.preventDefault();
                     return;
                 }
-                
+
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
                 sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
@@ -429,7 +429,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 let targetTableRow = e.currentTarget.closest('tr');
                 if (!this.checkCanDrop(targetTableRow, sourceCategory))
                     return;
-                
+
                 targetTableRow.classList.add('drag-hover');
                 e.target.classList.add('element-drag-hover');
             }).on('dragover', (e) => {
@@ -442,7 +442,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }).on('dragleave', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
-                
+
                 e.target.classList.remove('element-drag-hover');
                 if (e.relatedTarget && (e.target.parentElement === e.relatedTarget || e.target.firstElementChild === e.relatedTarget))
                     return;
@@ -451,11 +451,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             }).on('drop', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
-                
+
                 if (sourceCategory) {
                     let source = sourceCategory.key;
                     let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
-                    
+
                     this.handleCategoryDrop(source, target);
                 } else {
                     let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);

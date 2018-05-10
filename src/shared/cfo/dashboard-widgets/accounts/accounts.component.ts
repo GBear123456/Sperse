@@ -15,6 +15,7 @@ import * as moment from 'moment';
 export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
     @Input() waitForBankAccounts = false;
+    @Input() waitForPeriods = false;
 
     accountsData: any;
     bankAccountIds: number[] = [];
@@ -34,6 +35,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsText: string;
     dailyStatsSliderSelected = 1;
     dailyStatsPeriodSelected: string = this.l('All_Periods');
+    isActive = null;
+    visibleAccountCount = 0;
 
     constructor(
         injector: Injector,
@@ -63,7 +66,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getDailyStats(): void {
-        if (!this.waitForBankAccounts) {
+        if (!this.waitForBankAccounts && !this.waitForPeriods) {
             this.startLoading();
             this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
                 .subscribe(result => {
@@ -78,9 +81,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
     }
 
-    filterByBankAccounts(bankAccountIds: number[]) {
+    filterByBankAccounts(bankAccountData) {
         this.waitForBankAccounts = false;
-        this.bankAccountIds = bankAccountIds;
+        this.isActive = bankAccountData.isActive;
+        this.visibleAccountCount = bankAccountData.visibleAccountCount;
+        this.bankAccountIds = bankAccountData.bankAccountIds;
         this.getAccountTotals();
         this.getDailyStats();
     }
@@ -108,6 +113,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             this.endDate = currentDate;
         }
 
+        this.waitForPeriods = false;
         this.getDailyStats();
     }
 
@@ -125,7 +131,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         }
 
         this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
-        this.dailyStatsAmountInteger = (this.dailyStatsAmount < 0 ? -1: 1) * Math.floor(Math.abs(this.dailyStatsAmount));
+        this.dailyStatsAmountInteger = (this.dailyStatsAmount < 0 ? -1 : 1) * Math.floor(Math.abs(this.dailyStatsAmount));
         this.dailyStatsAmountFloat = '.' + this.dailyStatsAmount.toFixed(2).split('.')[1];
     }
 }

@@ -68,7 +68,7 @@
                         [editCellTemplate]="'attributeTemplate'"
                         [setCellValue]="setCellValue">
                     </dxi-column>
-                    <dxi-column dataField="conditionTypeId" 
+                    <dxi-column dataField="conditionTypeId"
                         [width]="80"
                         [setCellValue]="setCellValue"
                         [calculateDisplayValue]="conditionDisplayValue"
@@ -113,7 +113,7 @@
                         </div>
 
                         <div *dxTemplate="let cell of 'valueTemplate'">
-                            <dx-select-box 
+                            <dx-select-box
                                            [placeholder]="l('Enter_Value')"
                                            [hoverStateEnabled]="false"
                                            [activeStateEnabled]="false"
@@ -185,7 +185,7 @@
                                           displayExpr="name"
                                           [showClearButton]="true"
                                           [(value)]="selectedTransactionTypes"
-                                          (onValueChanged)="onTransactionTypesChanged()">
+                                          (onValueChanged)="onTransactionTypesChanged(null)">
                             <div *dxTemplate="let contentData of 'content'">
                                 <dx-tree-view [dataSource]="transactionTypes"
                                               dataStructure="plain"

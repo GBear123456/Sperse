@@ -42,19 +42,12 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Statements')],
-            onRefresh: this.refreshData.bind(this),
-            iconSrc: 'assets/common/icons/credit-card-icon.svg'
-        };
-    }
-
-    private headlineConfig;
+    public headlineConfig;
     private bankAccountCount = '';
+    visibleAccountCount = 0;
     private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private filters: FilterModel[] = new Array<FilterModel>();
-    private sliderReportPeriod = {
+    public sliderReportPeriod = {
         start: null,
         end: null,
         minDate: moment().utc().subtract(10, 'year').year(),
@@ -62,11 +55,19 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     };
 
     private requestFilter: StatsFilter;
-    private statementsData: BankAccountDailyStatDto[] = [];
+    public statementsData: BankAccountDailyStatDto[] = [];
 
-    private currencyFormat = {
+    public currencyFormat = {
         type: 'currency',
         precision: 2
+    };
+
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            names: [this.l('Statements')],
+            onRefresh: this.refreshData.bind(this),
+            iconSrc: 'assets/common/icons/credit-card-icon.svg'
+        };
     }
 
     initToolbarConfig() {
@@ -248,7 +249,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.instanceId,
             'USD',
             this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
-            this.requestFilter.bankIds,
             this.requestFilter.accountIds,
             this.requestFilter.startDate,
             this.requestFilter.endDate,
@@ -261,13 +261,13 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     let currentPeriodTransaction: BankAccountDailyStatDto;
                     let currentPeriodForecast: BankAccountDailyStatDto;
 
-                    for (var i = result.length - 1; i >= 0; i--) {
+                    for (let i = result.length - 1; i >= 0; i--) {
                         let statsItem: BankAccountDailyStatDto = result[i];
-                        
+
                         Object.defineProperties(statsItem, {
                             'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
                         });
-                        
+
                         if (!currentPeriodTransaction && !statsItem.isForecast) {
                             currentPeriodForecast = result[i + 1];
                             currentPeriodTransaction = statsItem;
@@ -289,7 +289,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             }
                         }
                     }
-                    
+
                     this.statementsData = result;
 
                     /** reinit */
@@ -345,7 +345,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);              
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -360,11 +360,13 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         });
     }
 
-    setBankAccountCount(bankAccountIds) {
+    setBankAccountCount(bankAccountIds, visibleAccountCount) {
         if (!bankAccountIds || !bankAccountIds.length)
             this.bankAccountCount = '';
-        else
+        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
             this.bankAccountCount = bankAccountIds.length;
+        else
+            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     toggleBankAccountTooltip() {
@@ -374,7 +376,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     toggleReportPeriodFilter() {
         this.reportPeriodSelector.toggleReportPeriodFilter();
     }
-    
+
     expandColapseRow(e) {
         if (!e.data.sourceData) return;
 
@@ -428,6 +430,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             } else {
                 accountFilter.items['element'].setValue([], accountFilter);
             }
+            this.visibleAccountCount = data.visibleAccountCount;
+            this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this._filtersService.change(accountFilter);
         }
     }

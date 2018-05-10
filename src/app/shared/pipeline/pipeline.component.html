@@ -5,11 +5,11 @@
         </div>
         <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.name}}" (click)="onCardClick($event)">
             <ng-container *ngFor="let lead of stage.leads">
-                  <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id">
-                      <div class="container-fluid">
+                  <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id" (click)="openDetails(lead?.Id, lead?.CustomerId)">                  
+                      <div class="container-fluid">                                        
                           <div class="row">
                               <div class="text-right pipeline-photo-wrap">
-                                  <a [routerLink]="['../client', lead?.CustomerId, 'lead', lead?.Id, 'contact-information']" [queryParams]="leadDetailQueryParams"><img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.FullName}}" class="img-responsive img-circle" width="40"></a>
+                                  <img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.FullName}}" class="img-responsive img-circle" width="40">
                               </div>
                               <div class="full-name">
                                   <span>{{lead?.FullName}}</span>

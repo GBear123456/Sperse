@@ -7,7 +7,7 @@ import { FilterComponent } from '../models/filter-component';
     styleUrls: ['./bank-account-filter.component.less']
 })
 export class BankAccountFilterComponent extends AppComponentBase implements OnInit, FilterComponent {
-    items: {};
+    items: any;
     apply: (event) => void;
 
     constructor(injector: Injector) {

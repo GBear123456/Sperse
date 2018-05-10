@@ -42,7 +42,7 @@ import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import query from 'devextreme/data/query';
 
-import 'devextreme/data/odata/store';
+import DataSource from 'devextreme/data/data_source';
 
 import * as _ from 'underscore';
 import * as moment from 'moment';
@@ -63,9 +63,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
 
     firstRefresh = false;
-    gridDataSource: any = {};
+    pipelineDataSource: any;
     collection: any;
-    showPipeline = false;
+    showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedLeads = [];
     stages = [];
@@ -75,6 +75,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
+    private subRouteParams: any;
 
     private masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
@@ -105,20 +106,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this._route.queryParams.subscribe(params => {
-            if (params['dataLayoutType']) {
-                this.dataLayoutType = params['dataLayoutType'];
-                if (this.dataLayoutType == DataLayoutType.Grid)
-                    _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                        .subscribe(this.onStagesLoaded.bind(this));
-            }
-
-            if ('addNew' == params['action'])
-                setTimeout(() => this.createLead());
-        });       
-
         this.dataSource = {
+            requireTotalCount: true,
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -130,31 +119,43 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 paginate: true
             }
-        };
-
-        this.initToolbarConfig();
-
+        };      
+        
         this.searchColumns = ['FullName', 'CompanyName', 'Email'];
         this.searchValue = '';
     }
+    
+    private paramsSubscribe() {    
+        this.subRouteParams = this._route.queryParams.subscribe(params => {
+            if (params['dataLayoutType']) {
+                let dataLayoutType = params['dataLayoutType'];
+                if (dataLayoutType != this.dataLayoutType) {
+                    if (dataLayoutType == DataLayoutType.Grid)
+                        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+                            .subscribe(this.onStagesLoaded.bind(this));
+                    this.toggleDataLayout(dataLayoutType);
+                }
+            }
+
+            if ('addNew' == params['action'])
+                setTimeout(() => this.createLead());
+        });       
+    }
 
     onContentReady(event) {
-        this.gridDataSource = event.component.getDataSource();
-        this.showPipeline = (this.dataLayoutType == DataLayoutType.Pipeline);
-
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
         });
     }
 
-    refreshDataGrid() {
-        if (this.showPipeline)
-            this.pipelineComponent.refresh();
-        else
+    refreshDataGrid(quiet = false) {
+        setTimeout(() => {
+            this.pipelineComponent.refresh(quiet || !this.showPipeline);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
+        });
     }
 
     showColumnChooser() {
@@ -164,78 +165,75 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     toggleDataLayout(dataLayoutType) {
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
-        if (!this.showPipeline) {
-            this.gridDataSource.pageSize(20);
-            this.gridDataSource.filter(null);
-            this.gridDataSource['_store']['_url'] =
-                this.getODataURL(this.dataSourceURI);
-            this.gridDataSource.load().then(() => {
-                this.setGridDataLoaded();
-            });
-        }
+        this.initDataSource();
+        if (!this.showPipeline)
+            setTimeout(() => this.dataGrid.instance.repaint());            
     }
 
-    ngOnInit(): void {
-        this._leadService.getFiltersInitialData().subscribe(result => {
-            this._filtersService.setup(this.filters = [
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Name',
-                    items: { FullName: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Email',
-                    items: { Email: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: 'ge', to: 'le' },
-                    caption: 'creation',
-                    field: 'CreationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    caption: 'stages',
-                    items: {
-                        element: new FilterCheckBoxesModel(
-                            {
-                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result.pipelines),
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'SourceCode',
-                    items: { SourceCode: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Industry',
-                    items: { Industry: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Owner',
-                    items: { Owner: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Campaign',
-                    items: { Campaign: new FilterItemModel() }
-                }),
-            ], this._activatedRoute.snapshot.queryParams);
-        });
+    initFilterConfig(): void {
+        if (this.filters)
+            this._filtersService.setup(this.filters);
+        else
+            this._leadService.getFiltersInitialData().subscribe(result => {
+                this._filtersService.setup(this.filters = [
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'Name',
+                        items: { FullName: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'Email',
+                        items: { Email: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterCalendarComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'creation',
+                        field: 'CreationTime',
+                        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                        options: {method: 'getFilterByDate'}
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'stages',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result.pipelines),
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'SourceCode',
+                        items: { SourceCode: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'Industry',
+                        items: { Industry: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'Owner',
+                        items: { Owner: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'Campaign',
+                        items: { Campaign: new FilterItemModel() }
+                    }),
+                ], this._activatedRoute.snapshot.queryParams);
+            });
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
@@ -484,16 +482,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         );
     }
 
-    ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-    }
-
-    ngOnDestroy() {
-        this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
+    initDataSource() {
+        if (this.showPipeline) {
+            if (!this.pipelineDataSource)
+                this.pipelineDataSource = new DataSource(this.dataSource);
+        }
     }
 
     createLead() {
@@ -518,7 +511,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
     }
 
-    onStagesLoaded($event) {
+    onStagesLoaded($event) {        
         this.stages = $event.stages.map((stage) => {
             return {
                 text: stage.name,
@@ -532,8 +525,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let targetStage = $event.itemData.text,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage))
-                ignoredStages.push(lead.Stage);
+            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage) 
+                && ignoredStages.indexOf(lead.Stage) < 0)
+                    ignoredStages.push(lead.Stage);
         });
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
@@ -597,5 +591,41 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.refreshDataGrid();
         });
+    }
+    
+    ngOnInit() {
+        this.activate();
+    }    
+    
+    ngAfterViewInit() {
+        this.initDataSource();
+        this.paramsSubscribe();
+    }
+    
+    ngOnDestroy() {
+        this.deactivate();
+        this.subRouteParams.unsubscribe();
+    }
+
+    activate() {
+        this.initToolbarConfig();
+        this.initFilterConfig();
+        this._filtersService.localizationSourceName = 
+            this.localizationSourceName;
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+    
+    deactivate() {
+        this._appService.toolbarConfig = null;
+        this._filtersService.localizationSourceName = 
+            AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
     }
 }

@@ -53,7 +53,7 @@
 
             <dxo-header-filter [visible]="true"></dxo-header-filter>
             <dxo-selection selectAllMode="page"
-                           showCheckBoxesMode="always"
+                           [showCheckBoxesMode]="detailsContainsHistorical"
                            mode="multiple">
             </dxo-selection>
             <dxi-column dataField="forecastDate"

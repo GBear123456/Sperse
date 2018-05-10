@@ -26,7 +26,7 @@
                             showCheckBoxesMode="always"
                             mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
+                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
@@ -51,11 +51,11 @@
             </div>
         </div>
     </div>
-    <div *ngIf="showPipeline" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
-                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
+                    <app-pipeline [dataSource]="pipelineDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>
                 </div>

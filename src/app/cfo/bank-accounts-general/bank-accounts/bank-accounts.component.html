@@ -3,6 +3,7 @@
         [allItemsText]="l('All_Entities')"
         [title]="l('Financial_Accounts_For')"
         [selectionList]="businessEntities$ | async"
+        [selectedItems]="selectedBusinessEntities"
         (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
     <add-account-button class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
@@ -13,6 +14,14 @@
     <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="accountsAmount$ | async" [description]="l('Accounts')"></info-component>
 </div>
 <div class="bank-accounts">
+
+    <div class="filter-actions-is-active">
+        <div class="is-active-filter">
+            <span>{{isActive ? l('Active') : l('Disabled')}}</span>
+            <dx-switch [(value)]="isActive" (onValueChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
+        </div>
+    </div>
+
     <bank-accounts-widget
         [allowBankAccountsEditing]="true"
         [allowUpdateAccount]="true"

@@ -75,6 +75,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     isForecast = false;
     reportPeriodTooltipVisible = false;
     bankAccountCount = '';
+    visibleAccountCount = 0;
     barChartTooltipFields = [
         {
             'name': 'startingBalance',
@@ -360,7 +361,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -375,11 +376,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         });
     }
 
-    setBankAccountCount(bankAccountIds) {
+    setBankAccountCount(bankAccountIds, visibleAccountCount) {
         if (!bankAccountIds || !bankAccountIds.length)
             this.bankAccountCount = '';
-        else
+        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
             this.bankAccountCount = bankAccountIds.length;
+        else
+            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
@@ -465,13 +468,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
-        let { startDate, endDate, accountIds = [], bankIds = [] } = this.requestFilter;
+        let { startDate, endDate, accountIds = []} = this.requestFilter;
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
             'USD',
             this.selectedForecastModel.id,
-            bankIds,
             accountIds,
             startDate,
             endDate,
@@ -602,6 +604,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             } else {
                 accountFilter.items['element'].setValue([], accountFilter);
             }
+            this.visibleAccountCount = data.visibleAccountCount;
+            this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this._filtersService.change(accountFilter);
         }
     }

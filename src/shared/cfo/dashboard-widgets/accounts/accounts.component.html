@@ -3,7 +3,7 @@
         <dx-tooltip
             target="#valueTotal"
             showEvent="dxhoverstart"
-            hideEvent="dxhoverend">     
+            hideEvent="dxhoverend">
             <div *dxTemplate="let data = data of 'content'">
                 <div class="tooltip-wrap">
                     <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData?.totalNetWorth - accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
@@ -22,7 +22,7 @@
                  <dx-tooltip
                      target="#valueDaily"
                      showEvent="dxhoverstart"
-                     hideEvent="dxhoverend">     
+                     hideEvent="dxhoverend">
                      <div *dxTemplate="let data = data of 'content'">
                          {{ dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}
                      </div>
@@ -41,9 +41,9 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseenter()">
         <a class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountIds.length && accountsData && bankAccountIds.length !== accountsData.bankAccountCount ? bankAccountIds.length + ' of ': ''}}{{ accountsData?.bankAccountCount }}</div>
+        <div class="value">{{ bankAccountIds.length && bankAccountIds.length !== visibleAccountCount ? bankAccountIds.length + ' of ': ''}}{{ visibleAccountCount }}</div>
         <div class="name">
-            {{l((bankAccountIds.length ? '': 'Total_') + 'Accounts')}}
+            {{bankAccountIds.length ? l(isActive ? 'Active' : 'Disabled') : ''}} {{l((bankAccountIds.length ? '': 'Total_') + 'Accounts')}}
             <ng-container *ngIf="bankAccountIds.length">
                 <span class="filtered">*</span>
             </ng-container>

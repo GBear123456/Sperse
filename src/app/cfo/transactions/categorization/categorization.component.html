@@ -46,14 +46,14 @@
                     [sortIndex]="1"
                     [sortOrder]="'asc'"
                     dataField="coAID"
-                    [dataType]="number"
+                    dataType="number"
                     [caption]="'ID'"
                     [calculateSortValue]="calculateSortValue"
                     [visible]="settings.showCID">
         </dxi-column>
         <dxi-column dataField="transactionsCount"
                     [cellTemplate]="'transactionsCountTemplate'"
-                    [dataType]="number"
+                    dataType="number"
                     [alignment]="'left'"
                     [caption]="'Count'"
                     [allowEditing]="false"

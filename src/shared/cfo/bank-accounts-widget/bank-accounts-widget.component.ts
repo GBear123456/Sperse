@@ -165,16 +165,18 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
 
     bankAccountSelectionChanged(e) {
         this.syncAccountsDataSource.forEach(syncAccount => {
-            let selectedBankAccountCount = 0;
-            syncAccount.bankAccounts.forEach(bankAccount => {
-                if (bankAccount['selected'])
-                    selectedBankAccountCount++;
-            });
+            if (syncAccount.bankAccounts.length) {
+                let selectedBankAccountCount = 0;
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    if (bankAccount['selected'])
+                        selectedBankAccountCount++;
+                });
 
-            if (selectedBankAccountCount === 0) {
-                syncAccount['selected'] = false;
-            } else {
-                syncAccount['selected'] = selectedBankAccountCount === syncAccount.bankAccounts.length ? true : null;
+                if (selectedBankAccountCount === 0) {
+                    syncAccount['selected'] = false;
+                } else {
+                    syncAccount['selected'] = selectedBankAccountCount === syncAccount.bankAccounts.length ? true : null;
+                }
             }
             this.mainDataGrid.instance.repaintRows([this.mainDataGrid.instance.getRowIndexByKey(syncAccount.syncAccountId)]);
         });
@@ -405,7 +407,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         this.onUpdateAccount.emit({ id: id });
     }
 
-    calculateHeight(e) {
+    calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
         return window.innerHeight - filtersBottomPosition - 20;

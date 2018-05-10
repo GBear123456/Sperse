@@ -1,5 +1,6 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 
 import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput } from '@shared/service-proxies/service-proxies';
 
@@ -32,7 +33,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _tagsService: CustomerTagsServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     toggle() {
@@ -40,10 +41,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     apply(selectedKeys = undefined) {
-        if (this.listComponent) {
-            this.selectedTags = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item;
-            }).filter(Boolean);
+        if (this.listComponent && this.selectedTags.length) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 this.selectedKeys.forEach((key) => {
@@ -84,7 +82,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.showAddButton = this.list.every((item) => !item.includes(this.searchValue));
         $event.component.option('showClearButton', !this.showAddButton);
     }
-
     reset() {
         this.selectedItems = [];
     }

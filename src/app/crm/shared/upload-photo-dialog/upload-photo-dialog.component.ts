@@ -35,7 +35,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.cropperSettings = this.getCropperSetting();        
+        this.cropperSettings = this.getCropperSetting();
     }
 
     ngAfterViewInit() {
@@ -103,7 +103,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
 
             octx.drawImage(oc, 0, 0, oc.width * 0.9, oc.height * 0.9);
 
-            ctx.drawImage(oc, 0, 0, 
+            ctx.drawImage(oc, 0, 0,
                 oc.width * 0.9, oc.height * 0.9,
                 0, 0, canvas.width, canvas.height);
 
@@ -111,6 +111,8 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         }
         image.src = this.imageData.image;
     }
+
+    mouseDown(e) {}
 
     onCrop(bounds: Bounds) {
         this.croppedHeight = bounds.bottom-bounds.top;

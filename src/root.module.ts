@@ -10,7 +10,8 @@ import {httpConfiguration} from '@shared/http/httpConfiguration';
 import {MobileModule} from './mobile/mobile.module';
 import {CommonModule} from '@shared/common/common.module';
 import {ServiceProxyModule} from '@shared/service-proxies/service-proxy.module';
-import {RootRoutingModule} from './root-routing.module';
+import {RootRoutingModule, CustomReuseStrategy} from './root-routing.module';
+import {RouteReuseStrategy} from '@angular/router';
 
 import {AppConsts} from '@shared/AppConsts';
 import {AppSessionService} from '@shared/common/session/app-session.service';
@@ -119,6 +120,10 @@ ABP_HTTP_PROVIDER.deps = [XHRBackend, RequestOptions, httpConfiguration];
         {
             provide: LOCALE_ID,
             useFactory: getCurrentLanguage
+        },        
+        {
+            provide: RouteReuseStrategy,
+            useClass: CustomReuseStrategy
         }
     ],
     bootstrap: [RootComponent]

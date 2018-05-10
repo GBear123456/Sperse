@@ -77,9 +77,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public transactionsFilterQuery: any[];
 
     public dragInProgress = false;
+    private draggedTransactionRow;
     public selectedCashflowCategoryKey: any;
 
-    public bankAccountCount: number;
+    public bankAccountCount;
+    visibleAccountCount = 0;
     public bankAccounts: number[];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
@@ -324,7 +326,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             });
             this.bankAccounts = _.uniq(bankAccounts);
-            this.bankAccountCount = this.bankAccounts.length;
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -345,10 +346,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionCount = totals[0].debitCount;
                 this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
                 if (totals[0].bankAccounts) {
-                    this.bankAccountCount = totals[0].bankAccounts.length;
                     this.bankAccounts = totals[0].bankAccounts;
                 } else {
-                    this.bankAccountCount = 0;
                     this.bankAccounts = [];
                 }
 
@@ -364,7 +363,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = 0;
                 this.debitTransactionCount = 0;
 
-                this.bankAccountCount = 0;
                 this.bankAccounts = [];
 
                 this.transactionTotal = 0;
@@ -608,7 +606,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         caption: 'Reference',
                         //items: { BusinessEntity: '' }
                     })
-                ], this._activatedRoute.snapshot.queryParams
+                ], this._activatedRoute.snapshot.queryParams, false
             );
         });
 
@@ -616,7 +614,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value);
                 }
 
                 if (filter.caption.toLowerCase() === 'classified') {
@@ -643,11 +640,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
-    setBankAccountCount(bankAccountIds) {
+    setBankAccountCount(bankAccountIds, visibleAccountCount) {
         if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = null;
-        else
+            this.bankAccountCount = '';
+        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
             this.bankAccountCount = bankAccountIds.length;
+        else
+            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     applyTotalBankAccountFilter(data) {
@@ -663,6 +662,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 accountFilter.items['element'].setValue([], accountFilter);
             }
             this.setDataSource();
+            this.visibleAccountCount = data.visibleAccountCount;
+            this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this.filtersService.change(accountFilter);
         }
     }
@@ -673,6 +674,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
+                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);
                 }
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
@@ -796,30 +798,42 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onSelectionChanged($event, initial = false) {
-        let img = new Image(),
-            transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
-        img.src = 'assets/common/icons/drag-icon.svg';
+        let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
+
+        let img = new Image();
+        img.src = 'assets/common/icons/drag-icon.svg';
+
         let element = <any>$($event.element);
-        element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend')
-            .filter('.dx-selection').attr('draggable', true).on('dragstart', (e) => {
-                this.dragInProgress = true;
-                e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
-                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                e.originalEvent.dropEffect = 'move';
-            }).on('dragend', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+        let affectedRows = element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend');
+        if (transactionKeys.length)
+            affectedRows = affectedRows.filter('.dx-selection');
+        affectedRows.attr('draggable', true).on('dragstart', (e) => {
+            if (!transactionKeys.length)
+                this.draggedTransactionRow = this.dataGrid.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+            this.dragInProgress = true;
+            e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
+            e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+            e.originalEvent.dropEffect = 'move';
+            document.addEventListener('dxpointermove', this.stopPropagation, true);
+        }).on('dragend', (e) => {
+            e.originalEvent.preventDefault();
+            e.originalEvent.stopPropagation();
 
-                this.dragInProgress = false;
-            }).on('click', (e) => {
-                e.originalEvent.preventDefault();
-                e.originalEvent.stopPropagation();
+            this.draggedTransactionRow = null;
+            this.dragInProgress = false;
+            document.removeEventListener('dxpointermove', this.stopPropagation);
+        }).on('click', (e) => {
+            this.draggedTransactionRow = null;
+            this.dragInProgress = false;
+        });
 
-                this.dragInProgress = false;
-            });
         this.getTotalValues();
+    }
+
+    stopPropagation(e) {
+        e.stopPropagation();
     }
 
     onCellClick($event) {
@@ -870,9 +884,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     categorizeTransactions($event) {
-        let transactions = this.dataGrid
+        let transactions: any[] = this.dataGrid
             .instance.getSelectedRowKeys();
+        if (!transactions.length && this.draggedTransactionRow)
+            transactions = [this.draggedTransactionRow];
         let transactionIds = transactions.map(t => t.Id);
+        let isSingleDraggedTransaction = !!this.draggedTransactionRow;
 
         if ($event.categoryId) {
             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
@@ -924,7 +941,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             }
                         );
 
-                        this.dataGrid.instance.selectRows(gridItems, false);
+                        if (!isSingleDraggedTransaction)
+                            this.dataGrid.instance.selectRows(gridItems, false);
                         this.dataGrid.instance.repaintRows(selectedRowIndexes);
 
                         this.getTotalValues();

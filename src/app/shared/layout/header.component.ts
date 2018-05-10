@@ -79,7 +79,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
         private _appSessionService: AppSessionService,
-        private _layoutService: LayoutService
+        public _layoutService: LayoutService
     ) {
         super(injector);
     }
