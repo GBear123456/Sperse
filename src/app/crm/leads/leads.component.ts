@@ -76,7 +76,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
     private subRouteParams: any;
-
+    private filterChanged = false;
     private masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
 
@@ -170,6 +170,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initDataSource();
         if (!this.showPipeline)
             setTimeout(() => this.dataGrid.instance.repaint());            
+        if (this.filterChanged) {
+            this.filterChanged = false;
+            setTimeout(() => this.processFilterInternal());
+        }
     }
 
     initFilterConfig(): void {
@@ -238,6 +242,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
 
         this._filtersService.apply(() => {
+            this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
         });
