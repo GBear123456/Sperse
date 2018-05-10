@@ -55,7 +55,10 @@
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
-                    <app-pipeline [dataSource]="pipelineDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
+                    <app-pipeline 
+                        [dataSource]="pipelineDataSource" 
+                        [pipelinePurposeId]="pipelinePurposeId" 
+                        (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>
                 </div>

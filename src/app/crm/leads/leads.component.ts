@@ -150,9 +150,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    refreshDataGrid(quiet = false) {
+    refreshDataGrid(quiet = false, addedNew = false) {
         setTimeout(() => {
-            this.pipelineComponent.refresh(quiet || !this.showPipeline);
+            this.pipelineComponent.refresh(
+                quiet || !this.showPipeline, addedNew);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
@@ -496,7 +497,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: this.refreshDataGrid.bind(this),
+                refreshParent: (quite) => {
+                    this.refreshDataGrid(quite, true);
+                }, 
                 isInLeadMode: true
             }
         });
@@ -593,7 +596,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refreshDataGrid();
         });
     }
-    
+
     ngOnInit() {
         this.activate();
     }    
