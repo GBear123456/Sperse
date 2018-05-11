@@ -3250,7 +3250,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (operation === 'move') {
                     /** @todo change if we have to handle moving into multiple cells */
                     forecastModels.forecasts.forEach(forecastModel => {
-                        let timezoneOffset = targetsData[0].date.startDate.toDate().getTimezoneOffset();
+                        let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
                         let forecastsInCashflow = this.cashflowData.filter(item => item.forecastId === forecastModel.id);
                         forecastsInCashflow.forEach((forecastInCashflow, index) => {
 
@@ -5270,6 +5270,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onTransactionDetailContentReady(e) {
         this.hideModifyingNumberBox();
+    }
+
+    activate() {
+        this.operations.initToolbarConfig();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
+        this.rootComponent.overflowHidden();
     }
 
 }

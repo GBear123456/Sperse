@@ -753,4 +753,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         };
     }
 
+    activate() {
+        this.initToolbarConfig();
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
+        this.rootComponent.overflowHidden();
+    }
+
 }

@@ -38,8 +38,8 @@ import { StatementsComponent } from './statements/statements.component';
                     },
                     { path: 'business-entities', component: BusinessEntitiesComponent, data: { permission: '' } },
                     { path: 'chart-of-accounts', component: ChartOfAccountsComponent, data: { permission: '' } },
-                    { path: 'cashflow', component: CashflowComponent, data: { permission: '' } },
-                    { path: 'stats', component: StatsComponent, data: { permission: '' } },
+                    { path: 'cashflow', component: CashflowComponent, data: { permission: '', reuse: true } },
+                    { path: 'stats', component: StatsComponent, data: { permission: '', reuse: true } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
                     { path: 'statements', component: StatementsComponent, data: { permission: '' } }
