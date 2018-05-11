@@ -33,14 +33,25 @@
                         <div class="col-7">
                             <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
                                 <ul class="list-of-synch-accounts">
-                                    <li *ngFor="let acc of synchData.accountProgresses"
-                                        [class]="'clearfix ' + acc.syncStatus | lowercase"
-                                        [attr.data-msg]="acc.syncStatusMessage">
+                                    <li *ngFor="let acc of synchData.accountProgresses; let i = index" id="accountProgress{{i}}"
+                                        (mouseenter)="accountProgressMouseEnter('accountProgress' + i, acc.syncStatusMessage)"
+                                        [class]="'clearfix ' + acc.syncStatus | lowercase">
                                         <span class="name" [ngClass]="{'full-width': completed}">{{ acc.accountName }}{{ completed ? '' : ':'}}</span>
                                         <span *ngIf="!completed" class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
                                     </li>
                                 </ul>
                             </dx-scroll-view>
+                            <dx-tooltip #accountProgressTooltip
+                                        [position]="{
+                                                      my: 'left top',
+                                                      at: 'left bottom',
+                                                      of: accountProgressTooltipTarget
+                                        }"
+                                        [(visible)]="accountProgressTooltipVisible">
+                                <div *dxTemplate="let data = data of 'content'" class="tooltip-data">
+                                    {{accountProgressTooltipText}}
+                                </div>
+                            </dx-tooltip>
                         </div>
                         <div class="col-5">
                             <div class="progress-wrap">

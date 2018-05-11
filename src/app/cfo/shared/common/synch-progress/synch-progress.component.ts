@@ -2,6 +2,7 @@ import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild
 import { SyncServiceProxy, SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { DxTooltipComponent } from 'devextreme-angular';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -10,6 +11,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
     providers: [SyncServiceProxy]
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
+    @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     @Output() completed = true;
     synchData: SyncProgressOutput;
@@ -21,6 +23,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     statusCheckCompleted = false;
     tooltipVisible: boolean;
     timeoutHandler: any;
+
+    accountProgressTooltipTarget;
+    accountProgressTooltipVisible: boolean = false;
+    accountProgressTooltipText: string;
 
     readonly maxTryCount = 3;
     tryCount = 0;
@@ -155,6 +161,14 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             },
             abpHandleError: false
         });
+    }
+
+    accountProgressMouseEnter(elementId: string, message: string) {
+        this.accountProgressTooltipVisible = true;
+        this.accountProgressTooltipTarget = '#' + elementId;
+        this.accountProgressTooltipText = message;
+
+        setTimeout(() => this.accountProgressTooltip.instance.repaint());
     }
 
     ngOnDestroy(): void {
