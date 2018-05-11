@@ -305,15 +305,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private afterSave(customerId: number, leadId?: number): void
     {
         if (this.saveContextMenuItems[0].selected) {
-            this.data.refreshParent();
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
-        } else if (this.saveContextMenuItems[1].selected)
+        } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(customerId, leadId);
-        else {
-            this.data.refreshParent();
+            return this.data.refreshParent(true);
+        } else 
             this.close();
-        }
+        this.data.refreshParent();
     }
 
     save(event?): void {     
@@ -408,8 +407,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     redirectToClientDetails(id: number, leadId?: number) {
-        let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
-        this._router.navigate([path], { queryParams: { referrer: this._router.url } });
+        setTimeout(() => {
+            let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
+            this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
+        }, 1000);
         this.close();
     }
 

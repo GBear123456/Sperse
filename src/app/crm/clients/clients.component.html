@@ -25,7 +25,7 @@
                                        showCheckBoxesMode="always"
                                        mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
+                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>

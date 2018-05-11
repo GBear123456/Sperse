@@ -1,4 +1,4 @@
-import { Component,  Injector, ViewChild } from '@angular/core';
+import { Component,  Injector, ViewChild, OnDestroy } from '@angular/core';
 import { RoleServiceProxy, RoleListDto } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -11,7 +11,7 @@ import { DataTable } from 'primeng/components/datatable/datatable';
     templateUrl: './roles.component.html',
     animations: [appModuleAnimation()]
 })
-export class RolesComponent extends AppComponentBase {
+export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     @ViewChild('createOrEditRoleModal') createOrEditRoleModal: CreateOrEditRoleModalComponent;
     @ViewChild('dataTable') dataTable: DataTable;
@@ -19,6 +19,7 @@ export class RolesComponent extends AppComponentBase {
 
     //Filters
     selectedPermission = '';
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
@@ -27,6 +28,8 @@ export class RolesComponent extends AppComponentBase {
         private _fileDownloadService: FileDownloadService
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     getRoles(): void {
@@ -57,5 +60,9 @@ export class RolesComponent extends AppComponentBase {
                 }
             }
         );
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 }

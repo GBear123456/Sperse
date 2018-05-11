@@ -10,7 +10,7 @@
             <div>
                 <div id="LeadsTable">
                     <dx-data-grid id="gridContainer"
-                                [dataSource]="gridDataSource"
+                                [dataSource]="dataSource"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
                                 [allowColumnResizing]="true"
@@ -26,7 +26,7 @@
                             showCheckBoxesMode="always"
                             mode="multiple">
                         </dxo-selection>
-                        <dxo-editing mode="row" [allowUpdating]="true"></dxo-editing>
+                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
@@ -37,6 +37,18 @@
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="AffiliateCode" caption="{{l('AffiliateCode')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="CampaignCode" caption="{{l('CampaignCode')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="ChannelCode" caption="{{l('ChannelCode')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="EntryUrl" caption="{{l('EntryUrl')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="StreetAddress" caption="{{l('Contact.StreetAddress')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Zip" caption="{{l('Contact.Zip')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Website" caption="{{l('Website')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Title" caption="{{l('Title')}}" [visible]="false"></dxi-column>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}
                         </div>
@@ -55,7 +67,10 @@
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
-                    <app-pipeline [dataSource]="pipelineDataSource" [pipelinePurposeId]="pipelinePurposeId" (onStagesLoaded)="onStagesLoaded($event)">
+                    <app-pipeline 
+                        [dataSource]="pipelineDataSource" 
+                        [pipelinePurposeId]="pipelinePurposeId" 
+                        (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>
                 </div>

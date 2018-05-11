@@ -3250,7 +3250,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (operation === 'move') {
                     /** @todo change if we have to handle moving into multiple cells */
                     forecastModels.forecasts.forEach(forecastModel => {
-                        let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
+                        let timezoneOffset = targetsData[0].date.startDate.toDate().getTimezoneOffset();
                         let forecastsInCashflow = this.cashflowData.filter(item => item.forecastId === forecastModel.id);
                         forecastsInCashflow.forEach((forecastInCashflow, index) => {
 

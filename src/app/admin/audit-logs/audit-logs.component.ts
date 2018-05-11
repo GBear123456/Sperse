@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@angular/core';
 import { AuditLogServiceProxy, AuditLogListDto } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -17,7 +17,7 @@ import * as moment from 'moment';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class AuditLogsComponent extends AppComponentBase {
+export class AuditLogsComponent extends AppComponentBase implements OnDestroy{
 
     @ViewChild('auditLogDetailModal') auditLogDetailModal: AuditLogDetailModalComponent;
     @ViewChild('dataTable') dataTable: DataTable;
@@ -35,6 +35,7 @@ export class AuditLogsComponent extends AppComponentBase {
     public maxExecutionDuration: number;
 
     private _$auditLogsTable: JQuery;
+    private rootComponent: any;
     advancedFiltersAreShown = false;
 
     constructor(
@@ -44,6 +45,8 @@ export class AuditLogsComponent extends AppComponentBase {
         private _fileDownloadService: FileDownloadService
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     showDetails(record: AuditLogListDto): void {
@@ -101,5 +104,9 @@ export class AuditLogsComponent extends AppComponentBase {
 
     truncateStringWithPostfix(text: string, length: number): string {
         return abp.utils.truncateStringWithPostfix(text, length);
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 }

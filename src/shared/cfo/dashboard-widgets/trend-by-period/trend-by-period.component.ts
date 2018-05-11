@@ -189,7 +189,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                 this.startDate,
                 this.endDate,
                 undefined,
-                this.selectedPeriod.key
+                this.selectedPeriod.key,
+                false
             ).subscribe(result => {
                 if (result) {
                     let historical = [], forecast = [];
