@@ -38,6 +38,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     toggle() {
         this.tooltipVisible = !this.tooltipVisible;
+        this.listComponent.option('searchValue', '');
+        this.showAddButton = false;
     }
 
     apply(selectedKeys = undefined) {
