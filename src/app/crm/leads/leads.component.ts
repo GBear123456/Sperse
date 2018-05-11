@@ -140,6 +140,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     
                 if ('addNew' == params['action'])
                     setTimeout(() => this.createLead());
+                if (params['refresh'])
+                    this.refreshDataGrid();
             });       
     }
 

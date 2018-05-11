@@ -129,6 +129,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 .subscribe(params => {
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
+                    if (params['refresh'])
+                        this.refreshDataGrid();
             });
     } 
 

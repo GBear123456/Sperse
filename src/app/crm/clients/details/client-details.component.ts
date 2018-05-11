@@ -203,14 +203,14 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         );
     }
 
-    close() {
+    close(params = null) {
         this._dialog.closeAll();
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: _.mapObject(this.referrerParams,
+            { queryParams: _.extend(_.mapObject(this.referrerParams,
                 (val, key) => {
                     return (key == 'referrer'? undefined: val)
-                })
+                }), params)
             }
         );
     }
@@ -252,7 +252,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 if (isConfirmed) {
                     this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
-                        this.close();
+                        this.close({refresh: true});
                     });
                 }
             }
