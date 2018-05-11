@@ -2720,7 +2720,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
             let trancatingSpeed = performance.now();
             let textElement: HTMLSpanElement = e.cellElement.parentElement.querySelector(`td:nth-child(${e.cellElement.cellIndex + 1}) > span`);
-            let textWidth: number = textElement.getBoundingClientRect().width;
+            let textWidth: number = Math.round(textElement.getBoundingClientRect().width);
             let newTextWidth = this.getNewTextWidth(options.general.hasChilds, e.cellElement.clientWidth, textWidth, options.general.isAccountHeaderCell);
             if (newTextWidth) {
                 this.applyNewTextWidth(e, textElement, newTextWidth);
@@ -3024,7 +3024,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return newTextWidth;
         },
-        input => JSON.stringify(input)
+        function() { return JSON.stringify(arguments) }
     )
 
     /**
@@ -3338,7 +3338,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
             return options;
         },
-        input => JSON.stringify(input)
+        function() { return JSON.stringify(arguments) }
     )
 
     mergeOptions(initialOptions: CellOptions, options: CellOptions) {
