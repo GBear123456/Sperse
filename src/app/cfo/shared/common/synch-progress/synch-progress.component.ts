@@ -136,6 +136,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.tooltipVisible = !this.tooltipVisible;
     }
 
+    isFailedAccount(accountStatus: string): boolean {
+        return accountStatus == SyncProgressDtoSyncStatus.ActionRequired.toString() ||
+            accountStatus == SyncProgressDtoSyncStatus.SyncPending.toString() ||
+            accountStatus == SyncProgressDtoSyncStatus.Unavailable.toString();
+    }
+
     ajaxRequest(url: string, method: string, params) {
         let _url = AppConsts.remoteServiceBaseUrl + url;
 

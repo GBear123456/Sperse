@@ -37,7 +37,7 @@
                                         (mouseenter)="accountProgressMouseEnter('accountProgress' + i, acc.syncStatusMessage)"
                                         [class]="'clearfix ' + acc.syncStatus | lowercase">
                                         <span class="name" [ngClass]="{'full-width': completed}">{{ acc.accountName }}{{ completed ? '' : ':'}}</span>
-                                        <span *ngIf="!completed" class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
+                                        <span *ngIf="!completed && !(acc.progressPercent == 100 && isFailedAccount(acc.syncStatus))" class="percent">{{acc.progressPercent | number : '1.0-0'}}%</span>
                                     </li>
                                 </ul>
                             </dx-scroll-view>
