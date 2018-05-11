@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, Injector } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewChecked, Injector } from '@angular/core';
 import { TenantSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -15,7 +15,7 @@ import * as moment from 'moment';
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()]
 })
-export class TenantSettingsComponent extends AppComponentBase implements OnInit, AfterViewChecked {
+export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
@@ -34,6 +34,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Tenant;
 
+    private rootComponent;
+
     constructor(
         injector: Injector,
         private _tenantSettingsService: TenantSettingsServiceProxy,
@@ -41,6 +43,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private _tokenService: TokenService
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     ngOnInit(): void {
@@ -54,6 +58,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         $('tabset ul.nav').addClass('m-tabs-line');
         $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
     };
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
+    }      
 
     getSettings(): void {
         this.loading = true;

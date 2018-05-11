@@ -17,7 +17,10 @@ export class RootComponent implements AfterViewInit {
     constructor(@Inject(DOCUMENT) private document,
                 private hostElement: ElementRef,
                 private _uiCustomizationService: AppUiCustomizationService,
-                private title: Title) { }
+                private title: Title
+    ) { 
+        this.pageHeaderFixed(true);
+    }
 
     public checkSetClasses(loggedUser) {
         let classList = this.hostElement.nativeElement.classList,

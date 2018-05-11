@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantSslBindingInfo } from '@shared/service-proxies/service-proxies';
@@ -11,7 +11,7 @@ import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal
     animations: [appModuleAnimation()],
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
-export class SystemSettingsComponent extends AppComponentBase implements OnInit {
+export class SystemSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
 
     @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
     @ViewChild('addOrEditSSLBindingModal') addOrEditSSLBindingModal: AddOrEditSSLBindingModal;
@@ -28,12 +28,16 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
         { 'Id': 2, 'Name': 'Funding UI' }
     ];
 
+    private rootComponent;
+
     constructor(
         injector: Injector,
         private _tenantSslCertificateService: TenantSslCertificateServiceProxy,
         private _tenantHostService: TenantHostServiceProxy
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     ngOnInit(): void {
@@ -89,5 +93,9 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit 
                     });
             }
         });
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 }

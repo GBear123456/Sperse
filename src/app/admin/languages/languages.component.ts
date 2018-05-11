@@ -1,4 +1,4 @@
-import { Component, Injector, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { Component, Injector, ViewEncapsulation, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { LanguageServiceProxy, ApplicationLanguageListDto, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -12,7 +12,7 @@ import { Paginator } from 'primeng/components/paginator/paginator';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class LanguagesComponent extends AppComponentBase {
+export class LanguagesComponent extends AppComponentBase implements OnDestroy {
 
     @ViewChild('languagesTable') languagesTable: ElementRef;
     @ViewChild('createOrEditLanguageModal') createOrEditLanguageModal: CreateOrEditLanguageModalComponent;
@@ -21,6 +21,7 @@ export class LanguagesComponent extends AppComponentBase {
 
     defaultLanguageName: string;
     private _$languagesTable: JQuery;
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
@@ -28,6 +29,8 @@ export class LanguagesComponent extends AppComponentBase {
         private _router: Router
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     getLanguages(): void {
@@ -66,5 +69,9 @@ export class LanguagesComponent extends AppComponentBase {
                 }
             }
         );
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 }

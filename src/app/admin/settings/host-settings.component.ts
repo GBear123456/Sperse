@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, AfterViewChecked, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, AfterViewChecked, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { HostSettingsServiceProxy, HostSettingsEditDto, CommonLookupServiceProxy, ComboboxItemDto, DefaultTimezoneScope, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
@@ -15,7 +15,7 @@ import * as moment from 'moment';
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()]
 })
-export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewChecked {
+export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
     loading = false;
     hostSettings: HostSettingsEditDto;
@@ -26,6 +26,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
 
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
+    private rootComponent;
 
     constructor(
         injector: Injector,
@@ -34,6 +35,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         private _appSessionService: AppSessionService
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     loadHostSettings(): void {
@@ -76,6 +79,10 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
         $('tabset ul.nav').addClass('m-tabs-line');
         $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 
     sendTestEmail(): void {

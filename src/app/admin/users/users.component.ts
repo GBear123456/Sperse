@@ -1,4 +1,4 @@
-import { Component, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Http } from '@angular/http';
 import { UserServiceProxy, UserListDto, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
@@ -21,7 +21,7 @@ import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class UsersComponent extends AppComponentBase {
+export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     @ViewChild('createOrEditUserModal') createOrEditUserModal: CreateOrEditUserModalComponent;
     @ViewChild('editUserPermissionsModal') editUserPermissionsModal: EditUserPermissionsModalComponent;
@@ -33,6 +33,8 @@ export class UsersComponent extends AppComponentBase {
     filterText = '';
     selectedPermission = '';
     role: number = undefined;
+
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
@@ -46,6 +48,8 @@ export class UsersComponent extends AppComponentBase {
     ) {
         super(injector);
         this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     getUsers(event?: LazyLoadEvent) {
@@ -123,5 +127,9 @@ export class UsersComponent extends AppComponentBase {
                 }
             }
         );
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 }
