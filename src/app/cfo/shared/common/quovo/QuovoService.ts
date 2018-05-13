@@ -7,6 +7,8 @@ declare const Quovo: any;
 
 export class QuovoHandler {
     private handler: any;
+    private handlerTokenTime: number;
+    private tokenExpirationTime = 1000 * 60 * 60;
     private addedConnectionIds = [];
     private _isLoaded = false;
     private _isOpened = false;
@@ -25,13 +27,25 @@ export class QuovoHandler {
 
     get instanceType(): string { return this._instanceType; }
     get instanceId(): number { return this._instanceId; }
-    get isLoaded(): boolean { return this._isLoaded; }
+    get isLoaded(): boolean {
+        if (this._isLoaded && !this.isValid) {
+            console.log('reconnecting...');
+            setTimeout(() => this.reconnect(), 100);
+            return false;
+        }
+
+        return this._isLoaded;
+    }
     get isOpened(): boolean { return this._isOpened; }
 
     onClose: Function;
 
     connect() {
         this._connectFunc(this);
+    }
+
+    get isValid() {
+        return Date.now() - this.handlerTokenTime < this.tokenExpirationTime;
     }
 
     open(onClose: Function = null, connectionId: number = null) {
@@ -73,6 +87,7 @@ export class QuovoHandler {
     }
 
     createHandler(createHandlerFunction, token) {
+        this.handlerTokenTime = Date.now();
         this.handler = createHandlerFunction(token,
             () => this.onHandlerLoad(),
             () => this.onHandlerOpen(),
