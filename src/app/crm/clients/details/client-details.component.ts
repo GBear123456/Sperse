@@ -242,6 +242,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 if (isConfirmed) {
                     this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
+                        this._customerService['data']['deleted'] = true;
                         this.close();
                     });
                 }
