@@ -14,6 +14,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
 
+import { ClientDetailsService } from './client-details.service';
 import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -157,6 +158,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     ClientDetailsComponent
   ],
   providers: [
+    ClientDetailsService,
     CountryServiceProxy,
     ContactAddressServiceProxy,
     ContactEmailServiceProxy,
