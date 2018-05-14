@@ -7,8 +7,9 @@ declare const Quovo: any;
 
 export class QuovoHandler {
     private handler: any;
-    private handlerTokenTime: number;
-    private tokenExpirationTime = 1000 * 60 * 60;
+    private _token: string;
+    private _tokenTime: number;
+    private _tokenExpirationTime = 1000 * 60 * 1;
     private addedConnectionIds = [];
     private _isLoaded = false;
     private _isOpened = false;
@@ -16,12 +17,15 @@ export class QuovoHandler {
     private _instanceType: string;
     private _instanceId: number;
     private _connectFunc: Function;
+    private _getTokenFunc: Function;
+    private _iframe: any;
     private onAdd: Function;
 
-    constructor(instanceType: string, instanceId: number, connectFunc, onAccountAdd) {
+    constructor(instanceType: string, instanceId: number, connectFunc, onAccountAdd, getTokenFunc) {
         this._instanceType = instanceType;
         this._instanceId = instanceId;
         this._connectFunc = connectFunc;
+        this._getTokenFunc = getTokenFunc;
         this.onAdd = onAccountAdd;
     }
 
@@ -45,8 +49,15 @@ export class QuovoHandler {
     }
 
     get isValid() {
-        return Date.now() - this.handlerTokenTime < this.tokenExpirationTime;
+        return Date.now() - this._tokenTime < this._tokenExpirationTime;
     }
+
+    private set token($token) {
+        this._token = $token;
+        this._tokenTime = Date.now();
+    }
+
+    private get token() { return this._token; }
 
     open(onClose: Function = null, connectionId: number = null) {
         if (!this.isLoaded || this.isOpened) { return; }
@@ -87,7 +98,7 @@ export class QuovoHandler {
     }
 
     createHandler(createHandlerFunction, token) {
-        this.handlerTokenTime = Date.now();
+        this.token = token;
         this.handler = createHandlerFunction(token,
             () => this.onHandlerLoad(),
             () => this.onHandlerOpen(),
@@ -101,12 +112,30 @@ export class QuovoHandler {
             this._isOpened = false;
             this.close();
         }
-        this.handler = null;
-        this.connect();
+
+        if (this._iframe) {
+            this._getTokenFunc(this, (newToken) => {
+                let src = this._iframe.getAttribute('src');
+                src = src.replace(this.token, newToken);
+                this.token = newToken;
+                this._iframe.setAttribute('src', 'about:blank');
+                this._iframe.setAttribute('src', src);
+            });
+        } else {
+            this.connect();
+        }
     }
 
     private onHandlerLoad() {
         this._isLoaded = true;
+
+        if (!this._iframe) {
+            let frames = document.querySelectorAll('[id|=q-frame]');
+            if (frames.length === 0) {
+                this._iframe = null;
+            }
+            this._iframe = frames[0];
+        }
     }
 
     private onHandlerOpen() {
@@ -151,7 +180,8 @@ export class QuovoService {
         if (!quovoHandler) {
             quovoHandler = new QuovoHandler(instanceType, instanceId,
                 (handler) => this.connect(handler),
-                (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id));
+                (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id),
+                (handler, callback) => this.getUIToken(handler, callback));
             this.quovoHandlers[handlerId] = quovoHandler;
 
             jQuery.getScript('https://app.quovo.com/ui.js', () => {
@@ -163,10 +193,12 @@ export class QuovoService {
     }
 
     public connect(quovoHandler: QuovoHandler) {
+        this.getUIToken(quovoHandler, (token) => quovoHandler.createHandler(this.createQuovoHandler, token));
+    }
+
+    public getUIToken(quovoHandler: QuovoHandler, callback) {
         this._syncService.createProviderUIToken(InstanceType[quovoHandler.instanceType], quovoHandler.instanceId)
-            .subscribe((data) => {
-                quovoHandler.createHandler(this.createQuovoHandler, data.token);
-            });
+            .subscribe((data) => callback(data.token));
     }
 
     private onAccountAdd(instanceType: string, instanceId: number, accountId) {
