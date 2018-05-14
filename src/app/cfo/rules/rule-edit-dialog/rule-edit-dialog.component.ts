@@ -496,6 +496,11 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             .option('elementAttr', { invalid: false });
         $event.data.id = this.attributesAndKeywords.length;
         this.attributeEditData = $event.data;
+        this.keyAttributeValuesDataSource = [];
+    }
+
+    onEditingStart($event) {
+        this.keyAttributeValuesDataSource = this.getKeyAttributeValues($event.data.attributeTypeId);
     }
 
     attributeGridDropDownInitialized($event, cell) {
