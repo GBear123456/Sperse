@@ -76,7 +76,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
     private subRouteParams: any;
-
+    private filterChanged = false;
     private masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
 
@@ -125,21 +125,24 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.searchValue = '';
     }
     
-    private paramsSubscribe() {    
-        this.subRouteParams = this._route.queryParams.subscribe(params => {
-            if (params['dataLayoutType']) {
-                let dataLayoutType = params['dataLayoutType'];
-                if (dataLayoutType != this.dataLayoutType) {
-                    if (dataLayoutType == DataLayoutType.Grid)
-                        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                            .subscribe(this.onStagesLoaded.bind(this));
-                    this.toggleDataLayout(dataLayoutType);
+    private paramsSubscribe() {
+        if (!this.subRouteParams || this.subRouteParams.closed)    
+            this.subRouteParams = this._route.queryParams.subscribe(params => {
+                if (params['dataLayoutType']) {
+                    let dataLayoutType = params['dataLayoutType'];
+                    if (dataLayoutType != this.dataLayoutType) {
+                        if (dataLayoutType == DataLayoutType.Grid)
+                            this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+                                .subscribe(this.onStagesLoaded.bind(this));
+                        this.toggleDataLayout(dataLayoutType);
+                    }
                 }
-            }
-
-            if ('addNew' == params['action'])
-                setTimeout(() => this.createLead());
-        });       
+    
+                if ('addNew' == params['action'])
+                    setTimeout(() => this.createLead());
+                if (params['refresh'])
+                    this.refreshDataGrid();
+            });       
     }
 
     onContentReady(event) {
@@ -149,9 +152,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    refreshDataGrid(quiet = false) {
+    refreshDataGrid(quiet = false, addedNew = false) {
         setTimeout(() => {
-            this.pipelineComponent.refresh(quiet || !this.showPipeline);
+            this.pipelineComponent.refresh(
+                quiet || !this.showPipeline, addedNew);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
@@ -168,6 +172,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initDataSource();
         if (!this.showPipeline)
             setTimeout(() => this.dataGrid.instance.repaint());            
+        if (this.filterChanged) {
+            this.filterChanged = false;
+            setTimeout(() => this.processFilterInternal());
+        }
     }
 
     initFilterConfig(): void {
@@ -236,6 +244,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
 
         this._filtersService.apply(() => {
+            this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
         });
@@ -495,7 +504,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: this.refreshDataGrid.bind(this),
+                refreshParent: (quite) => {
+                    this.refreshDataGrid(quite, true);
+                }, 
                 isInLeadMode: true
             }
         });
@@ -592,36 +603,38 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refreshDataGrid();
         });
     }
-    
+
     ngOnInit() {
         this.activate();
     }    
     
     ngAfterViewInit() {
         this.initDataSource();
-        this.paramsSubscribe();
     }
     
     ngOnDestroy() {
         this.deactivate();
-        this.subRouteParams.unsubscribe();
     }
 
     activate() {
-        this.initToolbarConfig();
-        this.initFilterConfig();
         this._filtersService.localizationSourceName = 
             this.localizationSourceName;
+
+        this.paramsSubscribe();
+        this.initToolbarConfig();
+        this.initFilterConfig();
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+        this.rootComponent.overflowHidden(true);            
     }
     
     deactivate() {
-        this._appService.toolbarConfig = null;
         this._filtersService.localizationSourceName = 
             AppConsts.localization.defaultLocalizationSourceName;
+        
+        this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
+        this.subRouteParams.unsubscribe();
     }
 
     onShowingPopup(e) {

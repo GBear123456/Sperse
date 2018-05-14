@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -7,15 +7,18 @@ import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } f
     templateUrl: './ui-customization.component.html',
     animations: [appModuleAnimation()]
 })
-export class UiCustomizationComponent extends AppComponentBase {
+export class UiCustomizationComponent extends AppComponentBase implements OnDestroy {
 
     settings: UiCustomizationSettingsEditDto;
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
         private _uiCustomizationService: UiCustomizationSettingsServiceProxy
     ) {
         super(injector);
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     ngAfterViewChecked(): void {
@@ -28,6 +31,10 @@ export class UiCustomizationComponent extends AppComponentBase {
         this._uiCustomizationService.getUiManagementSettings().subscribe((settingsResult) => {
             this.settings = settingsResult;
         });
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 
     leftMenuPositionSelected(): boolean {

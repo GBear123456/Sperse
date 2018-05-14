@@ -31,9 +31,15 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount).subscribe(result => {
-            this.dataSource = result;
-        });
+        this.refresh();
+    }
+
+    refresh() {
+        this._dashboardServiceProxy.getRecentlyCreatedCustomers(
+            this.recordsCount).subscribe(result => {
+                this.dataSource = result;
+            }
+        );
     }
 
     onCellClick($event) {

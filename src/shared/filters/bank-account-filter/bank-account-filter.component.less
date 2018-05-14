@@ -7,5 +7,23 @@
                 border-top: none;
             }
         }
+
+        /deep/ bank-accounts-widget {
+            .filter-actions .filter-by-types /deep/ .dx-tab .dx-tab-text {
+                font-size: 13px;
+            }
+
+            #gridContainer table.dx-datagrid-table .account-status {
+                text-align: left;
+                max-width: 112px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding-left: 18px;
+
+                &::before {
+                    left: 7px;
+                }
+            }
+        }
     }
 }

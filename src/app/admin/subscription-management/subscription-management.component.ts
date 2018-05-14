@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
@@ -22,7 +22,7 @@ import { Paginator } from 'primeng/components/paginator/paginator';
     animations: [appModuleAnimation()]
 })
 
-export class SubscriptionManagementComponent extends AppComponentBase implements OnInit {
+export class SubscriptionManagementComponent extends AppComponentBase implements OnInit, OnDestroy {
 
     @ViewChild('dataTable') dataTable: DataTable;
     @ViewChild('paginator') paginator: Paginator;
@@ -35,6 +35,7 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
     editionPaymentType: EditionPaymentType = EditionPaymentType;
 
     filterText = '';
+    private rootComponent;
 
     constructor(
         injector: Injector,
@@ -46,6 +47,8 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
     ) {
         super(injector);
         this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.pageHeaderFixed();
     }
 
     ngAfterViewChecked(): void {
@@ -56,6 +59,10 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
 
     ngOnInit(): void {
         this.getSettings();
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.pageHeaderFixed(true);
     }
 
     createOrShowInvoice(paymentId: number, invoiceNo: string): void {

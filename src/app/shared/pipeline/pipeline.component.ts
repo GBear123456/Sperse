@@ -53,7 +53,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    refresh(quiet = false) {
+    refresh(quiet = false, addedNew = false) {
         if (!quiet)
             this.startLoading(true, this.mainContainerSelector);
         this._pipelineService
@@ -61,7 +61,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             .subscribe((result: PipelineDto) => {
                 this.pipeline = result;
                 this.onStagesLoaded.emit(result);
-                this.loadStagesLeads();
+                this.loadStagesLeads(addedNew ? 
+                  Math.floor(this.stages.length / 2): 0, 0, addedNew);
             });
     }
 
@@ -91,7 +92,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._dataSource.pageIndex(page);
         this._dataSource.load().done((leads) => {
             let stage = stages[index];
-            stage['leads'] = oneStageOnly ? _.uniqBy(
+            stage['leads'] = page && oneStageOnly ? _.uniqBy(
                 (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
             stage['total'] = this._dataSource.totalCount();
             stage['full'] = stage['total'] <= stage['leads'].length;
@@ -128,7 +129,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.disabled = true;                    
                 this._pipelineService.updateLeadStageByLeadId(
                     leadId, oldStage, newStage, () => {
-                        this.disabled = false;                            
+                        this.disabled = false;
                     }
                 );
             }

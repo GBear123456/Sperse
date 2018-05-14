@@ -5,13 +5,16 @@ import { MatDialog } from '@angular/material';
 
 import { AppConsts } from '@shared/AppConsts';
 import { Observable } from "rxjs";
+import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/switchMap';
 import * as _ from "underscore";
 
 @Injectable()
 export class PipelineService {
-    private stages = [];
     private pipeline: PipelineDto;
+
+    public stages = [];
+    public stageChange: Subject<any>;
 
     constructor(
         injector: Injector,
@@ -19,6 +22,7 @@ export class PipelineService {
         private _leadService: LeadServiceProxy,
         private _pipelineServiceProxy: PipelineServiceProxy
     ) {  
+        this.stageChange = new Subject<any>();
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
@@ -133,8 +137,9 @@ export class PipelineService {
     }
 
     completeLeadUpdate(lead, fromStage, toStage) {
-        lead.Stage = toStage.name;
+        lead.stage = lead.Stage = toStage.name;
         fromStage.total--;
         toStage.total++;
+        this.stageChange.next(lead);
     }
 }

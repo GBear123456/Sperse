@@ -54,7 +54,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 this.startDate,
                 this.endDate,
                 undefined,
-                this.selectedPeriod
+                this.selectedPeriod,
+                false
             )
                 .mergeMap(x => x)
                 .scan((prevStatsItem, currentStatsItem) => {

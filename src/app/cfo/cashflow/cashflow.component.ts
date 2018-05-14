@@ -130,6 +130,18 @@ class CashflowCategorizationModel {
     childReferenceProperty?: string;
 }
 
+class CellOptions {
+    classes?: string[] = [];
+    parentClasses?: string[] = [];
+    attributes?: any = {};
+    elementsToAppend?: HTMLElement[] = [];
+    childrenSelectorsToRemove?: string[] = [];
+    eventListeners?: object = {};
+    eventsToTrigger?: string[] = [];
+    value?: string = null;
+    general?: any = {};
+}
+
 @Component({
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
@@ -177,6 +189,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Bank accounts of user */
     private bankAccounts: BankAccountDto[];
 
+    calculateCellValuePerformance = 0;
     preparingSpeed = 0;
     truncatingSpeed = 0;
 
@@ -205,6 +218,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Filter by string */
     private filterBy: string;
+
+    private rowCellRightPadding = 10;
+
+    private sparkLinesWidth = 64;
+
+    private accountNumberWidth = 53;
 
     private _calculatorShowed = false;
     public set calculatorShowed(value: boolean) {
@@ -466,10 +485,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         localizationAndCurrency: {
             applyTo: 'cells',
             preferences: {
-                currency: {
-                    areas: ['data'],
-                    handleMethod: this.changeCurrency
-                },
                 numberFormatting: {
                     areas: ['data'],
                     handleMethod: this.reformatCell
@@ -489,7 +504,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 },
                 showNegativeValuesInRed: {
                     areas: ['data'],
-                    handleMethod: this.showNegativeValuesInRed,
+                    handleMethod: this.showNegativeValuesInRed
                 }
             }
         },
@@ -611,7 +626,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private filters: FilterModel[] = new Array<FilterModel>();
     private rootComponent: any;
     private requestFilter: StatsFilter;
-    private anotherPeriodAccountsValues: Map<object, number> = new Map();
+    private anotherPeriodAccountsValues: Map<string, number> = new Map();
     private cachedColumnActivity: Map<string, boolean> = new Map();
     private cachedRowsFitsToFilter: Map<string, boolean> = new Map();
 
@@ -790,12 +805,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTreeObservalble = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, false);
+        let getCategoryTreeObservable = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservalble, getCashflowGridSettings, getBankAccountsObservable)
+        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0], result[4]);
@@ -844,6 +859,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         [].push.call(this.cashflowData, this.addCategorizationLevels(netChangeObject));
                     }
                 }
+
+                this.anotherPeriodAccountsValues.clear();
+                this.getUserPreferencesForCell.cache = {};
                 return [].push.call(this.cashflowData, cashflowItem);
             };
         }
@@ -1796,6 +1814,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
+        this.getUserPreferencesForCell.cache = {};
+        this.getCellOptionsFromCell.cache = {};
+        this.getNewTextWidth.cache = {};
+        this.anotherPeriodAccountsValues.clear();
         this.initHeadlineConfig();
         this.closeTransactionsDetail();
         this.loadGridDataSource();
@@ -1834,9 +1856,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** @todo refactor - move to the showNetChangeRow and call here all
              *  appliedTo data methods before reloading the cashflow
              */
+
+            /** Clear user preferences cache */
+            this.getUserPreferencesForCell.cache = {};
+
             /** @todo move to the userPreferencesHandlers to avoid if else structure */
             if (updateWithDiscrepancyChange) {
-                this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
             }
             if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange) {
@@ -1950,9 +1975,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.finishLoading();
         }
 
+        //console.log('calculateCellValuePerformance speed', this.calculateCellValuePerformance);
         //console.log('preparing speed', this.preparingSpeed);
         //console.log('truncating speed', this.truncatingSpeed);
-        this.preparingSpeed = this.truncatingSpeed = 0;
+        this.preparingSpeed = this.truncatingSpeed = this.calculateCellValuePerformance = 0;
         //console.log('conent ready speed', performance.now() - contentReadyStart);
     }
 
@@ -2639,22 +2665,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return a;
     }
 
-    applyOptionsToElement(element, options) {
-        options.classes.length && element.classList.add(...options.classes);
-        options.parentClasses.length && element.parentElement.classList.add(...options.parentClasses);
-        if (Object.keys(options.attributes).length) {
-            for (let attribute in options.attributes) {
-                element.setAttribute(attribute, options.attributes[attribute]);
+    applyOptionsToElement(element, ...optionsList) {
+        for (let options of optionsList) {
+            options.classes.length && element.classList.add(...options.classes);
+            options.parentClasses.length && element.parentElement.classList.add(...options.parentClasses);
+            if (Object.keys(options.attributes).length) {
+                for (let attribute in options.attributes) {
+                    element.setAttribute(attribute, options.attributes[attribute]);
+                }
+            }
+            options.elementsToAppend.length && options.elementsToAppend.forEach(appendElement => element.appendChild(appendElement));
+            options.childrenSelectorsToRemove.length && options.childrenSelectorsToRemove.forEach(selectorToRemove => element.querySelector(selectorToRemove).remove());
+            if (Object.keys(options.eventListeners).length) {
+                for (let listener in options.eventListeners) {
+                    element[listener] = options.eventListeners[listener];
+                }
+            }
+            options.eventsToTrigger.length && options.eventsToTrigger.forEach(eventName => element[eventName]());
+            if (options.value !== null) {
+                /** @todo add class to the span with actual value and get it */
+                element.firstElementChild.innerHTML = options.value;
             }
         }
-        options.elementsToAppend.length && options.elementsToAppend.forEach(appendElement => element.appendChild(appendElement));
-        options.childrenSelectorsToRemove.length && options.childrenSelectorsToRemove.forEach(selectorToRemove => element.querySelector(selectorToRemove).remove());
-        if (Object.keys(options.eventListeners).length) {
-            for (let listener in options.eventListeners) {
-                element[listener] = options.eventListeners[listener];
-            }
-        }
-        options.eventsToTrigger.length && options.eventsToTrigger.forEach(eventName => element[eventName]());
     }
 
     /**
@@ -2667,7 +2699,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let getCellOptionsStarted = performance.now();
 
         /** Apply user preferences to the data showing */
-        this.applyUserPreferencesForCells(e);
+        let preferencesOptions = this.getUserPreferencesForCell(e.cell, e.area);
 
         let options = this.getCellOptionsFromCell(e.cell, e.area, e.rowIndex, e.isWhiteSpace);
         this.preparingSpeed += performance.now() - getCellOptionsStarted;
@@ -2679,10 +2711,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         //let applyingOptionsStarted = performance.now();
         /** Apply all cell options to the cellElement */
-        this.applyOptionsToElement(e.cellElement, options);
+        this.applyOptionsToElement(e.cellElement, options, preferencesOptions);
 
         //console.log('applying options to cell', performance.now() - applyingOptionsStarted);
         //let otherOptions = performance.now();
+
+        /** hide long text for row headers and show '...' instead with the hover and long text */
+        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
+            let trancatingSpeed = performance.now();
+            let textElement: HTMLSpanElement = e.cellElement.parentElement.querySelector(`td:nth-child(${e.cellElement.cellIndex + 1}) > span`);
+            let textWidth: number = Math.round(textElement.getBoundingClientRect().width);
+            let newTextWidth = this.getNewTextWidth(options.general.hasChilds, e.cellElement.clientWidth, textWidth, options.general.isAccountHeaderCell);
+            if (newTextWidth) {
+                this.applyNewTextWidth(e, textElement, newTextWidth);
+            }
+
+            this.truncatingSpeed += performance.now() - trancatingSpeed;
+        }
 
         if (e.area === 'column' && e.cell.type !== GrandTotal && e.cell.path) {
             let fieldObj = this.getFieldObjectByPath(e.cell.path);
@@ -2702,14 +2747,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.highlightFilteredResult(e);
         }
 
-        /** hide long text for row headers and show '...' instead with the hover and long text */
-        if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
-            let trancatingSpeed = performance.now();
-            this.truncateCellText(e);
-            this.truncatingSpeed += performance.now() - trancatingSpeed;
-        }
-
         //console.log('applying other options', performance.now() - otherOptions);
+    }
+
+    applyNewTextWidth(cellObj, element, newCellWidth) {
+        cellObj.cellElement.setAttribute('title', cellObj.cell.text.toUpperCase());
+        /** Extend text to the whole cell */
+        element.style.whiteSpace = 'nowrap';
+        element.classList.add('truncated');
+        /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
+        element.innerHTML = `<span>${element.textContent}</span>`;
+        /** Set new width to the text element */
+        element.style.width = newCellWidth + 'px';
     }
 
     addChartToRow(e) {
@@ -2789,16 +2838,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getCellOptionsFromCell = underscore.memoize(
-        (cell, area: 'row' | 'column' | 'data', rowIndex: number, isWhiteSpace: boolean) => {
-            let options = {
-                classes: [],
-                parentClasses: [],
-                attributes: {},
-                elementsToAppend: [],
-                childrenSelectorsToRemove: [],
-                eventListeners: {},
-                eventsToTrigger: []
-            };
+        (cell, area: 'row' | 'column' | 'data', rowIndex: number, isWhiteSpace: boolean): CellOptions => {
+            let options: CellOptions = new CellOptions();
 
             /** Add day (MON, TUE etc) to the day header cells */
             if ((area === 'column' || area === 'data') && cell.text !== undefined && this.isDayCell(cell)) {
@@ -2830,15 +2871,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** add account number to the cell */
             if (this.isAccountHeaderCell(cell, area)) {
                 let accountId = cell.path[1].slice(2);
-            let account = this.bankAccounts.find(account => account.id == accountId);
-            if (account && account.accountNumber) {
-                    /** @todo check for memory leak */
-                    let accountNumberElement = document.createElement('span');
-                    accountNumberElement.className = 'accountNumber';
-                    accountNumberElement.innerText = account.accountNumber;
-                    options.elementsToAppend.push(accountNumberElement);
+                let account = this.bankAccounts.find(account => account.id == accountId);
+                if (account && account.accountNumber) {
+                        /** @todo check for memory leak */
+                        let accountNumberElement = document.createElement('span');
+                        accountNumberElement.className = 'accountNumber';
+                        accountNumberElement.innerText = account.accountNumber;
+                        options.elementsToAppend.push(accountNumberElement);
+                }
+                options.general['isAccountHeaderCell'] = true;
             }
-        }
 
             /** add current classes for the cells that belongs to the current periods */
             if (area === 'data' || (area === 'column' || rowIndex >= 1)) {
@@ -2855,25 +2897,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** disable expanding and hide the plus button of the elements that has no children */
             if (area === 'row' && cell.path && !cell.isWhiteSpace && cell.path.length !== this.pivotGrid.instance.getDataSource().getAreaFields('row', true).length) {
-                if (!this.hasChildsByPath(cell.path)) {
+                options.general['hasChilds'] = this.hasChildsByPath(cell.path);
+                if (!options.general['hasChilds']) {
                     this.pivotGrid.instance.getDataSource().collapseHeaderItem('row', cell.path);
                     options.classes.push('emptyChildren');
                     options.childrenSelectorsToRemove.push('.dx-expand-icon-container');
                     options.eventListeners['onclick'] = function(event) {
-                    event.stopImmediatePropagation();
-                };
+                        event.stopImmediatePropagation();
+                    };
+                }
             }
-        }
 
             /** If there are some cells to click - click it! */
-                if (area === 'column' && cell.path) {
-                    if (this.fieldPathsToClick.length) {
+            if (area === 'column' && cell.path) {
+                if (this.fieldPathsToClick.length) {
                     let index;
-                        this.fieldPathsToClick.forEach((path, arrIndex) => { if (path.toString() === cell.path.toString()) index = arrIndex; });
+                    this.fieldPathsToClick.forEach((path, arrIndex) => { if (path.toString() === cell.path.toString()) index = arrIndex; });
                     if (index !== undefined) {
                         delete this.fieldPathsToClick[index];
-                            if (!cell.expanded) {
-                                options.eventsToTrigger.push('click');
+                        if (!cell.expanded) {
+                            options.eventsToTrigger.push('click');
                         }
                     }
                 }
@@ -2965,29 +3008,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Check if cell text is not fit to one row with other elements and if so - truncate it
      * @param e
      */
-    truncateCellText(e) {
-        let paddingRight: number = parseInt(getComputedStyle(e.cellElement).paddingRight);
-        let paddingLeft: number = parseInt(getComputedStyle(e.cellElement).paddingLeft);
-        let cellWidth: number = e.cellElement.clientWidth - paddingRight - paddingLeft;
-        let textElement: HTMLSpanElement = e.cellElement.parentElement.querySelector(`td:nth-child(${e.cellElement.cellIndex + 1}) > span`);
-        /** Extend text to the whole cell */
-        textElement.style.whiteSpace = 'nowrap';
-        let textWidth: number = textElement.getBoundingClientRect().width;
-        /** Get the sum of widths of all cell children except text element width */
-        let anotherChildrenElementsWidth: number = [].reduce.call(e.cellElement.children, (sum, element) => {
-            let computedStyles: CSSStyleDeclaration = getComputedStyle(element);
-            return sum + (element !== textElement ? element.getBoundingClientRect().width + parseInt(computedStyles.marginRight) + parseInt(computedStyles.marginLeft) : 0);
-        }, 0);
-        /** If text size is too big - truncate it */
-        if ((textWidth + anotherChildrenElementsWidth) > cellWidth) {
-            e.cellElement.setAttribute('title', e.cell.text.toUpperCase());
-            textElement.classList.add('truncated');
-            /** created another span inside to avoid inline-flex and text-overflow: ellipsis conflicts */
-            textElement.innerHTML = `<span>${textElement.textContent}</span>`;
-            /** Set new width to the text element */
-            textElement.style.width = (cellWidth - anotherChildrenElementsWidth - 1) + 'px';
-        }
-    }
+    getNewTextWidth = underscore.memoize(
+        (hasChilds, cellInnerWidth, textWidth, isAccount): number => {
+            let newTextWidth;
+            let paddingRight = this.rowCellRightPadding;
+            let paddingLeft = hasChilds ? 22 : 43;
+            let cellWidth: number = cellInnerWidth - paddingRight - paddingLeft;
+
+            /** Get the sum of widths of all cell children except text element width */
+            let anotherChildrenElementsWidth: number = this.sparkLinesWidth + (isAccount ? this.accountNumberWidth : 0);
+
+            /** If text size is too big - truncate it */
+            if ((textWidth + anotherChildrenElementsWidth) > cellWidth) {
+                newTextWidth = (cellWidth - anotherChildrenElementsWidth - 1);
+            }
+            return newTextWidth;
+        },
+        function() { return JSON.stringify(arguments) }
+    )
 
     /**
      * Return whehter element is cell of cashflow table
@@ -3019,7 +3057,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     $('.selectedCell').removeClass('selectedCell');
                     this.hideModifyingNumberBox();
                     targetCell.classList.add('selectedCell');
-                };
+                }
 
                 let items = this.getDataItemsByCell(cellObj);
                 /** If there are some forecasts for this cell */
@@ -3146,12 +3184,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 targetCell.appendChild(infoTooltip);
                 this.infoTooltip.show();
             }
-
-            /** To avoid issues with dx events */
-            // if (!targetCell.classList.contains('dx-area-data-cell')) {
-            //     $('.dx-skip-gesture-event').removeClass('dx-skip-gesture-event');
-            //     targetCell.classList.add('dx-skip-gesture-event');
-            // }
         }
     }
 
@@ -3213,11 +3245,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             result => {
                 /** Get ids from the server in a case of creation or from the local in a case of update */
                 let updatedForecastsIds = result || forecastModels.forecasts.map(forecast => forecast.id);
+                let timezoneOffset = targetsData[0].date.startDate.toDate().getTimezoneOffset();
                 /** if the operation is update - then also remove the old objects (income or expense, net change and total balance) */
                 if (operation === 'move') {
                     /** @todo change if we have to handle moving into multiple cells */
                     forecastModels.forecasts.forEach(forecastModel => {
-                        let timezoneOffset = targetsData[0].date.startDate.toDate().getTimezoneOffset();
+                        let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
                         let forecastsInCashflow = this.cashflowData.filter(item => item.forecastId === forecastModel.id);
                         forecastsInCashflow.forEach((forecastInCashflow, index) => {
 
@@ -3293,13 +3326,39 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
     }
 
-    applyUserPreferencesForCells(e) {
-        let userPreferences = this.getUserPreferencesAppliedTo('cells');
-        userPreferences.forEach(preference => {
-            if (preference['sourceValue'] !== null && (!preference.areas.length || preference.areas.indexOf(e.area) !== -1)) {
-                preference['handleMethod'].call(this, e, preference);
+    getUserPreferencesForCell = underscore.memoize(
+        (cell, area) => {
+            let options: CellOptions = new CellOptions();
+            let userPreferences = this.getUserPreferencesAppliedTo('cells');
+            userPreferences.forEach(preference => {
+                if (preference['sourceValue'] !== null && (!preference.areas.length || preference.areas.indexOf(area) !== -1)) {
+                    let preferenceOptions = preference['handleMethod'].call(this, cell, area, preference);
+                    this.mergeOptions(options, preferenceOptions);
+                }
+            });
+            return options;
+        },
+        function() { return JSON.stringify(arguments) }
+    )
+
+    mergeOptions(initialOptions: CellOptions, options: CellOptions) {
+        for (let optionName in options) {
+            let optionValue = options[optionName];
+            if (optionValue === null) {
+                continue;
             }
-        });
+            if (Array.isArray(optionValue)) {
+                initialOptions[optionName] = [ ...initialOptions[optionName], ...options[optionName] ];
+                continue;
+            }
+            if (typeof optionValue === 'string') {
+                initialOptions[optionName] = optionValue;
+                continue;
+            }
+            if (typeof optionValue === 'object') {
+                initialOptions[optionName] = { ...initialOptions[optionName], ...options[optionName] };
+            }
+        }
     }
 
     /**
@@ -3337,39 +3396,47 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /** User preferences */
-    showAmountsWithDecimals(cellObj, preference) {
-        let cellType = this.getCellType(cellObj);
+    showAmountsWithDecimals(cell, area, preference): CellOptions {
+        let options: CellOptions = { attributes: {}, value: null };
+        let cellType = this.getCellType(cell, area);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
             if (!isCellMarked) {
-                cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(Math.round(cellObj.cell.value), 0);
+                options.value = this.formatAsCurrencyWithLocale(Math.round(cell.value), 0);
+
                 /** add title to the cells that has too little value and shown as 0 to show the real value on hover */
-                if (cellObj.cell.value > -1 && cellObj.cell.value < 1 && cellObj.cell.value !== 0 && Math.abs(cellObj.cell.value) >= 0.01) {
-                    cellObj.cellElement.setAttribute('title', this.formatAsCurrencyWithLocale(cellObj.cell.value, 2));
+                if (cell.value > -1 && cell.value < 1 && cell.value !== 0 && Math.abs(cell.value) >= 0.01) {
+                    options.attributes.title = this.formatAsCurrencyWithLocale(cell.value, 2);
                 }
             }
         }
+
+        return options;
     }
 
-    hideZeroValuesInCells(cellObj, preference) {
-        let cellType = this.getCellType(cellObj);
+    hideZeroValuesInCells(cell, area, preference): CellOptions {
+        let options: CellOptions = { value: null, classes: [] };
+        let cellType = this.getCellType(cell, area);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
-            if (isCellMarked && (cellObj.cell.value > -0.01 && cellObj.cell.value < 0.01)) {
-                cellObj.cellElement.innerText = '';
-                cellObj.cellElement.classList.add('hideZeroValues');
+            if (isCellMarked && (cell.value > -0.01 && cell.value < 0.01)) {
+                options.value = '';
+                options.classes.push('hideZeroValues');
             }
         }
+        return options;
     }
 
-    showNegativeValuesInRed(cellObj, preference) {
-        let cellType = this.getCellType(cellObj);
+    showNegativeValuesInRed(cell, area, preference): CellOptions {
+        let options: CellOptions = { classes: [] };
+        let cellType = this.getCellType(cell, area);
         if (cellType) {
             let isCellMarked = this.userPreferencesService.isCellMarked(preference['sourceValue'], cellType);
-            if (isCellMarked && cellObj.cell.value < -0.01) {
-                cellObj.cellElement.classList.add('red');
+            if (isCellMarked && cell.value < -0.01) {
+                options.classes.push('red');
             }
         }
+        return options;
     }
 
     addPreferenceClass(preference) {
@@ -3393,16 +3460,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    reformatCell(cellObj, preference) {
-        if (!cellObj.cellElement.classList.contains('hideZeroActivity') &&
-            !cellObj.cellElement.classList.contains('hideZeroValues')) {
-            cellObj.cellElement.innerText = this.formatAsCurrencyWithLocale(cellObj.cell.value);
-        }
-    }
-
-    changeCurrency(cellObj, preference) {
-        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: preference.sourceValue});
-        this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? preference.sourceValue : 'USD';
+    reformatCell(cell, area, preference): CellOptions {
+        return { value: this.formatAsCurrencyWithLocale(cell.value) };
     }
 
     formatAsCurrencyWithLocale(value: number, fractionDigits = 2, locale: string = null) {
@@ -3438,12 +3497,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /** @todo refactor */
-    getCellType(cellObj) {
+    getCellType(cell, area) {
         let cellType;
         if (this.cellTypesCheckMethods) {
             for (let type of Object.keys(this.cellTypesCheckMethods)) {
                 let method = <any>this.cellTypesCheckMethods[type];
-                if (method(cellObj.cell, cellObj.area)) {
+                if (method(cell, area)) {
                     cellType = type;
                     break;
                 }
@@ -4281,7 +4340,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     hasChildsByPath(path): boolean {
         let cellPath = path.join(',');
-
         let keys = Object.keys(this.treePathes);
         return path.slice(-1)[0] && keys.some(path => {
             let currentPathIndex = path.indexOf(cellPath);
@@ -4560,12 +4618,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** if we haven't found the value from the another period -
              *  then it hasn't been expanded and we should find out whether the value is in cash */
             if (targetPeriodAccountCell === null) {
-                targetPeriodAccountCachedValue = this.getAnotherPeriodAccountCachedValue(cellData.toString());
+                let key = cellData.toString();
                 /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselves */
-                if (!targetPeriodAccountCachedValue) {
+                if (!this.anotherPeriodAccountsValues.has(key)) {
                     /** calculate the cell value using the cell data and cashflowData */
                     targetPeriodAccountCachedValue = this.calculateCellValue(cellData, this.cashflowData);
-                    this.setAnotherPeriodAccountCachedValue(cellData.toString(), targetPeriodAccountCachedValue);
+                    this.setAnotherPeriodAccountCachedValue(key, targetPeriodAccountCachedValue);
+                } else {
+                    targetPeriodAccountCachedValue = this.anotherPeriodAccountsValues.get(key);
                 }
             } else {
                 /** add the prevEndingAccount value to the cash */
@@ -4616,6 +4676,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellData
      */
     calculateCellValue(cellData, dataArray) {
+        let cellValuePerformance = performance.now();
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = dataArray.reduce((sum, cashflowData) => {
             let date = cashflowData.initialDate || cashflowData.date;
@@ -4632,12 +4693,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return sum;
         }, 0);
-        return value;
-    }
 
-    /** get the prev ending account from the cash */
-    getAnotherPeriodAccountCachedValue(key) {
-        return this.anotherPeriodAccountsValues.get(key);
+        this.calculateCellValuePerformance += performance.now() - cellValuePerformance;
+
+        return value;
     }
 
     /** set the prev ending account value to the cash */
@@ -5179,7 +5238,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: e.data[e.column.dataField],
-            format: '$ #,###.##',
+            format: this.currencySymbol + ' #,###.##',
             width: '90%',
             onEnterKey: this.updateForecastCell.bind(this, e)
         });

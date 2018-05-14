@@ -40,6 +40,7 @@ import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutp
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { ClientService } from '@app/crm/clients/clients.service';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import query from 'devextreme/data/query';
@@ -71,6 +72,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private subRouteParams: any;
     private canSendVerificationRequest: boolean = false;
     private nameParts = ['NamePrefix', 'FirstName', 'MiddleName', 'LastName', 'NameSuffix', 'NickName'];
+    private dependencyChanged: boolean = false;
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -90,6 +92,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         public dialog: MatDialog,
         private _router: Router,
         private _appService: AppService,
+        private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
@@ -125,15 +128,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
         this.searchValue = '';
 
+        this._pipelineService.stageChange.asObservable().subscribe((lead) => {
+            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.stages).name);
+        });
+
         this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
     }
     
     private paramsSubscribe() {
-        this.subRouteParams = this._activatedRoute.queryParams
-            .subscribe(params => {
-                if ('addNew' == params['action'])
-                    setTimeout(() => this.createClient());
-        });
+        if (!this.subRouteParams || this.subRouteParams.closed)
+            this.subRouteParams = this._activatedRoute.queryParams
+                .subscribe(params => {
+                    if ('addNew' == params['action'])
+                        setTimeout(() => this.createClient());
+                    if (params['refresh'])
+                        this.refreshDataGrid();
+            });
     } 
 
     private checkCFOClientAccessPermission() {
@@ -159,6 +169,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
+        this.dependencyChanged = false;
     }
 
     showCompactRowsHeight() {
@@ -575,19 +586,26 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
     
     activate() {
+        this._filtersService.localizationSourceName = 
+            this.localizationSourceName;
+
         this.paramsSubscribe();
         this.initToolbarConfig();
         this.initFilterConfig();        
-        this._filtersService.localizationSourceName = this.localizationSourceName;
+
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+
+        if (this.dependencyChanged)
+            this.refreshDataGrid();
     }
     
     deactivate() {
-        this.subRouteParams.unsubscribe();
-        this._appService.toolbarConfig = null;
         this._filtersService.localizationSourceName = 
             AppConsts.localization.defaultLocalizationSourceName;
+
+        this.subRouteParams.unsubscribe();
+        this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();   
     }

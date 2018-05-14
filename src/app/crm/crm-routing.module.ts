@@ -14,7 +14,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
                 children: [
                     { path: 'start', component: DashboardComponent, data: { permission: 'Pages.Detect.Route' } },
                     { path: 'dashboard', component: DashboardComponent, data: { permission: '' } },
-                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: false } },
+                    { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
                     { path: 'orders', component: OrdersComponent, data: { permission: 'Pages.CRM.Orders' } }
                 ]
