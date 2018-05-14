@@ -124,3 +124,9 @@ export class CustomerStatus {
     static Active = 'A';
     static Inactive = 'I'; 
 }
+
+export class ODataSearchStrategy {
+    static Contains = 'contains';
+    static StartsWith = 'startswith';
+    static Equals = 'equals';
+}
