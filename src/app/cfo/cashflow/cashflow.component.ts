@@ -5383,11 +5383,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             format: this.currencySymbol + ' #,###.##',
             width: '86%',
             onEnterKey: this.updateForecastCell.bind(this, e),
-            onKeyDown: function(e) {
+           /* onKeyDown: function(e) {
                 if (e.event.keyCode === 37 || e.event.keyCode === 39) {
                     e.event.stopPropagation();
                 }
-            }
+            }*/
         });
         this.functionButton = new Button(wrapperButton, {
             iconSrc: 'assets/common/icons/fx.svg',
