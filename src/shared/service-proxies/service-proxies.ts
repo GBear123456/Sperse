@@ -10614,6 +10614,60 @@ export class LeadServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    importLeadBusinesses(input: ImportLeadBusinessesInput): Observable<LeadBusinessInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ImportLeadBusinesses";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processImportLeadBusinesses(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processImportLeadBusinesses(response_);
+                } catch (e) {
+                    return <Observable<LeadBusinessInfoOutput[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<LeadBusinessInfoOutput[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processImportLeadBusinesses(response: Response): Observable<LeadBusinessInfoOutput[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LeadBusinessInfoOutput.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<LeadBusinessInfoOutput[]>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getFiltersInitialData(): Observable<LeadFiltersInitialData> {
@@ -25581,8 +25635,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     categories: string;
     shortname: string;
     companyName: string;
-    emailAddress1: string;
-    emailAddress2: string;
     industry: string;
     relationship: string;
     primaryFundingType: string;
@@ -25608,7 +25660,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     productServicesSold: number;
     businessSicCode: number;
     organizationAliases: OrganizationAliasInfo[];
-    organizationPhones: OrganizationPhoneInfo[];
     organizationTeamContacts: OrganizationTeamContactInfo[];
     contactId: number;
     emailAddress: string;
@@ -25616,6 +25667,9 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     phoneExtension: string;
     address: AddressInfo;
     userId: number;
+    photo: ContactPhotoInfo;
+    contactEmails: ContactEmailInfo[];
+    contactPhones: ContactPhoneInfo[];
     contactLinks: ContactLinkInfo[];
 
     constructor(data?: IOrganizationBusinessInfo) {
@@ -25634,8 +25688,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.categories = data["categories"];
             this.shortname = data["shortname"];
             this.companyName = data["companyName"];
-            this.emailAddress1 = data["emailAddress1"];
-            this.emailAddress2 = data["emailAddress2"];
             this.industry = data["industry"];
             this.relationship = data["relationship"];
             this.primaryFundingType = data["primaryFundingType"];
@@ -25665,11 +25717,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
                 for (let item of data["organizationAliases"])
                     this.organizationAliases.push(OrganizationAliasInfo.fromJS(item));
             }
-            if (data["organizationPhones"] && data["organizationPhones"].constructor === Array) {
-                this.organizationPhones = [];
-                for (let item of data["organizationPhones"])
-                    this.organizationPhones.push(OrganizationPhoneInfo.fromJS(item));
-            }
             if (data["organizationTeamContacts"] && data["organizationTeamContacts"].constructor === Array) {
                 this.organizationTeamContacts = [];
                 for (let item of data["organizationTeamContacts"])
@@ -25681,6 +25728,17 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.phoneExtension = data["phoneExtension"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
             this.userId = data["userId"];
+            this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
+            if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
+                this.contactEmails = [];
+                for (let item of data["contactEmails"])
+                    this.contactEmails.push(ContactEmailInfo.fromJS(item));
+            }
+            if (data["contactPhones"] && data["contactPhones"].constructor === Array) {
+                this.contactPhones = [];
+                for (let item of data["contactPhones"])
+                    this.contactPhones.push(ContactPhoneInfo.fromJS(item));
+            }
             if (data["contactLinks"] && data["contactLinks"].constructor === Array) {
                 this.contactLinks = [];
                 for (let item of data["contactLinks"])
@@ -25702,8 +25760,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["categories"] = this.categories;
         data["shortname"] = this.shortname;
         data["companyName"] = this.companyName;
-        data["emailAddress1"] = this.emailAddress1;
-        data["emailAddress2"] = this.emailAddress2;
         data["industry"] = this.industry;
         data["relationship"] = this.relationship;
         data["primaryFundingType"] = this.primaryFundingType;
@@ -25733,11 +25789,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             for (let item of this.organizationAliases)
                 data["organizationAliases"].push(item.toJSON());
         }
-        if (this.organizationPhones && this.organizationPhones.constructor === Array) {
-            data["organizationPhones"] = [];
-            for (let item of this.organizationPhones)
-                data["organizationPhones"].push(item.toJSON());
-        }
         if (this.organizationTeamContacts && this.organizationTeamContacts.constructor === Array) {
             data["organizationTeamContacts"] = [];
             for (let item of this.organizationTeamContacts)
@@ -25749,6 +25800,17 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["phoneExtension"] = this.phoneExtension;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["userId"] = this.userId;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        if (this.contactEmails && this.contactEmails.constructor === Array) {
+            data["contactEmails"] = [];
+            for (let item of this.contactEmails)
+                data["contactEmails"].push(item.toJSON());
+        }
+        if (this.contactPhones && this.contactPhones.constructor === Array) {
+            data["contactPhones"] = [];
+            for (let item of this.contactPhones)
+                data["contactPhones"].push(item.toJSON());
+        }
         if (this.contactLinks && this.contactLinks.constructor === Array) {
             data["contactLinks"] = [];
             for (let item of this.contactLinks)
@@ -25764,8 +25826,6 @@ export interface IOrganizationBusinessInfo {
     categories: string;
     shortname: string;
     companyName: string;
-    emailAddress1: string;
-    emailAddress2: string;
     industry: string;
     relationship: string;
     primaryFundingType: string;
@@ -25791,7 +25851,6 @@ export interface IOrganizationBusinessInfo {
     productServicesSold: number;
     businessSicCode: number;
     organizationAliases: OrganizationAliasInfo[];
-    organizationPhones: OrganizationPhoneInfo[];
     organizationTeamContacts: OrganizationTeamContactInfo[];
     contactId: number;
     emailAddress: string;
@@ -25799,6 +25858,9 @@ export interface IOrganizationBusinessInfo {
     phoneExtension: string;
     address: AddressInfo;
     userId: number;
+    photo: ContactPhotoInfo;
+    contactEmails: ContactEmailInfo[];
+    contactPhones: ContactPhoneInfo[];
     contactLinks: ContactLinkInfo[];
 }
 
@@ -25835,41 +25897,6 @@ export class OrganizationAliasInfo implements IOrganizationAliasInfo {
 
 export interface IOrganizationAliasInfo {
     alias: string;
-}
-
-export class OrganizationPhoneInfo implements IOrganizationPhoneInfo {
-    phoneNumber: string;
-
-    constructor(data?: IOrganizationPhoneInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.phoneNumber = data["phoneNumber"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationPhoneInfo {
-        let result = new OrganizationPhoneInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["phoneNumber"] = this.phoneNumber;
-        return data; 
-    }
-}
-
-export interface IOrganizationPhoneInfo {
-    phoneNumber: string;
 }
 
 export class OrganizationTeamContactInfo implements IOrganizationTeamContactInfo {
@@ -25991,6 +26018,131 @@ export interface IAddressInfo {
     zip: string;
     countryId: string;
     country: string;
+    usageTypeId: string;
+}
+
+export class ContactPhotoInfo implements IContactPhotoInfo {
+    original: string;
+    thumbnail: string;
+    photoSourceId: string;
+
+    constructor(data?: IContactPhotoInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.original = data["original"];
+            this.thumbnail = data["thumbnail"];
+            this.photoSourceId = data["photoSourceId"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoInfo {
+        let result = new ContactPhotoInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["original"] = this.original;
+        data["thumbnail"] = this.thumbnail;
+        data["photoSourceId"] = this.photoSourceId;
+        return data; 
+    }
+}
+
+export interface IContactPhotoInfo {
+    original: string;
+    thumbnail: string;
+    photoSourceId: string;
+}
+
+export class ContactEmailInfo implements IContactEmailInfo {
+    emailAddress: string;
+    usageTypeId: string;
+
+    constructor(data?: IContactEmailInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): ContactEmailInfo {
+        let result = new ContactEmailInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IContactEmailInfo {
+    emailAddress: string;
+    usageTypeId: string;
+}
+
+export class ContactPhoneInfo implements IContactPhoneInfo {
+    phoneNumber: string;
+    phoneExtension: string;
+    usageTypeId: string;
+
+    constructor(data?: IContactPhoneInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhoneInfo {
+        let result = new ContactPhoneInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IContactPhoneInfo {
+    phoneNumber: string;
+    phoneExtension: string;
     usageTypeId: string;
 }
 
@@ -30384,6 +30536,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
+    ratingId: number;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -30442,6 +30595,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                     this.lists.push(CustomerListInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
         }
     }
 
@@ -30499,6 +30653,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
                 data["lists"].push(item.toJSON());
         }
         data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
         return data; 
     }
 }
@@ -30526,6 +30681,7 @@ export interface ICreateCustomerInput {
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
+    ratingId: number;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -34185,6 +34341,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
+    ratingId: number;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -34244,6 +34401,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                     this.lists.push(CustomerListInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
         }
     }
 
@@ -34302,6 +34460,7 @@ export class CreateLeadInput implements ICreateLeadInput {
                 data["lists"].push(item.toJSON());
         }
         data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
         return data; 
     }
 }
@@ -34330,6 +34489,7 @@ export interface ICreateLeadInput {
     tags: CustomerTagInput[];
     lists: CustomerListInput[];
     assignedUserId: number;
+    ratingId: number;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
@@ -35366,7 +35526,6 @@ export interface ILeadBusinessTeamContactInput {
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     leadRequestXref: string;
-    shortName: string;
     companyName: string;
     errorMessage: string;
 
@@ -35382,7 +35541,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
-            this.shortName = data["shortName"];
             this.companyName = data["companyName"];
             this.errorMessage = data["errorMessage"];
         }
@@ -35397,7 +35555,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
-        data["shortName"] = this.shortName;
         data["companyName"] = this.companyName;
         data["errorMessage"] = this.errorMessage;
         return data; 
@@ -35406,9 +35563,182 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
 export interface ILeadBusinessInfoOutput {
     leadRequestXref: string;
-    shortName: string;
     companyName: string;
     errorMessage: string;
+}
+
+export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
+    leads: ImportLeadBusinessInput[];
+    lists: string[];
+    assignedUserId: number;
+    ratingId: number;
+
+    constructor(data?: IImportLeadBusinessesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["leads"] && data["leads"].constructor === Array) {
+                this.leads = [];
+                for (let item of data["leads"])
+                    this.leads.push(ImportLeadBusinessInput.fromJS(item));
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(item);
+            }
+            this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
+        }
+    }
+
+    static fromJS(data: any): ImportLeadBusinessesInput {
+        let result = new ImportLeadBusinessesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.leads && this.leads.constructor === Array) {
+            data["leads"] = [];
+            for (let item of this.leads)
+                data["leads"].push(item.toJSON());
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item);
+        }
+        data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
+        return data; 
+    }
+}
+
+export interface IImportLeadBusinessesInput {
+    leads: ImportLeadBusinessInput[];
+    lists: string[];
+    assignedUserId: number;
+    ratingId: number;
+}
+
+export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
+    prefix: string;
+    first: string;
+    middle: string;
+    last: string;
+    suffix: string;
+    nick: string;
+    title: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    companyName: string;
+    webSite1: string;
+    webSite2: string;
+    companyAddress: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    countryID: string;
+    phoneNumber: string;
+    faxNumber: string;
+
+    constructor(data?: IImportLeadBusinessInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.prefix = data["prefix"];
+            this.first = data["first"];
+            this.middle = data["middle"];
+            this.last = data["last"];
+            this.suffix = data["suffix"];
+            this.nick = data["nick"];
+            this.title = data["title"];
+            this.email1 = data["email1"];
+            this.email2 = data["email2"];
+            this.email3 = data["email3"];
+            this.companyName = data["companyName"];
+            this.webSite1 = data["webSite1"];
+            this.webSite2 = data["webSite2"];
+            this.companyAddress = data["companyAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.zipCode = data["zipCode"];
+            this.countryID = data["countryID"];
+            this.phoneNumber = data["phoneNumber"];
+            this.faxNumber = data["faxNumber"];
+        }
+    }
+
+    static fromJS(data: any): ImportLeadBusinessInput {
+        let result = new ImportLeadBusinessInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["prefix"] = this.prefix;
+        data["first"] = this.first;
+        data["middle"] = this.middle;
+        data["last"] = this.last;
+        data["suffix"] = this.suffix;
+        data["nick"] = this.nick;
+        data["title"] = this.title;
+        data["email1"] = this.email1;
+        data["email2"] = this.email2;
+        data["email3"] = this.email3;
+        data["companyName"] = this.companyName;
+        data["webSite1"] = this.webSite1;
+        data["webSite2"] = this.webSite2;
+        data["companyAddress"] = this.companyAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["zipCode"] = this.zipCode;
+        data["countryID"] = this.countryID;
+        data["phoneNumber"] = this.phoneNumber;
+        data["faxNumber"] = this.faxNumber;
+        return data; 
+    }
+}
+
+export interface IImportLeadBusinessInput {
+    prefix: string;
+    first: string;
+    middle: string;
+    last: string;
+    suffix: string;
+    nick: string;
+    title: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    companyName: string;
+    webSite1: string;
+    webSite2: string;
+    companyAddress: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    countryID: string;
+    phoneNumber: string;
+    faxNumber: string;
 }
 
 export class LeadFiltersInitialData implements ILeadFiltersInitialData {
