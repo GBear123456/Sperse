@@ -26,6 +26,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private _dataSource: DataSource;
     private loadStageIndex: number;
+    private refreshTimeout: any;
 
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
@@ -55,17 +56,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     refresh(quiet = false, addedNew = false) {
-        if (!quiet)
-            this.startLoading(true, this.mainContainerSelector);
-        this._pipelineService
-            .getPipelineDefinitionObservable(this.pipelinePurposeId)
-            .subscribe((result: PipelineDto) => {
-                this.pipeline = result;
-                this.onStagesLoaded.emit(result);
-                this.loadStageIndex = addedNew ? 
-                  Math.floor(this.stages.length / 2): 0;
-                this.loadStagesLeads(0, addedNew);
+        if (!this.refreshTimeout) {
+            if (!quiet)
+                this.startLoading(true, this.mainContainerSelector);
+            this.refreshTimeout = setTimeout(() => {
+                this._pipelineService
+                    .getPipelineDefinitionObservable(this.pipelinePurposeId)
+                    .subscribe((result: PipelineDto) => {
+                        this.pipeline = result;
+                        this.onStagesLoaded.emit(result);
+                        this.loadStageIndex = addedNew ? 
+                          Math.floor(this.stages.length / 2): 0;
+                        this.loadStagesLeads(0, addedNew);
+                        this.refreshTimeout = null;
+                    });
             });
+        }
     }
 
     getLeadByElement(el, stage) {
