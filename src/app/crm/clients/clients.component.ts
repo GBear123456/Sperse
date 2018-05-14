@@ -9,6 +9,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
+import { ODataSearchStrategy } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -69,6 +70,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
     private canSendVerificationRequest: boolean = false;
+    private nameParts = ['NamePrefix', 'FirstName', 'MiddleName', 'LastName', 'NameSuffix', 'NickName'];
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -110,7 +112,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         };
 
-        this.searchColumns = ['Name', 'FullName', 'CompanyName', 'Email', 'Phone', 'City', 'State', 'StateId'];
+        this.searchColumns = [
+            {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'Email', strategy: ODataSearchStrategy.Equals}, 
+            {name: 'Phone', strategy: ODataSearchStrategy.Equals},
+            {name: 'City', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'State', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'StateId', strategy: ODataSearchStrategy.Equals}
+        ];
+        this.nameParts.forEach(x => {
+            this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
+        });
         this.searchValue = '';
 
         this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
@@ -202,13 +214,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.filters = [
                         new FilterModel({
                             component: FilterInputsComponent,
-                            operator: 'contains',
+                            operator: 'startswith',
                             caption: 'name',
                             items: { FullName: new FilterItemModel()}
                         }),
                         new FilterModel({
                             component: FilterInputsComponent,
-                            operator: 'contains',
                             caption: 'email',
                             items: { Email: new FilterItemModel() }
                         }),
@@ -235,7 +246,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         }),
                         new FilterModel({
                             component: FilterInputsComponent,
-                            operator: 'contains',
                             caption: 'phone',
                             items: { Phone: new FilterItemModel() }
                         }),
@@ -248,7 +258,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         }),
                         new FilterModel({
                             component: FilterInputsComponent,
-                            operator: 'contains',
+                            operator: 'startswith',
                             caption: 'city',
                             items: { City: new FilterItemModel() }
                         }),
@@ -260,7 +270,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         }),
                         new FilterModel({
                             component: FilterInputsComponent,
-                            operator: 'contains',
+                            operator: 'startswith',
                             caption: 'zipCode',
                             items: { ZipCode: new FilterItemModel() }
                         })
@@ -432,6 +442,34 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     toggleStars() {
         this.starsListComponent.toggle();
+    }
+
+    filterByName(filter: FilterModel) {
+        let data = {};
+        let filterData = [];
+        let element = filter.items["FullName"];
+        if (element && element.value) {
+            let values = FilterModel.getSearchKeyWords(element.value);
+            values.forEach((val) => {
+                let valFilterData: any[] = [];
+                this.nameParts.forEach(x => {
+                    let el = {};
+                    el[x] = {};
+                    el[x][ODataSearchStrategy.StartsWith] = val;
+                    valFilterData.push(el);
+                });
+                
+                let valFilter = {
+                    or: valFilterData
+                };
+                filterData.push(valFilter);
+            });
+
+            data = {
+                and: filterData
+            };
+        }
+        return data;
     }
 
     filterByStates(filter: FilterModel) {

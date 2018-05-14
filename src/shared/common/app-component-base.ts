@@ -21,6 +21,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
+import { ODataSearchStrategy } from '@shared/AppEnums';
 
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -43,7 +44,7 @@ export abstract class AppComponentBase {
     loading: boolean;
 
     public searchValue: string;
-    public searchColumns: string[];
+    public searchColumns: any[];
 
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
@@ -156,26 +157,24 @@ export abstract class AppComponentBase {
 
         if (this.searchColumns && this.searchValue) {
             let values = FilterModel.getSearchKeyWords(this.searchValue);
-            this.searchColumns.forEach((col) => {
-                let colFilterData: any[] = [];
-
-                values.forEach((val) => {
-                    let el = {};
-                    el[col] = {
-                        contains: val
-                    };
-                    colFilterData.push(el);
+            values.forEach((val) => {
+                let valueFilterData: any[] = [];
+            
+                this.searchColumns.forEach((col) => {
+                    let colName = col.name || col;
+                    let searchStrategy = col.strategy || ODataSearchStrategy.Contains;
+                    let el = this.getFilterExpression(colName, searchStrategy, val);
+                    valueFilterData.push(el);
                 });
 
                 let elF = {
-                    and: colFilterData
+                    or: valueFilterData
                 };
-
                 filterData.push(elF);
             });
 
             data = {
-                or: filterData
+                and: filterData
             };
         }
 
@@ -251,6 +250,24 @@ export abstract class AppComponentBase {
     finishLoading(globally = false, elementSelector?) {
         abp.ui.clearBusy(globally ? elementSelector : this.getElementRef().nativeElement);
         this.loading = false;
+    }
+
+    private getFilterExpression(colName: string, strategy: string, value: string): object
+    {
+        let el = {};
+        el[colName] = {};
+
+        switch(strategy)
+        {
+            case ODataSearchStrategy.Contains:
+            case ODataSearchStrategy.StartsWith:
+                el[colName][strategy] = value;
+                break;
+            case ODataSearchStrategy.Equals:
+            default:
+                el[colName] = value;
+        }
+        return el;
     }
 
     protected setTitle(moduleName: string) {
