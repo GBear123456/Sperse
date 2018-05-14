@@ -134,10 +134,9 @@ export abstract class AppComponentBase {
 
     advancedODataFilter(grid: any, uri: string, query: any[]) {
         let queryWithSearch = query.concat(this.getSearchFilter());
-        grid.getDataSource()['_store']['_url'] =
-            this.getODataURL(uri, queryWithSearch);
-
-        grid.refresh();
+        let dataSource = grid.getDataSource();
+        dataSource['_store']['_url'] = this.getODataURL(uri, queryWithSearch);
+        dataSource.load().done(() => grid.repaint());
         return queryWithSearch;
     }
 
