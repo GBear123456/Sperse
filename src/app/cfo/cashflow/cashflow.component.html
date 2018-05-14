@@ -45,7 +45,6 @@
                       (onRowPrepared)="onDetailsRowPrepared($event)"
                       (onContentReady)="onTransactionDetailContentReady($event)"
                       (onRowUpdating)="onDetailsRowUpdating($event)">
-
             <dxo-editing mode="cell"
                          [allowUpdating]="true"
                          texts="{'confirmDeleteMessage': ''}">
@@ -113,8 +112,9 @@
                         dataField="accountNumber"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        [allowEditing]="false"
-                        [minWidth]="130">
+                        [allowEditing]="true"
+                        [minWidth]="130"
+                        editCellTemplate="accountsEditSelect">
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"
@@ -140,6 +140,14 @@
             <div *dxTemplate="let cellData of 'typeCell'">{{this.cashflowTypes[cellData.value]}}</div>
             <div *dxTemplate="let cellData of 'descriptionTemplate'">
                 <span id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
+            </div>
+            <div *dxTemplate="let cell of 'accountsEditSelect'">
+                <dx-select-box [items]="bankAccounts"
+                               displayExpr="accountName"
+                               valueExpr="id"
+                               [value]="getBankAccountId(cell)"
+                               (onValueChanged)="accountChanged($event, cell)">
+                </dx-select-box>
             </div>
             <div *dxTemplate="let headerCellData of 'twoRowsHeaderCellTemplate'">
                 <div class="firstLine">{{headerCellData.column.caption.slice(0, headerCellData.column.caption.indexOf(' '))}}</div>

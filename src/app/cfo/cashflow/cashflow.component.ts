@@ -5393,6 +5393,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.detailsModifyingNumberBoxCellObj = e.key;
     }
 
+    getBankAccountId(cell) {
+        let id = this.bankAccounts.find(account => account.accountNumber === cell.data.accountNumber)['id'];
+        return id;
+    }
+
+    accountChanged(e, cell) {
+        if (e.value !== e.previousValue) {
+            this._cashFlowForecastServiceProxy.updateForecast(
+                InstanceType10[this.instanceType],
+                this.instanceId,
+                UpdateForecastInput.fromJS({
+                    id: cell.data.forecastId,
+                    bankAccountId: e.value
+                })
+            ).subscribe( () => {
+                this.updateDataSource();
+            });
+            let newAccountNumber = this.bankAccounts.find(account => account.id === e.value)['accountNumber'];
+            cell.setValue(newAccountNumber);
+        }
+    }
+
     updateForecastCell(e) {
         e.component.cellValue(e.rowIndex, e.columnIndex, this.modifyingCellNumberBox.option('value'));
         e.component.saveEditData();
