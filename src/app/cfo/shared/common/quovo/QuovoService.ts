@@ -33,7 +33,6 @@ export class QuovoHandler {
     get instanceId(): number { return this._instanceId; }
     get isLoaded(): boolean {
         if (this._isLoaded && !this.isValid) {
-            console.log('reconnecting...');
             setTimeout(() => this.reconnect(), 100);
             return false;
         }
@@ -133,8 +132,9 @@ export class QuovoHandler {
             let frames = document.querySelectorAll('[id|=q-frame]');
             if (frames.length === 0) {
                 this._iframe = null;
+            } else {
+                this._iframe = frames[frames.length - 1];
             }
-            this._iframe = frames[0];
         }
     }
 
@@ -215,11 +215,10 @@ export class QuovoService {
             search: {
                 testInstitutions: true
             },
-            onLoad: () => { onLoad(); console.log('loaded'); },
+            onLoad: () => { onLoad(); },
             onAdd: function (err, event) {
                 if (!err) {
                     onAdd(event.connection.id);
-                    console.log('Connection', event.connection.id, 'added!');
                 }
             },
             onClose: () => onClose()
