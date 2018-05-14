@@ -2037,7 +2037,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                     break;
                 case 46: // delete
-                    this.onDelete(e);
+                    if (this.statsDetailResult)
+                        this.onDetailsRowDelete(e);
+                    else
+                        this.onDelete(e);
                     break;
                 default:
                     return;
@@ -5438,4 +5441,70 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.hideModifyingNumberBox();
     }
 
+    onDetailsRowDelete(e) {
+        let selectedRecords = this.cashFlowGrid.instance.getSelectedRowKeys();
+        if (selectedRecords && selectedRecords.length) {
+            selectedRecords.forEach((record, i) =>
+            {
+                if (record.forecastId) {
+                    abp.ui.setBusy();
+                    if (record.forecastDate) {
+                        let momentDate = moment(record.forecastDate);
+                        this.addLocalTimezoneOffset(momentDate);
+                        record.forecastDate = momentDate.toDate();
+                    }
+
+                    this._cashFlowForecastServiceProxy
+                        .deleteForecast(
+                        InstanceType10[this.instanceType],
+                        this.instanceId,
+                        record.forecastId
+                        ).subscribe(res => {
+                            /** update CFO grid */
+                            let affectedTransactions: TransactionStatsDto[] = [];
+                            let sameDateTransactionExist = false;
+                            for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+                                let item = this.cashflowData[i];
+
+                                if (item.forecastId == record.forecastId) {
+                                    this.cashflowData.splice(i, 1);
+
+                                    affectedTransactions.push(item);
+                                } else if (moment(record.forecastDate).utc().isSame(item.date)) {
+                                    sameDateTransactionExist = true;
+                                }
+                            }
+
+                            affectedTransactions.forEach(item => {
+                                if (!sameDateTransactionExist) {
+                                    this.cashflowData.push(
+                                        this.createStubTransaction({
+                                            date: item.date,
+                                            initialDate: (<any>item).initialDate,
+                                            amount: 0,
+                                            cashflowTypeId: item.cashflowTypeId,
+                                            accountId: item.accountId
+                                        }));
+                                    sameDateTransactionExist = true;
+                                }
+                                this.updateTreePathes(item, true);
+                            });
+
+                            this.getCellOptionsFromCell.cache = {};
+                            this.pivotGrid.instance.getDataSource().reload();
+                            abp.ui.clearBusy();
+                            this.statsDetailResult.every((v, index) => {
+                                if (v.forecastId == record.forecastId) {
+                                    this.statsDetailResult.splice(index, 1);
+                                    return false;
+                                }
+                                return true;
+                            });
+                        }, error => {
+                            abp.ui.clearBusy();
+                        });
+                }
+            });
+        }
+    }
 }
