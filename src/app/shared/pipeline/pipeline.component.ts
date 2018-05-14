@@ -25,6 +25,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
     private _dataSource: DataSource;
+    private loadStageIndex: number;
+    private refreshTimeout: any;
 
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
@@ -54,16 +56,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     refresh(quiet = false, addedNew = false) {
-        if (!quiet)
-            this.startLoading(true, this.mainContainerSelector);
-        this._pipelineService
-            .getPipelineDefinitionObservable(this.pipelinePurposeId)
-            .subscribe((result: PipelineDto) => {
-                this.pipeline = result;
-                this.onStagesLoaded.emit(result);
-                this.loadStagesLeads(addedNew ? 
-                  Math.floor(this.stages.length / 2): 0, 0, addedNew);
+        if (!this.refreshTimeout) {
+            if (!quiet)
+                this.startLoading(true, this.mainContainerSelector);
+            this.refreshTimeout = setTimeout(() => {
+                this._pipelineService
+                    .getPipelineDefinitionObservable(this.pipelinePurposeId)
+                    .subscribe((result: PipelineDto) => {
+                        this.pipeline = result;
+                        this.onStagesLoaded.emit(result);
+                        this.loadStageIndex = addedNew ? 
+                          Math.floor(this.stages.length / 2): 0;
+                        this.loadStagesLeads(0, addedNew);
+                        this.refreshTimeout = null;
+                    });
             });
+        }
     }
 
     getLeadByElement(el, stage) {
@@ -82,8 +90,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return elm && elm.getAttribute('accessKey');
     }
 
-    loadStagesLeads(index = 0, page = 0, oneStageOnly = false) {
-        let stages = this.pipeline.stages;
+    loadStagesLeads(page = 0, oneStageOnly = false) {
+        let index = this.loadStageIndex, 
+            stages = this.pipeline.stages;
         this._dataSource.pageSize(this.STAGE_PAGE_COUNT);
         this._dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
@@ -91,31 +100,36 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._dataSource.sort({getter: 'Id', desc: true});
         this._dataSource.pageIndex(page);
         this._dataSource.load().done((leads) => {
-            let stage = stages[index];
-            stage['leads'] = page && oneStageOnly ? _.uniqBy(
-                (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
-            stage['total'] = this._dataSource.totalCount();
-            stage['full'] = stage['total'] <= stage['leads'].length;
-            if (!oneStageOnly && this.pipeline.stages[++index])
-                this.loadStagesLeads(index, page);
-            else {
-                this.stages = stages;
-                this.finishLoading(true, this.mainContainerSelector);
+            if (index == this.loadStageIndex) {
+                let stage = stages[index];
+                stage['leads'] = page && oneStageOnly ? _.uniqBy(
+                    (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
+                stage['total'] = this._dataSource.totalCount();
+                stage['full'] = stage['total'] <= stage['leads'].length;            
+                if (!oneStageOnly && this.pipeline.stages[++this.loadStageIndex])
+                    this.loadStagesLeads(page);
+                else {
+                    this.stages = stages;
+                    this.finishLoading(true, this.mainContainerSelector);
+                }
             }
         });
     }
 
     advancedODataFilter(grid: any, uri: string, query: any[]) {
         this.queryWithSearch = query.concat(this.getSearchFilter());
-
         this.startLoading(true, this.mainContainerSelector);
+
+        this.loadStageIndex = 0;
         this.loadStagesLeads();
+
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {
         this.startLoading(true, this.mainContainerSelector);
-        this.loadStagesLeads(stageIndex,
+        this.loadStageIndex = stageIndex;
+        this.loadStagesLeads(
             Math.floor(this.stages[stageIndex]['leads'].length
                 / this.STAGE_PAGE_COUNT), true);
     }

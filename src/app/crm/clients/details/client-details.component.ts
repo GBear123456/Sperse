@@ -39,19 +39,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     leadInfo: LeadInfoDto;
     leadStages = [];
 
-    person: any = {
-        id: 1,
-        first_name: 'Matthew',
-        second_name: 'Robertson',
-        rating: 7,
-        person_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png',
-        approved_sum: '45000',
-        requested_sum_min: '100000',
-        requested_sum_max: '245000',
-        profile_created: '6/6/2016',
-        lead_owner_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png',
-        lead_owner_name: 'R.Hibbert'
-    };
+    private initialData: string;
 
     navLinks = [
         {'label': 'Contact Information', 'route': 'contact-information', active: true},
@@ -131,6 +119,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     private fillLeadDetails(result) {
         this._customerService['data'].leadInfo = result;
+        this.initialData = JSON.stringify(this._customerService['data']);
         this.leadInfo = result;
     }
 
@@ -203,14 +192,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         );
     }
 
-    close() {
+    close() {        
         this._dialog.closeAll();
+        let data = JSON.stringify(this._customerService['data']);
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: _.mapObject(this.referrerParams,
+            { queryParams: _.extend(_.mapObject(this.referrerParams,
                 (val, key) => {
                     return (key == 'referrer'? undefined: val)
-                })
+                }), this.initialData != data ? {refresh: true}: {})
             }
         );
     }
@@ -252,6 +242,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 if (isConfirmed) {
                     this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
+                        this._customerService['data']['deleted'] = true;
                         this.close();
                     });
                 }

@@ -6,6 +6,7 @@
     transform: translateX(-50%);
     height: 100%;
 }
+
 .synch-container {
     display: flex;
     height: 100%;
@@ -128,6 +129,18 @@
         }
     }
 }
+
+/deep/ .dx-tooltip-wrapper {
+    width: 100%;
+}
+
+.tooltip-data {
+    white-space: normal;
+    max-width: 360px;
+    word-wrap: break-word;
+    text-align: left;
+}
+
 
 .tooltip-container {
     .header {
@@ -269,26 +282,6 @@
                         background: none;
                         top: 6px;
                         left: 5px;
-                    }
-                }
-
-                &:hover {
-                    &::before {
-                        content: attr(data-msg);
-                        background: #fff;
-                        display: block;
-                        width: auto;
-                        max-width: 100%;
-                        height: auto;
-                        padding: 8px;
-                        font-size: 13px;
-                        border-radius: 3px;
-                        border: 1px solid #ddd;
-                        position: absolute;
-                        top: 25px;
-                        left: 0;
-                        z-index: 10;
-                        white-space: normal;
                     }
                 }
 

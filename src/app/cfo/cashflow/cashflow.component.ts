@@ -5369,8 +5369,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: e.data[e.column.dataField],
-            format: '$ #,###.##',
-            width: '90%',
+            format: this.currencySymbol + ' #,###.##',
+            width: '86%',
             onEnterKey: this.updateForecastCell.bind(this, e)
         });
         this.functionButton = new Button(wrapperButton, {

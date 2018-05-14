@@ -7,6 +7,7 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
+import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 
@@ -20,6 +21,7 @@ import * as moment from 'moment';
     providers: [DashboardWidgetsService]
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
+    @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
     private selectedPeriod: any;
@@ -45,6 +47,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     refresh() {
         this.periodChanged(this.selectedPeriod);
+        this.recentClientsComponent.refresh();
     }
 
     checkDataEmpty(data) {      

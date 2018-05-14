@@ -82,7 +82,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     public headlineConfig = {
         names: [this.l('Leads')],
-        onRefresh: this.refreshDataGrid.bind(this),
+        onRefresh: this.refreshDataGrid.bind(this, false, false),
         icon: 'basket',
         buttons: [
             {
@@ -140,6 +140,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     
                 if ('addNew' == params['action'])
                     setTimeout(() => this.createLead());
+                if (params['refresh'])
+                    this.refreshDataGrid();
             });       
     }
 
