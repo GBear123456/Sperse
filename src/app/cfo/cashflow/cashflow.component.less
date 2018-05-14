@@ -44,7 +44,7 @@
     position: relative;
 
     &.fullscreen {
-        top: 0px !important;
+        top: 0 !important;
 
         .cashflow #cashflowFooterToolbar {
             bottom: 0;
@@ -1029,8 +1029,7 @@
             justify-content: left;
 
             input.dx-texteditor-input {
-                padding: 8px 8px;
-                padding-right: 0;
+                padding: 8px 0 8px 8px;
                 font-size: 15px;
                 display: block;
                 float: left;
@@ -1112,7 +1111,7 @@
                     border: none;
 
                     .dx-tab {
-                        padding: 0px 11px 0px 11px;
+                        padding: 0 11px 0 11px;
                         color: #677380;
                         margin-right: 23px;
                         background-color: initial;
@@ -1371,12 +1370,26 @@
                     line-height: 24px;
                     padding: 11px 20px;
 
+                    &.selectedCell,
+                    &.dx-focused {
+                        border: 1px double #f9b83a !important;
+                        background-color: #fbf3e4 !important;
+                        color: #333 !important;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+
+                        span {
+                            color: #333 !important;
+                        }
+                    }
+
                     &.editable {
                         cursor: cell;
                     }
 
                     &.dx-editor-cell {
-                        padding: 0px;
+                        padding: 0 5px;
                         line-height: initial;
 
                         input {
@@ -1398,7 +1411,7 @@
                             border-radius: 50%;
                             height: 7px;
                             top: 0;
-                            left: 0;
+                            left: 5px;
                             bottom: 0;
                             margin: auto;
                         }
@@ -1466,7 +1479,7 @@
                             &:before {
                                 position: absolute;
                                 content: '!';
-                                left: 0;
+                                left: 2px;
                                 display: block;
                                 color: #f89800;
                                 font-weight: 800;
