@@ -4,6 +4,7 @@ import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.co
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { MatDialog } from '@angular/material';
+import { ClientDetailsService } from '../client-details.service';
 import {
     CustomersServiceProxy, CustomerInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
@@ -38,6 +39,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
+                private _clientDetailsService: ClientDetailsService,
                 private _customerService: CustomersServiceProxy,
                 private _addressService: ContactAddressServiceProxy,
                 private _countryService: CountryServiceProxy,
@@ -148,6 +150,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                     data.id = result.id;
                     this.contactInfoData.addresses
                         .push(ContactAddressDto.fromJS(data));
+                    this._clientDetailsService.verificationUpdate();
                 }
             }
         );

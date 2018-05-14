@@ -251,6 +251,18 @@ export abstract class AppComponentBase {
         this.loading = false;
     }
 
+    showHostElement() {
+        setTimeout(() => {
+            this.getElementRef().nativeElement
+                .style.display = 'block';
+        }, 100);
+    }
+
+    hideHostElement() {
+        this.getElementRef().nativeElement
+            .style.display = 'none';
+    }
+
     private getFilterExpression(colName: string, strategy: string, value: string): object
     {
         let el = {};

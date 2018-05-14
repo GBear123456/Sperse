@@ -105,7 +105,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _leadService: LeadServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
+   
         this.dataSource = {
             requireTotalCount: true,
             store: {
@@ -625,6 +625,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initFilterConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);            
+
+        this.showHostElement();
     }
     
     deactivate() {
@@ -635,6 +637,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.subRouteParams.unsubscribe();
+
+        this.hideHostElement();
     }
 
     onShowingPopup(e) {

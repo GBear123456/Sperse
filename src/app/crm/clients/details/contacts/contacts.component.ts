@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
+import { ClientDetailsService } from '../client-details.service';
 import {
     CustomersServiceProxy, CustomerInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
@@ -29,6 +30,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
+                private _clientDetailsService: ClientDetailsService,
                 private _customerService: CustomersServiceProxy,
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
@@ -85,7 +87,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
-            if (result) {
+            if (result) {                
                 if (dialogData.contactId) {
                     this.updateDataField(field, data, dialogData);
                 } else {
@@ -151,6 +153,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
                     this.contactInfoData.emails
                         .push(ContactEmailDto.fromJS(updatedData));
             }
+            this._clientDetailsService.verificationUpdate();
         }, error => {
             dataItem[field] = dataItem.original;
         });

@@ -17,6 +17,7 @@ import 'rxjs/add/observable/forkJoin';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { OperationsWidgetComponent } from './operations-widget.component';
+import { ClientDetailsService } from './client-details.service';
 
 import * as _ from 'underscore';
 
@@ -64,7 +65,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _route: ActivatedRoute,
                 private _customerService: CustomersServiceProxy,
                 private _leadService: LeadServiceProxy,
-                private _pipelineService: PipelineService) {
+                private _pipelineService: PipelineService,
+                private _clientDetailsService: ClientDetailsService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _customerService['data'] = {customerInfo: null, leadInfo: null};
@@ -101,6 +103,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             .subscribe(params => {
                 this.referrerParams = params;
         }));
+        _clientDetailsService.verificationSubscribe(
+            this.initVerificationChecklist.bind(this)
+        );
     }
 
     private fillCustomerDetails(result) {

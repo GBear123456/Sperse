@@ -5010,7 +5010,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellClick(e) {
-        this.onAmountCellEditStart(e);
+        this.handleDoubleSingleClick(e, null, this.onAmountCellEditStart.bind(this));
+
+        if (e.rowType === 'data') {
+            if (!e.cellElement.classList.contains('selectedCell')) {
+                $('.selectedCell').removeClass('selectedCell');
+                e.cellElement.classList.add('selectedCell');
+            }
+        }
+
         if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId) {
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
@@ -5371,7 +5379,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             value: e.data[e.column.dataField],
             format: this.currencySymbol + ' #,###.##',
             width: '86%',
-            onEnterKey: this.updateForecastCell.bind(this, e)
+            onEnterKey: this.updateForecastCell.bind(this, e),
+            onKeyDown: function(e) {
+                if (e.event.keyCode === 37 || e.event.keyCode === 39) {
+                    e.event.stopPropagation();
+                }
+            }
         });
         this.functionButton = new Button(wrapperButton, {
             iconSrc: 'assets/common/icons/fx.svg',

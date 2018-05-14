@@ -598,6 +598,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         if (this.dependencyChanged)
             this.refreshDataGrid();
+
+        this.showHostElement();
     }
     
     deactivate() {
@@ -608,6 +610,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();   
+
+        this.hideHostElement();
     }
 
     onShowingPopup(e) {

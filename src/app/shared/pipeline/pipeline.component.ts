@@ -65,9 +65,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     .subscribe((result: PipelineDto) => {
                         this.pipeline = result;
                         this.onStagesLoaded.emit(result);
-                        this.loadStageIndex = addedNew ? 
-                          Math.floor(this.stages.length / 2): 0;
-                        this.loadStagesLeads(0, addedNew);
+                        if (this._dataSource) {
+                            this.loadStageIndex = addedNew ? 
+                                Math.floor(this.stages.length / 2): 0;
+                            this.loadStagesLeads(0, addedNew);
+                        }
                         this.refreshTimeout = null;
                     });
             });
