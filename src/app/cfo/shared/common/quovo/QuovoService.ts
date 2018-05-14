@@ -9,22 +9,22 @@ export class QuovoHandler {
     private handler: any;
     private _token: string;
     private _tokenTime: number;
-    private _tokenExpirationTime = 1000 * 60 * 1;
+    private _tokenExpirationTime = 1000 * 60 * 60;
     private addedConnectionIds = [];
     private _isLoaded = false;
     private _isOpened = false;
 
     private _instanceType: string;
     private _instanceId: number;
-    private _connectFunc: Function;
+    private _createHandlerFunc: Function;
     private _getTokenFunc: Function;
     private _iframe: any;
     private onAdd: Function;
 
-    constructor(instanceType: string, instanceId: number, connectFunc, onAccountAdd, getTokenFunc) {
+    constructor(instanceType: string, instanceId: number, createQuovoHandlerFunc, onAccountAdd, getTokenFunc) {
         this._instanceType = instanceType;
         this._instanceId = instanceId;
-        this._connectFunc = connectFunc;
+        this._createHandlerFunc = createQuovoHandlerFunc;
         this._getTokenFunc = getTokenFunc;
         this.onAdd = onAccountAdd;
     }
@@ -45,7 +45,7 @@ export class QuovoHandler {
     onClose: Function;
 
     connect() {
-        this._connectFunc(this);
+        this._getTokenFunc(this, (token) => this.createHandler(token));
     }
 
     get isValid() {
@@ -97,9 +97,9 @@ export class QuovoHandler {
         this.handler.close();
     }
 
-    createHandler(createHandlerFunction, token) {
+    private createHandler(token) {
         this.token = token;
-        this.handler = createHandlerFunction(token,
+        this.handler = this._createHandlerFunc(token,
             () => this.onHandlerLoad(),
             () => this.onHandlerOpen(),
             () => this.onHandlerClose(),
@@ -179,21 +179,17 @@ export class QuovoService {
 
         if (!quovoHandler) {
             quovoHandler = new QuovoHandler(instanceType, instanceId,
-                (handler) => this.connect(handler),
+                (token, onLoad, onOpen, onClose, onAdd) => this.createQuovoHandler(token, onLoad, onOpen, onClose, onAdd),
                 (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id),
                 (handler, callback) => this.getUIToken(handler, callback));
             this.quovoHandlers[handlerId] = quovoHandler;
 
             jQuery.getScript('https://app.quovo.com/ui.js', () => {
-                this.connect(quovoHandler);
+                quovoHandler.connect();
             });
         }
 
         return quovoHandler;
-    }
-
-    public connect(quovoHandler: QuovoHandler) {
-        this.getUIToken(quovoHandler, (token) => quovoHandler.createHandler(this.createQuovoHandler, token));
     }
 
     public getUIToken(quovoHandler: QuovoHandler, callback) {
