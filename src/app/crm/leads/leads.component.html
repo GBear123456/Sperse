@@ -29,7 +29,7 @@
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
-                        <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
                         <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
