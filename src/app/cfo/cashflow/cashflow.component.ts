@@ -5013,7 +5013,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellClick(e) {
-        this.handleDoubleSingleClick(e, null, this.onAmountCellEditStart.bind(this));
+        this.handleDoubleSingleClick(e, null, this.onDetailsCellDoubleClick.bind(this));
 
         if (e.rowType === 'data') {
             if (!e.cellElement.classList.contains('selectedCell')) {
@@ -5027,6 +5027,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();
         }
+    }
+
+    onDetailsCellDoubleClick(e) {
+        if(e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'accountNumber')
+            e.component.editCell(e.rowIndex, e.column.dataField);
+
+        if(e.column.dataField == 'debit' || e.column.dataField == 'credit')
+            this.onAmountCellEditStart(e);
     }
 
     /**
@@ -5383,11 +5391,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             format: this.currencySymbol + ' #,###.##',
             width: '86%',
             onEnterKey: this.updateForecastCell.bind(this, e),
-           /* onKeyDown: function(e) {
-                if (e.event.keyCode === 37 || e.event.keyCode === 39) {
+            onKeyDown: function(e) {
+                if ((e.event as any).keyCode === 37 || (e.event as any).keyCode === 39) {
                     e.event.stopPropagation();
                 }
-            }*/
+            }
         });
         this.functionButton = new Button(wrapperButton, {
             iconSrc: 'assets/common/icons/fx.svg',
