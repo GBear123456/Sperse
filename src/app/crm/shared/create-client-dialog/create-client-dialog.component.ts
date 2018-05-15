@@ -44,6 +44,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     private readonly SAVE_OPTION_DEFAULT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
+    private similarCustomersTimeout: any;
     
     saveButtonId: string = 'saveClientOptions';
     saveContextMenuItems = [];
@@ -446,20 +447,23 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     checkSimilarCustomers() {
-        this._customersService.getSimilarCustomers(
-            this.person.namePrefix,
-            this.person.firstName,
-            this.person.middleName,
-            this.person.lastName,
-            this.person.nameSuffix,
-            this.company,
-            this.getCurrentEmails(),
-            this.getCurrentPhones(),
-            null, null, null, null, null)
-        .subscribe(response => {
-            if (response)
-                this.similarCustomers = response;
-        });
+        clearTimeout(this.similarCustomersTimeout);
+        this.similarCustomersTimeout = setTimeout(() => {
+            this._customersService.getSimilarCustomers(
+                this.person.namePrefix,
+                this.person.firstName,
+                this.person.middleName,
+                this.person.lastName,
+                this.person.nameSuffix,
+                this.company,
+                this.getCurrentEmails(),
+                this.getCurrentPhones(),
+                null, null, null, null, null)
+            .subscribe(response => {
+                if (response)
+                    this.similarCustomers = response;
+            });
+        }, 1000);
     }
 
    getCurrentEmails() {
