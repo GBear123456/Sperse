@@ -25659,6 +25659,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    note: string;
     organizationAliases: OrganizationAliasInfo[];
     organizationTeamContacts: OrganizationTeamContactInfo[];
     contactId: number;
@@ -25712,6 +25713,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.annualVolumesOnCards = data["annualVolumesOnCards"];
             this.productServicesSold = data["productServicesSold"];
             this.businessSicCode = data["businessSicCode"];
+            this.note = data["note"];
             if (data["organizationAliases"] && data["organizationAliases"].constructor === Array) {
                 this.organizationAliases = [];
                 for (let item of data["organizationAliases"])
@@ -25784,6 +25786,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["annualVolumesOnCards"] = this.annualVolumesOnCards;
         data["productServicesSold"] = this.productServicesSold;
         data["businessSicCode"] = this.businessSicCode;
+        data["note"] = this.note;
         if (this.organizationAliases && this.organizationAliases.constructor === Array) {
             data["organizationAliases"] = [];
             for (let item of this.organizationAliases)
@@ -25850,6 +25853,7 @@ export interface IOrganizationBusinessInfo {
     annualVolumesOnCards: number;
     productServicesSold: number;
     businessSicCode: number;
+    note: string;
     organizationAliases: OrganizationAliasInfo[];
     organizationTeamContacts: OrganizationTeamContactInfo[];
     contactId: number;
@@ -35569,7 +35573,7 @@ export interface ILeadBusinessInfoOutput {
 
 export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
     leads: ImportLeadBusinessInput[];
-    lists: string[];
+    lists: CustomerListInput[];
     assignedUserId: number;
     ratingId: number;
 
@@ -35592,7 +35596,7 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
-                    this.lists.push(item);
+                    this.lists.push(CustomerListInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
@@ -35615,7 +35619,7 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
         if (this.lists && this.lists.constructor === Array) {
             data["lists"] = [];
             for (let item of this.lists)
-                data["lists"].push(item);
+                data["lists"].push(item.toJSON());
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
@@ -35625,7 +35629,7 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
 
 export interface IImportLeadBusinessesInput {
     leads: ImportLeadBusinessInput[];
-    lists: string[];
+    lists: CustomerListInput[];
     assignedUserId: number;
     ratingId: number;
 }
