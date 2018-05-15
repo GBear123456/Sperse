@@ -44,8 +44,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private readonly dataSourceURI = 'Lead';
     private subscribers = [];
 
-    private mainContainerSelector = '.funnel-wrapper';
-
     constructor(injector: Injector,
         private _leadService: LeadServiceProxy,
         private _dragulaService: DragulaService,
@@ -58,7 +56,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     refresh(quiet = false, addedNew = false) {
         if (!this.refreshTimeout) {
             if (!quiet)
-                this.startLoading(true, this.mainContainerSelector);
+                this.startLoading();
             this.refreshTimeout = setTimeout(() => {
                 this._pipelineService
                     .getPipelineDefinitionObservable(this.pipelinePurposeId)
@@ -112,7 +110,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.loadStagesLeads(page);
                 else {
                     this.stages = stages;
-                    this.finishLoading(true, this.mainContainerSelector);
+                    this.finishLoading();
                 }
             }
         });
@@ -120,7 +118,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     advancedODataFilter(grid: any, uri: string, query: any[]) {
         this.queryWithSearch = query.concat(this.getSearchFilter());
-        this.startLoading(true, this.mainContainerSelector);
+        this.startLoading();
 
         this.loadStageIndex = 0;
         this.loadStagesLeads();
@@ -129,7 +127,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadMore(stageIndex) {
-        this.startLoading(true, this.mainContainerSelector);
+        this.startLoading();
         this.loadStageIndex = stageIndex;
         this.loadStagesLeads(
             Math.floor(this.stages[stageIndex]['leads'].length
