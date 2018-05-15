@@ -236,7 +236,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Filter by string */
     private filterBy: string;
 
-    private rowCellLeftPadding = 43;
     private rowCellRightPadding = 10;
 
     private sparkLinesWidth = 64;
@@ -2746,8 +2745,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.area === 'row' && !e.cell.isWhiteSpace && e.cell.path && e.cell.text) {
             let trancatingSpeed = performance.now();
             let textElement: HTMLSpanElement = e.cellElement.parentElement.querySelector(`td:nth-child(${e.cellElement.cellIndex + 1}) > span`);
-            let textWidth: number = Math.round(textElement.getBoundingClientRect().width);
-            let newTextWidth = this.getNewTextWidth(e.cellElement.clientWidth, textWidth, options.general.isAccountHeaderCell);
+            let cellClientRect = e.cellElement.getBoundingClientRect();
+            let textClientRect = textElement.getBoundingClientRect();
+            let textWidth: number = Math.round(textClientRect.width);
+            let textPaddingLeft = Math.round(textClientRect.left - cellClientRect.left);
+            let cellWidth = document.querySelector('.dx-area-description-cell').clientWidth - cellClientRect.left;
+            let newTextWidth = this.getNewTextWidth(cellWidth, textWidth, textPaddingLeft, options.general.isAccountHeaderCell);
             if (newTextWidth) {
                 this.applyNewTextWidth(e, textElement, newTextWidth);
             }
@@ -3042,16 +3045,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param e
      */
     getNewTextWidth = underscore.memoize(
-        (cellInnerWidth, textWidth, isAccount): number => {
+        (cellInnerWidth, textWidth, textPaddingLeft, isAccount): number => {
             let newTextWidth;
-            let cellWidth: number = cellInnerWidth - this.rowCellRightPadding - this.rowCellLeftPadding;
-
             /** Get the sum of widths of all cell children except text element width */
             let anotherChildrenElementsWidth: number = this.sparkLinesWidth + (isAccount ? this.accountNumberWidth : 0);
+            let cellAvailableWidth: number = cellInnerWidth - this.rowCellRightPadding - textPaddingLeft - anotherChildrenElementsWidth;
 
             /** If text size is too big - truncate it */
-            if ((textWidth + anotherChildrenElementsWidth) > cellWidth) {
-                newTextWidth = (cellWidth - anotherChildrenElementsWidth - 1);
+            if (textWidth > cellAvailableWidth) {
+                newTextWidth = cellAvailableWidth - 1;
             }
             return newTextWidth;
         },
