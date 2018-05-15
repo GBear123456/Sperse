@@ -168,8 +168,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     refreshDataGrid() {
-        this.dataGrid.instance.refresh();
-        this.dependencyChanged = false;
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.dataGrid.instance.refresh();
+            this.dependencyChanged = false;
+        }
     }
 
     showCompactRowsHeight() {
