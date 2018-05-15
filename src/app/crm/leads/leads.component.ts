@@ -434,7 +434,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let filterValue = filterField && filterField.value;
         if (filterValue)
             return {
-                Email: { contains: filterValue }
+                EmailAddresses: { any: 'contains(e,\'' + filterValue + '\')' }
             };
     }
 
