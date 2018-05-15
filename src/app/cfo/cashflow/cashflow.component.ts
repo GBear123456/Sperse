@@ -5137,52 +5137,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
                     }
                 }
-
-                /** update CFO grid */
-                let affectedTransactions: TransactionStatsDto[] = [];
-                let sameDateTransactionExist = false;
-                for (let i = this.cashflowData.length - 1; i >= 0; i--) {
-                    let item = this.cashflowData[i];
-
-                    if (item.forecastId == e.key.id) {
-                        if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
-                            this.cashflowData.splice(i, 1);
-                        }
-
-                        affectedTransactions.push(item);
-                    } else if (paramNameForUpdateInput == 'date' && moment(e.oldData[paramName]).utc().isSame(item.date)) {
-                        sameDateTransactionExist = true;
-                    }
-                }
-
-                affectedTransactions.forEach(item => {
-                    if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
-                        this.cashflowData.push(
-                            this.createStubTransaction({
-                                date: item.date,
-                                initialDate: (<any>item).initialDate,
-                                amount: 0,
-                                cashflowTypeId: item.cashflowTypeId,
-                                accountId: item.accountId
-                            }));
-                        sameDateTransactionExist = true;
-                    }
-
-                    if (paramNameForUpdateInput == 'transactionDescriptor' || (paramNameForUpdateInput == 'amount' && paramValue == 0)) {
-                        this.updateTreePathes(item, true);
-                    }
-
-                    if (paramNameForUpdateInput == 'date') {
-                        item[paramNameForUpdateInput] = moment(paramValue).utc();
-                        item['initialDate'] = moment(paramValue).utc().subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
-                    } else {
-                        item[paramNameForUpdateInput] = paramValue;
-                    }
-
-                    if (paramNameForUpdateInput == 'transactionDescriptor') {
-                        this.addCategorizationLevels(item);
-                    }
-                });
+                this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName]);                
 
                 this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
@@ -5205,6 +5160,53 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate) {
+        let affectedTransactions: TransactionStatsDto[] = [];
+        let sameDateTransactionExist = false;
+        for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+            let item = this.cashflowData[i];
+
+            if (item.forecastId == key) {
+                if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
+                    this.cashflowData.splice(i, 1);
+                }
+
+                affectedTransactions.push(item);
+            } else if (paramNameForUpdateInput == 'date' && moment(oldDataDate).utc().isSame(item.date)) {
+                sameDateTransactionExist = true;
+            }
+        }
+
+        affectedTransactions.forEach(item => {
+            if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
+                this.cashflowData.push(
+                    this.createStubTransaction({
+                        date: item.date,
+                        initialDate: (<any>item).initialDate,
+                        amount: 0,
+                        cashflowTypeId: item.cashflowTypeId,
+                        accountId: item.accountId
+                    }));
+                sameDateTransactionExist = true;
+            }
+
+            if (paramNameForUpdateInput == 'transactionDescriptor' || (paramNameForUpdateInput == 'amount' && paramValue == 0)) {
+                this.updateTreePathes(item, true);
+            }
+
+            if (paramNameForUpdateInput == 'date') {
+                item[paramNameForUpdateInput] = moment(paramValue).utc();
+                item['initialDate'] = moment(paramValue).utc().subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+            } else {
+                item[paramNameForUpdateInput] = paramValue;
+            }
+
+            if (paramNameForUpdateInput == 'transactionDescriptor') {
+                this.addCategorizationLevels(item);
+            }
+        });
+
+    }
     mapParamNameToUpdateParam(paramName) {
         let detailsParamsToUpdateParams = {
             'forecastDate': 'date',
@@ -5478,50 +5480,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         InstanceType10[this.instanceType],
                         this.instanceId,
                         record.forecastId
-                        ).subscribe(res => {
-                            /** update CFO grid */
-                            let affectedTransactions: TransactionStatsDto[] = [];
-                            let sameDateTransactionExist = false;
-                            for (let i = this.cashflowData.length - 1; i >= 0; i--) {
-                                let item = this.cashflowData[i];
-
-                                if (item.forecastId == record.forecastId) {
-                                    this.cashflowData.splice(i, 1);
-
-                                    affectedTransactions.push(item);
-                                } else if (moment(record.forecastDate).utc().isSame(item.date)) {
-                                    sameDateTransactionExist = true;
-                                }
+                    ).subscribe(res => {
+                        this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate); 
+                        this.getCellOptionsFromCell.cache = {};
+                        this.pivotGrid.instance.getDataSource().reload();
+                        abp.ui.clearBusy();
+                        this.statsDetailResult.every((v, index) => {
+                            if (v.forecastId == record.forecastId) {
+                                this.statsDetailResult.splice(index, 1);
+                                return false;
                             }
-
-                            affectedTransactions.forEach(item => {
-                                if (!sameDateTransactionExist) {
-                                    this.cashflowData.push(
-                                        this.createStubTransaction({
-                                            date: item.date,
-                                            initialDate: (<any>item).initialDate,
-                                            amount: 0,
-                                            cashflowTypeId: item.cashflowTypeId,
-                                            accountId: item.accountId
-                                        }));
-                                    sameDateTransactionExist = true;
-                                }
-                                this.updateTreePathes(item, true);
-                            });
-
-                            this.getCellOptionsFromCell.cache = {};
-                            this.pivotGrid.instance.getDataSource().reload();
-                            abp.ui.clearBusy();
-                            this.statsDetailResult.every((v, index) => {
-                                if (v.forecastId == record.forecastId) {
-                                    this.statsDetailResult.splice(index, 1);
-                                    return false;
-                                }
-                                return true;
-                            });
-                        }, error => {
-                            abp.ui.clearBusy();
+                            return true;
                         });
+                    }, error => {
+                        abp.ui.clearBusy();
+                    });
                 }
             });
         }
