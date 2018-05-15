@@ -146,7 +146,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.disabled = false;
                         this.stages.every((stage, index) => {
                             let result = (stage.name == oldStage);
-                            if (result && stage['total'] && !stage.leads.length) {
+                            if (result && stage['total'] && !stage['leads'].length) {
                                 this.loadStageIndex = index;
                                 this.loadStagesLeads(0, true);
                                 this.startLoading();
