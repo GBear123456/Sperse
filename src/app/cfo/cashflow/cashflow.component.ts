@@ -5014,15 +5014,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellClick(e) {
-        this.handleDoubleSingleClick(e, null, this.onDetailsCellDoubleClick.bind(this));
+        this.hideModifyingNumberBox();
+        this.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this), this.onDetailsCellDoubleClick.bind(this));
 
         if (e.rowType === 'data') {
             if (!e.cellElement.classList.contains('selectedCell')) {
-                $('.selectedCell').removeClass('selectedCell');
+                $(e.element).find('.selectedCell').removeClass('selectedCell');
                 e.cellElement.classList.add('selectedCell');
             }
         }
+    }
 
+    onDetailsCellSingleClick(e) {
         if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId) {
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
@@ -5031,10 +5034,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellDoubleClick(e) {
-        if(e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'accountNumber')
+        if (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'accountNumber')
             e.component.editCell(e.rowIndex, e.column.dataField);
 
-        if(e.column.dataField == 'debit' || e.column.dataField == 'credit')
+        if (e.column.dataField == 'debit' || e.column.dataField == 'credit')
             this.onAmountCellEditStart(e);
     }
 
