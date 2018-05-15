@@ -3293,24 +3293,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
-    createMovedForecastsModels(forecasts: TransactionStatsDtoExtended[], targetData: CellInfo) {
+    createMovedForecastsModels(forecasts: TransactionStatsDtoExtended[], targetData: CellInfo): UpdateForecastsInput {
         let date, forecastModel;
         let forecastModels = {'forecasts': []};
         forecasts.forEach(forecast => {
             date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, forecast.initialDate);
-            forecastModel = UpdateForecastInput.fromJS({
+            forecastModel = new UpdateForecastInput({
                 id: forecast.forecastId,
-                date: date,
+                date: moment(date),
                 amount: forecast.amount,
                 categoryId: targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor || forecast.transactionDescriptor
+                transactionDescriptor: targetData.transactionDescriptor || forecast.transactionDescriptor,
+                bankAccountId: forecast.accountId
             });
 
             if (forecastModel)
                 forecastModels.forecasts.push(forecastModel);
         });
 
-        return forecastModels;
+        return new UpdateForecastsInput(forecastModels);
     }
 
     moveForecasts(forecastsModels: UpdateForecastInput[]) {
@@ -3335,10 +3336,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         targetsData.forEach((target, index) => {
             forecasts.forEach(forecast => {
                 date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, forecast.initialDate);
-                forecastModel = AddForecastInput.fromJS({
+                forecastModel = new AddForecastInput({
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: forecast.accountId,
-                    date: date,
+                    date: moment(date),
                     startDate: target.date.startDate,
                     endDate: target.date.endDate,
                     cashFlowTypeId: target.cashflowTypeId,
