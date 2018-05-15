@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import {Component, Injector, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -10,7 +10,7 @@ import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput } fro
   styleUrls: ['./tags-list.component.less'],
   providers: [CustomerTagsServiceProxy]
 })
-export class TagsListComponent extends AppComponentBase implements OnInit {
+export class TagsListComponent extends AppComponentBase {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
     @Input() bulkUpdateMode = false;
@@ -37,7 +37,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     toggle() {
-        this.tooltipVisible = !this.tooltipVisible;
+        if (this.tooltipVisible = !this.tooltipVisible)
+            this.refresh();
         this.listComponent.option('searchValue', '');
         this.showAddButton = false;
     }
@@ -68,7 +69,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.listComponent = $event.component;
     }
 
-    ngOnInit() {
+    refresh() {
         this._tagsService.getTags().subscribe((result) => {
             this.list = result.map((obj) => obj.name);
         });

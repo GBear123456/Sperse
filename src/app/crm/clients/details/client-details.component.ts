@@ -167,6 +167,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             customerId: this.customerId,
             statusId: statusId
         })).subscribe(() => {
+            this.customerInfo.statusId = statusId;
             this.notify.success(this.l('StatusSuccessfullyUpdated'));
         });
     }
