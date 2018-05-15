@@ -2967,12 +2967,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             if (this.isStartingBalanceDataColumn(cell, area) && cell.value == 0) {
                 let elements = this.adjustmentsList.filter(cashflowItem => {
-                        return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
-                            cell.columnPath.every((fieldValue, index) => {
-                            let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
-                            let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
-                                return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cell.columnPath[index];
-                        });
+                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
+                        cell.columnPath.every((fieldValue, index) => {
+                        let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
+                        let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
+                            return field.dataType !== 'date' || (field.groupInterval === 'month' ? cashflowItem.initialDate[dateMethod]() + 1 : cashflowItem.initialDate[dateMethod]()) === cell.columnPath[index];
+                    });
                 });
                 if (elements.length) {
                     let sum = elements.reduce((x, y) => x + y.amount, 0);
@@ -2991,7 +2991,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let fieldGroup = fieldObj.groupInterval ? 'dateField' : fieldObj.caption.toLowerCase() + 'Field';
                 if (fieldGroup === 'dateField') {
                     fieldName = fieldObj.groupInterval;
-
                     if (fieldName === 'day') {
                         let dayNumber = cell.path.slice(-1)[0],
                             dayEnding = [, 'st', 'nd', 'rd'][ dayNumber % 100 >> 3 ^ 1 && dayNumber % 10] || 'th';
@@ -3922,6 +3921,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cashflowData.forEach(item => this.updateTreePathes(item));
         this.getUserPreferencesForCell.cache = {};
         this.getCellOptionsFromCell.cache = {};
+        this.getNewTextWidth.cache = {};
         this.pivotGrid.instance.getDataSource().reload();
     }
 
@@ -5052,8 +5052,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /** If date is lower then the current date - return false */
-    validateForecastDate = (e) => {
-        let dateIsValid = new Date(e.value.toLocaleDateString()) >= new Date(new Date().toLocaleDateString());
+    validateForecastDate = e => {
+        let currentDate = this.getUtcCurrentDate();
+        let timezoneOffset = e.value.getTimezoneOffset();
+        let forecastDate = moment(e.value).utc().subtract(timezoneOffset, 'minutes');
+        let dateIsValid = forecastDate.isSameOrAfter(currentDate);
         if (!dateIsValid) {
             this.notify.error(this.l('ForecastDateUpdating_validation_message'));
         }
