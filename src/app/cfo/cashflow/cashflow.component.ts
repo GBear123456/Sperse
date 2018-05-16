@@ -3112,7 +3112,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** Don't allow to move to unclassified (api is not support)
                      *  @todo remove not when needed
                      */
-                    this.highlightHistoricalTargetCells($targetCell, $availableRows.not('.unclassifiedRow'));
+                    this.highlightHistoricalTargetCells($targetCell, $availableRows);
                 } else {
                     this.highlightForecastsTargetCells($targetCell, $availableRows);
                 }
@@ -3205,7 +3205,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** Handle moving of historical transactions */
             let movingObservables = [];
-            if (historicalItems.length && targetCellData.categoryId !== undefined && targetCell.className.indexOf('next') === -1) {
+            if (historicalItems.length && targetCell.className.indexOf('next') === -1) {
                 movingObservables.push(
                     this.moveHistoricals(this.movedCell, targetCellData)
                 );
@@ -3274,13 +3274,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     moveHistoricals(movedCell, targetCellData): Observable<any> {
         let filter = this.getDetailFilterFromCell(movedCell);
+        let destinationCategoryId = targetCellData.subCategoryId || targetCellData.categoryId;
         return this._classificationServiceProxy.updateTransactionsCategoryWithFilter(
             InstanceType[this.instanceType],
             this.instanceId,
             UpdateTransactionsCategoryWithFilterInput.fromJS({
                 transactionFilter: filter,
-                destinationCategoryId: targetCellData.subCategoryId || targetCellData.categoryId,
-                standardDescriptor: targetCellData.transactionDescriptor
+                destinationCategoryId: destinationCategoryId,
+                standardDescriptor: destinationCategoryId ? targetCellData.transactionDescriptor : 'Unclassified'
             })
         );
     }
