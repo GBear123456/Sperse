@@ -219,9 +219,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initFilterConfig() {
-        if (this.filters)
+        if (this.filters) {
             this._filtersService.setup(this.filters);
-        else     
+            this._filtersService.checkIfAnySelected();
+        } else     
             this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
                 this._filtersService.setup(
                     this.filters = [
@@ -592,8 +593,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.localizationSourceName;
 
         this.paramsSubscribe();
+        this.initFilterConfig();
         this.initToolbarConfig();
-        this.initFilterConfig();        
 
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
