@@ -144,6 +144,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this._pipelineService.updateLeadStageByLeadId(
                     leadId, oldStage, newStage, () => {
                         this.disabled = false;
+                        this.stages.every((stage, index) => {
+                            let result = (stage.name == oldStage);
+                            if (result && stage['total'] && !stage['leads'].length) {
+                                this.loadStageIndex = index;
+                                this.loadStagesLeads(0, true);
+                                this.startLoading();
+                            }
+                            return !result;
+                        });
                     }
                 );
             }

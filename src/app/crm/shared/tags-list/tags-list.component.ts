@@ -81,8 +81,8 @@ export class TagsListComponent extends AppComponentBase {
     }
 
     onSearch = ($event) => {
-        this.searchValue = $event.event.target.value;
-        this.showAddButton = this.list.every((item) => !item.includes(this.searchValue));
+        this.searchValue = $event.event.target.value.trim();
+        this.showAddButton = this.searchValue && this.list.every((item) => item != this.searchValue);
         $event.component.option('showClearButton', !this.showAddButton);
     }
     reset() {

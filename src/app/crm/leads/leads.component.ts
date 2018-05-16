@@ -179,9 +179,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initFilterConfig(): void {
-        if (this.filters)
+        if (this.filters) {
             this._filtersService.setup(this.filters);
-        else
+            this._filtersService.checkIfAnySelected();
+        } else
             this._leadService.getFiltersInitialData().subscribe(result => {
                 this._filtersService.setup(this.filters = [
                     new FilterModel({
@@ -621,8 +622,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.localizationSourceName;
 
         this.paramsSubscribe();
-        this.initToolbarConfig();
         this.initFilterConfig();
+        this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);            
 
