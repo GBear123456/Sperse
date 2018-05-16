@@ -82,7 +82,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSearch = ($event) => {
-        this.searchValue = $event.event.target.value;
+        this.searchValue = $event.event.target.value.trim();
         this.showAddButton = this.searchValue && this.list.every((item) => item != this.searchValue);
         $event.component.option('showClearButton', !this.showAddButton);
     }
