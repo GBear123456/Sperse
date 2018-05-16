@@ -34,7 +34,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     ngOnInit(): void {
         super.ngOnInit();
-
         this.requestSyncAjax();
     }
 
@@ -52,7 +51,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             });
     }
 
-    private getSynchProgressAjax() {
+    public getSynchProgressAjax() {
         this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {})
             .done((result: SyncProgressOutput) => {
                 this.currentProgress = result.totalProgress.progressPercent;
@@ -136,7 +135,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         let requestParams = {
             instanceType: InstanceType[this.instanceType],
             instanceId: this.instanceId
-        }
+        };
 
         requestParams = { ...requestParams, ...params };
         let paramKeys = Object.keys(requestParams);

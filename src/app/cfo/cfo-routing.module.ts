@@ -20,7 +20,7 @@ import { StatementsComponent } from './statements/statements.component';
             {
                 path: '',
                 children: [
-                    { path: 'start', component: StartComponent, data: { permission: '' } },
+                    { path: 'start', component: StartComponent, data: { permission: '', reuse: true } },
                     {
                         path: 'linkaccounts',
                         data: { permission: '' },
@@ -28,7 +28,8 @@ import { StatementsComponent } from './statements/statements.component';
                         children: [
                             {
                                 path: '',
-                                component: BankAccountsComponent
+                                component: BankAccountsComponent,
+                                data: { permission: '', reuse: true },
                             },
                             {
                                 path: 'quovo',
@@ -40,9 +41,9 @@ import { StatementsComponent } from './statements/statements.component';
                     { path: 'chart-of-accounts', component: ChartOfAccountsComponent, data: { permission: '' } },
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '', reuse: true } },
                     { path: 'stats', component: StatsComponent, data: { permission: '', reuse: true } },
-                    { path: 'transactions', component: TransactionsComponent, data: { permission: '' } },
+                    { path: 'transactions', component: TransactionsComponent, data: { permission: '', reuse: true } },
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
-                    { path: 'statements', component: StatementsComponent, data: { permission: '' } }
+                    { path: 'statements', component: StatementsComponent, data: { permission: '', reuse: true } }
                 ]
             }
         ])

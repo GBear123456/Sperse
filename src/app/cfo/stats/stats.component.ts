@@ -18,6 +18,7 @@ import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 import {
     StatsFilter,
@@ -26,7 +27,8 @@ import {
     BankAccountDailyStatDto,
     GroupBy,
     CashFlowForecastServiceProxy,
-    InstanceType
+    InstanceType,
+    SyncAccountBankDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import * as _ from 'underscore';
@@ -46,6 +48,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
@@ -149,6 +152,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
     private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
+    private bankAccounts: SyncAccountBankDto[];
     constructor(
         injector: Injector,
         private _appService: AppService,
@@ -312,13 +316,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter.endDate = moment().utc().add(1, 'year');
 
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowService.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD');
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getBankAccountsObservable)
+        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+
+        Observable.forkJoin(getBankAccountsObservable, getForecastModelsObservable)
             .subscribe(result => {
                 /** Initial data handling */
-                this.handleCashFlowInitialResult(result[0], result[2]);
+                this.handleCashFlowInitialResult(result[0]);
 
                 /** Forecast models handling */
                 this.handleForecastModelResult(result[1]);
@@ -346,7 +350,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     initFiltering() {
         this._filtersService.apply(() => {
-
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'date') {
                     if (filter.items.from.value)
@@ -370,7 +373,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 else
                     this.requestFilter[filter.field] = undefined;
             }
-
             this.loadStatsData();
             this.initToolbarConfig();
         });
@@ -397,33 +399,42 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         return window.innerHeight - 260;
     }
 
-    handleCashFlowInitialResult(result, bankAccounts) {
-        this._filtersService.setup(
-            this.filters = [
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    caption: 'Date',
-                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                    options: {
-                        allowFutureDates: true,
-                        endDate: moment(new Date()).add(10, 'years').toDate()
-                    }
-                }),
-                new FilterModel({
-                    field: 'accountIds',
-                    component: BankAccountFilterComponent,
-                    caption: 'Account',
-                    items: {
-                        element: new BankAccountFilterModel(
-                            {
-                                dataSource: bankAccounts,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                })
-            ]
-        );
+    handleCashFlowInitialResult(bankAccounts) {
+        this.bankAccounts = bankAccounts;
+        this.setupFilters();
+    }
+
+    setupFilters() {
+        if (this.filters.length) {
+            this._filtersService.setup(this.filters);
+        } else {
+            this._filtersService.setup(
+                this.filters = [
+                    new FilterModel({
+                        component: FilterCalendarComponent,
+                        caption: 'Date',
+                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                        options: {
+                            allowFutureDates: true,
+                            endDate: moment(new Date()).add(10, 'years').toDate()
+                        }
+                    }),
+                    new FilterModel({
+                        field: 'accountIds',
+                        component: BankAccountFilterComponent,
+                        caption: 'Account',
+                        items: {
+                            element: new BankAccountFilterModel(
+                                {
+                                    dataSource: this.bankAccounts,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    })
+                ]
+            );
+        }
     }
 
     handleForecastModelResult(result) {
@@ -742,24 +753,30 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     .replace(new RegExp('url\\(#forecast-linear-gradient\\)', 'g'), this.forecastShadowStartedColor);
     }
 
-    customizeBarTooltip = (pointInfo) => {
-        if (pointInfo.seriesName == 'historicalGradient' || pointInfo.seriesName == 'forecastGradient')
-            return {
-                html: ''
-            };
-
+    customizeBarTooltip = pointInfo => {
         return {
-            html: this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo)
+            html: (pointInfo.seriesName !== 'historicalGradient' && pointInfo.seriesName !== 'forecastGradient') ?
+                  '' :
+                  this._statsService.getTooltipInfoHtml(this.statsData, this.barChartTooltipFields, pointInfo)
         };
     }
 
     activate() {
+        this._filtersService.localizationSourceName = this.localizationSourceName;
         this.initToolbarConfig();
-        this.rootComponent = this.getRootComponent();
+        this.setupFilters();
+        this.initFiltering();
+        this.bankAccountSelector.handleSelectedBankAccounts();
+        if (this.synchProgressComponent.completed) {
+            this.synchProgressComponent.getSynchProgressAjax();
+        }
         this.rootComponent.overflowHidden(true);
     }
 
     deactivate() {
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 
