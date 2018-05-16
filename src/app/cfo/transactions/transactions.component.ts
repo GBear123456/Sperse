@@ -46,6 +46,7 @@ import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/b
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -58,6 +59,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
 
@@ -505,111 +507,114 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
             this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
         ).subscribe(result => {
-            this.filtersService.setup(
-                this.filters = [
-                    new FilterModel({
-                        component: FilterCalendarComponent,
-                        operator: { from: 'ge', to: 'le' },
-                        caption: 'Date',
-                        field: 'Date',
-                        items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                        options: { method: 'getFilterByDate' }
-                    }),
-                    new FilterModel({
-                        component: BankAccountFilterComponent,
-                        caption: 'Account',
-                        items: {
-                            element: new BankAccountFilterModel(
-                                {
-                                    dataSource: result[2],
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'Description',
-                        items: { Description: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: { from: 'ge', to: 'le' },
-                        caption: 'Amount',
-                        field: 'Amount',
-                        items: { from: new FilterItemModel(), to: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        field: 'CategoryId',
-                        caption: 'TransactionCategory',
-                        items: {
-                            element: new FilterCheckBoxesModel({
-                                dataSource: result[0].categories,
+            this.filters = [
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'Date',
+                    field: 'Date',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate' }
+                }),
+                new FilterModel({
+                    component: BankAccountFilterComponent,
+                    caption: 'Account',
+                    items: {
+                        element: new BankAccountFilterModel(
+                            {
+                                dataSource: result[2],
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        field: 'TypeId',
-                        caption: 'TransactionType',
-                        items: {
-                            element: new FilterCheckBoxesModel({
-                                dataSource: result[0].types,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterCBoxesComponent,
-                        caption: 'classified',
-                        field: 'CashflowCategoryId',
-                        items: { yes: new FilterItemModel(), no: new FilterItemModel() }
-                    }),
-                    new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        field: 'CurrencyId',
-                        caption: 'Currency',
-                        items: {
-                            element: new FilterCheckBoxesModel({
-                                dataSource: result[1].currencies,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        field: 'BusinessEntityId',
-                        caption: 'BusinessEntity',
-                        items: {
-                            element: new FilterCheckBoxesModel({
-                                dataSource: result[1].businessEntities,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                        }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        //operator: 'contains',
-                        caption: 'CheckNumber',
-                        //items: { BusinessEntity: '' }
-                    }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        //operator: 'contains',
-                        caption: 'Reference',
-                        //items: { BusinessEntity: '' }
-                    })
-                ], this._activatedRoute.snapshot.queryParams, false
-            );
+                    }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Description',
+                    items: { Description: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'Amount',
+                    field: 'Amount',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'CategoryId',
+                    caption: 'TransactionCategory',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: result[0].categories,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'TypeId',
+                    caption: 'TransactionType',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: result[0].types,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCBoxesComponent,
+                    caption: 'classified',
+                    field: 'CashflowCategoryId',
+                    items: { yes: new FilterItemModel(), no: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'CurrencyId',
+                    caption: 'Currency',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: result[1].currencies,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    field: 'BusinessEntityId',
+                    caption: 'BusinessEntity',
+                    items: {
+                        element: new FilterCheckBoxesModel({
+                            dataSource: result[1].businessEntities,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    //operator: 'contains',
+                    caption: 'CheckNumber',
+                    //items: { BusinessEntity: '' }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    //operator: 'contains',
+                    caption: 'Reference',
+                    //items: { BusinessEntity: '' }
+                })
+            ];
+            this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
         });
 
+        this.initFiltering();
+    }
+
+    initFiltering() {
         this.filtersService.apply(() => {
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'account') {
@@ -1052,5 +1057,24 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.rootComponent.overflowHidden();
 
         super.ngOnDestroy();
+    }
+
+    activate() {
+        this.filtersService.localizationSourceName = this.localizationSourceName;
+        this.initToolbarConfig();
+        this.filtersService.setup(this.filters);
+        this.initFiltering();
+        this.bankAccountSelector.handleSelectedBankAccounts();
+        if (this.synchProgressComponent.completed) {
+            this.synchProgressComponent.getSynchProgressAjax();
+        }
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
+        this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this.filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
     }
 }

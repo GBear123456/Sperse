@@ -10,6 +10,7 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 @Component({
     selector: 'dashboard',
@@ -23,6 +24,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
     @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
     @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
 
@@ -71,7 +73,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.totalsByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
         this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
     }
-    
+
     refreshWidgets() {
         this.accountsComponent.getAccountTotals();
         this.accountsComponent.getDailyStats();
@@ -83,4 +85,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     periodChanged($event) {
         this._dashboardService.periodChanged($event);
     }
+
+    activate() {
+        this.bankAccountSelector.handleSelectedBankAccounts();
+        if (this.synchProgressComponent.completed) {
+            this.synchProgressComponent.getSynchProgressAjax();
+        }
+    }
+
 }
