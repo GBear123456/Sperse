@@ -720,10 +720,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.tagsComponent.reset();
         this.listsComponent.reset();
         this.userAssignmentComponent.reset();
-
-        this.tagsComponent.reset();
-        this.listsComponent.reset();
-        this.userAssignmentComponent.reset();
     }
 
     onSaveOptionSelectionChanged($event) {
