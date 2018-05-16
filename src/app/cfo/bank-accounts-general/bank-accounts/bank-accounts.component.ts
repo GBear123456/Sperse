@@ -1,5 +1,5 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { BankAccountsServiceProxy, BusinessEntityServiceProxy, DashboardServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit, Injector } from '@angular/core';
+import { BankAccountsServiceProxy, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
@@ -17,7 +17,7 @@ import * as _ from 'underscore';
     selector: 'bank-accounts-component',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
-    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService, DashboardServiceProxy ]
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     initialBankAccounts;
@@ -32,14 +32,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     bankAccountIds = null;
     storedVisibleBankAccountIds = [];
     isActive = true;
-    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;    
+    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
     private readonly LOCAL_STORAGE = 0;
 
     constructor(
         injector: Injector,
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
-        private _dashboardProxy: DashboardServiceProxy,
         private _bankAccountsService: BankAccountsService,
         private _quovoService: QuovoService,
         private _synchProgress: SynchProgressService,
@@ -62,16 +61,29 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
     ngOnInit() {
         this.businessEntities$ = this._businessEntityService.getBusinessEntities(InstanceType[this.instanceType], this.instanceId);
         this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
+        this.checkCachedData();
+        this.loadBankAccounts();
+    }
 
+    checkCachedData() {
+        let dataChanged = false;
         if (this._cacheService.exists(this.bankAccountsCacheKey)) {
             let cacheData = this._cacheService.get(this.bankAccountsCacheKey);
             this.isActive = cacheData['isActive'] ? true : false;
-            this.selectedBusinessEntities = cacheData['selectedBusinessEntityIds'];
-            this.bankAccountIds = cacheData['bankAccounts'] || null;
-            this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || null;
+            if (cacheData['visibleBankAccountIds'] &&
+                cacheData['visibleBankAccountIds'].length &&
+                (
+                    _.difference(this.bankAccountIds, cacheData['bankAccounts']).length ||
+                 _.difference(cacheData['bankAccounts'], this.bankAccountIds)
+                )
+            ) {
+                this.selectedBusinessEntities = cacheData['selectedBusinessEntityIds'];
+                this.bankAccountIds = cacheData['bankAccounts'] || null;
+                this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || null;
+                dataChanged = true;
+            }
         }
-
-        this.loadBankAccounts();        
+        return dataChanged;
     }
 
     loadBankAccounts() {
@@ -138,7 +150,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             return syncAccount.selectedBankAccounts.reduce((sum, bankAccount) => bankAccount.balance + sum, 0) + sum;
         }, 0);
     }
-    
+
     onUpdateAccount(event) {
         if (this.quovoHandler.isLoaded) {
             if (this.loading) {
@@ -173,9 +185,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
 
     isActiveChanged(e) {
         this.bankAccountIds = null;
-        this.filterDataSource();        
+        this.filterDataSource();
     }
-    
+
     updateCache() {
         let selectedBankAccountIds = [];
         let bankAccountIds = [];
@@ -184,7 +196,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
                 if (bankAccount.selected) {
                     selectedBankAccountIds.push(bankAccount.id);
                 }
-                bankAccountIds.push(bankAccount.id)
+                bankAccountIds.push(bankAccount.id);
             });
         });
         this.bankAccountIds = selectedBankAccountIds;
@@ -196,4 +208,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit {
             'visibleBankAccountIds': bankAccountIds
         });
     }
+
+    activate() {
+        let dataChanged = this.checkCachedData();
+        if (dataChanged) {
+            this.reloadGrid();
+        }
+    }
+
+    deactivate() {}
 }
