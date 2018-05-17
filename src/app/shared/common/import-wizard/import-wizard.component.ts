@@ -1,6 +1,7 @@
-import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { MatHorizontalStepper } from '@angular/material';
 
 @Component({
     selector: 'import-wizard',
@@ -8,6 +9,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     styleUrls: ['import-wizard.component.less']
 })
 export class ImportWizardComponent extends AppComponentBase {
+    @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
+
     @Input() title: string;
     @Input() imported: boolean;
 
@@ -37,6 +40,9 @@ export class ImportWizardComponent extends AppComponentBase {
 
     stepChanged($event) {
         this.lastStep = ($event.selectedIndex >= this.STEP_COUNT - 1);
+    }
+
+    reset() { 
     }
 
     cancel() {
