@@ -1,26 +1,28 @@
-<h1>{{title}}</h1>
-<div class="actions">
-    <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
-    <button class="button-layout button-primary" (click)="lastStep ? complete(): stepper.next()">{{lastStep ? l('Import'): l('Next')}}</button>
+<div *ngIf="showSteper">
+    <h1>{{title}}</h1>
+    <div class="actions">
+        <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
+        <button class="button-layout button-primary" (click)="lastStep ? complete(): stepper.next()">{{lastStep ? l('Import'): l('Next')}}</button>
+    </div>
+    <mat-horizontal-stepper 
+        (selectionChange)="stepChanged($event)"
+        [linear]="true">
+      <mat-step [stepControl]="uploadFile" [label]="'Upload file'" [editable]="false">
+        <form [formGroup]="uploadFile">
+          <mat-form-field>
+            <input matInput formControlName="firstCtrl" required>
+          </mat-form-field>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="dataMapping" [label]="'Data mapping'" [editable]="false">
+        <form [formGroup]="dataMapping">
+          <mat-form-field>
+            <input matInput formControlName="secondCtrl" required>
+          </mat-form-field>
+        </form>
+      </mat-step>
+      <mat-step [label]="'Review'" [completed]="imported" [editable]="false">
+        <div [hidden]="imported"></div>
+      </mat-step>
+    </mat-horizontal-stepper>
 </div>
-<mat-horizontal-stepper 
-    (selectionChange)="stepChanged($event)"
-    [linear]="true" #stepper>
-  <mat-step [stepControl]="uploadFile" [label]="'Upload file'" [editable]="false">
-    <form [formGroup]="uploadFile">
-      <mat-form-field>
-        <input matInput formControlName="firstCtrl" required>
-      </mat-form-field>
-    </form>
-  </mat-step>
-  <mat-step [stepControl]="dataMapping" [label]="'Data mapping'" [editable]="false">
-    <form [formGroup]="dataMapping">
-      <mat-form-field>
-        <input matInput formControlName="secondCtrl" required>
-      </mat-form-field>
-    </form>
-  </mat-step>
-  <mat-step [label]="'Review'" [completed]="imported" [editable]="false">
-    <div [hidden]="imported"></div>
-  </mat-step>
-</mat-horizontal-stepper>
