@@ -12,6 +12,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 import {
     StatsFilter,
@@ -41,6 +42,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
     public headlineConfig;
     private bankAccountCount = '';
@@ -211,14 +213,41 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         Observable.forkJoin(getForecastModelsObservable, getBankAccountsObservable)
             .subscribe(result => {
                 this.handleForecastModelResult(result[0]);
-
-                this.initFiltering(result[1]);
-
+                this.createFilters(result[1]);
+                this._filtersService.setup(this.filters);
+                this.initFiltering();
                 this.initToolbarConfig();
             });
 
         this.initHeadlineConfig();
         this.initToolbarConfig();
+    }
+
+    createFilters(bankAccounts) {
+        this.filters = [
+            new FilterModel({
+                component: FilterCalendarComponent,
+                caption: 'Date',
+                items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                options: {
+                    allowFutureDates: true,
+                    endDate: moment(new Date()).add(10, 'years').toDate()
+                }
+            }),
+            new FilterModel({
+                field: 'accountIds',
+                component: BankAccountFilterComponent,
+                caption: 'Account',
+                items: {
+                    element: new BankAccountFilterModel(
+                        {
+                            dataSource: bankAccounts,
+                            nameField: 'name',
+                            keyExpr: 'id'
+                        })
+                }
+            })
+        ];
     }
 
     handleForecastModelResult(result) {
@@ -303,34 +332,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             });
     }
 
-    initFiltering(bankAccounts) {
-        this._filtersService.setup(
-            this.filters = [
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    caption: 'Date',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {
-                        allowFutureDates: true,
-                        endDate: moment(new Date()).add(10, 'years').toDate()
-                    }
-                }),
-                new FilterModel({
-                    field: 'accountIds',
-                    component: BankAccountFilterComponent,
-                    caption: 'Account',
-                    items: {
-                        element: new BankAccountFilterModel(
-                            {
-                                dataSource: bankAccounts,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                })
-            ]
-        );
-
+    initFiltering() {
         this._filtersService.apply(() => {
             for (let filter of this.filters) {
                 if (filter.caption.toLowerCase() === 'date') {
@@ -346,7 +348,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 }
                 if (filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);              
+                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -447,14 +449,28 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     ngOnDestroy() {
         this._appService.toolbarConfig = null;
-
-        this._filtersService.localizationSourceName
-            = AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
-
-        let rootComponent = this.getRootComponent();
-        rootComponent.overflowHidden();
-
+        this.getRootComponent().overflowHidden();
         super.ngOnDestroy();
+    }
+
+    activate() {
+        this._filtersService.localizationSourceName = this.localizationSourceName;
+        this.initToolbarConfig();
+        this._filtersService.setup(this.filters);
+        this.initFiltering();
+        this.bankAccountSelector.handleSelectedBankAccounts();
+        if (this.synchProgressComponent.completed) {
+            this.synchProgressComponent.getSynchProgressAjax();
+        }
+        this.getRootComponent().overflowHidden(true);
+    }
+
+    deactivate() {
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this._filtersService.unsubscribe();
+        this.getRootComponent().overflowHidden();
     }
 }

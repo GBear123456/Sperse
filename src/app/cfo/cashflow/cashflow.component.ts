@@ -81,6 +81,7 @@ import { CellsCopyingService } from 'shared/common/xls-mode/cells-copying/cells-
 
 import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 class TransactionStatsDtoExtended extends TransactionStatsDto {
     initialDate: moment.Moment;
@@ -169,6 +170,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
     transactionId: any;
     selectedBankAccounts;
@@ -203,7 +205,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cashflowTypes: any;
 
-    /** Bank accounts of user */
+    /** Bank accounts of user with extracted bank accounts */
     private bankAccounts: BankAccountDto[];
 
     calculateCellValuePerformance = 0;
@@ -1030,44 +1032,51 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
         this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
-        this._filtersService.setup(
-            this.filters = [
-                new FilterModel({
-                    field: 'accountIds',
-                    component: BankAccountFilterComponent,
-                    caption: 'Account',
-                    items: {
-                        element: new BankAccountFilterModel(
-                            {
-                                dataSource: bankAccounts,
-                                nameField: 'name',
-                                keyExpr: 'id'
-                            })
-                    }
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    caption: 'Date',
-                    items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                    options: {
-                        allowFutureDates: true,
-                        endDate: moment(new Date()).add(10, 'years').toDate()
-                    }
-                }),
-                new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    field: 'businessEntityIds',
-                    caption: 'BusinessEntity',
-                    items: {
-                        element: new FilterCheckBoxesModel({
-                            dataSource: initialDataResult.businessEntities,
+        this.createFilters(initialDataResult, bankAccounts);
+        this.setupFilters(this.filters);
+    }
+
+    createFilters(initialData, bankAccounts) {
+        this.filters = [
+            new FilterModel({
+                field: 'accountIds',
+                component: BankAccountFilterComponent,
+                caption: 'Account',
+                items: {
+                    element: new BankAccountFilterModel(
+                        {
+                            dataSource: bankAccounts,
                             nameField: 'name',
                             keyExpr: 'id'
                         })
-                    }
-                })
-            ]
-        );
+                }
+            }),
+            new FilterModel({
+                component: FilterCalendarComponent,
+                caption: 'Date',
+                items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                options: {
+                    allowFutureDates: true,
+                    endDate: moment(new Date()).add(10, 'years').toDate()
+                }
+            }),
+            new FilterModel({
+                component: FilterCheckBoxesComponent,
+                field: 'businessEntityIds',
+                caption: 'BusinessEntity',
+                items: {
+                    element: new FilterCheckBoxesModel({
+                        dataSource: initialData.businessEntities,
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+                }
+            })
+        ];
+    }
+
+    setupFilters(filters) {
+        this._filtersService.setup(filters);
     }
 
     /**
@@ -3112,7 +3121,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** Don't allow to move to unclassified (api is not support)
                      *  @todo remove not when needed
                      */
-                    this.highlightHistoricalTargetCells($targetCell, $availableRows.not('.unclassifiedRow'));
+                    this.highlightHistoricalTargetCells($targetCell, $availableRows);
                 } else {
                     this.highlightForecastsTargetCells($targetCell, $availableRows);
                 }
@@ -3205,7 +3214,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** Handle moving of historical transactions */
             let movingObservables = [];
-            if (historicalItems.length && targetCellData.categoryId !== undefined && targetCell.className.indexOf('next') === -1) {
+            if (historicalItems.length && targetCell.className.indexOf('next') === -1) {
                 movingObservables.push(
                     this.moveHistoricals(this.movedCell, targetCellData)
                 );
@@ -3274,13 +3283,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     moveHistoricals(movedCell, targetCellData): Observable<any> {
         let filter = this.getDetailFilterFromCell(movedCell);
+        let destinationCategoryId = targetCellData.subCategoryId || targetCellData.categoryId;
         return this._classificationServiceProxy.updateTransactionsCategoryWithFilter(
             InstanceType[this.instanceType],
             this.instanceId,
             UpdateTransactionsCategoryWithFilterInput.fromJS({
                 transactionFilter: filter,
-                destinationCategoryId: targetCellData.subCategoryId || targetCellData.categoryId,
-                standardDescriptor: targetCellData.transactionDescriptor
+                destinationCategoryId: destinationCategoryId,
+                standardDescriptor: destinationCategoryId ? targetCellData.transactionDescriptor : 'Unclassified'
             })
         );
     }
@@ -5499,4 +5509,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
         }
     }
+
+    activate() {
+        this._filtersService.localizationSourceName = this.localizationSourceName;
+        this.operations.initToolbarConfig();
+        this.setupFilters(this.filters);
+        this.initFiltering();
+        this.operations.bankAccountSelector.handleSelectedBankAccounts();
+        this.pivotGrid.instance.repaint();
+        if (this.synchProgressComponent.completed) {
+            this.synchProgressComponent.getSynchProgressAjax();
+        }
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this._appService.toolbarConfig = null;
+        this._filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
+    }
+
 }

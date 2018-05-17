@@ -1,5 +1,5 @@
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { Injector, Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Injector, Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { SetupComponent } from './setup/setup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -13,6 +13,7 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
     animations: [appModuleAnimation()]
 })
 export class StartComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild(DashboardComponent) dashboardComponent: DashboardComponent;
     constructor(injector: Injector,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
@@ -28,6 +29,18 @@ export class StartComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy(): void {
+        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+    }
+
+    activate() {
+        this._cfoService.instanceChangeProcess();
+        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+        if (this.dashboardComponent) {
+            this.dashboardComponent.activate();
+        }
+    }
+
+    deactivate() {
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
     }
 }
