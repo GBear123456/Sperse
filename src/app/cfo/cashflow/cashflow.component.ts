@@ -3118,9 +3118,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
                 /** Highlight cells where we can drop cell */
                 if (moveOnlyHistorical) {
-                    /** Don't allow to move to unclassified (api is not support)
-                     *  @todo remove not when needed
-                     */
                     this.highlightHistoricalTargetCells($targetCell, $availableRows);
                 } else {
                     this.highlightForecastsTargetCells($targetCell, $availableRows);
@@ -3299,7 +3296,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         items.forEach(item => {
             item.categoryId = targetData.categoryId;
             item.subCategoryId = targetData.subCategoryId;
-            item.transactionDescriptor = targetData.transactionDescriptor || item.transactionDescriptor;
+            item.transactionDescriptor = targetData.categoryId || targetData.subCategoryId
+                ? targetData.transactionDescriptor || item.transactionDescriptor
+                : null;
             this.addCategorizationLevels(item);
         });
     }
