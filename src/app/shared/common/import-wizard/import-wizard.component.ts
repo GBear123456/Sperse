@@ -23,6 +23,7 @@ export class ImportWizardComponent extends AppComponentBase {
     lastStep: boolean;
 
     private readonly STEP_COUNT = 3; 
+    showSteper: boolean = true;
 
     constructor(
         injector: Injector,
@@ -43,6 +44,16 @@ export class ImportWizardComponent extends AppComponentBase {
     }
 
     reset() { 
+        this.showSteper = false;
+        this.imported = false;
+        this.lastStep = false;
+
+        this.uploadFile.reset();
+        this.dataMapping.reset();
+
+        setTimeout(() => {
+            this.showSteper = true;
+        });
     }
 
     cancel() {
