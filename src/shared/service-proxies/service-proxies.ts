@@ -6850,6 +6850,52 @@ export class CustomerListsServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    rename(input: UpdateCustomerListInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Rename";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRename(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRename(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRename(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getLists(): Observable<CustomerListInfoDto[]> {
@@ -14501,8 +14547,8 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccount(instanceType: InstanceType75, instanceId: number, syncAccountId: number): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
+    syncAccountAsync(instanceType: InstanceType75, instanceId: number, syncAccountId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccountAsync?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14522,11 +14568,11 @@ export class SyncServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSyncAccount(response_);
+            return this.processSyncAccountAsync(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processSyncAccount(response_);
+                    return this.processSyncAccountAsync(response_);
                 } catch (e) {
                     return <Observable<boolean>><any>Observable.throw(e);
                 }
@@ -14535,7 +14581,7 @@ export class SyncServiceProxy {
         });
     }
 
-    protected processSyncAccount(response: Response): Observable<boolean> {
+    protected processSyncAccountAsync(response: Response): Observable<boolean> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -29352,6 +29398,45 @@ export interface IScoreSimulatorDto {
     obtainAutoLoan: number;
     obtainPersonalLoan: number;
     transferCreditBalances: number;
+}
+
+export class UpdateCustomerListInput implements IUpdateCustomerListInput {
+    id: number;
+    name: string;
+
+    constructor(data?: IUpdateCustomerListInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomerListInput {
+        let result = new UpdateCustomerListInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUpdateCustomerListInput {
+    id: number;
+    name: string;
 }
 
 export class CustomerListInfoDto implements ICustomerListInfoDto {
