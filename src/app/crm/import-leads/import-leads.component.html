@@ -1,0 +1,12 @@
+<import-wizard
+    [title]="l('Import leads')"
+    [imported]="imported"
+    (onComplete)="complete()"
+    (onCancel)="cancel()">
+</import-wizard>
+<div class="success" [hidden]="!imported">
+    <h1>{{l('ImportedLeadsHeader', [importedCount])}}</h1>
+    <h3>{{l('ImportedLeadsMessage')}}</h3>
+    <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
+    <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
+</div>

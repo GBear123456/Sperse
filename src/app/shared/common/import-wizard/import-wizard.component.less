@@ -1,0 +1,77 @@
+:host {
+    position: relative;
+    display: block;
+    margin: 0px 20px;
+
+    h1 {
+        position: absolute;
+        top: 23px;
+        left: 20px;
+        font-size: 24px;
+        font-weight: 600;
+        color: #202b35;
+    }
+
+    .actions {  
+        position: absolute;
+        right: 20px;
+        top: 13px;
+    }
+
+    /deep/ mat-horizontal-stepper {
+        .mat-horizontal-stepper-header-container {
+            justify-content: space-around;
+            border-bottom: 1px solid #e5e9ec;
+            padding: 0px 20%;
+            .mat-step-label-active {
+                .mat-step-text-label {
+                    font-weight: 500!important;
+                }
+            }
+            .mat-step-text-label {
+                font-size: 16px!important;
+                font-weight: 300;
+                letter-spacing: 0.2px!important;
+                color: #677380!important;
+            }
+            .mat-step-icon {
+                font-weight: 500;
+                color: #00aeef!important;
+                background: #FFF!important;
+                border: 1px solid #00aeef;
+            }
+            .mat-step-icon-not-touched {
+                color: #677380!important;
+                background: #FFF!important;
+                border: 1px solid #e5e9ec;
+            }
+        }
+        .mat-stepper-horizontal-line {
+            border-top-width: 0px!important;
+            flex: none!important;
+            width: 50px;
+            padding-left: 15px;
+
+            &:before {
+                bottom: 7px;
+                content: '';
+                width: 20px;
+                height: 1px;
+                background: #e5e9ec;
+                display: block;
+                position: relative;
+                transform: rotate(45deg);
+            }
+            &:after {
+                top: 7px;
+                content: '';
+                width: 20px;
+                height: 1px;
+                background: #e5e9ec;
+                display: block;
+                position: relative;
+                transform: rotate(-45deg);
+            }
+        }
+    }
+}

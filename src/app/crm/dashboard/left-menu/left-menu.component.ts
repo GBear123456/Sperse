@@ -13,7 +13,7 @@ export class DashboardMenuComponent extends AppComponentBase {
     items = [
         { caption: 'ManageClients', component: '/clients', showPlus: true },
         { caption: 'ManageLeads', component: '/leads', showPlus: true },
-        { caption: 'ImportYourList', component: '/clients', disabled: true },
+        { caption: 'ImportYourList', component: '/import-leads', disabled: false },
         { caption: 'CustomizeSettings', component: '/editions', disabled: true }
     ];
 

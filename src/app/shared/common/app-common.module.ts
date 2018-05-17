@@ -1,18 +1,20 @@
 import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap';
 
 import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
-import { MatProgressBarModule } from '@angular/material';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule, MatStepperModule, MatInputModule } from '@angular/material';
 
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, 
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule } from 'devextreme-angular';
 
+import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
@@ -44,7 +46,11 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DataTableModule,
         PaginatorModule,
 
+        MatInputModule,
+        MatFormFieldModule,
         MatProgressBarModule,
+        MatStepperModule,
+        ReactiveFormsModule,
 
         DxListModule,
         DxButtonModule,
@@ -69,7 +75,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ContactInfoPanelComponent,
         InplaceEditComponent,
         InplaceSelectBoxComponent,
-        PeriodComponent
+        PeriodComponent,
+        ImportWizardComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -82,7 +89,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ContactInfoPanelComponent,
         InplaceEditComponent,
         InplaceSelectBoxComponent,
-        PeriodComponent
+        PeriodComponent,
+        ImportWizardComponent
     ],
     providers: [
         DateTimeService,

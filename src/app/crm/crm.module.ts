@@ -20,6 +20,7 @@ import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
+import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 
 import { EditionComboComponent } from '@admin/shared/edition-combo.component';
@@ -110,7 +111,8 @@ import {
       OrdersComponent,          
       DashboardComponent,
       DashboardMenuComponent,
-      LeadsStatsComponent
+      LeadsStatsComponent,
+      ImportLeadsComponent
     ],
     entryComponents: [
         CreateClientDialogComponent
