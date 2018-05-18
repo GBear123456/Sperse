@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, Injector } from '@angular/core';
+import { Component, ElementRef, ViewChild, Injector, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CalculatorService } from './calculator-widget.service';
 import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 
@@ -8,27 +8,29 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
     styleUrls: ['./calculator-widget.component.less']
 })
 
-export class CalculatorComponent extends CFOComponentBase {
-    input = '';
-    lastOperation = '';
-    private OpenedBrackets = 0;
-    private ClosedBrackets = 0;
+export class CalculatorComponent extends CFOComponentBase implements OnChanges {
+    private input: string = '';
+    private historyEquation = '';
+    lastOperation: string = '';
+    private OpenedBrackets: number = 0;
+    private ClosedBrackets: number = 0;
 
     calcHistory: CalcHistory[] = [];
 
     private readonly allowedChars: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '.', '%'];
     private readonly allowedOperators: string[] = ['+', '-', '*', '/'];
 
-    // isScientificMode: boolean = false;
+    isScientificMode: boolean = false;
+    IsEditHistoryEnabled: boolean = false;
+    @Input()
+    parentEquation: string;
 
     @ViewChild('calculatorInput') calculatorInputControl: ElementRef;
+    @ViewChild('calculatorHistoryEdit') calculatorHistoryEditControl: ElementRef;
 
-    constructor(
-        injector: Injector,
-        public calculatorService: CalculatorService
-    ) {
+    constructor(injector: Injector, private calculatorService: CalculatorService) {
         super(injector);
-        // this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
+        this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
         calculatorService.subscribePeriodChange((value) => {
             if (!value || (this.calcHistory.length && Number(this.calcHistory[this.calcHistory.length - 1].Result.replace(',', '')) !== value)) {
                 this.ClearAll();
@@ -42,6 +44,15 @@ export class CalculatorComponent extends CFOComponentBase {
         });
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['parentEquation']) {
+            let variableChange = changes['parentEquation'];
+            this.historyEquation = variableChange.currentValue;
+            console.log('parentEquation = ' + variableChange.currentValue);
+            this.RegenerateEquation();
+        }
+    }
+
     // For outside consumers
     public GetExpression(): string {
         return this.calculatorService.GetExpression();
@@ -50,6 +61,21 @@ export class CalculatorComponent extends CFOComponentBase {
     // For outside consumers
     public GetResult(): string {
         return this.calcHistory[this.calcHistory.length - 1].Result;
+    }
+
+    RegenerateEquation() {
+        this.historyEquation = this.calculatorHistoryEditControl.nativeElement.value;
+        if (this.historyEquation !== '') {
+            for (let i = 0; i < this.historyEquation.length; i++) {
+                if (this.allowedOperators.indexOf(this.historyEquation.charAt(i)) >= 0
+                    || this.historyEquation.charAt(i).toLowerCase() === 'x') {
+                    this.selectOperator(this.historyEquation.charAt(i));
+                } else {
+                    this.inputNumber(this.historyEquation.charAt(i));
+                }
+            }
+            this.selectOperator('=');
+        }
     }
 
     inputKeyPress(event: any): boolean {
@@ -111,14 +137,17 @@ export class CalculatorComponent extends CFOComponentBase {
         //     return;
         // }
 
+        if (operation === '=' && this.IsEditHistoryEnabled) {
+            this.IsEditHistoryEnabled = false;
+            this.RegenerateEquation();
+            return;
+        }
         if (operation === '*') {
             operation = 'x';
         }
 
         if (this.input === '') {
-            // if (this.lastOperation !== operation) {
             this.lastOperation = operation;
-            // }
             return;
         }
 
@@ -161,7 +190,7 @@ export class CalculatorComponent extends CFOComponentBase {
         console.log('Expression Value: ' + this.calculatorService.GetExpressionValue());
     }
 
-    ClearAll(): void {
+    private ClearAll(): void {
         this.calculatorInputControl.nativeElement.focus();
         this.lastOperation = '';
         this.input = '';
@@ -204,8 +233,26 @@ export class CalculatorComponent extends CFOComponentBase {
 
     ToggleScienticMode() {
         this.ClearAll();
-        this.calculatorService.IsScientificModeEnabled = !this.calculatorService.IsScientificModeEnabled;
+        this.isScientificMode = this.calculatorService.IsScientificModeEnabled = !this.calculatorService.IsScientificModeEnabled;
         // console.log('this.calculatorService.IsScientificModeEnabled = ' + this.calculatorService.IsScientificModeEnabled);
+    }
+
+    ToggleEditHistory() {
+        this.IsEditHistoryEnabled = !this.IsEditHistoryEnabled;
+        if (this.IsEditHistoryEnabled) {
+            this.calculatorHistoryEditControl.nativeElement.focus();
+            if (this.isScientificMode) {
+                this.historyEquation = this.GetExpression();
+            } else {
+                this.historyEquation = '';
+                for (let i = 0; i < this.calcHistory.length; i++) {
+                    this.historyEquation += this.calcHistory[i].Operator + this.calcHistory[i].Operand; // No operator for first operand.
+                }
+            }
+            this.calculatorHistoryEditControl.nativeElement.value = this.historyEquation;
+            this.ClearAll();
+            console.log('this.historyEquation = ' + this.historyEquation);
+        }
     }
 }
 
@@ -214,3 +261,4 @@ class CalcHistory {
     Operand: string = '';
     Result: string = '';
 }
+
