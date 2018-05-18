@@ -12,10 +12,48 @@
         color: #202b35;
     }
 
+    h3 {
+        padding-bottom: 20px;
+        font-size: 18px;
+    }    
+
     .actions {  
         position: absolute;
         right: 20px;
         top: 13px;
+    }
+
+    form {
+        padding: 30px 0px;
+        display: flex;
+        justify-content: center;
+        .center {
+            line-height: 10;
+            color: #e5e9ec;
+        }
+        .block {
+            width: 400px;
+            margin: 20px;
+            &.right {
+                margin-left: 50px;
+            }
+            &.left {
+                margin-right: 50px;
+            }
+            input {
+                padding: 7px;
+                border-radius: 5px;
+            }
+            .file-info {
+                padding: 20px;
+                p {
+                    margin: 0px; 
+                }
+            }
+        }
+        .full-width { 
+            width: 100%;
+        }
     }
 
     /deep/ mat-horizontal-stepper {
@@ -71,6 +109,33 @@
                 display: block;
                 position: relative;
                 transform: rotate(-45deg);
+            }
+        }
+    }
+
+    /deep/ file-drop {
+        display: block;
+        border-radius: 10px;
+
+        .drop-zone {
+            width: 400px;
+            height: 170px;
+            border: 2px dashed #e5e9ec;
+            border-radius: 10px;
+            .content {
+                color: #677380;
+                p {
+                    text-align: center;
+                    margin-top: 75px;
+                    a {
+                        position: relative;
+                        input {
+                            position: absolute;
+                            cursor: pointer;
+                            opacity: 0;
+                        }
+                    }
+                }
             }
         }
     }
