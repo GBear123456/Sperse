@@ -28,7 +28,7 @@ export class CalculatorComponent extends CFOComponentBase implements OnChanges {
     @ViewChild('calculatorInput') calculatorInputControl: ElementRef;
     @ViewChild('calculatorHistoryEdit') calculatorHistoryEditControl: ElementRef;
 
-    constructor(injector: Injector, private calculatorService: CalculatorService) {
+    constructor(injector: Injector, public calculatorService: CalculatorService) {
         super(injector);
         this.isScientificMode = this.calculatorService.IsScientificModeEnabled;
         calculatorService.subscribePeriodChange((value) => {
