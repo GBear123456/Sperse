@@ -9,16 +9,16 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 })
 
 export class CalculatorComponent extends CFOComponentBase implements OnChanges {
-    private input: string = '';
-    private historyEquation = '';
+    input: string = '';
+    historyEquation = '';
     lastOperation: string = '';
-    private OpenedBrackets: number = 0;
-    private ClosedBrackets: number = 0;
+    OpenedBrackets: number = 0;
+    ClosedBrackets: number = 0;
 
     calcHistory: CalcHistory[] = [];
 
-    private readonly allowedChars: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '.', '%'];
-    private readonly allowedOperators: string[] = ['+', '-', '*', '/'];
+    readonly allowedChars: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '.', '%'];
+    readonly allowedOperators: string[] = ['+', '-', '*', '/'];
 
     isScientificMode: boolean = false;
     IsEditHistoryEnabled: boolean = false;
