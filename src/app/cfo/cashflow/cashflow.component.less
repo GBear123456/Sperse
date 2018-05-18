@@ -53,7 +53,7 @@
 
     .sidebar-calculator-widget {
         position: absolute;
-        top: -62px;
+        top: 0;
         right: 0;
         border: 1px solid #e5e9ec;
         height: calc(~"100vh - 148px");
@@ -63,7 +63,7 @@
         flex-direction: column;
 
         .calculator-title {
-            padding: 25px 30px 14px 10px;
+            padding: 25px 30px 25px 10px;
             font-size: 15px;
             line-height: 1.6;
             letter-spacing: 0.3px;
@@ -122,7 +122,7 @@
 
         calculator-widget {
             // display: block;
-            height: 100%;
+            height: calc(~"100% - 72px");
         }
 
         &.calculatorHidden {
