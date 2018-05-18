@@ -13,9 +13,7 @@
               <h3>Upload from computer</h3>
               <file-drop 
                   [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (100 - dropZoneProgress) + '%, #00aeef 0%)'}"
-                  (onFileDrop)="fileDropped($event)" 
-                  (onFileOver)="fileOver($event)" 
-                  (onFileLeave)="fileLeave($event)">
+                  (onFileDrop)="fileDropped($event)">
                   <p>Drag and Drop files from your computer here<br>or<br><a href="javascript:void(0);"><input name="importFile" type="file" (change)="fileSelected($event)" accept=".csv">browse</a></p>
               </file-drop>
               <div class="file-info" [hidden]="!dropZoneProgress">
