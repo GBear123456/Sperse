@@ -184,13 +184,13 @@ export class CalculatorComponent extends CFOComponentBase implements OnChanges {
         }
     }
 
-    private DisplayTreeContent(): void {
+    DisplayTreeContent(): void {
         let log: string = this.calculatorService.DisplayTreeContent();
         console.log(log);
         console.log('Expression Value: ' + this.calculatorService.GetExpressionValue());
     }
 
-    private ClearAll(): void {
+    ClearAll(): void {
         this.calculatorInputControl.nativeElement.focus();
         this.lastOperation = '';
         this.input = '';
@@ -216,7 +216,7 @@ export class CalculatorComponent extends CFOComponentBase implements OnChanges {
         }
     }
 
-    private AddToHistory(operatorParam: string, operandParam: string, resultParam: string) {
+    AddToHistory(operatorParam: string, operandParam: string, resultParam: string) {
         let history: CalcHistory = {
             Operator: operatorParam,
             Operand: operandParam,
@@ -225,7 +225,7 @@ export class CalculatorComponent extends CFOComponentBase implements OnChanges {
         this.calcHistory.push(history);
     }
 
-    private ShowTotal() {
+    ShowTotal() {
         this.input = '$' + this.calcHistory[this.calcHistory.length - 1].Result;
         let numberResult = Number(this.calcHistory[this.calcHistory.length - 1].Result.replace(',', ''));
         this.calculatorService.valueChanged(numberResult);
