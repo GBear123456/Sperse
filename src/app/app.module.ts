@@ -9,7 +9,6 @@ import {AppComponent} from './app.component';
 import {AppService} from './app.service';
 
 import {ImpersonationService} from '@admin/users/impersonation.service';
-import {AppConsts} from '@shared/AppConsts';
 
 import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';
 import {CacheService} from 'ng2-cache-service';

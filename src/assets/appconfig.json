@@ -1,5 +1,5 @@
 {
-  "remoteServiceBaseUrl": "http://localhost:7000",
+  "remoteServiceBaseUrl": "https://testapi.sperse.com",
   "appBaseUrl": "http://localhost:7200",
   "recaptchaSiteKey": "6Lcmdi8UAAAAAFMAymcmeUJaZ79EFp47MiSlCCCF",
   "googleSheetClientId": "1052585251895-35255he8j11dr544ebl8nhg2vipdrdqk.apps.googleusercontent.com",

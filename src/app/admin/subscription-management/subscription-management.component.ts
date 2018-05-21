@@ -1,8 +1,7 @@
-import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
-    SessionServiceProxy,
     UserLoginInfoDto,
     TenantLoginInfoDto,
     ApplicationInfoDto,
@@ -10,7 +9,7 @@ import {
     InvoiceServiceProxy,
     CreateInvoiceDto
 } from '@shared/service-proxies/service-proxies';
-import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
+import { EditionPaymentType } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +21,7 @@ import { Paginator } from 'primeng/components/paginator/paginator';
     animations: [appModuleAnimation()]
 })
 
-export class SubscriptionManagementComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class SubscriptionManagementComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
     @ViewChild('dataTable') dataTable: DataTable;
     @ViewChild('paginator') paginator: Paginator;
@@ -31,7 +30,6 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
     user: UserLoginInfoDto = new UserLoginInfoDto();
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     application: ApplicationInfoDto = new ApplicationInfoDto();
-    subscriptionStartType: typeof SubscriptionStartType = SubscriptionStartType;
     editionPaymentType: EditionPaymentType = EditionPaymentType;
 
     filterText = '';
@@ -39,7 +37,6 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
 
     constructor(
         injector: Injector,
-        private _sessionService: SessionServiceProxy,
         private _paymentServiceProxy: PaymentServiceProxy,
         private _appSessionService: AppSessionService,
         private _invoiceServiceProxy: InvoiceServiceProxy,

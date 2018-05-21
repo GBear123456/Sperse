@@ -10,7 +10,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule, MatStepperModule, MatInputModule } from '@angular/material';
 
-import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, 
+import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule } from 'devextreme-angular';
 
@@ -19,14 +19,12 @@ import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-pan
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
 import { TimeZoneComboComponent } from './timing/timezone-combo.component';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { JqPluginDirective } from './libs/jq-plugin.directive';
 import { CommonLookupModalComponent } from './lookup/common-lookup-modal.component';
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
 import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
 import { PeriodComponent } from './period/period.component';
-import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
@@ -58,7 +56,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DxDropDownBoxModule,
         DxMenuModule,
         DxTextBoxModule,
-        DxValidationGroupModule, 
+        DxValidationGroupModule,
         DxValidatorModule,
         DxiValidationRuleModule,
         DxSelectBoxModule,

@@ -18,7 +18,6 @@ export class SelectEditionComponent extends AppComponentBase implements OnInit {
 
     editionsSelectOutput: EditionsSelectOutput = new EditionsSelectOutput();
     isUserLoggedIn = false;
-    isSetted = false;
     editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
     subscriptionStartType: typeof SubscriptionStartType = SubscriptionStartType;
 

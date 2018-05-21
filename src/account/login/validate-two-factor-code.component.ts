@@ -15,7 +15,6 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 export class ValidateTwoFactorCodeComponent extends AppComponentBase implements CanActivate, OnInit, OnDestroy {
 
     code: string;
-    submitting = false;
     remainingSeconds = 90;
     timerSubscription: Subscription;
 

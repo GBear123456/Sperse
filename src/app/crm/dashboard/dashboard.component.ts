@@ -1,18 +1,12 @@
 import { Router } from '@angular/router';
-import { Component, AfterViewInit, ViewChild, Injector, ViewEncapsulation, OnDestroy } from '@angular/core';
-import { TenantDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
+import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { AppSalesSummaryDatePeriod } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
-
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
-
-import * as _ from 'lodash';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -25,7 +19,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
     private selectedPeriod: any;
-        
     public dataEmpty: boolean;
     public headlineConfig = {
       names: [this.l('Dashboard')],
@@ -34,11 +27,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
       icon: 'globe',
       buttons: []
     };
-    
+
     constructor(
         injector: Injector,
         private _router: Router,
-        private _dashboardService: TenantDashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
@@ -50,13 +42,12 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.recentClientsComponent.refresh();
     }
 
-    checkDataEmpty(data) {      
+    checkDataEmpty(data) {
         this.dataEmpty = !data.length;
     }
 
     addClient() {
-        this._router.navigate(['app/crm/clients'], 
-            { queryParams: { action: 'addNew' } });
+        this._router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
     }
 
     periodChanged($event) {
