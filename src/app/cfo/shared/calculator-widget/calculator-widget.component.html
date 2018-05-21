@@ -8,6 +8,8 @@
                             <td colspan="4" class="ScientificModeToggle">
                                 <input id="chkIsScientificModeEnabled" (click)="ToggleScienticMode()" type="checkbox" data-toggle="toggle" />
                                 <label for="chkIsScientificModeEnabled">Enable Scientific Mode</label>
+                                <br />
+                                <a (click)="ToggleEditHistory()" [hidden]="this.IsEditHistoryEnabled">Edit</a>
                             </td>
                         </tr>
                         <tr *ngFor="let history of this.calcHistory">
@@ -32,7 +34,8 @@
             </td>
             <td class="tdInput">
                 <input #calculatorInput type="text" class="input" name="input" [(value)]="input" autocomplete="off" maxlength="10"
-                       (keydown)="inputKeyPress($event)" autofocus />
+                       (keydown)="inputKeyPress($event)" autofocus [hidden]="this.IsEditHistoryEnabled" />
+                <input #calculatorHistoryEdit type="text" class="input" name="input" [(value)]="historyEquation" autocomplete="off" autofocus [hidden]="!this.IsEditHistoryEnabled" />
             </td>
         </tr>
         <tr class="footer">

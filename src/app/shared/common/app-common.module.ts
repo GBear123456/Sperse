@@ -33,6 +33,9 @@ import { PaginatorModule } from 'primeng/primeng';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 
+import { FileDropModule } from 'ngx-file-drop';
+import { PapaParseModule } from 'ngx-papaparse';
+
 @NgModule({
     imports: [
         ngCommon.CommonModule,
@@ -49,6 +52,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         MatProgressBarModule,
         MatStepperModule,
         ReactiveFormsModule,
+        FileDropModule,
+        PapaParseModule,
 
         DxListModule,
         DxButtonModule,
