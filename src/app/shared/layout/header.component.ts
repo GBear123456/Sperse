@@ -25,7 +25,7 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
+import { EditionPaymentType } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
 
 import * as _ from 'lodash';
@@ -63,7 +63,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-    subscriptionStartType = SubscriptionStartType;
     editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
 
     constructor(
@@ -72,7 +71,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
-        private _userServiceProxy: UserServiceProxy,
         private _authService: AppAuthService,
         private _impersonationService: ImpersonationService,
         private _linkedAccountService: LinkedAccountService,

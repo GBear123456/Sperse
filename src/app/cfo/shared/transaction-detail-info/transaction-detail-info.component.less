@@ -9,6 +9,11 @@
     color: #424c56;
 }
 
+.fa.fa-angle-right {
+    margin-right: 6px;
+    margin-left: 2px;
+}
+
 .tooltip-template {
     margin: -12px -17px;
     width: auto !important;
@@ -42,6 +47,72 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.blue-edit-pencil {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background: url(../../../../assets/common/icons/blue-edit-pencil.svg) 50% 50% no-repeat;
+    position: relative;
+    top: 2px;
+    margin-left: 4px;
+}
+
+.category-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.aligned-center {
+    [class^="col"] {
+    }
+}
+
+.unclassified-label {
+    padding-right: 6px;
+}
+
+/deep/ .inplace-edit-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    margin: 3px 0 4px;
+
+    .dx-texteditor-input {
+        padding: 5px 8px;
+    }
+
+    dx-text-box {
+        margin-right: 10px;
+    }
+
+    dx-button {
+        &.update,
+        &.exit {
+            background: transparent;
+            border: 0 !important;
+
+            .dx-button-content {
+                white-space: normal !important;
+                text-overflow: unset !important;
+                padding: 8px 4px;
+
+                .dx-icon {
+                    color: #61c670 !important;
+                    font-size: 15px;
+                }
+            }
+        }
+
+        &.exit {
+            .dx-button-content {
+                .dx-icon {
+                    color: red !important;
+                }
+            }
+        }
+    }
 }
 
 .status {
@@ -146,3 +217,61 @@ main {
         }
     }
 }
+
+[accessKey="category-select"],
+[accesskey="accType-select"] {
+    display: block !important;
+
+    /deep/ .dx-selectbox-container {
+        display: block !important;
+
+        .dx-state-disabled.dx-widget {
+            opacity: 1;
+        }
+
+        .dx-texteditor-container {
+            .dx-texteditor-input {
+                padding: 0 4px !important;
+                font-size: 14px;
+                font-weight: 400;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.6;
+                letter-spacing: 0.3px;
+                color: #424c56;
+                border-bottom: 0;
+                min-width: 0 !important;
+                min-height: 0;
+            }
+        }
+
+        .dx-placeholder {
+            font-size: 14px;
+            font-weight: 400;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            top: 0 !important;
+
+            text-overflow: ellipsis;
+            overflow: hidden;
+
+            &::before {
+                padding: 0;
+            }
+        }
+
+        .dx-texteditor-buttons-container {
+            display: none !important;
+        }
+    }
+}
+[accesskey="accType-select"] {
+    /deep/ .dx-selectbox-container {
+        max-width: 90px;
+    }
+}
+
+

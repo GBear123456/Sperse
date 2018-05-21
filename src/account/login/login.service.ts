@@ -132,7 +132,7 @@ export class LoginService {
     }
 
     init(): void {
-        this.initExternalLoginProviders();
+        //this.initExternalLoginProviders();
     }
 
     private processAuthenticateResult(authenticateResult: AuthenticateResultModel, redirectUrl?: string) {
@@ -168,7 +168,7 @@ export class LoginService {
                 authenticateResult.encryptedAccessToken,
                 authenticateResult.expireInSeconds,
                 this.rememberMe,
-                authenticateResult.twoFactorRememberClientToken, 
+                authenticateResult.twoFactorRememberClientToken,
                 redirectUrl
             );
 
@@ -209,8 +209,7 @@ export class LoginService {
             );
         }
 
-        redirectUrl = redirectUrl || 
-            sessionStorage.getItem('redirectUrl');
+        redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
             sessionStorage.removeItem('redirectUrl');
             location.href = redirectUrl;
@@ -230,7 +229,6 @@ export class LoginService {
         this.authenticateModel.rememberClient = false;
         this.authenticateResult = null;
         this.rememberMe = false;
-
         this.resetPasswordModel = null;
         this.resetPasswordResult = null;
     }
@@ -261,7 +259,7 @@ export class LoginService {
                 FB.getLoginStatus(response => {
                     this.facebookLoginStatusChangeCallback(response);
                     if (response.status !== 'connected') {
-                        callback();     
+                        callback();
                     }
                 });
             });
@@ -304,7 +302,7 @@ export class LoginService {
             model.providerKey = resp.authResponse.userID;
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
-            
+
             this._tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
                     if (result.waitingForActivation) {

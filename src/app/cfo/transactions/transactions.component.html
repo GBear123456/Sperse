@@ -276,4 +276,4 @@
                       useGlobalCache="true"
                       (onBankAccountsSelected)="applyTotalBankAccountFilter($event)">
 </bank-accounts-select>
-<app-transaction-detail-info [transactionId]="transactionId"></app-transaction-detail-info>
+<app-transaction-detail-info [transactionId]="transactionId" (onTooltipClosed)="refreshDataGrid()"></app-transaction-detail-info>

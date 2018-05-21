@@ -1,10 +1,7 @@
 import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { PipelineDto, PipelineData, ProcessLeadInput,
-    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, StageDto
-} from '@shared/service-proxies/service-proxies';
+import { PipelineDto, LeadServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -64,8 +61,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.pipeline = result;
                         this.onStagesLoaded.emit(result);
                         if (this._dataSource) {
-                            this.loadStageIndex = addedNew ? 
-                                Math.floor(this.stages.length / 2): 0;
+                            this.loadStageIndex = addedNew ? Math.floor(this.stages.length / 2) : 0;
                             this.loadStagesLeads(0, addedNew);
                         }
                         this.refreshTimeout = null;
@@ -91,8 +87,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadStagesLeads(page = 0, oneStageOnly = false) {
-        let index = this.loadStageIndex, 
-            stages = this.pipeline.stages;
+        let index = this.loadStageIndex, stages = this.pipeline.stages;
         this._dataSource.pageSize(this.STAGE_PAGE_COUNT);
         this._dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
@@ -105,7 +100,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 stage['leads'] = page && oneStageOnly ? _.uniqBy(
                     (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
                 stage['total'] = this._dataSource.totalCount();
-                stage['full'] = stage['total'] <= stage['leads'].length;            
+                stage['full'] = stage['total'] <= stage['leads'].length;
                 if (!oneStageOnly && this.pipeline.stages[++this.loadStageIndex])
                     this.loadStagesLeads(page);
                 else {
@@ -140,7 +135,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 newStage = this.getAccessKey(value[2]),
                 oldStage = this.getAccessKey(value[3]);
             if (leadId && newStage != oldStage) {
-                this.disabled = true;                    
+                this.disabled = true;
                 this._pipelineService.updateLeadStageByLeadId(
                     leadId, oldStage, newStage, () => {
                         this.disabled = false;
@@ -202,7 +197,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
 
     }
-    
+
     ngOnDestroy() {
         this._dragulaService.destroy(this.dragulaName);
         this.subscribers.forEach((sub) => sub.unsubscribe());
@@ -228,6 +223,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], {queryParams: {
             referrer: 'app/crm/leads',
             dataLayoutType: DataLayoutType.Pipeline
-        }});        
+        }});
     }
 }

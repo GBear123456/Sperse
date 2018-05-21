@@ -1,17 +1,16 @@
-﻿import { OnInit, Injectable } from '@angular/core';
+﻿import { Injectable, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import { capitalize } from 'underscore.string';
-import * as moment from 'moment';
 import * as _ from 'underscore';
-
 
 declare const gapi: any;
 
 @Injectable()
-export class ExportGoogleSheetService {
-    constructor() {
+export class ExportGoogleSheetService implements OnInit {
+
+    ngOnInit() {
         jQuery.getScript('https://apis.google.com/js/api.js', () => {
             gapi.load('client:auth2',
                 () => {
@@ -27,7 +26,6 @@ export class ExportGoogleSheetService {
     export(dataGrid: DxDataGridComponent, sheetName: string, exportAllData: boolean) {
         let auth = gapi.auth2.getAuthInstance();
         if (auth.isSignedIn.get()) {
-
             this.createSheet(dataGrid, sheetName, exportAllData);
         } else {
             let exportService = this;

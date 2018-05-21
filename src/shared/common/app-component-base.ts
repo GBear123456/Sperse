@@ -1,4 +1,4 @@
-import { Injector, Inject, Input, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -13,11 +13,9 @@ import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { AppService } from '@app/app.service';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { environment } from 'environments/environment';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -158,7 +156,6 @@ export abstract class AppComponentBase {
             let values = FilterModel.getSearchKeyWords(this.searchValue);
             values.forEach((val) => {
                 let valueFilterData: any[] = [];
-            
                 this.searchColumns.forEach((col) => {
                     let colName = col.name || col;
                     let searchStrategy = col.strategy || ODataSearchStrategy.Contains;
@@ -207,10 +204,8 @@ export abstract class AppComponentBase {
     }
 
     exportToXLS(option) {
-        this.dataGrid.export.fileName =
-            this._exportService.getFileName();
-        this.dataGrid.instance
-          .exportToExcel(option == 'selected');
+        this.dataGrid.export.fileName = this._exportService.getFileName();
+        this.dataGrid.instance.exportToExcel(option == 'selected');
     }
 
     exportToCSV(option) {
@@ -263,13 +258,11 @@ export abstract class AppComponentBase {
             .style.display = 'none';
     }
 
-    private getFilterExpression(colName: string, strategy: string, value: string): object
-    {
+    private getFilterExpression(colName: string, strategy: string, value: string): object {
         let el = {};
         el[colName] = {};
 
-        switch(strategy)
-        {
+        switch (strategy) {
             case ODataSearchStrategy.Contains:
             case ODataSearchStrategy.StartsWith:
                 el[colName][strategy] = value;
