@@ -21,7 +21,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
 
     @Input() title: string;
-    @Input() imported: boolean;
     @Input() localizationSource: string;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
@@ -42,6 +41,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
     private readonly REVIEW_STEP_INDEX  = 2;
+    private readonly FINISH_STEP_INDEX  = 3;
 
     showSteper: boolean = true;
     loadProgress: number = 0;
@@ -115,6 +115,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.onComplete.emit(data);
     }
 
+    showFinishStep() {
+        this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
+    }
+
     initReviewDataSource(mappedFields) {        
         let columnsIndex = {};
         this.reviewDataSource = this.fileData.data.map((row, index) => {
@@ -137,8 +141,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         let isFistName = false, 
             isLastName = false,
             isMapped = rows.every((row) => {
-                isFistName = isFistName || (row.mappedField == 'first');
-                isLastName = isLastName || (row.mappedField == 'last');
+                isFistName = isFistName || (row.mappedField.toLowerCase() == 'first');
+                isLastName = isLastName || (row.mappedField.toLowerCase() == 'last');
                 if (!row.mappedField)
                     this.message.error(this.l('MapAllRecords'));
                 return !!row.mappedField;
@@ -174,7 +178,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.fileSize = (file.size / 1024).toFixed(2) + 'KB';
         let reader = new FileReader();
         reader.onload = (event) => {
-            this.dropZoneProgress = 100;
+            this.dropZoneProgress = 101;
             this.parse(reader.result);
         };
         reader.onprogress = (event) => {
@@ -198,14 +202,27 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     buildMappingDataSource() {
         this.mapDataSource = 
             this.fileData.data[0].map((field, index) => {
-                let fieldId = field.toLowerCase();
+                let fieldId;
                 return {
                   sourceField: field,
-                  sampleValue: this.fileData.data[1][index],
-                  mappedField: this.lookupFields.every(
-                      (item) => item.id.toLowerCase() != fieldId) ? '': fieldId
+                  sampleValue: this.lookForValueExample(index),
+                  mappedField: this.lookupFields.every((item) => {
+                      let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                      if (isSameField)
+                          fieldId = item.id;
+                      return !isSameField;
+                  }) ? '': fieldId
                 };
             });
+    }
+
+    lookForValueExample(fieldIndex) {
+        let notEmptyIndex = 1;
+        this.fileData.data.every((record, index) => {
+            notEmptyIndex = index || notEmptyIndex;
+            return !index || !record[fieldIndex];
+        });
+        return this.fileData.data[notEmptyIndex][fieldIndex];
     }
    
     fileSelected($event) {
@@ -232,7 +249,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.dropZoneProgress = 0;
         let request = new XMLHttpRequest();
         request.addEventListener("load", (event) => {
-            this.loadProgress = 100;
+            this.loadProgress = 101;
             callback(event);
         });
         request.addEventListener("progress", (event) => {
