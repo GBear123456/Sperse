@@ -2,12 +2,12 @@
     <h1>{{title}}</h1>
     <div class="actions">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
-        <button class="button-layout button-primary" (click)="lastStep ? complete(): stepper.next()">{{lastStep ? l('Import'): l('Next')}}</button>
+        <button class="button-layout button-primary" (click)="lastStep ? complete(): next()">{{lastStep ? l('Import'): l('Next')}}</button>
     </div>
     <mat-horizontal-stepper 
         (selectionChange)="stepChanged($event)"
         [linear]="true">
-      <mat-step [stepControl]="uploadFile" [label]="'Upload file'" [editable]="false">
+      <mat-step [stepControl]="uploadFile" [label]="l('Upload file')" [editable]="false">
         <form [formGroup]="uploadFile">
           <div class="block left">
               <h3>Upload from computer</h3>
@@ -26,7 +26,7 @@
           <div class="block right"> 
               <h3>Load from URL</h3>
               <mat-form-field class="full-width">
-                <input matInput type="url" formControlName="url" [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (100 - loadProgress) + '%, #00aeef 0%)'}" required>
+                <input matInput type="url" formControlName="url" [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (100 - loadProgress) + '%, #00aeef 0%)'}">
               </mat-form-field>
               <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}}</button>
               <div class="file-info" [hidden]="!loadProgress">
@@ -37,14 +37,41 @@
           </div>
         </form>
       </mat-step>
-      <mat-step [stepControl]="dataMapping" [label]="'Data mapping'" [editable]="false">
-        <form [formGroup]="dataMapping">
-          <mat-form-field>
-            <input matInput formControlName="secondCtrl" required>
-          </mat-form-field>
-        </form>
+      <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')" [editable]="false">
+          <dx-data-grid id="gridContainer" #mapGrid
+                      [dataSource]="mapDataSource"
+                      [allowColumnReordering]="false"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="false"
+                      [hoverStateEnabled]="true"
+                      (onRowValidating)="onRowValidating($event)">
+              <dxo-selection
+                  selectAllMode="page"
+                  showCheckBoxesMode="always"
+                  mode="multiple">
+              </dxo-selection>
+
+               <dxo-editing
+                   mode="cell"
+                   [allowUpdating]="true"
+                   [allowDeleting]="false"
+                   [allowAdding]="false">
+              </dxo-editing>
+
+              <dxi-column dataField="sourceField" caption="{{l('SourceField')}}" [allowEditing]="false"></dxi-column>
+              <dxi-column dataField="sampleValue" caption="{{l('SampleValue')}}" [allowEditing]="false"></dxi-column>
+              <dxi-column dataField="mappedField" 
+                      [showEditorAlways]="true"
+                      [caption]="l('MappedField')">
+                  <dxo-lookup
+                      [dataSource]="lookupFields"
+                      displayExpr="name"
+                      valueExpr="id">
+                  </dxo-lookup>
+              </dxi-column>
+          </dx-data-grid>
       </mat-step>
-      <mat-step [label]="'Review'" [completed]="imported" [editable]="false">
+      <mat-step [label]="l('Review')" [editable]="false">
         <div [hidden]="imported"></div>
       </mat-step>
     </mat-horizontal-stepper>

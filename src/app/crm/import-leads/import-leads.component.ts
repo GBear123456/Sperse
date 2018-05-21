@@ -1,23 +1,30 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
 
+import { ImportLeadBusinessInput } from '@shared/service-proxies/service-proxies';
+
 @Component({
   templateUrl: 'import-leads.component.html',
   styleUrls: ['import-leads.component.less']
 })
-export class ImportLeadsComponent extends AppComponentBase {
+export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
     imported: boolean = false;
     importedCount: number = 0;
+    mappingFileds: any = [];
+
+    private rootComponent: any;
 
     constructor(
         injector: Injector,
         private _router: Router
     ) { 
         super(injector, AppConsts.localization.CRMLocalizationSourceName);       
+    
+        this.mappingFileds = Object.keys(ImportLeadBusinessInput.fromJS({}));
     }
 
     cancel() {
@@ -31,5 +38,14 @@ export class ImportLeadsComponent extends AppComponentBase {
 
     complete() {
         this.imported = true;
+    }
+
+    ngAfterViewInit(): void {
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.overflowHidden();
     }
 }

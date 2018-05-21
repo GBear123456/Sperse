@@ -12,7 +12,7 @@ import { MatProgressBarModule, MatStepperModule, MatInputModule } from '@angular
 
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule, 
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
-    DxSelectBoxModule, DxTextAreaModule } from 'devextreme-angular';
+    DxSelectBoxModule, DxTextAreaModule, DxDataGridModule } from 'devextreme-angular';
 
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
@@ -67,7 +67,8 @@ import { PapaParseModule } from 'ngx-papaparse';
         DxValidatorModule,
         DxiValidationRuleModule,
         DxSelectBoxModule,
-        DxTextAreaModule
+        DxTextAreaModule,
+        DxDataGridModule
     ],
     declarations: [
         TimeZoneComboComponent,
