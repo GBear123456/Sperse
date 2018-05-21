@@ -16,7 +16,7 @@
               </file-drop>
               <div class="file-info" [hidden]="!dropZoneProgress">
                   <p>{{l('File')}}: {{fileName}}</p>
-                  <p>{{l('Size')}}: {{fileSize}}</p>
+                  <p>{{l('FileSize')}}: {{fileSize}}</p>
                   <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
               </div>
           </div>
@@ -29,7 +29,7 @@
               <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}}</button>
               <div class="file-info" [hidden]="!loadProgress">
                   <p>{{l('File')}}: {{fileName}}</p>
-                  <p>{{l('Size')}}: {{fileSize}}</p>
+                  <p>{{l('FileSize')}}: {{fileSize}}</p>
                   <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
               </div>
           </div>
