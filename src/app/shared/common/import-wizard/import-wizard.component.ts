@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatHorizontalStepper } from '@angular/material';
@@ -15,13 +15,14 @@ import { DxDataGridComponent } from 'devextreme-angular';
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase {
+export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
-//    @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
+    @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
 
     @Input() title: string;
     @Input() imported: boolean;
+    @Input() localizationSource: string;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
             return {
@@ -35,8 +36,6 @@ export class ImportWizardComponent extends AppComponentBase {
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
 
     uploadFile: FormGroup;
-
-    lastStep: boolean;
 
     private files: UploadFile[] = [];
 
@@ -68,13 +67,12 @@ export class ImportWizardComponent extends AppComponentBase {
         });
     }
 
-    stepChanged($event) {
-        this.lastStep = ($event.selectedIndex == this.REVIEW_STEP_INDEX);
+    ngOnInit() {  
+        this.localizationSourceName = this.localizationSource;
     }
 
     reset(callback = null) { 
         this.showSteper = false;
-        this.lastStep = false;
 
         this.uploadFile.reset();
         setTimeout(() => {
@@ -102,6 +100,8 @@ export class ImportWizardComponent extends AppComponentBase {
                     this.initReviewDataSource(mappedFields); 
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
+            let data = this.reviewGrid.instance.getSelectedRowsData();
+            this.complete(data.length && data || this.reviewDataSource);
         }
     }
 
@@ -111,18 +111,24 @@ export class ImportWizardComponent extends AppComponentBase {
         });
     }
 
-    complete() {
-        this.onComplete.emit();
+    complete(data) {
+        this.onComplete.emit(data);
     }
 
     initReviewDataSource(mappedFields) {        
-        this.reviewDataSource = this.fileData.data.map((row) => {
-            let data = {};
-            mappedFields.forEach((field) => {
-                data[field.mappedField] = row[field.sourceField];
-            });
-            return data;
-        })
+        let columnsIndex = {};
+        this.reviewDataSource = this.fileData.data.map((row, index) => {
+            if (index) {
+                let data = {};
+                mappedFields.forEach((field) => {
+                    data[field.mappedField] = row[columnsIndex[field.sourceField]];
+                });
+                return data;
+            } else 
+                row.forEach((item, index) => {
+                    columnsIndex[item] = index;
+                });
+        });
 
         this.stepper.next();
     }

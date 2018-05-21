@@ -2,11 +2,9 @@
     <h1>{{title}}</h1>
     <div class="actions">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
-        <button class="button-layout button-primary" (click)="lastStep ? complete(): next()">{{lastStep ? l('Import'): l('Next')}}</button>
+        <button class="button-layout button-primary" (click)="next()">{{stepper?.selectedIndex == this.REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
     </div>
-    <mat-horizontal-stepper 
-        (selectionChange)="stepChanged($event)"
-        [linear]="true">
+    <mat-horizontal-stepper [linear]="true">
       <mat-step [stepControl]="uploadFile" [label]="l('Upload file')" [editable]="false">
         <form [formGroup]="uploadFile">
           <div class="block left">
@@ -72,7 +70,23 @@
           </dx-data-grid>
       </mat-step>
       <mat-step [label]="l('Review')" [editable]="false">
-        <div [hidden]="imported"></div>
+          <div [hidden]="!imported">
+              <ng-content></ng-content>
+          </div>
+          <div [hidden]="imported">
+              <dx-data-grid id="gridContainer" #reviewGrid
+                          [dataSource]="reviewDataSource"
+                          [allowColumnReordering]="false"
+                          [columnAutoWidth]="true"
+                          [allowColumnResizing]="false"
+                          [hoverStateEnabled]="true">
+                  <dxo-selection
+                      selectAllMode="page"
+                      showCheckBoxesMode="always"
+                      mode="multiple">
+                  </dxo-selection>
+              </dx-data-grid>
+          </div>
       </mat-step>
     </mat-horizontal-stepper>
 </div>

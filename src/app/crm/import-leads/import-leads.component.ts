@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
 
-import { ImportLeadBusinessInput } from '@shared/service-proxies/service-proxies';
+import { ImportLeadBusinessInput, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
   templateUrl: 'import-leads.component.html',
@@ -20,10 +20,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
+        private _leadService: LeadServiceProxy,
         private _router: Router
     ) { 
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);       
-    
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+            
         this.mappingFileds = Object.keys(ImportLeadBusinessInput.fromJS({}));
     }
 
@@ -36,16 +37,26 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.wizard.reset();
     }
 
-    complete() {
+    complete(data) {
+        this.startLoading();
         this.imported = true;
+        this.finishLoading()
     }
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+        this.activate();
     }
 
     ngOnDestroy() {
+        this.deactivate();
+    }
+
+    activate() {
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
         this.rootComponent.overflowHidden();
     }
 }
