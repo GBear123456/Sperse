@@ -4,6 +4,11 @@
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
         <button class="button-layout button-primary" (click)="next()">{{stepper?.selectedIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
     </div>
+    <dx-context-menu
+        [items]="selectModeItems"
+        (onItemClick)="selectionModeChanged($event)"
+        target=".dx-header-row">
+    </dx-context-menu>
     <mat-horizontal-stepper [linear]="true">
       <mat-step [stepControl]="uploadFile" [label]="l('Upload file')" 
           [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
@@ -74,6 +79,7 @@
       <mat-step [label]="l('Review')"
           [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
           <dx-data-grid id="gridContainer" #reviewGrid
+                      [pager]="defaultGridPagerConfig"
                       [dataSource]="reviewDataSource"
                       [allowColumnReordering]="false"
                       [columnAutoWidth]="true"

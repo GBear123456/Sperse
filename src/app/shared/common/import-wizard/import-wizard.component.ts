@@ -55,6 +55,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     mapDataSource: any;
     lookupFields: any;
 
+    selectModeItems = [
+        {text: 'Affect on page items', mode: 'page'},
+        {text: 'Affect all pages items', mode: 'allPages'}
+    ]
+
     constructor(
         injector: Injector,
         private _parser: PapaParseService,
@@ -272,5 +277,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 $event.errorText = this.l('FieldMappedError', [row.sourceField]);
             }
         });
+    }
+
+    selectionModeChanged($event) {
+        this.reviewGrid.instance.option(
+            'selection.selectAllMode', $event.itemData.mode);
     }
 }
