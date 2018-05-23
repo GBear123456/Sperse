@@ -209,6 +209,8 @@ export class LoginService {
             );
         }
 
+        abp.multiTenancy.setTenantIdCookie();
+
         redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
             sessionStorage.removeItem('redirectUrl');

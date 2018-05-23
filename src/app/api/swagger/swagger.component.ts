@@ -33,9 +33,7 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
         this.link = this._sanitizer
             .bypassSecurityTrustResourceUrl(
             AppConsts.remoteServiceBaseUrl +
-            '/swagger/index.html?tenantId=' +
-            abp.multiTenancy.getTenantIdCookie() +
-            '&tokenAuth=' + abp.auth.getToken()
+            '/swagger/index.html?tokenAuth=' + abp.auth.getToken()
         );
         abp.ui.setBusy();
     }
