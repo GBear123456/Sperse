@@ -46,16 +46,27 @@ export class RatingComponent extends AppComponentBase implements OnInit {
     apply(selectedKeys = undefined) {
         this.selectedKeys = selectedKeys || this.selectedKeys;
         if (this.sliederComponent && this.selectedKeys && this.selectedKeys.length) {
-            this.selectedKeys.forEach((key) => {
-                this._ratingService.rateCustomer(RateCustomerInput.fromJS({
-                    customerId: key,
-                    ratingId: this.ratingValue
-                })).subscribe((result) => {});
-            });
-            if (this.bulkUpdateMode)
+            if (this.bulkUpdateMode) {
+                this.message.confirm(
+                    this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                    isConfirmed => {
+                        isConfirmed && this.process();
+                    }
+                );
                 setTimeout(() => { this.ratingValue = this.ratingMin; }, 500);
+            } else
+                this.process();
         }
         this.tooltipVisible = false;
+    }
+
+    process() {
+        this.selectedKeys.forEach((key) => {
+            this._ratingService.rateCustomer(RateCustomerInput.fromJS({
+                customerId: key,
+                ratingId: this.ratingValue
+            })).subscribe((result) => {});
+        });
     }
 
     clear() {

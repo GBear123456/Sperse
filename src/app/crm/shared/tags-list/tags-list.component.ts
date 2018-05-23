@@ -50,17 +50,29 @@ export class TagsListComponent extends AppComponentBase {
         if (this.listComponent && this.selectedTags.length) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
-                this.selectedKeys.forEach((key) => {
-                    this._tagsService.assignToCustomer(AssignToCustomerInput.fromJS({
-                        customerId: key,
-                        tags: this.selectedItems
-                    })).subscribe((result) => {});
-                });
+                if (this.bulkUpdateMode)
+                    this.message.confirm(
+                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                        isConfirmed => {
+                            isConfirmed && this.process();
+                        }
+                    );
+                else
+                    this.process();
             }
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
+    }
+
+    process() {
+        this.selectedKeys.forEach((key) => {
+            this._tagsService.assignToCustomer(AssignToCustomerInput.fromJS({
+                customerId: key,
+                tags: this.selectedItems
+            })).subscribe((result) => {});
+        });
     }
 
     clear() {

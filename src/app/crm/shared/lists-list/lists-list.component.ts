@@ -1,5 +1,6 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 
 import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInput, 
     UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
@@ -15,6 +16,8 @@ import * as _ from 'underscore';
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
 
+    @Input() showFilter: boolean;
+    @Input() filterData: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Lists']";
     @Input() bulkUpdateMode = false;
@@ -38,7 +41,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _listsService: CustomerListsServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     toggle() {
@@ -50,17 +53,29 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
-                this.selectedKeys.forEach((key) => {
-                    this._listsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
-                        customerId: key,
-                        lists: this.selectedItems
-                    })).subscribe((result) => {});
-                });
+                if (this.bulkUpdateMode)
+                    this.message.confirm(
+                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                        isConfirmed => {
+                            isConfirmed && this.process();
+                        }
+                    );
+                else
+                    this.process();
             }
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
         }
         this.tooltipVisible = false;
+    }
+
+    process() {
+        this.selectedKeys.forEach((key) => {
+            this._listsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
+                customerId: key,
+                lists: this.selectedItems
+            })).subscribe((result) => {});
+        });
     }
 
     clear() {
@@ -106,13 +121,15 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 this.listComponent.deleteRow(
                     this.listComponent.getRowIndexByKey($event.data.id));
             });
-            this.addActionButton('filter', $event.cellElement, (event) => {
-                let wrapper = $event.cellElement.parentElement;
-                if (!this.clearSelection(wrapper.classList.contains('filtered'))) {
-                    wrapper.classList.add('filtered');
-                    this.onFilterSelected.emit($event.data);
-                }
-            });
+            if (this.showFilter)
+                this.addActionButton('filter', $event.cellElement, (event) => {
+                    let wrapper = $event.cellElement.parentElement;
+                    if (!this.clearSelection(wrapper.classList.contains('filtered'))) {
+                        wrapper.classList.add('filtered');
+                        this.onFilterSelected.emit($event.data);
+                        this.tooltipVisible = false;
+                    }
+                });
         }
     }
 
@@ -150,6 +167,14 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             $event.event.stopPropagation();
             $event.component.focus($event.component.getCellElement(0, 0));
             $event.component.saveEditData();
+        }
+    }
+
+    onContentReady($event) {
+        if (this.filterData) {
+            let row = $event.component.getRowElement(
+                $event.component.getRowIndexByKey(this.filterData.id));
+            if (row && row[0]) row[0].classList.add('filtered');
         }
     }
 }
