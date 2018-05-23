@@ -1,7 +1,10 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInput } from '@shared/service-proxies/service-proxies';
+import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInput, 
+    UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
+
+import * as _ from 'underscore';
 
 @Component({
   selector: 'crm-lists-list',
@@ -10,6 +13,8 @@ import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInpu
   providers: [CustomerListsServiceProxy]
 })
 export class ListsListComponent extends AppComponentBase implements OnInit {
+    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
+
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Lists']";
     @Input() bulkUpdateMode = false;
@@ -18,15 +23,16 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
     get selectedItems() {
         return this.selectedLists.map(item => {
-            return CustomerListInput.fromJS({name: item});
-        });
+            return CustomerListInput.fromJS(_.findWhere(this.list, {id: item}));
+        }).filter(Boolean);
     }
+
+    private _prevClickDate = new Date();
     private selectedLists = [];
     list: any;
 
     listComponent: any;
     tooltipVisible = false;
-    showAddButton = false;
 
     constructor(
         injector: Injector,
@@ -41,7 +47,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedLists = this.listComponent.option('selectedItems');
+            this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 this.selectedKeys.forEach((key) => {
@@ -52,7 +58,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 });
             }
             if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
+                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
@@ -68,7 +74,10 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this._listsService.getLists().subscribe((result) => {
-            this.list = result.map((obj) => obj.name);
+            this.list = result.map((obj, index) => {
+                obj['parent'] = 0;
+                return obj;
+            });
         });
     }
 
@@ -76,14 +85,71 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         this.selectedItems = [];
     }
 
-    addNewList() {
-        this.list.push(this.searchValue);
-        this.showAddButton = false;
+    addActionButton(name, container: HTMLElement, callback) {
+        let buttonElement = document.createElement('a');
+        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.className = 'dx-link dx-link-' + name;
+        buttonElement.addEventListener('click', callback);
+        container.appendChild(buttonElement);
     }
 
-    onSearch = ($event) => {
-        this.searchValue = $event.event.target.value.trim();
-        this.showAddButton = this.searchValue && this.list.every((item) => item != this.searchValue);
-        $event.component.option('showClearButton', !this.showAddButton);
+    clearSelection(clearFilter) {
+        $('.filtered').removeClass('filtered');
+        if (clearFilter)
+            this.onFilterSelected.emit(null);
+        return clearFilter;
+    }
+
+    onCellPrepared($event) {
+        if ($event.rowType === 'data' && $event.column.command === 'edit') {
+            this.addActionButton('delete', $event.cellElement, (event) => {
+                this.listComponent.deleteRow(
+                    this.listComponent.getRowIndexByKey($event.data.id));
+            });
+            this.addActionButton('filter', $event.cellElement, (event) => {
+                let wrapper = $event.cellElement.parentElement;
+                if (!this.clearSelection(wrapper.classList.contains('filtered'))) {
+                    wrapper.classList.add('filtered');
+                    this.onFilterSelected.emit($event.data);
+                }
+            });
+        }
+    }
+
+    onRowRemoving($event) {
+        //!!VP should be applied corresponding method
+    }
+
+    onRowUpdating($event) {
+        this._listsService.rename(UpdateCustomerListInput.fromJS({
+            id: $event.oldData.id,
+            name: $event.newData.name
+        })).subscribe((res) => {
+            if (res)
+                $event.cancel = true;
+        });
+    }
+
+    onInitNewRow($event) {        
+        $event.data.name = $event.component.option('searchPanel.text');
+    }
+
+    onRowClick($event) {
+        let nowDate = new Date();
+        if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
+            $event.event.originalEvent.preventDefault();
+            $event.event.originalEvent.stopPropagation();
+            $event.component.editRow($event.rowIndex);
+        }
+        this._prevClickDate = nowDate;
+    }
+
+    onKeyDown($event) {
+        if ($event.event.keyCode == 13) {
+            $event.event.preventDefault();
+            $event.event.stopPropagation();
+            $event.component.focus($event.component.getCellElement(0, 0));
+            $event.component.saveEditData();
+        }
     }
 }
