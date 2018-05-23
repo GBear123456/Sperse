@@ -21,7 +21,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     private router: Router;
 
     subscriptionStartType = SubscriptionStartType;
-    installationMode: boolean = true;
+    installationMode: boolean = false;
 
 
     public constructor(
@@ -44,8 +44,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         if (this.appSession.application && this.appSession.application.features['SignalR']) {
             SignalRHelper.initSignalR(() => {this._chatSignalrService.init();});
         }
-
-        this.installationMode = UrlHelper.isInstallUrl(location.href);
     }
 
     subscriptionStatusBarVisible(): boolean {
