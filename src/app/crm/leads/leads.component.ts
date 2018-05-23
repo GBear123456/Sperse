@@ -229,10 +229,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         items: { Industry: new FilterItemModel() }
                     }),
                     new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'Owner',
-                        items: { Owner: new FilterItemModel() }
+                        component: FilterCheckBoxesComponent,
+                        caption: 'assignedUser',
+                        field: 'AssignedUserId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.users,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
@@ -450,22 +457,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return data;
     }
 
-    filterByLeadType(filter: FilterModel) {
-        let data = {};
-        let element = filter.items.element;
-        if (element && element.value) {
-            let filterData = _.map(element.value, x => {
-                let el = {};
-                el[filter.field] = x;
-                return el;
-            });
-
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
+    filterByAssignedUser(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
     }
 
     searchValueChange(e: object) {

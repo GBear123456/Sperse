@@ -30622,6 +30622,7 @@ export interface IUpdateCustomerStatusesInput {
 
 export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
     statuses: CustomerStatusDto[];
+    users: UserInfoDto[];
 
     constructor(data?: ICustomerFiltersInitialData) {
         if (data) {
@@ -30639,6 +30640,11 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
                 for (let item of data["statuses"])
                     this.statuses.push(CustomerStatusDto.fromJS(item));
             }
+            if (data["users"] && data["users"].constructor === Array) {
+                this.users = [];
+                for (let item of data["users"])
+                    this.users.push(UserInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -30655,12 +30661,18 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
             for (let item of this.statuses)
                 data["statuses"].push(item.toJSON());
         }
+        if (this.users && this.users.constructor === Array) {
+            data["users"] = [];
+            for (let item of this.users)
+                data["users"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
 export interface ICustomerFiltersInitialData {
     statuses: CustomerStatusDto[];
+    users: UserInfoDto[];
 }
 
 export class CustomerStatusDto implements ICustomerStatusDto {
@@ -30699,6 +30711,45 @@ export class CustomerStatusDto implements ICustomerStatusDto {
 
 export interface ICustomerStatusDto {
     id: string;
+    name: string;
+}
+
+export class UserInfoDto implements IUserInfoDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IUserInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UserInfoDto {
+        let result = new UserInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUserInfoDto {
+    id: number;
     name: string;
 }
 
@@ -35129,6 +35180,7 @@ export interface IImportLeadBusinessInput {
 export class LeadFiltersInitialData implements ILeadFiltersInitialData {
     pipelines: PipelineDto[];
     leadTypes: LeadTypeDto[];
+    users: UserInfoDto[];
 
     constructor(data?: ILeadFiltersInitialData) {
         if (data) {
@@ -35151,6 +35203,11 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
                 for (let item of data["leadTypes"])
                     this.leadTypes.push(LeadTypeDto.fromJS(item));
             }
+            if (data["users"] && data["users"].constructor === Array) {
+                this.users = [];
+                for (let item of data["users"])
+                    this.users.push(UserInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -35172,6 +35229,11 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
             for (let item of this.leadTypes)
                 data["leadTypes"].push(item.toJSON());
         }
+        if (this.users && this.users.constructor === Array) {
+            data["users"] = [];
+            for (let item of this.users)
+                data["users"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -35179,6 +35241,7 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
 export interface ILeadFiltersInitialData {
     pipelines: PipelineDto[];
     leadTypes: LeadTypeDto[];
+    users: UserInfoDto[];
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -44037,45 +44100,6 @@ export interface ICreateOrUpdateUserInput {
     setRandomPassword: boolean;
     organizationUnits: number[];
     tenantHostType: CreateOrUpdateUserInputTenantHostType;
-}
-
-export class UserInfoDto implements IUserInfoDto {
-    id: number;
-    name: string;
-
-    constructor(data?: IUserInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): UserInfoDto {
-        let result = new UserInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IUserInfoDto {
-    id: number;
-    name: string;
 }
 
 export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
