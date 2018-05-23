@@ -8259,324 +8259,6 @@ export class DashboardServiceProxy {
 }
 
 @Injectable()
-export class DemoUiComponentsServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @date (optional) 
-     * @return Success
-     */
-    sendAndGetDate(date: moment.Moment): Observable<DateToStringOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetDate?";
-        if (date !== undefined)
-            url_ += "date=" + encodeURIComponent(date ? "" + date.toJSON() : "") + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSendAndGetDate(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSendAndGetDate(response_);
-                } catch (e) {
-                    return <Observable<DateToStringOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<DateToStringOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSendAndGetDate(response: Response): Observable<DateToStringOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DateToStringOutput.fromJS(resultData200) : new DateToStringOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<DateToStringOutput>(<any>null);
-    }
-
-    /**
-     * @date (optional) 
-     * @return Success
-     */
-    sendAndGetDateTime(date: moment.Moment): Observable<DateToStringOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetDateTime?";
-        if (date !== undefined)
-            url_ += "date=" + encodeURIComponent(date ? "" + date.toJSON() : "") + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSendAndGetDateTime(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSendAndGetDateTime(response_);
-                } catch (e) {
-                    return <Observable<DateToStringOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<DateToStringOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSendAndGetDateTime(response: Response): Observable<DateToStringOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DateToStringOutput.fromJS(resultData200) : new DateToStringOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<DateToStringOutput>(<any>null);
-    }
-
-    /**
-     * @startDate (optional) 
-     * @endDate (optional) 
-     * @return Success
-     */
-    sendAndGetDateRange(startDate: moment.Moment, endDate: moment.Moment): Observable<DateToStringOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetDateRange?";
-        if (startDate !== undefined)
-            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
-        if (endDate !== undefined)
-            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSendAndGetDateRange(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSendAndGetDateRange(response_);
-                } catch (e) {
-                    return <Observable<DateToStringOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<DateToStringOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSendAndGetDateRange(response: Response): Observable<DateToStringOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DateToStringOutput.fromJS(resultData200) : new DateToStringOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<DateToStringOutput>(<any>null);
-    }
-
-    /**
-     * @searchTerm (optional) 
-     * @return Success
-     */
-    getCountries(searchTerm: string): Observable<NameValueOfString[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/GetCountries?";
-        if (searchTerm !== undefined)
-            url_ += "searchTerm=" + encodeURIComponent("" + searchTerm) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetCountries(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetCountries(response_);
-                } catch (e) {
-                    return <Observable<NameValueOfString[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<NameValueOfString[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetCountries(response: Response): Observable<NameValueOfString[]> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(NameValueOfString.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<NameValueOfString[]>(<any>null);
-    }
-
-    /**
-     * @selectedCountries (optional) 
-     * @return Success
-     */
-    sendAndGetSelectedCountries(selectedCountries: NameValueOfString[]): Observable<NameValueOfString[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetSelectedCountries";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(selectedCountries);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSendAndGetSelectedCountries(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSendAndGetSelectedCountries(response_);
-                } catch (e) {
-                    return <Observable<NameValueOfString[]>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<NameValueOfString[]>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSendAndGetSelectedCountries(response: Response): Observable<NameValueOfString[]> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(NameValueOfString.fromJS(item));
-            }
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<NameValueOfString[]>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    sendAndGetValue(input: string): Observable<StringOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/DemoUiComponents/SendAndGetValue?";
-        if (input !== undefined)
-            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSendAndGetValue(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSendAndGetValue(response_);
-                } catch (e) {
-                    return <Observable<StringOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<StringOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSendAndGetValue(response: Response): Observable<StringOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? StringOutput.fromJS(resultData200) : new StringOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<StringOutput>(<any>null);
-    }
-}
-
-@Injectable()
 export class EditionServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -9415,156 +9097,6 @@ export class HostSettingsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class InstallServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    setup(input: InstallDto): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Install/Setup";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSetup(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSetup(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSetup(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getAppSettingsJson(): Observable<AppSettingsJsonDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/Install/GetAppSettingsJson";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetAppSettingsJson(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetAppSettingsJson(response_);
-                } catch (e) {
-                    return <Observable<AppSettingsJsonDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<AppSettingsJsonDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetAppSettingsJson(response: Response): Observable<AppSettingsJsonDto> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? AppSettingsJsonDto.fromJS(resultData200) : new AppSettingsJsonDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<AppSettingsJsonDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    checkDatabase(): Observable<CheckDatabaseOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/Install/CheckDatabase";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processCheckDatabase(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processCheckDatabase(response_);
-                } catch (e) {
-                    return <Observable<CheckDatabaseOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<CheckDatabaseOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processCheckDatabase(response: Response): Observable<CheckDatabaseOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CheckDatabaseOutput.fromJS(resultData200) : new CheckDatabaseOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<CheckDatabaseOutput>(<any>null);
     }
 }
 
@@ -31090,6 +30622,7 @@ export interface IUpdateCustomerStatusesInput {
 
 export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
     statuses: CustomerStatusDto[];
+    users: UserInfoDto[];
 
     constructor(data?: ICustomerFiltersInitialData) {
         if (data) {
@@ -31107,6 +30640,11 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
                 for (let item of data["statuses"])
                     this.statuses.push(CustomerStatusDto.fromJS(item));
             }
+            if (data["users"] && data["users"].constructor === Array) {
+                this.users = [];
+                for (let item of data["users"])
+                    this.users.push(UserInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -31123,12 +30661,18 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
             for (let item of this.statuses)
                 data["statuses"].push(item.toJSON());
         }
+        if (this.users && this.users.constructor === Array) {
+            data["users"] = [];
+            for (let item of this.users)
+                data["users"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
 export interface ICustomerFiltersInitialData {
     statuses: CustomerStatusDto[];
+    users: UserInfoDto[];
 }
 
 export class CustomerStatusDto implements ICustomerStatusDto {
@@ -31167,6 +30711,45 @@ export class CustomerStatusDto implements ICustomerStatusDto {
 
 export interface ICustomerStatusDto {
     id: string;
+    name: string;
+}
+
+export class UserInfoDto implements IUserInfoDto {
+    id: number;
+    name: string;
+
+    constructor(data?: IUserInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UserInfoDto {
+        let result = new UserInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUserInfoDto {
+    id: number;
     name: string;
 }
 
@@ -31696,115 +31279,6 @@ export interface IGetCustomersByRegionOutput {
     customerCount: number;
     countryId: string;
     stateId: string;
-}
-
-export class DateToStringOutput implements IDateToStringOutput {
-    dateString: string;
-
-    constructor(data?: IDateToStringOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.dateString = data["dateString"];
-        }
-    }
-
-    static fromJS(data: any): DateToStringOutput {
-        let result = new DateToStringOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["dateString"] = this.dateString;
-        return data; 
-    }
-}
-
-export interface IDateToStringOutput {
-    dateString: string;
-}
-
-export class NameValueOfString implements INameValueOfString {
-    name: string;
-    value: string;
-
-    constructor(data?: INameValueOfString) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): NameValueOfString {
-        let result = new NameValueOfString();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface INameValueOfString {
-    name: string;
-    value: string;
-}
-
-export class StringOutput implements IStringOutput {
-    output: string;
-
-    constructor(data?: IStringOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.output = data["output"];
-        }
-    }
-
-    static fromJS(data: any): StringOutput {
-        let result = new StringOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["output"] = this.output;
-        return data; 
-    }
-}
-
-export interface IStringOutput {
-    output: string;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
@@ -33396,190 +32870,6 @@ export class SendTestEmailInput implements ISendTestEmailInput {
 
 export interface ISendTestEmailInput {
     emailAddress: string;
-}
-
-export class InstallDto implements IInstallDto {
-    connectionString: string;
-    adminPassword: string;
-    webSiteUrl: string;
-    serverUrl: string;
-    defaultLanguage: string;
-    smtpSettings: EmailSettingsEditDto;
-    billInfo: HostBillingSettingsEditDto;
-
-    constructor(data?: IInstallDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.connectionString = data["connectionString"];
-            this.adminPassword = data["adminPassword"];
-            this.webSiteUrl = data["webSiteUrl"];
-            this.serverUrl = data["serverUrl"];
-            this.defaultLanguage = data["defaultLanguage"];
-            this.smtpSettings = data["smtpSettings"] ? EmailSettingsEditDto.fromJS(data["smtpSettings"]) : <any>undefined;
-            this.billInfo = data["billInfo"] ? HostBillingSettingsEditDto.fromJS(data["billInfo"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): InstallDto {
-        let result = new InstallDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["connectionString"] = this.connectionString;
-        data["adminPassword"] = this.adminPassword;
-        data["webSiteUrl"] = this.webSiteUrl;
-        data["serverUrl"] = this.serverUrl;
-        data["defaultLanguage"] = this.defaultLanguage;
-        data["smtpSettings"] = this.smtpSettings ? this.smtpSettings.toJSON() : <any>undefined;
-        data["billInfo"] = this.billInfo ? this.billInfo.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IInstallDto {
-    connectionString: string;
-    adminPassword: string;
-    webSiteUrl: string;
-    serverUrl: string;
-    defaultLanguage: string;
-    smtpSettings: EmailSettingsEditDto;
-    billInfo: HostBillingSettingsEditDto;
-}
-
-export class AppSettingsJsonDto implements IAppSettingsJsonDto {
-    webSiteUrl: string;
-    serverSiteUrl: string;
-    languages: NameValue[];
-
-    constructor(data?: IAppSettingsJsonDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.webSiteUrl = data["webSiteUrl"];
-            this.serverSiteUrl = data["serverSiteUrl"];
-            if (data["languages"] && data["languages"].constructor === Array) {
-                this.languages = [];
-                for (let item of data["languages"])
-                    this.languages.push(NameValue.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): AppSettingsJsonDto {
-        let result = new AppSettingsJsonDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["webSiteUrl"] = this.webSiteUrl;
-        data["serverSiteUrl"] = this.serverSiteUrl;
-        if (this.languages && this.languages.constructor === Array) {
-            data["languages"] = [];
-            for (let item of this.languages)
-                data["languages"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IAppSettingsJsonDto {
-    webSiteUrl: string;
-    serverSiteUrl: string;
-    languages: NameValue[];
-}
-
-export class NameValue implements INameValue {
-    name: string;
-    value: string;
-
-    constructor(data?: INameValue) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): NameValue {
-        let result = new NameValue();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface INameValue {
-    name: string;
-    value: string;
-}
-
-export class CheckDatabaseOutput implements ICheckDatabaseOutput {
-    isDatabaseExist: boolean;
-
-    constructor(data?: ICheckDatabaseOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.isDatabaseExist = data["isDatabaseExist"];
-        }
-    }
-
-    static fromJS(data: any): CheckDatabaseOutput {
-        let result = new CheckDatabaseOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["isDatabaseExist"] = this.isDatabaseExist;
-        return data; 
-    }
-}
-
-export interface ICheckDatabaseOutput {
-    isDatabaseExist: boolean;
 }
 
 export class GetStatusOutput implements IGetStatusOutput {
@@ -35890,6 +35180,7 @@ export interface IImportLeadBusinessInput {
 export class LeadFiltersInitialData implements ILeadFiltersInitialData {
     pipelines: PipelineDto[];
     leadTypes: LeadTypeDto[];
+    users: UserInfoDto[];
 
     constructor(data?: ILeadFiltersInitialData) {
         if (data) {
@@ -35912,6 +35203,11 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
                 for (let item of data["leadTypes"])
                     this.leadTypes.push(LeadTypeDto.fromJS(item));
             }
+            if (data["users"] && data["users"].constructor === Array) {
+                this.users = [];
+                for (let item of data["users"])
+                    this.users.push(UserInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -35933,6 +35229,11 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
             for (let item of this.leadTypes)
                 data["leadTypes"].push(item.toJSON());
         }
+        if (this.users && this.users.constructor === Array) {
+            data["users"] = [];
+            for (let item of this.users)
+                data["users"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -35940,6 +35241,7 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
 export interface ILeadFiltersInitialData {
     pipelines: PipelineDto[];
     leadTypes: LeadTypeDto[];
+    users: UserInfoDto[];
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -44798,45 +44100,6 @@ export interface ICreateOrUpdateUserInput {
     setRandomPassword: boolean;
     organizationUnits: number[];
     tenantHostType: CreateOrUpdateUserInputTenantHostType;
-}
-
-export class UserInfoDto implements IUserInfoDto {
-    id: number;
-    name: string;
-
-    constructor(data?: IUserInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): UserInfoDto {
-        let result = new UserInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IUserInfoDto {
-    id: number;
-    name: string;
 }
 
 export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {

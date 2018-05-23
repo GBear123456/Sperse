@@ -19,12 +19,6 @@ export class AppPreBootstrap {
         }
 
         AppPreBootstrap.getApplicationConfig(() => {
-            if (UrlHelper.isInstallUrl(location.href)) {
-                LocalizedResourcesHelper.loadMetronicStyles('');
-                callback();
-                return;
-            }
-
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {

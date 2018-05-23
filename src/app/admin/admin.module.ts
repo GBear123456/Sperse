@@ -32,7 +32,6 @@ import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 
 import { HostSettingsComponent } from './settings/host-settings.component';
-import { InstallComponent } from './install/install.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { JobsComponent } from './jobs/jobs.component';
 import { ImpersonationService } from './users/impersonation.service';
@@ -51,18 +50,12 @@ import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-bind
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
 import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
-import { DemoUiComponentsComponent } from './demo-ui-components/demo-ui-components.component';
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
 import { EditorModule } from 'primeng/primeng';
 import { AddMemberModalComponent } from 'app/admin/organization-units/add-member-modal.component';
 import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/primeng';
 import { AutoCompleteModule } from 'primeng/primeng';
-import { DemoUiDateTimeComponent } from './demo-ui-components/demo-ui-date-time.component';
-import { DemoUiSelectionComponent } from './demo-ui-components/demo-ui-selection.component';
-import { DemoUiFileUploadComponent } from './demo-ui-components/demo-ui-file-upload.component';
-import { DemoUiInputMaskComponent } from './demo-ui-components/demo-ui-input-mask.component';
-import { DemoUiEditorComponent } from './demo-ui-components/demo-ui-editor.component';
 import { InputMaskModule } from 'primeng/primeng';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { TenantsComponent } from './tenants/tenants.component';
@@ -109,7 +102,6 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         AuditLogsComponent,
         AuditLogDetailModalComponent,
         HostSettingsComponent,
-        InstallComponent,
         MaintenanceComponent,
         JobsComponent,
         LanguagesComponent,
@@ -129,12 +121,6 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         InvoiceComponent,
         SubscriptionManagementComponent,
         AddMemberModalComponent,
-        DemoUiComponentsComponent,
-        DemoUiDateTimeComponent,
-        DemoUiSelectionComponent,
-        DemoUiFileUploadComponent,
-        DemoUiInputMaskComponent,
-        DemoUiEditorComponent,
         UiCustomizationComponent,
         EditionsComponent,
         CreateOrEditEditionModalComponent,

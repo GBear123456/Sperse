@@ -6,22 +6,22 @@
                     <table>
                         <tr>
                             <td colspan="4" class="ScientificModeToggle">
-                                <input id="chkIsScientificModeEnabled" (click)="ToggleScienticMode()" type="checkbox" data-toggle="toggle" />
+                                <input id="chkIsScientificModeEnabled" (click)="toggleScienticMode()" type="checkbox" data-toggle="toggle" />
                                 <label for="chkIsScientificModeEnabled">Enable Scientific Mode</label>
                                 <br />
-                                <a (click)="ToggleEditHistory()" [hidden]="this.IsEditHistoryEnabled">Edit</a>
+                                <a (click)="toggleEditHistory()" [hidden]="isEditHistoryEnabled">Edit</a>
                             </td>
                         </tr>
-                        <tr *ngFor="let history of this.calcHistory">
-                            <td class="tdOperator"><span class="operator">{{ history.Operator }}</span></td>
+                        <tr *ngFor="let history of calcHistory">
+                            <td class="tdoperator"><span class="operator">{{ history.operator }}</span></td>
                             <td class="tdOperand">
-                                <span class="inputed">{{ history.Operand }}</span>
+                                <span class="inputed">{{ history.operand }}</span>
                             </td>
                             <td class="tdEquals">
                                 <span *ngIf="history.result != ''">=</span>
                             </td>
                             <td class="tdResult">
-                                <span class="result">{{ history.Result }}</span>
+                                <span class="result">{{ history.result }}</span>
                             </td>
                         </tr>
                     </table>
@@ -34,8 +34,8 @@
             </td>
             <td class="tdInput">
                 <input #calculatorInput type="text" class="input" name="input" [(value)]="input" autocomplete="off" maxlength="10"
-                       (keydown)="inputKeyPress($event)" autofocus [hidden]="this.IsEditHistoryEnabled" />
-                <input #calculatorHistoryEdit type="text" class="input" name="input" [(value)]="historyEquation" autocomplete="off" autofocus [hidden]="!this.IsEditHistoryEnabled" />
+                       (keydown)="inputKeyPress($event)" autofocus [hidden]="isEditHistoryEnabled" />
+                <input #calculatorHistoryEdit type="text" class="input" name="input" [(value)]="historyEquation" autocomplete="off" autofocus [hidden]="!isEditHistoryEnabled" />
             </td>
         </tr>
         <tr class="footer">
@@ -46,12 +46,12 @@
                             <table class="keypad">
                                 <tbody>
                                     <tr>
-                                        <td colspan="2" class="clearKey" (click)="ClearAll()">C</td>
-                                        <td class="backspace" (click)="BackSpace()">&#8678;</td>
+                                        <td colspan="2" class="clearKey" (click)="clearAll()">C</td>
+                                        <td class="backspace" (click)="backSpace()">&#8678;</td>
                                     </tr>
                                     <tr>
-                                        <td [class.disabled]="!calculatorService.IsScientificModeEnabled" (click)="inputNumber('(')">(</td>
-                                        <td [class.disabled]="!calculatorService.IsScientificModeEnabled" (click)="inputNumber(')')">)</td>
+                                        <td [class.disabled]="!calculatorService.isScientificModeEnabled" (click)="inputNumber('(')">(</td>
+                                        <td [class.disabled]="!calculatorService.isScientificModeEnabled" (click)="inputNumber(')')">)</td>
                                         <td (click)="inputNumber('%')">%</td>
                                     </tr>
                                     <tr>

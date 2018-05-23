@@ -4,7 +4,6 @@ import { UsersComponent } from './users/users.component';
 import { RolesComponent } from './roles/roles.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { HostSettingsComponent } from './settings/host-settings.component';
-import { InstallComponent } from './install/install.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
 import { SystemSettingsComponent } from './settings/system-settings.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
@@ -15,7 +14,6 @@ import { OrganizationUnitsComponent } from './organization-units/organization-un
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
 import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
-import { DemoUiComponentsComponent } from './demo-ui-components/demo-ui-components.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { EditionsComponent } from './editions/editions.component';
 import { TenantsComponent } from './tenants/tenants.component';
@@ -41,8 +39,6 @@ import { TenantsComponent } from './tenants/tenants.component';
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
                     { path: 'systemSettings', component: SystemSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } },
-                    { path: 'demo-ui-components', component: DemoUiComponentsComponent, data: { permission: 'Pages.DemoUiComponents' } },
-                    { path: 'install', component: InstallComponent },
                     { path: 'ui-customization', component: UiCustomizationComponent },
                     { path: 'products', component: EditionsComponent, data: { permission: 'Pages.Editions' } },
                     { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } }
