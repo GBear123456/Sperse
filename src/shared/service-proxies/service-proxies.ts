@@ -28986,6 +28986,7 @@ export interface IScoreSimulatorDto {
 }
 
 export class CustomerListInfoDto implements ICustomerListInfoDto {
+    id: number;
     name: string;
 
     constructor(data?: ICustomerListInfoDto) {
@@ -28999,6 +29000,7 @@ export class CustomerListInfoDto implements ICustomerListInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.name = data["name"];
         }
     }
@@ -29011,12 +29013,14 @@ export class CustomerListInfoDto implements ICustomerListInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
         return data; 
     }
 }
 
 export interface ICustomerListInfoDto {
+    id: number;
     name: string;
 }
 
