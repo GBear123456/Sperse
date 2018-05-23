@@ -38,7 +38,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         //    version: this.getODataVersion(),
         //    beforeSend: function (request) {
         //      request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-        //      request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
         //    }
         //  }
         //};

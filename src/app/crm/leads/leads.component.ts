@@ -115,7 +115,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 },
                 paginate: true
             }
