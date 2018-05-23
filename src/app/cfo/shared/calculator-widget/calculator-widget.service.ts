@@ -4,104 +4,104 @@ import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class CalculatorService {
-    readonly BracketsPrecedenceLevelStart: number = 1;
-    readonly TotalDigitsAllowed: number = 15;   // including decimal point
-    private RootNode: ExpressionNode;
-    private BracketsPrecedenceLevel: number;
-    private StandardCalculatorData: StandardModeData = {
-        Result: 0,
-        Operand: 0,
-        Operator: ''
+    readonly bracketsPrecedenceLevelStart: number = 1;
+    readonly totalDigitsAllowed: number = 15;   // including decimal point
+    private rootNode: ExpressionNode;
+    private bracketsPrecedenceLevel: number;
+    private standardCalculatordata: StandardModedata = {
+        result: 0,
+        operand: 0,
+        operator: ''
     };
 
-    public TreeContentLog: string;
-    public IsScientificModeEnabled: boolean;
+    public treeContentLog: string;
+    public isScientificModeEnabled: boolean;
 
     constructor(injector: Injector) {
-        this.BracketsPrecedenceLevel = this.BracketsPrecedenceLevelStart;
-        this.IsScientificModeEnabled = false;
+        this.bracketsPrecedenceLevel = this.bracketsPrecedenceLevelStart;
+        this.isScientificModeEnabled = false;
         this._value = new Subject<Object>();
     }
 
     // #region "Public Functions"
 
-    public AddToCalculator(operator: string, operand: string) {
-        if (this.IsScientificModeEnabled) {
-            return this.AddToTree(operator, operand);
+    public addToCalculator(operator: string, operand: string) {
+        if (this.isScientificModeEnabled) {
+            return this.addToTree(operator, operand);
         } else {
-            return this.AddToStandardMode(operator, operand);
+            return this.addToStandardMode(operator, operand);
         }
     }
 
-    public GetExpressionValue(): string {
-        if (this.IsScientificModeEnabled) {
-            return this.GetTreeExpressionValue();
+    public getExpressionValue(): string {
+        if (this.isScientificModeEnabled) {
+            return this.getTreeExpressionValue();
         } else {
-            return this.GetStandardCalculationValue();
+            return this.getStandardCalculationValue();
         }
     }
 
-    public DisplayTreeContent(): string {
-        if (this.RootNode != null) {
-            this.TreeContentLog = 'Root: ' + this.RootNode.Data + '\n';
-            this.InOrderTraversal(this.RootNode);
-            this.TreeContentLog += '\n';
-            this.PreOrderTraversal(this.RootNode);
-            this.TreeContentLog += '\n';
-            this.PostOrderTraversal(this.RootNode);
+    public displayTreeContent(): string {
+        if (this.rootNode != null) {
+            this.treeContentLog = 'Root: ' + this.rootNode.data + '\n';
+            this.inOrderTraversal(this.rootNode);
+            this.treeContentLog += '\n';
+            this.preOrderTraversal(this.rootNode);
+            this.treeContentLog += '\n';
+            this.postOrderTraversal(this.rootNode);
         } else {
-            this.TreeContentLog = 'Expression is empty!';
+            this.treeContentLog = 'Expression is empty!';
         }
-        return this.TreeContentLog;
+        return this.treeContentLog;
     }
 
-    public InOrderTraversal(node: ExpressionNode): void {
+    public inOrderTraversal(node: ExpressionNode): void {
         if (node != null) {
-            this.InOrderTraversal(node.Left);
-            this.TreeContentLog += node.OpeningBrackets + node.Data + node.ClosingBrackets;
-            this.InOrderTraversal(node.Right);
+            this.inOrderTraversal(node.left);
+            this.treeContentLog += node.openingBrackets + node.data + node.closingBrackets;
+            this.inOrderTraversal(node.right);
         }
     }
 
-    public PreOrderTraversal(node: ExpressionNode): void {
+    public preOrderTraversal(node: ExpressionNode): void {
         if (node != null) {
-            this.TreeContentLog += node.Data;
-            this.PreOrderTraversal(node.Left);
-            this.PreOrderTraversal(node.Right);
+            this.treeContentLog += node.data;
+            this.preOrderTraversal(node.left);
+            this.preOrderTraversal(node.right);
         }
     }
 
-    public PostOrderTraversal(node: ExpressionNode): void {
+    public postOrderTraversal(node: ExpressionNode): void {
         if (node != null) {
-            this.PostOrderTraversal(node.Left);
-            this.PostOrderTraversal(node.Right);
-            this.TreeContentLog += node.Data;
+            this.postOrderTraversal(node.left);
+            this.postOrderTraversal(node.right);
+            this.treeContentLog += node.data;
         }
     }
 
-    public GetExpression(): string {
-        this.TreeContentLog = '';
-        this.InOrderTraversal(this.RootNode);
-        return this.TreeContentLog;
+    public getExpression(): string {
+        this.treeContentLog = '';
+        this.inOrderTraversal(this.rootNode);
+        return this.treeContentLog;
     }
 
-    public ClearAll(): void {
-        this.RootNode = null;
-        this.TreeContentLog = '';
-        this.BracketsPrecedenceLevel = this.BracketsPrecedenceLevelStart;
+    public clearAll(): void {
+        this.rootNode = null;
+        this.treeContentLog = '';
+        this.bracketsPrecedenceLevel = this.bracketsPrecedenceLevelStart;
     }
 
-    public RoundUpForDisplay(num: number, isFixed = true): string {
+    public roundUpForDisplay(num: number, isFixed = true): string {
         if (isFixed) {
-            return this.GetNumberWithCommas(num.toFixed(2));  //.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            return this.getNumberWithCommas(num.toFixed(2));  //.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
         }
-        return this.GetNumberWithCommas(num.toString());   //.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        return this.getNumberWithCommas(num.toString());   //.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     }
 
-    public GetNumberWithCommas(num: string): string {
-        var parts = num.toString().split(".");
+    public getNumberWithCommas(num: string): string {
+        let parts = num.toString().split('.');
         parts[0] = parts[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-        return parts.join(".");
+        return parts.join('.');
     }
 
     // #endregion
@@ -110,112 +110,112 @@ export class CalculatorService {
 
     // #region "Standard Mode Calculator"
 
-    private AddToStandardMode(operator: string, operand: string) {
+    private addToStandardMode(operator: string, operand: string) {
         if (operand.endsWith('%')) {
             operand = (parseFloat(operand.substr(0, operand.length - 1)) / 100).toString();
         }
         if (operator === '') {
-            this.StandardCalculatorData.Result = parseFloat(operand);
+            this.standardCalculatordata.result = parseFloat(operand);
         } else {
-            this.StandardCalculatorData.Operand = parseFloat(operand);
-            this.StandardCalculatorData.Operator = operator;
-            this.StandardCalculatorData.Result = this.EvaluateExpression(this.StandardCalculatorData.Result
-                , operator, this.StandardCalculatorData.Operand);
+            this.standardCalculatordata.operand = parseFloat(operand);
+            this.standardCalculatordata.operator = operator;
+            this.standardCalculatordata.result = this.evaluateExpression(this.standardCalculatordata.result
+                , operator, this.standardCalculatordata.operand);
         }
     }
 
-    private GetStandardCalculationValue(): string {
-        let result: number = this.RoundUpNumber(this.StandardCalculatorData.Result);
-        return this.FormatNumber(result);
+    private getStandardCalculationValue(): string {
+        let result: number = this.roundUpNumber(this.standardCalculatordata.result);
+        return this.formatNumber(result);
     }
     // #endregion
 
     // #region Scientific Mode Calculator
 
-    private AddToTree(operator: string, operand: string) {
-        if (operand == null || this.IsScientificModeEnabled === false) {
+    private addToTree(operator: string, operand: string) {
+        if (operand == null || this.isScientificModeEnabled === false) {
             return;
         }
 
-        let operatorNode: ExpressionNode = operator == null || operator === '' ? null : this.CreateNewNode(operator);
-        let operandNode: ExpressionNode = this.CreateNewNode(operand);
+        let operatorNode: ExpressionNode = operator == null || operator === '' ? null : this.createNewNode(operator);
+        let operandNode: ExpressionNode = this.createNewNode(operand);
 
-        if (operatorNode != null && this.BracketsPrecedenceLevel > this.BracketsPrecedenceLevelStart) {
-            operatorNode.PrecedenceOverrideLevel = this.BracketsPrecedenceLevel;
+        if (operatorNode != null && this.bracketsPrecedenceLevel > this.bracketsPrecedenceLevelStart) {
+            operatorNode.precedenceOverrideLevel = this.bracketsPrecedenceLevel;
         }
         // The below Increment/Decrement will affect the precedence of next operator.
-        if (operandNode.OpeningBrackets !== '') {
-            this.BracketsPrecedenceLevel++;
-        } else if (operandNode.ClosingBrackets !== '') {
-            this.BracketsPrecedenceLevel--;
+        if (operandNode.openingBrackets !== '') {
+            this.bracketsPrecedenceLevel++;
+        } else if (operandNode.closingBrackets !== '') {
+            this.bracketsPrecedenceLevel--;
         }
 
-        let explicitPrecedence = operatorNode == null ? 0 : operatorNode.PrecedenceOverrideLevel;
-        this.RootNode = this.CreateExpressionTree(this.RootNode, operatorNode, operandNode,
+        let explicitPrecedence = operatorNode == null ? 0 : operatorNode.precedenceOverrideLevel;
+        this.rootNode = this.createExpressionTree(this.rootNode, operatorNode, operandNode,
             explicitPrecedence);
     }
 
-    private CreateExpressionTree(rootNode: ExpressionNode, operatorNode: ExpressionNode,
+    private createExpressionTree(rootNode: ExpressionNode, operatorNode: ExpressionNode,
         operandNode: ExpressionNode, explicitPrecedence: number): ExpressionNode {
         if (rootNode != null && operatorNode != null) {
-            let rootPrecedence: number = this.GetPrecedence(rootNode.Data) + rootNode.PrecedenceOverrideLevel;
-            let operatorPrecedence: number = this.GetPrecedence(operatorNode.Data) + operatorNode.PrecedenceOverrideLevel;
+            let rootPrecedence: number = this.getPrecedence(rootNode.data) + rootNode.precedenceOverrideLevel;
+            let operatorPrecedence: number = this.getPrecedence(operatorNode.data) + operatorNode.precedenceOverrideLevel;
 
-            if (rootPrecedence !== 0 && (rootPrecedence < operatorPrecedence || explicitPrecedence > this.BracketsPrecedenceLevelStart)) {
-                if (explicitPrecedence > this.BracketsPrecedenceLevelStart) {
+            if (rootPrecedence !== 0 && (rootPrecedence < operatorPrecedence || explicitPrecedence > this.bracketsPrecedenceLevelStart)) {
+                if (explicitPrecedence > this.bracketsPrecedenceLevelStart) {
                     explicitPrecedence--;
                 }
-                rootNode.Right = this.CreateExpressionTree(rootNode.Right, operatorNode, operandNode, explicitPrecedence);
+                rootNode.right = this.createExpressionTree(rootNode.right, operatorNode, operandNode, explicitPrecedence);
                 return rootNode;
             }
 
-            operatorNode.Left = rootNode;
-            operatorNode.Right = operandNode;
+            operatorNode.left = rootNode;
+            operatorNode.right = operandNode;
             return operatorNode;
         } else {
             return operandNode;
         }
     }
 
-    private CreateNewNode(data: string): ExpressionNode {
+    private createNewNode(data: string): ExpressionNode {
         let node: ExpressionNode = {
-            OpeningBrackets: data.lastIndexOf('(') >= 0 ? data.substr(0, data.lastIndexOf('(') + 1) : '',
-            Data: data.split('(').join('').split(')').join(''),
-            ClosingBrackets: data.indexOf(')') >= 0 ? data.substr(data.indexOf(')'), data.length - data.indexOf(')')) : '',
-            Left: null,
-            Right: null,
-            PrecedenceOverrideLevel: 0,
+            openingBrackets: data.lastIndexOf('(') >= 0 ? data.substr(0, data.lastIndexOf('(') + 1) : '',
+            data: data.split('(').join('').split(')').join(''),
+            closingBrackets: data.indexOf(')') >= 0 ? data.substr(data.indexOf(')'), data.length - data.indexOf(')')) : '',
+            left: null,
+            right: null,
+            precedenceOverrideLevel: 0,
         };
         return node;
     }
 
-    private GetTreeExpressionValue(): string {
-        let result: number = this.RoundUpNumber(this.EvaluateTree(this.RootNode));
-        return this.FormatNumber(result);
+    private getTreeExpressionValue(): string {
+        let result: number = this.roundUpNumber(this.evaluateTree(this.rootNode));
+        return this.formatNumber(result);
     }
 
-    private EvaluateTree(rootNode: ExpressionNode): number {
+    private evaluateTree(rootNode: ExpressionNode): number {
         if (rootNode == null) {
             return 0;
         }
 
-        if (rootNode.Left == null && rootNode.Right == null) {
-            if (rootNode.Data.endsWith('%')) {
-                return (parseFloat(rootNode.Data.substr(0, rootNode.Data.length - 1)) / 100);
+        if (rootNode.left == null && rootNode.right == null) {
+            if (rootNode.data.endsWith('%')) {
+                return (parseFloat(rootNode.data.substr(0, rootNode.data.length - 1)) / 100);
             }
-            return parseFloat(rootNode.Data);
+            return parseFloat(rootNode.data);
         }
 
-        let leftValue: number = this.EvaluateTree(rootNode.Left);
-        let rightValue: number = this.EvaluateTree(rootNode.Right);
+        let leftValue: number = this.evaluateTree(rootNode.left);
+        let rightValue: number = this.evaluateTree(rootNode.right);
 
-        return this.EvaluateExpression(leftValue, rootNode.Data, rightValue);
+        return this.evaluateExpression(leftValue, rootNode.data, rightValue);
     }
     // #endregion
 
     // #region Common Functions
 
-    private GetPrecedence(operator: string): number {
+    private getPrecedence(operator: string): number {
         switch (operator) {
             case '+':
             case '-':
@@ -230,7 +230,7 @@ export class CalculatorService {
         }
     }
 
-    private EvaluateExpression(leftValue: number, operator: string, rightValue: number): number {
+    private evaluateExpression(leftValue: number, operator: string, rightValue: number): number {
         switch (operator) {
             case '+':
                 return leftValue + rightValue;
@@ -248,18 +248,18 @@ export class CalculatorService {
         }
     }
 
-    private FormatNumber(result: number): string {
-        if ((result.toString().indexOf('.') < 0 && result.toString().length > this.TotalDigitsAllowed)
+    private formatNumber(result: number): string {
+        if ((result.toString().indexOf('.') < 0 && result.toString().length > this.totalDigitsAllowed)
             ||
-            (result.toString().indexOf('.') >= 0 && result.toString().length > (this.TotalDigitsAllowed + 3))
+            (result.toString().indexOf('.') >= 0 && result.toString().length > (this.totalDigitsAllowed + 3))
         ) {
             return result.toExponential(3);
         } else {
-            return this.RoundUpForDisplay(result);
+            return this.roundUpForDisplay(result);
         }
     }
 
-    private RoundUpNumber(num: number): number {
+    private roundUpNumber(num: number): number {
         return Math.round(num * 100) / 100;
         // return (Math.round(num * 100) / 100).toFixed(2);
     }
@@ -269,7 +269,7 @@ export class CalculatorService {
 
     private _value: Subject<Object>;
     private _subscribers: Array<Subscription> = [];
-    
+
     subscribePeriodChange(callback: (value: Object) => any) {
         this._subscribers.push(
             this._value.asObservable().subscribe(callback)
@@ -289,16 +289,16 @@ export class CalculatorService {
 }
 
 interface ExpressionNode {
-    OpeningBrackets: string;
-    Left: ExpressionNode;
-    Data: string;
-    PrecedenceOverrideLevel: number;
-    Right: ExpressionNode;
-    ClosingBrackets: string;
+    openingBrackets: string;
+    left: ExpressionNode;
+    data: string;
+    precedenceOverrideLevel: number;
+    right: ExpressionNode;
+    closingBrackets: string;
 }
 
-interface StandardModeData {
-    Operand: number;
-    Operator: string;
-    Result: number;
+interface StandardModedata {
+    operand: number;
+    operator: string;
+    result: number;
 }
