@@ -19,12 +19,6 @@ export class AppPreBootstrap {
         }
 
         AppPreBootstrap.getApplicationConfig(() => {
-            if (UrlHelper.isInstallUrl(location.href)) {
-                LocalizedResourcesHelper.loadMetronicStyles('');
-                callback();
-                return;
-            }
-
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
@@ -52,10 +46,7 @@ export class AppPreBootstrap {
     private static getApplicationConfig(callback: () => void) {
         return abp.ajax({
             url: '/assets/appconfig.json',
-            method: 'GET',
-            headers: {
-                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-            }
+            method: 'GET'
         }).done(result => {
             AppConsts.appBaseUrlFormat = result.appBaseUrl;
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
@@ -114,6 +105,7 @@ export class AppPreBootstrap {
         }).done(result => {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
+            abp.multiTenancy.setTenantIdCookie();
             location.search = '';
             callback();
         }).fail(result => {
@@ -134,6 +126,7 @@ export class AppPreBootstrap {
         }).done(result => {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
+            abp.multiTenancy.setTenantIdCookie();
             location.search = '';
             callback();
         });

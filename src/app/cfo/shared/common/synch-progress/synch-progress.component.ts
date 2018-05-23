@@ -161,7 +161,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             url: _url,
             method: method,
             headers: {
-                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie(),
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             },
             abpHandleError: false

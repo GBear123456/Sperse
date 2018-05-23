@@ -14,7 +14,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     private viewContainerRef: ViewContainerRef;
 
     subscriptionStartType = SubscriptionStartType;
-    installationMode: boolean = true;
+    installationMode: boolean = false;
 
 
     public constructor(
@@ -29,8 +29,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
     ngOnInit(): void {
         this.appService.initModule();
-
-        this.installationMode = UrlHelper.isInstallUrl(location.href);
     }
 
     ngAfterViewInit(): void {

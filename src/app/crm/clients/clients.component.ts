@@ -32,6 +32,7 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
@@ -110,7 +111,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 }
             }
         };
@@ -287,7 +287,21 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             operator: 'startswith',
                             caption: 'zipCode',
                             items: { ZipCode: new FilterItemModel() }
+                        }),
+                        new FilterModel({
+                            component: FilterCheckBoxesComponent,
+                            caption: 'assignedUser',
+                            field: 'AssignedUserId',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: result.users,
+                                        nameField: 'name',
+                                        keyExpr: 'id'
+                                    })
+                            }
                         })
+
                     ]
                 )
             );
@@ -506,20 +520,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     filterByStatus(filter: FilterModel) {
-        let data = {};
-        let element = filter.items.element;
-        if (element && element.value) {
-            let filterData = _.map(element.value, x => {
-                let el = {};
-                el[filter.field] = x;
-                return el;
-            });
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
 
-            data = {
-                or: filterData
-            };
-        }
-        return data;
+    filterByAssignedUser(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
     }
 
     searchValueChange(e: object) {

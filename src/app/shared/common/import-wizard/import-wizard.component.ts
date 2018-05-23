@@ -1,31 +1,47 @@
-import { Component, Injector, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatHorizontalStepper } from '@angular/material';
 import { PapaParseService } from 'ngx-papaparse';
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
 
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
+import { DxDataGridComponent } from 'devextreme-angular';
+
 @Component({
     selector: 'import-wizard',
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase {
+export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
+    @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
+    @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
 
     @Input() title: string;
-    @Input() imported: boolean;
+    @Input() localizationSource: string;
+    @Input() set fields(list: string[]) {
+        this.lookupFields = list.map((field) => {
+            return {
+                id: field,
+                name: this.capitalize(field)
+            };
+        });
+    }
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
 
     uploadFile: FormGroup;
-    dataMapping: FormGroup;
-
-    lastStep: boolean;
 
     private files: UploadFile[] = [];
-    private readonly STEP_COUNT = 3; 
+
+    private readonly UPLOAD_STEP_INDEX  = 0;
+    private readonly MAPPING_STEP_INDEX = 1;
+    private readonly REVIEW_STEP_INDEX  = 2;
+    private readonly FINISH_STEP_INDEX  = 3;
 
     showSteper: boolean = true;
     loadProgress: number = 0;
@@ -34,6 +50,15 @@ export class ImportWizardComponent extends AppComponentBase {
     fileData: any;
     fileName: string = '';
     fileSize: string = '';
+
+    reviewDataSource: any;
+    mapDataSource: any;
+    lookupFields: any;
+
+    selectModeItems = [
+        {text: 'Affect on page items', mode: 'page'},
+        {text: 'Affect all pages items', mode: 'allPages'}
+    ]
 
     constructor(
         injector: Injector,
@@ -45,33 +70,98 @@ export class ImportWizardComponent extends AppComponentBase {
         this.uploadFile = _formBuilder.group({
           url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
         });
-        this.dataMapping = _formBuilder.group({
-          secondCtrl: ['', Validators.required]
-        });
     }
 
-    stepChanged($event) {
-        this.lastStep = ($event.selectedIndex >= this.STEP_COUNT - 1);
+    ngOnInit() {  
+        this.localizationSourceName = this.localizationSource;
     }
 
-    reset() { 
+    reset(callback = null) { 
         this.showSteper = false;
-        this.lastStep = false;
 
         this.uploadFile.reset();
-        this.dataMapping.reset();
-
         setTimeout(() => {
             this.showSteper = true;
+            callback && callback();
         });
     }
 
-    cancel() {
-        this.onCancel.emit();
+    next() {
+        if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
+            if (this.checkFileDataValid())
+                this.stepper.next();
+            else
+                this.message.error(this.l('ChooseCorrectCSV'));
+        } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
+            let selected = this.mapGrid.instance.getSelectedRowsData();
+            if (selected.length) {
+                if (this.validateFieldsMapping(selected))
+                    this.initReviewDataSource(selected);
+            } else {
+                let mappedFields = this.mapDataSource.filter((row) => {
+                    return !!row.mappedField;
+                });
+                if (this.validateFieldsMapping(mappedFields))
+                    this.initReviewDataSource(mappedFields); 
+            }
+        } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
+            let data = this.reviewGrid.instance.getSelectedRowsData();
+            this.complete(data.length && data || this.reviewDataSource);
+        }
     }
 
-    complete() {
-        this.onComplete.emit();
+    cancel() {        
+        this.reset(() => {
+            this.onCancel.emit();
+        });
+    }
+
+    complete(data) {
+        this.onComplete.emit(data);
+    }
+
+    showFinishStep() {
+        this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
+    }
+
+    initReviewDataSource(mappedFields) {        
+        let columnsIndex = {};
+        this.reviewDataSource = this.fileData.data.map((row, index) => {
+            if (index) {
+                let data = {};
+                mappedFields.forEach((field) => {
+                    data[field.mappedField] = row[columnsIndex[field.sourceField]];
+                });
+                return data;
+            } else 
+                row.forEach((item, index) => {
+                    columnsIndex[item] = index;
+                });
+        });
+
+        this.stepper.next();
+    }
+
+    validateFieldsMapping(rows) {
+        let isFistName = false, 
+            isLastName = false,
+            isMapped = rows.every((row) => {
+                isFistName = isFistName || (row.mappedField.toLowerCase() == 'first');
+                isLastName = isLastName || (row.mappedField.toLowerCase() == 'last');
+                if (!row.mappedField)
+                    this.message.error(this.l('MapAllRecords'));
+                return !!row.mappedField;
+            });
+
+        if (isMapped && (!isFistName || !isLastName))
+            this.message.error(this.l('FieldsMapError'));
+
+        return isMapped && isFistName && isLastName;
+    }
+
+    checkFileDataValid() {
+        return this.fileData && !this.fileData.errors.length 
+            && this.fileData.data.length;
     }
 
     parse(content) {
@@ -81,6 +171,7 @@ export class ImportWizardComponent extends AppComponentBase {
                     this.message.error(results.errors[0].message);
                 else {
                     this.fileData = results;
+                    this.buildMappingDataSource();
                 }    
             }
         });
@@ -92,7 +183,7 @@ export class ImportWizardComponent extends AppComponentBase {
         this.fileSize = (file.size / 1024).toFixed(2) + 'KB';
         let reader = new FileReader();
         reader.onload = (event) => {
-            this.dropZoneProgress = 100;
+            this.dropZoneProgress = 101;
             this.parse(reader.result);
         };
         reader.onprogress = (event) => {
@@ -112,6 +203,32 @@ export class ImportWizardComponent extends AppComponentBase {
                 this.loadFileContent(file);
         }
     }
+
+    buildMappingDataSource() {
+        this.mapDataSource = 
+            this.fileData.data[0].map((field, index) => {
+                let fieldId;
+                return {
+                  sourceField: field,
+                  sampleValue: this.lookForValueExample(index),
+                  mappedField: this.lookupFields.every((item) => {
+                      let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                      if (isSameField)
+                          fieldId = item.id;
+                      return !isSameField;
+                  }) ? '': fieldId
+                };
+            });
+    }
+
+    lookForValueExample(fieldIndex) {
+        let notEmptyIndex = 1;
+        this.fileData.data.every((record, index) => {
+            notEmptyIndex = index || notEmptyIndex;
+            return !index || !record[fieldIndex];
+        });
+        return this.fileData.data[notEmptyIndex][fieldIndex];
+    }
    
     fileSelected($event) {
         if ($event.target.files.length)
@@ -119,21 +236,25 @@ export class ImportWizardComponent extends AppComponentBase {
     }
 
     downloadFromURL() {
-        if (!this.uploadFile.invalid)
-            this.getFile(this.uploadFile.value.url, (result) => {
-                if (result.target.status == 200) {
-                    this.parse(result.target.responseText);
-                } else {
-                    this.message.error(result.target.statusText);
-                }
-            });
+        if (!this.uploadFile.invalid) {
+            if (this.uploadFile.value.url)
+                this.getFile(this.uploadFile.value.url, (result) => {
+                    if (result.target.status == 200) {
+                        this.parse(result.target.responseText);
+                    } else {
+                        this.message.error(result.target.statusText);
+                    }
+                });
+            else 
+                this.message.error(this.l('FieldEmptyError', [this.l('URL')]));
+        }   
     }
 
     getFile(path: string, callback: Function) {
         this.dropZoneProgress = 0;
         let request = new XMLHttpRequest();
         request.addEventListener("load", (event) => {
-            this.loadProgress = 100;
+            this.loadProgress = 101;
             callback(event);
         });
         request.addEventListener("progress", (event) => {
@@ -145,5 +266,21 @@ export class ImportWizardComponent extends AppComponentBase {
         request.setRequestHeader('Content-Type', "application/*");
 
         request.send();
+    }
+
+    onRowValidating($event) {
+        this.mapDataSource.forEach((row) => {
+            if ($event.newData.sourceField != row.sourceField 
+                && $event.newData.mappedField == row.mappedField
+            ) {
+                $event.isValid = false;
+                $event.errorText = this.l('FieldMappedError', [row.sourceField]);
+            }
+        });
+    }
+
+    selectionModeChanged($event) {
+        this.reviewGrid.instance.option(
+            'selection.selectAllMode', $event.itemData.mode);
     }
 }

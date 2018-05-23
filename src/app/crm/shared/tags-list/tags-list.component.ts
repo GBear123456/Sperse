@@ -4,6 +4,8 @@ import { AppConsts } from '@shared/AppConsts';
 
 import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput } from '@shared/service-proxies/service-proxies';
 
+import * as _ from 'underscore';
+
 @Component({
   selector: 'crm-tags-list',
   templateUrl: './tags-list.component.html',
@@ -23,7 +25,7 @@ export class TagsListComponent extends AppComponentBase {
         });
     }
     private selectedTags = [];
-    list: any;
+    list: any = [];
 
     listComponent: any;
     tooltipVisible = false;
@@ -39,7 +41,8 @@ export class TagsListComponent extends AppComponentBase {
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.refresh();
-        this.listComponent.option('searchValue', '');
+        if (this.listComponent)
+            this.listComponent.option('searchValue', '');
         this.showAddButton = false;
     }
 
@@ -71,7 +74,7 @@ export class TagsListComponent extends AppComponentBase {
 
     refresh() {
         this._tagsService.getTags().subscribe((result) => {
-            this.list = result.map((obj) => obj.name);
+            this.list = _.uniq(this.list.concat(result.map((obj) => obj.name)));
         });
     }
 

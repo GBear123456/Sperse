@@ -220,7 +220,7 @@
                         (onKeyUp)="onCommentKeyUp($event, type)"
                         [(value)]="notes[type]">
                       </dx-text-area>
-                      <span [class]="notes[type] && 'clear-contact' || 'hidden'" (click)="notes[type] = ''">+</span>
+                      <span class="dx-icon dx-icon-clear {{!notes[type] && 'hidden'}}" (click)="notes[type] = ''"></span>
                   </div>
               </dx-validation-group>
           </div>

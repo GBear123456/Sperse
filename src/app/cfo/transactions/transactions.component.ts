@@ -484,7 +484,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 }
             }
         };
@@ -496,7 +495,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 }
             },
             onChanged: this.getTotalValues.bind(this)

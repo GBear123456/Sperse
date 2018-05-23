@@ -83,6 +83,9 @@
                 background: #FFF!important;
                 border: 1px solid #e5e9ec;
             }
+            .mat-stepper-horizontal-line:nth-last-child(2), mat-step-header:last-child {
+                display: none!important;
+            }
         }
         .mat-stepper-horizontal-line {
             border-top-width: 0px!important;
@@ -137,6 +140,22 @@
                     }
                 }
             }
+        }
+    }
+
+    /deep/ dx-data-grid {
+        height: calc(~"100vh - 150px")!important;
+
+        .dx-datagrid-focus-overlay {
+            display: none!important;
+        }
+        input {
+            border-bottom: none!important;
+        }
+        .dx-state-focused {
+            .dx-placeholder {
+                top: -25px!important;
+            }            
         }
     }
 }
