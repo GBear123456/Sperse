@@ -6850,52 +6850,6 @@ export class CustomerListsServiceProxy {
     }
 
     /**
-     * @input (optional) 
-     * @return Success
-     */
-    rename(input: UpdateCustomerListInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Rename";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRename(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRename(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRename(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
      * @return Success
      */
     getLists(): Observable<CustomerListInfoDto[]> {
@@ -6978,6 +6932,105 @@ export class CustomerListsServiceProxy {
     }
 
     protected processAssignListsToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rename(input: UpdateCustomerListInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Rename";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRename(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRename(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRename(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @moveToListId (optional) 
+     * @return Success
+     */
+    delete(id: number, moveToListId: number, deleteAllReferences: boolean): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Delete?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (moveToListId !== undefined)
+            url_ += "MoveToListId=" + encodeURIComponent("" + moveToListId) + "&"; 
+        if (deleteAllReferences === undefined || deleteAllReferences === null)
+            throw new Error("The parameter 'deleteAllReferences' must be defined and cannot be null.");
+        else
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processDelete(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processDelete(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processDelete(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -29400,11 +29453,11 @@ export interface IScoreSimulatorDto {
     transferCreditBalances: number;
 }
 
-export class UpdateCustomerListInput implements IUpdateCustomerListInput {
+export class CustomerListInfoDto implements ICustomerListInfoDto {
     id: number;
     name: string;
 
-    constructor(data?: IUpdateCustomerListInput) {
+    constructor(data?: ICustomerListInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -29420,8 +29473,8 @@ export class UpdateCustomerListInput implements IUpdateCustomerListInput {
         }
     }
 
-    static fromJS(data: any): UpdateCustomerListInput {
-        let result = new UpdateCustomerListInput();
+    static fromJS(data: any): CustomerListInfoDto {
+        let result = new CustomerListInfoDto();
         result.init(data);
         return result;
     }
@@ -29434,43 +29487,8 @@ export class UpdateCustomerListInput implements IUpdateCustomerListInput {
     }
 }
 
-export interface IUpdateCustomerListInput {
-    id: number;
-    name: string;
-}
-
-export class CustomerListInfoDto implements ICustomerListInfoDto {
-    name: string;
-
-    constructor(data?: ICustomerListInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerListInfoDto {
-        let result = new CustomerListInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
 export interface ICustomerListInfoDto {
+    id: number;
     name: string;
 }
 
@@ -29553,6 +29571,45 @@ export class CustomerListInput implements ICustomerListInput {
 }
 
 export interface ICustomerListInput {
+    name: string;
+}
+
+export class UpdateCustomerListInput implements IUpdateCustomerListInput {
+    id: number;
+    name: string;
+
+    constructor(data?: IUpdateCustomerListInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCustomerListInput {
+        let result = new UpdateCustomerListInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUpdateCustomerListInput {
+    id: number;
     name: string;
 }
 
