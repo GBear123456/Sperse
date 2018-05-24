@@ -72,7 +72,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
     private canSendVerificationRequest: boolean = false;
-    private nameParts = ['NamePrefix', 'FirstName', 'MiddleName', 'LastName', 'NameSuffix', 'NickName'];
     private dependencyChanged: boolean = false;
 
     selectedClientKeys: any = [];
@@ -123,7 +122,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             {name: 'State', strategy: ODataSearchStrategy.StartsWith},
             {name: 'StateId', strategy: ODataSearchStrategy.Equals}
         ];
-        this.nameParts.forEach(x => {
+        FilterHelpers.nameParts.forEach(x => {
             this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
         });
         this.searchValue = '';
@@ -230,7 +229,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             component: FilterInputsComponent,
                             operator: 'startswith',
                             caption: 'name',
-                            items: { FullName: new FilterItemModel()}
+                            items: { Name: new FilterItemModel()}
                         }),
                         new FilterModel({
                             component: FilterInputsComponent,
@@ -300,8 +299,33 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                         keyExpr: 'id'
                                     })
                             }
+                        }),
+                        new FilterModel({
+                            component: FilterCheckBoxesComponent,
+                            caption: 'List',
+                            field: 'ListId',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: result.lists,
+                                        nameField: 'name',
+                                        keyExpr: 'id'
+                                    })
+                            }
+                        }),
+                        new FilterModel({
+                            component: FilterCheckBoxesComponent,
+                            caption: 'Tag',
+                            field: 'TagId',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: result.tags,
+                                        nameField: 'name',
+                                        keyExpr: 'id'
+                                    })
+                            }
                         })
-
                     ]
                 )
             );
@@ -473,31 +497,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     filterByName(filter: FilterModel) {
-        let data = {};
-        let filterData = [];
-        let element = filter.items["FullName"];
-        if (element && element.value) {
-            let values = FilterModel.getSearchKeyWords(element.value);
-            values.forEach((val) => {
-                let valFilterData: any[] = [];
-                this.nameParts.forEach(x => {
-                    let el = {};
-                    el[x] = {};
-                    el[x][ODataSearchStrategy.StartsWith] = val;
-                    valFilterData.push(el);
-                });
-                
-                let valFilter = {
-                    or: valFilterData
-                };
-                filterData.push(valFilter);
-            });
-
-            data = {
-                and: filterData
-            };
-        }
-        return data;
+        FilterHelpers.filterByClientName(filter);
     }
 
     filterByStates(filter: FilterModel) {
@@ -524,6 +524,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     filterByAssignedUser(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByList(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByTag(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
 

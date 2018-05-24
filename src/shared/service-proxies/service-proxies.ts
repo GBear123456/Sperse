@@ -21334,6 +21334,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showNetChangeRow: boolean;
     showAccountingTypeRow: boolean;
     showBalanceDiscrepancy: boolean;
+    splitMonthType: CashflowGridGeneralSettingsDtoSplitMonthType;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -21353,6 +21354,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showNetChangeRow = data["showNetChangeRow"];
             this.showAccountingTypeRow = data["showAccountingTypeRow"];
             this.showBalanceDiscrepancy = data["showBalanceDiscrepancy"];
+            this.splitMonthType = data["splitMonthType"];
         }
     }
 
@@ -21371,6 +21373,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showNetChangeRow"] = this.showNetChangeRow;
         data["showAccountingTypeRow"] = this.showAccountingTypeRow;
         data["showBalanceDiscrepancy"] = this.showBalanceDiscrepancy;
+        data["splitMonthType"] = this.splitMonthType;
         return data; 
     }
 }
@@ -21383,6 +21386,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showNetChangeRow: boolean;
     showAccountingTypeRow: boolean;
     showBalanceDiscrepancy: boolean;
+    splitMonthType: CashflowGridGeneralSettingsDtoSplitMonthType;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
@@ -30623,6 +30627,8 @@ export interface IUpdateCustomerStatusesInput {
 export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
     statuses: CustomerStatusDto[];
     users: UserInfoDto[];
+    lists: CustomerListInfoDto[];
+    tags: CustomerTagInfoDto[];
 
     constructor(data?: ICustomerFiltersInitialData) {
         if (data) {
@@ -30645,6 +30651,16 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
                 for (let item of data["users"])
                     this.users.push(UserInfoDto.fromJS(item));
             }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(CustomerListInfoDto.fromJS(item));
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -30666,6 +30682,16 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
             for (let item of this.users)
                 data["users"].push(item.toJSON());
         }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -30673,6 +30699,8 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
 export interface ICustomerFiltersInitialData {
     statuses: CustomerStatusDto[];
     users: UserInfoDto[];
+    lists: CustomerListInfoDto[];
+    tags: CustomerTagInfoDto[];
 }
 
 export class CustomerStatusDto implements ICustomerStatusDto {
@@ -30753,6 +30781,45 @@ export interface IUserInfoDto {
     name: string;
 }
 
+export class CustomerTagInfoDto implements ICustomerTagInfoDto {
+    id: number;
+    name: string;
+
+    constructor(data?: ICustomerTagInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTagInfoDto {
+        let result = new CustomerTagInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTagInfoDto {
+    id: number;
+    name: string;
+}
+
 export class CustomerStarInfoDto implements ICustomerStarInfoDto {
     id: number;
     name: string;
@@ -30829,41 +30896,6 @@ export class MarkCustomerInput implements IMarkCustomerInput {
 export interface IMarkCustomerInput {
     customerId: number;
     starId: number;
-}
-
-export class CustomerTagInfoDto implements ICustomerTagInfoDto {
-    name: string;
-
-    constructor(data?: ICustomerTagInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerTagInfoDto {
-        let result = new CustomerTagInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerTagInfoDto {
-    name: string;
 }
 
 export class AssignToCustomerInput implements IAssignToCustomerInput {
@@ -35181,6 +35213,8 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
     pipelines: PipelineDto[];
     leadTypes: LeadTypeDto[];
     users: UserInfoDto[];
+    lists: CustomerListInfoDto[];
+    tags: CustomerTagInfoDto[];
 
     constructor(data?: ILeadFiltersInitialData) {
         if (data) {
@@ -35208,6 +35242,16 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
                 for (let item of data["users"])
                     this.users.push(UserInfoDto.fromJS(item));
             }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(CustomerListInfoDto.fromJS(item));
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -35234,6 +35278,16 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
             for (let item of this.users)
                 data["users"].push(item.toJSON());
         }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -35242,6 +35296,8 @@ export interface ILeadFiltersInitialData {
     pipelines: PipelineDto[];
     leadTypes: LeadTypeDto[];
     users: UserInfoDto[];
+    lists: CustomerListInfoDto[];
+    tags: CustomerTagInfoDto[];
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -45058,6 +45114,11 @@ export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
     Quarters = <any>"Quarters", 
     Years = <any>"Years", 
     None = <any>"None", 
+}
+
+export enum CashflowGridGeneralSettingsDtoSplitMonthType {
+    Days = <any>"Days", 
+    Weeks = <any>"Weeks", 
 }
 
 export enum CreateForecastScheduleDtoWeekDayNumber {
