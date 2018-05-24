@@ -74,6 +74,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private canSendVerificationRequest: boolean = false;
     private dependencyChanged: boolean = false;
 
+    filterModelLists: FilterModel;
+    filterModelTags: FilterModel;
+
     selectedClientKeys: any = [];
     public headlineConfig = {
         names: [this.l('Customers')],
@@ -162,7 +165,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     onSelectionChanged($event) {
-        this.selectedClientKeys = $event.component.getSelectedRowKeys();
+        this.selectedClientKeys = 
+            $event.component.getSelectedRowKeys();
         this.initToolbarConfig();
     }
 
@@ -300,7 +304,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     })
                             }
                         }),
-                        new FilterModel({
+                        this.filterModelLists = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'List',
                             field: 'ListId',
@@ -313,7 +317,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     })
                             }
                         }),
-                        new FilterModel({
+                        this.filterModelTags = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'Tag',
                             field: 'TagId',
@@ -330,10 +334,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 )
             );
 
-        this._filtersService.apply(() => {
-            this.initToolbarConfig();
-            this.processFilterInternal();
-        });
+        this._filtersService.apply(this.filterApply.bind(this));
     }
 
     initToolbarConfig() {
@@ -410,13 +411,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'lists',
-                        action: this.toggleLists.bind(this),
-                        disabled: !this.selectedClientKeys.length
+                        action: this.toggleLists.bind(this)
                     },
                     {
                         name: 'tags',
-                        action: this.toggleTags.bind(this),
-                        disabled: !this.selectedClientKeys.length
+                        action: this.toggleTags.bind(this)
                     },
                     {
                         name: 'rating',
@@ -473,6 +472,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             }
         ];
+    }
+
+    filterApply() {
+        this.selectedClientKeys = [];
+        this.initToolbarConfig();
+        this.processFilterInternal();
     }
 
     toggleUserAssignment() {
