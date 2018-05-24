@@ -139,7 +139,7 @@
             <dxo-scrolling mode="virtual"></dxo-scrolling>
 
             <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
-            <div *dxTemplate="let cellData of 'typeCell'">{{this.cashflowTypes[cellData.value]}}</div>
+            <div *dxTemplate="let cellData of 'typeCell'">{{cashflowTypes[cellData.value]}}</div>
             <div *dxTemplate="let cellData of 'descriptionTemplate'">
                 <span id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
             </div>
