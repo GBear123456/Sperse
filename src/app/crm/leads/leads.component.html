@@ -1,7 +1,7 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
     <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [showFilter]="true"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [showFilter]="true"></crm-lists-list>
+    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists" (onFilterSelected)="filterApply()"></crm-lists-list>
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [showFilter]="true"></crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-stars-list>

@@ -71,6 +71,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     selectedLeads = [];
     stages = [];
     selectedClientKeys = [];
+    filterModelLists: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -252,7 +253,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         field: 'CampaignCode',
                         items: { Campaign: new FilterItemModel() }
                     }),
-                    new FilterModel({
+                    this.filterModelLists = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'List',
                         field: 'ListId',
@@ -281,11 +282,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             ], this._activatedRoute.snapshot.queryParams);
             });
 
-        this._filtersService.apply(() => {
-            this.filterChanged = true;
-            this.initToolbarConfig();
-            this.processFilterInternal();
-        });
+        this._filtersService.apply(this.filterApply.bind(this));
     }
 
     initToolbarConfig() {
@@ -354,7 +351,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
-                        disabled: !this.selectedClientKeys.length,
                         action: this.toggleLists.bind(this)
                     },
                     {
@@ -461,6 +457,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             }
         ];
+    }
+
+    filterApply() {
+        this.selectedClientKeys = [];
+        this.filterChanged = true;
+        this.initToolbarConfig();
+        this.processFilterInternal();
     }
 
     showCompactRowsHeight() {
