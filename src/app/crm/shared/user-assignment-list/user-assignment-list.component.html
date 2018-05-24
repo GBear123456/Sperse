@@ -19,7 +19,7 @@
                 [selectedItemKeys]="selectedItemKeys"
                 (onInitialized)="onInitialized($event)">
                 <div *dxTemplate="let data of 'item'">
-                    {{data.name}}
+                    <div class="item-row"><span>{{data.name}}</span><a *ngIf="showFilter" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
                 </div>
             </dx-list>
         </div>

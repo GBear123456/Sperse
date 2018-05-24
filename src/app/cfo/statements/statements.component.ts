@@ -448,10 +448,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
-        this.getRootComponent().overflowHidden();
+        this.deactivate();
         super.ngOnDestroy();
     }
 

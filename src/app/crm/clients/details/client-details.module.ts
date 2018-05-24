@@ -7,7 +7,7 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
     MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, 
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule, 
     DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
@@ -127,6 +127,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     DxTooltipModule,
     DxListModule,
     DxSliderModule,
+    DxTreeListModule,
     RoundProgressModule,
     DxValidationGroupModule,
     PipelineModule,
