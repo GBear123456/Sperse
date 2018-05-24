@@ -1,5 +1,5 @@
 export interface IGroupbyItem {
-    groupInterval: 'year' | 'month' | 'quarter' | 'week';
+    groupInterval: 'year' | 'quarter' | 'month';
     optionText: string;
     customizeTextFunction?: any;
 }

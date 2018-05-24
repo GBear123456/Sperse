@@ -21334,6 +21334,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
     showNetChangeRow: boolean;
     showAccountingTypeRow: boolean;
     showBalanceDiscrepancy: boolean;
+    splitMonthInto: CashflowGridGeneralSettingsDtoSplitMonthInto;
 
     constructor(data?: ICashflowGridGeneralSettingsDto) {
         if (data) {
@@ -21353,6 +21354,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
             this.showNetChangeRow = data["showNetChangeRow"];
             this.showAccountingTypeRow = data["showAccountingTypeRow"];
             this.showBalanceDiscrepancy = data["showBalanceDiscrepancy"];
+            this.splitMonthInto = data["splitMonthInto"];
         }
     }
 
@@ -21371,6 +21373,7 @@ export class CashflowGridGeneralSettingsDto implements ICashflowGridGeneralSetti
         data["showNetChangeRow"] = this.showNetChangeRow;
         data["showAccountingTypeRow"] = this.showAccountingTypeRow;
         data["showBalanceDiscrepancy"] = this.showBalanceDiscrepancy;
+        data["splitMonthInto"] = this.splitMonthInto;
         return data; 
     }
 }
@@ -21383,6 +21386,7 @@ export interface ICashflowGridGeneralSettingsDto {
     showNetChangeRow: boolean;
     showAccountingTypeRow: boolean;
     showBalanceDiscrepancy: boolean;
+    splitMonthInto: CashflowGridGeneralSettingsDtoSplitMonthInto;
 }
 
 export class CashflowGridVisualSettingsDto implements ICashflowGridVisualSettingsDto {
@@ -45052,6 +45056,15 @@ export enum CashFlowStatsDetailDtoStatus {
 }
 
 export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
+    Days = <any>"Days", 
+    Weeks = <any>"Weeks", 
+    Months = <any>"Months", 
+    Quarters = <any>"Quarters", 
+    Years = <any>"Years", 
+    None = <any>"None", 
+}
+
+export enum CashflowGridGeneralSettingsDtoSplitMonthInto {
     Days = <any>"Days", 
     Weeks = <any>"Weeks", 
     Months = <any>"Months", 

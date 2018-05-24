@@ -120,19 +120,18 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 175,
-                            items: [{
-                                action: this.groupBy.bind(this),
-                                text: 'Years'
-                            }, {
-                                action: this.groupBy.bind(this),
-                                text: 'Quarters'
-                            }, {
-                                action: this.groupBy.bind(this),
-                                text: 'Months'
-                            }, {
-                                action: this.groupBy.bind(this),
-                                text: 'Weeks'
-                            }]
+                            items: [
+                                {
+                                    action: this.groupBy.bind(this),
+                                    text: 'Years'
+                                }, {
+                                    action: this.groupBy.bind(this),
+                                    text: 'Quarters'
+                                }, {
+                                    action: this.groupBy.bind(this),
+                                    text: 'Months'
+                                }
+                            ]
                         }
                     }
                 ]
