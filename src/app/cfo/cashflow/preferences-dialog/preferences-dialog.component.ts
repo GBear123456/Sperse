@@ -27,6 +27,10 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         'Work Sans'
     ];
     fontSizes = [];
+    splintIntoItems = [
+        'Weeks',
+        'Days'
+    ];
     themes = [
         'Default Theme',
         'Light Dark Theme'
