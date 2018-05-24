@@ -41,7 +41,7 @@ import {
     UpdateTransactionsCategoryWithFilterInput,
     UpdateForecastsInput,
     CreateForecastsInput,
-    CashflowGridGeneralSettingsDtoSplitMonthInto
+    CashflowGridGeneralSettingsDtoSplitMonthType
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
@@ -1263,7 +1263,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
         this.currencySymbol = (777).toLocaleString('en-EN', { style: 'currency', currency: this.preferenceCurrencyId}).substr(0, 1);
 
-        this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthInto);
+        this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
 
         let thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
         /** Changed thousands and decimal separators */
@@ -1273,8 +1273,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
-    applySplitMonthIntoSetting(splitMonthInto: CashflowGridGeneralSettingsDtoSplitMonthInto) {
-        let showWeeks = splitMonthInto === CashflowGridGeneralSettingsDtoSplitMonthInto.Weeks;
+    applySplitMonthIntoSetting(splitMonthType: CashflowGridGeneralSettingsDtoSplitMonthType) {
+        let showWeeks = splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
         let weekField = this.apiTableFields.find(field => field.caption === 'Week');
         let projectedField = this.apiTableFields.find(field => field.caption === 'Projected');
         weekField.visible = showWeeks;
@@ -1884,7 +1884,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             const updateWithNetChange = result.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
             const updateAfterAccountingTypeShowingChange = result.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
             const updateWithDiscrepancyChange = result.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
-            const updateMonthSplitting = result.general.splitMonthInto !== this.cashflowGridSettings.general.splitMonthInto;
+            const updateMonthSplitting = result.general.splitMonthType !== this.cashflowGridSettings.general.splitMonthType;
             this.handleGetCashflowGridSettingsResult(result);
             this.closeTransactionsDetail();
             this.startLoading();
@@ -1896,7 +1896,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Clear user preferences cache */
             this.getUserPreferencesForCell.cache = {};
             if (updateMonthSplitting) {
-                let showWeeks = result.general.splitMonthInto === CashflowGridGeneralSettingsDtoSplitMonthInto.Weeks;
+                let showWeeks = result.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
                 /** Changed showing of week and projected fields */
                 dataSource.field('Projected', { visible: !showWeeks, expanded: !showWeeks });
                 dataSource.field('Week', { visible: showWeeks });
@@ -3422,22 +3422,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         targetsData.forEach((target, index) => {
             forecasts.forEach(forecast => {
                 date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, forecast.initialDate);
-                forecastModel = new AddForecastInput({
+                let data = {
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: forecast.accountId,
                     date: moment(date),
                     startDate: target.date.startDate,
                     endDate: target.date.endDate,
-                    cashFlowTypeId: target.cashflowTypeId,
-                    categoryId: target.subCategoryId || target.categoryId,
-                    transactionDescriptor: target.transactionDescriptor,
                     currencyId: this.currencyId,
                     amount: forecast.amount
-                });
-                forecastModel['targetCellIndex'] = index;
-
-                if (forecastModel)
+                };
+                let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(forecast, target);
+                let combinedData = <any>{ ...data, ...categorizationData };
+                forecastModel = new AddForecastInput(combinedData);
+                if (forecastModel) {
                     forecastsItems.push(forecastModel);
+                }
             });
         });
         return new CreateForecastsInput({
@@ -3470,17 +3469,22 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     }
 
-    updateCopiedForecasts(copiedForecastsIds, forecasts, targetCells) {
-        forecasts.forEach((forecastModel, index) => {
-            let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
-            this.cashflowData.push(this.createStubTransaction({
-                accountId: forecastModel.bankAccountId,
-                count: 1,
-                amount: forecastModel.amount,
-                date: moment(forecastModel.date).add(timezoneOffset, 'minutes'),
-                initialDate: forecastModel.date,
-                forecastId: copiedForecastsIds[index]
-            }, targetCells[forecastModel.targetCellIndex].cell.rowPath));
+    updateCopiedForecasts(copiedForecastsIds, forecasts, targetsData: CellInfo[]) {
+        targetsData.forEach((target, index) => {
+            forecasts.forEach((forecast, index) => {
+                let timezoneOffset = forecast.date.toDate().getTimezoneOffset();
+                let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, forecast.initialDate);
+                let data = {
+                    accountId: forecast.bankAccountId,
+                    count: 1,
+                    amount: forecast.amount,
+                    date: moment(date).add(timezoneOffset, 'minutes'),
+                    initialDate: date,
+                    forecastId: copiedForecastsIds[index]
+                };
+                let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(forecast, target, false);
+                this.cashflowData.push(this.createStubTransaction({...data, ...categorizationData}));
+            });
         });
     }
 
@@ -3996,7 +4000,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.copyForecasts(forecastsModels)
                     .subscribe(
                         res => {
-                            this.updateCopiedForecasts(res, forecastsModels.forecasts, targetCells);
+                            this.updateCopiedForecasts(res, forecastsItems, targetsData);
                         },
                         e => { console.log(e); this.notify.error(e); },
                         () => {
@@ -4064,7 +4068,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let forecastsModels = this.createCopyForecastsModels(forecastsItems, [targetCellData]);
             this.copyForecasts(forecastsModels)
                 .subscribe(
-                    res => { this.updateCopiedForecasts(res, forecastsModels.forecasts, [targetCell]); },
+                    res => { this.updateCopiedForecasts(res, forecastsItems, [targetCellData]); },
                     e => { console.log(e); this.notify.error(e); },
                     () => {
                         this.updateDataSource();

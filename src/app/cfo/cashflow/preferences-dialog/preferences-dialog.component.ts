@@ -27,7 +27,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         'Work Sans'
     ];
     fontSizes = [];
-    splintIntoItems = [
+    splitIntoItems = [
         'Weeks',
         'Days'
     ];
