@@ -75,6 +75,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private dependencyChanged: boolean = false;
 
     filterModelLists: FilterModel;
+    filterModelTags: FilterModel;
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -316,7 +317,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     })
                             }
                         }),
-                        new FilterModel({
+                        this.filterModelTags = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'Tag',
                             field: 'TagId',
@@ -414,8 +415,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'tags',
-                        action: this.toggleTags.bind(this),
-                        disabled: !this.selectedClientKeys.length
+                        action: this.toggleTags.bind(this)
                     },
                     {
                         name: 'rating',

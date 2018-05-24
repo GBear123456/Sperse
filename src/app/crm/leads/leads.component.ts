@@ -71,7 +71,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     selectedLeads = [];
     stages = [];
     selectedClientKeys = [];
+
     filterModelLists: FilterModel;
+    filterModelTags: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -266,7 +268,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 })
                         }
                     }),
-                    new FilterModel({
+                    this.filterModelTags = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'Tag',
                         field: 'TagId',
@@ -355,7 +357,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.selectedClientKeys.length,
                         action: this.toggleTags.bind(this)
                     },
                     {
