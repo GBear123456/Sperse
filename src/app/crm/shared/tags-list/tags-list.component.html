@@ -8,18 +8,30 @@
                 <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                 <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
             </div>
-            <span class="add-button" [hidden]="!showAddButton" (click)="addNewTag()">+</span>
-            <dx-list 
-                height="350"
-                [dataSource]="list"
+            <dx-tree-list 
+                width="300px"
+                height="350px"
+                keyExpr="id"
+                parentIdExpr="parent"
+                [rootValue]="0"
                 [noDataText]="l('AddNewTag')"
-                [searchEditorOptions]="{onInput: onSearch}"
-                [searchEnabled]="true"
-                [selectionMode]="'multiple'"
-                [showSelectionControls]="true"
-                [(selectedItems)]="selectedTags"                
-                (onInitialized)="onInitialized($event)">
-            </dx-list>
+                [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true}"
+                [showColumnLines]="false"
+                [showColumnHeaders]="false"
+                [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
+                [selection]="{allowSelectAll: false, mode: 'multiple'}"
+                [selectedRowKeys]="selectedTags"
+                [(dataSource)]="list"
+                (onRowClick)="onRowClick($event)"
+                (onInitialized)="onInitialized($event)"
+                (onInitNewRow)="onInitNewRow($event)"
+                (onRowRemoving)="onRowRemoving($event)"
+                (onRowUpdating)="onRowUpdating($event)"
+                (onCellPrepared)="onCellPrepared($event)"
+                (onContentReady)="onContentReady($event)">
+
+                <dxi-column dataField="name"></dxi-column>
+            </dx-tree-list>
         </div>
     </div>
 </dx-tooltip>

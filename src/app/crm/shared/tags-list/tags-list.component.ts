@@ -13,6 +13,10 @@ import * as _ from 'underscore';
   providers: [CustomerTagsServiceProxy]
 })
 export class TagsListComponent extends AppComponentBase {
+    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
+
+    @Input() showFilter: boolean;
+    @Input() filterData: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
     @Input() bulkUpdateMode = false;
@@ -21,15 +25,16 @@ export class TagsListComponent extends AppComponentBase {
     }
     get selectedItems() {
         return this.selectedTags.map(item => {
-            return CustomerTagInput.fromJS({name: item});
+            return CustomerTagInput.fromJS(_.findWhere(this.list, {id: item}));
         });
     }
+
+    private _prevClickDate = new Date();
     private selectedTags = [];
     list: any = [];
 
     listComponent: any;
     tooltipVisible = false;
-    showAddButton = false;
 
     constructor(
         injector: Injector,
@@ -41,9 +46,6 @@ export class TagsListComponent extends AppComponentBase {
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.refresh();
-        if (this.listComponent)
-            this.listComponent.option('searchValue', '');
-        this.showAddButton = false;
     }
 
     apply(selectedKeys = undefined) {
@@ -76,7 +78,7 @@ export class TagsListComponent extends AppComponentBase {
     }
 
     clear() {
-        this.listComponent.unselectAll();
+        this.listComponent.deselectAll();
         this.apply();
     }
 
@@ -86,21 +88,99 @@ export class TagsListComponent extends AppComponentBase {
 
     refresh() {
         this._tagsService.getTags().subscribe((result) => {
-            this.list = _.uniq(this.list.concat(result.map((obj) => obj.name)));
+            this.list = result.map((obj) => {
+                obj['parent'] = 0;
+                return obj;
+            });
         });
     }
 
-    addNewTag() {
-        this.list.push(this.searchValue);
-        this.showAddButton = false;
-    }
-
-    onSearch = ($event) => {
-        this.searchValue = $event.event.target.value.trim();
-        this.showAddButton = this.searchValue && this.list.every((item) => item != this.searchValue);
-        $event.component.option('showClearButton', !this.showAddButton);
-    }
     reset() {
         this.selectedItems = [];
+    }
+
+    addActionButton(name, container: HTMLElement, callback) {
+        let buttonElement = document.createElement('a');
+        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.className = 'dx-link dx-link-' + name;
+        buttonElement.addEventListener('click', callback);
+        container.appendChild(buttonElement);
+    }
+
+    clearSelection(clearFilter) {
+        let elements = this.listComponent.element()
+            .getElementsByClassName('filtered');
+        [].forEach.call(elements, (elm) => {
+            elm.classList.remove('filtered');
+        });
+
+        if (clearFilter)
+            this.onFilterSelected.emit(null);
+        return clearFilter;
+    }
+
+    onCellPrepared($event) {
+        if ($event.rowType === 'data' && $event.column.command === 'edit') {
+            this.addActionButton('delete', $event.cellElement, (event) => {
+                this.listComponent.deleteRow(
+                    this.listComponent.getRowIndexByKey($event.data.id));
+            });
+            if (this.showFilter)
+                this.addActionButton('filter', $event.cellElement, (event) => {
+                    let wrapper = $event.cellElement.parentElement;
+                    if (!this.clearSelection(wrapper.classList.contains('filtered'))) {
+                        wrapper.classList.add('filtered');
+                        this.onFilterSelected.emit($event.data);
+                        this.tooltipVisible = false;
+                    }
+                });
+        }
+    }
+
+    onRowRemoving($event) {
+        //!!VP should be applied corresponding method
+    }
+
+    onRowUpdating($event) {
+/*
+        this._tagsService.rename(UpdateCustomerTagsInput.fromJS({
+            id: $event.oldData.id,
+            name: $event.newData.name
+        })).subscribe((res) => {
+            if (res)
+                $event.cancel = true;
+        });
+*/
+    }
+
+    onInitNewRow($event) {        
+        $event.data.name = $event.component.option('searchPanel.text');
+    }
+
+    onRowClick($event) {
+        let nowDate = new Date();
+        if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
+            $event.event.originalEvent.preventDefault();
+            $event.event.originalEvent.stopPropagation();
+            $event.component.editRow($event.rowIndex);
+        }
+        this._prevClickDate = nowDate;
+    }
+
+    onKeyDown($event) {
+        if ($event.event.keyCode == 13) {
+            $event.event.preventDefault();
+            $event.event.stopPropagation();
+            $event.component.focus($event.component.getCellElement(0, 0));
+            $event.component.saveEditData();
+        }
+    }
+
+    onContentReady($event) {
+        if (this.filterData) {
+            let row = $event.component.getRowElement(
+                $event.component.getRowIndexByKey(this.filterData.id));
+            if (row && row[0]) row[0].classList.add('filtered');
+        }
     }
 }

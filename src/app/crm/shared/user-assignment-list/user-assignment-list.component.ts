@@ -11,6 +11,9 @@ import { AppConsts } from '@shared/AppConsts';
   providers: [UserAssignmentServiceProxy]
 })
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
+    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
+
+    @Input() showFilter: boolean;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
@@ -89,5 +92,25 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     reset() {
         this.selectedItemKey = null;
+    }
+
+    applyFilter(event, data) {
+        event.stopPropagation();
+
+        let isFilterRemoved = false,
+            parent = event.target.parentNode.parentNode.parentNode,
+            elements = this.listComponent.element().getElementsByClassName('filtered');
+  
+        [].forEach.call(elements, (elm) => {
+            if (parent == elm)
+                isFilterRemoved = true;
+            elm.classList.remove('filtered');
+        })
+
+        if (!isFilterRemoved)
+            parent.classList.add('filtered');
+
+        this.tooltipVisible = isFilterRemoved;
+        this.onFilterSelected.emit(isFilterRemoved ? null: data);        
     }
 }

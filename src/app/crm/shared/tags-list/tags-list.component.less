@@ -46,5 +46,106 @@
         .dx-icon-clear {
             right: 0px;
         }
+        .dx-treelist-text-content {
+            line-height: 1.7;
+            padding-left: 10px;
+        }
+
+        .dx-toolbar-after {
+            padding-left: 0px!important;
+            width: 300px;
+            left: 0px;
+
+            .dx-treelist-addrow-button {
+                border: none!important;
+                i {
+                    color: #00AEEF;
+                }
+            }
+
+            .dx-toolbar-button {
+                float: left;
+                &:first-child {
+                    float: right;
+                    margin-top: 4px;
+                }
+            }
+            .dx-treelist-search-panel {
+                margin: 0px!important;
+                input {
+                    border: none;
+                }
+            }
+        }
+
+        tr.dx-edit-row .dx-texteditor-input {
+            font-weight: 400;
+            border-bottom: none !important;
+        }
+
+        td.dx-command-edit {
+            text-overflow: unset;
+            text-align: right !important;
+
+            a.dx-link {
+                width: 22px;
+                display: inline-block;
+                color: transparent !important;
+
+                &.dx-link-add, &.dx-link-edit, &.dx-link-delete {
+                    display: none;
+                }
+
+                &.dx-link-delete {
+                    background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
+                }
+
+                &.dx-link-save {
+                    background: url('../../../../assets/common/icons/check.svg') no-repeat center;
+                }
+
+                &.dx-link-cancel {
+                    background: url('../../../../assets/common/icons/cancel.svg') no-repeat center;
+                }
+
+                &.dx-link-filter {
+                    background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+                }
+            }
+        }
+
+        input {
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.67;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+
+        tr {
+            &.filtered {
+                background-color: #effafe;
+            }
+
+            &.dx-edit-row {
+                .dx-link-filter {
+                    display: none!important;
+                }
+                .dx-link-delete {
+                    display: inline-block!important;
+                }
+            }
+        }
+    }
+
+    .add-button {
+        position: absolute;
+        right: 27px;
+        top: 57px;
+        font-size: 24px;
+        z-index: 1;
+        font-weight: 500;
+        cursor: pointer;
+        color: #00AEEF;
     }
 }

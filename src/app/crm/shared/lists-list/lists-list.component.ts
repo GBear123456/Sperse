@@ -109,7 +109,12 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     clearSelection(clearFilter) {
-        $('.filtered').removeClass('filtered');
+        let elements = this.listComponent.element()
+            .getElementsByClassName('filtered');
+        [].forEach.call(elements, (elm) => {
+            elm.classList.remove('filtered');
+        });
+
         if (clearFilter)
             this.onFilterSelected.emit(null);
         return clearFilter;
