@@ -71,4 +71,16 @@ export class CashflowService {
         return activeBankAccountsIds;
     }
 
+    /**
+     * Get active account id
+     * @param {number[]} activeAccountIds
+     * @param {number} accountId
+     * @return {number}
+     */
+    getActiveAccountId(activeAccountIds: number[], accountId: number) {
+        return activeAccountIds && activeAccountIds.length ?
+               (activeAccountIds.indexOf(accountId) !== -1 ? accountId : activeAccountIds[0]) :
+               accountId;
+    }
+
 }
