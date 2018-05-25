@@ -4370,7 +4370,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let currentDate = this.getUtcCurrentDate();
             let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
             let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.modifyingNumberBoxStatsDetailFilter.bankAccountIds);
-            let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : this.modifyingNumberBoxStatsDetailFilter.bankAccountIds[0];
+            let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : (this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id);
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
                 bankAccountId: accountId,
