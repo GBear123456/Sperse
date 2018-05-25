@@ -74,6 +74,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
+    filterModelAssignment: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -236,7 +237,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         caption: 'Industry',
                         items: { Industry: new FilterItemModel() }
                     }),
-                    new FilterModel({
+                    this.filterModelAssignment = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'assignedUser',
                         field: 'AssignedUserId',
@@ -281,10 +282,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 })
                         }
                     })
-            ], this._activatedRoute.snapshot.queryParams);
+                ], this._activatedRoute.snapshot.queryParams);
             });
 
-        this._filtersService.apply(this.filterApply.bind(this));
+        this._filtersService.apply(() => {
+            this.selectedClientKeys = [];
+            this.filterChanged = true;
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initToolbarConfig() {
@@ -339,7 +345,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'before', items: [
                     {
                         name: 'assign',
-                        disabled: !this.selectedClientKeys.length,
                         action: this.toggleUserAssignment.bind(this)
                     },
                     {
@@ -458,13 +463,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             }
         ];
-    }
-
-    filterApply() {
-        this.selectedClientKeys = [];
-        this.filterChanged = true;
-        this.initToolbarConfig();
-        this.processFilterInternal();
     }
 
     showCompactRowsHeight() {

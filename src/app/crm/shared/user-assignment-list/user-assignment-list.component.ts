@@ -11,9 +11,7 @@ import { AppConsts } from '@shared/AppConsts';
   providers: [UserAssignmentServiceProxy]
 })
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
-    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
-
-    @Input() showFilter: boolean;
+    @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
@@ -35,8 +33,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         private _userAssignmentService: UserAssignmentServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this._filtersService.localizationSourceName = this.localizationSourceName;
     }
 
     toggle() {
@@ -94,23 +90,28 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.selectedItemKey = null;
     }
 
+    clearFiltersHighlight() {
+        if (this.listComponent) {
+            let elements = this.listComponent.element()
+                .getElementsByClassName('filtered');
+            while(elements.length)        
+                elements[0].classList.remove('filtered');
+        }
+    }
+
     applyFilter(event, data) {
         event.stopPropagation();
-
-        let isFilterRemoved = false,
-            parent = event.target.parentNode.parentNode.parentNode,
-            elements = this.listComponent.element().getElementsByClassName('filtered');
   
-        [].forEach.call(elements, (elm) => {
-            if (parent == elm)
-                isFilterRemoved = true;
-            elm.classList.remove('filtered');
-        })
+        this.clearFiltersHighlight();
 
-        if (!isFilterRemoved)
-            parent.classList.add('filtered');
+        let modelItems = this.filterModel.items.element.value;
+        if (modelItems.length == 1 && modelItems[0] == data.id) 
+            this.filterModel.items.element.value = [];
+        else {
+            this.filterModel.items.element.value = [data.id];
+            event.target.parentNode.parentNode.parentNode.classList.add('filtered');
+        }
 
-        this.tooltipVisible = isFilterRemoved;
-        this.onFilterSelected.emit(isFilterRemoved ? null: data);        
+        this._filtersService.change(this.filterModel);
     }
 }

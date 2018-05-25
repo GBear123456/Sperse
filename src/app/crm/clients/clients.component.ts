@@ -76,6 +76,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
+    filterModelAssignment: FilterModel;
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -291,7 +292,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             caption: 'zipCode',
                             items: { ZipCode: new FilterItemModel() }
                         }),
-                        new FilterModel({
+                        this.filterModelAssignment = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'assignedUser',
                             field: 'AssignedUserId',
@@ -334,7 +335,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 )
             );
 
-        this._filtersService.apply(this.filterApply.bind(this));
+        this._filtersService.apply(() => {
+            this.selectedClientKeys = [];
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initToolbarConfig() {
@@ -389,8 +394,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'before', items: [
                     {
                         name: 'assign',
-                        action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.selectedClientKeys.length
+                        action: this.toggleUserAssignment.bind(this)
                     },
                     {
                         name: 'status',
@@ -472,12 +476,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             }
         ];
-    }
-
-    filterApply() {
-        this.selectedClientKeys = [];
-        this.initToolbarConfig();
-        this.processFilterInternal();
     }
 
     toggleUserAssignment() {
