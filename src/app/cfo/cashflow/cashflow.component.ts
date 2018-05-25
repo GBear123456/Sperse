@@ -3419,7 +3419,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         targetsData.forEach((target, index) => {
             cashflowItems.forEach(cashflowItem => {
                 date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, cashflowItem.initialDate);
-                let accountId = activeAccountIds && activeAccountIds.indexOf(cashflowItem.accountId) !== -1 ? cashflowItem.accountId : (activeAccountIds ? activeAccountIds[0] : null);
+                let accountId = activeAccountIds && activeAccountIds.indexOf(cashflowItem.accountId) !== -1 ? cashflowItem.accountId : (activeAccountIds ? activeAccountIds[0] : cashflowItem.accountId);
                 let data = {
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: accountId,
@@ -3473,7 +3473,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             cashflowItems.forEach((cashflowItem, index) => {
                 let timezoneOffset = cashflowItem.date.toDate().getTimezoneOffset();
                 let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, cashflowItem.initialDate);
-                let accountId = activeAccountIds && activeAccountIds.indexOf(cashflowItem.accountId) !== -1 ? cashflowItem.accountId : (activeAccountIds ? activeAccountIds[0] : null);
+                let accountId = activeAccountIds && activeAccountIds.indexOf(cashflowItem.accountId) !== -1 ? cashflowItem.accountId : (activeAccountIds ? activeAccountIds[0] : cashflowItem.accountId);
                 let data = {
                     accountId: accountId,
                     count: 1,
@@ -4370,7 +4370,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let currentDate = this.getUtcCurrentDate();
             let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
             let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.modifyingNumberBoxStatsDetailFilter.bankAccountIds);
-            let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : null;
+            let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : this.modifyingNumberBoxStatsDetailFilter.bankAccountIds[0];
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
                 bankAccountId: accountId,
