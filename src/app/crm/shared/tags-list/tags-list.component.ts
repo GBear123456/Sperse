@@ -1,5 +1,6 @@
 import {Component, Injector, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
 import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
@@ -13,8 +14,6 @@ import * as _ from 'underscore';
   providers: [CustomerTagsServiceProxy]
 })
 export class TagsListComponent extends AppComponentBase {
-    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
-
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
@@ -37,6 +36,7 @@ export class TagsListComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
+        private _filterService: FiltersService,
         private _tagsService: CustomerTagsServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -132,8 +132,8 @@ export class TagsListComponent extends AppComponentBase {
                         this.filterModel.items.element.value = [$event.data.id];
                         $event.cellElement.parentElement.classList.add('filtered');
                     }
-                    this.filterModel.updateCaptions();
-                    this.onFilterSelected.emit(this.filterModel);
+
+                    this._filterService.change(this.filterModel);
                 });
         }
     }
