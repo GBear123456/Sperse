@@ -212,7 +212,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     getExistBankAccountTypes() {
         this.existBankAccountTypes = [];
         this.syncAccountsDataSource.forEach(syncAccount => {
-            let types = _.uniq(_.map(syncAccount.bankAccounts, bankAccount => bankAccount.type));
+            let types = _.uniq(_.map(syncAccount.bankAccounts, bankAccount => bankAccount.typeName));
             this.existBankAccountTypes = _.union(this.existBankAccountTypes, types);
         });
         this.bankAccountTypesForSelect = [];
