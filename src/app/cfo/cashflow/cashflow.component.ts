@@ -1753,7 +1753,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** added fake data for each date that is not already exists in cashflow data */
         let accountId = cashflowData[0] ? cashflowData[0].accountId : this.bankAccounts[0].id;
         let stubCashflowData = this.createStubsForPeriod(stubsInterval.startDate, stubsInterval.endDate, period, accountId, existingPeriods);
-
         if (this.requestFilter.dailyPeriods.length) {
             this.requestFilter.dailyPeriods.forEach(dailyPeriod => {
                 let filterStart = this.requestFilter.startDate ? moment(this.requestFilter.startDate) : null;
@@ -3419,7 +3418,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         targetsData.forEach((target, index) => {
             cashflowItems.forEach(cashflowItem => {
                 date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, cashflowItem.initialDate);
-                let accountId = activeAccountIds && activeAccountIds.indexOf(cashflowItem.accountId) !== -1 ? cashflowItem.accountId : (activeAccountIds ? activeAccountIds[0] : cashflowItem.accountId);
+                let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, cashflowItem.accountId);;
                 let data = {
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: accountId,
@@ -3473,7 +3472,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             cashflowItems.forEach((cashflowItem, index) => {
                 let timezoneOffset = cashflowItem.date.toDate().getTimezoneOffset();
                 let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, cashflowItem.initialDate);
-                let accountId = activeAccountIds && activeAccountIds.indexOf(cashflowItem.accountId) !== -1 ? cashflowItem.accountId : (activeAccountIds ? activeAccountIds[0] : cashflowItem.accountId);
+                let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, cashflowItem.accountId);
                 let data = {
                     accountId: accountId,
                     count: 1,
@@ -4370,7 +4369,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let currentDate = this.getUtcCurrentDate();
             let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
             let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.modifyingNumberBoxStatsDetailFilter.bankAccountIds);
-            let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : this.modifyingNumberBoxStatsDetailFilter.bankAccountIds[0];
+            let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : (this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id);
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
                 bankAccountId: accountId,
@@ -5534,6 +5533,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     bankAccountId: e.value
                 })
             ).subscribe( () => {
+                /** Update cashflowData with the new account id */
+                this.cashflowData.forEach(item => {
+                    if (item.forecastId === cell.data.forecastId) {
+                        item.accountId = e.value;
+                    }
+                });
                 this.updateDataSource();
             });
             let newAccountNumber = this.bankAccounts.find(account => account.id === e.value)['accountNumber'];
