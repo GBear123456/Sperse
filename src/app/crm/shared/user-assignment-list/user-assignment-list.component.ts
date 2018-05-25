@@ -4,6 +4,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { UserAssignmentServiceProxy, AssignUserToCustomerInput, UserInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
+import * as _ from 'underscore';
+
 @Component({
   selector: 'crm-user-assignment-list',
   templateUrl: './user-assignment-list.component.html',
@@ -36,7 +38,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     toggle() {
-        this.tooltipVisible = !this.tooltipVisible;
+        if (this.tooltipVisible = !this.tooltipVisible)
+            this.highlightSelectedFilters();
     }
 
     apply(selectedKeys = undefined) {
@@ -90,6 +93,20 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.selectedItemKey = null;
     }
 
+    highlightSelectedFilters() {
+        let filterIds = this.filterModel && 
+            this.filterModel.items.element.value;        
+        this.clearFiltersHighlight();
+        if (this.listComponent && filterIds && filterIds.length) {
+            let items = this.listComponent.element()
+                .getElementsByClassName('item-row');
+            _.each(items, (item) => {
+                if (filterIds.indexOf(Number(item.getAttribute('id'))) >= 0)
+                    item.parentNode.parentNode.classList.add('filtered');                
+            });
+        }
+    }
+
     clearFiltersHighlight() {
         if (this.listComponent) {
             let elements = this.listComponent.element()
@@ -113,5 +130,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         }
 
         this._filtersService.change(this.filterModel);
+    }
+
+    onContentReady($event) {
+        this.highlightSelectedFilters();
     }
 }
