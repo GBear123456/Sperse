@@ -1,5 +1,15 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
+    <crm-static-list 
+        [width]="'180px'"
+        [title]="l('Status')"
+        [showConfirmation]="false"
+        [selectedKeys]="selectedClientKeys" 
+        [filterModel]="filterModelStatus" 
+        [targetSelector]="'[aria-label=Status]'" 
+        [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]" 
+        (onItemSelected)="updateClientStatuses($event)">
+    </crm-static-list>
     <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
     <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelAssignment"></crm-user-assignment-list>

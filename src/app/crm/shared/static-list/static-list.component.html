@@ -1,24 +1,21 @@
-<dx-tooltip height="440"
+<dx-tooltip [width]="width"
             [target]="targetSelector"
             [(visible)]="tooltipVisible">
     <div *dxTemplate="let data of 'content'">
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
-                <span class="title">{{l('AssignTo')}}</span>
+                <span class="title">{{title}}</span>
                 <div *ngIf="selectedKeys.length">
-                    <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>
             <dx-list
-                height="350"
-                [searchEnabled]="true"
-                [searchExpr]="'name'"
+                [searchEnabled]="false"
                 [selectionMode]="selectedKeys.length ? 'single': 'none'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"
-                [selectedItemKeys]="selectedItemKeys"
+                [(selectedItems)]="selectedItems"
                 (onContentReady)="onContentReady($event)"
                 (onInitialized)="onInitialized($event)">
                 <div *dxTemplate="let data of 'item'">
