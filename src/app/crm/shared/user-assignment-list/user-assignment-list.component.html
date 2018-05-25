@@ -19,9 +19,10 @@
                 [dataSource]="list"
                 [keyExpr]="'id'"
                 [selectedItemKeys]="selectedItemKeys"
+                (onContentReady)="onContentReady($event)"
                 (onInitialized)="onInitialized($event)">
                 <div *dxTemplate="let data of 'item'">
-                    <div class="item-row"><span>{{data.name}}</span><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
+                    <div class="item-row" data-id="{{data.id}}"><span>{{data.name}}</span><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
                 </div>
             </dx-list>
         </div>
