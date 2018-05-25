@@ -281,10 +281,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 })
                         }
                     })
-            ], this._activatedRoute.snapshot.queryParams);
+                ], this._activatedRoute.snapshot.queryParams);
             });
 
-        this._filtersService.apply(this.filterApply.bind(this));
+        this._filtersService.apply(() => {
+            this.selectedClientKeys = [];
+            this.filterChanged = true;
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initToolbarConfig() {
@@ -460,11 +465,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ];
     }
 
-    filterApply() {
-        this.selectedClientKeys = [];
-        this.filterChanged = true;
-        this.initToolbarConfig();
-        this.processFilterInternal();
+    filterApply(filterModel) {
+        this._filtersService.change(filterModel);
     }
 
     showCompactRowsHeight() {

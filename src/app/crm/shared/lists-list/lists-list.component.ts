@@ -128,14 +128,14 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;
-                    if (modelItems.indexOf($event.data.id) >= 0 && modelItems.length == 1) 
+                    if (modelItems.length == 1 && modelItems[0] == $event.data.id) 
                         this.filterModel.items.element.value = [];
                     else {
                         this.filterModel.items.element.value = [$event.data.id];
                         $event.cellElement.parentElement.classList.add('filtered');
                     }
                     this.filterModel.updateCaptions();
-                    this.onFilterSelected.emit($event.data);
+                    this.onFilterSelected.emit(this.filterModel);
                 });
         }
     }

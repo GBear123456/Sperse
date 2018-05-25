@@ -334,7 +334,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 )
             );
 
-        this._filtersService.apply(this.filterApply.bind(this));
+        this._filtersService.apply(() => {
+            this.selectedClientKeys = [];
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initToolbarConfig() {
@@ -474,10 +478,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ];
     }
 
-    filterApply() {
-        this.selectedClientKeys = [];
-        this.initToolbarConfig();
-        this.processFilterInternal();
+    filterApply(filterModel) {
+        this._filtersService.change(filterModel);
     }
 
     toggleUserAssignment() {

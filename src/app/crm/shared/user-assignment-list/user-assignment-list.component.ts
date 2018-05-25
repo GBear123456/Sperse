@@ -86,7 +86,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     ngOnInit() {
         this._userAssignmentService.getUsers().subscribe((result) => {
-            this.list = result;
+            this.list = result.map((obj) => obj.name);
         });
     }
 
