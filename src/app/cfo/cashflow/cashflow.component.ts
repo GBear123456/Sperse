@@ -84,6 +84,7 @@ import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/fromEventPattern';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/pluck';
+import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
@@ -795,8 +796,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._cellsCopyingService.selectedCellsToCopyChange$.subscribe(data => {
             this.handleCellsSelecting(data);
         });
-        this._cellsCopyingService.selectedCellsToCopyFinished$.subscribe(data => {
-            this.handleCellsCopying(data);
+        this._cellsCopyingService.selectedCellsToCopyFinished$.subscribe(targetCells => {
+            this.handleCellsCopying(this._cellsCopyingService.copiedCell, targetCells);
         });
     }
 
@@ -2053,7 +2054,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     break;
                 case 86: // ctrl + v
                     if (this.copiedCell && this.isCopyable(this.copiedCell) && (e.ctrlKey || e.metaKey)) {
-                        this.onPaste(e);
+                        this.onPaste();
                     }
                     break;
                 case 46: // delete
@@ -2468,7 +2469,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (path.length === monthIndex + 1) {
                 monthsPaths.push(path);
             }
-        };
+        }
         return monthsPaths;
     }
 
@@ -3274,47 +3275,46 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let historicalItemsIds, moveForecastsModels;
             let cellObj = this.getCellObjectFromCellElement(targetCell);
             let targetCellData = this.getCellInfo(cellObj);
+            /** Get the transactions of moved cell if so */
+            let sourceCellInfo = this.getCellInfo(this.movedCell);
+            this.statsDetailFilter = this.getDetailFilterFromCell(this.movedCell);
+            let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).flatMap(x => x);
+            const forecastsObservable = statsDetailObservable.filter(transaction => !!transaction.forecastId).toArray();
+            const historicalsObservable = statsDetailObservable.filter(transaction => !!!transaction.forecastId).toArray();
 
-            /** Get the transaction of moved cell if so */
-            let itemsToMove = this.getDataItemsByCell(this.movedCell);
-            let historicalItems = itemsToMove.filter(item => !item.forecastId);
-            let forecastItems = itemsToMove.filter(item => item.forecastId);
-
-            /** Handle moving of historical transactions */
-            let movingObservables = [];
-            if (historicalItems.length && targetCell.className.indexOf('next') === -1) {
-                movingObservables.push(
-                    this.moveHistoricals(this.movedCell, targetCellData)
-                );
-            } else {
-                movingObservables.push(Observable.of('empty'));
-            }
-
-            /** Handle moving of forecasts */
-            if (forecastItems.length) {
-                moveForecastsModels = this.createMovedForecastsModels(forecastItems, targetCellData);
-                movingObservables.push(this.moveForecasts(moveForecastsModels));
-            } else {
-                movingObservables.push(Observable.of('empty'));
-            }
-
-            Observable.forkJoin(...movingObservables)
-                .subscribe(
-                    res => {
+            Observable.forkJoin(
+                historicalsObservable.mergeMap(historicalTransactions => {
+                    const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
+                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(this.movedCell, targetCellData) : Observable.of('empty');
+                }),
+                forecastsObservable.mergeMap(forecastsTransactions => {
+                    if (forecastsTransactions && forecastsTransactions.length) {
+                        let moveForecastsModels = this.createMovedForecastsModels(forecastsTransactions, sourceCellInfo, targetCellData);
+                        return <any>this.getMoveForecastsObservable(moveForecastsModels);
+                    } else {
+                        return Observable.of('empty');
+                    }
+                })
+            ).subscribe(
+                res => {
+                    if (res) {
+                        let itemsToMove = this.getDataItemsByCell(this.movedCell);
                         if (res[0] !== 'empty') {
+                            let historicalItems = itemsToMove.filter(item => !item.forecastId);
                             this.updateMovedHistoricals(historicalItems, targetCellData);
                         }
-
                         if (res[1] !== 'empty') {
-                            this.updateMovedForecasts(moveForecastsModels.forecasts, targetCellData);
+                            let forecastItems = itemsToMove.filter(item => item.forecastId);
+                            this.updateMovedForecasts(forecastItems, targetCellData);
                         }
-                    },
-                    e => { console.log(e); this.notify.error(e); },
-                    () => {
-                        this.updateDataSource();
-                        this.notify.success(this.l('AppliedSuccessfully'));
                     }
-                );
+                },
+                e => { console.log(e); this.notify.error(e); },
+                () => {
+                    this.updateDataSource();
+                    this.notify.success(this.l('AppliedSuccessfully'));
+                }
+            );
         }
         targetCell = null;
     }
@@ -3349,7 +3349,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    moveHistoricals(movedCell, targetCellData): Observable<any> {
+    getMoveHistoricalObservable(movedCell, targetCellData): Observable<any> {
         let filter = this.getDetailFilterFromCell(movedCell);
         let destinationCategoryId = targetCellData.subCategoryId || targetCellData.categoryId;
         return this._classificationServiceProxy.updateTransactionsCategoryWithFilter(
@@ -3374,18 +3374,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
-    createMovedForecastsModels(cashflowItems: TransactionStatsDtoExtended[], targetData: CellInfo): UpdateForecastsInput {
+    createMovedForecastsModels(forecasts: CashFlowStatsDetailDto[], sourceData: CellInfo, targetData: CellInfo): UpdateForecastsInput {
         let date, forecastModel;
         let forecastModels = {'forecasts': []};
-        cashflowItems.forEach(cashflowItem => {
-            date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, cashflowItem.initialDate);
+        forecasts.forEach(forecast => {
+            date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, forecast.forecastDate);
             forecastModel = new UpdateForecastInput({
-                id: cashflowItem.forecastId,
+                id: forecast.forecastId,
                 date: moment(date),
-                amount: cashflowItem.amount,
+                amount: forecast.debit !== null ? -forecast.debit : forecast.credit,
                 categoryId: targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor || cashflowItem.transactionDescriptor,
-                bankAccountId: cashflowItem.accountId
+                transactionDescriptor: targetData.transactionDescriptor || sourceData.transactionDescriptor,
+                bankAccountId: forecast.accountId
             });
 
             if (forecastModel)
@@ -3395,7 +3395,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return new UpdateForecastsInput(forecastModels);
     }
 
-    moveForecasts(forecastsModels: UpdateForecastInput[]) {
+    getMoveForecastsObservable(forecastsModels: UpdateForecastsInput): Observable<void> {
         return this._cashFlowForecastServiceProxy.updateForecasts(
             InstanceType10[this.instanceType],
             this.instanceId,
@@ -3411,14 +3411,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         );
     }
 
-    createCopyItemsModels(cashflowItems: TransactionStatsDtoExtended[], targetsData: CellInfo[]): CreateForecastsInput {
+    createCopyItemsModels(transactions: CashFlowStatsDetailDto[], sourceCellInfo: CellInfo, targetsData: CellInfo[]): CreateForecastsInput {
         let date, forecastModel;
         let forecastsItems: AddForecastInput[] = [];
         let activeAccountIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.requestFilter.accountIds);
         targetsData.forEach((target, index) => {
-            cashflowItems.forEach(cashflowItem => {
-                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, cashflowItem.initialDate);
-                let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, cashflowItem.accountId);;
+            transactions.forEach(transaction => {
+                let transactionDate = transaction.forecastDate || transaction.date;
+                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, transactionDate.utc());
+                let transactionAccountId = this.bankAccounts.find(account => account.accountNumber === transaction.accountNumber).id;
+                let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, transactionAccountId);
                 let data = {
                     forecastModelId: this.selectedForecastModel.id,
                     bankAccountId: accountId,
@@ -3426,9 +3428,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     startDate: target.date.startDate,
                     endDate: target.date.endDate,
                     currencyId: this.currencyId,
-                    amount: cashflowItem.amount
+                    amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
-                let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(cashflowItem, target);
+                /** To update local data */
+                data['target'] = target;
+                let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
                 forecastModel = new AddForecastInput(combinedData);
                 if (forecastModel) {
@@ -3441,63 +3445,59 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
     }
 
-    updateMovedForecasts(forecasts: UpdateForecastInput[], targetData: CellInfo) {
+    updateMovedForecasts(forecasts: TransactionStatsDtoExtended[], targetData: CellInfo) {
         /** if the operation is update - then also remove the old objects (income or expense, net change and total balance) */
-        forecasts.forEach(forecastModel => {
-            let timezoneOffset = forecastModel.date.toDate().getTimezoneOffset();
-            let forecastsInCashflow = this.cashflowData.filter(item => item.forecastId === forecastModel.id);
-            forecastsInCashflow.forEach((forecastInCashflow, index) => {
-                /** Add stub to avoid hiding of old period from cashflow */
-                let stubCopy = this.createStubTransaction(forecastInCashflow);
-                stubCopy.amount = 0;
-                stubCopy.forecastId = null;
-                this.cashflowData.push(stubCopy);
+        forecasts.forEach((forecastInCashflow, index) => {
+            /** Add stub to avoid hiding of old period from cashflow */
+            let stubCopy = this.createStubTransaction(forecastInCashflow);
+            stubCopy.amount = 0;
+            stubCopy.forecastId = null;
+            this.cashflowData.push(stubCopy);
 
-                /** Change forecast locally */
-                forecastInCashflow.date = moment(targetData.date.startDate).utc().add(timezoneOffset, 'minutes');
-                forecastInCashflow.initialDate = targetData.date.startDate.utc();
-                forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
-                forecastInCashflow.subCategoryId = targetData.subCategoryId;
-                forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor;
-                forecastsInCashflow[index] = this.addCategorizationLevels(forecastInCashflow);
-                this.updateTreePathes(forecastInCashflow, true);
-            });
+            let date = moment(targetData.date.startDate).utc();
+            let timezoneOffset = date.toDate().getTimezoneOffset();
+
+            /** Change forecast locally */
+            forecastInCashflow.date = date.add(timezoneOffset, 'minutes');
+            forecastInCashflow.initialDate = targetData.date.startDate.utc();
+            forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
+            forecastInCashflow.subCategoryId = targetData.subCategoryId;
+            forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor;
+            forecasts[index] = this.addCategorizationLevels(forecastInCashflow);
+            this.updateTreePathes(forecastInCashflow, true);
         });
 
     }
 
-    createForecastsFromCopiedItems(copiedForecastsIds: number[], cashflowItems: TransactionStatsDtoExtended[], targetsData: CellInfo[]) {
+    createForecastsFromCopiedItems(copiedForecastsIds: number[], forecasts: AddForecastInput[], sourceData: CellInfo) {
         let activeAccountIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.requestFilter.accountIds);
-        targetsData.forEach((target, index) => {
-            cashflowItems.forEach((cashflowItem, index) => {
-                let timezoneOffset = cashflowItem.date.toDate().getTimezoneOffset();
-                let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, cashflowItem.initialDate);
-                let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, cashflowItem.accountId);
-                let data = {
-                    accountId: accountId,
-                    count: 1,
-                    amount: cashflowItem.amount,
-                    date: moment(date).add(timezoneOffset, 'minutes'),
-                    initialDate: date,
-                    forecastId: copiedForecastsIds[index]
-                };
-                let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(cashflowItem, target, false);
-                this.cashflowData.push(this.createStubTransaction({...data, ...categorizationData}));
-            });
+        forecasts.forEach((forecast, index) => {
+            let timezoneOffset = forecast.date.toDate().getTimezoneOffset();
+            let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, forecast.bankAccountId);
+            let data = {
+                accountId: accountId,
+                count: 1,
+                amount: forecast.amount,
+                date: moment(forecast.date).add(timezoneOffset, 'minutes'),
+                initialDate: forecast.date,
+                forecastId: copiedForecastsIds[index]
+            };
+            let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceData, forecast['target'], false);
+            this.cashflowData.push(this.createStubTransaction({...data, ...categorizationData}));
         });
     }
 
-    getDateForForecast(targetCaption, targetStartDate, targetEndDate, forecastDate) {
+    getDateForForecast(targetCaption, targetStartDate, targetEndDate, sourceDate) {
         let date = moment(targetStartDate);
         /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
         if (['year', 'quarter', 'month'].indexOf(targetCaption) !== -1) {
             if (targetCaption === 'quarter') {
-                date.month(date.month() + (forecastDate.month() % 3));
+                date.month(date.month() + (sourceDate.month() % 3));
             }
             if (targetCaption === 'year') {
-                date.month(forecastDate.month());
+                date.month(sourceDate.month());
             }
-            let dayNumber = forecastDate.date() < date.daysInMonth() ? forecastDate.date() : date.daysInMonth();
+            let dayNumber = sourceDate.date() < date.daysInMonth() ? sourceDate.date() : date.daysInMonth();
             date.date(dayNumber);
         }
 
@@ -3978,33 +3978,39 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    handleCellsCopying(cellsToCopy) {
-        if (cellsToCopy && cellsToCopy.length) {
-            let copiedCellObject = this.getCellObjectFromCellElement(this._cellsCopyingService.copiedCell);
+    handleCellsCopying(sourceCell: any, targetCells: any[]) {
+        if (targetCells && targetCells.length) {
+            let sourceCellObject = sourceCell instanceof HTMLTableCellElement? this.getCellObjectFromCellElement(sourceCell) : sourceCell;
 
             /** Create forecasts for the cell */
-            let items = this.getDataItemsByCell(copiedCellObject);
-            let targetCells = [];
-
-            cellsToCopy.forEach(cell => {
-                let cellObj = this.getCellObjectFromCellElement(cell);
+            let targetCellsObj = [];
+            targetCells.forEach(cell => {
+                let cellObj = cell instanceof HTMLTableCellElement ? this.getCellObjectFromCellElement(cell) : cell;
                 if (this.cellCanBeTargetOfCopy(cellObj)) {
-                    targetCells.push(cellObj);
+                    targetCellsObj.push(cellObj);
                 }
             });
 
-            if (targetCells.length) {
-                let targetsData = targetCells.map(cell => this.getCellInfo(cell));
-                let forecastsModels = this.createCopyItemsModels(items, targetsData);
-                this.copyForecasts(forecastsModels)
+            let copyItemsModels;
+            if (targetCellsObj.length) {
+                let targetsData = targetCellsObj.map(cell => this.getCellInfo(cell));
+                let sourceCellInfo = this.getCellInfo(sourceCellObject);
+                this.statsDetailFilter = this.getDetailFilterFromCell(sourceCellObject);
+                this._cashflowServiceProxy
+                    .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                    .map(transactions => {
+                        copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData) : null;
+                        return copyItemsModels;
+                    })
+                    .mergeMap(forecastModels => this.copyForecasts(forecastModels))
                     .subscribe(
                         res => {
-                            this.createForecastsFromCopiedItems(res, items, targetsData);
-                        },
-                        e => { console.log(e); this.notify.error(e); },
-                        () => {
-                            this.updateDataSource();
-                            this.notify.success(this.l('SavedSuccessfully'));
+                            if (copyItemsModels && copyItemsModels.forecasts && copyItemsModels.forecasts.length) {
+                                let localItems = this.getDataItemsByCell(sourceCellObject);
+                                this.createForecastsFromCopiedItems(res, copyItemsModels.forecasts, sourceCellInfo);
+                                this.updateDataSource();
+                                this.notify.success(this.l('SavedSuccessfully'));
+                            }
                         }
                     );
             }
@@ -4056,46 +4062,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.notify.info(this.l('Cell_Copied'));
     }
 
-    onPaste(ev) {
-        let targetCell = this.selectedCell;
-        /** If user copy to the accounting type - show popup with message that he should select the category */
-        /** @todo implement */
-        /** Allow copy paste only for the same cashflowTypeId and to the current or forecast periods */
-        if (this.cellCanBeTargetOfCopy(targetCell)) {
-            let items = this.getDataItemsByCell(this.copiedCell);
-            let targetCellData = this.getCellInfo(targetCell);
-            let forecastsModels = this.createCopyItemsModels(items, [targetCellData]);
-            this.copyForecasts(forecastsModels)
-                .subscribe(
-                    res => { this.createForecastsFromCopiedItems(res, items, [targetCellData]); },
-                    e => { console.log(e); this.notify.error(e); },
-                    () => {
-                        this.updateDataSource();
-                        this.notify.success(this.l('Cell_pasted'));
-                    }
-                );
-
-        }
+    onPaste() {
+        this.handleCellsCopying(this.copiedCell, [this.selectedCell]);
     }
 
     onDelete(ev) {
         let cellObj = this.selectedCell;
-
-        this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
         let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
-        let columnFields = this.getColumnFields();
-        let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
-
         if (
             this.cellIsNotHistorical(cellObj) &&
             clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountName
         ) {
+            let columnFields = this.getColumnFields();
+            let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
+            this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
             this._cashflowServiceProxy
                 .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                 .subscribe(result => {
-
                     if (result.length !== 0) {
                         let forecastIds: number[] = [];
                         let forecastDates = [];

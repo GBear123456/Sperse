@@ -16,13 +16,13 @@ export class CashflowService {
      * @param {boolean} subCategoryIsCategory
      * @return {{categoryId: number; transactionDescriptor: string}}
      */
-    getCategorizationFromForecastAndTarget(forecast, target: CellInfo, subCategoryIsCategory = true) {
-        let cashflowTypeId = target.cashflowTypeId != forecast.cashflowTypeId ? target.cashflowTypeId : forecast.cashflowTypeId;
-        let subCategoryId = target.subCategoryId && target.subCategoryId != forecast.subCategoryId ? target.subCategoryId : forecast.subCategoryId;
+    getCategorizationFromForecastAndTarget(source: CellInfo, target: CellInfo, subCategoryIsCategory = true) {
+        let cashflowTypeId = target.cashflowTypeId != source.cashflowTypeId ? target.cashflowTypeId : source.cashflowTypeId;
+        let subCategoryId = target.subCategoryId && target.subCategoryId != source.subCategoryId ? target.subCategoryId : source.subCategoryId;
 
-        let categoryId = target.categoryId && target.categoryId != forecast.categoryId ? target.categoryId : forecast.categoryId;
+        let categoryId = target.categoryId && target.categoryId != source.categoryId ? target.categoryId : source.categoryId;
 
-        let transactionDescriptor = target.transactionDescriptor && target.transactionDescriptor != forecast.transactionDescriptor ? target.transactionDescriptor : forecast.transactionDescriptor;
+        let transactionDescriptor = target.transactionDescriptor && target.transactionDescriptor != source.transactionDescriptor ? target.transactionDescriptor : source.transactionDescriptor;
 
         const categorization = {
             categoryId: subCategoryIsCategory && subCategoryId ? subCategoryId : categoryId,
@@ -33,7 +33,7 @@ export class CashflowService {
             categorization['subCategoryId'] = subCategoryId;
             categorization['cashflowTypeId'] = cashflowTypeId;
         } else {
-            /** @todo change when parameters */
+            /** @todo change when parameters will be the same */
             categorization['cashFlowTypeId'] = cashflowTypeId;
         }
         return categorization;
@@ -77,9 +77,9 @@ export class CashflowService {
      * @param {number} accountId
      * @return {number}
      */
-    getActiveAccountId(activeAccountIds: number[], accountId: number) {
+    getActiveAccountId(activeAccountIds: number[], accountId: number = null) {
         return activeAccountIds && activeAccountIds.length ?
-               (activeAccountIds.indexOf(accountId) !== -1 ? accountId : activeAccountIds[0]) :
+               accountId && (activeAccountIds.indexOf(accountId) !== -1 ? accountId : activeAccountIds[0]) :
                accountId;
     }
 
