@@ -771,6 +771,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     private detailsModifyingNumberBoxCellObj: any;
 
+    tabularFontName;
+
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -1262,8 +1264,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.currencySymbol = (777).toLocaleString('en-EN', { style: 'currency', currency: this.preferenceCurrencyId}).substr(0, 1);
 
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
-
-        let thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
+        this.tabularFontName = this.userPreferencesService.getClassNameFromPreference({
+            sourceName: 'fontName',
+            sourceValue: this.cashflowGridSettings.visualPreferences.fontName
+        });
+        const thousandsSeparator = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 3 ? '.' : ',';
         /** Changed thousands and decimal separators */
         config({
             thousandsSeparator: thousandsSeparator,
@@ -3281,7 +3286,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).flatMap(x => x);
             const forecastsObservable = statsDetailObservable.filter(transaction => !!transaction.forecastId).toArray();
             const historicalsObservable = statsDetailObservable.filter(transaction => !!!transaction.forecastId).toArray();
-
             Observable.forkJoin(
                 historicalsObservable.mergeMap(historicalTransactions => {
                     const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
@@ -3635,12 +3639,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     addPreferenceClass(preference) {
-        let setting = preference['sourceName'];
-        const className = setting + preference['sourceValue'].replace(/ /g, '');
+        const className = this.userPreferencesService.getClassNameFromPreference(preference);
         for (let area of preference.areas) {
             $(`.dx-area-${area}-cell`).removeClass((index, classes) => {
                 /** remove old setting class */
-                const start = classes.indexOf(setting),
+                const start = classes.indexOf(preference['sourceName']),
                       end = classes.indexOf(' ', start) === -1 ? classes.length + 1 : classes.indexOf(' ', start);
                 return classes.slice(start, end);
             });
@@ -5539,6 +5542,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onTransactionDetailContentReady(e) {
         this.hideModifyingNumberBox();
+        /** To update width of selection column */
+        if (e.component.shouldSkipNextReady) {
+            e.component.shouldSkipNextReady = false;
+        } else {
+            e.component.shouldSkipNextReady = true;
+            e.component.columnOption("command:select", "width", 28);
+            e.component.updateDimensions();
+        }
     }
 
     onDetailsRowDelete(e) {

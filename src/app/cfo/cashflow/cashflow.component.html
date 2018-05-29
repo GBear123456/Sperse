@@ -57,6 +57,7 @@
             </dxo-selection>
             <dxi-column dataField="forecastDate"
                         dataType="date"
+                        [cssClass]="'forecastDate ' + tabularFontName"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
@@ -68,6 +69,7 @@
             </dxi-column>
             <dxi-column dataField="date"
                         dataType="date"
+                        [cssClass]="tabularFontName"
                         cellTemplate="dateCell"
                         headerCellTemplate="twoRowsHeaderCellTemplate"
                         alignment="left"
@@ -95,6 +97,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
+                        [cssClass]="tabularFontName"
                         [allowEditing]="false"
                         alignment="right"
                         [minWidth]="150">
@@ -105,6 +108,7 @@
                         [format]="customCurrency"
                         [allowSorting]="false"
                         [allowFiltering]="false"
+                        [cssClass]="tabularFontName"
                         [allowEditing]="false"
                         alignment="right"
                         [minWidth]="150">
@@ -114,6 +118,7 @@
                         dataField="accountNumber"
                         [allowSorting]="false"
                         [allowFiltering]="false"
+                        [cssClass]="tabularFontName"
                         [allowEditing]="false"
                         [minWidth]="130"
                         editCellTemplate="accountsEditSelect">
