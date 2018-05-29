@@ -1,0 +1,16 @@
+<div class="wrapper">
+    <div class="range-values">
+        <span class="start">{{fromValue}}</span>
+        to
+        <span class="end">{{toValue}}</span>
+    </div>
+
+    <dx-range-slider 
+        [min]="items.element.min"
+        [max]="items.element.max"
+        [(start)]="fromValue"
+        [(end)]="toValue"
+        [step]="items.element.step"
+        (onValueChanged)="valueChanged()">
+    </dx-range-slider>
+</div>

@@ -23,8 +23,10 @@ export class FilterItemModel {
     
     getDisplayElements(key: string): DisplayElement[] {
         let caption = capitalize(key);
-        let isBoolValues = typeof (this.value) == 'boolean';
-        let value = (typeof (this.value) == 'string') && this.value
+        let valueType = typeof (this.value);
+        let isBoolValues = valueType == 'boolean';
+        let value = valueType == 'string' && this.value
+            || valueType == 'number' && (caption ? `${caption}: ${this.value}` : this.value)
             || isBoolValues && this.value && caption
             || this.value && this.value['getDate'] && (caption + ': ' +
             this.value.toLocaleDateString().split('/').map((part) => {

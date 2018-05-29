@@ -26,6 +26,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
@@ -280,6 +281,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     keyExpr: 'id'
                                 })
                         }
+                    }),
+                    new FilterModel({
+                        component: FilterRangeComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'Rating',
+                        field: 'Rating',
+                        items: FilterHelpers.getRatingFilterItems(result.ratings)
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Star',
+                        field: 'StarId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.stars,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
                     })
             ], this._activatedRoute.snapshot.queryParams);
             });
@@ -496,6 +517,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     filterByTag(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByRating(filter: FilterModel) {
+        return FilterHelpers.filterByRating(filter);
+    }
+
+    filterByStar(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
