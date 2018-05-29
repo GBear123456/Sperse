@@ -13,6 +13,7 @@ import { ODataSearchStrategy } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
@@ -32,6 +33,7 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -50,7 +52,6 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 
-
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
@@ -64,6 +65,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -77,6 +79,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
+    filterModelStatus: FilterModel;
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -249,7 +252,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             items: {from: new FilterItemModel(), to: new FilterItemModel()},
                             options: {method: 'getFilterByDate'}
                         }),
-                        new FilterModel({
+                        this.filterModelStatus = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'status',
                             field: 'StatusId',
@@ -330,6 +333,26 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                         keyExpr: 'id'
                                     })
                             }
+                        }),
+                        new FilterModel({
+                            component: FilterRangeComponent,
+                            operator: { from: 'ge', to: 'le' },
+                            caption: 'Rating',
+                            field: 'Rating',
+                            items: FilterHelpers.getRatingFilterItems(result.ratings)
+                        }),
+                        new FilterModel({
+                            component: FilterCheckBoxesComponent,
+                            caption: 'Star',
+                            field: 'StarId',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: result.stars,
+                                        nameField: 'name',
+                                        keyExpr: 'id'
+                                    })
+                            }
                         })
                     ]
                 )
@@ -398,20 +421,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'status',
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length,
-                        options: {
-                            hint: 'Status',
-                            items: [
-                              {
-                                  action: this.updateClientStatuses.bind(this, 'A'),
-                                  text: 'Active',
-                              }, {
-                                  action: this.updateClientStatuses.bind(this, 'I'),
-                                  text: 'Inactive',
-                              }
-                          ]
-                        }
+                        action: this.toggleStatus.bind(this)
                     },
                     {
                         name: 'lists',
@@ -482,6 +492,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.userAssignmentComponent.toggle();
     }
 
+    toggleStatus() {
+        this.statusComponent.toggle();
+    }
 
     toggleLists() {
         this.listsComponent.toggle();
@@ -500,7 +513,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     filterByName(filter: FilterModel) {
-        FilterHelpers.filterByClientName(filter);
+        return FilterHelpers.filterByClientName(filter);
     }
 
     filterByStates(filter: FilterModel) {
@@ -538,6 +551,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    filterByRating(filter: FilterModel) {
+        return FilterHelpers.filterByRating(filter);
+    }
+
+    filterByStar(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.processFilterInternal();
@@ -554,10 +575,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         );
     }
 
-    updateClientStatuses (statusId: string) {
+    updateClientStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         if (selectedIds && selectedIds.length) {
-            this.showConfirmationDialog(selectedIds, statusId);
+            this.showConfirmationDialog(selectedIds, status.id);
         } else {
             this.message.warn(this.l('NoRecordsToUpdate'));
         }

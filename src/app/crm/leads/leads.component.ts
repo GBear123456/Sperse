@@ -26,6 +26,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
@@ -41,6 +42,8 @@ import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
+import { StaticListComponent } from '../shared/static-list/static-list.component';
+
 import query from 'devextreme/data/query';
 
 import DataSource from 'devextreme/data/data_source';
@@ -62,6 +65,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
     firstRefresh = false;
     pipelineDataSource: any;
@@ -75,6 +79,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
+    filterModelStages: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -180,7 +185,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        if (!this.showPipeline)
+        if (this.showPipeline) {
+            this.selectedClientKeys = [];
+            this.dataGrid.instance.deselectAll();
+        } else
             setTimeout(() => this.dataGrid.instance.repaint());
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -214,7 +222,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         items: { from: new FilterItemModel(), to: new FilterItemModel() },
                         options: {method: 'getFilterByDate'}
                     }),
-                    new FilterModel({
+                    this.filterModelStages = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'stages',
                         items: {
@@ -277,6 +285,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             element: new FilterCheckBoxesModel(
                                 {
                                     dataSource: result.tags,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterRangeComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'Rating',
+                        field: 'Rating',
+                        items: FilterHelpers.getRatingFilterItems(result.ratings)
+                    }),
+                    new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Star',
+                        field: 'StarId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.stars,
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -348,13 +376,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleUserAssignment.bind(this)
                     },
                     {
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.selectedLeads.length,
                         name: 'stage',
-                        options: {
-                            hint: this.l('Stage'),
-                            items: this.stages
-                        }
+                        action: this.toggleStages.bind(this)
                     },
                     {
                         name: 'lists',
@@ -497,6 +520,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    filterByRating(filter: FilterModel) {
+        return FilterHelpers.filterByRating(filter);
+    }
+
+    filterByStar(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.processFilterInternal();
@@ -554,15 +585,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onStagesLoaded($event) {
         this.stages = $event.stages.map((stage) => {
             return {
-                text: stage.name,
-                action: this.updateLeadsStage.bind(this)
-            };
+                id: this._pipelineService.pipeline.id + ':' + stage.id,
+                name: stage.name,
+                text: stage.name
+            }
         });
         this.initToolbarConfig();
     }
 
     updateLeadsStage($event) {
-        let targetStage = $event.itemData.text,
+        let targetStage = $event.name,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
             if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage)
@@ -597,6 +629,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
+    }
+
+    toggleStages() {
+        this.stagesComponent.toggle();
     }
 
     toggleLists() {

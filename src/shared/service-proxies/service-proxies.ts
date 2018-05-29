@@ -827,7 +827,7 @@ export class BankAccountsServiceProxy {
      * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy, calculateAverageDailyBalance: boolean): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -851,10 +851,6 @@ export class BankAccountsServiceProxy {
             throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
         else
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
-        if (calculateAverageDailyBalance === undefined || calculateAverageDailyBalance === null)
-            throw new Error("The parameter 'calculateAverageDailyBalance' must be defined and cannot be null.");
-        else
-            url_ += "CalculateAverageDailyBalance=" + encodeURIComponent("" + calculateAverageDailyBalance) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -30732,6 +30728,8 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
     users: UserInfoDto[];
     lists: CustomerListInfoDto[];
     tags: CustomerTagInfoDto[];
+    ratings: CustomerRatingInfoDto[];
+    stars: CustomerStarInfoDto[];
 
     constructor(data?: ICustomerFiltersInitialData) {
         if (data) {
@@ -30764,6 +30762,16 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
                 for (let item of data["tags"])
                     this.tags.push(CustomerTagInfoDto.fromJS(item));
             }
+            if (data["ratings"] && data["ratings"].constructor === Array) {
+                this.ratings = [];
+                for (let item of data["ratings"])
+                    this.ratings.push(CustomerRatingInfoDto.fromJS(item));
+            }
+            if (data["stars"] && data["stars"].constructor === Array) {
+                this.stars = [];
+                for (let item of data["stars"])
+                    this.stars.push(CustomerStarInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -30795,6 +30803,16 @@ export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
             for (let item of this.tags)
                 data["tags"].push(item.toJSON());
         }
+        if (this.ratings && this.ratings.constructor === Array) {
+            data["ratings"] = [];
+            for (let item of this.ratings)
+                data["ratings"].push(item.toJSON());
+        }
+        if (this.stars && this.stars.constructor === Array) {
+            data["stars"] = [];
+            for (let item of this.stars)
+                data["stars"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -30804,6 +30822,8 @@ export interface ICustomerFiltersInitialData {
     users: UserInfoDto[];
     lists: CustomerListInfoDto[];
     tags: CustomerTagInfoDto[];
+    ratings: CustomerRatingInfoDto[];
+    stars: CustomerStarInfoDto[];
 }
 
 export class CustomerStatusDto implements ICustomerStatusDto {
@@ -35357,6 +35377,8 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
     users: UserInfoDto[];
     lists: CustomerListInfoDto[];
     tags: CustomerTagInfoDto[];
+    ratings: CustomerRatingInfoDto[];
+    stars: CustomerStarInfoDto[];
 
     constructor(data?: ILeadFiltersInitialData) {
         if (data) {
@@ -35394,6 +35416,16 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
                 for (let item of data["tags"])
                     this.tags.push(CustomerTagInfoDto.fromJS(item));
             }
+            if (data["ratings"] && data["ratings"].constructor === Array) {
+                this.ratings = [];
+                for (let item of data["ratings"])
+                    this.ratings.push(CustomerRatingInfoDto.fromJS(item));
+            }
+            if (data["stars"] && data["stars"].constructor === Array) {
+                this.stars = [];
+                for (let item of data["stars"])
+                    this.stars.push(CustomerStarInfoDto.fromJS(item));
+            }
         }
     }
 
@@ -35430,6 +35462,16 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
             for (let item of this.tags)
                 data["tags"].push(item.toJSON());
         }
+        if (this.ratings && this.ratings.constructor === Array) {
+            data["ratings"] = [];
+            for (let item of this.ratings)
+                data["ratings"].push(item.toJSON());
+        }
+        if (this.stars && this.stars.constructor === Array) {
+            data["stars"] = [];
+            for (let item of this.stars)
+                data["stars"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -35440,6 +35482,8 @@ export interface ILeadFiltersInitialData {
     users: UserInfoDto[];
     lists: CustomerListInfoDto[];
     tags: CustomerTagInfoDto[];
+    ratings: CustomerRatingInfoDto[];
+    stars: CustomerStarInfoDto[];
 }
 
 export class PipelineDto implements IPipelineDto {

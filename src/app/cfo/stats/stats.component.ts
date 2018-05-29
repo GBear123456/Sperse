@@ -489,8 +489,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             startDate,
             endDate,
             undefined,
-            GroupBy.Monthly,
-            false
+            GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),

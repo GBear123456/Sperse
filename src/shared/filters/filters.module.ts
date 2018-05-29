@@ -18,8 +18,9 @@ import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 
 import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, 
-    DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule } from 'devextreme-angular';
+    DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule, DxRangeSliderModule } from 'devextreme-angular';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
+import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 
 @NgModule({
     imports: [
@@ -32,6 +33,7 @@ import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/b
         DxDropDownBoxModule,
         DxDataGridModule,
         DxTreeListModule,
+        DxRangeSliderModule,
         CommonModule
     ],
     declarations: [
@@ -44,6 +46,7 @@ import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/b
         FilterCBoxesComponent,
         FilterDatesComponent,
         FilterCalendarComponent,
+        FilterRangeComponent,
         BankAccountFilterComponent,
         AdDirective
     ],
@@ -56,6 +59,7 @@ import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/b
         FilterInputsComponent,
         FilterDatesComponent,
         FilterCalendarComponent,
+        FilterRangeComponent,
         BankAccountFilterComponent
     ],
     exports: [
