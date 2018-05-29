@@ -13,6 +13,7 @@ import { ODataSearchStrategy } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
@@ -64,6 +65,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
@@ -77,6 +79,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
+    filterModelStatus: FilterModel;
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -249,7 +252,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             items: {from: new FilterItemModel(), to: new FilterItemModel()},
                             options: {method: 'getFilterByDate'}
                         }),
-                        new FilterModel({
+                        this.filterModelStatus = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'status',
                             field: 'StatusId',
@@ -398,20 +401,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'status',
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length,
-                        options: {
-                            hint: 'Status',
-                            items: [
-                              {
-                                  action: this.updateClientStatuses.bind(this, 'A'),
-                                  text: 'Active',
-                              }, {
-                                  action: this.updateClientStatuses.bind(this, 'I'),
-                                  text: 'Inactive',
-                              }
-                          ]
-                        }
+                        action: this.toggleStatus.bind(this)
                     },
                     {
                         name: 'lists',
@@ -482,6 +472,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.userAssignmentComponent.toggle();
     }
 
+    toggleStatus() {
+        this.statusComponent.toggle();
+    }
 
     toggleLists() {
         this.listsComponent.toggle();
@@ -554,10 +547,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         );
     }
 
-    updateClientStatuses (statusId: string) {
+    updateClientStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         if (selectedIds && selectedIds.length) {
-            this.showConfirmationDialog(selectedIds, statusId);
+            this.showConfirmationDialog(selectedIds, status.id);
         } else {
             this.message.warn(this.l('NoRecordsToUpdate'));
         }

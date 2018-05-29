@@ -11,10 +11,9 @@ import * as _ from "underscore";
 
 @Injectable()
 export class PipelineService {
-    private pipeline: PipelineDto;
-
-    public stages = [];
     public stageChange: Subject<any>;
+    public pipeline: PipelineDto;
+    public stages = [];
 
     constructor(
         injector: Injector,
