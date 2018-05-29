@@ -28,7 +28,9 @@
       </div>
       <dx-scroll-view showScrollbar="onHover">
         <nav mat-tab-nav-bar>
-            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.active && link.route" [routerLinkActive]="link.active ? 'active': ''" [queryParams]="referrerParams" [disabled]="!link.active">{{link.label}}</a>
+            <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams">
+                {{link.label}}
+            </a>
         </nav>
       </dx-scroll-view>
     </mat-sidenav>
@@ -37,13 +39,20 @@
     </div>
     <mat-sidenav class="right_sidenav" mode="side" align="end" opened="true">
       <mat-tab-group>
-        <mat-tab label="Credit overview">
+        <mat-tab label="{{l('Overview')}}">
           <dx-scroll-view showScrollbar="onHover">
-            <div class="right-content">
-              <client-scores></client-scores>
-              <total-approved></total-approved>
+            <div class="right-content" [ngClass]="{'config-mode': configMode}">
+              <span class="gear-icon" (click)="toggleConfigMode()"></span>
+              <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.clientScores">
+                  <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'clientScores')" class="cb-visible-section" [checked]="rightPanelSetting?.clientScores"><client-scores></client-scores>
+              </div>
+              <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.totalApproved">
+                  <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'totalApproved')" class="cb-visible-section" [checked]="rightPanelSetting?.totalApproved"><total-approved></total-approved>
+              </div>
               <!-- credit-lines></credit-lines -->
-              <verification-checklist [data]="verificationChecklist"></verification-checklist>
+              <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.verification">
+                  <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'verification')" class="cb-visible-section" [checked]="rightPanelSetting?.verification"><verification-checklist [data]="verificationChecklist"></verification-checklist>
+              </div>
               <!-- required-documents></required-documents -->
             </div>
           </dx-scroll-view>
