@@ -19,6 +19,7 @@ import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 
+import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
@@ -98,7 +99,9 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     ListsListComponent,
     UserAssignmentComponent,
     RatingComponent,
-    StarsListComponent
+    StarsListComponent,
+    StaticListComponent,
+    StaticListComponent
   ],
   imports: [
     FormsModule,
@@ -142,7 +145,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     ListsListComponent,
     UserAssignmentComponent,
     RatingComponent,
-    StarsListComponent
+    StarsListComponent,
+    StaticListComponent
   ],
   entryComponents: [
     EditContactDialog,

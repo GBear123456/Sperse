@@ -4,6 +4,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { UserAssignmentServiceProxy, AssignUserToCustomerInput, UserInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
+import * as _ from 'underscore';
+
 @Component({
   selector: 'crm-user-assignment-list',
   templateUrl: './user-assignment-list.component.html',
@@ -11,9 +13,7 @@ import { AppConsts } from '@shared/AppConsts';
   providers: [UserAssignmentServiceProxy]
 })
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
-    @Output() onFilterSelected: EventEmitter<any> = new EventEmitter();
-
-    @Input() showFilter: boolean;
+    @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
@@ -35,12 +35,11 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         private _userAssignmentService: UserAssignmentServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this._filtersService.localizationSourceName = this.localizationSourceName;
     }
 
     toggle() {
-        this.tooltipVisible = !this.tooltipVisible;
+        if (this.tooltipVisible = !this.tooltipVisible)
+            this.highlightSelectedFilters();
     }
 
     apply(selectedKeys = undefined) {
@@ -94,23 +93,46 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.selectedItemKey = null;
     }
 
+    highlightSelectedFilters() {
+        let filterIds = this.filterModel && 
+            this.filterModel.items.element.value;        
+        this.clearFiltersHighlight();
+        if (this.listComponent && filterIds && filterIds.length) {
+            let items = this.listComponent.element()
+                .getElementsByClassName('item-row');
+            _.each(items, (item) => {
+                if (filterIds.indexOf(Number(item.getAttribute('id'))) >= 0)
+                    item.parentNode.parentNode.classList.add('filtered');                
+            });
+        }
+    }
+
+    clearFiltersHighlight() {
+        if (this.listComponent) {
+            let elements = this.listComponent.element()
+                .getElementsByClassName('filtered');
+            while(elements.length)        
+                elements[0].classList.remove('filtered');
+        }
+    }
+
     applyFilter(event, data) {
         event.stopPropagation();
-
-        let isFilterRemoved = false,
-            parent = event.target.parentNode.parentNode.parentNode,
-            elements = this.listComponent.element().getElementsByClassName('filtered');
   
-        [].forEach.call(elements, (elm) => {
-            if (parent == elm)
-                isFilterRemoved = true;
-            elm.classList.remove('filtered');
-        })
+        this.clearFiltersHighlight();
 
-        if (!isFilterRemoved)
-            parent.classList.add('filtered');
+        let modelItems = this.filterModel.items.element.value;
+        if (modelItems.length == 1 && modelItems[0] == data.id) 
+            this.filterModel.items.element.value = [];
+        else {
+            this.filterModel.items.element.value = [data.id];
+            event.target.parentNode.parentNode.parentNode.classList.add('filtered');
+        }
 
-        this.tooltipVisible = isFilterRemoved;
-        this.onFilterSelected.emit(isFilterRemoved ? null: data);        
+        this._filtersService.change(this.filterModel);
+    }
+
+    onContentReady($event) {
+        this.highlightSelectedFilters();
     }
 }

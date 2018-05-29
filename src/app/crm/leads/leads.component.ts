@@ -42,6 +42,8 @@ import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
+import { StaticListComponent } from '../shared/static-list/static-list.component';
+
 import query from 'devextreme/data/query';
 
 import DataSource from 'devextreme/data/data_source';
@@ -63,6 +65,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
     firstRefresh = false;
     pipelineDataSource: any;
@@ -75,6 +78,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
+    filterModelAssignment: FilterModel;
+    filterModelStages: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -180,7 +185,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        if (!this.showPipeline)
+        if (this.showPipeline) {
+            this.selectedClientKeys = [];
+            this.dataGrid.instance.deselectAll();
+        } else
             setTimeout(() => this.dataGrid.instance.repaint());
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -214,7 +222,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         items: { from: new FilterItemModel(), to: new FilterItemModel() },
                         options: {method: 'getFilterByDate'}
                     }),
-                    new FilterModel({
+                    this.filterModelStages = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'stages',
                         items: {
@@ -237,7 +245,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         caption: 'Industry',
                         items: { Industry: new FilterItemModel() }
                     }),
-                    new FilterModel({
+                    this.filterModelAssignment = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'assignedUser',
                         field: 'AssignedUserId',
@@ -302,10 +310,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 })
                         }
                     })
-            ], this._activatedRoute.snapshot.queryParams);
+                ], this._activatedRoute.snapshot.queryParams);
             });
 
-        this._filtersService.apply(this.filterApply.bind(this));
+        this._filtersService.apply(() => {
+            this.selectedClientKeys = [];
+            this.filterChanged = true;
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initToolbarConfig() {
@@ -360,17 +373,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'before', items: [
                     {
                         name: 'assign',
-                        disabled: !this.selectedClientKeys.length,
                         action: this.toggleUserAssignment.bind(this)
                     },
                     {
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.selectedLeads.length,
                         name: 'stage',
-                        options: {
-                            hint: this.l('Stage'),
-                            items: this.stages
-                        }
+                        action: this.toggleStages.bind(this)
                     },
                     {
                         name: 'lists',
@@ -481,13 +488,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ];
     }
 
-    filterApply() {
-        this.selectedClientKeys = [];
-        this.filterChanged = true;
-        this.initToolbarConfig();
-        this.processFilterInternal();
-    }
-
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
@@ -585,15 +585,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onStagesLoaded($event) {
         this.stages = $event.stages.map((stage) => {
             return {
-                text: stage.name,
-                action: this.updateLeadsStage.bind(this)
-            };
+                id: this._pipelineService.pipeline.id + ':' + stage.id,
+                name: stage.name,
+                text: stage.name
+            }
         });
         this.initToolbarConfig();
     }
 
     updateLeadsStage($event) {
-        let targetStage = $event.itemData.text,
+        let targetStage = $event.name,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
             if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage)
@@ -628,6 +629,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
+    }
+
+    toggleStages() {
+        this.stagesComponent.toggle();
     }
 
     toggleLists() {

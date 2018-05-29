@@ -282,8 +282,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.requestFilter.startDate,
             this.requestFilter.endDate,
             undefined,
-            GroupBy.Monthly,
-            true
+            GroupBy.Monthly
         )
             .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
