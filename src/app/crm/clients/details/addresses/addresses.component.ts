@@ -209,7 +209,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     updateItem(address, event) {
-        let countryId = _.findWhere(this.countries, {name: this.country})['code'];
+        let country = _.findWhere(this.countries, {name: this.country}),
+            countryId = country && country['code'];
         countryId && this._countryService
             .getCountryStates(countryId)
             .subscribe(states => {
@@ -240,7 +241,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             });
         address.inplaceEdit = false;
         this._isInPlaceEditAllowed = true;
-        event.jQueryEvent.stopPropagation();
+        event.event.stopPropagation();
     }
 
     aggregateAddress(address: ContactAddressDto) {
