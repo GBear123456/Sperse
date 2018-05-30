@@ -38,6 +38,15 @@
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <div *dxTemplate="let data of 'photoTemplate'">
+                            <img [src]="getPhoto(data.data.Photo)"
+                                alt="{{l('AltPersonPhoto')}}"
+                                width="38"
+                                class="img-circle" />
+                        </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
