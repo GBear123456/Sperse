@@ -1217,315 +1217,349 @@
                 }
             }
         }
-    }
 
-    .groupBy {
-        padding-left: 22px;
-        display: flex;
-        color: @generalColor;
-        align-items: center;
+        .groupBy {
+            padding-left: 22px;
+            display: flex;
+            color: @generalColor;
+            align-items: center;
 
-        span {
-            margin-right: 10px;
+            span {
+                margin-right: 10px;
+            }
         }
-    }
 
-    .cashflow-wrap {
-        height: 400px;
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-        right: 0;
-        border-top: 1px solid @tableBorderColor;
-        border-left: 1px solid @tableBorderColor;
-        padding: 0 15px;
-        background: #fff;
-        z-index: 3;
-        transform: translate(0, 0) !important;
-
-        .resize-buttons {
-            z-index: 1;
-            text-align: center;
-            font-size: 22px;
-            position: absolute;
+        .cashflow-wrap {
+            height: 400px;
+            position: fixed;
             width: 100%;
-            left: 0;
-            line-height: 0.5;
-            font-weight: bold;
-            letter-spacing: 3px;
-            color: #cecece;
-        }
+            bottom: 0;
+            right: 0;
+            border-top: 1px solid @tableBorderColor;
+            border-left: 1px solid @tableBorderColor;
+            padding: 0 15px 0 24px;
+            background: #fff;
+            z-index: 3;
+            transform: translate(0, 0) !important;
 
-        .detailsButtons {
-            position: absolute;
-            z-index: 100;
-            right: 5px;
-            top: 15px;
-
-            .close-btn:hover {
-                background: transparent !important;
+            .resize-buttons {
+                z-index: 1;
+                text-align: center;
+                font-size: 22px;
+                position: absolute;
+                width: 100%;
+                left: 0;
+                line-height: 0.5;
+                font-weight: bold;
+                letter-spacing: 3px;
+                color: #cecece;
             }
 
-            .reclassify-btn,
-            .showall-btn,
-            .close-btn,
-            .search-value-btn {
-                border: 0;
+            .detailsButtons {
+                position: absolute;
+                z-index: 100;
+                right: 5px;
+                top: 15px;
+
+                .close-btn:hover {
+                    background: transparent !important;
+                }
+
+                .reclassify-btn,
+                .showall-btn,
+                .close-btn,
+                .search-value-btn {
+                    border: 0;
+                    padding: 0;
+
+                    /deep/ .dx-button-text {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        /deep/ #cashflowGridContainer {
+            height: 100%;
+
+            /deep/.dx-highlight-outline {
                 padding: 0;
 
-                /deep/ .dx-button-text {
-                    text-decoration: underline;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    border: 0;
+                    top: 0;
+                    left: 1px;
+                    bottom: 0;
+                    right: 0;
+                    pointer-events: none;
                 }
             }
-        }
-    }
 
-    /deep/ #cashflowGridContainer {
-        height: 100%;
+            .dx-datagrid-headers {
+                .dx-datagrid-content {
+                    .dx-header-row {
+                        &:hover {
+                            td:not(:first-child):not(:last-child) {
+                                border-right: 1px solid #f5f5f5;
+                            }
+                        }
 
-        /deep/.dx-highlight-outline {
-            padding: 0;
+                        td {
+                            padding: 20px;
+                            text-transform: uppercase;
+                            font-size: 13px;
+                            font-weight: 700;
+                            line-height: 24px;
+                            color: #686f76;
+                            vertical-align: middle;
 
-            &::after {
-                content: '';
-                position: absolute;
-                border: 0;
-                top: 0;
-                left: 1px;
-                bottom: 0;
-                right: 0;
-                pointer-events: none;
-            }
-        }
+                            &[aria-sort='none'] {
+                                color: @middleGrayColor;
+                            }
 
-        .dx-datagrid-headers {
-            .dx-datagrid-content {
-                .dx-header-row {
-                    &:hover {
-                        td:not(:first-child):not(:last-child) {
-                            border-right: 1px solid #f5f5f5;
+                            .firstLine {
+                                text-transform: capitalize;
+                                line-height: 1em;
+                                font-weight: 500;
+                                margin-bottom: 7px;
+                                & + div {
+                                    line-height: 1em;
+                                    color: @generalColor;
+                                }
+                            }
+
+                            &.dx-command-select {
+                                padding: 20px 0;
+                                text-align: left!important;
+                            }
+
+                            &:hover,
+                            &:not([aria-sort="none"]) {
+                                .dx-column-indicators {
+                                    display: block;
+                                }
+                            }
+
+                            .dx-column-indicators {
+                                display: none;
+
+                                .dx-sort {
+                                    color: rgba(103, 115, 128, .5);
+                                    font-weight: bold;
+                                    font-size: 16px;
+                                    position: relative;
+                                    top: 1px;
+                                }
+
+                                .dx-header-filter {
+                                    color: rgba(103, 115, 128, .5);
+                                }
+                            }
                         }
                     }
+                }
+            }
 
+            .dx-datagrid-rowsview {
+                border-top: 0;
+            }
+
+            .dx-datagrid-table {
+                .dx-data-row {
                     td {
-                        padding: 20px;
-                        text-transform: uppercase;
-                        font-size: 13px;
-                        font-weight: 700;
-                        line-height: 24px;
-                        color: #686f76;
+                        color: #424c56;
+                        font-size: 14px;
+                        font-weight: 500;
+                        line-height: 1.7;
+                        letter-spacing: 0.3px;
+                        padding: 6px 20px;
                         vertical-align: middle;
 
-                        &[aria-sort='none'] {
-                            color: @middleGrayColor;
-                        }
-
-                        .firstLine {
-                            text-transform: capitalize;
-                            line-height: 11px;
-                            font-weight: 500;
-
-                            & + div {
-                                color: @generalColor;
-                            }
-                        }
-
-                        &.dx-command-select {
-                            padding: 20px 0;
-                        }
-
-                        &:hover,
-                        &:not([aria-sort="none"]) {
-                            .dx-column-indicators {
-                                display: block;
-                            }
-                        }
-
-                        .dx-column-indicators {
-                            display: none;
-
-                            .dx-sort {
-                                color: rgba(103, 115, 128, .5);
-                                font-weight: bold;
-                                font-size: 16px;
-                                position: relative;
-                                top: 1px;
-                            }
-
-                            .dx-header-filter {
-                                color: rgba(103, 115, 128, .5);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        .dx-datagrid-rowsview {
-            border-top: 0;
-        }
-
-        .dx-datagrid-table {
-            .dx-data-row {
-                td {
-                    color: #424c56;
-                    font-size: 14px;
-                    font-weight: 400;
-                    line-height: 24px;
-                    padding: 11px 20px;
-
-                    &.selectedCell,
-                    &.dx-focused {
-                        border: 1px double #f9b83a !important;
-                        background-color: #fbf3e4 !important;
-                        color: #333 !important;
-                        -webkit-user-select: none;
-                        -moz-user-select: none;
-                        -ms-user-select: none;
-
-                        span {
+                        &.selectedCell:not(.dx-command-select),
+                        &.dx-focused {
+                            border: 1px double #f9b83a !important;
+                            background-color: #fbf3e4 !important;
                             color: #333 !important;
+                            -webkit-user-select: none;
+                            -moz-user-select: none;
+                            -ms-user-select: none;
+
+                            span {
+                                color: #333 !important;
+                            }
                         }
-                    }
 
-                    &.editable {
-                        cursor: cell;
-                    }
+                        &.fontNameLato {
+                            &, div, input {
+                                font-family: Lato !important;
+                            }
+                        }
 
-                    &.dx-editor-cell {
-                        padding: 0 5px !important;
-                        line-height: initial;
+                        &.fontNameOpenSans {
+                            &, div, input {
+                                font-family: "Open Sans" !important;
+                            }
+                        }
 
-                        input {
-                            height: 36px;
-                            display: inline-block;
+                        &.fontNameKameron {
+                            &, div, input {
+                                font-family: Kameron !important;
+                            }
+                        }
+
+                        &.fontNameWorkSans {
+                            &, div, input {
+                                font-family: Work Sans !important;
+                            }
+                        }
+
+                        &.editable {
+                            cursor: cell;
+                        }
+
+                        &.dx-editor-cell {
+                            padding: 0!important;
+                            line-height: initial;
+                            text-align: left !important;
+                            input {
+                                height: 36px;
+                                display: inline-block;
+                                position: relative;
+                                background-color: initial;
+                                border: solid 1px #e5e9ec;
+                            }
+                            .dx-checkbox-container {
+                                height: 20px;
+                            }
+                        }
+
+                        &.statusField {
                             position: relative;
-                            background-color: initial;
-                            border: solid 1px #e5e9ec;
+
+                            &:before {
+                                content: '';
+                                position: absolute;
+                                width: 7px;
+                                border-radius: 50%;
+                                height: 7px;
+                                top: 0;
+                                left: 5px;
+                                bottom: 0;
+                                margin: auto;
+                            }
+
+                            &.projected,
+                            &.historical {
+                                color: #fe871a;
+
+                                &:before {
+                                    background-color: #fe871a;
+                                }
+                            }
+
+                            &.completed {
+                                color: #a6d7a9;
+
+                                &:before {
+                                    background-color: #a6d7a9;
+                                }
+                            }
+                        }
+
+                        &.inflows div {
+                            color: #61c670;
+                            background-color: rgba(97, 198, 112, 0.1);
+                        }
+
+                        &.outflows div {
+                            color: #e7326a;
+                            background-color: rgba(231, 50, 106, 0.1);
+                        }
+
+                        &.inflows,
+                        &.outflows {
+                            div {
+                                border-radius: 11px;
+                                max-width: 89px;
+                                text-align: center;
+                            }
+                        }
+
+                        .dx-invalid-message {
+                            display: none;
                         }
                     }
 
-                    &.statusField {
-                        position: relative;
+                    &.dx-selection {
+                        td {
+                            background-color: rgba(0, 174, 239, 0.05);
+                        }
+                    }
 
-                        &:before {
-                            content: '';
-                            position: absolute;
-                            width: 7px;
-                            border-radius: 50%;
-                            height: 7px;
-                            top: 0;
-                            left: 5px;
-                            bottom: 0;
-                            margin: auto;
+                    &.forecastRow,
+                    &.adjustmentRow {
+                        td.dx-command-select {
+                            pointer-events: none;
+                            .dx-select-checkbox {
+                                display: none;
+                            }
                         }
 
                         &.projected {
-                            color: #fe871a;
-
-                            &:before {
-                                background-color: #fe871a;
+                            td.forecastDate {
+                                position: relative;
+                                &:before {
+                                    position: absolute;
+                                    content: '!';
+                                    left: 2px;
+                                    display: block;
+                                    color: #f89800;
+                                    font-weight: 800;
+                                    font-size: 18px;
+                                    top: 3px;
+                                    font-family: Montserat;
+                                }
                             }
                         }
 
-                        &.completed {
-                            color: #a6d7a9;
-
-                            &:before {
-                                background-color: #a6d7a9;
-                            }
+                        &.dx-selection td {
+                            background-color: initial;
+                            border: none;
                         }
-                    }
 
-                    &.inflows div {
-                        color: #61c670;
-                        background-color: rgba(97, 198, 112, 0.1);
-                    }
-
-                    &.outflows div {
-                        color: #e7326a;
-                        background-color: rgba(231, 50, 106, 0.1);
-                    }
-
-                    &.inflows,
-                    &.outflows {
-                        div {
-                            border-radius: 11px;
-                            text-align: center;
+                        &.dx-selection.dx-row-alt td {
+                            background-color: #f3f7fa;
+                            border: none;
                         }
-                    }
-
-                    .dx-invalid-message {
-                        display: none;
                     }
                 }
+            }
 
-                &.dx-selection {
-                    td {
-                        background-color: rgba(0, 174, 239, 0.05);
-                    }
+            .dx-datagrid {
+                .dx-row-alt > td {
+                    background: #f3f7fa;
                 }
 
-                &.forecastRow,
-                &.adjustmentRow {
-                    td.dx-command-select {
-                        pointer-events: none;
-                        .dx-select-checkbox {
-                            display: none;
-                        }
-                    }
+                .dx-column-lines > td {
+                    border-right: 0;
+                    border-left: 0;
+                }
 
-                    &.projected {
-                        /** If nth child is forecast date, else - change it */
-                        td:nth-child(2) {
-                            position: relative;
-
-                            &:before {
-                                position: absolute;
-                                content: '!';
-                                left: 2px;
-                                display: block;
-                                color: #f89800;
-                                font-weight: 800;
-                                font-size: 18px;
-                            }
-                        }
-                    }
-
-                    &.dx-selection td {
-                        background-color: initial;
-                        border: none;
-                    }
-
-                    &.dx-selection.dx-row-alt td {
-                        background-color: #f3f7fa;
-                        border: none;
-                    }
+                .dx-datagrid-focus-overlay {
+                    border: none;
                 }
             }
         }
 
-        .dx-datagrid {
-            .dx-row-alt > td {
-                background: #f3f7fa;
-            }
-
-            .dx-column-lines > td {
-                border-right: 0;
-                border-left: 0;
-            }
-
-            .dx-datagrid-focus-overlay {
-                border: none;
+        /deep/ .headline-title .header-names {
+            @media (max-width: 1400px) {
+                max-width: 400px;
             }
         }
     }
 
-    /deep/ .headline-title .header-names {
-        @media (max-width: 1400px) {
-            max-width: 400px;
-        }
-    }
 }
 
 /deep/ .dx-overlay-content {

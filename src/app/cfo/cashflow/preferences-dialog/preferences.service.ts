@@ -40,4 +40,8 @@ export class UserPreferencesService {
     removeLocalModel() {
         this._cacheService.remove(this.cacheKey);
     }
+
+    getClassNameFromPreference(preference: {sourceName: string, sourceValue: string}) {
+        return preference['sourceName'] + preference['sourceValue'].replace(/ /g, '');
+    }
 }
