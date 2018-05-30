@@ -29333,8 +29333,8 @@ export class CustomerInfoDto implements ICustomerInfoDto {
     assignedUserId: number;
     starId: number;
     ratingId: number;
-    tags: string[];
-    lists: string[];
+    tags: number[];
+    lists: number[];
     score: number;
     primaryContactInfo: PersonContactInfoDto;
     organizationContactInfo: OrganizationContactInfoDto;
@@ -29433,8 +29433,8 @@ export interface ICustomerInfoDto {
     assignedUserId: number;
     starId: number;
     ratingId: number;
-    tags: string[];
-    lists: string[];
+    tags: number[];
+    lists: number[];
     score: number;
     primaryContactInfo: PersonContactInfoDto;
     organizationContactInfo: OrganizationContactInfoDto;
