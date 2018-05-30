@@ -35202,6 +35202,7 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
     lists: CustomerListInput[];
     assignedUserId: number;
     ratingId: number;
+    groupByCompany: boolean;
 
     constructor(data?: IImportLeadBusinessesInput) {
         if (data) {
@@ -35226,6 +35227,7 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
+            this.groupByCompany = data["groupByCompany"];
         }
     }
 
@@ -35249,6 +35251,7 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
+        data["groupByCompany"] = this.groupByCompany;
         return data; 
     }
 }
@@ -35258,6 +35261,7 @@ export interface IImportLeadBusinessesInput {
     lists: CustomerListInput[];
     assignedUserId: number;
     ratingId: number;
+    groupByCompany: boolean;
 }
 
 export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
