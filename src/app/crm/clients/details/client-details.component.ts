@@ -56,7 +56,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         {'label': 'Notes', 'route': 'notes'}
     ];
 
-    rightPanelSetting: any = {};
+    rightPanelSetting: any = {
+        clientScores: true,
+        totalApproved: true,
+        verification: true
+    };
 
     private rootComponent: any;
     private paramsSubscribe: any = [];
