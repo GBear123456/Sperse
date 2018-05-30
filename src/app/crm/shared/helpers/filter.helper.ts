@@ -97,8 +97,8 @@ export class FilterHelpers {
         let maxRating = ratings[ratings.length - 1].id;
         let result = 
         { 
-            from: new FilterItemModel(minRating),
-            to: new FilterItemModel(maxRating),
+            from: new FilterItemModel(),
+            to: new FilterItemModel(),
             element:  new FilterRangeModel({
                 min: minRating,
                 max: maxRating,
