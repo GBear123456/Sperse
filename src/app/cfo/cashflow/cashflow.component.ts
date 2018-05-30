@@ -4323,6 +4323,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         element.appendChild(this.functionButton.element());
         element.appendChild(this.modifyingCellNumberBox.element());
+        this.modifyingCellNumberBox.element().querySelector('input.dx-texteditor-input')['style'].fontSize = this.cashflowGridSettings.visualPreferences.fontSize;
         this.modifyingCellNumberBox.focus();
         element = null;
         this.modifyingNumberBoxCellObj = cellObj;
