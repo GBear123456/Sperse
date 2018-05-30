@@ -3229,13 +3229,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDragEnd(e) {
         e.preventDefault();
         e.stopPropagation();
-        let targetCell = this.getCellElementFromTarget(e.target);
+        const targetCell = this.getCellElementFromTarget(e.target);
         if (targetCell && this.elementIsDataCell(targetCell)) {
+            const hoveredElements = document.querySelectorAll(':hover');
+            const lastHoveredElement = hoveredElements[hoveredElements.length - 1];
+            const hoveredCell = this.getCellElementFromTarget(lastHoveredElement);
+            if (hoveredCell && this.elementIsDataCell(hoveredCell)) {
+                /** Show messages */
+                const targetCellObj = this.getCellObjectFromCellElement(hoveredCell);
+                const targetInterval = this.formattingDate(targetCellObj.cell.columnPath);
+                const currentDate = this.getUtcCurrentDate();
+                if (targetInterval.endDate.isBefore(currentDate)) {
+                    this.notify.error(this.l('SelectFutureDate'));
+                } else {
+                    this.notify.error(this.l('SelectCategory'));
+                }
+            }
+
             targetCell.classList.remove('dragged');
             $('[droppable]').removeClass('currentDroppable');
             $('[droppable]').attr('droppable', 'false');
         }
-        targetCell = null;
         this.dragImg.style.display = 'none';
         document.removeEventListener('dxpointermove', this.stopPropagation);
     }
@@ -3316,7 +3330,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 e => { console.log(e); this.notify.error(e); },
                 () => {
                     this.updateDataSource();
-                    this.notify.success(this.l('AppliedSuccessfully'));
+                    this.notify.success(this.l('Cell_moved'));
                 }
             );
         }
@@ -4012,7 +4026,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 let localItems = this.getDataItemsByCell(sourceCellObject);
                                 this.createForecastsFromCopiedItems(res, copyItemsModels.forecasts, sourceCellInfo);
                                 this.updateDataSource();
-                                this.notify.success(this.l('SavedSuccessfully'));
+                                this.notify.success(this.l('Cell_pasted'));
                             }
                         }
                     );
@@ -4139,7 +4153,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     });
 
                                     this.updateDataSource();
-                                    this.notify.success(this.l('Cell_deleted'));
+                                    this.notify.success(this.l('Forecasts_deleted'));
                                 });
                         }
                     }
@@ -4389,6 +4403,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload();
+                    this.notify.success(this.l('Forecasts_added'));
                     abp.ui.clearBusy();
                 });
         }
