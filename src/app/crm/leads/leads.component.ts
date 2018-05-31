@@ -67,13 +67,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
+    private _selectedLeads: any;
+    get selectedLeads() {
+        return this._selectedLeads || [];
+    }
+    set selectedLeads(leads) {
+        this._selectedLeads = leads;
+        this.selectedClientKeys = [];
+        leads.forEach((lead) => {
+            if (lead && lead.CustomerId)
+                this.selectedClientKeys.push(lead.CustomerId);
+        });
+        this.initToolbarConfig();
+    }
+
+    stages = [];
     firstRefresh = false;
     pipelineDataSource: any;
     collection: any;
     showPipeline = true;
-    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
-    selectedLeads = [];
-    stages = [];
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;   
     selectedClientKeys = [];
 
     filterModelLists: FilterModel;
@@ -182,14 +195,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleDataLayout(dataLayoutType) {
+        this.selectedClientKeys = [];
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        if (this.showPipeline) {
-            this.selectedClientKeys = [];
+        if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
-        } else
+        else {
+            this.pipelineComponent.deselectAllCards();
             setTimeout(() => this.dataGrid.instance.repaint());
+        }
         if (this.filterChanged) {
             this.filterChanged = false;
             setTimeout(() => this.processFilterInternal());
@@ -574,12 +589,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onSelectionChanged($event) {
         this.selectedLeads = $event.component.getSelectedRowsData();
-        this.selectedClientKeys = [];
-        this.selectedLeads.forEach((item) => {
-            if (item.CustomerId)
-                this.selectedClientKeys.push(item.CustomerId);
-        });
-        this.initToolbarConfig();
     }
 
     onStagesLoaded($event) {

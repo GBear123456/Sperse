@@ -15,16 +15,31 @@ import DataSource from 'devextreme/data/data_source';
 @Component({
     selector: 'app-pipeline',
     templateUrl: './pipeline.component.html',
-    styleUrls: ['./pipeline.component.less']
+    styleUrls: ['./pipeline.component.less'],
+    host: {
+        '(window:keyup)': 'onKeyUp($event)' 
+    }
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
+    private _selectedLeads: any;
     private _dataSource: DataSource;
     private loadStageIndex: number;
     private refreshTimeout: any;
-
+    private shiftStartLead: any;
+    
+    @Output() selectedLeadsChange = new EventEmitter<any>();    
+    @Input() 
+    get selectedLeads() {
+        return this._selectedLeads || [];
+    }
+    set selectedLeads(leads) {
+        this._selectedLeads = leads;
+        this.selectedLeadsChange.emit(this._selectedLeads);
+    }
+    
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
@@ -32,6 +47,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.refresh();
     }
     @Input() pipelinePurposeId: string;
+
     pipeline: PipelineDto;
     stages: StageDto[];
     dragulaName = 'stage';
@@ -51,6 +67,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     refresh(quiet = false, addedNew = false) {
+        this.selectedLeads = [];
         if (!this.refreshTimeout) {
             if (!quiet)
                 this.startLoading();
@@ -78,7 +95,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     getStageByElement(el) {
         return _.find(this.stages, (stage) => {
-            return stage && (stage.name == this.getAccessKey(el.closest('.column-items')));
+            return stage && (stage.name == (el.getAttribute('stage') || this.getAccessKey(el)));
         });
     }
 
@@ -129,28 +146,46 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 / this.STAGE_PAGE_COUNT), true);
     }
 
+    updateLeadStage(leadId, newStage, oldStage, complete = null) {
+        if (leadId && newStage != oldStage) {
+            this.disabled = true;
+            this._pipelineService.updateLeadStageByLeadId(
+                leadId, oldStage, newStage, () => {
+                    this.stages.every((stage, index) => {
+                        let result = (stage.name == oldStage);
+                        if (result && stage['total'] && !stage['leads'].length) {
+                            this.loadStageIndex = index;
+                            this.loadStagesLeads(0, true);
+                            this.startLoading();
+                        }
+                        return !result;
+                    });
+                    this.disabled = false;
+                    complete && complete();
+                }
+            );
+        }
+    }
+
     ngOnInit() {
          this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             let leadId = this.getAccessKey(value[1]),
-                newStage = this.getAccessKey(value[2]),
-                oldStage = this.getAccessKey(value[3]);
-            if (leadId && newStage != oldStage) {
-                this.disabled = true;
-                this._pipelineService.updateLeadStageByLeadId(
-                    leadId, oldStage, newStage, () => {
-                        this.disabled = false;
-                        this.stages.every((stage, index) => {
-                            let result = (stage.name == oldStage);
-                            if (result && stage['total'] && !stage['leads'].length) {
-                                this.loadStageIndex = index;
-                                this.loadStagesLeads(0, true);
-                                this.startLoading();
+                newStage = this.getStageByElement(value[2]),
+                oldStage = this.getStageByElement(value[3]);
+            
+            if (value[1].classList.contains('selected')) {
+                this.getSelectedLeads().forEach((lead) => {
+                    if (lead && lead.Stage != newStage.name)
+                        this.updateLeadStage(lead.Id, newStage.name, lead.Stage, () => {
+                            if (lead.Id != leadId) {
+                                newStage['leads'].unshift(lead);
+                                oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
                             }
-                            return !result;
                         });
-                    }
-                );
-            }
+                });                
+                this.selectedLeads = [];
+            } else            
+                this.updateLeadStage(leadId, newStage.name, oldStage.name);
         }));
         this.subscribers.push(
             this._dragulaService.dragend.subscribe((value) => {
@@ -161,7 +196,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._dragulaService.setOptions(this.dragulaName, {
             ignoreInputTextSelection: false,
             moves: (el, source) => {
-                let stage = this.getStageByElement(source);
+                if (el.classList.contains('selected')) {
+                    let cards = this.getSelectedCards();
+                    if (cards.length)
+                        el.setAttribute('count', cards.length);
+                }
+
+                let stage = this.getStageByElement(el);
                 setTimeout(() => {
                     if (stage)
                         stage.accessibleActions.forEach((action) => {
@@ -214,15 +255,89 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    onCardClick($event) {
-        this.hideStageHighlighting();
+    getSelectedCards() {
+        return document.getElementsByClassName('card selected');
     }
 
-    openDetails(leadId, clientId) {
+    getSelectedLeads() {
+        return [].map.call(this.getSelectedCards(), (card) => {
+            return !card.classList.contains('gu-mirror') && 
+                this.getLeadByElement(card, this.getStageByElement(card));
+        }).filter(Boolean);
+    }
+
+    highlightSelectedCard(event) {
+        let card;
+        event.path.every((elm) => {
+            let isCard = elm.classList.contains('card');
+            if (isCard) {
+                card = elm;
+                elm.classList.toggle('selected');
+            }
+            return !isCard;    
+        });        
+        return card && card.classList
+            .contains('selected');
+    }
+
+    deselectAllCards() {
+        let elements = this.getSelectedCards();
+        while(elements.length)
+            elements[0].classList.remove('selected');
+    }
+
+    getCardByPath(path) {
+        let card;
+        path.every((elm) => {
+            let isCard = elm.classList.contains('card');
+            if (isCard)
+                card = elm;
+            return !isCard;
+        });
+        return card;
+    }
+
+    checkHighlightShiftArea(lead) {
+        if (this.shiftStartLead && 
+            this.shiftStartLead.Stage == lead.Stage
+        ) {
+            let startCard: any = document.querySelector('[accessKey="' + this.shiftStartLead.Id + '"]'),
+                endCard: any = document.querySelector('[accessKey="' + lead.Id + '"]');
+
+            if (startCard.offsetTop > endCard.offsetTop) {
+                let stored = startCard;
+                startCard = endCard;
+                endCard = stored;
+            }
+            
+            while(startCard != endCard) {
+                if (startCard.nodeType == Node.ELEMENT_NODE)
+                    startCard.classList.add('selected');
+                startCard = startCard.nextSibling;
+            } 
+            endCard.classList.add('selected');
+        } else 
+            this.shiftStartLead = lead;
+    }
+
+    onKeyUp(event) {
+        if (event.keyCode == 16/*SHIFT*/)
+            this.shiftStartLead = null;
+    }
+
+    onCardClick(lead, event) {
+         if (event.ctrlKey || event.shiftKey) {            
+            if ((this.highlightSelectedCard(event) || this.shiftStartLead) && event.shiftKey)
+                this.checkHighlightShiftArea(lead);
+            this.selectedLeads = this.getSelectedLeads();            
+         } else
+            lead && this._router.navigate(
+                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
+                    queryParams: {
+                    referrer: 'app/crm/leads',
+                    dataLayoutType: DataLayoutType.Pipeline
+                }
+            });
         this.hideStageHighlighting();
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'], {queryParams: {
-            referrer: 'app/crm/leads',
-            dataLayoutType: DataLayoutType.Pipeline
-        }});
     }
 }
