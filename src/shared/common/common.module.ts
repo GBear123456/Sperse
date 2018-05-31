@@ -26,6 +26,7 @@ import { SelectionFilterComponent } from '@shared/common/widgets/selection-filte
 import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
 import { PhoneFormatPipe } from './pipes/phone-format.pipe';
+import { AddressFormatPipe } from './pipes/address-format.pipe';
 
 @NgModule({
     declarations: [
@@ -35,6 +36,7 @@ import { PhoneFormatPipe } from './pipes/phone-format.pipe';
         NoDataComponent,
         BankAccountsWidgetComponent,
         PhoneFormatPipe,
+        AddressFormatPipe,
         SelectionFilterComponent,
         InfoComponent
     ],
@@ -44,6 +46,7 @@ import { PhoneFormatPipe } from './pipes/phone-format.pipe';
         ModalDialogComponent,
         NoDataComponent,
         PhoneFormatPipe,
+        AddressFormatPipe,
         BankAccountsWidgetComponent,
         SelectionFilterComponent,
         InfoComponent,
