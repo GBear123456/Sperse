@@ -326,9 +326,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             return this.notify.error(this.l('FullNameIsRequired'));
         }
 
-        if (!this.validateMultiple(this.emailValidators) || 
-            !this.validateMultiple(this.phoneValidators) || 
-            !this.validateMultiple(this.addressValidators)
+        if (!this.validateMultiple(this.emailValidators) ||
+            !this.validateMultiple(this.phoneValidators)
         )
             return ;
 
@@ -400,17 +399,25 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
               streetAddressParts.push(address.streetAddress);
           if (address.streetNumber)
               streetAddressParts.push(address.streetNumber);
-        let streetAddress = streetAddressParts.join(' ');
-        return streetAddress ? {
-            streetAddress: streetAddress,
-            city: address.city,
-            stateId: this.getStateCode(address.state),
-            zip: address.zip,
-            countryId: this.getCountryCode(address.country),
-            isActive: true,
-            comment: address.comment,
-            usageTypeId: address.addressType
-        } as CreateContactAddressInput: undefined;
+        let streetAddress = streetAddressParts.length ? streetAddressParts.join(' ') : address.address;
+        if (streetAddress ||
+            address.city ||
+            address.state ||
+            address.zip ||
+            address.country) {
+            return {
+                streetAddress: streetAddress,
+                city: address.city,
+                stateId: this.getStateCode(address.state),
+                zip: address.zip,
+                countryId: this.getCountryCode(address.country),
+                isActive: true,
+                comment: address.comment,
+                usageTypeId: address.addressType
+            } as CreateContactAddressInput;
+        } else {
+            return undefined;
+        }
     }
 
     redirectToClientDetails(id: number, leadId?: number) {

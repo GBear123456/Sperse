@@ -122,7 +122,7 @@
                     <span [class]="website && 'clear-contact' || 'hidden'" (click)="website = ''">+</span>
                 </div>
               </dx-validation-group>
-              <dx-validation-group (onInitialized)="initValidationGroup($event, 'addressValidators')">
+              <dx-validation-group>
                   <div class="field addr address H">
                       <label>{{l('Address')}}</label>                   
                       <input *ngIf="!googleAutoComplete" type="text"
@@ -162,12 +162,8 @@
                           name="city"
                           maxLength="50"
                           placeholder="{{l('City')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [(value)]="contacts.addresses[type].city">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('CityRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-text-box>
                   </div>
                   <div class="field addr">
@@ -178,13 +174,9 @@
                           valueExpr="name"
                           name="state"
                           placeholder="{{l('State')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [searchEnabled]="true"
                           [(value)]="contacts.addresses[type].state">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('StateRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-select-box>
                   </div>
                   <div class="field addr">
@@ -193,12 +185,8 @@
                           name="zip"
                           maxLength="5"
                           placeholder="{{l('Zip')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [(value)]="contacts.addresses[type].zip">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('ZipIsRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-text-box>
                   </div>
                   <div class="field">
@@ -209,14 +197,10 @@
                           valueExpr="name"
                           name="country"
                           placeholder="{{l('Country')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [searchEnabled]="true"
                           [(value)]="contacts.addresses[type].country"
                           (onValueChanged)="onCountryChange($event)">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('CountryRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-select-box>
                   </div>
                   <div class="field" *ngIf="type == 'personal'">
