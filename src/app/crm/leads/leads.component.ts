@@ -134,7 +134,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this.searchColumns = [
             {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Equals}
+            {name: 'Email', strategy: ODataSearchStrategy.Equals},
+            {name: 'City', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'State', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'StateId', strategy: ODataSearchStrategy.Equals}
         ];
         FilterHelpers.nameParts.forEach(x => {
             this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
