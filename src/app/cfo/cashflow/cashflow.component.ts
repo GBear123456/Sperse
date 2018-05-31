@@ -1783,7 +1783,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     getStubsInterval(minDate: moment.Moment, maxDate: moment.Moment, existingPeriods: string[], periodFormat: string): { startDate: moment.Moment, endDate: moment.Moment } {
 
-        let currentDate = this.getUtcCurrentDate();
+        let currentDate = this.cashflowService.getUtcCurrentDate();
         let filterStart = this.requestFilter.startDate;
         let filterEnd = this.requestFilter.endDate;
 
@@ -2303,7 +2303,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         } else if (columnField.caption === 'Historical') {
             columnFieldValueForCurrent = Periods.Current;
         } else {
-            let currentDate = this.getUtcCurrentDate();
+            let currentDate = this.cashflowService.getUtcCurrentDate();
             if (columnField.dataType === 'date') {
                 let method = columnField.groupInterval === 'day' ? 'date' : columnField.groupInterval;
                 columnFieldValueForCurrent = method === 'month' ? currentDate[method]() + 1 : currentDate[method]();
@@ -3045,9 +3045,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             /** add draggable and droppable attribute to the cells that can be dragged */
-            if (this.cellCanBeDragged(cell, area) && (this.isEnableForecastAdding() || this.cellIsHistorical(cell))) {
+            if (this.cellCanBeDragged(cell, area)) {
                 options.attributes['draggable'] = 'true';
                 options.attributes['droppable'] = 'false';
+                if (!this.cellIsHistorical(cell)) {
+                    const cellDateInterval = this.formattingDate(cell.columnPath);
+                    const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+                    if (!this.cashflowService.cellIsAllowedForAddingForecast(cellDateInterval, futureForecastsYearsAmount)) {
+                        options.classes.push('outOfAllowedForecastsInterval');
+                    }
+                }
             }
 
             if (this.isReconciliationRows(cell) && cell.value !== 0) {
@@ -3123,7 +3130,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     cellIsHistorical(cell) {
         let path = cell.path || cell.columnPath;
         let cellInterval = this.formattingDate(path);
-        let currentDate = this.getUtcCurrentDate();
+        let currentDate = this.cashflowService.getUtcCurrentDate();
         return cellInterval.endDate.isBefore(currentDate);
     }
 
@@ -3212,14 +3219,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     highlightForecastsTargetCells($targetCell, $availableRows) {
+        /** Exclude cells that are not in allowed forecasts amount interval */
+        const allowedForecastsYearAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+
         /** Exclude next current total row from droppable */
         let closestYearColumnTotalSelector = !$targetCell.hasClass('dx-total')
             ? `:not(:nth-child(${$targetCell.nextAll('.dx-total').index() + 1}))`
             : '';
-        let nextCellsSelectors = `[droppable][class*="next"]:not(.selectedCell)${closestYearColumnTotalSelector}`;
+        let nextCellsSelectors = `[droppable][class*="next"]:not(.outOfAllowedForecastsInterval):not(.selectedCell)${closestYearColumnTotalSelector}`;
         $availableRows.find(nextCellsSelectors).attr('droppable', 'true');
-        $availableRows.find(`[droppable][class*="current"]:not(.selectedCell):not(.currentYear.dx-total)`).attr('droppable', 'true');
-        $availableRows.find(`[droppable]:not(.selectedCell) > span`).attr('droppable', 'true');
+        $availableRows.find(`[droppable][class*="current"]:not(.outOfAllowedForecastsInterval):not(.selectedCell):not(.currentYear.dx-total)`).attr('droppable', 'true');
+        $availableRows.find(`[droppable]:not(.outOfAllowedForecastsInterval):not(.selectedCell) > span`).attr('droppable', 'true');
     }
 
     stopPropagation(e) {
@@ -3229,13 +3239,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDragEnd(e) {
         e.preventDefault();
         e.stopPropagation();
-        let targetCell = this.getCellElementFromTarget(e.target);
+        const targetCell = this.getCellElementFromTarget(e.target);
         if (targetCell && this.elementIsDataCell(targetCell)) {
+            const hoveredElements = document.querySelectorAll(':hover');
+            const lastHoveredElement = hoveredElements[hoveredElements.length - 1];
+            const hoveredCell = this.getCellElementFromTarget(lastHoveredElement);
+            if (hoveredCell && this.elementIsDataCell(hoveredCell) && hoveredCell !== targetCell
+                && hoveredCell.getAttribute('droppable') !== 'true') {
+                /** Show messages */
+                const targetCellObj = this.getCellObjectFromCellElement(hoveredCell);
+                const targetInterval = this.formattingDate(targetCellObj.cell.columnPath);
+                const currentDate = this.cashflowService.getUtcCurrentDate();
+                const forecastsYearCount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+                if (targetInterval.endDate.isBefore(currentDate)) {
+                    this.notify.error(this.l('SelectFutureDate'));
+                } else if (!this.cashflowService.cellIsAllowedForAddingForecast(targetInterval, forecastsYearCount)) {
+                    this.notify.error(this.l('ForecastIsProjectedTooFarAhead'));
+                } else {
+                    this.notify.error(this.l('SelectCategory'));
+                }
+            }
+
             targetCell.classList.remove('dragged');
             $('[droppable]').removeClass('currentDroppable');
             $('[droppable]').attr('droppable', 'false');
         }
-        targetCell = null;
         this.dragImg.style.display = 'none';
         document.removeEventListener('dxpointermove', this.stopPropagation);
     }
@@ -3316,7 +3344,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 e => { console.log(e); this.notify.error(e); },
                 () => {
                     this.updateDataSource();
-                    this.notify.success(this.l('AppliedSuccessfully'));
+                    this.notify.success(this.l('Cell_moved'));
                 }
             );
         }
@@ -3382,7 +3410,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let date, forecastModel;
         let forecastModels = {'forecasts': []};
         forecasts.forEach(forecast => {
-            date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, forecast.forecastDate);
+            date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, forecast.forecastDate.utc());
             forecastModel = new UpdateForecastInput({
                 id: forecast.forecastId,
                 date: moment(date),
@@ -3416,13 +3444,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     createCopyItemsModels(transactions: CashFlowStatsDetailDto[], sourceCellInfo: CellInfo, targetsData: CellInfo[]): CreateForecastsInput {
-        let date, forecastModel;
         let forecastsItems: AddForecastInput[] = [];
         let activeAccountIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.requestFilter.accountIds);
         targetsData.forEach((target, index) => {
             transactions.forEach(transaction => {
                 let transactionDate = transaction.forecastDate || transaction.date;
-                date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, transactionDate.utc());
+                let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, transactionDate.utc());
                 let transactionAccountId = this.bankAccounts.find(account => account.accountNumber === transaction.accountNumber).id;
                 let accountId = this.cashflowService.getActiveAccountId(activeAccountIds, transactionAccountId);
                 let data = {
@@ -3438,7 +3465,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
-                forecastModel = new AddForecastInput(combinedData);
+                let forecastModel = new AddForecastInput(combinedData);
                 if (forecastModel) {
                     forecastsItems.push(forecastModel);
                 }
@@ -3493,6 +3520,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getDateForForecast(targetCaption, targetStartDate, targetEndDate, sourceDate) {
         let date = moment(targetStartDate);
+        sourceDate = sourceDate.utc();
         /** if targetCellDate doesn't have certain month or day - get them from the copied transactions */
         if (['year', 'quarter', 'month'].indexOf(targetCaption) !== -1) {
             if (targetCaption === 'quarter') {
@@ -3506,10 +3534,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** If current date is in target interval and is bigger then forecast date - then use current date as current */
-        let currentDate = this.getUtcCurrentDate();
+        let currentDate = this.cashflowService.getUtcCurrentDate();
         if (currentDate.isBetween(date, targetEndDate, 'days', '(]')) {
             date = currentDate;
+        } else {
+            /** If date is after allowed last date for forecasts year feature - get this last date */
+            const forecastsYearCount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+            if (forecastsYearCount) {
+                const allowedForecastsInterval = this.cashflowService.getAllowedForecastsInterval(forecastsYearCount);
+                if (date.isAfter(allowedForecastsInterval.endDate)) {
+                    date = allowedForecastsInterval.endDate;
+                }
+            }
         }
+
+        /** @todo discuss and handle situation if end of filter is before current day and we move or copy to the current quarter/month etc */
+        /** If date is after filter end date - use filter end date */
+        // if (this.requestFilter.endDate && date.isAfter(this.requestFilter.endDate)) {
+        //     date = this.requestFilter.endDate;
+        // }
 
         return date;
     }
@@ -4012,7 +4055,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 let localItems = this.getDataItemsByCell(sourceCellObject);
                                 this.createForecastsFromCopiedItems(res, copyItemsModels.forecasts, sourceCellInfo);
                                 this.updateDataSource();
-                                this.notify.success(this.l('SavedSuccessfully'));
+                                this.notify.success(this.l('Cell_pasted'));
                             }
                         }
                     );
@@ -4139,7 +4182,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     });
 
                                     this.updateDataSource();
-                                    this.notify.success(this.l('Cell_deleted'));
+                                    this.notify.success(this.l('Forecasts_deleted'));
                                 });
                         }
                     }
@@ -4148,10 +4191,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
+        const cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
+        const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
         return (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE)
-            && this.isEnableForecastAdding()
-            && !this.isCashflowTypeRowTotal(cellObj.cell, cellObj.area) && !this.isAccountingRowTotal(cellObj.cell, cellObj.area) && this.cellIsNotHistorical(cellObj) &&
-            cellObj.cell.columnType !== Total;
+            && !this.isCashflowTypeRowTotal(cellObj.cell, cellObj.area)
+            && !this.isAccountingRowTotal(cellObj.cell, cellObj.area)
+            && this.cellIsNotHistorical(cellObj)
+            && this.cashflowService.cellIsAllowedForAddingForecast(cellDateInterval, futureForecastsYearsAmount)
+            && cellObj.cell.columnType !== Total;
     }
 
     /** check the date - if it is mtd date - disallow editing, if today or projected - welcome on board */
@@ -4186,10 +4233,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountName
-                    // check feature
-                    && this.isEnableForecastAdding()
                 ) {
-                    this.handleForecastAdding(cellObj, result);
+                    const cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
+                    const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
+                    if (futureForecastsYearsAmount && !this.cashflowService.cellIsAllowedForAddingForecast(cellDateInterval, futureForecastsYearsAmount)) {
+                        this.notify.error(this.l('ForecastIsProjectedTooFarAhead'));
+                    } else {
+                        this.handleForecastAdding(cellObj, result);
+                    }
                 } else {
                     this.showTransactionDetail(result);
                 }
@@ -4235,21 +4286,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return StatsDetailFilter.fromJS(filterParams);
     }
 
-    isEnableForecastAdding() {
-        if (!abp.session.tenantId)
-            return true;
-
-        let futureForecastsYearCount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
-        if (!futureForecastsYearCount)
-            return false;
-
-        let possibleStartDate = moment().startOf('day');
-        let possibleEndDate = moment().add('day', -1).add('year', futureForecastsYearCount).endOf('day');
-        let date = this.statsDetailFilter.startDate > moment() ? this.statsDetailFilter.startDate : moment();
-
-        return (date >= possibleStartDate && date <= possibleEndDate);
-    }
-
     handleForecastAdding(cellObj, details) {
         let element: HTMLElement = cellObj.cellElement;
         /** if the modifying input has already exists */
@@ -4287,6 +4323,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         element.appendChild(this.functionButton.element());
         element.appendChild(this.modifyingCellNumberBox.element());
+        this.modifyingCellNumberBox.element().querySelector('input.dx-texteditor-input')['style'].fontSize = this.cashflowGridSettings.visualPreferences.fontSize;
         this.modifyingCellNumberBox.focus();
         element = null;
         this.modifyingNumberBoxCellObj = cellObj;
@@ -4354,7 +4391,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let categoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
             let subCategoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.SubCategory);
             let transactionDescriptor = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
-            let currentDate = this.getUtcCurrentDate();
+            let currentDate = this.cashflowService.getUtcCurrentDate();
             let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
             let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.modifyingNumberBoxStatsDetailFilter.bankAccountIds);
             let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : (this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id);
@@ -4389,14 +4426,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload();
+                    this.notify.success(this.l('Forecasts_added'));
                     abp.ui.clearBusy();
                 });
         }
         this.removeModifyingCellNumberBox();
-    }
-
-    getUtcCurrentDate(): moment.Moment {
-        return moment.tz( moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
     }
 
     /**
@@ -5133,7 +5167,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** If date is lower then the current date - return false */
     validateForecastDate = e => {
-        let currentDate = this.getUtcCurrentDate();
+        let currentDate = this.cashflowService.getUtcCurrentDate();
         let timezoneOffset = e.value.getTimezoneOffset();
         let forecastDate = moment(e.value).utc().subtract(timezoneOffset, 'minutes');
         let dateIsValid = forecastDate.isSameOrAfter(currentDate);

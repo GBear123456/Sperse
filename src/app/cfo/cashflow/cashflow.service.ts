@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CellInfo } from './models/cell-info';
+import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import { BankAccountDto } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
+import * as moment from 'moment';
 
 @Injectable()
 export class CashflowService {
@@ -81,6 +83,33 @@ export class CashflowService {
         return activeAccountIds && activeAccountIds.length ?
                accountId && (activeAccountIds.indexOf(accountId) !== -1 ? accountId : activeAccountIds[0]) :
                accountId;
+    }
+
+    /**
+     * Gets current date with 00:00:00 time
+     * @returns {moment.Moment}
+     */
+    getUtcCurrentDate(): moment.Moment {
+        return moment.tz(moment().format('YYYY-MM-DD') + 'T00:00:00', 'UTC');
+    }
+
+    /**
+     * Get forecasts interval for adding forecasts
+     * @param futureForecastsYearCount
+     * @returns {CellInterval}
+     */
+    getAllowedForecastsInterval(forecastsYearCount: number): CellInterval {
+        const currentDate = this.getUtcCurrentDate();
+        return {
+            startDate: currentDate,
+            endDate: moment(currentDate).add('day', -1).add('year', forecastsYearCount).endOf('day')
+        };
+    }
+
+    cellIsAllowedForAddingForecast(cellInterval: CellInterval, futureForecastsYearCount: number): boolean {
+        const allowedForecastsInterval = this.getAllowedForecastsInterval(futureForecastsYearCount);
+        return cellInterval.endDate.isBefore(allowedForecastsInterval.endDate) ||
+               cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
     }
 
 }

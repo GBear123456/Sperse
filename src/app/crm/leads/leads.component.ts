@@ -27,6 +27,8 @@ import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.mo
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
+import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
+import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
@@ -145,7 +147,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this.searchColumns = [
             {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Equals}
+            {name: 'Email', strategy: ODataSearchStrategy.Equals},
+            {name: 'City', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'State', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'StateId', strategy: ODataSearchStrategy.Equals}
         ];
         FilterHelpers.nameParts.forEach(x => {
             this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
@@ -248,6 +253,31 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                     keyExpr: 'id'
                                 })
                         }
+                    }),
+                    new FilterModel({
+                        component: FilterStatesComponent,
+                        caption: 'states',
+                        items: {
+                            countryStates: new FilterStatesModel()
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'city',
+                        items: { City: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'streetAddress',
+                        items: { StreetAddress: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'zipCode',
+                        items: { ZipCode: new FilterItemModel() }
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
@@ -521,6 +551,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
 
         return data;
+    }
+
+    filterByStates(filter: FilterModel) {
+        return FilterHelpers.filterByStates(filter);
     }
 
     filterByAssignedUser(filter: FilterModel) {

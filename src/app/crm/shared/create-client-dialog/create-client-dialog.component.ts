@@ -62,10 +62,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     addressTypePersonalDefault = 'H';
     addressTypeBusinessDefault = 'W';
     addressTypes: any = [];
-    addressValidator: any;
-    emailValidator: any;
-    phoneValidator: any;
-    websiteValidator: any;
+    addressValidators: any = [];
+    emailValidators: any = [];
+    phoneValidators: any = [];
+    websiteValidators: any = [];
 
     emails = {};
     emailTypePersonalDefault = 'P';
@@ -321,21 +321,29 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             return this.saveContextComponent
                 .instance.option('visible', true);
 
-        if (!this.addressValidator.validate().isValid)
-            return ;
-        
         if (!this.person.firstName || !this.person.lastName) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsRequired'));
         }
+
+        if (!this.validateMultiple(this.emailValidators) ||
+            !this.validateMultiple(this.phoneValidators)
+        )
+            return ;
 
         this.checkAddContactByField('emails');
         this.checkAddContactByField('phones');
 
         if (!this.validateBusinessTab())
             return ;
-
+    
         this.createEntity();
+    }
+
+    private validateMultiple(validators): boolean{
+        let result = true;
+        validators.forEach((v) => { result = result && v.validate().isValid; });
+        return result;
     }
 
     validateBusinessTab() {
@@ -347,10 +355,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
 
-        if (!this.websiteValidator.validate().isValid)
-            return false;
-
-        return true;
+        return this.validateMultiple(this.websiteValidators);
     }
 
     checkAddContactByField(field) {
@@ -394,17 +399,25 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
               streetAddressParts.push(address.streetAddress);
           if (address.streetNumber)
               streetAddressParts.push(address.streetNumber);
-        let streetAddress = streetAddressParts.join(' ');
-        return streetAddress ? {
-            streetAddress: streetAddress,
-            city: address.city,
-            stateId: this.getStateCode(address.state),
-            zip: address.zip,
-            countryId: this.getCountryCode(address.country),
-            isActive: true,
-            comment: address.comment,
-            usageTypeId: address.addressType
-        } as CreateContactAddressInput: undefined;
+        let streetAddress = streetAddressParts.length ? streetAddressParts.join(' ') : address.address;
+        if (streetAddress ||
+            address.city ||
+            address.state ||
+            address.zip ||
+            address.country) {
+            return {
+                streetAddress: streetAddress,
+                city: address.city,
+                stateId: this.getStateCode(address.state),
+                zip: address.zip,
+                countryId: this.getCountryCode(address.country),
+                isActive: true,
+                comment: address.comment,
+                usageTypeId: address.addressType
+            } as CreateContactAddressInput;
+        } else {
+            return undefined;
+        }
     }
 
     redirectToClientDetails(id: number, leadId?: number) {
@@ -630,7 +643,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     initValidationGroup($event, validator) {
-        this[validator] = $event.component;
+        this[validator].push($event.component);
     }
 
     onKeyUp($event, field, type, data) {

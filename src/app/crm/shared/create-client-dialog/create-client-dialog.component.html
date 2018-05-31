@@ -36,7 +36,7 @@
                 </dx-text-box>
                 <span [class]="title && 'clear-contact' || 'hidden'" (click)="title = ''">+</span>
               </div>
-              <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidator')">
+              <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
                   <div class="field email">
                       <label>{{l('Email')}}</label>
                       <dx-text-box #emailComponent
@@ -64,43 +64,51 @@
               </dx-validation-group>
               <div class="field" *ngFor="let email of contacts.emails[type]; index as i">
                   <p class="{{email.type}}">{{email.email}}<span (click)="removeContact('emails', type, i)"></span></p>
-              </div>
-              <div class="field phone H">
-                  <label>{{l('Phone')}}</label>
-                  <dx-text-box
-                    class="tabular"
-                    name="phone"
-                    maskInvalidMessage="{{l('PhoneValidationError')}}"
-                    [mask]="masks.phone"
-                    [width]="'205px'"
-                    (onKeyUp)="onKeyUp($event, 'phones', type, phones)"
-                    (onFocusIn)="focusInput($event)"
-                    (onInitialized)="onComponentInitialized($event, 'phones', type)">
-                  </dx-text-box>
-                  <dx-number-box
-                    class="tabular"
-                    name="phoneExtension"
-                    [width]="'50px'"
-                    [placeholder]="l('Ext')"
-                    [(value)]="phoneExtension[type]">
-                  </dx-number-box>
-                  <dx-select-box
-                    width="100px"
-                    name="phoneType"
-                    [disabled]="!addButtonVisible[type]['phones']"
-                    placeholder="{{l('Type')}}"
-                    [dataSource]="phoneTypes"
-                    displayExpr="name"
-                    valueExpr="id"
-                    [value]="phoneType[type]"
-                    (onValueChanged)="onTypeChanged($event, 'phone', type)">
-                  </dx-select-box>
-                  <span [class]="addButtonVisible[type]['phones'] && 'add-contact' || clearButtonVisible[type]['phones'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible[type]['phones'] ? emptyInput('phones', type): addContact('phones', type)">+</span>
-              </div>
+			  </div>
+			  <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
+				<div class="field phone H">
+					<label>{{l('Phone')}}</label>
+					<dx-text-box
+						class="tabular"
+						name="phone"
+						maskInvalidMessage="{{l('PhoneValidationError')}}"
+						[mask]="masks.phone"
+						[width]="'205px'"
+						(onKeyUp)="onKeyUp($event, 'phones', type, phones)"
+						(onFocusIn)="focusInput($event)"
+						(onInitialized)="onComponentInitialized($event, 'phones', type)">
+                        <dx-validator>
+                          <dxi-validation-rule type="pattern" [pattern]="phoneRegEx" message="{{l('PhoneValidationError')}}."></dxi-validation-rule>
+                        </dx-validator>
+					</dx-text-box>
+					<dx-number-box
+						class="tabular"
+						name="phoneExtension"
+						[width]="'50px'"
+						[placeholder]="l('Ext')"
+						[(value)]="phoneExtension[type]">
+						<dx-validator>
+							<dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
+						</dx-validator>
+					</dx-number-box>
+					<dx-select-box
+						width="100px"
+						name="phoneType"
+						[disabled]="!addButtonVisible[type]['phones']"
+						placeholder="{{l('Type')}}"
+						[dataSource]="phoneTypes"
+						displayExpr="name"
+						valueExpr="id"
+						[value]="phoneType[type]"
+						(onValueChanged)="onTypeChanged($event, 'phone', type)">
+					</dx-select-box>
+					<span [class]="addButtonVisible[type]['phones'] && 'add-contact' || clearButtonVisible[type]['phones'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible[type]['phones'] ? emptyInput('phones', type): addContact('phones', type)">+</span>
+				</div>
+			  </dx-validation-group>
               <div class="field" *ngFor="let phone of contacts.phones[type]; index as i">
                   <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', type, i)"></span></p>
               </div>
-              <dx-validation-group *ngIf="type == 'business'" (onInitialized)="initValidationGroup($event, 'websiteValidator')">
+              <dx-validation-group *ngIf="type == 'business'" (onInitialized)="initValidationGroup($event, 'websiteValidators')">
                 <div class="field">
                     <label>{{l('Website')}}</label>
                     <dx-text-box #websiteComponent
@@ -114,7 +122,7 @@
                     <span [class]="website && 'clear-contact' || 'hidden'" (click)="website = ''">+</span>
                 </div>
               </dx-validation-group>
-              <dx-validation-group (onInitialized)="initValidationGroup($event, 'addressValidator')">
+              <dx-validation-group>
                   <div class="field addr address H">
                       <label>{{l('Address')}}</label>                   
                       <input *ngIf="!googleAutoComplete" type="text"
@@ -154,12 +162,8 @@
                           name="city"
                           maxLength="50"
                           placeholder="{{l('City')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [(value)]="contacts.addresses[type].city">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('CityRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-text-box>
                   </div>
                   <div class="field addr">
@@ -170,13 +174,9 @@
                           valueExpr="name"
                           name="state"
                           placeholder="{{l('State')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [searchEnabled]="true"
                           [(value)]="contacts.addresses[type].state">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('StateRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-select-box>
                   </div>
                   <div class="field addr">
@@ -185,12 +185,8 @@
                           name="zip"
                           maxLength="5"
                           placeholder="{{l('Zip')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [(value)]="contacts.addresses[type].zip">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('ZipIsRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-text-box>
                   </div>
                   <div class="field">
@@ -201,14 +197,10 @@
                           valueExpr="name"
                           name="country"
                           placeholder="{{l('Country')}}"
-                          [disabled]="!contacts.addresses[type].address"
                           [width]="'360px'"
                           [searchEnabled]="true"
                           [(value)]="contacts.addresses[type].country"
                           (onValueChanged)="onCountryChange($event)">
-                          <dx-validator>
-                              <dxi-validation-rule type="required" message="{{l('CountryRequired')}}"></dxi-validation-rule>
-                          </dx-validator>
                       </dx-select-box>
                   </div>
                   <div class="field" *ngIf="type == 'personal'">

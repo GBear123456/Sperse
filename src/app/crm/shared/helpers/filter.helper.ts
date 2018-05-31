@@ -47,6 +47,25 @@ export class FilterHelpers {
         return filterData;
     }
 
+    static filterByStates(filter: FilterModel) {
+        let data ={};
+        let filterData = [];
+        if (filter.items.countryStates && filter.items.countryStates.value) {
+            filter.items.countryStates.value.forEach((val) => {
+                let parts = val.split(':');
+                filterData.push(parts.length == 2 ? {
+                    CountryId: parts[0],
+                    StateId: parts[1]
+                } : {CountryId: val});
+            });
+
+            data = {
+                or: filterData
+            };
+        }
+        return data;
+    }
+
     static filterByClientName(filter: FilterModel) {
         let data = {};
         let filterData = [];
@@ -97,8 +116,8 @@ export class FilterHelpers {
         let maxRating = ratings[ratings.length - 1].id;
         let result = 
         { 
-            from: new FilterItemModel(minRating),
-            to: new FilterItemModel(maxRating),
+            from: new FilterItemModel(),
+            to: new FilterItemModel(),
             element:  new FilterRangeModel({
                 min: minRating,
                 max: maxRating,

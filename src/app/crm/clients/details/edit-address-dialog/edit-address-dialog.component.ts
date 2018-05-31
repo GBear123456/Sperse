@@ -40,7 +40,7 @@ export class EditAddressDialog extends AppComponentBase {
                 private _countryService: CountryServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
-        if (data.city) {
+        if (this.validateAddress(data)) {
             this.action = 'Edit';
             this.address =
                 this.googleAutoComplete ? [
@@ -93,12 +93,24 @@ export class EditAddressDialog extends AppComponentBase {
     onSave(event) {
         this.data.streetAddress = this.address;
 
-        if (this.validator.validate().isValid && this.data.streetAddress) {
-            this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
-            if (this.data.state)
-                this.data.stateId = _.findWhere(this.states, {name: this.data.state})['code'];
+        if (this.validator.validate().isValid && this.validateAddress(this.data)) {
+            if (this.data.country)
+                this.data.countryId = _.findWhere(this.countries, {name: this.data.country})['code'];
+            if (this.data.state) {
+                let state = _.findWhere(this.states, {name: this.data.state});
+                if (state)
+                    this.data.stateId = state['code'];
+            }
             this.dialogRef.close(true);
         }
+    }
+
+    validateAddress(data) {
+        return data.streetAddress ||
+            data.country ||
+            data.state ||
+            data.city ||
+            data.zip;
     }
 
     initValidationGroup(event) {
