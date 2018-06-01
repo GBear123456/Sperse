@@ -49,9 +49,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         {'label': 'Lead Information', 'route': 'lead-information'},
         {'label': 'Questionnaire', 'route': 'questionnaire'},
         {'label': 'Documents', 'route': 'required-documents'},
-        {'label': 'Application Status', 'route': 'application-status'},
+        {'label': 'Application Status', 'route': 'application-status', 'hiddenForLeads': true},
         {'label': 'Referral History', 'route': 'referal-history'},
-        {'label': 'Payment Information', 'route': 'payment-information'},
+        {'label': 'Payment Information', 'route': 'payment-information', 'hiddenForLeads': true},
         {'label': 'Activity Logs', 'route': 'activity-logs'},
         {'label': 'Notes', 'route': 'notes'}
     ];
