@@ -1,9 +1,8 @@
 import { Type } from '@angular/core';
 import { FilterItemModel, DisplayElement } from './filter-item.model';
 import { FilterComponent } from './filter-component';
-
 import * as _ from 'underscore';
-
+declare let require: any;
 let capitalize = require('underscore.string/capitalize');
 
 export class FilterModelBase<T extends FilterItemModel> {
@@ -49,7 +48,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                     if (this.operator)
                         operator[this.operator] = val;
                     if (val && (['string', 'number'].indexOf(typeof (val)) >= 0)) {
-                        obj[capitalize(key)] = this.operator ? operator : val;
+                        obj[_.capitalize(key)] = this.operator ? operator : val;
                     }
                     return obj;
                 }, {});

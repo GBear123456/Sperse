@@ -6,17 +6,16 @@ import { AppService } from '@app/app.service';
 import { ActivatedRoute } from '@angular/router';
 
 import { TransactionsServiceProxy,
-         BankAccountDto,
          InstanceType,
          ClassificationServiceProxy,
          UpdateTransactionsCategoryInput,
-         BankDto,
          AutoClassifyDto,
          ResetClassificationDto,
          BankAccountsServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
@@ -36,9 +35,7 @@ import 'rxjs/add/observable/forkJoin';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
-import * as moment from 'moment';
 
-import query from 'devextreme/data/query';
 import DataSource from 'devextreme/data/data_source';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
@@ -263,7 +260,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _bankAccountsServiceProxy: BankAccountsServiceProxy,
-        public filtersService: FiltersService
+        public filtersService: FiltersService,
+        private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
 
@@ -403,7 +401,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-
+        this.bankAccountSelector.getBankAccounts(true);
         this.totalDataSource.load();
         this.dataGrid.instance.refresh();
         this.categorizationComponent.refreshCategories();
@@ -644,26 +642,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     setBankAccountCount(bankAccountIds, visibleAccountCount) {
-        if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = '';
-        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
-            this.bankAccountCount = bankAccountIds.length;
-        else
-            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
+        this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     }
 
     applyTotalBankAccountFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (!accountFilter) {
-            setTimeout(() => {
-                this.applyTotalBankAccountFilter(data);
-            }, 300);
+            setTimeout(() => { this.applyTotalBankAccountFilter(data); }, 300);
         } else {
-            if (data.bankAccountIds) {
-                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
-            } else {
-                accountFilter.items['element'].setValue([], accountFilter);
-            }
+            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.bankAccountSelector.initDataSource);
             this.setDataSource();
             this.visibleAccountCount = data.visibleAccountCount;
             this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
@@ -982,7 +969,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-
     autoClassify(param): void {
         switch (param) {
             case 'credit':
@@ -1063,9 +1049,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.setup(this.filters);
         this.initFiltering();
         this.bankAccountSelector.handleSelectedBankAccounts();
-        if (this.synchProgressComponent.completed) {
-            this.synchProgressComponent.getSynchProgressAjax();
-        }
+        this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
 

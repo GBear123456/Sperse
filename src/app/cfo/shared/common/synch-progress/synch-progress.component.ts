@@ -23,7 +23,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     statusCheckCompleted = false;
     tooltipVisible: boolean;
     timeoutHandler: any;
-
     accountProgressTooltipTarget;
     accountProgressTooltipVisible: boolean = false;
     accountProgressTooltipText: string;
@@ -31,9 +30,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     readonly maxTryCount = 3;
     tryCount = 0;
 
-    constructor(injector: Injector,
-        private _syncServiceProxy: SyncServiceProxy
-    ) {
+    constructor(injector: Injector) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
