@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
+import { CommonModule } from '@shared/common/common.module';
 import { FormsModule } from '@angular/forms';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -8,8 +9,8 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
 import { UtilsModule } from '@shared/utils/utils.module';
-import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule,
-  DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule
+import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule,
+  DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule
 } from 'devextreme-angular';
 
 import { UsersComponent } from './users/users.component';
@@ -66,6 +67,7 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
 @NgModule({
     imports: [
         FormsModule,
+        ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
         AdminRoutingModule,
@@ -81,6 +83,8 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         DxSelectBoxModule,
         DxTextBoxModule,
         DxButtonModule,
+        DxTooltipModule,
+        DxListModule,
         UtilsModule,
         DataTableModule,
         PaginatorModule,

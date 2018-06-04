@@ -16,8 +16,9 @@ import { FilterCBoxesComponent } from './cboxes/filter-cboxes.component';
 import { FilterDatesComponent } from './dates/filter-dates.component';
 import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
+import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.component';
 
-import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, 
+import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxRadioGroupModule,
     DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule, DxRangeSliderModule } from 'devextreme-angular';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
@@ -25,7 +26,9 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 @NgModule({
     imports: [
         ngCommon.CommonModule,
+        CommonModule,
         FormsModule,
+
         DxCheckBoxModule,
         DxSelectBoxModule,
         DxTextBoxModule,
@@ -33,8 +36,8 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         DxDropDownBoxModule,
         DxDataGridModule,
         DxTreeListModule,
-        DxRangeSliderModule,
-        CommonModule
+        DxRadioGroupModule,
+        DxRangeSliderModule
     ],
     declarations: [
         FilterManagerComponent,
@@ -47,6 +50,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         FilterDatesComponent,
         FilterCalendarComponent,
         FilterRangeComponent,
+        FilterRadioGroupComponent,
         BankAccountFilterComponent,
         AdDirective
     ],
@@ -60,6 +64,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         FilterDatesComponent,
         FilterCalendarComponent,
         FilterRangeComponent,
+        FilterRadioGroupComponent,
         BankAccountFilterComponent
     ],
     exports: [
