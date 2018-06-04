@@ -2,8 +2,7 @@
     <app-headline [config]="headlineConfig"></app-headline>
     <dx-tooltip width="200px"
                 [target]="'.dx-state-hover .dx-link.dx-link-edit'"
-                [visible]="actionRecord"
-                (onHidden)="menuVisible = false">
+                [visible]="actionRecord">
         <div *dxTemplate="let data of 'content'">
             <div class="lists-tooltip-container">
                 <dx-list [dataSource]="actionMenuItems"

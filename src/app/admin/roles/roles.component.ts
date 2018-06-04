@@ -97,6 +97,10 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
+    getRoles() {
+
+    }
+
     initToolbarConfig() {
         this._appService.toolbarConfig = [
             {
