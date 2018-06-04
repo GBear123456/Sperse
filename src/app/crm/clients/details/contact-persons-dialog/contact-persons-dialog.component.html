@@ -1,10 +1,9 @@
+<h5 class="dialog-title">{{l('RelatedOrSimilarContacts')}}</h5>
 <mat-dialog-content>
     <div class="contact-persons-container">
-        <h5>{{l('RelatedOrSimilarContacts')}}</h5>
         <div class="contact-person-info" *ngFor="let contactPerson of contactPersonsFiltered" (click)='selectContactPerson(contactPerson)'>
             <div class="avatar">
-                <div class="active"></div>
-                <img src="{{ contactPerson?.photo ? 'data:image/png;base64,' + contactPerson?.photo.thumbnail: person.person_photo_url }}" alt="Person Photo">
+                <img src="{{ getPhoto(contactPerson?.photo )}}" alt="{{l('AltPersonPhoto')}}">
             </div>
             <div class="personal-info">
                 <div class="full-name">
@@ -21,9 +20,9 @@
                         <span class="rating_int">{{person.rating}}/10</span>
                     </div>
                 </div>
-            </div>
-            <div class="organization-name">
-                <h5 *ngIf="data?.organizationContactInfo">{{data?.organizationContactInfo?.fullName}}</h5>
+                <div class="organization-name">
+                    <h5 *ngIf="data?.organizationContactInfo">{{data?.organizationContactInfo?.fullName}}</h5>
+                </div>
             </div>
         </div>
     </div>
