@@ -1,17 +1,19 @@
 import { Component, OnInit, Injector, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEntityServiceProxy, BankAccountDto } from 'shared/service-proxies/service-proxies';
+import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
 
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widget/bank-accounts-data.model';
 
 @Component({
     selector: 'bank-accounts-select',
     templateUrl: './bank-accounts-select.component.html',
     styleUrls: ['./bank-accounts-select.component.less'],
-    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, CacheService, BankAccountsService]
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, CacheService, BankAccountsService ]
 })
 export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
     @ViewChild(BankAccountsWidgetComponent) bankAccountWidget: BankAccountsWidgetComponent;
@@ -63,21 +65,22 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         if (this.useGlobalCache && this._cacheService.exists(this.bankAccountsCacheKey)) {
             let cacheData = this._cacheService.get(this.bankAccountsCacheKey);
             initIsActive = cacheData['isActive'] ? true : false;
+            const selectedAccountsChanged = ArrayHelper.dataChanged(cacheData['selectedBankAccounts'], this.selectedBankAccounts);
+            const syncAccountsChanged = ArrayHelper.dataChanged(cacheData['syncAccounts'], this.initDataSource);
             /** Check if selected bank account ids change */
-            if (
-                cacheData['visibleBankAccountIds'] &&
-                cacheData['visibleBankAccountIds'].length &&
-                (_.difference(cacheData['bankAccounts'], this.selectedBankAccounts).length ||
-                 _.difference(this.selectedBankAccounts, cacheData['bankAccounts']).length)
-            ) {
-                this.selectedBusinessEntityIds = cacheData['selectedBusinessEntityIds'];
-                this.selectedBankAccounts = cacheData['bankAccounts'] || null;
-                this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || null;
+            if (selectedAccountsChanged || syncAccountsChanged) {
+                this.initDataSource = cacheData['syncAccounts'] || this.initDataSource;
+                this.selectedBusinessEntityIds = cacheData['selectedBusinessEntityIds'] || this.selectedBusinessEntityIds;
+                this.selectedBankAccounts = cacheData['selectedBankAccounts'] || this.selectedBankAccounts;
+                this.storedVisibleBankAccountIds = cacheData['visibleBankAccountIds'] || this.storedVisibleBankAccountIds;
                 let data = {
                     bankAccountIds: this.selectedBankAccounts || [],
                     isActive: initIsActive,
                     visibleAccountCount: this.storedVisibleBankAccountIds ? this.storedVisibleBankAccountIds.length : 0
                 };
+                if (syncAccountsChanged) {
+                    this.filterDataSource(this.selectedBankAccounts);
+                }
                 this.onBankAccountsSelected.emit(data);
                 needEmitSelectedBankAccounts = false;
             }
@@ -128,7 +131,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         this.refreshSelected([]);
         if (this.useGlobalCache)
             this._cacheService.set(this.bankAccountsCacheKey, {
-                'bankAccounts': [], 'isActive': this.isActive, 'selectedBusinessEntityIds': this.selectedBusinessEntityIds
+                'selectedBankAccounts': [], 'isActive': this.isActive, 'selectedBusinessEntityIds': this.selectedBusinessEntityIds
             });
 
         let data = {};
@@ -149,7 +152,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
         if (this.useGlobalCache)
             this._cacheService.set(this.bankAccountsCacheKey, {
-                'bankAccounts': data.bankAccountIds,
+                'selectedBankAccounts': data.bankAccountIds,
                 'isActive': this.isActive,
                 'selectedBusinessEntityIds': this.selectedBusinessEntityIds,
                 'visibleBankAccountIds': visibleBankAccountIds
@@ -206,7 +209,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 }
                 if (this.useGlobalCache && needEmitSelectedAccounts) {
                     let bankAccountIds = this.selectedBankAccounts || [] ;
-                    let data = {
+                    let data: BankAccountsDataModel = {
                         bankAccountIds: bankAccountIds,
                         isActive: this.isActive,
                         visibleAccountCount: 0
@@ -231,7 +234,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         let visibleBankAccountIds = this.getVisibleBankAccounts();
         if (this.useGlobalCache)
             this._cacheService.set(this.bankAccountsCacheKey, {
-                'bankAccounts': bankAccountIds,
+                'syncAccounts': this.initDataSource,
+                'selectedBankAccounts': bankAccountIds,
                 'isActive': this.isActive,
                 'selectedBusinessEntityIds': this.selectedBusinessEntityIds,
                 'visibleBankAccountIds': visibleBankAccountIds.bankAccountIds

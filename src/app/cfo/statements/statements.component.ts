@@ -10,6 +10,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { CacheService } from 'ng2-cache-service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
@@ -192,7 +193,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _filtersService: FiltersService,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
 
@@ -329,6 +331,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     result = [];
                 }
             });
+        this.bankAccountSelector.getBankAccounts(true);
     }
 
     initFiltering() {
@@ -363,12 +366,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     setBankAccountCount(bankAccountIds, visibleAccountCount) {
-        if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = '';
-        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
-            this.bankAccountCount = bankAccountIds.length;
-        else
-            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
+        this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     }
 
     toggleBankAccountTooltip() {
@@ -423,15 +421,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (!accountFilter) {
-            setTimeout(() => {
-                this.setBankAccountsFilter(data);
-            }, 300);
+            setTimeout(() => { this.setBankAccountsFilter(data); }, 300);
         } else {
-            if (data.bankAccountIds) {
-                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
-            } else {
-                accountFilter.items['element'].setValue([], accountFilter);
-            }
+            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.bankAccountSelector.initDataSource);
             this.visibleAccountCount = data.visibleAccountCount;
             this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this._filtersService.change(accountFilter);
@@ -457,9 +449,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.setup(this.filters);
         this.initFiltering();
         this.bankAccountSelector.handleSelectedBankAccounts();
-        if (this.synchProgressComponent.completed) {
-            this.synchProgressComponent.getSynchProgressAjax();
-        }
+        this.synchProgressComponent.requestSyncAjax();
         this.getRootComponent().overflowHidden(true);
     }
 

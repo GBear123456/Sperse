@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity, InstanceType } from '@shared/service-proxies/service-proxies';
-import * as ModelEnums from '../models/setting-enums';
+import { GeneralScope } from '../enums/general-scope.enum';
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CacheService } from 'ng2-cache-service';
@@ -13,7 +13,6 @@ import { Observable } from 'rxjs/Observable';
     providers: [CashflowServiceProxy, UserPreferencesService, CacheService]
 })
 export class PreferencesDialogComponent extends CFOModalDialogComponent implements OnInit {
-    GeneralScope = ModelEnums.GeneralScope;
     PeriodScope = CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 
     model: CashFlowGridSettingsDto;

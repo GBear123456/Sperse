@@ -1,7 +1,6 @@
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
-import { Router } from '@angular/router';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
@@ -9,7 +8,6 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
 @Component({
@@ -38,7 +36,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     constructor(
         injector: Injector,
-        private _router: Router,
         private _dashboardService: DashboardService,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
     ) {
@@ -80,6 +77,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.trendByPeriodComponent.loadStatsData();
         this.totalsByPeriodComponent.loadStatsData();
         this.categorizationStatusComponent.getCategorizationStatus();
+        this.bankAccountSelector.getBankAccounts(true);
     }
 
     periodChanged($event) {
@@ -88,9 +86,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     activate() {
         this.bankAccountSelector.handleSelectedBankAccounts();
-        if (this.synchProgressComponent.completed) {
-            this.synchProgressComponent.getSynchProgressAjax();
-        }
+        this.synchProgressComponent.requestSyncAjax();
     }
 
 }

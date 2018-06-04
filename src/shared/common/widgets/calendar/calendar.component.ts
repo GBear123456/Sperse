@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '../../app-component-base';
 import * as moment from 'moment';
-
+declare let require: any;
 let JQCalendarInit = require('jquery-calendar');
 
 @Component({

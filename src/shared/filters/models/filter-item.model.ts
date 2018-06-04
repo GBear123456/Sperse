@@ -1,7 +1,5 @@
 import { FilterModel } from './filter.model';
-import * as moment from 'moment';
-
-let capitalize = require('underscore.string/capitalize');
+import * as _ from 'underscore.string';
 
 export class FilterItemModel {
     protected _value: any = '';
@@ -9,7 +7,7 @@ export class FilterItemModel {
     public constructor(value?: any) {
         if (value) this.value = value;
     }
-    
+
     get value(): any {
         return this._value;
     }
@@ -20,9 +18,9 @@ export class FilterItemModel {
     setValue(value: any, filter: FilterModel) {
         this.value = value;
     }
-    
+
     getDisplayElements(key: string): DisplayElement[] {
-        let caption = capitalize(key);
+        let caption = _.capitalize(key);
         let valueType = typeof (this.value);
         let isBoolValues = valueType == 'boolean';
         let value = valueType == 'string' && this.value
@@ -30,7 +28,7 @@ export class FilterItemModel {
             || isBoolValues && this.value && caption
             || this.value && this.value['getDate'] && (caption + ': ' +
             this.value.toLocaleDateString().split('/').map((part) => {
-                return part.length >= 2 ? part: '0' + part;
+                return part.length >= 2 ? part : '0' + part;
             }).join('/'));
 
         return [<DisplayElement>{ item: this, displayValue: value }];
