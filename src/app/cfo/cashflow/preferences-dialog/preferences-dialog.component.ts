@@ -13,6 +13,7 @@ import { Observable } from 'rxjs/Observable';
     providers: [CashflowServiceProxy, UserPreferencesService, CacheService]
 })
 export class PreferencesDialogComponent extends CFOModalDialogComponent implements OnInit {
+    GeneralScope = GeneralScope;
     PeriodScope = CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
 
     model: CashFlowGridSettingsDto;
