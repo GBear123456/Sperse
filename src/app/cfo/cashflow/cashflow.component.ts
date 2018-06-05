@@ -2972,7 +2972,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** If cell is cashflow type header total row - add css classes to parent tr */
             if (this.isCashflowTypeRowTotal(cell, area)) {
                 let path = cell.path || cell.rowPath;
-                options.parentClasses.push(path[0].slice(2).toLowerCase() + 'Row', 'totalRow');
+                options.parentClasses.push(path[0].slice(2).toLowerCase() + 'Row', 'totalRow', 'grandTotal');
             }
 
             if (this.isUnclassified(cell, area)) {
@@ -2980,7 +2980,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             if (this.isAccountingRowTotal(cell, area)) {
-                options.parentClasses.push('totalRow');
+                options.parentClasses.push('totalRow', 'accountingTotal');
             }
 
             /** added css class to the income and outcomes columns */
@@ -3203,7 +3203,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 let $targetCell = $(targetCell);
                 let $targetCellParent = $targetCell.parent();
-                let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
+                let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.grandTotal')).add($targetCellParent.nextUntil('.grandTotal'));
                 /** Highlight cells where we can drop cell */
                 if (moveOnlyHistorical) {
                     this.highlightHistoricalTargetCells($targetCell, $availableRows);
