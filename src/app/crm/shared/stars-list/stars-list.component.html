@@ -5,21 +5,36 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Stars')}}</span>
-                <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
-                <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
-            </div>
-            <dx-list
-                height="350"
-                [selectionMode]="'single'"
-                [showSelectionControls]="true"
-                [dataSource]="list"
-                [keyExpr]="'id'"
-                [selectedItemKeys]="selectedItemKeys"
-                (onInitialized)="onInitialized($event)">
-                <div *dxTemplate="let data of 'item'">
-                    <div [class]="'star star-' + data.name | lowercase"></div>
+                <div [hidden]="bulkUpdateMode && !selectedKeys?.length">
+                    <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
-            </dx-list>
+            </div>
+            <dx-tree-list
+                width="180px"
+                height="230px"
+                keyExpr="id"
+                parentIdExpr="parent"
+                [rootValue]="0"
+                [editing]="{allowAdding: false, allowDeleting: false, allowUpdating: true}"
+                [showColumnLines]="false"
+                [showColumnHeaders]="false"
+                [selection]="{allowSelectAll: false, mode: (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'single' }"
+                [selectedRowKeys]="selectedItemKeys"
+                [(dataSource)]="list"
+                (onInitialized)="onInitialized($event)"
+                (onCellPrepared)="onCellPrepared($event)"
+                (onContentReady)="onContentReady($event)"
+                (onRowClick)="onRowClick($event)">
+                <dxi-column cellTemplate="selectCellTemplate"></dxi-column>
+                <div *dxTemplate="let data of 'selectCellTemplate'">
+                    <dx-radio-group [hidden]="bulkUpdateMode && !selectedKeys?.length" [items]="[{id:data.data.id}]" [value]="selectedItemKey" valueExpr="id"></dx-radio-group>
+                </div>
+                <dxi-column dataField="name" cellTemplate="starTemplate"></dxi-column>
+                <div *dxTemplate="let data of 'starTemplate'">
+                    <div [class]="'star star-' + data.data.name | lowercase"></div>
+                </div>
+            </dx-tree-list>
         </div>
     </div>
 </dx-tooltip>

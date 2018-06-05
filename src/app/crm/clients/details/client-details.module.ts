@@ -9,7 +9,7 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule, 
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule } from 'devextreme-angular';
+    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -134,7 +134,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     RoundProgressModule,
     DxValidationGroupModule,
     PipelineModule,
-    ImageCropperModule
+    ImageCropperModule,
+    DxRadioGroupModule
   ],
   exports: [
     UploadPhotoDialogComponent,

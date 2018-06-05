@@ -80,6 +80,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
     filterModelStatus: FilterModel;
+    filterModelRating: FilterModel;
+    filterModelStar: FilterModel;
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -334,14 +336,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     })
                             }
                         }),
-                        new FilterModel({
+                        this.filterModelRating = new FilterModel({
                             component: FilterRangeComponent,
                             operator: { from: 'ge', to: 'le' },
                             caption: 'Rating',
                             field: 'Rating',
                             items: FilterHelpers.getRatingFilterItems(result.ratings)
                         }),
-                        new FilterModel({
+                        this.filterModelStar = new FilterModel({
                             component: FilterCheckBoxesComponent,
                             caption: 'Star',
                             field: 'StarId',
@@ -433,13 +435,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'rating',
-                        action: this.toggleRating.bind(this),
-                        disabled: !this.selectedClientKeys.length
+                        action: this.toggleRating.bind(this)
                     },
                     {
                         name: 'star',
-                        action: this.toggleStars.bind(this),
-                        disabled: !this.selectedClientKeys.length
+                        action: this.toggleStars.bind(this)
                     }
                 ]
             },
