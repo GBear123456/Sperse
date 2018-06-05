@@ -148,6 +148,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         maxDate: moment().utc().add(10, 'year').year()
     };
 
+    allowChangingForecast: true;
     showAllVisible = false;
     showAllDisable = false;
     private noRefreshedAfterSync: boolean;
@@ -4235,7 +4236,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** disallow adding of these levels */
                     clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountName
+                    clickedCellPrefix !== CategorizationPrefixes.AccountName &&
+                    /** allow adding if checked active accounts */
+                    this.allowChangingForecast
                 ) {
                     const cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
                     const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
@@ -5381,6 +5384,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.operations.bankAccountSelector.initDataSource);
             this._filtersService.change(accountFilter);
         }
+        this.allowChangingForecast = data.isActive;
     }
 
     discardDiscrepancy(cellObj) {
