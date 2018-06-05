@@ -148,7 +148,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         maxDate: moment().utc().add(10, 'year').year()
     };
 
-    allowChangingForecast: true;
+    allowChangingForecast: boolean;
     showAllVisible = false;
     showAllDisable = false;
     private noRefreshedAfterSync: boolean;
