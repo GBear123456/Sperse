@@ -12,6 +12,7 @@ import { CellInfo } from './models/cell-info';
 import { CategorizationModel } from './models/categorization-model';
 import { CellInterval } from './models/cell-interval';
 import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 
 import { CashflowService } from './cashflow.service';
 import {
@@ -74,7 +75,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { MatDialog } from '@angular/material';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
-import * as ModelEnums from './models/setting-enums';
+import { GeneralScope } from './enums/general-scope.enum';
 import { IExpandLevel } from './models/expand-level';
 import * as $ from 'jquery';
 
@@ -525,10 +526,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     };
 
     private cellTypesCheckMethods = {
-        [ModelEnums.GeneralScope.TransactionRows]: this.isTransactionRows,
-        [ModelEnums.GeneralScope.TotalRows]: this.isIncomeOrExpensesDataCell,
-        [ModelEnums.GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
-        [ModelEnums.GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
+        [GeneralScope.TransactionRows]: this.isTransactionRows,
+        [GeneralScope.TotalRows]: this.isIncomeOrExpensesDataCell,
+        [GeneralScope.BeginningBalances]: this.isStartingBalanceDataColumn,
+        [GeneralScope.EndingBalances]: this.isAllTotalBalanceCell
     };
 
     cashflowGridSettings: CashFlowGridSettingsDto;
@@ -785,7 +786,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _appService: AppService,
                 private _calculatorService: CalculatorService,
                 private _cellsCopyingService: CellsCopyingService,
-                private cashflowService: CashflowService
+                private cashflowService: CashflowService,
+                private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -1854,6 +1856,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.getNewTextWidth.cache = {};
         this.monthsDaysLoadedPathes = [];
         this.anotherPeriodAccountsValues.clear();
+        this.operations.bankAccountSelector.getBankAccounts(true);
         this.initHeadlineConfig();
         this.closeTransactionsDetail();
         this.loadGridDataSource();
@@ -5372,17 +5375,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-
         if (!accountFilter) {
-            setTimeout(() => {
-                this.setBankAccountsFilter(data);
-            }, 300);
+            setTimeout(() => { this.setBankAccountsFilter(data); }, 300);
         } else {
-            if (data.bankAccountIds) {
-                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
-            } else {
-                accountFilter.items['element'].setValue([], accountFilter);
-            }
+            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.operations.bankAccountSelector.initDataSource);
             this._filtersService.change(accountFilter);
         }
     }
@@ -5628,11 +5624,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.operations.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
-        this.operations.bankAccountSelector.handleSelectedBankAccounts();
         this.pivotGrid.instance.repaint();
-        if (this.synchProgressComponent.completed) {
-            this.synchProgressComponent.getSynchProgressAjax();
-        }
+        this.operations.bankAccountSelector.handleSelectedBankAccounts();
+        this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
 

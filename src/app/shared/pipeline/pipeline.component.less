@@ -117,7 +117,16 @@
                     text-align: left;
                     letter-spacing: 0.3px;
                     color: #424c56;
-                    overflow: hidden;
+                    overflow: visible;
+                    &.selected {
+                        background-color: #effafe;
+                        &:after {
+                            content:  "\2713 ";
+                            position: absolute;
+                            right: 15px;
+                            bottom: 12px;
+                        }
+                    }
                     &.locked {
                         opacity: 0.3;
                     }
@@ -305,6 +314,27 @@
     text-align: left;
     color: #202b35;
     cursor: grabbing;
+
+    &.selected {
+        &:before {
+            content: attr(count);
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            display: block;
+            border-radius: 50%;
+            background-color: #da0000;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            color: #FFF;
+            font-weight: 400;
+            font-size: 12px;
+            padding: 4px 0px;
+            border: 1px solid #ca0808;
+        }
+    }
+
     .pipeline-photo-wrap {
         padding: 0 8px;
         min-width: 56px;

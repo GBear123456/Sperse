@@ -20,6 +20,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 import { ODataSearchStrategy } from '@shared/AppEnums';
+declare let require: any;
 
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;

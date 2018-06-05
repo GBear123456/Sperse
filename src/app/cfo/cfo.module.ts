@@ -74,6 +74,7 @@ import {
 } from 'devextreme-angular';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-account-button/add-account-button.component';
@@ -162,7 +163,8 @@ import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-accou
         ContactServiceProxy,
         QuovoService,
         SyncServiceProxy,
-        CalculatorService
+        CalculatorService,
+        BankAccountsService
     ]
 })
 

@@ -144,13 +144,16 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowUpdating($event) {
-        this._listsService.rename(UpdateCustomerListInput.fromJS({
-            id: $event.oldData.id,
-            name: $event.newData.name
-        })).subscribe((res) => {
-            if (res)
-                $event.cancel = true;
-        });
+        let id = $event.oldData.id;
+        if (Number.isInteger(id)) {
+            this._listsService.rename(UpdateCustomerListInput.fromJS({
+                id: id,
+                name: $event.newData.name
+            })).subscribe((res) => {
+                if (res)
+                    $event.cancel = true;
+            });
+        }
     }
 
     onInitNewRow($event) {        

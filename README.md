@@ -9,10 +9,10 @@ So, don't use it in production, but you can test it and check source to prepare 
 https://www.microsoft.com/net/download/core#/runtime
 
 * nodejs + npm
-https://nodejs.org/dist/v6.9.5/node-v6.9.5-x64.msi
+https://nodejs.org/dist/v8.11.2/node-v8.11.2-x64.msi
 
 * Yarn
-https://yarnpkg.com/en/docs/install#windows-tab
+https://yarnpkg.com/en/docs/install#windows-stable
 
 * angular-cli v1.0.0-beta.17 (tested in this version, but may work in later versions too).
 

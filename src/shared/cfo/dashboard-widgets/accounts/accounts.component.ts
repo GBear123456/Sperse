@@ -34,7 +34,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsAmountInteger: number;
     dailyStatsText: string;
     dailyStatsSliderSelected = 1;
-    dailyStatsPeriodSelected: string = this.l('All_Periods');
     isActive = null;
     visibleAccountCount = 0;
 

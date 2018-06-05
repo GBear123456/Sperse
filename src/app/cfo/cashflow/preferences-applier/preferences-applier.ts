@@ -2,7 +2,7 @@
  * Class that responsible for appliing user preferences to cashflow grid
  */
 import { UserPreferencesService } from '../preferences-dialog/preferences.service';
-import * as ModelEnums from '../models/setting-enums';
+import { GeneralScope } from '../enums/general-scope.enum';
 import { CashflowCellsChecker } from '../cashflow-cells-checker/cashflow-cells-checker';
 import * as _ from 'underscore.string';
 import { CashflowHelper } from '../cashflow.helper/cashflow.helper';
@@ -61,10 +61,10 @@ export class PreferencesApplier {
     };
 
     cellTypesCheckMethods = {
-        [ModelEnums.GeneralScope.TransactionRows]: 'isTransactionRows',
-        [ModelEnums.GeneralScope.TotalRows]: 'isIncomeOrExpensesDataCell',
-        [ModelEnums.GeneralScope.BeginningBalances]: 'isStartingBalanceDataColumn',
-        [ModelEnums.GeneralScope.EndingBalances]: 'isAllTotalBalanceCell'
+        [GeneralScope.TransactionRows]: 'isTransactionRows',
+        [GeneralScope.TotalRows]: 'isIncomeOrExpensesDataCell',
+        [GeneralScope.BeginningBalances]: 'isStartingBalanceDataColumn',
+        [GeneralScope.EndingBalances]: 'isAllTotalBalanceCell'
     };
 
     constructor(private _userPreferencesService: UserPreferencesService,
@@ -155,7 +155,7 @@ export class PreferencesApplier {
                 cellType = type;
                 break;
             }
-        };
+        }
         return cellType;
     }
 
