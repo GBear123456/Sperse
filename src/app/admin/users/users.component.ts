@@ -147,9 +147,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    getUsers() {
-    }
-
     initToolbarConfig() {
         this._appService.toolbarConfig = [
             {
