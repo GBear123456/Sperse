@@ -824,10 +824,9 @@ export class BankAccountsServiceProxy {
      * @accounts (optional) 
      * @startDate (optional) 
      * @endDate (optional) 
-     * @maxCount (optional) 
      * @return Success
      */
-    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, maxCount: number, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
+    getStats(instanceType: InstanceType3, instanceId: number, currency: string, forecastModelId: number, accounts: number[], startDate: moment.Moment, endDate: moment.Moment, groupBy: GroupBy): Observable<BankAccountDailyStatDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/BankAccounts/GetStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -845,8 +844,6 @@ export class BankAccountsServiceProxy {
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        if (maxCount !== undefined)
-            url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
         if (groupBy === undefined || groupBy === null)
             throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
         else
