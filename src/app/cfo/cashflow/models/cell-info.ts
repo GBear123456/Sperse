@@ -6,4 +6,5 @@ export class CellInfo {
     categoryId: number;
     subCategoryId?: number;
     transactionDescriptor?: string;
+    accountingTypeId: number;
 }
