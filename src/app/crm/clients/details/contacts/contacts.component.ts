@@ -206,8 +206,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
                 this.dialog.closeAll();
                 this._contactEmailService.deleteContactEmail(
                     this.contactInfoData.contactId, email.id).subscribe(result => {
-                    if (!result)
+                    if (!result) {
                         this.contactInfoData.emails.splice(index, 1);
+                        this._clientDetailsService.verificationUpdate();
+                    }
                 });
             }
         });
@@ -225,8 +227,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
                 this.dialog.closeAll();
                 this._contactPhoneService.deleteContactPhone(
                     this.contactInfoData.contactId, phone.id).subscribe(result => {
-                    if (!result)
+                    if (!result) {
                         this.contactInfoData.phones.splice(index, 1);
+                        this._clientDetailsService.verificationUpdate();
+                    }
                 });
             }
         });
