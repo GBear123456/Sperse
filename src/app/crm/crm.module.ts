@@ -53,7 +53,8 @@ import {
     DxScrollViewModule,
     DxTextAreaModule,
     DxContextMenuModule,
-    DxSliderModule
+    DxSliderModule,
+    DxRadioGroupModule
 } from 'devextreme-angular';
 
 @NgModule({
@@ -81,6 +82,7 @@ import {
       DxTooltipModule,
       DxListModule,
       DxSliderModule,
+      DxRadioGroupModule,
 
       MatSidenavModule,
       MatProgressBarModule,

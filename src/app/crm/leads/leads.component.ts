@@ -95,6 +95,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
     filterModelStages: FilterModel;
+    filterModelRating: FilterModel;
+    filterModelStar: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -335,14 +337,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 })
                         }
                     }),
-                    new FilterModel({
+                    this.filterModelRating = new FilterModel({
                         component: FilterRangeComponent,
                         operator: { from: 'ge', to: 'le' },
                         caption: 'Rating',
                         field: 'Rating',
                         items: FilterHelpers.getRatingFilterItems(result.ratings)
                     }),
-                    new FilterModel({
+                    this.filterModelStar = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'Star',
                         field: 'StarId',
@@ -434,12 +436,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.selectedClientKeys.length,
                         action: this.toggleRating.bind(this)
                     },
                     {
                         name: 'star',
-                        disabled: !this.selectedClientKeys.length,
                         action: this.toggleStars.bind(this)
                     }
                 ]

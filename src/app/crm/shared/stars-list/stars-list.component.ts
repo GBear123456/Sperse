@@ -11,6 +11,7 @@ import { AppConsts } from '@shared/AppConsts';
   providers: [CustomerStarsServiceProxy]
 })
 export class StarsListComponent extends AppComponentBase implements OnInit {
+    @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
     @Input() set selectedItemKey(value) {
@@ -33,33 +34,37 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         private _starsService: CustomerStarsServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+    }
 
-        this._filtersService.localizationSourceName = this.localizationSourceName;
+    private deselectAllItems()
+    {
+        this.listComponent.deselectAll();
+        this.selectedItemKeys = [];
     }
 
     toggle() {
-        this.tooltipVisible = !this.tooltipVisible;
+        if (this.tooltipVisible = !this.tooltipVisible)
+            this.highlightSelectedFilters();
     }
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item.id;
-            }).filter(Boolean);
+            this.selectedItemKeys = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed) 
+                                this.process();
+                            else
+                                this.deselectAllItems();
                         }
                     );
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
@@ -69,17 +74,78 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             this._starsService.markCustomer(MarkCustomerInput.fromJS({
                 customerId: key,
                 starId: this.selectedItemKey
-            })).subscribe((result) => {});
+            })).finally(() => { 
+                if (this.bulkUpdateMode) 
+                    this.deselectAllItems(); 
+            }).subscribe((result) => {});
         });
     }
 
     clear() {
-        this.listComponent.unselectAll();
+        this.deselectAllItems();
         this.apply();
+    }
+
+    addActionButton(name, container: HTMLElement, callback) {
+        let buttonElement = document.createElement('a');
+        buttonElement.innerText = this.l(this.capitalize(name));
+        buttonElement.className = 'dx-link dx-link-' + name;
+        buttonElement.addEventListener('click', callback);
+        container.appendChild(buttonElement);
+    }
+
+    clearFiltersHighlight() {
+        if (this.listComponent) {
+            let elements = this.listComponent.element()
+                .getElementsByClassName('filtered');
+            while(elements.length)        
+                elements[0].classList.remove('filtered');
+        }
+    }
+
+    onCellPrepared($event) {
+        if ($event.rowType === 'data' && $event.column.command === 'edit') {
+            if (this.filterModel)
+                this.addActionButton('filter', $event.cellElement, (event) => {
+                    this.clearFiltersHighlight();
+
+                    let modelItems = this.filterModel.items.element.value;
+                    if (modelItems.length == 1 && modelItems[0] == $event.data.id) 
+                        this.filterModel.items.element.value = [];
+                    else {
+                        this.filterModel.items.element.value = [$event.data.id];
+                        $event.cellElement.parentElement.classList.add('filtered');
+                    }
+                    this._filtersService.change(this.filterModel);
+                });
+        }
+    }
+
+    highlightSelectedFilters() {
+        let filterIds = this.filterModel && 
+            this.filterModel.items.element.value;        
+        this.clearFiltersHighlight();
+        if (this.listComponent && filterIds && filterIds.length) {
+            filterIds.forEach((id) => {
+                let row = this.listComponent.getRowElement(
+                    this.listComponent.getRowIndexByKey(id));
+                if (row && row[0]) row[0].classList.add('filtered');
+            });
+        }
+    }
+
+    onContentReady($event) {
+        this.highlightSelectedFilters();
     }
 
     onInitialized($event) {
         this.listComponent = $event.component;
+    }
+
+    onRowClick($event) {
+        let key = $event.key;
+        this.selectedItemKey = key;
+        $event.component.selectRows([key], false);
     }
 
     ngOnInit() {

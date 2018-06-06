@@ -5,21 +5,28 @@
         <div class="slider-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Rating')}}</span>
-                <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
-                <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                <div class="actions-wrapper">
+                    <div class="edit-actions" [hidden]="bulkUpdateMode && !selectedKeys?.length">
+                        <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                        <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                    </div>
+                    <div class="dx-link dx-link-filter" [ngClass]="{'filtered': filtered}" (click)="applyFilter($event)"></div>
+                </div>
             </div>
-            <dx-slider
-                [min]="ratingMin"
-                [max]="ratingMax"
-                [(value)]="ratingValue"
-                [step]="ratingStep"
-                (onInitialized)="onInitialized($event)">
-                <dxo-tooltip
-                    [enabled]="true"
-                    [format]="format"
-                    position="bottom">
-                </dxo-tooltip>
-            </dx-slider>
+            <div>
+                <dx-slider
+                    [min]="ratingMin"
+                    [max]="ratingMax"
+                    [(value)]="ratingValue"
+                    [step]="ratingStep"
+                    (onInitialized)="onInitialized($event)">
+                    <dxo-tooltip
+                        [enabled]="true"
+                        [format]="format"
+                        position="bottom">
+                    </dxo-tooltip>
+                </dx-slider>
+            </div>
         </div>
     </div>
 </dx-tooltip>

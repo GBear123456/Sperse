@@ -286,17 +286,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             elements[0].classList.remove('selected');
     }
 
-    getCardByPath(path) {
-        let card;
-        path.every((elm) => {
-            let isCard = elm.classList.contains('card');
-            if (isCard)
-                card = elm;
-            return !isCard;
-        });
-        return card;
-    }
-
     checkHighlightShiftArea(lead) {
         if (this.shiftStartLead && 
             this.shiftStartLead.Stage == lead.Stage

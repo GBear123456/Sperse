@@ -5,7 +5,7 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('AssignTo')}}</span>
-                <div *ngIf="selectedKeys.length">
+                <div [hidden]="bulkUpdateMode && !selectedKeys?.length">
                     <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
@@ -14,7 +14,7 @@
                 height="350"
                 [searchEnabled]="true"
                 [searchExpr]="'name'"
-                [selectionMode]="selectedKeys.length ? 'single': 'none'"
+                [selectionMode]="bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"

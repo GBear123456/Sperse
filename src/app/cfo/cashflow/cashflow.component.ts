@@ -148,6 +148,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         maxDate: moment().utc().add(10, 'year').year()
     };
 
+    allowChangingForecast: boolean;
     showAllVisible = false;
     showAllDisable = false;
     private noRefreshedAfterSync: boolean;
@@ -2972,7 +2973,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** If cell is cashflow type header total row - add css classes to parent tr */
             if (this.isCashflowTypeRowTotal(cell, area)) {
                 let path = cell.path || cell.rowPath;
-                options.parentClasses.push(path[0].slice(2).toLowerCase() + 'Row', 'totalRow');
+                options.parentClasses.push(path[0].slice(2).toLowerCase() + 'Row', 'totalRow', 'grandTotal');
             }
 
             if (this.isUnclassified(cell, area)) {
@@ -2980,7 +2981,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             if (this.isAccountingRowTotal(cell, area)) {
-                options.parentClasses.push('totalRow');
+                options.parentClasses.push('totalRow', 'accountingTotal');
             }
 
             /** added css class to the income and outcomes columns */
@@ -3203,7 +3204,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 let $targetCell = $(targetCell);
                 let $targetCellParent = $targetCell.parent();
-                let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.totalRow')).add($targetCellParent.nextUntil('.totalRow'));
+                let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.grandTotal')).add($targetCellParent.nextUntil('.grandTotal'));
                 /** Highlight cells where we can drop cell */
                 if (moveOnlyHistorical) {
                     this.highlightHistoricalTargetCells($targetCell, $availableRows);
@@ -4235,7 +4236,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** disallow adding of these levels */
                     clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
                     clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
-                    clickedCellPrefix !== CategorizationPrefixes.AccountName
+                    clickedCellPrefix !== CategorizationPrefixes.AccountName &&
+                    /** allow adding if checked active accounts */
+                    this.allowChangingForecast
                 ) {
                     const cellDateInterval = this.formattingDate(cellObj.cell.columnPath);
                     const futureForecastsYearsAmount = parseInt(this.feature.getValue('CFO.FutureForecastsYearCount'));
@@ -5381,6 +5384,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.operations.bankAccountSelector.initDataSource);
             this._filtersService.change(accountFilter);
         }
+        this.allowChangingForecast = data.isActive;
     }
 
     discardDiscrepancy(cellObj) {
