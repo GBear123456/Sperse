@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { ClientDetailsComponent } from './client-details.component';
-import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
+import { DocumentsComponent } from './documents/documents.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
@@ -23,7 +23,7 @@ import { NotesComponent } from './notes/notes.component';
                   {path: 'contact-information', component: ContactInformationComponent },
                   {path: 'lead-information', component: LeadInformationComponent },
                   {path: 'questionnaire', component: QuestionnaireComponent },
-                  {path: 'required-documents', component: RequiredDocumentsComponent },
+                  {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
                   {path: 'application-status', component: ApplicationStatusComponent },
                   {path: 'referal-history', component: ReferalHistoryComponent },
                   {path: 'payment-information', component: PaymentInformationComponent },
@@ -39,7 +39,7 @@ import { NotesComponent } from './notes/notes.component';
                   {path: 'contact-information', component: ContactInformationComponent },
                   {path: 'lead-information', component: LeadInformationComponent },
                   {path: 'questionnaire', component: QuestionnaireComponent },
-                  {path: 'required-documents', component: RequiredDocumentsComponent },
+                  {path: 'documents', component: DocumentsComponent },
                   {path: 'referal-history', component: ReferalHistoryComponent },
                   {path: 'activity-logs', component: ActivityLogsComponent },
                   {path: 'notes', component: NotesComponent }

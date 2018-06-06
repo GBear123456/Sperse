@@ -150,8 +150,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                     data.id = result.id;
                     this.contactInfoData.addresses
                         .push(ContactAddressDto.fromJS(data));
-                    this._clientDetailsService.verificationUpdate();
                 }
+                this._clientDetailsService.verificationUpdate();
             }
         );
     }
@@ -168,6 +168,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 this._addressService.deleteContactAddress(
                     this.contactInfoData.contactId, address.id).subscribe(result => {
                     this.contactInfoData.addresses.splice(index, 1);
+                    this._clientDetailsService.verificationUpdate();
                 });
             }
         });

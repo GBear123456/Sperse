@@ -93,17 +93,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
-            let selected = this.mapGrid.instance.getSelectedRowsData();
-            if (selected.length) {
-                if (this.validateFieldsMapping(selected))
-                    this.initReviewDataSource(selected);
-            } else {
-                let mappedFields = this.mapDataSource.filter((row) => {
+            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+            if (!mappedFields.length) {
+                mappedFields = this.mapDataSource.filter((row) => {
                     return !!row.mappedField;
                 });
-                if (this.validateFieldsMapping(mappedFields))
-                    this.initReviewDataSource(mappedFields); 
             }
+            if (this.validateFieldsMapping(mappedFields))
+                this.initReviewDataSource(mappedFields); 
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
@@ -143,11 +140,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     validateFieldsMapping(rows) {
+        const FIRST_NAME_FIELD = 'first',
+              LAST_NAME_FIELD = 'last';
         let isFistName = false, 
             isLastName = false,
             isMapped = rows.every((row) => {
-                isFistName = isFistName || (row.mappedField.toLowerCase() == 'first');
-                isLastName = isLastName || (row.mappedField.toLowerCase() == 'last');
+                isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
+                isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
                 if (!row.mappedField)
                     this.message.error(this.l('MapAllRecords'));
                 return !!row.mappedField;
