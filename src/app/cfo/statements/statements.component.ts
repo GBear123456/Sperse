@@ -330,7 +330,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     result = [];
                 }
             });
-        this.bankAccountSelector.getBankAccounts(true);
+        //this.bankAccountSelector.getBankAccounts(true);
     }
 
     initFiltering() {
