@@ -1,0 +1,46 @@
+<div class="wrapper">
+    <div class="grid-view">
+        <dx-data-grid id="gridContainer"
+                      height="100%"
+                      [dataSource]="dataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig"
+                      (onContentReady)="onContentReady($event)"
+                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                      (onToolbarPreparing)="onToolbarPreparing($event)">
+            <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
+            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+            <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
+
+            <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+
+            <dxi-column dataField="size" caption="{{l('DocumentSize')}}"></dxi-column>
+            <dxi-column dataField="dateTime" caption="{{l('Date')}}" cssClass="tabular" [calculateCellValue]="calculateDateCellValue"></dxi-column>
+            <dxi-column dataField="received" caption="{{l('DocumentReceived')}}"></dxi-column>
+            <dxi-column dataField="checkList" caption="{{l('DocumentCheckList')}}"></dxi-column>
+
+            <div *dxTemplate="let data of 'title'">
+                <h2 class="title">{{l('Documents')}}</h2>
+            </div>
+
+            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+        </dx-data-grid>
+    </div>
+    <div class="drop-down">
+        <h1>{{l('DropYourFile')}}</h1>
+        <file-drop 
+            (onFileDrop)="fileDropped($event)">
+            <p>{{l('DragAndDrop')}}</p>
+        </file-drop>
+        <p class="alter-text">or <a href="javascript:void(0);"><input name="browseFile" type="file" (change)="fileSelected($event)">{{l('SelectFileFrom')}}</a></p>
+        <div class="file-container">
+        </div>
+    </div>
+</div>

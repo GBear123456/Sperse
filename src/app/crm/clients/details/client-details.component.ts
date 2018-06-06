@@ -10,7 +10,7 @@ import {
     StageDto,
     LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -48,7 +48,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         {'label': 'Contact Information', 'route': 'contact-information'},
         {'label': 'Lead Information', 'route': 'lead-information'},
         {'label': 'Questionnaire', 'route': 'questionnaire'},
-        {'label': 'Documents', 'route': 'required-documents'},
+        {'label': 'Documents', 'route': 'documents'},
         {'label': 'Application Status', 'route': 'application-status', 'hiddenForLeads': true},
         {'label': 'Referral History', 'route': 'referal-history'},
         {'label': 'Payment Information', 'route': 'payment-information', 'hiddenForLeads': true},
@@ -59,7 +59,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     rightPanelSetting: any = {
         clientScores: true,
         totalApproved: true,
-        verification: true
+        verification: true,
+        opened: true
     };
 
     private rootComponent: any;
@@ -118,6 +119,16 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         _clientDetailsService.verificationSubscribe(
             this.initVerificationChecklist.bind(this)
         );
+        let optionTimeout = null;
+        this._router.events.subscribe((event) => {
+            if(event instanceof ActivationEnd && !optionTimeout)
+                optionTimeout = setTimeout(() => {
+                    optionTimeout = null;
+                    let data = event.snapshot.data;
+                    this.rightPanelSetting.opened = data.hasOwnProperty(
+                        'rightPanelOpened') ? data.rightPanelOpened: true;
+                });
+        });
     }
 
     private fillCustomerDetails(result) {

@@ -26,6 +26,7 @@ import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
 
+import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
@@ -55,6 +56,7 @@ import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
+import { FileDropModule } from 'ngx-file-drop';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
@@ -101,7 +103,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     RatingComponent,
     StarsListComponent,
     StaticListComponent,
-    StaticListComponent
+    DocumentsComponent
   ],
   imports: [
     FormsModule,
@@ -134,7 +136,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     RoundProgressModule,
     DxValidationGroupModule,
     PipelineModule,
-    ImageCropperModule
+    ImageCropperModule,
+    FileDropModule
   ],
   exports: [
     UploadPhotoDialogComponent,

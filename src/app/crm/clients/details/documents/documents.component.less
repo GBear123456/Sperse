@@ -1,0 +1,76 @@
+﻿:host {
+    .wrapper {
+        display: flex;
+        margin: 0px 23px;
+        height: 100%;
+        overflow: hidden;
+        width: 97%;
+
+        .grid-view {
+            width: auto;            
+            max-width: calc(~"100% - 380px");
+            height: 100%;
+            /deep/ dx-data-grid {
+                 table {
+                     direction: rtl;
+                     tr, td {
+                         direction: ltr;
+                     }
+                 }
+
+                 .dx-datagrid .dx-link.dx-link-edit {
+                     width: 18px!important;
+                 }
+                 td.dx-command-edit {
+                     width: 120px!important;
+                     &:before {
+                        left: 60px!important;
+                     }
+                 }
+
+                .title {
+                    margin-top: 20px;
+                }
+                input {
+                    border-bottom: none;
+                }
+            }
+        }
+
+        .drop-down {
+            width: 30%;
+            min-width: 340px;
+            margin: 50px 0px 0px 30px;
+            h1 {
+                text-align: center;
+                font-weight: 300;
+                font-size: 34px;
+                padding-bottom: 20px;
+                color: #dedede;
+            }
+            /deep/ .drop-zone {
+                margin: auto;                
+                height: 100px;
+                border: 1px solid #dedede;
+                border-radius: 5px;
+                background-color: #F8F7FC;
+                text-transform: uppercase;
+                width: 300px;
+                p { 
+                    color: #333333;
+                    padding-top: 10px;
+                    font-weight: 500;
+                }
+            }
+            p.alter-text {
+                text-align: center;
+                padding-top: 20px;     
+                input {
+                    opacity: 0;
+                    width: 200px;
+                    position: absolute;
+                }
+            }
+        }
+    }
+}
