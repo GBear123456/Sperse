@@ -484,24 +484,24 @@
                 background: url('../../../../assets/common/icons/funnel-icon.svg') no-repeat center;
             }
 
-            &[filter-selected="true"] {
-                &::after {
-                    content: '';
-                    position: absolute;
-                    display: block;
-                    width: 5px;
-                    height: 5px;
-                    border-radius: 50%;
-                    background: red;
-                    top: 7px;
-                    right: 7px;
-                }
-            }
-
             &[button-pressed="true"] {
                 .dx-button-content {
                     background: url('../../../../assets/common/icons/funnel-blue-icon.svg') no-repeat center;
                 }
+            }
+        }
+
+        [filter-selected="true"] {
+            &::after {
+                content: '';
+                position: absolute;
+                display: block;
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: red;
+                top: 7px;
+                right: 7px;
             }
         }
 
@@ -661,7 +661,7 @@
                     min-width: 60px;
                 }
 
-                &:after {
+                &:before {
                     content: '';
                     display: block;
                     background: url('../../../../assets/common/icons/down-arrow-icon.svg');

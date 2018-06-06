@@ -99,18 +99,15 @@ export class FiltersService {
     }
 
     checkIfAnySelected() {
-        this.hasFilterSelected =
-            _.any(this.filters, (x) => {
-                if (x.items) {
-                    let filterIsSet = false;
-                    _.forEach(x.items, y => {
-                        if ((y.value && !_.isArray(y.value)) || (y.value && y.value.length))
-                            filterIsSet = true;
-                    });
-                    return filterIsSet;
-                }
-
-                return false;
-            });
+        _.forEach(this.filters, (x) => {
+            if (x.items) {
+                x.isSelected = _.any(x.items, y => {
+                    if ((y.value && !_.isArray(y.value)) || (y.value && y.value.length))
+                        return true;
+                    return false;
+                });
+            }
+        });
+        this.hasFilterSelected = _.any(this.filters, (x) => x.isSelected);
     }
 }

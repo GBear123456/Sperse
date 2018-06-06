@@ -13,6 +13,7 @@ export class FilterModelBase<T extends FilterItemModel> {
     items?: { [item: string]: T; };
     displayElements?: any[];
     options?: any;
+    isSelected: boolean = false;
 
     public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);
@@ -48,7 +49,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                     if (this.operator)
                         operator[this.operator] = val;
                     if (val && (['string', 'number'].indexOf(typeof (val)) >= 0)) {
-                        obj[_.capitalize(key)] = this.operator ? operator : val;
+                        obj[capitalize(key)] = this.operator ? operator : val;
                     }
                     return obj;
                 }, {});

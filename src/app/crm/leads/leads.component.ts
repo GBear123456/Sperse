@@ -420,27 +420,45 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'before', items: [
                     {
                         name: 'assign',
-                        action: this.toggleUserAssignment.bind(this)
+                        action: this.toggleUserAssignment.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                        }
                     },
                     {
                         name: 'stage',
-                        action: this.toggleStages.bind(this)
+                        action: this.toggleStages.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                        }
                     },
                     {
                         name: 'lists',
-                        action: this.toggleLists.bind(this)
+                        action: this.toggleLists.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
+                        }
                     },
                     {
                         name: 'tags',
-                        action: this.toggleTags.bind(this)
+                        action: this.toggleTags.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
+                        }
                     },
                     {
                         name: 'rating',
-                        action: this.toggleRating.bind(this)
+                        action: this.toggleRating.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
+                        }
                     },
                     {
                         name: 'star',
-                        action: this.toggleStars.bind(this)
+                        action: this.toggleStars.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        }
                     }
                 ]
             },

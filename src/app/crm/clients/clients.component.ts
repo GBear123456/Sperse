@@ -419,27 +419,45 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'before', items: [
                     {
                         name: 'assign',
-                        action: this.toggleUserAssignment.bind(this)
+                        action: this.toggleUserAssignment.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                        }
                     },
                     {
                         name: 'status',
-                        action: this.toggleStatus.bind(this)
+                        action: this.toggleStatus.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected
+                        }
                     },
                     {
                         name: 'lists',
-                        action: this.toggleLists.bind(this)
+                        action: this.toggleLists.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
+                        }
                     },
                     {
                         name: 'tags',
-                        action: this.toggleTags.bind(this)
+                        action: this.toggleTags.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
+                        }
                     },
                     {
                         name: 'rating',
-                        action: this.toggleRating.bind(this)
+                        action: this.toggleRating.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
+                        }
                     },
                     {
                         name: 'star',
-                        action: this.toggleStars.bind(this)
+                        action: this.toggleStars.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        }
                     }
                 ]
             },
