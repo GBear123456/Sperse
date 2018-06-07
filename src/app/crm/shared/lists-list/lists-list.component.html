@@ -16,7 +16,6 @@
                 keyExpr="id"
                 parentIdExpr="parent"
                 [rootValue]="0"
-                [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true}"
                 [showColumnLines]="false"
                 [showColumnHeaders]="false"
                 [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
@@ -30,8 +29,12 @@
                 (onRowUpdating)="onRowUpdating($event)"
                 (onCellPrepared)="onCellPrepared($event)"
                 (onContentReady)="onContentReady($event)">
-
                 <dxi-column dataField="name"></dxi-column>
+                <dxo-editing mode="row"
+                    [texts]="{confirmDeleteMessage: ''}"
+                    [allowUpdating]="true"
+                    [allowAdding]="true">
+                </dxo-editing>
             </dx-tree-list>
         </div>
     </div>

@@ -6,6 +6,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { MatDialog } from '@angular/material';
+import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 
 @Component({
   selector: 'crm-tags-list',
@@ -36,6 +38,7 @@ export class TagsListComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _filterService: FiltersService,
         private _tagsService: CustomerTagsServiceProxy
     ) {
@@ -139,7 +142,30 @@ export class TagsListComponent extends AppComponentBase {
     }
 
     onRowRemoving($event) {
-        //!!VP should be applied corresponding method
+        $event.cancel = true;
+        let itemId = $event.key,
+            dialogData = {
+                deleteAllReferences: false,
+                items: _.filter(this.list, (obj) => {
+                    return (obj.id != itemId);
+                }),
+                entityPrefix: 'Tag',
+                reassignToItemId: undefined,
+                localization: this.localizationSourceName
+            };
+        this.tooltipVisible = false;
+        this.dialog.open(DeleteAndReassignDialogComponent, {
+            data: dialogData
+        }).afterClosed().subscribe((result) => {
+            if (result)
+                this._tagsService
+                    .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
+                    .subscribe(() => {
+                        this.refresh();
+                    });
+            else
+                this.tooltipVisible = true;
+            });
     }
 
     onRowUpdating($event) {
