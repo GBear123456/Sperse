@@ -43,12 +43,8 @@ export class TagsListComponent extends AppComponentBase {
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible) {
+        if (this.tooltipVisible = !this.tooltipVisible)
             this.refresh();
-
-            if (this.bulkUpdateMode)
-                this.selectedTags = [];
-        }
     }
 
     apply(selectedKeys = undefined) {
