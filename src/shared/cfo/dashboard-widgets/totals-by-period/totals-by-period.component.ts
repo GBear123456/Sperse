@@ -53,7 +53,6 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 this.bankAccountIds,
                 this.startDate,
                 this.endDate,
-                undefined,
                 this.selectedPeriod
             )
                 .mergeMap(x => x)

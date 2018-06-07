@@ -20,6 +20,7 @@ export class CashflowService {
      */
     getCategorizationFromForecastAndTarget(source: CellInfo, target: CellInfo, subCategoryIsCategory = true) {
         let cashflowTypeId = target.cashflowTypeId != source.cashflowTypeId ? target.cashflowTypeId : source.cashflowTypeId;
+        let accountingTypeId = target.accountingTypeId && target.accountingTypeId != source.accountingTypeId ? target.accountingTypeId : source.accountingTypeId;
         let subCategoryId = target.subCategoryId && target.subCategoryId != source.subCategoryId ? target.subCategoryId : source.subCategoryId;
 
         let categoryId = target.categoryId && target.categoryId != source.categoryId ? target.categoryId : source.categoryId;
@@ -28,7 +29,8 @@ export class CashflowService {
 
         const categorization = {
             categoryId: subCategoryIsCategory && subCategoryId ? subCategoryId : categoryId,
-            transactionDescriptor: transactionDescriptor
+            transactionDescriptor: transactionDescriptor,
+            accountingTypeId: accountingTypeId
         };
 
         if (!subCategoryIsCategory) {

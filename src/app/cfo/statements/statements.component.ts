@@ -283,7 +283,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.requestFilter.accountIds,
             this.requestFilter.startDate,
             this.requestFilter.endDate,
-            undefined,
             GroupBy.Monthly
         )
             .finally(() => abp.ui.clearBusy())
@@ -331,7 +330,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     result = [];
                 }
             });
-        this.bankAccountSelector.getBankAccounts(true);
+        //this.bankAccountSelector.getBankAccounts(true);
     }
 
     initFiltering() {

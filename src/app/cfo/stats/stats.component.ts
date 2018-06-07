@@ -482,7 +482,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             accountIds,
             startDate,
             endDate,
-            undefined,
             GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
