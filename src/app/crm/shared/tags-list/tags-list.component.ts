@@ -63,8 +63,6 @@ export class TagsListComponent extends AppComponentBase {
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
         }
         this.tooltipVisible = visible;
     }
@@ -76,6 +74,9 @@ export class TagsListComponent extends AppComponentBase {
                 tags: this.selectedItems
             })).subscribe((result) => {});
         });
+
+        if (this.bulkUpdateMode)
+            setTimeout(() => { this.listComponent.deselectAll(); }, 500);
     }
 
     clear() {
@@ -148,13 +149,27 @@ export class TagsListComponent extends AppComponentBase {
     }
 
     onRowUpdating($event) {
-        this._tagsService.rename(UpdateCustomerTagInput.fromJS({
-            id: $event.oldData.id,
-            name: $event.newData.name
-        })).subscribe((res) => {
-            if (res)
-                $event.cancel = true;
-        });
+        let tagName = $event.newData.name.trim();
+        if (tagName) {
+            this._tagsService.rename(UpdateCustomerTagInput.fromJS({
+                id: $event.oldData.id,
+                name: tagName
+            })).subscribe((res) => {
+                if (res)
+                    $event.cancel = true;
+            });
+        } else {
+            $event.cancel = true;
+        }
+    }
+
+    onRowInserting($event) {
+        if (!$event.data.name.trim())
+            $event.cancel = true;
+    }
+
+    onSelectionChanged($event) {
+        this.selectedTags = $event.component.getSelectedRowKeys('all');
     }
 
     editorPrepared($event) {
