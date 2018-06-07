@@ -68,7 +68,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Statements')],
-            onRefresh: this.refreshData.bind(this),
+            onRefresh: () => this.bankAccountSelector.getBankAccounts(true),
             iconSrc: 'assets/common/icons/credit-card-icon.svg'
         };
     }
@@ -330,7 +330,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     result = [];
                 }
             });
-        //this.bankAccountSelector.getBankAccounts(true);
     }
 
     initFiltering() {

@@ -72,11 +72,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     refreshWidgets() {
-        this.accountsComponent.getAccountTotals();
-        this.accountsComponent.getDailyStats();
-        this.trendByPeriodComponent.loadStatsData();
-        this.totalsByPeriodComponent.loadStatsData();
-        this.categorizationStatusComponent.getCategorizationStatus();
         this.bankAccountSelector.getBankAccounts(true);
     }
 
