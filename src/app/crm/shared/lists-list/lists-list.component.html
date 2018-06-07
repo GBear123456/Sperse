@@ -1,4 +1,4 @@
-<dx-tooltip height="440"
+<dx-tooltip height="410"
             [target]="targetSelector"
             [(visible)]="tooltipVisible">
     <div *dxTemplate="let data of 'content'">
@@ -29,9 +29,11 @@
                 (onRowRemoving)="onRowRemoving($event)"
                 (onRowUpdating)="onRowUpdating($event)"
                 (onCellPrepared)="onCellPrepared($event)"
-                (onContentReady)="onContentReady($event)">
+                (onContentReady)="onContentReady($event)"
+                (onRowInserted)="onRowInserted($event)"
+                (onEditorPrepared)="editorPrepared($event)">
 
-                <dxi-column dataField="name"></dxi-column>
+                <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
             </dx-tree-list>
         </div>
     </div>
