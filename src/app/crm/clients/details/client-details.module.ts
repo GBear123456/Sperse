@@ -44,7 +44,7 @@ import { ContactInformationComponent } from './contact-information/contact-infor
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { ApplicationStatusComponent } from './application-status/application-status.component';
-import { ReferalHistoryComponent } from './referal-history/referal-history.component';
+import { ReferralHistoryComponent } from './referral-history/referral-history.component';
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
@@ -86,7 +86,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     QuestionnaireComponent,
     RequiredDocumentsComponent,
     ApplicationStatusComponent,
-    ReferalHistoryComponent,
+    ReferralHistoryComponent,
     PaymentInformationComponent,
     ActivityLogsComponent,
     VerificationChecklistComponent,
