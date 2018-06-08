@@ -146,6 +146,15 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
+    clearFilterIfSelected(selectedId) {
+        let modelItems = this.filterModel.items.element.value;
+        if (modelItems.length == 1 && modelItems[0] == selectedId)  {
+            this.clearFiltersHighlight();
+            this.filterModel.items.element.value = [];
+        }
+        this._filterService.change(this.filterModel);
+    }
+
     onRowRemoving($event) {
         $event.cancel = true;
         let itemId = $event.key,
@@ -167,6 +176,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
                     .subscribe(() => {
                         this.refresh();
+                        this.clearFilterIfSelected(itemId);
                     });
             else
                 this.tooltipVisible = true;
