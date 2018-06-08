@@ -549,7 +549,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'fullscreen', 
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
-                            this.dataGrid.instance.repaint();
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
                 ]

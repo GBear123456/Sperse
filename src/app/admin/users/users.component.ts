@@ -232,7 +232,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                         name: 'fullscreen', 
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
-                            this.dataGrid.instance.repaint();
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
                         }
                     }
                 ]
