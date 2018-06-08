@@ -37,7 +37,7 @@
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" sortOrder="desc"></dxi-column>
                         <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
@@ -60,12 +60,12 @@
                         <dxi-column dataField="ChannelCode" caption="{{l('ChannelCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="EntryUrl" caption="{{l('EntryUrl')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="StreetAddress" caption="{{l('Contact.StreetAddress')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Zip" caption="{{l('Contact.Zip')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Zip" caption="{{l('Contact.Zip')}}" [visible]="false" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="Website" caption="{{l('Website')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="Title" caption="{{l('Title')}}" [visible]="false"></dxi-column>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}

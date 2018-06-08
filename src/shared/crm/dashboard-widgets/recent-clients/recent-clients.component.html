@@ -9,7 +9,7 @@
                       (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                       (onCellClick)="onCellClick($event)">
             <dxi-column dataField="name" caption="{{l('Customer.Name')}}"></dxi-column>
-            <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell"></dxi-column>
+            <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
             <div *dxTemplate="let cellData of 'dateCell'">
                 {{cellData.value | date: formatting.dateTime}}
             </div>
