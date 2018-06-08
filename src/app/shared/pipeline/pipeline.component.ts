@@ -325,8 +325,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCardClick(lead, event) {
-         if (event.ctrlKey || event.shiftKey) {            
-            if ((this.highlightSelectedCard(event) || this.shiftStartLead) && event.shiftKey)
+         if (event.ctrlKey || event.shiftKey) {
+            let checkedCard = this.highlightSelectedCard(event);
+            if (!checkedCard && event.ctrlKey && event.shiftKey)
+                this.deselectAllCards();
+            else if ((checkedCard || this.shiftStartLead) && event.shiftKey)
                 this.checkHighlightShiftArea(lead);
             this.selectedLeads = this.getSelectedLeads();            
          } else
