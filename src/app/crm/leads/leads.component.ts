@@ -181,6 +181,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
+        if (this.dataLayoutType == DataLayoutType.Grid)
+            this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
