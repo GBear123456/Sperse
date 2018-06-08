@@ -100,15 +100,15 @@ export class FiltersService {
     }
 
     checkIfAnySelected() {
+        this.hasFilterSelected = false;
         _.forEach(this.filters, (x) => {
             if (x.items) {
                 x.isSelected = _.any(x.items, y => {
                     if ((y.value && !_.isArray(y.value)) || (y.value && y.value.length))
-                        return true;
+                        return this.hasFilterSelected = true;
                     return false;
                 });
             }
         });
-        this.hasFilterSelected = _.any(this.filters, (x) => x.isSelected);
     }
 }
