@@ -296,7 +296,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             elements[0].classList.remove('selected');
     }
 
-    checkHighlightShiftArea(lead) {
+    toogleHighlightShiftArea(lead, checked) {
         if (this.shiftStartLead && 
             this.shiftStartLead.Stage == lead.Stage
         ) {
@@ -309,12 +309,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 endCard = stored;
             }
             
+            let method = checked ? 'add': 'remove';
             while(startCard != endCard) {
                 if (startCard.nodeType == Node.ELEMENT_NODE)
-                    startCard.classList.add('selected');
+                    startCard.classList[method]('selected');
                 startCard = startCard.nextSibling;
             } 
-            endCard.classList.add('selected');
+            endCard.classList[method]('selected');
         } else 
             this.shiftStartLead = lead;
     }
@@ -329,17 +330,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             let checkedCard = this.highlightSelectedCard(event);
             if (!checkedCard && event.ctrlKey && event.shiftKey)
                 this.deselectAllCards();
-            else if ((checkedCard || this.shiftStartLead) && event.shiftKey)
-                this.checkHighlightShiftArea(lead);
+            else if (event.shiftKey)
+                this.toogleHighlightShiftArea(lead, checkedCard);
             this.selectedLeads = this.getSelectedLeads();            
          } else
             lead && this._router.navigate(
                 ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
                     queryParams: {
-                    referrer: 'app/crm/leads',
-                    dataLayoutType: DataLayoutType.Pipeline
+                        referrer: 'app/crm/leads',
+                        dataLayoutType: DataLayoutType.Pipeline
+                    }
                 }
-            });
+            );
         this.hideStageHighlighting();
     }
 }
