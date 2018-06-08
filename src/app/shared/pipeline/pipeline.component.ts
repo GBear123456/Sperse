@@ -29,6 +29,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private loadStageIndex: number;
     private refreshTimeout: any;
     private shiftStartLead: any;
+    private firstStage: any;
+    private lastStage: any;
     
     @Output() selectedLeadsChange = new EventEmitter<any>();    
     @Input() 
@@ -122,6 +124,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.loadStagesLeads(page);
                 else {
                     this.stages = stages;
+                    this.firstStage = stages[0];
+                    this.lastStage = stages[stages.length - 1];
                     this.finishLoading();
                 }
             }
@@ -275,7 +279,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             let isCard = elm.classList.contains('card');
             if (isCard) {
                 card = elm;
-                elm.classList.toggle('selected');
+                let stageName = card.getAttribute('stage');
+                if ([this.firstStage.name, this.lastStage.name].indexOf(stageName) < 0)
+                    elm.classList.toggle('selected');
             }
             return !isCard;    
         });        
