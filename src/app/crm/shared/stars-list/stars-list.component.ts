@@ -4,6 +4,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { CustomerStarsServiceProxy, MarkCustomerInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
+import * as _ from 'underscore';
+
 @Component({
   selector: 'crm-stars-list',
   templateUrl: './stars-list.component.html',
@@ -36,12 +38,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    private deselectAllItems()
-    {
-        this.listComponent.deselectAll();
-        this.selectedItemKeys = [];
-    }
-
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.highlightSelectedFilters();
@@ -49,22 +45,23 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.listComponent.option('selectedRowKeys');
+            this.selectedItemKeys = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(index) && item.id;
+            }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            if (isConfirmed) 
-                                this.process();
-                            else
-                                this.deselectAllItems();
+                            isConfirmed && this.process();
                         }
                     );
                 else
                     this.process();
             }
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
@@ -74,24 +71,27 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             this._starsService.markCustomer(MarkCustomerInput.fromJS({
                 customerId: key,
                 starId: this.selectedItemKey
-            })).finally(() => { 
-                if (this.bulkUpdateMode) 
-                    this.deselectAllItems(); 
-            }).subscribe((result) => {});
+            })).subscribe((result) => {});
         });
     }
 
     clear() {
-        this.deselectAllItems();
+        this.listComponent.unselectAll();
         this.apply();
     }
-
-    addActionButton(name, container: HTMLElement, callback) {
-        let buttonElement = document.createElement('a');
-        buttonElement.innerText = this.l(this.capitalize(name));
-        buttonElement.className = 'dx-link dx-link-' + name;
-        buttonElement.addEventListener('click', callback);
-        container.appendChild(buttonElement);
+    
+    highlightSelectedFilters() {
+        let filterIds = this.filterModel && 
+            this.filterModel.items.element.value;        
+        this.clearFiltersHighlight();
+        if (this.listComponent && filterIds && filterIds.length) {
+            let items = this.listComponent.element()
+                .getElementsByClassName('item-row');
+            _.each(items, (item) => {
+                if (filterIds.indexOf(Number(item.getAttribute('id'))) >= 0)
+                    item.parentNode.parentNode.classList.add('filtered');                
+            });
+        }
     }
 
     clearFiltersHighlight() {
@@ -103,35 +103,20 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    onCellPrepared($event) {
-        if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            if (this.filterModel)
-                this.addActionButton('filter', $event.cellElement, (event) => {
-                    this.clearFiltersHighlight();
-
-                    let modelItems = this.filterModel.items.element.value;
-                    if (modelItems.length == 1 && modelItems[0] == $event.data.id) 
-                        this.filterModel.items.element.value = [];
-                    else {
-                        this.filterModel.items.element.value = [$event.data.id];
-                        $event.cellElement.parentElement.classList.add('filtered');
-                    }
-                    this._filtersService.change(this.filterModel);
-                });
-        }
-    }
-
-    highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+    applyFilter(event, data) {
+        event.stopPropagation();
+  
         this.clearFiltersHighlight();
-        if (this.listComponent && filterIds && filterIds.length) {
-            filterIds.forEach((id) => {
-                let row = this.listComponent.getRowElement(
-                    this.listComponent.getRowIndexByKey(id));
-                if (row && row[0]) row[0].classList.add('filtered');
-            });
+
+        let modelItems = this.filterModel.items.element.value;
+        if (modelItems.length == 1 && modelItems[0] == data.id) 
+            this.filterModel.items.element.value = [];
+        else {
+            this.filterModel.items.element.value = [data.id];
+            event.target.parentNode.parentNode.parentNode.classList.add('filtered');
         }
+
+        this._filtersService.change(this.filterModel);
     }
 
     onContentReady($event) {
@@ -140,12 +125,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     onInitialized($event) {
         this.listComponent = $event.component;
-    }
-
-    onRowClick($event) {
-        let key = $event.key;
-        this.selectedItemKey = key;
-        $event.component.selectRows([key], false);
     }
 
     ngOnInit() {

@@ -10,31 +10,19 @@
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>
-            <dx-tree-list
-                width="180px"
+            <dx-list
                 height="230px"
-                keyExpr="id"
-                parentIdExpr="parent"
-                [rootValue]="0"
-                [editing]="{allowAdding: false, allowDeleting: false, allowUpdating: true}"
-                [showColumnLines]="false"
-                [showColumnHeaders]="false"
-                [selection]="{allowSelectAll: false, mode: (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'single' }"
-                [selectedRowKeys]="selectedItemKeys"
-                [(dataSource)]="list"
-                (onInitialized)="onInitialized($event)"
-                (onCellPrepared)="onCellPrepared($event)"
+                [selectionMode]="bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
+                [showSelectionControls]="true"
+                [dataSource]="list"
+                [keyExpr]="'id'"
+                [selectedItemKeys]="selectedItemKeys"
                 (onContentReady)="onContentReady($event)"
-                (onRowClick)="onRowClick($event)">
-                <dxi-column cellTemplate="selectCellTemplate"></dxi-column>
-                <div *dxTemplate="let data of 'selectCellTemplate'">
-                    <dx-radio-group [hidden]="bulkUpdateMode && !selectedKeys?.length" [items]="[{id:data.data.id}]" [value]="selectedItemKey" valueExpr="id"></dx-radio-group>
+                (onInitialized)="onInitialized($event)">
+                <div *dxTemplate="let data of 'item'">
+                    <div class="item-row" data-id="{{data.id}}"><div [class]="'star star-' + data.name | lowercase"></div><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
                 </div>
-                <dxi-column dataField="name" cellTemplate="starTemplate"></dxi-column>
-                <div *dxTemplate="let data of 'starTemplate'">
-                    <div [class]="'star star-' + data.data.name | lowercase"></div>
-                </div>
-            </dx-tree-list>
+            </dx-list>
         </div>
     </div>
 </dx-tooltip>

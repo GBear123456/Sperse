@@ -40,77 +40,53 @@
             right: 0px;
         }
 
-        .dx-toolbar-after {
-            padding-left: 0px!important;
-            width: 300px;
-            left: 0px;
-            .dx-toolbar-button {
-                float: left;
-                &:first-child {
-                    float: right;
-                    margin-top: 4px;
-                }
+        .dx-list-item.filtered {
+            background-color: #effafe!important;
+        }
+
+        .dx-list-item.dx-state-focused {
+            background-color: #FFF;
+            color: #333;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;            
+
+            a.dx-link-filter {
+                width: 30px;
+                background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
             }
-        }
 
-        tr {
-            &.filtered {
-                background-color: #effafe;
-            }
-        }
-        
-        div.dx-treelist-icon-container {
-            display: none;
-        }
-
-        td.dx-command-edit {
-            text-overflow: unset;
-            text-align: right !important;
-
-            a.dx-link {
-                width: 22px;
+            .star {
                 display: inline-block;
-                color: transparent !important;
-                vertical-align: middle;
-
-                &.dx-link-add, &.dx-link-edit, &.dx-link-delete {
-                    display: none;
+                width: 25px;
+                height: 25px;
+                margin-bottom: 2px;
+                -webkit-mask-image: url(../../../../assets/common/icons/star-icon.svg);
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-size: 25px;
+        
+                &.star-yellow {
+                    background-color: rgb(230, 230, 0);
                 }
-
-                &.dx-link-filter {
-                    background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+        
+                &.star-blue {
+                    background-color: blue;
                 }
-            }
-        }
-    }
-
-    .star {
-        display: inline-block;
-        width: 25px;
-        height: 25px;
-        margin-bottom: 2px;
-        -webkit-mask-image: url(../../../../assets/common/icons/star-icon.svg);
-        -webkit-mask-repeat: no-repeat;
-        -webkit-mask-size: 25px;
-
-        &.star-yellow {
-            background-color: rgb(230, 230, 0);
-        }
-
-        &.star-blue {
-            background-color: blue;
-        }
-
-        &.star-green {
-            background-color: green;
-        }
-
-        &.star-purple {
-            background-color: purple;
-        }
-
-        &.star-red {
-            background-color: red;
+        
+                &.star-green {
+                    background-color: green;
+                }
+        
+                &.star-purple {
+                    background-color: purple;
+                }
+        
+                &.star-red {
+                    background-color: red;
+                }
+            }        
         }
     }
 }
