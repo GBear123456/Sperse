@@ -178,6 +178,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             
             if (value[1].classList.contains('selected')) {
                 this.getSelectedLeads().forEach((lead) => {
+                    if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
+                        return false;
+
                     let oldStage = _.find(this.stages, (stage) => {
                         return stage.name == lead.Stage;
                     });
@@ -207,7 +210,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (el.classList.contains('selected')) {
                     let cards = this.getSelectedCards();
                     if (cards.length)
-                        el.setAttribute('count', cards.length);
+                        el.setAttribute('count', [].filter.call(cards, (card) => {
+                            return [this.firstStage.name, this.lastStage.name]
+                                .indexOf(card.getAttribute('stage')) < 0;
+                        }).length);
                 }
 
                 let stage = this.getStageByElement(el);
@@ -281,8 +287,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (isCard) {
                 card = elm;
                 let stageName = card.getAttribute('stage');
-                if ([this.firstStage.name, this.lastStage.name].indexOf(stageName) < 0)
-                    elm.classList.toggle('selected');
+                elm.classList.toggle('selected');
             }
             return !isCard;    
         });        
