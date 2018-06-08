@@ -184,7 +184,13 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             {
                 location: 'after',
                 items: [
-                    { name: 'fullscreen', action: Function() }
+                    { 
+                        name: 'fullscreen', 
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);
+                            this.dataGrid.instance.repaint();
+                        }
+                    }
                 ]
             }
         ];
@@ -215,7 +221,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         });
 
         this._filtersService.apply((filter) => {
-            this.selectedPermission = filter.items.element.value;
+            this.selectedPermission = filter && 
+                filter.items.element.value;
 
             this.initToolbarConfig();
             this.refreshDataGrid();

@@ -60,6 +60,7 @@ export class FiltersService {
     }
 
     clearAllFilters() {
+        this.hasFilterSelected = false;
         this.filters.forEach(
             (filter: FilterModel) => filter.clearFilterItems()
         );
