@@ -209,8 +209,9 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                                 list: res.items.map((item) => {
                                     return {
                                         id: item.name,
-                                        name: '-'.repeat(item.level * 2) + item.displayName,
-                                        displayName: item.name
+                                        name: String.fromCharCode(160/*Space to avoid trim*/)
+                                            .repeat(item.level * 5) + item.displayName,
+                                        displayName: item.displayName
                                     };
                                 })
                             })                        

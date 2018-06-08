@@ -192,7 +192,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 });                
                 this.selectedLeads = [];
             } else            
-                this.updateLeadStage(leadId, newStage.name, oldStage.name);
+                this.updateLeadStage(leadId, newStage.name, 
+                    this.getStageByElement(value[3]).name);
         }));
         this.subscribers.push(
             this._dragulaService.dragend.subscribe((value) => {
