@@ -29,6 +29,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private loadStageIndex: number;
     private refreshTimeout: any;
     private shiftStartLead: any;
+    private firstStage: any;
+    private lastStage: any;
     
     @Output() selectedLeadsChange = new EventEmitter<any>();    
     @Input() 
@@ -122,6 +124,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.loadStagesLeads(page);
                 else {
                     this.stages = stages;
+                    this.firstStage = stages[0];
+                    this.lastStage = stages[stages.length - 1];
                     this.finishLoading();
                 }
             }
@@ -170,11 +174,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
          this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             let leadId = this.getAccessKey(value[1]),
-                newStage = this.getStageByElement(value[2]),
-                oldStage = this.getStageByElement(value[3]);
+                newStage = this.getStageByElement(value[2]);
             
             if (value[1].classList.contains('selected')) {
                 this.getSelectedLeads().forEach((lead) => {
+                    let oldStage = _.find(this.stages, (stage) => {
+                        return stage.name == lead.Stage;
+                    });
+
                     if (lead && lead.Stage != newStage.name)
                         this.updateLeadStage(lead.Id, newStage.name, lead.Stage, () => {
                             if (lead.Id != leadId) {
@@ -272,7 +279,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             let isCard = elm.classList.contains('card');
             if (isCard) {
                 card = elm;
-                elm.classList.toggle('selected');
+                let stageName = card.getAttribute('stage');
+                if ([this.firstStage.name, this.lastStage.name].indexOf(stageName) < 0)
+                    elm.classList.toggle('selected');
             }
             return !isCard;    
         });        
