@@ -7,6 +7,8 @@ import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInpu
     UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'crm-lists-list',
@@ -39,6 +41,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _filterService: FiltersService,
         private _listsService: CustomerListsServiceProxy
     ) {
@@ -80,6 +83,15 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         });
     }
 
+    refresh() {
+        this._listsService.getLists().subscribe((result) => {
+            this.list = result.map((obj, index) => {
+                obj['parent'] = 0;
+                return obj;
+            });
+        });
+    }
+
     clear() {
         this.listComponent.deselectAll();
         this.apply();
@@ -90,12 +102,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._listsService.getLists().subscribe((result) => {
-            this.list = result.map((obj, index) => {
-                obj['parent'] = 0;
-                return obj;
-            });
-        });
+        this.refresh();
     }
 
     reset() {
@@ -144,8 +151,41 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
+    clearFilterIfSelected(selectedId) {
+        let modelItems = this.filterModel.items.element.value;
+        if (modelItems.length == 1 && modelItems[0] == selectedId)  {
+            this.clearFiltersHighlight();
+            this.filterModel.items.element.value = [];
+        }
+        this._filterService.change(this.filterModel);
+    }
+
     onRowRemoving($event) {
-        //!!VP should be applied corresponding method
+        $event.cancel = true;
+        let itemId = $event.key,
+            dialogData = {
+                deleteAllReferences: false,
+                items: _.filter(this.list, (obj) => {
+                    return (obj.id != itemId);
+                }),
+                entityPrefix: 'List',
+                reassignToItemId: undefined,
+                localization: this.localizationSourceName
+            };
+        this.tooltipVisible = false;
+        this.dialog.open(DeleteAndReassignDialogComponent, {
+            data: dialogData
+        }).afterClosed().subscribe((result) => {
+            if (result)
+                this._listsService
+                    .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
+                    .subscribe(() => {
+                        this.refresh();
+                        this.clearFilterIfSelected(itemId);
+                    });
+            else
+                this.tooltipVisible = true;
+        });
     }
 
     onRowUpdating($event) {

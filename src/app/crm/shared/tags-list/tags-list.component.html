@@ -17,7 +17,6 @@
                 parentIdExpr="parent"
                 [rootValue]="0"
                 [noDataText]="l('AddNewTag')"
-                [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true}"
                 [showColumnLines]="false"
                 [showColumnHeaders]="false"
                 [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
@@ -35,8 +34,12 @@
                 (onContentReady)="onContentReady($event)"
                 (onRowInserted)="onRowInserted($event)"
                 (onEditorPrepared)="editorPrepared($event)">
-
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
+                <dxo-editing mode="row"
+                    [texts]="{confirmDeleteMessage: ''}"
+                    [allowUpdating]="true"
+                    [allowAdding]="true">
+                </dxo-editing>
             </dx-tree-list>
         </div>
     </div>

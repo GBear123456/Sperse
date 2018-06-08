@@ -54,8 +54,10 @@ import {
     DxTextAreaModule,
     DxContextMenuModule,
     DxSliderModule,
-    DxRadioGroupModule
+    DxRadioGroupModule,
+    DxCheckBoxModule
 } from 'devextreme-angular';
+import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 
 @NgModule({
     imports: [
@@ -83,6 +85,7 @@ import {
       DxListModule,
       DxSliderModule,
       DxRadioGroupModule,
+      DxCheckBoxModule,
 
       MatSidenavModule,
       MatProgressBarModule,
@@ -114,10 +117,12 @@ import {
       DashboardComponent,
       DashboardMenuComponent,
       LeadsStatsComponent,
-      ImportLeadsComponent
+      ImportLeadsComponent,
+      DeleteAndReassignDialogComponent
     ],
     entryComponents: [
-        CreateClientDialogComponent
+        CreateClientDialogComponent,
+        DeleteAndReassignDialogComponent
     ]
 })
 export class CrmModule {
