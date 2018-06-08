@@ -170,11 +170,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
          this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             let leadId = this.getAccessKey(value[1]),
-                newStage = this.getStageByElement(value[2]),
-                oldStage = this.getStageByElement(value[3]);
+                newStage = this.getStageByElement(value[2]);
             
             if (value[1].classList.contains('selected')) {
                 this.getSelectedLeads().forEach((lead) => {
+                    let oldStage = _.find(this.stages, (stage) => {
+                        return stage.name == lead.Stage;
+                    });
+
                     if (lead && lead.Stage != newStage.name)
                         this.updateLeadStage(lead.Id, newStage.name, lead.Stage, () => {
                             if (lead.Id != leadId) {
