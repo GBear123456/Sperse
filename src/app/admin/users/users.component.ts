@@ -50,12 +50,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         onRefresh: this.refreshDataGrid.bind(this),
         buttons: [
             {
-                enabled: true,
-                class: 'btn-default',
-                action: this.exportToExcel.bind(this),
-                lable: this.l('ExportToExcel')              
-            },
-            {
                 enabled: this.isGranted('Pages.Administration.Users.Create'),
                 action: this.createUser.bind(this),
                 lable: this.l('CreateNewUser')
@@ -207,7 +201,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 text: this.l('Save as PDF'),
                                 icon: 'pdf',
                             }, {
-                                action: this.exportToXLS.bind(this),
+                                action: this.exportToExcel.bind(this),
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
@@ -234,7 +228,13 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             {
                 location: 'after',
                 items: [
-                    { name: 'fullscreen', action: Function() }
+                    { 
+                        name: 'fullscreen', 
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                        }
+                    }
                 ]
             }
         ];
@@ -256,8 +256,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 list: res[0].items.map((item) => {
                                     return {
                                         id: item.name,
-                                        name: '-'.repeat(item.level * 2) + item.displayName,
-                                        displayName: item.name
+                                        name: String.fromCharCode(160/*Space to avoid trim*/)
+                                            .repeat(item.level * 5) + item.displayName,
+                                        displayName: item.displayName
                                     };
                                 })
                             })                        
@@ -283,11 +284,14 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
 
         this._filtersService.apply((filter) => {
-            let filterValue = filter.items.element.value;
-            if (filter.caption == 'role')
-                this.role = filterValue;
-            else 
-                this.selectedPermission = filterValue;
+            let filterValue = filter && 
+                filter.items.element.value;
+            if (filterValue) {
+                if (filter.caption == 'role')
+                    this.role = filterValue;
+                else 
+                    this.selectedPermission = filterValue;
+            }
 
             this.initToolbarConfig();
             this.refreshDataGrid();

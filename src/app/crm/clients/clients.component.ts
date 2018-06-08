@@ -500,7 +500,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             {
                 location: 'after',
                 items: [
-                    { name: 'fullscreen', action: Function() }
+                    { 
+                        name: 'fullscreen', 
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                        }
+                    }
                 ]
             }
         ];

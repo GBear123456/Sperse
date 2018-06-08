@@ -1859,8 +1859,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.anotherPeriodAccountsValues.clear();
         this.operations.bankAccountSelector.getBankAccounts(true);
         this.initHeadlineConfig();
-        this.closeTransactionsDetail();
-        this.loadGridDataSource();
     }
 
     repaintDataGrid() {

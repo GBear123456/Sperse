@@ -2,6 +2,13 @@
     position: relative;
     top: 74px;
 
+    &.fullscreen {
+        top: 0px !important;
+        #gridContainer {
+            height: calc(~"100vh - 60px");
+        }
+    }
+
     .img-circle {
         border-radius: 50%;
         height: 40px;

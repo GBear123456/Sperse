@@ -34,6 +34,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     private selectedLists = [];
     list: any;
 
+    lastNewAdded: any;
+    addNewTimeout: any;
     listComponent: any;
     tooltipVisible = false;
 
@@ -51,7 +53,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined) {
+    apply(selectedKeys = undefined, visible = false) {
         if (this.listComponent) {
             this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
@@ -69,7 +71,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
         }
-        this.tooltipVisible = false;
+        this.tooltipVisible = visible;
     }
 
     process() {
@@ -127,8 +129,11 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
             this.addActionButton('delete', $event.cellElement, (event) => {
-                this.listComponent.deleteRow(
-                    this.listComponent.getRowIndexByKey($event.data.id));
+                if ($event.data.hasOwnProperty('id'))
+                    this.listComponent.deleteRow(
+                        this.listComponent.getRowIndexByKey($event.data.id));
+                else
+                    $event.component.cancelEditData();
             });
             if (this.filterModel)
                 this.addActionButton('filter', $event.cellElement, (event) => {
@@ -196,8 +201,30 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
+    editorPrepared($event) {
+        if ($event.editorName == 'dxTextBox') {
+            if ($event.editorElement.closest('tr')) {
+                if (this.addNewTimeout) 
+                    this.addNewTimeout = null;
+                else {
+                    $event.component.cancelEditData();
+                    $event.component.getScrollable().scrollTo(0);
+                    this.addNewTimeout = setTimeout(()=> {
+                        $event.component.addRow();
+                    });               
+                } 
+            }    
+        }
+    }
+
     onInitNewRow($event) {        
         $event.data.name = $event.component.option('searchPanel.text');
+    }
+
+    onRowInserted($event) {
+        this.lastNewAdded = $event.data;
+        $event.component.selectRows([$event.key]);
+        setTimeout(() => this.apply(undefined, true));
     }
 
     onRowClick($event) {
@@ -233,6 +260,15 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     this.listComponent.getRowIndexByKey(id));
                 if (row && row[0]) row[0].classList.add('filtered');
             });
+        }
+    }
+
+    customSortingMethod = (item1, item2) => { 
+        if (this.lastNewAdded) {
+            if (this.lastNewAdded.name == item1)
+                return -1;
+            else if (this.lastNewAdded.name == item2)
+                return 1;
         }
     }
 }

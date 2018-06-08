@@ -521,7 +521,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     getUpdatedDataSource() {
         this.bankAccountSelector.getBankAccounts(true);
-        this.loadStatsData();
     }
 
     ngAfterViewInit(): void {
