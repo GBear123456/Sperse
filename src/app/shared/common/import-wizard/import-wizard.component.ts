@@ -77,8 +77,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     reset(callback = null) { 
-        this.showSteper = false;
+        this.fileData = null;
+        this.dropZoneProgress = 0;
+        this.loadProgress = 0;
 
+        this.showSteper = false;
         this.uploadFile.reset();
         setTimeout(() => {
             this.showSteper = true;
@@ -123,13 +126,16 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     initReviewDataSource(mappedFields) {        
         let columnsIndex = {};
-        this.reviewDataSource = this.fileData.data.map((row, index) => {
-            if (index) {
-                let data = {};
-                mappedFields.forEach((field) => {
-                    data[field.mappedField] = row[columnsIndex[field.sourceField]];
-                });
-                return data;
+        this.reviewDataSource = [];
+        this.fileData.data.forEach((row, index) => {
+            if (index) {                
+                if (row.length == Object.keys(columnsIndex).length) {
+                    let data = {};
+                    mappedFields.forEach((field) => {
+                        data[field.mappedField] = row[columnsIndex[field.sourceField]];
+                    });
+                    this.reviewDataSource.push(data);
+                }
             } else 
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
@@ -164,7 +170,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     parse(content) {
-        this._parser.parse(content, {
+        this._parser.parse(content.trim(), {
             complete: (results) => {
                 if (results.errors.length)
                     this.message.error(results.errors[0].message);

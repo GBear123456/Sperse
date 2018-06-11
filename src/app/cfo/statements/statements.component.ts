@@ -118,6 +118,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
+                            adaptive: false,
                             onSelectionChanged: (e) => {
                                 if (e) {
                                     this.refreshData();
