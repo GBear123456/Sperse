@@ -3,7 +3,7 @@
     <div class="contact-persons-container">
         <div class="contact-person-info" *ngFor="let contactPerson of contactPersonsFiltered" (click)='selectContactPerson(contactPerson)'>
             <div class="avatar">
-                <img src="{{ getPhoto(contactPerson?.photo )}}" alt="{{l('AltPersonPhoto')}}">
+                <img src="{{ getPhoto(contactPerson?.primaryPhoto?.thumbnail )}}" alt="{{l('AltPersonPhoto')}}">
             </div>
             <div class="personal-info">
                 <div class="full-name">
