@@ -6,7 +6,7 @@ import {
     UserNotificationState,
     IsTenantAvailableOutputState,
     IncomeStatisticsDateInterval,
-    RegisterTenantInputSubscriptionStartType,
+//    RegisterTenantInputSubscriptionStartType,
     CreatePaymentDtoEditionPaymentType,
     CreatePaymentDtoPaymentPeriodType,
     CreatePaymentDtoSubscriptionPaymentGatewayType,
@@ -51,14 +51,14 @@ export class AppIncomeStatisticsDateInterval {
     static Weekly: number = IncomeStatisticsDateInterval._2;
     static Monthly: number = IncomeStatisticsDateInterval._3;
 }
-
+/*
 export class SubscriptionStartType {
 
     static Free: number = RegisterTenantInputSubscriptionStartType._1;
     static Trial: number = RegisterTenantInputSubscriptionStartType._2;
     static Paid: number = RegisterTenantInputSubscriptionStartType._3;
 }
-
+*/
 export class EditionPaymentType {
     static NewRegistration: number = CreatePaymentDtoEditionPaymentType._0;
     static BuyNow: number = CreatePaymentDtoEditionPaymentType._1;
