@@ -53,7 +53,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined, visible = false) {
+    apply(selectedKeys = undefined) {
         if (this.listComponent) {
             this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
@@ -71,7 +71,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
         }
-        this.tooltipVisible = visible;
+        this.tooltipVisible = false;
     }
 
     process() {
@@ -223,8 +223,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
-        $event.component.selectRows([$event.key]);
-        setTimeout(() => this.apply(undefined, true));
+        setTimeout(() => {
+            $event.component.selectRows([$event.key]);
+        });
     }
 
     onRowClick($event) {

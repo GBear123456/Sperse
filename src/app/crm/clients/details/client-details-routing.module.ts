@@ -7,7 +7,7 @@ import { ContactInformationComponent } from './contact-information/contact-infor
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { ApplicationStatusComponent } from './application-status/application-status.component';
-import { ReferalHistoryComponent } from './referal-history/referal-history.component';
+import { ReferralHistoryComponent } from './referral-history/referral-history.component';
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
@@ -18,7 +18,7 @@ let childRouters = [
     {path: 'lead-information', component: LeadInformationComponent },
     {path: 'questionnaire', component: QuestionnaireComponent },
     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
-    {path: 'referal-history', component: ReferalHistoryComponent },
+    {path: 'referral-history', component: ReferralHistoryComponent },
     {path: 'activity-logs', component: ActivityLogsComponent },
     {path: 'notes', component: NotesComponent }
 ];
