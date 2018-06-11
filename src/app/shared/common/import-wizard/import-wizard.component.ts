@@ -77,8 +77,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     reset(callback = null) { 
-        this.showSteper = false;
+        this.fileData = null;
+        this.dropZoneProgress = 0;
+        this.loadProgress = 0;
 
+        this.showSteper = false;
         this.uploadFile.reset();
         setTimeout(() => {
             this.showSteper = true;
