@@ -52,7 +52,7 @@ export class TagsListComponent extends AppComponentBase {
             this.refresh();
     }
 
-    apply(selectedKeys = undefined, visible = false) {
+    apply(selectedKeys = undefined) {
         if (this.listComponent) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
@@ -67,7 +67,7 @@ export class TagsListComponent extends AppComponentBase {
                     this.process();
             }
         }
-        this.tooltipVisible = visible;
+        this.tooltipVisible = false;
     }
 
     process() {
@@ -230,8 +230,9 @@ export class TagsListComponent extends AppComponentBase {
 
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
-        $event.component.selectRows([$event.key]);
-        setTimeout(() => this.apply(undefined, true));
+        setTimeout(() => {
+            $event.component.selectRows([$event.key]);
+        });
     }
 
     onRowClick($event) {
