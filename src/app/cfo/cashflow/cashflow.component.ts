@@ -3890,7 +3890,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj
      */
     bindCollapseActionOnWhiteSpaceColumn(cellObj) {
-        let totalCell = $(cellObj.cellElement).parent().nextAll('.dx-expand-border').first().find('td.dx-total');
+        let rowSpan = cellObj.cellElement.rowSpan || 1;
+        let totalCell = $(cellObj.cellElement).parent().nextAll().eq(rowSpan-1).first().find('td.dx-total');
         totalCell.trigger('click');
     }
 
