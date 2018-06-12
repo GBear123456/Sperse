@@ -19,9 +19,13 @@
         .m-topbar__nav.m-nav {
             margin: 0px!important;
             padding-top: 6px;
-            .m-nav__item {
-                padding: 0 8px!important;
-            }
+                .m-nav__item {
+                    padding: 0 14px !important;
+
+                    @media (max-width: 768px) {
+                        padding: 0 8px !important;
+                    }
+                }
         }
 
         .user-info-drop-down-arrow {

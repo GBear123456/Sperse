@@ -5,6 +5,7 @@ import { UserNotificationHelper, IFormattedUserNotification } from './UserNotifi
 
 @Component({
     templateUrl: './header-notifications.component.html',
+    styleUrls: ['./header-notifications.component.less'],
     selector: '[headerNotifications]',
     encapsulation: ViewEncapsulation.None
 })
