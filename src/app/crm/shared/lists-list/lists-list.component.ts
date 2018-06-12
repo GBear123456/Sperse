@@ -84,8 +84,10 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         })).finally(() => {
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-        }) .subscribe((result) => {
+        }).subscribe((result) => {
             this.notify.success(this.l('ListsAssigned'));
+        }, (error) => {
+            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 
