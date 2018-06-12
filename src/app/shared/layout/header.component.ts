@@ -51,7 +51,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     isImpersonatedLogin = false;
 
     shownLoginNameTitle = '';
-    shownLoginName = '';
+    shownLoginInfo: { fullName, userName, tenancyName? };
+
     profilePicture = '/assets/common/images/default-profile-picture.png';
     helpLink: string = AppConsts.helpLink;
 
@@ -132,7 +133,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getCurrentLoginInformations(): void {
-        this.shownLoginName = this.appSession.getShownLoginName();
+        this.shownLoginInfo = this.appSession.getShownLoginInfo();
         this._sessionService.getCurrentLoginInformations()
             .subscribe((result: GetCurrentLoginInformationsOutput) => {
                 this.tenant = result.tenant;
@@ -186,7 +187,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     onMySettingsModalSaved(): void {
-        this.shownLoginName = this.appSession.getShownLoginName();
+        this.shownLoginInfo = this.appSession.getShownLoginInfo();
     }
 
     backToMyAccount(): void {
@@ -202,7 +203,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     get notificationEnabled(): boolean {
-        return  (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
+        return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
     }
 
     subscriptionStatusBarVisible(): boolean {
