@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerListsServiceProxy, AssignListsToCustomerInput, CustomerListInput, 
+import { CustomerListsServiceProxy, AssignListsToCustomersInput, CustomerListInput, 
     UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -60,28 +60,32 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                        this.l('BulkUpdateConfirmation', this.selectedKeys.length), 
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed)
+                                this.process();
+                            else
+                                if (this.bulkUpdateMode)
+                                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
                         }
                     );
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-
             setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }
 
     process() {
-        this.selectedKeys.forEach((key) => {
-            this._listsService.assignListsToCustomer(AssignListsToCustomerInput.fromJS({
-                customerId: key,
-                lists: this.selectedItems
-            })).subscribe((result) => {});
+        this._listsService.assignToMultipleCustomers(AssignListsToCustomersInput.fromJS({
+            customerIds: this.selectedKeys,
+            lists: this.selectedItems
+        })).finally(() => {
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+        }) .subscribe((result) => {
+            this.notify.success(this.l('ListsAssigned'));
         });
     }
 

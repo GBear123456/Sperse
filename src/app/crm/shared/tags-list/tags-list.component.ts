@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
+import { CustomerTagsServiceProxy, AssignToCustomersInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { MatDialog } from '@angular/material';
@@ -77,15 +77,15 @@ export class TagsListComponent extends AppComponentBase {
     }
 
     process() {
-        this.selectedKeys.forEach((key) => {
-            this._tagsService.assignToCustomer(AssignToCustomerInput.fromJS({
-                customerId: key,
-                tags: this.selectedItems
-            })).subscribe((result) => {});
+        this._tagsService.assignToMultipleCustomers(AssignToCustomersInput.fromJS({
+            customerIds: this.selectedKeys,
+            tags: this.selectedItems
+        })).finally(() => {
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+        }).subscribe((result) => {
+            this.notify.success(this.l('TagsAssigned'));
         });
-
-        if (this.bulkUpdateMode)
-            setTimeout(() => { this.listComponent.deselectAll(); }, 500);
     }
 
     clear() {
