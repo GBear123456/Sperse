@@ -85,6 +85,8 @@ export class TagsListComponent extends AppComponentBase {
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
         }).subscribe((result) => {
             this.notify.success(this.l('TagsAssigned'));
+        }, (error) => {
+            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 

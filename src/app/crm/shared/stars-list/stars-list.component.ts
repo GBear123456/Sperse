@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerStarsServiceProxy, MarkCustomerInput } from '@shared/service-proxies/service-proxies';
+import { CustomerStarsServiceProxy, MarkCustomersInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 import * as _ from 'underscore';
@@ -67,11 +67,13 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     process() {
-        this.selectedKeys.forEach((key) => {
-            this._starsService.markCustomer(MarkCustomerInput.fromJS({
-                customerId: key,
-                starId: this.selectedItemKey
-            })).subscribe((result) => {});
+        this._starsService.markCustomers(MarkCustomersInput.fromJS({
+            customerIds: this.selectedKeys,
+            starId: this.selectedItemKey
+        })).subscribe((result) => {
+            this.notify.success(this.l('CustomersMarked'));
+        }, (error) => {
+            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 

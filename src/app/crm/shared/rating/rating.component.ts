@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, RateCustomerInput, CustomerRatingInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomerRatingsServiceProxy, RateCustomersInput, CustomerRatingInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -64,14 +64,16 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     process() {
-        this.selectedKeys.forEach((key) => {
-            this._ratingService.rateCustomer(RateCustomerInput.fromJS({
-                customerId: key,
-                ratingId: this.ratingValue
-            })).finally(() => {
-                if (this.bulkUpdateMode)
-                    this.ratingValue = this.ratingMin;
-            }).subscribe((result) => {});
+        this._ratingService.rateCustomers(RateCustomersInput.fromJS({
+            customerIds: this.selectedKeys,
+            ratingId: this.ratingValue
+        })).finally(() => {
+            if (this.bulkUpdateMode)
+                this.ratingValue = this.ratingMin;
+        }).subscribe((result) => {
+            this.notify.success(this.l('CustomersRated'));
+        }, (error) => {
+            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 
