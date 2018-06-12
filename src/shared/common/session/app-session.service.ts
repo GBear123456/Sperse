@@ -42,13 +42,17 @@ export class AppSessionService {
         return this.tenant ? this.tenant.id : null;
     }
 
-    getShownLoginName(): string {
-        const userName = this._user.userName;
-        if (!this._abpMultiTenancyService.isEnabled) {
-            return userName;
+    getShownLoginInfo(): { fullName, userName, tenancyName?} {
+        let info: { fullName, userName, tenancyName? } = {
+            fullName: this._user.name + ' ' + this._user.surname,
+            userName: this._user.userName
+        };
+
+        if (this._abpMultiTenancyService.isEnabled) {
+            info.tenancyName = this.tenant ? this._tenant.tenancyName : 'Host';
         }
 
-        return (this._tenant ? this._tenant.tenancyName : '.') + '\\' + userName;
+        return info;
     }
 
     init(): Promise<boolean> {
