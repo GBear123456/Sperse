@@ -42,14 +42,14 @@ export class AppSessionService {
         return this.tenant ? this.tenant.id : null;
     }
 
-    getShownLoginInfo(): { fullName, userName, tenancyName?} {
-        let info: { fullName, userName, tenancyName? } = {
+    getShownLoginInfo(): { fullName, email, tenantName?} {
+        let info: { fullName, email, tenantName? } = {
             fullName: this._user.name + ' ' + this._user.surname,
-            userName: this._user.userName
+            email: this._user.emailAddress
         };
 
         if (this._abpMultiTenancyService.isEnabled) {
-            info.tenancyName = this.tenant ? this._tenant.tenancyName : 'Host';
+            info.tenantName = this.tenant ? this._tenant.name : 'Host';
         }
 
         return info;

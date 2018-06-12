@@ -51,7 +51,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     isImpersonatedLogin = false;
 
     shownLoginNameTitle = '';
-    shownLoginInfo: { fullName, userName, tenancyName? };
+    shownLoginInfo: { fullName, email, tenantName? };
 
     profilePicture = '/assets/common/images/default-profile-picture.png';
     helpLink: string = AppConsts.helpLink;
