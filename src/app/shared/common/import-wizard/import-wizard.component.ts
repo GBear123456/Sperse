@@ -181,11 +181,15 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             }
         });
     }
+
+    getFileSize(size) {
+        return (size / 1024).toFixed(2) + 'KB';
+    }
  
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
-        this.fileSize = (file.size / 1024).toFixed(2) + 'KB';
+        this.fileSize = this.getFileSize(file.size);
         let reader = new FileReader();
         reader.onload = (event) => {
             this.dropZoneProgress = 101;
@@ -242,9 +246,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     downloadFromURL() {
         if (!this.uploadFile.invalid) {
-            if (this.uploadFile.value.url)
-                this.getFile(this.uploadFile.value.url, (result) => {
+            let url = this.uploadFile.value.url;
+            if (url)
+                this.getFile(url, (result) => {
                     if (result.target.status == 200) {
+                        this.fileName = url.split('?')[0].split('/').pop();
+                        this.fileSize = this.getFileSize(result.loaded);
                         this.parse(result.target.responseText);
                     } else {
                         this.message.error(result.target.statusText);

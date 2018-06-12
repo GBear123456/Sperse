@@ -60,12 +60,18 @@ export class TagsListComponent extends AppComponentBase {
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed) {
+                                this.process();
+                            } else {
+                                if (this.bulkUpdateMode)
+                                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                            }
                         }
                     );
                 else
                     this.process();
             }
+            setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }

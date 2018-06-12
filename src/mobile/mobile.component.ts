@@ -1,7 +1,6 @@
 import { Component, ViewContainerRef, OnInit, AfterViewInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { SubscriptionStartType } from '@shared/AppEnums';
 import { AppService } from './mobile.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 
@@ -13,7 +12,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
     private viewContainerRef: ViewContainerRef;
 
-    subscriptionStartType = SubscriptionStartType;
     installationMode: boolean = false;
 
 

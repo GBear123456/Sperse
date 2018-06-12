@@ -70,6 +70,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             }
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+
+            setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }

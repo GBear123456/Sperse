@@ -18,12 +18,12 @@ import { AccountComponent } from './account.component';
 import { TenantChangeComponent } from './shared/tenant-change.component';
 import { TenantChangeModalComponent } from './shared/tenant-change-modal.component';
 import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { RegisterTenantComponent } from './register/register-tenant.component';
-import { RegisterTenantResultComponent } from './register/register-tenant-result.component';
+//import { RegisterComponent } from './register/register.component';
+//import { RegisterTenantComponent } from './register/register-tenant.component';
+//import { RegisterTenantResultComponent } from './register/register-tenant-result.component';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
-import { SelectEditionComponent } from './register/select-edition.component';
-import { TenantRegistrationHelperService } from './register/tenant-registration-helper.service';
+//import { SelectEditionComponent } from './register/select-edition.component';
+//import { TenantRegistrationHelperService } from './register/tenant-registration-helper.service';
 import { ForgotPasswordComponent } from './password/forgot-password.component';
 import { ResetPasswordComponent } from './password/reset-password.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
@@ -33,11 +33,11 @@ import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.compone
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { LanguageSwitchComponent } from './language-switch.component';
-import { BuyComponent } from './payment/buy.component';
-import { UpgradeOrExtendComponent } from './payment/upgrade-or-extend.component';
+//import { BuyComponent } from './payment/buy.component';
+//import { UpgradeOrExtendComponent } from './payment/upgrade-or-extend.component';
 
-import { PaymentGatewaysComponent } from './payment/payment-gateways.component';
-import { PayPalComponent } from './payment/paypal/paypal.component';
+//import { PaymentGatewaysComponent } from './payment/payment-gateways.component';
+//import { PayPalComponent } from './payment/paypal/paypal.component';
 
 @NgModule({
     imports: [
@@ -62,10 +62,10 @@ import { PayPalComponent } from './payment/paypal/paypal.component';
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
-        RegisterComponent,
-        RegisterTenantComponent,
-        RegisterTenantResultComponent,
-        SelectEditionComponent,
+//        RegisterComponent,
+//        RegisterTenantComponent,
+//        RegisterTenantResultComponent,
+//        SelectEditionComponent,
         ForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
@@ -74,15 +74,15 @@ import { PayPalComponent } from './payment/paypal/paypal.component';
         ValidateTwoFactorCodeComponent,
         SelectTenantComponent,
         LanguageSwitchComponent,
-        BuyComponent,
-        UpgradeOrExtendComponent,
-        PaymentGatewaysComponent,
-        PayPalComponent,
+//        BuyComponent,
+//        UpgradeOrExtendComponent,
+//        PaymentGatewaysComponent,
+//        PayPalComponent,
         CompleteTenantRegistrationComponent
     ],
     providers: [
-        LoginService,
-        TenantRegistrationHelperService
+        LoginService
+//        TenantRegistrationHelperService
     ]
 })
 export class AccountModule {
