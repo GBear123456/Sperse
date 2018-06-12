@@ -2522,11 +2522,32 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let childPath = path.slice();
             childPath.push(child.value);
             if (this.hasChildsByPath(childPath)) {
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', childPath);
-                if (currentDepth != stopDepth)
-                    this.expandRows(child, stopDepth, childPath, currentDepth + 1);
+                let dataSource = this.pivotGrid.instance.getDataSource();
+                dataSource.expandHeaderItem('row', childPath);
+                    
+                this.pivotGrid.instance.getDataSource().load().then((d) => {
+                    var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
+                    if (currentDepth != stopDepth)
+                        this.expandRows(dataSourceChild, stopDepth, childPath, currentDepth + 1);
+                });
             }
         }
+    }
+
+    getDataSourceItemByPath(dataSourceItems: any[], path: any[]) {
+        let pathValue = path.shift();
+        for (let i = 0; i < dataSourceItems.length; i++){
+            let item = dataSourceItems[i];
+            if (item.value == pathValue) {
+                if (path.length == 0)
+                    return item;
+
+                if (!item.children)
+                    return null;
+
+                return this.getDataSourceItemByPath(item.children, path);
+            }
+        };
     }
 
     /**
@@ -3869,7 +3890,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj
      */
     bindCollapseActionOnWhiteSpaceColumn(cellObj) {
-        let totalCell = $(cellObj.cellElement).parent().nextAll('.dx-expand-border').first().find('td.dx-total');
+        let rowSpan = cellObj.cellElement.rowSpan || 1;
+        let totalCell = $(cellObj.cellElement).parent().nextAll().eq(rowSpan-1).first().find('td.dx-total');
         totalCell.trigger('click');
     }
 

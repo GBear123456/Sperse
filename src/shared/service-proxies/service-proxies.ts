@@ -6942,6 +6942,52 @@ export class CustomerListsServiceProxy {
      * @input (optional) 
      * @return Success
      */
+    assignToMultipleCustomers(input: AssignListsToCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AssignToMultipleCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToMultipleCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToMultipleCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToMultipleCustomers(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
     rename(input: UpdateCustomerListInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Rename";
         url_ = url_.replace(/[?&]$/, "");
@@ -7778,6 +7824,52 @@ export class CustomerTagsServiceProxy {
     }
 
     protected processAssignToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignToMultipleCustomers(input: AssignToCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToMultipleCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToMultipleCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToMultipleCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToMultipleCustomers(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -16222,152 +16314,6 @@ export class TenantRegistrationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<CompleteTenantRegistrationOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    registerTenant(input: RegisterTenantInput): Observable<RegisterTenantOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/RegisterTenant";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRegisterTenant(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRegisterTenant(response_);
-                } catch (e) {
-                    return <Observable<RegisterTenantOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<RegisterTenantOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRegisterTenant(response: Response): Observable<RegisterTenantOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RegisterTenantOutput.fromJS(resultData200) : new RegisterTenantOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<RegisterTenantOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getEditionsForSelect(): Observable<EditionsSelectOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/GetEditionsForSelect";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetEditionsForSelect(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetEditionsForSelect(response_);
-                } catch (e) {
-                    return <Observable<EditionsSelectOutput>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<EditionsSelectOutput>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetEditionsForSelect(response: Response): Observable<EditionsSelectOutput> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? EditionsSelectOutput.fromJS(resultData200) : new EditionsSelectOutput();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<EditionsSelectOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getEdition(editionId: number): Observable<EditionSelectDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantRegistration/GetEdition?";
-        if (editionId === undefined || editionId === null)
-            throw new Error("The parameter 'editionId' must be defined and cannot be null.");
-        else
-            url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetEdition(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGetEdition(response_);
-                } catch (e) {
-                    return <Observable<EditionSelectDto>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<EditionSelectDto>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGetEdition(response: Response): Observable<EditionSelectDto> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? EditionSelectDto.fromJS(resultData200) : new EditionSelectDto();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<EditionSelectDto>(<any>null);
     }
 }
 
@@ -29206,6 +29152,61 @@ export interface ICustomerListInput {
     name: string;
 }
 
+export class AssignListsToCustomersInput implements IAssignListsToCustomersInput {
+    customerIds: number[];
+    lists: CustomerListInput[];
+
+    constructor(data?: IAssignListsToCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(CustomerListInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssignListsToCustomersInput {
+        let result = new AssignListsToCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssignListsToCustomersInput {
+    customerIds: number[];
+    lists: CustomerListInput[];
+}
+
 export class UpdateCustomerListInput implements IUpdateCustomerListInput {
     id: number;
     name: string;
@@ -31062,6 +31063,61 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
 
 export interface IAssignToCustomerInput {
     customerId: number;
+    tags: CustomerTagInput[];
+}
+
+export class AssignToCustomersInput implements IAssignToCustomersInput {
+    customerIds: number[];
+    tags: CustomerTagInput[];
+
+    constructor(data?: IAssignToCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssignToCustomersInput {
+        let result = new AssignToCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssignToCustomersInput {
+    customerIds: number[];
     tags: CustomerTagInput[];
 }
 
@@ -41734,360 +41790,6 @@ export interface ICompleteTenantRegistrationOutput {
     isEmailConfirmationRequired: boolean;
 }
 
-export class RegisterTenantInput implements IRegisterTenantInput {
-    tenancyName: string;
-    name: string;
-    adminEmailAddress: string;
-    adminPassword: string;
-    captchaResponse: string;
-    subscriptionStartType: RegisterTenantInputSubscriptionStartType;
-    gateway: RegisterTenantInputGateway;
-    editionId: number;
-    paymentId: string;
-    tenantHostType: RegisterTenantInputTenantHostType;
-
-    constructor(data?: IRegisterTenantInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-            this.adminEmailAddress = data["adminEmailAddress"];
-            this.adminPassword = data["adminPassword"];
-            this.captchaResponse = data["captchaResponse"];
-            this.subscriptionStartType = data["subscriptionStartType"];
-            this.gateway = data["gateway"];
-            this.editionId = data["editionId"];
-            this.paymentId = data["paymentId"];
-            this.tenantHostType = data["tenantHostType"];
-        }
-    }
-
-    static fromJS(data: any): RegisterTenantInput {
-        let result = new RegisterTenantInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        data["adminEmailAddress"] = this.adminEmailAddress;
-        data["adminPassword"] = this.adminPassword;
-        data["captchaResponse"] = this.captchaResponse;
-        data["subscriptionStartType"] = this.subscriptionStartType;
-        data["gateway"] = this.gateway;
-        data["editionId"] = this.editionId;
-        data["paymentId"] = this.paymentId;
-        data["tenantHostType"] = this.tenantHostType;
-        return data; 
-    }
-}
-
-export interface IRegisterTenantInput {
-    tenancyName: string;
-    name: string;
-    adminEmailAddress: string;
-    adminPassword: string;
-    captchaResponse: string;
-    subscriptionStartType: RegisterTenantInputSubscriptionStartType;
-    gateway: RegisterTenantInputGateway;
-    editionId: number;
-    paymentId: string;
-    tenantHostType: RegisterTenantInputTenantHostType;
-}
-
-export class RegisterTenantOutput implements IRegisterTenantOutput {
-    tenantId: number;
-    tenancyName: string;
-    name: string;
-    userName: string;
-    emailAddress: string;
-    isTenantActive: boolean;
-    isActive: boolean;
-    isEmailConfirmationRequired: boolean;
-
-    constructor(data?: IRegisterTenantOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-            this.userName = data["userName"];
-            this.emailAddress = data["emailAddress"];
-            this.isTenantActive = data["isTenantActive"];
-            this.isActive = data["isActive"];
-            this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
-        }
-    }
-
-    static fromJS(data: any): RegisterTenantOutput {
-        let result = new RegisterTenantOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        data["userName"] = this.userName;
-        data["emailAddress"] = this.emailAddress;
-        data["isTenantActive"] = this.isTenantActive;
-        data["isActive"] = this.isActive;
-        data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
-        return data; 
-    }
-}
-
-export interface IRegisterTenantOutput {
-    tenantId: number;
-    tenancyName: string;
-    name: string;
-    userName: string;
-    emailAddress: string;
-    isTenantActive: boolean;
-    isActive: boolean;
-    isEmailConfirmationRequired: boolean;
-}
-
-export class EditionsSelectOutput implements IEditionsSelectOutput {
-    allFeatures: FlatFeatureSelectDto[];
-    editionsWithFeatures: EditionWithFeaturesDto[];
-    tenantEditionId: number;
-
-    constructor(data?: IEditionsSelectOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["allFeatures"] && data["allFeatures"].constructor === Array) {
-                this.allFeatures = [];
-                for (let item of data["allFeatures"])
-                    this.allFeatures.push(FlatFeatureSelectDto.fromJS(item));
-            }
-            if (data["editionsWithFeatures"] && data["editionsWithFeatures"].constructor === Array) {
-                this.editionsWithFeatures = [];
-                for (let item of data["editionsWithFeatures"])
-                    this.editionsWithFeatures.push(EditionWithFeaturesDto.fromJS(item));
-            }
-            this.tenantEditionId = data["tenantEditionId"];
-        }
-    }
-
-    static fromJS(data: any): EditionsSelectOutput {
-        let result = new EditionsSelectOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.allFeatures && this.allFeatures.constructor === Array) {
-            data["allFeatures"] = [];
-            for (let item of this.allFeatures)
-                data["allFeatures"].push(item.toJSON());
-        }
-        if (this.editionsWithFeatures && this.editionsWithFeatures.constructor === Array) {
-            data["editionsWithFeatures"] = [];
-            for (let item of this.editionsWithFeatures)
-                data["editionsWithFeatures"].push(item.toJSON());
-        }
-        data["tenantEditionId"] = this.tenantEditionId;
-        return data; 
-    }
-}
-
-export interface IEditionsSelectOutput {
-    allFeatures: FlatFeatureSelectDto[];
-    editionsWithFeatures: EditionWithFeaturesDto[];
-    tenantEditionId: number;
-}
-
-export class FlatFeatureSelectDto implements IFlatFeatureSelectDto {
-    parentName: string;
-    name: string;
-    displayName: string;
-    description: string;
-    defaultValue: string;
-    inputType: IInputType;
-    textHtmlColor: string;
-
-    constructor(data?: IFlatFeatureSelectDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.parentName = data["parentName"];
-            this.name = data["name"];
-            this.displayName = data["displayName"];
-            this.description = data["description"];
-            this.defaultValue = data["defaultValue"];
-            this.inputType = data["inputType"] ? IInputType.fromJS(data["inputType"]) : <any>undefined;
-            this.textHtmlColor = data["textHtmlColor"];
-        }
-    }
-
-    static fromJS(data: any): FlatFeatureSelectDto {
-        let result = new FlatFeatureSelectDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["parentName"] = this.parentName;
-        data["name"] = this.name;
-        data["displayName"] = this.displayName;
-        data["description"] = this.description;
-        data["defaultValue"] = this.defaultValue;
-        data["inputType"] = this.inputType ? this.inputType.toJSON() : <any>undefined;
-        data["textHtmlColor"] = this.textHtmlColor;
-        return data; 
-    }
-}
-
-export interface IFlatFeatureSelectDto {
-    parentName: string;
-    name: string;
-    displayName: string;
-    description: string;
-    defaultValue: string;
-    inputType: IInputType;
-    textHtmlColor: string;
-}
-
-export class EditionWithFeaturesDto implements IEditionWithFeaturesDto {
-    edition: EditionSelectDto;
-    featureValues: NameValueDto[];
-
-    constructor(data?: IEditionWithFeaturesDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.edition = data["edition"] ? EditionSelectDto.fromJS(data["edition"]) : <any>undefined;
-            if (data["featureValues"] && data["featureValues"].constructor === Array) {
-                this.featureValues = [];
-                for (let item of data["featureValues"])
-                    this.featureValues.push(NameValueDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): EditionWithFeaturesDto {
-        let result = new EditionWithFeaturesDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["edition"] = this.edition ? this.edition.toJSON() : <any>undefined;
-        if (this.featureValues && this.featureValues.constructor === Array) {
-            data["featureValues"] = [];
-            for (let item of this.featureValues)
-                data["featureValues"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IEditionWithFeaturesDto {
-    edition: EditionSelectDto;
-    featureValues: NameValueDto[];
-}
-
-export class IInputType implements IIInputType {
-    name: string;
-    attributes: { [key: string] : any; };
-    validator: IValueValidator;
-
-    constructor(data?: IIInputType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            if (data["attributes"]) {
-                this.attributes = {};
-                for (let key in data["attributes"]) {
-                    if (data["attributes"].hasOwnProperty(key))
-                        this.attributes[key] = data["attributes"][key];
-                }
-            }
-            this.validator = data["validator"] ? IValueValidator.fromJS(data["validator"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): IInputType {
-        let result = new IInputType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (this.attributes) {
-            data["attributes"] = {};
-            for (let key in this.attributes) {
-                if (this.attributes.hasOwnProperty(key))
-                    data["attributes"][key] = this.attributes[key];
-            }
-        }
-        data["validator"] = this.validator ? this.validator.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IIInputType {
-    name: string;
-    attributes: { [key: string] : any; };
-    validator: IValueValidator;
-}
-
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {
     general: GeneralSettingsEditDto;
     userManagement: TenantUserManagementSettingsEditDto = new TenantUserManagementSettingsEditDto();
@@ -45633,22 +45335,6 @@ export enum CompleteTenantRegistrationInputPaymentPeriodType {
 }
 
 export enum CompleteTenantRegistrationInputTenantHostType {
-    PlatformApi = <any>"PlatformApi", 
-    PlatformUi = <any>"PlatformUi", 
-    FundingUi = <any>"FundingUi", 
-}
-
-export enum RegisterTenantInputSubscriptionStartType {
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-}
-
-export enum RegisterTenantInputGateway {
-    _1 = 1, 
-}
-
-export enum RegisterTenantInputTenantHostType {
     PlatformApi = <any>"PlatformApi", 
     PlatformUi = <any>"PlatformUi", 
     FundingUi = <any>"FundingUi", 

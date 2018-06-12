@@ -221,6 +221,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
+                            adaptive: false,
                             onSelectionChanged: (e) => {
                                 if (e) {
                                     this.changeSelectedForecastModel(e);

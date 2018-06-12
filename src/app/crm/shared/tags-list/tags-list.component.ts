@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerTagsServiceProxy, AssignToCustomerInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
+import { CustomerTagsServiceProxy, AssignToCustomersInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { MatDialog } from '@angular/material';
@@ -60,26 +60,32 @@ export class TagsListComponent extends AppComponentBase {
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed) {
+                                this.process();
+                            } else {
+                                if (this.bulkUpdateMode)
+                                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                            }
                         }
                     );
                 else
                     this.process();
             }
+            setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }
 
     process() {
-        this.selectedKeys.forEach((key) => {
-            this._tagsService.assignToCustomer(AssignToCustomerInput.fromJS({
-                customerId: key,
-                tags: this.selectedItems
-            })).subscribe((result) => {});
+        this._tagsService.assignToMultipleCustomers(AssignToCustomersInput.fromJS({
+            customerIds: this.selectedKeys,
+            tags: this.selectedItems
+        })).finally(() => {
+            if (this.bulkUpdateMode)
+                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+        }).subscribe((result) => {
+            this.notify.success(this.l('TagsAssigned'));
         });
-
-        if (this.bulkUpdateMode)
-            setTimeout(() => { this.listComponent.deselectAll(); }, 500);
     }
 
     clear() {

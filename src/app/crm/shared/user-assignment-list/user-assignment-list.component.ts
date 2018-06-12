@@ -61,6 +61,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             }
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.unselectAll(); }, 500);
+
+            setTimeout(() => { this.listComponent.option('searchValue', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }

@@ -26,7 +26,7 @@ export class ChatFriendListItemComponent {
         if (!this.multiTenancy.isEnabled) {
             return userName;
         }
-        return (tenanycName ? tenanycName : '.') + '\\' + userName;
+        return (tenanycName ? tenanycName + '\\' : '') + userName;
     }
 
     getRemoteImageUrl(profilePictureId: string, userId: number, tenantId?: number): string {
