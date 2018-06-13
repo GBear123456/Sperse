@@ -178,6 +178,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Bank accounts of user with extracted bank accounts */
     private bankAccounts: BankAccountDto[];
+    private activeBankAccounts: BankAccountDto[];
 
     /** Source of the cashflow table (data fields descriptions and data) */
     dataSource;
@@ -1022,6 +1023,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
         this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
+        this.activeBankAccounts = this.bankAccounts.filter(b => b.isActive);
         this.createFilters(initialDataResult, bankAccounts);
         this.setupFilters(this.filters);
     }
@@ -5245,7 +5247,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         data.id
                     );
 
-            } else {
+            } else {                
                 /* Set descriptor */
                 if (paramName != 'description') {
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
@@ -5274,7 +5276,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
                     }
                 }
-                this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName]);
+
+                let hideFromCashflow = !underscore.contains(this.selectedBankAccounts, paramValue);
+                this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
                 this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
@@ -5285,7 +5289,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 this.statsDetailResult.splice(index, 1);
                                 return false;
                             }
-
                             return true;
                         });
                     }
@@ -5297,17 +5300,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate) {
+    deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate, hideFromCashflow) {
+        hideFromCashflow = hideFromCashflow || (paramNameForUpdateInput == 'amount' && paramValue == 0);
+
         let affectedTransactions: TransactionStatsDto[] = [];
         let sameDateTransactionExist = false;
         for (let i = this.cashflowData.length - 1; i >= 0; i--) {
             let item = this.cashflowData[i];
 
             if (item.forecastId == key) {
-                if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
+                if (hideFromCashflow) {
                     this.cashflowData.splice(i, 1);
                 }
-
                 affectedTransactions.push(item);
             } else if (paramNameForUpdateInput == 'date' && moment(oldDataDate).utc().isSame(item.date)) {
                 sameDateTransactionExist = true;
@@ -5315,7 +5319,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         affectedTransactions.forEach(item => {
-            if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
+            if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || hideFromCashflow)) {
                 this.cashflowData.push(
                     this.createStubTransaction({
                         date: item.date,
@@ -5327,7 +5331,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 sameDateTransactionExist = true;
             }
 
-            if (paramNameForUpdateInput == 'transactionDescriptor' || (paramNameForUpdateInput == 'amount' && paramValue == 0)) {
+            if (paramNameForUpdateInput == 'transactionDescriptor' || hideFromCashflow) {
                 this.updateTreePathes(item, true);
             }
 
@@ -5349,7 +5353,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'forecastDate': 'date',
             'credit': 'amount',
             'debit': 'amount',
-            'description': 'transactionDescriptor'
+            'description': 'transactionDescriptor',
+            'accountId': 'bankAccountId'
         };
 
         return detailsParamsToUpdateParams[paramName];
@@ -5568,22 +5573,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     accountChanged(e, cell) {
         if (e.value !== e.previousValue) {
-            this._cashFlowForecastServiceProxy.updateForecast(
-                InstanceType10[this.instanceType],
-                this.instanceId,
-                UpdateForecastInput.fromJS({
-                    id: cell.data.forecastId,
-                    bankAccountId: e.value
-                })
-            ).subscribe( () => {
-                /** Update cashflowData with the new account id */
-                this.cashflowData.forEach(item => {
-                    if (item.forecastId === cell.data.forecastId) {
-                        item.accountId = e.value;
-                    }
-                });
-                this.updateDataSource();
-            });
+
+            let rowKey = this.cashFlowGrid.instance.getRowIndexByKey(cell.key);
+            /** remove the value of opposite cell */
+            this.cashFlowGrid.instance.cellValue(rowKey, "accountId", e.value);
+
             let newAccountNumber = this.bankAccounts.find(account => account.id === e.value)['accountNumber'];
             cell.setValue(newAccountNumber);
         }
@@ -5662,4 +5656,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.rootComponent.overflowHidden();
     }
 
+    getBankAccountName(bankAccount) {
+        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber; 
+    }
 }
