@@ -12,7 +12,7 @@ import { PaymentInformationComponent } from './payment-information/payment-infor
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 
-class ClientDetailChildRoutes {
+export class ClientDetailsChildRoutes {
     static leadChildRoutes = [
         {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
         {path: 'contact-information', component: ContactInformationComponent },
@@ -24,7 +24,7 @@ class ClientDetailChildRoutes {
         {path: 'notes', component: NotesComponent }
     ];
 
-    static clientChildRoutes = ClientDetailChildRoutes.leadChildRoutes.concat([
+    static clientChildRoutes = ClientDetailsChildRoutes.leadChildRoutes.concat([
         {path: 'application-status', component: ApplicationStatusComponent },
         {path: 'payment-information', component: PaymentInformationComponent }
     ])
@@ -36,12 +36,12 @@ class ClientDetailChildRoutes {
             {
                 path: 'client/:clientId',
                 component: ClientDetailsComponent,
-                children: ClientDetailChildRoutes.clientChildRoutes
+                children: ClientDetailsChildRoutes.clientChildRoutes
             },
             {
                 path: 'client/:clientId/lead/:leadId',
                 component: ClientDetailsComponent,
-                children: ClientDetailChildRoutes.leadChildRoutes
+                children: ClientDetailsChildRoutes.leadChildRoutes
             }
         ])
     ],
