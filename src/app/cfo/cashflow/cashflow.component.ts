@@ -5619,7 +5619,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.instanceId,
                         record.forecastId
                     ).subscribe(res => {
-                        this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate);
+                        this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate, false);
                         this.getCellOptionsFromCell.cache = {};
                         this.pivotGrid.instance.getDataSource().reload();
                         abp.ui.clearBusy();
