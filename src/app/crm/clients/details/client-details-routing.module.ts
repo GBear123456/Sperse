@@ -12,16 +12,23 @@ import { PaymentInformationComponent } from './payment-information/payment-infor
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 
-let childRouters = [
-    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-    {path: 'contact-information', component: ContactInformationComponent },
-    {path: 'lead-information', component: LeadInformationComponent },
-    {path: 'questionnaire', component: QuestionnaireComponent },
-    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
-    {path: 'referral-history', component: ReferralHistoryComponent },
-    {path: 'activity-logs', component: ActivityLogsComponent },
-    {path: 'notes', component: NotesComponent }
-];
+class ClientDetailChildRoutes {
+    static leadChildRoutes = [
+        {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+        {path: 'contact-information', component: ContactInformationComponent },
+        {path: 'lead-information', component: LeadInformationComponent },
+        {path: 'questionnaire', component: QuestionnaireComponent },
+        {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+        {path: 'referral-history', component: ReferralHistoryComponent },
+        {path: 'activity-logs', component: ActivityLogsComponent },
+        {path: 'notes', component: NotesComponent }
+    ];
+
+    static clientChildRoutes = ClientDetailChildRoutes.leadChildRoutes.concat([
+        {path: 'application-status', component: ApplicationStatusComponent },
+        {path: 'payment-information', component: PaymentInformationComponent }
+    ])
+}
 
 @NgModule({
     imports: [
@@ -29,23 +36,12 @@ let childRouters = [
             {
                 path: 'client/:clientId',
                 component: ClientDetailsComponent,
-                children: [
-                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-                    {path: 'contact-information', component: ContactInformationComponent },
-                    {path: 'lead-information', component: LeadInformationComponent },
-                    {path: 'questionnaire', component: QuestionnaireComponent },
-                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
-                    {path: 'application-status', component: ApplicationStatusComponent },
-                    {path: 'referral-history', component: ReferralHistoryComponent },
-                    {path: 'payment-information', component: PaymentInformationComponent },
-                    {path: 'activity-logs', component: ActivityLogsComponent },
-                    {path: 'notes', component: NotesComponent }
-                ]
-              },
+                children: ClientDetailChildRoutes.clientChildRoutes
+            },
             {
                 path: 'client/:clientId/lead/:leadId',
                 component: ClientDetailsComponent,
-                children: childRouters
+                children: ClientDetailChildRoutes.leadChildRoutes
             }
         ])
     ],
