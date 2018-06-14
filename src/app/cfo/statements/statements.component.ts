@@ -48,7 +48,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     public headlineConfig;
     private bankAccountCount = '';
     visibleAccountCount = 0;
-    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [{ text: this.l('Periods_Historical') }], selectedItemIndex: null };
     private filters: FilterModel[] = new Array<FilterModel>();
     public sliderReportPeriod = {
         start: null,
@@ -255,11 +255,12 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     handleForecastModelResult(result) {
-        let items = result.map(forecastModelItem => {
-            return {
+        let items = [{ id: undefined, text: this.l('Periods_Historical') }];
+        result.forEach(forecastModelItem => {
+            items.push({
                 id: forecastModelItem.id,
                 text: forecastModelItem.name
-            };
+            });
         });
 
         this.forecastModelsObj = {
@@ -316,7 +317,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
                                 currentPeriodTransaction['itemType'] = 'MTD';
                                 currentPeriodForecast['itemType'] = 'Forecast';
-                                clone['sourceData'] = [ currentPeriodTransaction, currentPeriodForecast ];
+                                clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
                                 result.splice(i, 2, clone);
                             }
                         }
