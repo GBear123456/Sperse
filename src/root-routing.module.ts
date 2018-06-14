@@ -12,6 +12,10 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     private getKey(route: ActivatedRouteSnapshot) {
         return route && route.routeConfig.path;
     }
+
+    private checkSameRoute(route, handle) {
+        return handle && (handle.route.value.snapshot.routeConfig == route.routeConfig);
+    }
     
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         if (!route.routeConfig || route.routeConfig.loadChildren)
@@ -27,7 +31,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
-        return Boolean(this.handlers[this.getKey(route)]);
+        return this.checkSameRoute(route, <any>this.handlers[this.getKey(route)]);
     }
 
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
@@ -40,7 +44,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
             this.activateTimeout = setTimeout(() => 
                 handle.componentRef.instance.activate());
         }
-        return handle;
+        return (this.checkSameRoute(route, handle) ? handle: null);
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
