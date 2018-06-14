@@ -18,8 +18,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
     
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
-         if (!route.routeConfig || route.routeConfig.loadChildren)
-            return false;
+        if (!route.routeConfig || route.routeConfig.loadChildren)
+           return false;
 
         return route.routeConfig.data && route.routeConfig.data.reuse;
     }
@@ -35,8 +35,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
-         if (!route.routeConfig || route.routeConfig.loadChildren)
-            return false;
+        if (!route.routeConfig || route.routeConfig.loadChildren)
+           return null;
 
         let handle = <any>this.handlers[this.getKey(route)];
         if (handle && handle.componentRef.instance.activate) {

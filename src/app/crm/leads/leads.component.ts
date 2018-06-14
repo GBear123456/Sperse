@@ -629,7 +629,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     initDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
-                this.pipelineDataSource = new DataSource(this.dataSource);
+                this.pipelineDataSource = this.dataSource;
         }
     }
 
