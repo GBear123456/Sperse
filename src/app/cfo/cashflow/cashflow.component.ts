@@ -178,6 +178,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Bank accounts of user with extracted bank accounts */
     private bankAccounts: BankAccountDto[];
+    private activeBankAccounts: BankAccountDto[];
 
     /** Source of the cashflow table (data fields descriptions and data) */
     dataSource;
@@ -1022,6 +1023,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
         this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
+        this.activeBankAccounts = this.bankAccounts.filter(b => b.isActive);
         this.createFilters(initialDataResult, bankAccounts);
         this.setupFilters(this.filters);
     }
@@ -2522,11 +2524,32 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let childPath = path.slice();
             childPath.push(child.value);
             if (this.hasChildsByPath(childPath)) {
-                this.pivotGrid.instance.getDataSource().expandHeaderItem('row', childPath);
-                if (currentDepth != stopDepth)
-                    this.expandRows(child, stopDepth, childPath, currentDepth + 1);
+                let dataSource = this.pivotGrid.instance.getDataSource();
+                dataSource.expandHeaderItem('row', childPath);
+                    
+                this.pivotGrid.instance.getDataSource().load().then((d) => {
+                    var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
+                    if (currentDepth != stopDepth)
+                        this.expandRows(dataSourceChild, stopDepth, childPath, currentDepth + 1);
+                });
             }
         }
+    }
+
+    getDataSourceItemByPath(dataSourceItems: any[], path: any[]) {
+        let pathValue = path.shift();
+        for (let i = 0; i < dataSourceItems.length; i++){
+            let item = dataSourceItems[i];
+            if (item.value == pathValue) {
+                if (path.length == 0)
+                    return item;
+
+                if (!item.children)
+                    return null;
+
+                return this.getDataSourceItemByPath(item.children, path);
+            }
+        };
     }
 
     /**
@@ -3448,8 +3471,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     createCopyItemsModels(transactions: CashFlowStatsDetailDto[], sourceCellInfo: CellInfo, targetsData: CellInfo[]): CreateForecastsInput {
         let forecastsItems: AddForecastInput[] = [];
         let activeAccountIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.requestFilter.accountIds);
-        targetsData.forEach((target, index) => {
+        targetsData.forEach((targetData, index) => {
             transactions.forEach(transaction => {
+                let target = { ...targetData };
                 let transactionDate = transaction.forecastDate || transaction.date;
                 let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, transactionDate.utc());
                 let transactionAccountId = this.bankAccounts.find(account => account.accountNumber === transaction.accountNumber).id;
@@ -3464,6 +3488,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
+                let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
+                target.subCategoryId = cashflowObj.subCategoryId;
+                target.transactionDescriptor = cashflowObj.transactionDescriptor;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
@@ -3869,7 +3896,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellObj
      */
     bindCollapseActionOnWhiteSpaceColumn(cellObj) {
-        let totalCell = $(cellObj.cellElement).parent().nextAll('.dx-expand-border').first().find('td.dx-total');
+        let rowSpan = cellObj.cellElement.rowSpan || 1;
+        let totalCell = $(cellObj.cellElement).parent().nextAll().eq(rowSpan-1).first().find('td.dx-total');
         totalCell.trigger('click');
     }
 
@@ -4398,7 +4426,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let transactionDescriptor = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.TransactionDescriptor);
             let currentDate = this.cashflowService.getUtcCurrentDate();
             let targetDate = this.modifyingNumberBoxStatsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.modifyingNumberBoxStatsDetailFilter.startDate).utc() : currentDate;
-            let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.modifyingNumberBoxStatsDetailFilter.bankAccountIds);
+            let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.modifyingNumberBoxStatsDetailFilter.accountIds);
             let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : (this.modifyingNumberBoxStatsDetailFilter.accountIds[0] || this.bankAccounts[0].id);
             forecastModel = new AddForecastInput({
                 forecastModelId: this.selectedForecastModel.id,
@@ -5223,7 +5251,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         data.id
                     );
 
-            } else {
+            } else {                
                 /* Set descriptor */
                 if (paramName != 'description') {
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
@@ -5252,7 +5280,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cashFlowGrid.instance.cellValue(rowKey, oppositeParamName, null);
                     }
                 }
-                this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName]);
+
+                let hideFromCashflow = !underscore.contains(this.selectedBankAccounts, paramValue);
+                this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
                 this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
@@ -5263,7 +5293,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                 this.statsDetailResult.splice(index, 1);
                                 return false;
                             }
-
                             return true;
                         });
                     }
@@ -5275,17 +5304,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate) {
+    deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate, hideFromCashflow) {
+        hideFromCashflow = hideFromCashflow || (paramNameForUpdateInput == 'amount' && paramValue == 0);
+
         let affectedTransactions: TransactionStatsDto[] = [];
         let sameDateTransactionExist = false;
         for (let i = this.cashflowData.length - 1; i >= 0; i--) {
             let item = this.cashflowData[i];
 
             if (item.forecastId == key) {
-                if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
+                if (hideFromCashflow) {
                     this.cashflowData.splice(i, 1);
                 }
-
                 affectedTransactions.push(item);
             } else if (paramNameForUpdateInput == 'date' && moment(oldDataDate).utc().isSame(item.date)) {
                 sameDateTransactionExist = true;
@@ -5293,7 +5323,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         affectedTransactions.forEach(item => {
-            if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || (paramNameForUpdateInput == 'amount' && paramValue == 0))) {
+            if (!sameDateTransactionExist && (paramNameForUpdateInput == 'date' || hideFromCashflow)) {
                 this.cashflowData.push(
                     this.createStubTransaction({
                         date: item.date,
@@ -5305,7 +5335,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 sameDateTransactionExist = true;
             }
 
-            if (paramNameForUpdateInput == 'transactionDescriptor' || (paramNameForUpdateInput == 'amount' && paramValue == 0)) {
+            if (paramNameForUpdateInput == 'transactionDescriptor' || hideFromCashflow) {
                 this.updateTreePathes(item, true);
             }
 
@@ -5327,7 +5357,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             'forecastDate': 'date',
             'credit': 'amount',
             'debit': 'amount',
-            'description': 'transactionDescriptor'
+            'description': 'transactionDescriptor',
+            'accountId': 'bankAccountId'
         };
 
         return detailsParamsToUpdateParams[paramName];
@@ -5546,22 +5577,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     accountChanged(e, cell) {
         if (e.value !== e.previousValue) {
-            this._cashFlowForecastServiceProxy.updateForecast(
-                InstanceType10[this.instanceType],
-                this.instanceId,
-                UpdateForecastInput.fromJS({
-                    id: cell.data.forecastId,
-                    bankAccountId: e.value
-                })
-            ).subscribe( () => {
-                /** Update cashflowData with the new account id */
-                this.cashflowData.forEach(item => {
-                    if (item.forecastId === cell.data.forecastId) {
-                        item.accountId = e.value;
-                    }
-                });
-                this.updateDataSource();
-            });
+
+            let rowKey = this.cashFlowGrid.instance.getRowIndexByKey(cell.key);
+            /** remove the value of opposite cell */
+            this.cashFlowGrid.instance.cellValue(rowKey, "accountId", e.value);
+
             let newAccountNumber = this.bankAccounts.find(account => account.id === e.value)['accountNumber'];
             cell.setValue(newAccountNumber);
         }
@@ -5603,7 +5623,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.instanceId,
                         record.forecastId
                     ).subscribe(res => {
-                        this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate);
+                        this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate, false);
                         this.getCellOptionsFromCell.cache = {};
                         this.pivotGrid.instance.getDataSource().reload();
                         abp.ui.clearBusy();
@@ -5640,4 +5660,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.rootComponent.overflowHidden();
     }
 
+    getBankAccountName(bankAccount) {
+        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber; 
+    }
 }

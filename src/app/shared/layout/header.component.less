@@ -19,8 +19,48 @@
         .m-topbar__nav.m-nav {
             margin: 0px!important;
             padding-top: 6px;
-            .m-nav__item {
-                padding: 0 8px!important;    
+                .m-nav__item {
+                    padding: 0 14px !important;
+
+                    @media (max-width: 768px) {
+                        padding: 0 8px !important;
+                    }
+                }
+        }
+
+        .user-info-drop-down-arrow {
+            color: #43383b;
+        }
+
+        .m-card-user {
+            .m-card-user__details {
+                padding: 0 15px 0 0;
+
+                .user-info {
+                    color: #fff !important;
+                    font-size: 1.1rem;
+                    font-weight: 400;
+                    line-height: 1.4;
+                    display: block;
+                    word-break: break-word;
+
+                    &.fullName {
+                        font-weight: 600;
+                        font-size: 18px;
+                        text-transform: capitalize;
+                    }
+
+                    &.email {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        width: 190px;
+                    }
+                }
+            }
+
+            .m-card-user__pic {
+                padding: 0;
             }
         }
     }

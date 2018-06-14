@@ -17,12 +17,19 @@ export class CFOService extends CFOServiceBase {
 
         _appService.subscribeModuleChange((config) => {
             if (config['name'] == 'CFO') {
-                this._appService.topMenu.items
-                    .forEach((item, i) => {
-                        if (i != 0) {
-                            item.disabled = true;
-                        }
-                    });
+                if (this.initialized === undefined) {
+                    this._appService.topMenu.items
+                        .forEach((item, i) => {
+                            if (i != 0) {
+                                item.disabled = true;
+                            }
+                        });
+                    if (this.instanceType !== undefined) {
+                        this.instanceChangeProcess();
+                    }
+                } else {
+                    this.updateMenuItems();
+                }
             }
         });
     }
@@ -43,17 +50,21 @@ export class CFOService extends CFOServiceBase {
                 this.initContactInfo(data.userId);
             this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
             this.hasTransactions = this.initialized && data.hasTransactions;
-            this._appService.topMenu.items
-                .forEach((item, i) => {
-                    if (i == 0) {
-                        item.text = this.initialized ? 'Dashboard' : 'Setup';
-                    } else if (i == 1) {
-                        item.disabled = !this.initialized;
-                    } else {
-                        item.disabled = !this.hasTransactions;
-                    }
-                });
+            this.updateMenuItems();
             callback && callback.call(this, this.hasTransactions);
         });
+    }
+
+    private updateMenuItems() {
+        this._appService.topMenu.items
+            .forEach((item, i) => {
+                if (i == 0) {
+                    item.text = this.initialized ? 'Dashboard' : 'Setup';
+                } else if (i == 1) {
+                    item.disabled = !this.initialized;
+                } else {
+                    item.disabled = !this.hasTransactions;
+                }
+            });
     }
 }

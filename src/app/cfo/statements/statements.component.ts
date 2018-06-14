@@ -48,7 +48,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     public headlineConfig;
     private bankAccountCount = '';
     visibleAccountCount = 0;
-    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [{ text: this.l('Periods_Historical') }], selectedItemIndex: null };
     private filters: FilterModel[] = new Array<FilterModel>();
     public sliderReportPeriod = {
         start: null,
@@ -121,6 +121,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             adaptive: false,
                             onSelectionChanged: (e) => {
                                 if (e) {
+                                    this.forecastModelsObj.selectedItemIndex = e.itemIndex;
                                     this.refreshData();
                                 }
                             }
@@ -254,11 +255,12 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     handleForecastModelResult(result) {
-        let items = result.map(forecastModelItem => {
-            return {
+        let items = [{ id: undefined, text: this.l('Periods_Historical') }];
+        result.forEach(forecastModelItem => {
+            items.push({
                 id: forecastModelItem.id,
                 text: forecastModelItem.name
-            };
+            });
         });
 
         this.forecastModelsObj = {
@@ -315,7 +317,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
                                 currentPeriodTransaction['itemType'] = 'MTD';
                                 currentPeriodForecast['itemType'] = 'Forecast';
-                                clone['sourceData'] = [ currentPeriodTransaction, currentPeriodForecast ];
+                                clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
                                 result.splice(i, 2, clone);
                             }
                         }
@@ -374,6 +376,17 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     toggleReportPeriodFilter() {
         this.reportPeriodSelector.toggleReportPeriodFilter();
+    }
+
+    onRowPrepared(e) {
+        if (e.rowType == 'data') {
+            if (e.data.date.isSame(moment(), 'month'))
+                e.rowElement.classList.add('current-row');
+            else if (e.data.isForecast)
+                e.rowElement.classList.add('forecast-row');
+            else
+                e.rowElement.classList.add('historical-row');
+        }
     }
 
     expandColapseRow(e) {

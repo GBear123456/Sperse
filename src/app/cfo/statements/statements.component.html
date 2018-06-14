@@ -9,7 +9,8 @@
                       [pager]="defaultGridPagerConfig"
                       [dataSource]="statementsData"
                       [masterDetail]="{ enabled: false, template: 'detail' }"
-                      (onRowClick)="expandColapseRow($event)">
+                      (onRowClick)="expandColapseRow($event)"
+                      (onRowPrepared)="onRowPrepared($event)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
                            mode="multiple">

@@ -6942,6 +6942,52 @@ export class CustomerListsServiceProxy {
      * @input (optional) 
      * @return Success
      */
+    assignToMultipleCustomers(input: AssignListsToCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AssignToMultipleCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToMultipleCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToMultipleCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToMultipleCustomers(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
     rename(input: UpdateCustomerListInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Rename";
         url_ = url_.replace(/[?&]$/, "");
@@ -7132,6 +7178,52 @@ export class CustomerRatingsServiceProxy {
     }
 
     protected processRateCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rateCustomers(input: RateCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerRatings/RateCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRateCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRateCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRateCustomers(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -7682,6 +7774,52 @@ export class CustomerStarsServiceProxy {
         }
         return Observable.of<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    markCustomers(input: MarkCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerStars/MarkCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processMarkCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processMarkCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processMarkCustomers(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -7778,6 +7916,52 @@ export class CustomerTagsServiceProxy {
     }
 
     protected processAssignToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignToMultipleCustomers(input: AssignToCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToMultipleCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignToMultipleCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignToMultipleCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignToMultipleCustomers(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -13629,6 +13813,121 @@ export class ProfileServiceProxy {
 }
 
 @Injectable()
+export class QuickBookServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @state (optional) 
+     * @code (optional) 
+     * @realmId (optional) 
+     * @return Success
+     */
+    processResult(state: string, code: string, realmId: string): Observable<void> {
+        let url_ = this.baseUrl + "/QuickBook/ProcessResult?";
+        if (state !== undefined)
+            url_ += "State=" + encodeURIComponent("" + state) + "&"; 
+        if (code !== undefined)
+            url_ += "Code=" + encodeURIComponent("" + code) + "&"; 
+        if (realmId !== undefined)
+            url_ += "RealmId=" + encodeURIComponent("" + realmId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processProcessResult(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processProcessResult(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processProcessResult(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    getQuickBookConnectionLink(instanceType: InstanceType72, instanceId: number): Observable<QuickBookConnectionLinkResult> {
+        let url_ = this.baseUrl + "/api/services/CFO/QuickBook/GetQuickBookConnectionLink?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetQuickBookConnectionLink(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetQuickBookConnectionLink(response_);
+                } catch (e) {
+                    return <Observable<QuickBookConnectionLinkResult>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<QuickBookConnectionLinkResult>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetQuickBookConnectionLink(response: Response): Observable<QuickBookConnectionLinkResult> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? QuickBookConnectionLinkResult.fromJS(resultData200) : new QuickBookConnectionLinkResult();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<QuickBookConnectionLinkResult>(<any>null);
+    }
+}
+
+@Injectable()
 export class RoleServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -14054,7 +14353,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    createProviderUIToken(instanceType: InstanceType72, instanceId: number): Observable<GetProviderUITokenOutput> {
+    createProviderUIToken(instanceType: InstanceType73, instanceId: number): Observable<GetProviderUITokenOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14108,7 +14407,7 @@ export class SyncServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType73, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType74, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14164,7 +14463,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType74, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType75, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14224,7 +14523,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountAsync(instanceType: InstanceType75, instanceId: number, syncAccountId: number): Observable<boolean> {
+    syncAccountAsync(instanceType: InstanceType76, instanceId: number, syncAccountId: number): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccountAsync?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14280,7 +14579,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType76, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType77, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14333,7 +14632,7 @@ export class SyncServiceProxy {
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType77, instanceId: number, syncAccountIds: number[]): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType78, instanceId: number, syncAccountIds: number[]): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14401,7 +14700,7 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(instanceType: InstanceType78, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+    rename(instanceType: InstanceType79, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14452,7 +14751,7 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    delete(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<void> {
+    delete(instanceType: InstanceType80, instanceId: number, syncAccountId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17366,7 +17665,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType80, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType81, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17418,7 +17717,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType81, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType82, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17470,7 +17769,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType82, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType83, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -18357,6 +18656,52 @@ export class UserAssignmentServiceProxy {
     }
 
     protected processAssignUserToCustomer(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignUserToCustomers(input: AssignUserToCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignUserToCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignUserToCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignUserToCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignUserToCustomers(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -29060,6 +29405,61 @@ export interface ICustomerListInput {
     name: string;
 }
 
+export class AssignListsToCustomersInput implements IAssignListsToCustomersInput {
+    customerIds: number[];
+    lists: CustomerListInput[];
+
+    constructor(data?: IAssignListsToCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(CustomerListInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssignListsToCustomersInput {
+        let result = new AssignListsToCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssignListsToCustomersInput {
+    customerIds: number[];
+    lists: CustomerListInput[];
+}
+
 export class UpdateCustomerListInput implements IUpdateCustomerListInput {
     id: number;
     name: string;
@@ -29174,6 +29574,53 @@ export class RateCustomerInput implements IRateCustomerInput {
 
 export interface IRateCustomerInput {
     customerId: number;
+    ratingId: number;
+}
+
+export class RateCustomersInput implements IRateCustomersInput {
+    customerIds: number[];
+    ratingId: number;
+
+    constructor(data?: IRateCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            this.ratingId = data["ratingId"];
+        }
+    }
+
+    static fromJS(data: any): RateCustomersInput {
+        let result = new RateCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        data["ratingId"] = this.ratingId;
+        return data; 
+    }
+}
+
+export interface IRateCustomersInput {
+    customerIds: number[];
     ratingId: number;
 }
 
@@ -30872,6 +31319,53 @@ export interface IMarkCustomerInput {
     starId: number;
 }
 
+export class MarkCustomersInput implements IMarkCustomersInput {
+    customerIds: number[];
+    starId: number;
+
+    constructor(data?: IMarkCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            this.starId = data["starId"];
+        }
+    }
+
+    static fromJS(data: any): MarkCustomersInput {
+        let result = new MarkCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        data["starId"] = this.starId;
+        return data; 
+    }
+}
+
+export interface IMarkCustomersInput {
+    customerIds: number[];
+    starId: number;
+}
+
 export class AssignToCustomerInput implements IAssignToCustomerInput {
     customerId: number;
     tags: CustomerTagInput[];
@@ -30916,6 +31410,61 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
 
 export interface IAssignToCustomerInput {
     customerId: number;
+    tags: CustomerTagInput[];
+}
+
+export class AssignToCustomersInput implements IAssignToCustomersInput {
+    customerIds: number[];
+    tags: CustomerTagInput[];
+
+    constructor(data?: IAssignToCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AssignToCustomersInput {
+        let result = new AssignToCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAssignToCustomersInput {
+    customerIds: number[];
     tags: CustomerTagInput[];
 }
 
@@ -38873,6 +39422,41 @@ export interface IChangeUserLanguageDto {
     languageName: string;
 }
 
+export class QuickBookConnectionLinkResult implements IQuickBookConnectionLinkResult {
+    connectionLink: string;
+
+    constructor(data?: IQuickBookConnectionLinkResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.connectionLink = data["connectionLink"];
+        }
+    }
+
+    static fromJS(data: any): QuickBookConnectionLinkResult {
+        let result = new QuickBookConnectionLinkResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectionLink"] = this.connectionLink;
+        return data; 
+    }
+}
+
+export interface IQuickBookConnectionLinkResult {
+    connectionLink: string;
+}
+
 export class ListResultDtoOfRoleListDto implements IListResultDtoOfRoleListDto {
     items: RoleListDto[];
 
@@ -43884,6 +44468,53 @@ export interface IAssignUserToCustomerInput {
     userId: number;
 }
 
+export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
+    customerIds: number[];
+    userId: number;
+
+    constructor(data?: IAssignUserToCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): AssignUserToCustomersInput {
+        let result = new AssignUserToCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IAssignUserToCustomersInput {
+    customerIds: number[];
+    userId: number;
+}
+
 export class LinkToUserInput implements ILinkToUserInput {
     tenancyName: string;
     usernameOrEmailAddress: string;
@@ -44687,6 +45318,11 @@ export enum InstanceType79 {
     Main = <any>"Main", 
 }
 
+export enum InstanceType80 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum SalesSummaryDatePeriod {
     _1 = 1, 
     _2 = 2, 
@@ -44718,17 +45354,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType80 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
 export enum InstanceType81 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
 export enum InstanceType82 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType83 {
     User = <any>"User", 
     Main = <any>"Main", 
 }

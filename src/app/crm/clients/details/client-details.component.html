@@ -38,11 +38,11 @@
       <router-outlet></router-outlet>
     </div>
     <mat-sidenav class="right_sidenav" mode="side" align="end" [opened]="rightPanelSetting.opened">
+      <span class="gear-icon" (click)="toggleConfigMode()"></span>
       <mat-tab-group>
         <mat-tab label="{{l('Overview')}}">
           <dx-scroll-view showScrollbar="onHover">
             <div class="right-content" [ngClass]="{'config-mode': configMode}">
-              <span class="gear-icon" (click)="toggleConfigMode()"></span>
               <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.clientScores">
                   <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'clientScores')" class="cb-visible-section" [checked]="rightPanelSetting?.clientScores"><client-scores></client-scores>
               </div>

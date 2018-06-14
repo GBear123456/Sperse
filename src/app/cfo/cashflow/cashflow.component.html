@@ -87,7 +87,7 @@
             <dxi-column dataField="description"
                         cellTemplate="descriptionTemplate"
                         [width]="detailsDescriptionColumnWidth()"
-                        [minWidth]="160"
+                        [minWidth]="130"
                         [allowEditing]="false"
                         [caption]="l('DetailsHeaders_Description')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
@@ -120,8 +120,15 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
-                        [minWidth]="130"
+                        [minWidth]="190"
                         editCellTemplate="accountsEditSelect">
+            </dxi-column>
+            <dxi-column dataField="accountId"
+                        [allowSorting]="false"
+                        [allowFiltering]="false"
+                        [cssClass]="tabularFontName"
+                        [allowEditing]="false"
+                        visible="false">
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"
@@ -137,7 +144,7 @@
                         [allowSorting]="false"
                         [allowFiltering]="false"
                         [allowEditing]="false"
-                        [minWidth]="220">
+                        [minWidth]="200">
             </dxi-column>
 
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
@@ -149,8 +156,8 @@
                 <span id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
             </div>
             <div *dxTemplate="let cell of 'accountsEditSelect'">
-                <dx-select-box [items]="bankAccounts"
-                               displayExpr="accountName"
+                <dx-select-box [items]="activeBankAccounts"
+                               [displayExpr]="getBankAccountName"
                                valueExpr="id"
                                [value]="getBankAccountId(cell)"
                                (onValueChanged)="accountChanged($event, cell)">

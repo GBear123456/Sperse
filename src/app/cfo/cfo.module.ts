@@ -78,6 +78,7 @@ import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.servi
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-account-button/add-account-button.component';
+import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 
 @NgModule({
     imports: [
@@ -146,7 +147,8 @@ import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-accou
         TransactionDetailInfoComponent,
         ReportPeriodComponent,
         BankAccountsQuovoComponent,
-        AddAccountButtonComponent
+        AddAccountButtonComponent,
+        ImportFromQuickBooksButtonComponent
     ],
     entryComponents: [
         RuleDialogComponent,

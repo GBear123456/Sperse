@@ -12,32 +12,38 @@ import { PaymentInformationComponent } from './payment-information/payment-infor
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 
-let childRouters = [
-    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
-    {path: 'contact-information', component: ContactInformationComponent },
-    {path: 'lead-information', component: LeadInformationComponent },
-    {path: 'questionnaire', component: QuestionnaireComponent },
-    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
-    {path: 'referral-history', component: ReferralHistoryComponent },
-    {path: 'activity-logs', component: ActivityLogsComponent },
-    {path: 'notes', component: NotesComponent }
-];
-
 @NgModule({
     imports: [
         RouterModule.forChild([
             {
                 path: 'client/:clientId',
                 component: ClientDetailsComponent,
-                children: childRouters.concat([
+                children: [
+                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'lead-information', component: LeadInformationComponent },
+                    {path: 'questionnaire', component: QuestionnaireComponent },
+                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'application-status', component: ApplicationStatusComponent },
+                    {path: 'referral-history', component: ReferralHistoryComponent },
                     {path: 'payment-information', component: PaymentInformationComponent },
-                    {path: 'application-status', component: ApplicationStatusComponent }
-                ])
-            },
+                    {path: 'activity-logs', component: ActivityLogsComponent },
+                    {path: 'notes', component: NotesComponent }
+                ]
+              },
             {
                 path: 'client/:clientId/lead/:leadId',
                 component: ClientDetailsComponent,
-                children: childRouters
+                children: [
+                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'lead-information', component: LeadInformationComponent },
+                    {path: 'questionnaire', component: QuestionnaireComponent },
+                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'referral-history', component: ReferralHistoryComponent },
+                    {path: 'activity-logs', component: ActivityLogsComponent },
+                    {path: 'notes', component: NotesComponent }
+                ]
             }
         ])
     ],
