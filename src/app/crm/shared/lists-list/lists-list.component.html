@@ -32,12 +32,12 @@
                 (onContentReady)="onContentReady($event)"
                 (onRowInserted)="onRowInserted($event)"
                 (onEditorPrepared)="editorPrepared($event)"
-                [ngClass]="selectedKeys?.length ? 'add-new-item-mode' : ''">
+                [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
                     [texts]="{confirmDeleteMessage: ''}"
                     [allowUpdating]="true"
-                    [allowAdding]="selectedKeys?.length">
+                    [allowAdding]="!bulkUpdateMode || selectedKeys?.length">
                 </dxo-editing>
             </dx-tree-list>
         </div>
