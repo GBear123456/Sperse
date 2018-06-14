@@ -216,7 +216,7 @@
                             </div>
                         </div>
                     </tab>
-                    <tab heading="{{l('EmailSmtp')}}" customClass="m-tabs__item">
+                    <tab heading="{{l('EmailSmtp')}}" *ngIf="!isMultiTenancyEnabled" customClass="m-tabs__item">
                         <div class="form-group">
                             <label>{{l("DefaultFromAddress")}}</label>
                             <input type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':settings.email.defaultFromAddress}" [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
