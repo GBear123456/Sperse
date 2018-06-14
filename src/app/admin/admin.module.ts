@@ -9,9 +9,14 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
 import { UtilsModule } from '@shared/utils/utils.module';
-import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule,
-  DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule
+import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule, DxContextMenuModule,
+    DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule,
+    DxTextAreaModule, DxValidationGroupModule, DxNumberBoxModule
 } from 'devextreme-angular';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule, MatStepperModule, MatInputModule, 
+    MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
 
 import { UsersComponent } from './users/users.component';
 import { PermissionComboComponent } from './shared/permission-combo.component';
@@ -63,6 +68,7 @@ import { TenantsComponent } from './tenants/tenants.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
+import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 
 @NgModule({
     imports: [
@@ -76,6 +82,8 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         TabsModule.forRoot(),
         TooltipModule.forRoot(),
         PopoverModule.forRoot(),
+
+        DxValidationGroupModule,
         DxValidationSummaryModule,
         DxFileUploaderModule,
         DxDataGridModule,
@@ -84,7 +92,19 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         DxTextBoxModule,
         DxButtonModule,
         DxTooltipModule,
+        DxTextAreaModule,
+        DxNumberBoxModule,
+        DxContextMenuModule,
         DxListModule,
+
+        MatTabsModule,
+        MatInputModule,
+        MatSidenavModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatProgressBarModule,
+        MatStepperModule,
+
         UtilsModule,
         DataTableModule,
         PaginatorModule,
@@ -133,7 +153,11 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
-        TenantFeaturesModalComponent
+        TenantFeaturesModalComponent,
+        CreateUserDialogComponent
+    ],
+    entryComponents: [
+        CreateUserDialogComponent
     ],
     exports: [
         AddMemberModalComponent

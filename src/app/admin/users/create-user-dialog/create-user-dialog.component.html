@@ -1,0 +1,105 @@
+<div class="photo-area" (click)="showUploadPhoto($event)" [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
+<modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="saveContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
+        target="#{{saveButtonId}}">
+    </dx-context-menu>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
+      <mat-tab-group>
+        <mat-tab label="{{l('UserInformations') | uppercase}}">
+          <div class="tab-content">
+              <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
+                  <div class="field email">
+                      <label>{{l('Email')}}</label>
+                      <dx-text-box #emailComponent
+                        name="email"
+                        [width]="'260px'"
+                        (onKeyUp)="onKeyUp($event, 'emails', emails)"
+                        (onInitialized)="onComponentInitialized($event, 'emails')">
+                        <dx-validator>
+                          <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                        </dx-validator>
+                      </dx-text-box>
+                      <dx-select-box
+                        width="100px"
+                        name="emailType"
+                        placeholder="{{l('Type')}}"
+                        [dataSource]="emailTypes"
+                        [disabled]="!addButtonVisible['emails']"
+                        displayExpr="name"
+                        valueExpr="id"
+                        [value]="emailType"
+                        (onValueChanged)="onTypeChanged($event, 'email')">
+                      </dx-select-box>
+                      <span [class]="addButtonVisible['emails'] && 'add-contact' || clearButtonVisible['emails'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible['emails'] ? emptyInput('emails'): addContact('emails')">+</span>
+                  </div>
+              </dx-validation-group>
+              <div class="field" *ngFor="let email of contacts.emails; index as i">
+                  <p class="{{email.type}}">{{email.email}}<span (click)="removeContact('emails', i)"></span></p>
+			        </div>
+      			  <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
+        				<div class="field phone H">
+        					<label>{{l('Phone')}}</label>
+        					<dx-text-box
+        						class="tabular"
+        						name="phone"
+        						maskInvalidMessage="{{l('PhoneValidationError')}}"
+        						[mask]="masks.phone"
+        						[width]="'205px'"
+        						(onKeyUp)="onKeyUp($event, 'phones', phones)"
+        						(onFocusIn)="focusInput($event)"
+        						(onInitialized)="onComponentInitialized($event, 'phones')">
+                                <dx-validator>
+                                  <dxi-validation-rule type="pattern" [pattern]="phoneRegEx" message="{{l('PhoneValidationError')}}."></dxi-validation-rule>
+                                </dx-validator>
+        					</dx-text-box>
+        					<dx-number-box
+        						class="tabular"
+        						name="phoneExtension"
+        						[width]="'50px'"
+        						[placeholder]="l('Ext')"
+        						[(value)]="phoneExtension">
+        						<dx-validator>
+        							<dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
+        						</dx-validator>
+        					</dx-number-box>
+        					<dx-select-box
+        						width="100px"
+        						name="phoneType"
+        						[disabled]="!addButtonVisible['phones']"
+        						placeholder="{{l('Type')}}"
+        						[dataSource]="phoneTypes"
+        						displayExpr="name"
+        						valueExpr="id"
+        						[value]="phoneType"
+        						(onValueChanged)="onTypeChanged($event, 'phone')">
+        					</dx-select-box>
+        					<span [class]="addButtonVisible['phones'] && 'add-contact' || clearButtonVisible['phones'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible['phones'] ? emptyInput('phones'): addContact('phones')">+</span>
+        				</div>
+      			  </dx-validation-group>
+              <div class="field" *ngFor="let phone of contacts.phones; index as i">
+                  <p class="phone {{phone.type}}">{{phone.number | phone}}&nbsp;&nbsp;{{phone.ext ? 'ext: ' + phone.ext: '' }}<span (click)="removeContact('phones', i)"></span></p>
+              </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="{{l('Roles') | uppercase}}">
+            <!-- span class="badge badge-primary">{{getAssignedRoleCount()}}</span -->
+            <div class="roles-checkbox-list m-checkbox-list">
+                <label attr.for="EditUser_{{role.roleName}}" class="m-checkbox" *ngFor="let role of roles">
+                    <input id="EditUser_{{role.roleName}}" type="checkbox" name="{{role.roleName}}" [(ngModel)]="role.isAssigned">
+                    {{role.roleDisplayName}}
+                    <span></span>
+                </label>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{l('OrganizationUnits') | uppercase}}">
+            <organization-unit-tree #organizationUnitTree></organization-unit-tree>
+        </mat-tab>        
+      </mat-tab-group>
+    </mat-sidenav>
+</modal-dialog>
