@@ -33,12 +33,13 @@
                 (onCellPrepared)="onCellPrepared($event)"
                 (onContentReady)="onContentReady($event)"
                 (onRowInserted)="onRowInserted($event)"
-                (onEditorPrepared)="editorPrepared($event)">
+                (onEditorPrepared)="editorPrepared($event)"
+                [ngClass]="selectedKeys?.length ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"
                     [texts]="{confirmDeleteMessage: ''}"
                     [allowUpdating]="true"
-                    [allowAdding]="true">
+                    [allowAdding]="selectedKeys?.length">
                 </dxo-editing>
             </dx-tree-list>
         </div>
