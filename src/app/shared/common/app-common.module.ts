@@ -8,12 +8,14 @@ import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressBarModule, MatStepperModule, MatInputModule } from '@angular/material';
+import { MatProgressBarModule, MatStepperModule, MatInputModule, 
+    MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
 
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule } from 'devextreme-angular';
 
+import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
@@ -35,6 +37,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
 
 import { FileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
+import { ImageCropperModule } from 'ng2-img-cropper';
 
 @NgModule({
     imports: [
@@ -47,15 +50,20 @@ import { PapaParseModule } from 'ngx-papaparse';
         DataTableModule,
         PaginatorModule,
 
+        MatTabsModule,
         MatInputModule,
+        MatSidenavModule,
+        MatDialogModule,
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
         ReactiveFormsModule,
         FileDropModule,
         PapaParseModule,
+        ImageCropperModule,
 
         DxListModule,
+        DxContextMenuModule,
         DxButtonModule,
         DxToolbarModule,
         DxDropDownBoxModule,
@@ -81,7 +89,8 @@ import { PapaParseModule } from 'ngx-papaparse';
         InplaceEditComponent,
         InplaceSelectBoxComponent,
         PeriodComponent,
-        ImportWizardComponent
+        ImportWizardComponent,
+        UploadPhotoDialogComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -95,12 +104,16 @@ import { PapaParseModule } from 'ngx-papaparse';
         InplaceEditComponent,
         InplaceSelectBoxComponent,
         PeriodComponent,
-        ImportWizardComponent
+        ImportWizardComponent,
+        UploadPhotoDialogComponent
     ],
     providers: [
         DateTimeService,
         AppLocalizationService,
         AppNavigationService
+    ],
+    entryComponents: [
+        UploadPhotoDialogComponent
     ]
 })
 export class AppCommonModule {

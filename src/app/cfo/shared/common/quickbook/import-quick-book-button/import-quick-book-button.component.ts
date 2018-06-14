@@ -25,11 +25,11 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
     buttonClick(): void {
         abp.ui.setBusy();
         this._quickBookService.getQuickBookConnectionLink(InstanceType[this.instanceType], this.instanceId)
+            .finally(() => { abp.ui.clearBusy(); })
             .subscribe((result) => {
                 if (result.connectionLink) {
                     window.open(result.connectionLink, "Quick Book Connection", "menubar=0,scrollbars=1,width=780,height=900,top=10");
                 }
-                abp.ui.clearBusy();                
             });
     }
 

@@ -25,8 +25,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
 
     private _selectedLeads: any;
-    private _dataSource: DataSource;
-    private loadStageIndex: number;
+    private _dataSource: any;
+    private _dataSources: any = {};
     private refreshTimeout: any;
     private shiftStartLead: any;
     private firstStage: any;
@@ -45,7 +45,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
-        if (this._dataSource)
+        if (dataSource)
             this.refresh();
     }
     @Input() pipelinePurposeId: string;
@@ -78,11 +78,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     .getPipelineDefinitionObservable(this.pipelinePurposeId)
                     .subscribe((result: PipelineDto) => {
                         this.pipeline = result;
+                        this.stages = result.stages.map((stage) => {  
+                            stage['leads'] = [];
+                            return stage;
+                        });
+                        this.firstStage = this.stages[0];
+                        this.lastStage = this.stages[this.stages.length - 1];
                         this.onStagesLoaded.emit(result);
-                        if (this._dataSource) {
-                            this.loadStageIndex = addedNew ? Math.floor(this.stages.length / 2) : 0;
-                            this.loadStagesLeads(0, addedNew);
-                        }
+                        if (this._dataSource)
+                            this.loadStagesLeads(0, addedNew ? Math.floor(this.stages.length / 2) : undefined, addedNew);
+
                         this.refreshTimeout = null;
                     });
             });
@@ -105,38 +110,42 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return elm && elm.getAttribute('accessKey');
     }
 
-    loadStagesLeads(page = 0, oneStageOnly = false) {
-        let index = this.loadStageIndex, stages = this.pipeline.stages;
-        this._dataSource.pageSize(this.STAGE_PAGE_COUNT);
-        this._dataSource['_store']['_url'] =
+    loadStagesLeads(page = 0, stageIndex = undefined, oneStageOnly = false) {
+        let index = stageIndex || 0, 
+            stages = this.stages, stage = stages[index],
+            dataSource = this._dataSources[stage.name];
+        if (!dataSource)
+            dataSource = this._dataSources[stage.name] = 
+                new DataSource(this._dataSource);
+
+        dataSource.pageSize(this.STAGE_PAGE_COUNT);
+        dataSource['_store']['_url'] =
             this.getODataURL(this.dataSourceURI,
-                this.queryWithSearch.concat({or: [{StageId: stages[index].id}]}));
-        this._dataSource.sort({getter: 'Id', desc: true});
-        this._dataSource.pageIndex(page);
-        this._dataSource.load().done((leads) => {
-            if (index == this.loadStageIndex) {
-                let stage = stages[index];
-                stage['leads'] = page && oneStageOnly ? _.uniqBy(
-                    (stages[index]['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
-                stage['total'] = this._dataSource.totalCount();
-                stage['full'] = stage['total'] <= stage['leads'].length;
-                if (!oneStageOnly && this.pipeline.stages[++this.loadStageIndex])
-                    this.loadStagesLeads(page);
-                else {
-                    this.stages = stages;
-                    this.firstStage = stages[0];
-                    this.lastStage = stages[stages.length - 1];
-                    this.finishLoading();
-                }
-            }
+                this.queryWithSearch.concat({or: [{StageId: stage.id}]}));
+        dataSource.sort({getter: 'Id', desc: true});
+        dataSource.pageIndex(page);
+        dataSource.load().done((leads) => {
+            stage['leads'] = page && oneStageOnly ? _.uniqBy(
+                (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
+            stage['total'] = dataSource.totalCount();
+            stage['full'] = stage['total'] <= stage['leads'].length;
+            if (oneStageOnly || this.isAllStagesLoaded())
+                setTimeout(() => this.finishLoading(), 1000); 
         });
+
+        if (!oneStageOnly && stages[index + 1])
+            this.loadStagesLeads(page, index + 1);
+    }
+
+    isAllStagesLoaded() {
+        return Object['values'](this._dataSources)
+            .every(dataSource => dataSource.isLoaded());
     }
 
     advancedODataFilter(grid: any, uri: string, query: any[]) {
         this.queryWithSearch = query.concat(this.getSearchFilter());
-        this.startLoading();
 
-        this.loadStageIndex = 0;
+        this.startLoading();
         this.loadStagesLeads();
 
         return this.queryWithSearch;
@@ -144,10 +153,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     loadMore(stageIndex) {
         this.startLoading();
-        this.loadStageIndex = stageIndex;
         this.loadStagesLeads(
             Math.floor(this.stages[stageIndex]['leads'].length
-                / this.STAGE_PAGE_COUNT), true);
+                / this.STAGE_PAGE_COUNT), stageIndex, true);
     }
 
     updateLeadStage(leadId, newStage, oldStage, complete = null) {
@@ -158,9 +166,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.stages.every((stage, index) => {
                         let result = (stage.name == oldStage);
                         if (result && stage['total'] && !stage['leads'].length) {
-                            this.loadStageIndex = index;
-                            this.loadStagesLeads(0, true);
                             this.startLoading();
+                            this.loadStagesLeads(0, index, true);
                         }
                         return !result;
                     });
@@ -197,6 +204,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             } else            
                 this.updateLeadStage(leadId, newStage.name, 
                     this.getStageByElement(value[3]).name);
+
         }));
         this.subscribers.push(
             this._dragulaService.dragend.subscribe((value) => {

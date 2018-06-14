@@ -6,10 +6,6 @@ import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper'
 
 import * as _ from 'underscore';
 
-import {
-  ContactPhoneServiceProxy
-} from '@shared/service-proxies/service-proxies';
-
 @Component({
   selector: 'upload-photo-dialog',
   templateUrl: 'upload-photo-dialog.html',
@@ -30,7 +26,6 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private elementRef: ElementRef,
-        private _contactPhoneService: ContactPhoneServiceProxy,
         public dialogRef: MatDialogRef<UploadPhotoDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);

@@ -13,7 +13,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
-import { UploadPhotoDialogComponent } from '../upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';

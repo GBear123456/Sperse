@@ -35,7 +35,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
-        if (!route.routeConfig || route.routeConfig.loadChildren) 
+        if (!route.routeConfig || route.routeConfig.loadChildren)
             return null;
 
         let handle = <any>this.handlers[this.getKey(route)];

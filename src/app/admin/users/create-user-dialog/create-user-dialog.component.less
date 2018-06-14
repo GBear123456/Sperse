@@ -1,0 +1,244 @@
+/deep/ .dx-submenu {
+    border-radius: 5px;
+}
+
+:host {
+    /deep/ .mat-dialog-header {
+        padding: 0px 10px 0px 130px!important;
+    }
+
+    /deep/ .mat-dialog-actions {
+        #saveClientOptions {
+            width: 227px;
+        }
+    }
+
+    /deep/ .main_sidenav {
+        visibility: visible!important;
+        position: static!important;
+        
+        .roles-checkbox-list {
+            padding: 20px;
+            margin-left: 10px;
+        }
+
+        .tab-content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px 50px;
+            height: 700px;
+
+            .field {
+                margin-bottom: 20px;
+                &.addr {
+                    margin-bottom: 0px;
+                }
+         
+                label {
+                    font-size: 12px;
+                    line-height: 1.67;
+                    letter-spacing: 0.7px;
+                    color: #677380;
+                    font-weight: 400;
+                    width: 150px;
+                    margin-right: 40px;
+                    text-transform: uppercase;
+                    &.comment {
+                        vertical-align: top;
+                    }
+                }
+                p {
+                    width: 590px;
+                    position: relative;
+                    padding-left: 195px;
+                    padding-right: 32px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    &.phone {
+                        font-family: 'Lato' !important;
+                        &.H, &.P {
+                            background: url("../../../../assets/common/icons/phone.svg") no-repeat 160px 0px;
+                        }
+
+                        &.W {
+                            background: url("../../../../assets/common/icons/phone-work.svg") no-repeat 160px 0px;
+                        }
+
+                        &.M {
+                            background: url("../../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 0px;
+                        }
+                    }
+                    &.address {
+                        &.P {
+                            background: url("../../../../assets/common/icons/address-primary.png") no-repeat 160px 0px;
+                        }
+                        &.H {
+                            background: url("../../../../assets/common/icons/address-home.png") no-repeat 160px 0px;
+                        }
+                        &.S, &.W {
+                            background: url("../../../../assets/common/icons/address-shipping.png") no-repeat 160px 0px;
+                        }
+                    }
+                    span {  
+                        right: 0;
+                        position: absolute;
+                        width: 20px;
+                        height: 20px;
+                        cursor: pointer;
+                        background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;                        
+                    }
+                }
+                input[name="Address"] {
+                    width: 260px;
+                    height: 34px;
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    color: #424c56;                    
+                    padding: 0px;
+                    vertical-align: top;
+                }
+                span {
+                    font-size: 32px;
+                    font-weight: 100;
+                    margin: 0px 15px;
+                    cursor: pointer;
+
+                    &.hidden {
+                        display: none;
+                    }
+                    &.add-contact {
+                        color: #00aeef;
+                    }
+                    &.clear-contact {
+                        color: red;
+                        transform: rotate(45deg);
+                        display: inline-block;
+                        vertical-align: top;
+                        width: 8px;
+                        height: 8px;
+                    }
+                }
+                &.email {
+                    background: url("../../../../assets/common/icons/email.svg") no-repeat 160px 10px;
+                }
+                &.phone {
+                    font-family: 'Lato' !important;
+                    &.H, &.P {
+                        background: url("../../../../assets/common/icons/phone.svg") no-repeat 160px 10px;
+                    }
+
+                    &.W {
+                        background: url("../../../../assets/common/icons/phone-work.svg") no-repeat 160px 10px;
+                    }
+
+                    &.M {
+                        background: url("../../../../assets/common/icons/phone-mobile.svg") no-repeat 160px 10px;
+                    }
+                }
+                &.address {
+                    &.P {
+                        background: url("../../../../assets/common/icons/address-primary.png") no-repeat 160px 10px;
+                    }
+                    &.H {
+                        background: url("../../../../assets/common/icons/address-home.png") no-repeat 160px 10px;
+                    }
+                    &.S, &.W {
+                        background: url("../../../../assets/common/icons/address-shipping.png") no-repeat 160px 10px;
+                    }
+                }
+                dx-text-box, dx-number-box, dx-text-area, dx-select-box {
+                    display: inline-block;
+                    &.dx-invalid {
+                        input {
+                            color: #d9534f!important;
+                        }
+                    }
+                    &.dx-state-focused {
+                        .dx-placeholder {
+                            top: -30px;
+                        }
+                    }
+                    .dx-placeholder, input, textarea {                        
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1.79;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                        padding: 0px;
+                    }    
+                }
+                dx-text-box[name="phone"], dx-number-box[name="phoneExtension"]{
+                    input{
+                        font-family: 'Lato' !important;
+                    }
+                }
+                dx-select-box[name="state"] {
+                    &[name="state"], &[name="country"] {
+                        input {
+                            width: 360px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .photo-area {
+        top: 30px;
+        width: 110px;
+        height: 110px;
+        cursor: pointer;
+        position: absolute;
+        background-color: #F4F4F4;
+        z-index: 9999999;
+        border-radius: 50%;
+        margin-left: 20px;
+        background-size: cover;
+        background-image: url('../../../../assets/common/images/no-photo.png');
+
+        &:before {
+            display: block;
+            width: 10px;
+            background-color: #DBDCDD;
+            height: 40px;
+            top: 35px;
+            left: 50px;
+            position: relative;
+        }
+        &:after {
+           display: block;
+           width: 40px;
+           background-color: #DBDCDD;
+           height: 10px;
+           top: 10px;
+           left: 35px;
+           position: relative;
+        }
+    }
+
+    .similar-clients-message {
+        background-color: #ed6d6d;
+        color: white;
+        padding: 5px 30px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .dx-icon-clear {
+        color: #999999;
+        position: absolute;
+        top: 50%;
+        margin-top: 30px!important;
+        width: 34px;
+        height: 34px;
+        background-position: 8px 8px;
+        background-size: 18px 18px;
+        padding: 8px;
+        font-size: 18px!important;
+        text-align: center;
+        line-height: 18px;
+    }
+}

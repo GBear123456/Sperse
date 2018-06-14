@@ -8,6 +8,15 @@
         display: flex;
 
         /deep/ #gridContainer .dx-datagrid-rowsview .dx-datagrid-content tr {
+            &.current-row {
+                background-color: #fef8ef;
+                border: 2px solid #fab800;
+            }
+
+            &.historical-row {
+                background-color: #f9fbfc;
+            }
+
             td, td * {
                 font-family: 'Lato';
             }
@@ -18,6 +27,10 @@
 
             .negative {
                 color: #e7326a;
+            }
+
+            .dx-master-detail-cell {
+                padding: 7px;
             }
         }
     }

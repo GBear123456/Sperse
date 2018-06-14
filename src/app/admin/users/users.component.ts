@@ -8,6 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CreateUserDialogComponent } from './create-user-dialog/create-user-dialog.component';
 import { CreateOrEditUserModalComponent } from './create-or-edit-user-modal.component';
 import { EditUserPermissionsModalComponent } from './edit-user-permissions-modal.component';
 import { ImpersonationService } from './impersonation.service';
@@ -26,6 +27,8 @@ import { AppService } from '@app/app.service';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
+
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './users.component.html',
@@ -64,6 +67,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _appService: AppService,
         private _filtersService: FiltersService,
         private _userServiceProxy: UserServiceProxy,
@@ -331,6 +335,14 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     createUser(): void {
         this.createOrEditUserModal.show();
+/*
+        this.dialog.open(CreateUserDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {refreshParent: this.refreshDataGrid.bind(this)}
+        }).afterClosed().subscribe(() => this.refreshDataGrid())
+*/
     }
 
     deleteUser(user: UserListDto): void {

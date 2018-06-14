@@ -50,8 +50,6 @@ import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
-import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
-import { ImageCropperModule } from 'ng2-img-cropper';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
@@ -94,7 +92,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     OrganizationDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,
-    UploadPhotoDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddDialogComponent,
     TagsListComponent,
@@ -136,12 +133,10 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     RoundProgressModule,
     DxValidationGroupModule,
     PipelineModule,
-    ImageCropperModule,
     DxRadioGroupModule,
     FileDropModule
   ],
   exports: [
-    UploadPhotoDialogComponent,
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
@@ -158,7 +153,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     OrganizationDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,
-    UploadPhotoDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddDialogComponent,
     LeadCancelDialogComponent
