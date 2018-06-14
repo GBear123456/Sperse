@@ -4909,10 +4909,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 } else {
                     targetPeriodAccountCachedValue = this.anotherPeriodAccountsValues.get(key);
                 }
-            } else {
-                /** add the prevEndingAccount value to the cash */
-                this.setAnotherPeriodAccountCachedValue(cellData.toString(), targetPeriodAccountCell.value(isCalculatedValue));
             }
+            //else {
+            //    /** add the prevEndingAccount value to the cash */
+            //    this.setAnotherPeriodAccountCachedValue(cellData.toString(), targetPeriodAccountCell.value(isCalculatedValue));
+            //}
 
         return targetPeriodAccountCachedValue ?
                targetPeriodAccountCachedValue :
