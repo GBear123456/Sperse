@@ -377,6 +377,17 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.reportPeriodSelector.toggleReportPeriodFilter();
     }
 
+    onRowPrepared(e) {
+        if (e.rowType == 'data') {
+            if (e.data.date.isSame(moment(), 'month'))
+                e.rowElement.classList.add('current-row');
+            else if (e.data.isForecast)
+                e.rowElement.classList.add('forecast-row');
+            else
+                e.rowElement.classList.add('historical-row');
+        }
+    }
+
     expandColapseRow(e) {
         if (!e.data.sourceData) return;
 
