@@ -48,7 +48,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     public headlineConfig;
     private bankAccountCount = '';
     visibleAccountCount = 0;
-    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [{ text: this.l('Periods_Historical') }], selectedItemIndex: null };
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [{ text: this.l('Periods_Historical') }], selectedItemIndex: 0 };
     private filters: FilterModel[] = new Array<FilterModel>();
     public sliderReportPeriod = {
         start: null,
