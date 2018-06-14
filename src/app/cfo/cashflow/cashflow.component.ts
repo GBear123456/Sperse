@@ -3471,8 +3471,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     createCopyItemsModels(transactions: CashFlowStatsDetailDto[], sourceCellInfo: CellInfo, targetsData: CellInfo[]): CreateForecastsInput {
         let forecastsItems: AddForecastInput[] = [];
         let activeAccountIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.requestFilter.accountIds);
-        targetsData.forEach((target, index) => {
+        targetsData.forEach((targetData, index) => {
             transactions.forEach(transaction => {
+                let target = { ...targetData };
                 let transactionDate = transaction.forecastDate || transaction.date;
                 let date = this.getDateForForecast(target.fieldCaption, target.date.startDate, target.date.endDate, transactionDate.utc());
                 let transactionAccountId = this.bankAccounts.find(account => account.accountNumber === transaction.accountNumber).id;
@@ -3487,6 +3488,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
+                let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
+                target.subCategoryId = cashflowObj.subCategoryId;
+                target.transactionDescriptor = cashflowObj.transactionDescriptor;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
