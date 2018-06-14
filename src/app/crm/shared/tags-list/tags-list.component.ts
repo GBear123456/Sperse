@@ -194,22 +194,33 @@ export class TagsListComponent extends AppComponentBase {
 
     onRowUpdating($event) {
         let tagName = $event.newData.name.trim();
-        if (tagName) {
-            this._tagsService.rename(UpdateCustomerTagInput.fromJS({
-                id: $event.oldData.id,
-                name: tagName
-            })).subscribe((res) => {
-                if (res)
-                    $event.cancel = true;
-            });
-        } else {
+
+        if (!tagName || this.IsDuplicate(tagName)) {
             $event.cancel = true;
+            return;
         }
+
+        this._tagsService.rename(UpdateCustomerTagInput.fromJS({
+            id: $event.oldData.id,
+            name: tagName
+        })).subscribe((res) => {
+            if (res)
+                $event.cancel = true;
+        });
     }
 
     onRowInserting($event) {
-        if (!$event.data.name.trim())
+        let tagName = $event.data.name.trim();
+        if (!tagName || this.IsDuplicate(tagName))
             $event.cancel = true;
+    }
+
+    IsDuplicate(name) {
+        let nameNormalized = name.toLowerCase();
+        let duplicates = _.filter(this.list, (obj) => {
+            return (obj.name.toLowerCase() == nameNormalized);
+        });
+        return duplicates.length > 0;
     }
 
     onSelectionChanged($event) {
