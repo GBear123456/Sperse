@@ -129,7 +129,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             return {
                 id: contactInfo.id,
                 value: contactInfo.fullName,
-                validationRules: [],
+                validationRules: [
+                    {type: 'required', message: this.l('FullNameIsRequired')},
+                    {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
+                ],
                 isEditDialogEnabled: true,
                 lEntityName: "Name",
                 lEditPlaceholder: 'Enter value'

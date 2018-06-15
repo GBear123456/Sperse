@@ -22,6 +22,7 @@ import { UserAssignmentComponent } from '../user-assignment-list/user-assignment
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -327,7 +328,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             return this.notify.error(this.l('FullNameIsRequired'));
         }
 
-        if (!this.fullNameRegEx.test(this.data.title)) {
+        if (!ValidationHelper.ValidateName(this.data.title)) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsNotValid'));
         }
