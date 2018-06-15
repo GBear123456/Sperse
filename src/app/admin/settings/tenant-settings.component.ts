@@ -11,7 +11,8 @@ import { IAjaxResponse } from '@abp/abpHttp';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    styleUrls: ['./tenant-settings.component.less']
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
