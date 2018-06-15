@@ -253,7 +253,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            $event.component.selectRows([$event.key]);
+            this.selectedLists = this.listComponent.option('selectedRowKeys');
+            this.selectedLists.push($event.key);
         });
     }
 

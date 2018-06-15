@@ -250,7 +250,8 @@ export class TagsListComponent extends AppComponentBase {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            $event.component.selectRows([$event.key]);
+            this.selectedTags = this.listComponent.option('selectedRowKeys');
+            this.selectedTags.push($event.key);
         });
     }
 
