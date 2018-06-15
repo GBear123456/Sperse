@@ -31,6 +31,7 @@ export class TagsListComponent extends AppComponentBase {
 
     private _prevClickDate = new Date();
     private selectedTags = [];
+    
     list: any = [];
 
     lastNewAdded: any;
@@ -49,7 +50,7 @@ export class TagsListComponent extends AppComponentBase {
 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
-            this.refresh();
+            this.highlightSelectedFilters();
     }
 
     apply(selectedKeys = undefined) {
@@ -97,6 +98,10 @@ export class TagsListComponent extends AppComponentBase {
 
     onInitialized($event) {
         this.listComponent = $event.component;
+    }
+
+    ngOnInit() {
+        this.refresh();
     }
 
     refresh() {
