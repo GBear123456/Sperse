@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts'
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
 export class AppAuthService implements OnDestroy {
     private tokenCheckTimeout: any;
 
-    constructor() {
+    constructor(private _appLocalizationService: AppLocalizationService) {
         this.startTokenCheck();
     }
 
@@ -40,7 +41,10 @@ export class AppAuthService implements OnDestroy {
         var currentToken = abp.auth.getToken();
 
         if (initialToken != currentToken) {
-            abp.message.warn('Current user has changed. Page should be reloaded.', 'Warning').done(() => location.reload());
+            let warningMessage = 'Current user has changed. Page should be reloaded.';
+            if (this._appLocalizationService)
+                warningMessage = this._appLocalizationService.ls(AppConsts.localization.defaultLocalizationSourceName, 'UserHasChangedWarning');
+            abp.message.warn(warningMessage).done(() => location.reload());
         }
         else {
             this.tokenCheckTimeout = setTimeout(() => this.checkAuthToken(initialToken), 3000);

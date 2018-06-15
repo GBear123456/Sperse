@@ -22,7 +22,7 @@ export class AppPreBootstrap {
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
-                    new AppAuthService().logout();
+                    new AppAuthService(null).logout();
                 }
 
                 location.href = AppConsts.appBaseUrl + '/account/select-edition';
