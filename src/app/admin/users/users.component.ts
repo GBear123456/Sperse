@@ -334,15 +334,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     createUser(): void {
-        this.createOrEditUserModal.show();
-/*
         this.dialog.open(CreateUserDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {refreshParent: this.refreshDataGrid.bind(this)}
         }).afterClosed().subscribe(() => this.refreshDataGrid())
-*/
     }
 
     deleteUser(user: UserListDto): void {
