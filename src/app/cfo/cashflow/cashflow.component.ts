@@ -3488,9 +3488,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
-                let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
-                target.subCategoryId = cashflowObj.subCategoryId;
-                target.transactionDescriptor = cashflowObj.transactionDescriptor;
+                if (!target.subCategoryId && !target.transactionDescriptor && moment(sourceCellInfo.date.startDate).isSame(target.date.startDate)) {
+                    let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
+                    target.subCategoryId = cashflowObj.subCategoryId;
+                    target.transactionDescriptor = cashflowObj.transactionDescriptor;
+                }
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
@@ -4057,7 +4059,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     handleCellsCopying(sourceCell: any, targetCells: any[]) {
         if (targetCells && targetCells.length) {
-            let sourceCellObject = sourceCell instanceof HTMLTableCellElement? this.getCellObjectFromCellElement(sourceCell) : sourceCell;
+            let sourceCellObject = sourceCell instanceof HTMLTableCellElement ? this.getCellObjectFromCellElement(sourceCell) : sourceCell;
 
             /** Create forecasts for the cell */
             let targetCellsObj = [];
