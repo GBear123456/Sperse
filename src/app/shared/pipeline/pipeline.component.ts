@@ -7,6 +7,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { DragulaService } from 'ng2-dragula';
 import { Router } from '@angular/router';
+
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -79,7 +80,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     .subscribe((result: PipelineDto) => {
                         this.pipeline = result;
                         this.stages = result.stages.map((stage) => {  
-                            stage['leads'] = [];
+                            _.extend(stage, {
+                                leads: [],
+                                full: true
+                            });
                             return stage;
                         });
                         this.firstStage = this.stages[0];
