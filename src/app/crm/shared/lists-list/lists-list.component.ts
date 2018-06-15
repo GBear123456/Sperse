@@ -231,7 +231,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     editorPrepared($event) {
-        if ($event.editorName == 'dxTextBox') {
+        if (!$event.value && $event.editorName == 'dxTextBox') {
             if ($event.editorElement.closest('tr')) {
                 if (this.addNewTimeout) 
                     this.addNewTimeout = null;
