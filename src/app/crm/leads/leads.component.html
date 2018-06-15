@@ -27,8 +27,8 @@
                                 [pager]="defaultGridPagerConfig"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
-                                (onEditingStart)="showLeadDetails($event)"                    
-                                (onSelectionChanged)="onSelectionChanged($event)"                
+                                (onEditingStart)="showLeadDetails($event)"
+                                (onSelectionChanged)="onSelectionChanged($event)"
                                 (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxo-selection
                             selectAllMode="page"
@@ -59,7 +59,7 @@
                         <dxi-column dataField="CampaignCode" caption="{{l('CampaignCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="ChannelCode" caption="{{l('ChannelCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="EntryUrl" caption="{{l('EntryUrl')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="StreetAddress" caption="{{l('Contact.StreetAddress')}}" [visible]="false"></dxi-column>

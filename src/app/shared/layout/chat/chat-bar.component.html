@@ -17,7 +17,7 @@
                         <input type="text" class="form-control input-mini" placeholder="{{l('FilterOrAddUser')}}" [(ngModel)]="userNameFilter">
                         <span class="m-input-icon__icon m-input-icon__icon--right">
                             <span>
-                                <i *ngIf="tenantToTenantChatAllowed || tenantToHostChatAllowed" class="la la-info-circle" data-toggle="m-popover" data-placement="bottom" data-html="true" title="{{l('ChatUserSearch_Hint')}}"></i>
+                                <i *ngIf="tenantToTenantChatAllowed || tenantToHostChatAllowed" class="la la-info-circle" data-toggle="m-popover" data-placement="bottom" [attr.data-content]="l('ChatUserSearch_Hint')"></i>
                             </span>
                         </span>
                     </div>

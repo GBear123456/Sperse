@@ -53,6 +53,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
     urlRegEx = AppConsts.regexPatterns.url;
+    fullNameRegEx = AppConsts.regexPatterns.fullName;
 
     company: string;
     title: string;
@@ -324,6 +325,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (!this.person.firstName || !this.person.lastName) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('FullNameIsRequired'));
+        }
+
+        if (!this.fullNameRegEx.test(this.data.title)) {
+            this.data.isTitleValid = false;
+            return this.notify.error(this.l('FullNameIsNotValid'));
         }
 
         if (!this.validateMultiple(this.emailValidators) ||

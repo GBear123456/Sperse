@@ -13,7 +13,8 @@ import * as moment from 'moment';
 
 @Component({
     templateUrl: './host-settings.component.html',
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    styleUrls: ['./host-settings.component.less']
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 

@@ -197,16 +197,37 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowUpdating($event) {
+        let listName = $event.newData.name.trim();
+
+        if (!listName || this.IsDuplicate(listName)) {
+            $event.cancel = true;
+            return;
+        }
+
         let id = $event.oldData.id;
         if (Number.isInteger(id)) {
             this._listsService.rename(UpdateCustomerListInput.fromJS({
                 id: id,
-                name: $event.newData.name
+                name: listName
             })).subscribe((res) => {
                 if (res)
                     $event.cancel = true;
             });
         }
+    }
+
+    onRowInserting($event) {
+        let listName = $event.data.name.trim();
+        if (!listName || this.IsDuplicate(listName))
+            $event.cancel = true;
+    }
+
+    IsDuplicate(name) {
+        let nameNormalized = name.toLowerCase();
+        let duplicates = _.filter(this.list, (obj) => {
+            return (obj.name.toLowerCase() == nameNormalized);
+        });
+        return duplicates.length > 0;
     }
 
     editorPrepared($event) {
@@ -232,7 +253,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            $event.component.selectRows([$event.key]);
+            this.selectedLists = this.listComponent.option('selectedRowKeys');
+            this.selectedLists.push($event.key);
         });
     }
 
