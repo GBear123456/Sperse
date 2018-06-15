@@ -1,4 +1,4 @@
-import {Component, Injector, Input, EventEmitter, Output} from '@angular/core';
+import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -15,7 +15,7 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
   styleUrls: ['./tags-list.component.less'],
   providers: [CustomerTagsServiceProxy]
 })
-export class TagsListComponent extends AppComponentBase {
+export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
@@ -97,6 +97,10 @@ export class TagsListComponent extends AppComponentBase {
 
     onInitialized($event) {
         this.listComponent = $event.component;
+    }
+
+    ngOnInit() {
+        this.refresh();
     }
 
     refresh() {
