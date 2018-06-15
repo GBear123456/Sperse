@@ -232,8 +232,10 @@
                         </div>
                         <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
                             <label>{{l("Password")}}</label>
-                            <input type="text" name="SmtpPassword" id="SmtpPassword" class="form-control smtp-password" [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
-                                   maxlength="128">
+                            <input type="text" class="hidden-field">
+                            <input type="password" class="hidden-field">
+                            <input type="password" name="SmtpPassword" id="SmtpPassword" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
+                                   maxlength="128" autocomplete="off">
                         </div>
                         <hr />
                         <h5>{{l("TestEmailSettingsHeader")}}</h5>
