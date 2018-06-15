@@ -3488,7 +3488,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
-                if (!target.subCategoryId && !target.transactionDescriptor && moment(sourceCellInfo.date.startDate).isSame(target.date.startDate)) {
+                if (!target.subCategoryId && !target.transactionDescriptor && !moment(sourceCellInfo.date.startDate).isSame(target.date.startDate)) {
                     let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
                     target.subCategoryId = cashflowObj.subCategoryId;
                     target.transactionDescriptor = cashflowObj.transactionDescriptor;
