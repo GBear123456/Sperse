@@ -110,8 +110,7 @@
           </div>
         </mat-tab>
         <mat-tab label="{{l('Roles') | uppercase}} {{'(' + getAssignedRoleCount() + ')'}}">
-            <!-- span class="badge badge-primary">{{getAssignedRoleCount()}}</span -->
-            <div class="roles-checkbox-list m-checkbox-list">
+            <div class="tab-content">
                 <label attr.for="EditUser_{{role.roleName}}" class="m-checkbox" *ngFor="let role of roles">
                     <input id="EditUser_{{role.roleName}}" type="checkbox" name="{{role.roleName}}" [(ngModel)]="role.isAssigned">
                     {{role.roleDisplayName}}
@@ -120,7 +119,9 @@
             </div>
         </mat-tab>
         <mat-tab label="{{l('OrganizationUnits') | uppercase}}">
-            <organization-unit-tree #organizationUnitTree></organization-unit-tree>
+            <div class="tab-content">
+                <organization-unit-tree #organizationUnitTree></organization-unit-tree>
+            </div>
         </mat-tab>        
       </mat-tab-group>
     </mat-sidenav>
