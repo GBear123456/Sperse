@@ -4923,7 +4923,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getCellData(summaryCell, accountId, cashflowTypeId) {
-        const groupInterval = summaryCell.field('column') ? summaryCell.field('column').groupInterval : 'historical',
+        const groupInterval = summaryCell.field('column') ? summaryCell.field('column').groupInterval || 'projected' : 'historical',
               columnValue = summaryCell.value(summaryCell.field('column')),
               /** object with cell data as the key for Map object cash */
               cellData = {
@@ -4962,6 +4962,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     calculateCellValue(cellData, dataArray) {
         let cellValuePerformance = performance.now();
+        let currentDateDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc').date();
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = dataArray.reduce((sum, cashflowData) => {
             let date = cashflowData.initialDate || cashflowData.date;
@@ -4971,8 +4972,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 (cellData.accountId === StartedBalance || cellData.accountId === Total || cashflowData.accountId == cellData.accountId) &&
                 (!cellData.year || (cellData.year === date.year())) &&
                 (!cellData.quarter || (cellData.quarter === date.quarter())) &&
-                (!cellData.month || ( cellData.month - 1 === date.month())) &&
-                (!cellData.day || (cellData.day === date.date()))
+                (!cellData.month || (cellData.month - 1 === date.month())) &&
+                ((cellData.day && cellData.day === date.date()) ||
+                (!cellData.day && !cellData.projected) ||
+                (cellData.projected &&
+                ((cellData.projected === Projected.Mtd && date.date() < currentDateDate) ||
+                (cellData.projected === Projected.Today && date.date() === currentDateDate) ||
+                (cellData.projected === Projected.Forecast && date.date() > currentDateDate))))
             ) {
                 sum += cashflowData.amount;
             }
