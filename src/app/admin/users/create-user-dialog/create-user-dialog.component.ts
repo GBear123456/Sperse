@@ -33,8 +33,11 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     sendActivationEmail = true;
     setRandomPassword = false;
     passwordComplexityInfo = '';
-    passwordComplexitySetting: any;
     canChangeUserName: boolean;
+
+    isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
+    isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
+    passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     private readonly SAVE_OPTION_DEFAULT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
