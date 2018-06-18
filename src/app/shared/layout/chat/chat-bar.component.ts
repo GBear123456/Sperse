@@ -166,12 +166,14 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         this.init();
     }
 
-    getShownUserName(tenanycName: string, userName: string): string {
+    getShownUserName(friend: ChatFriendDto): string {
         if (!this.isMultiTenancyEnabled) {
-            return userName;
+            return friend.friendUserName;
         }
 
-        return (tenanycName ? tenanycName : '.') + '\\' + userName;
+        return friend.friendTenantId == abp.session.tenantId ?
+            friend.friendUserName :
+            (friend.friendTenantId ? friend.friendTenancyName : '.') + '\\' + friend.friendUserName;
     }
 
     getProfilePicture(): void {
@@ -305,7 +307,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     getFilteredFriends(state: FriendDtoState, userNameFilter: string): FriendDto[] {
         const foundFriends = _.filter(this.friends, friend => friend.state === state &&
-            this.getShownUserName(friend.friendTenancyName, friend.friendUserName)
+            this.getShownUserName(friend)
                 .toLocaleLowerCase()
                 .indexOf(userNameFilter.toLocaleLowerCase()) >= 0);
 

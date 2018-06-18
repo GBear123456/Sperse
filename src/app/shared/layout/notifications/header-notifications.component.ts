@@ -27,6 +27,12 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this.registerToEvents();
     }
 
+    hideDropDown() {
+        let element: any = $('#header_notification_bar');
+        let dropDown = element.mDropdown();
+        dropDown && dropDown.hide();
+    }
+
     loadNotifications(): void {
         this._notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
             this.unreadNotificationCount = result.unreadCount;

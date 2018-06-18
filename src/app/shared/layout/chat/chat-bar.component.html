@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-md-12" style="margin: 5px; padding-right: 25px;">
-                    <button type="button" class="btn btn-block btn-success" *ngIf="userNameFilter.length" (click)="search()">{{l('AddFriend')}}</button>
+                    <button type="button" class="btn btn-layout width-percent-100" *ngIf="userNameFilter.length" (click)="search()">{{l('AddFriend')}}</button>
                 </div>
             </div>
             <div class="m-list-search">
@@ -57,7 +57,7 @@
                     <friend-profile-picture [profilePictureId]="selectedUser.friendProfilePictureId" [userId]="selectedUser.friendUserId" [tenantId]="selectedUser.friendTenantId"></friend-profile-picture>
                     <span class="contact-status2" [ngClass]="{'online': selectedUser.isOnline, 'offline':!selectedUser.isOnline}"></span>
                 </div>
-                <h6>{{getShownUserName(selectedUser.friendTenancyName,selectedUser.friendUserName)}}</h6>
+                <h6>{{getShownUserName(selectedUser)}}</h6>
                 <div class="actions">
                     <a class="btn btn-metal m-btn m-btn--icon m-btn--icon-only m-btn--pill m-btn--air" href="javascript:;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="false">
                         <i class="fa fa-angle-down"></i>
@@ -105,7 +105,7 @@
                 <form #chatMessageForm="ngForm" id="chatMessageForm" role="form">
                     <div id="files" class="files"></div>
                     <div class="col-md-12" style="margin: 5px; padding-right: 25px;" *ngIf="selectedUser.state === friendDtoState.Blocked">
-                        <button (click)="unblock(selectedUser)" type="button" class="btn btn-block btn-success">{{l("UnblockUser")}}</button>
+                        <button (click)="unblock(selectedUser)" type="button" class="btn btn-layout width-percent-100">{{l("UnblockUser")}}</button>
                     </div>
 
                     <div class="col-md-12 chat-progress-bar">
