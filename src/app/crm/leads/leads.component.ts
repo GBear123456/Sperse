@@ -652,12 +652,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onStagesLoaded($event) {
-        this.stages = $event.stages.map((stage) => {
+        this.stages = _.sortBy($event.stages, function(x) {
+            return -x.sortOrder;
+        }).map((stage) => {
             return {
                 id: this._pipelineService.pipeline.id + ':' + stage.id,
                 name: stage.name,
                 text: stage.name
-            }
+            };
         });
         this.initToolbarConfig();
     }
