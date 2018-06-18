@@ -145,7 +145,9 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             return linkedUser.username;
         }
 
-        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
+        return linkedUser.tenantId == abp.session.tenantId ?
+            linkedUser.username :
+            (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
     }
 
     getProfilePicture(): void {

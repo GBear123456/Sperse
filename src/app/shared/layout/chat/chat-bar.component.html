@@ -57,7 +57,7 @@
                     <friend-profile-picture [profilePictureId]="selectedUser.friendProfilePictureId" [userId]="selectedUser.friendUserId" [tenantId]="selectedUser.friendTenantId"></friend-profile-picture>
                     <span class="contact-status2" [ngClass]="{'online': selectedUser.isOnline, 'offline':!selectedUser.isOnline}"></span>
                 </div>
-                <h6>{{getShownUserName(selectedUser.friendTenancyName,selectedUser.friendUserName)}}</h6>
+                <h6>{{getShownUserName(selectedUser)}}</h6>
                 <div class="actions">
                     <a class="btn btn-metal m-btn m-btn--icon m-btn--icon-only m-btn--pill m-btn--air" href="javascript:;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="false">
                         <i class="fa fa-angle-down"></i>

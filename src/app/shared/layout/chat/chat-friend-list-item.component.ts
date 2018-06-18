@@ -22,11 +22,14 @@ export class ChatFriendListItemComponent {
         this.multiTenancy = injector.get(AbpMultiTenancyService);
     }
 
-    getShownUserName(tenanycName: string, userName: string): string {
+    getShownUserName(friend: ChatFriendDto): string {
         if (!this.multiTenancy.isEnabled) {
-            return userName;
+            return friend.friendUserName;
         }
-        return (tenanycName ? tenanycName + '\\' : '') + userName;
+
+        return friend.friendTenantId == abp.session.tenantId ?
+            friend.friendUserName :
+            (friend.friendTenantId ? friend.friendTenancyName : '.') + '\\' + friend.friendUserName;
     }
 
     getRemoteImageUrl(profilePictureId: string, userId: number, tenantId?: number): string {
