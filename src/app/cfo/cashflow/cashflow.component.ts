@@ -1588,6 +1588,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                    transactionObj.cashflowTypeId === Reconciliation ||
                                    transactionObj.cashflowTypeId === NetChange;
         let key, parentKey = null;
+        if (transactionObj[`level${levelNumber}`]) {
+            for (let i = levelNumber; i < 5; i++) {
+                if (transactionObj[`level${i}`]) {
+                    delete transactionObj[`level${i}`];
+                }
+            }
+        }
         this.categorization.every((level) => {
             if (transactionObj[level.statsKeyName]) {
 
@@ -1612,11 +1619,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
-        if (transactionObj[`level${levelNumber}`]) {
-            for (let i = levelNumber; i < 5; i++) {
-                delete transactionObj[`level${i}`];
-            }
-        }
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
@@ -2526,7 +2528,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (this.hasChildsByPath(childPath)) {
                 let dataSource = this.pivotGrid.instance.getDataSource();
                 dataSource.expandHeaderItem('row', childPath);
-                    
+
                 this.pivotGrid.instance.getDataSource().load().then((d) => {
                     var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
                     if (currentDepth != stopDepth)
@@ -3522,6 +3524,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Change forecast locally */
             forecastInCashflow.date = date.add(timezoneOffset, 'minutes');
             forecastInCashflow.initialDate = targetData.date.startDate.utc();
+            forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
             forecastInCashflow.subCategoryId = targetData.subCategoryId;
             forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor;
@@ -5260,7 +5263,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         data.id
                     );
 
-            } else {                
+            } else {
                 /* Set descriptor */
                 if (paramName != 'description') {
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
@@ -5670,6 +5673,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getBankAccountName(bankAccount) {
-        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber; 
+        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber;
     }
 }
