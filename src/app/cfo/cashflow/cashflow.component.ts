@@ -3029,7 +3029,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** add current classes for the cells that belongs to the current periods */
             if (area === 'data' || (area === 'column' || rowIndex >= 1)) {
-                let currentPeriodClass = this.getCurrentPeriodsClass(cell);
+                let currentPeriodClass = this.getCurrentPeriodsClass(cell, area);
                 if (currentPeriodClass) {
                     options.classes.push(currentPeriodClass);
                 }
@@ -3805,10 +3805,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Get the classes for the current cells such as currentYear, currentQuarter and currentMonth
        @todo refactor
      */
-    getCurrentPeriodsClass(cell) {
+    getCurrentPeriodsClass(cell, area) {
         let className;
-        let path = cell.path || cell.columnPath;
-        if (path) {
+        const path = cell.path || cell.columnPath;
+        if (area !== 'row' && path && path.length) {
             let fieldIndex = path.length - 1;
             let cellField = this.getColumnFields()[fieldIndex];
             let fieldCaption = cellField.caption.toLowerCase();
@@ -4477,12 +4477,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param columnFields
      * @return {any}
      */
-    getDateByPath(path, columnFields, lowestCaption ?: string) {
-        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(path, columnFields);
+    getDateByPath(columnPath, columnFields, lowestCaption ?: string) {
+        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(columnPath, columnFields);
         let date = moment.unix(0).tz('UTC');
         columnFields.every(dateField => {
             let areaIndex = this.getAreaIndexByCaption(dateField.caption, 'column');
-            let fieldValue = path[areaIndex];
+            let fieldValue = columnPath[areaIndex];
             if (dateField.dataType === 'date') {
                 let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval;
                 if (fieldValue) {
