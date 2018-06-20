@@ -116,13 +116,15 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
                 .getCountryStates(countryCode)
                 .subscribe(result => {
                     this.states = result;
+                    if (!this.states || !this.states.length || !_.findWhere(this.states, { code: this.businessEntity.stateId })) {
+                        this.businessEntity.stateId = null;
+                    }
                 });
         }
     }
 
     onKeyUp($event, propName) {
         let value = $event.element.getElementsByTagName('input')[0].value;
-        console.log('keyUp', this.businessEntity[propName]);
         this.businessEntity[propName] = value;
     }
 
