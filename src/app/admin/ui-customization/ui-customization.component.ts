@@ -1,13 +1,13 @@
-import { Component, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AfterViewChecked, Component, Injector, OnInit } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './ui-customization.component.html',
     animations: [appModuleAnimation()]
 })
-export class UiCustomizationComponent extends AppComponentBase {
+export class UiCustomizationComponent extends AppComponentBase implements AfterViewChecked, OnInit {
 
     settings: UiCustomizationSettingsEditDto;
 
@@ -31,7 +31,7 @@ export class UiCustomizationComponent extends AppComponentBase {
     }
 
     leftMenuPositionSelected(): boolean {
-        return this.settings.menu.position === "left";
+        return this.settings.menu.position === 'left';
     }
 
     updateDefaultUiManagementSettings(): void {

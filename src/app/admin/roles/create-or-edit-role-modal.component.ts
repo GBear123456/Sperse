@@ -1,16 +1,15 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { RoleServiceProxy, RoleEditDto, CreateOrUpdateRoleInput } from '@shared/service-proxies/service-proxies';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CreateOrUpdateRoleInput, RoleEditDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModalDirective } from 'ngx-bootstrap';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
-
-import * as _ from 'lodash';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'createOrEditRoleModal',
     templateUrl: './create-or-edit-role-modal.component.html'
 })
-export class CreateOrEditRoleModalComponent extends AppComponentBase {
+export class CreateOrEditRoleModalComponent extends AppComponentBase implements AfterViewChecked {
 
     @ViewChild('roleNameInput') roleNameInput: ElementRef;
     @ViewChild('createOrEditModal') modal: ModalDirective;
@@ -60,7 +59,7 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase {
 
         this.saving = true;
         this._roleService.createOrUpdateRole(input)
-            .finally(() => this.saving = false)
+            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.close();

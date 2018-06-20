@@ -1,23 +1,15 @@
+import { TokenService } from '@abp/auth/token.service';
+import { LogService } from '@abp/log/log.service';
+import { MessageService } from '@abp/message/message.service';
+import { UtilsService } from '@abp/utils/utils.service';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    TokenAuthServiceProxy,
-    AuthenticateModel,
-    AuthenticateResultModel,
-    ExternalLoginProviderInfoModel,
-    ExternalAuthenticateModel,
-    ExternalAuthenticateResultModel
-} from '@shared/service-proxies/service-proxies';
-
-import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppConsts } from '@shared/AppConsts';
-
-import { MessageService } from '@abp/message/message.service';
-import { LogService } from '@abp/log/log.service';
-import { TokenService } from '@abp/auth/token.service';
-import { UtilsService } from '@abp/utils/utils.service';
-
+import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { AuthenticateModel, AuthenticateResultModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, ExternalLoginProviderInfoModel, TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
+import { finalize } from 'rxjs/operators';
+
 declare const FB: any; // Facebook API
 declare const gapi: any; // Facebook API
 declare const WL: any; // Microsoft API
@@ -83,7 +75,7 @@ export class LoginService {
 
         this._tokenAuthService
             .authenticate(this.authenticateModel)
-            .finally(finallyCallback)
+            .pipe(finalize(finallyCallback))
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
             });
@@ -96,7 +88,9 @@ export class LoginService {
                     this.facebookLoginStatusChangeCallback(response);
                 }, { scope: 'email' });
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
-                gapi.auth2.getAuthInstance().signIn();
+                gapi.auth2.getAuthInstance().signIn().then(() => {
+                    this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
+                });
             } else if (provider.name === ExternalLoginProvider.MICROSOFT) {
                 WL.login({
                     scope: ['wl.signin', 'wl.basic', 'wl.emails']
@@ -225,7 +219,7 @@ export class LoginService {
                 FB.getLoginStatus(response => {
                     this.facebookLoginStatusChangeCallback(response);
                     if (response.status !== 'connected') {
-                        callback();     
+                        callback();
                     }
                 });
             });
@@ -237,14 +231,8 @@ export class LoginService {
                             clientId: loginProvider.clientId,
                             scope: 'openid profile email'
                         }).then(() => {
-                            gapi.auth2.getAuthInstance().isSignedIn.listen((isSignedIn) => {
-                                this.googleLoginStatusChangeCallback(isSignedIn);
-                            });
-
-                            this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
+                            callback();
                         });
-
-                        callback();
                     });
             });
         } else if (loginProvider.name === ExternalLoginProvider.MICROSOFT) {

@@ -1,15 +1,16 @@
-import { Injector } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { LocalizationService } from '@abp/localization/localization.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { SettingService } from '@abp/settings/setting.service';
+import { LocalizationService } from '@abp/localization/localization.service';
 import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { SettingService } from '@abp/settings/setting.service';
+import { Injector } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
+import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 
 export abstract class AppComponentBase {
 
@@ -23,8 +24,9 @@ export abstract class AppComponentBase {
     message: MessageService;
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
-    primengDatatableHelper: PrimengDatatableHelper;
+    primengTableHelper: PrimengTableHelper;
     ui: AppUiCustomizationService;
+    appUrlService: AppUrlService;
 
     constructor(injector: Injector) {
         this.localization = injector.get(LocalizationService);
@@ -36,16 +38,19 @@ export abstract class AppComponentBase {
         this.multiTenancy = injector.get(AbpMultiTenancyService);
         this.appSession = injector.get(AppSessionService);
         this.ui = injector.get(AppUiCustomizationService);
-        this.primengDatatableHelper = new PrimengDatatableHelper();
+        this.appUrlService = injector.get(AppUrlService);
+        this.primengTableHelper = new PrimengTableHelper();
     }
 
     l(key: string, ...args: any[]): string {
-        return this.ls(this.localizationSourceName, key, args);
+        args.unshift(key);
+        args.unshift(this.localizationSourceName);
+        return this.ls.apply(this, args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
         let localizedText = this.localization.localize(key, sourcename);
-
+        
         if (!localizedText) {
             localizedText = key;
         }
@@ -54,9 +59,8 @@ export abstract class AppComponentBase {
             return localizedText;
         }
 
-        args[0].unshift(localizedText);
-
-        return abp.utils.formatString.apply(this, args[0]);
+        args.unshift(localizedText);
+        return abp.utils.formatString.apply(this, args);
     }
 
     isGranted(permissionName: string): boolean {
@@ -79,5 +83,9 @@ export abstract class AppComponentBase {
 
     s(key: string): string {
         return abp.setting.get(key);
+    }
+
+    appRootUrl(): string {
+        return this.appUrlService.appRootUrl;
     }
 }

@@ -1,16 +1,21 @@
-import { Component, Injector, OnInit, AfterViewInit } from '@angular/core';
-import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AfterViewChecked, AfterViewInit, Component, Injector, OnInit } from '@angular/core';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import * as _ from 'lodash';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './maintenance.component.html',
     styleUrls: ['./maintenance.component.less'],
     animations: [appModuleAnimation()]
 })
-export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
+
+    loading = false;
+    caches: any = null;
+    logs: any = '';
 
     constructor(
         injector: Injector,
@@ -26,17 +31,11 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
         $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
     }
 
-    loading = false;
-    caches: any = null;
-    logs: any = '';
-
     getCaches(): void {
         const self = this;
         self.loading = true;
         self._cacheService.getAllCaches()
-            .finally(() => {
-                self.loading = false;
-            })
+            .pipe(finalize(() => { self.loading = false; }))
             .subscribe((result) => {
                 self.caches = result.items;
             });

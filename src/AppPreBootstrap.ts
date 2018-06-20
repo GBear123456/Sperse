@@ -1,20 +1,20 @@
-import * as moment from 'moment';
-import { AppConsts } from '@shared/AppConsts';
-import { UrlHelper } from './shared/helpers/UrlHelper';
-import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
-import * as _ from 'lodash';
-import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyNameFinder';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
 import { UtilsService } from '@abp/utils/utils.service';
+import { CompilerOptions, NgModuleRef, Type } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppConsts } from '@shared/AppConsts';
+import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyNameFinder';
+import * as moment from 'moment';
+import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
+import { UrlHelper } from './shared/helpers/UrlHelper';
+import { environment } from './environments/environment';
 
 export class AppPreBootstrap {
 
-    static run(callback: () => void, resolve: any, reject: any): void {
-        AppPreBootstrap.getApplicationConfig(() => {
+    static run(appRootUrl: string, callback: () => void, resolve: any, reject: any): void {
+        AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             if (UrlHelper.isInstallUrl(location.href)) {
-                LocalizedResourcesHelper.loadMetronicStyles("");
+                LocalizedResourcesHelper.loadLocalizedStylesForTheme("default", false);
                 callback();
                 return;
             }
@@ -41,9 +41,10 @@ export class AppPreBootstrap {
         return platformBrowserDynamic().bootstrapModule(moduleType, compilerOptions);
     }
 
-    private static getApplicationConfig(callback: () => void) {
+    private static getApplicationConfig(appRootUrl: string, callback: () => void) {
+
         return abp.ajax({
-            url: '/assets/appconfig.json',
+            url: appRootUrl + 'assets/' + environment.appConfig,
             method: 'GET',
             headers: {
                 'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
@@ -121,7 +122,7 @@ export class AppPreBootstrap {
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         const token = abp.auth.getToken();
 
-        var requestHeaders = {
+        let requestHeaders = {
             '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };

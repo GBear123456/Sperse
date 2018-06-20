@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { AppMenuItem } from './app-menu-item';
-import { AppMenu } from './app-menu';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { Injectable } from '@angular/core';
+import { AppMenu } from './app-menu';
+import { AppMenuItem } from './app-menu-item';
 
 @Injectable()
 export class AppNavigationService {

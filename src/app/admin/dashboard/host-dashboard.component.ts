@@ -1,14 +1,11 @@
-import { Component, OnInit, AfterViewInit, Injector, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import {
-    HostDashboardServiceProxy,
-    HostDashboardData,
-} from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import * as moment from 'moment';
+import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 import { AppIncomeStatisticsDateInterval } from '@shared/AppEnums';
-import { DataTable } from 'primeng/components/datatable/datatable';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { HostDashboardData, HostDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
+import * as moment from 'moment';
+import { Table } from 'primeng/components/table/table';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -21,8 +18,8 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
     @ViewChild('EditionStatisticsChart') editionStatisticsChart: ElementRef;
     @ViewChild('IncomeStatisticsChart') incomeStatisticsChart: ElementRef;
 
-    @ViewChild('RecentTenantsTable') recentTenantsTable: DataTable;
-    @ViewChild('ExpiringTenantsTable') expiringTenantsTable: DataTable;
+    @ViewChild('RecentTenantsTable') recentTenantsTable: Table;
+    @ViewChild('ExpiringTenantsTable') expiringTenantsTable: Table;
 
     loading = false;
     loadingIncomeStatistics = false;
@@ -65,6 +62,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             this.createDateRangePicker();
             this.getDashboardStatisticsData();
             this.bindToolTipForIncomeStatisticsChart($(this.incomeStatisticsChart.nativeElement));
+            mApp.initScroller($('.m-scrollable'), {});
         }, 0);
     }
 
@@ -185,70 +183,72 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
 
         const self = this;
         const normalizedData = this.normalizeIncomeStatisticsData(data);
-        ($ as any).plot($(self.incomeStatisticsChart.nativeElement),
-            [{
-                data: normalizedData,
-                lines: {
-                    fill: 0.2,
-                    lineWidth: 1
-                },
-                color: ['#BAD9F5']
-            }, {
-                data: normalizedData,
-                points: {
-                    show: true,
-                    fill: true,
-                    radius: 4,
-                    fillColor: '#9ACAE6',
-                    lineWidth: 2
-                },
-                color: '#9ACAE6',
-                shadowSize: 1
-            }, {
-                data: normalizedData,
-                lines: {
-                    show: true,
-                    fill: false,
-                    lineWidth: 3
-                },
-                color: '#9ACAE6',
-                shadowSize: 0
-            }],
-            {
-                xaxis: {
-                    mode: 'time',
-                    timeformat: this.l('ChartDateFormat'),
-                    minTickSize: [1, 'day'],
-                    font: {
-                        lineHeight: 20,
-                        style: 'normal',
-                        variant: 'small-caps',
-                        color: '#6F7B8A',
-                        size: 10
+        setTimeout(() => {
+            ($ as any).plot($(self.incomeStatisticsChart.nativeElement),
+                [{
+                    data: normalizedData,
+                    lines: {
+                        fill: 0.2,
+                        lineWidth: 1
+                    },
+                    color: ['#BAD9F5']
+                }, {
+                    data: normalizedData,
+                    points: {
+                        show: true,
+                        fill: true,
+                        radius: 4,
+                        fillColor: '#9ACAE6',
+                        lineWidth: 2
+                    },
+                    color: '#9ACAE6',
+                    shadowSize: 1
+                }, {
+                    data: normalizedData,
+                    lines: {
+                        show: true,
+                        fill: false,
+                        lineWidth: 3
+                    },
+                    color: '#9ACAE6',
+                    shadowSize: 0
+                }],
+                {
+                    xaxis: {
+                        mode: 'time',
+                        timeformat: this.l('ChartDateFormat'),
+                        minTickSize: [1, 'day'],
+                        font: {
+                            lineHeight: 20,
+                            style: 'normal',
+                            variant: 'small-caps',
+                            color: '#6F7B8A',
+                            size: 10
+                        }
+                    },
+                    yaxis: {
+                        ticks: 5,
+                        tickDecimals: 0,
+                        tickColor: '#eee',
+                        font: {
+                            lineHeight: 14,
+                            style: 'normal',
+                            variant: 'small-caps',
+                            color: '#6F7B8A'
+                        }
+                    },
+                    grid: {
+                        hoverable: true,
+                        clickable: false,
+                        tickColor: '#eee',
+                        borderColor: '#eee',
+                        borderWidth: 1,
+                        margin: {
+                            bottom: 20
+                        }
                     }
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0,
-                    tickColor: '#eee',
-                    font: {
-                        lineHeight: 14,
-                        style: 'normal',
-                        variant: 'small-caps',
-                        color: '#6F7B8A'
-                    }
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: false,
-                    tickColor: '#eee',
-                    borderColor: '#eee',
-                    borderWidth: 1,
-                    margin: {
-                        bottom: 20
-                    }
-                }
-            });
+                });
+        }, 0);
     }
 
     incomeStatisticsDateIntervalChange(interval: number) {

@@ -1,36 +1,47 @@
+import { AbpModule } from '@abp/abp.module';
+import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
+import { PlatformLocation, registerLocaleData } from '@angular/common';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, Injector, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, Injector, APP_INITIALIZER, LOCALE_ID } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
-
-import { AbpModule, ABP_HTTP_PROVIDER } from '@abp/abp.module';
-
-import { AppModule } from './app/app.module';
-import { CommonModule } from '@shared/common/common.module';
-import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
-import { RootRoutingModule } from './root-routing.module';
-
-import { AppConsts } from '@shared/AppConsts';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
-
-import { RootComponent } from './root.component';
-import { AppPreBootstrap } from './AppPreBootstrap';
-
-import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppConsts } from '@shared/AppConsts';
+import { CommonModule } from '@shared/common/common.module';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-
+import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
+import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
+import * as localForage from 'localforage';
 import * as _ from 'lodash';
+import { AppPreBootstrap } from './AppPreBootstrap';
+import { AppModule } from './app/app.module';
+import { RootRoutingModule } from './root-routing.module';
+import { RootComponent } from './root.component';
 
-export function appInitializerFactory(injector: Injector) {
+export function appInitializerFactory(
+    injector: Injector,
+    platformLocation: PlatformLocation) {
     return () => {
         abp.ui.setBusy();
 
         handleLogoutRequest(injector.get(AppAuthService));
 
         return new Promise<boolean>((resolve, reject) => {
-            AppPreBootstrap.run(() => {
+            AppConsts.appBaseHref = getBaseHref(platformLocation);
+            let appBaseUrl = getDocumentOrigin() + AppConsts.appBaseHref;
+            
+            AppPreBootstrap.run(appBaseUrl, () => {
+                // Initialize local Forage
+                localForage.config({
+                    driver: localForage.LOCALSTORAGE,
+                    name: 'Platform',
+                    version: 1.0,
+                    storeName: 'abpzerotemplate_local_storage',
+                    description: 'Cached data for Platform'
+                });
+
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
@@ -51,7 +62,7 @@ export function appInitializerFactory(injector: Injector) {
 
                         //set og share image meta tag
                         if (!appSessionService.tenant || !appSessionService.tenant.logoId) {
-                            $('meta[property=og\\:image]').attr('content', window.location.origin + "/assets/common/images/app-logo-on-" + ui.getAsideSkin() + ".png");
+                            $('meta[property=og\\:image]').attr('content', window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png');
                         } else {
                             $('meta[property=og\\:image]').attr('content', AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSessionService.tenant.logoId);
                         }
@@ -60,7 +71,7 @@ export function appInitializerFactory(injector: Injector) {
 
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
-                            System.import(`@angular/common/locales/${angularLocale}.js`)
+                            import(`@angular/common/locales/${angularLocale}.js`)
                                 .then(module => {
                                     registerLocaleData(module.default);
                                     resolve(result);
@@ -77,6 +88,14 @@ export function appInitializerFactory(injector: Injector) {
             }, resolve, reject);
         });
     };
+}
+
+function getDocumentOrigin() {
+    if (!document.location.origin) {
+        return document.location.protocol + "//" + document.location.hostname + (document.location.port ? ':' + document.location.port : '');
+    }
+
+    return document.location.origin;
 }
 
 export function shouldLoadLocale(): boolean {
@@ -104,6 +123,15 @@ export function getCurrentLanguage(): string {
     return abp.localization.currentLanguage.name;
 }
 
+export function getBaseHref(platformLocation: PlatformLocation): string {
+    var baseUrl = platformLocation.getBaseHrefFromDOM();
+    if (baseUrl) {
+        return baseUrl;
+    }
+
+    return '/';
+}
+
 function handleLogoutRequest(authService: AppAuthService) {
     let currentUrl = UrlHelper.initialUrl;
     let returnUrl = UrlHelper.getReturnUrl();
@@ -120,19 +148,19 @@ function handleLogoutRequest(authService: AppAuthService) {
         CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,
-
+        HttpClientModule,
         RootRoutingModule
     ],
     declarations: [
         RootComponent
     ],
     providers: [
-        ABP_HTTP_PROVIDER,
+        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         {
             provide: APP_INITIALIZER,
             useFactory: appInitializerFactory,
-            deps: [Injector],
+            deps: [Injector, PlatformLocation],
             multi: true
         },
         {

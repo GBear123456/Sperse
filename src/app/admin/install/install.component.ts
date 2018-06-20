@@ -1,11 +1,12 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { InstallServiceProxy, EmailSettingsEditDto, InstallDto, NameValue, HostBillingSettingsEditDto, CommonLookupServiceProxy } from '@shared/service-proxies/service-proxies';
+import { Component, Injector, OnInit } from '@angular/core';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { CommonLookupServiceProxy, EmailSettingsEditDto, HostBillingSettingsEditDto, InstallDto, InstallServiceProxy, NameValue } from '@shared/service-proxies/service-proxies';
+import { finalize } from 'rxjs/operators';
 
 @Component({
-    templateUrl: "./install.component.html",
+    templateUrl: './install.component.html',
     animations: [appModuleAnimation()]
 })
 export class InstallComponent extends AppComponentBase implements OnInit {
@@ -37,7 +38,7 @@ export class InstallComponent extends AppComponentBase implements OnInit {
         this._installSettingService.checkDatabase()
             .subscribe(result => {
                 if (result.isDatabaseExist) {
-                    window.location.href = "/";
+                    window.location.href = '/';
                 }
             });
 
@@ -56,11 +57,9 @@ export class InstallComponent extends AppComponentBase implements OnInit {
     saveAll(): void {
         this.saving = true;
         this._installSettingService.setup(this.setupSettings)
-            .finally(() => {
-                this.saving = false;
-            })
+            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
-                window.location.href = "/";
+                window.location.href = '/';
             });
     }
 }

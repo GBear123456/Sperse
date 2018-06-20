@@ -1,17 +1,18 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { ProfileServiceProxy, CurrentUserProfileEditDto, DefaultTimezoneScope, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+import { ModalDirective } from 'ngx-bootstrap';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'mySettingsModal',
     templateUrl: './my-settings-modal.component.html'
 })
-export class MySettingsModalComponent extends AppComponentBase {
+export class MySettingsModalComponent extends AppComponentBase implements AfterViewChecked {
 
 
     @ViewChild('nameInput') nameInput: ElementRef;
@@ -69,8 +70,8 @@ export class MySettingsModalComponent extends AppComponentBase {
     smsVerify(): void {
         this._profileService.sendVerificationSms()
             .subscribe(() => {
-                 this.smsVerificationModal.show();
-        });
+                this.smsVerificationModal.show();
+            });
     }
 
     changePhoneNumberToVerified(): void {
@@ -89,7 +90,7 @@ export class MySettingsModalComponent extends AppComponentBase {
     save(): void {
         this.saving = true;
         this._profileService.updateCurrentUserProfile(this.user)
-            .finally(() => { this.saving = false; })
+            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
                 this._appSessionService.user.name = this.user.name;
                 this._appSessionService.user.surname = this.user.surname;

@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { DemoUiComponentsServiceProxy, NameValueOfString } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -43,11 +43,11 @@ export class DemoUiSelectionComponent extends AppComponentBase {
                     message += `<div><strong>id</strong>: ${item.value} - <strong>name</strong>: ${item.name}</div>`;
                 });
 
-                var $div = document.createElement("div");
+                let $div = document.createElement('div');
                 $div.innerHTML = message;
 
                 (abp as any).libs.sweetAlert.config.info.content = $div;
-                this.message.info("", this.l('PostedValue'));
+                this.message.info('', this.l('PostedValue'));
                 this.notify.info(this.l('SavedSuccessfully'));
                 (abp as any).libs.sweetAlert.config.info.content = '';
             });
@@ -63,11 +63,11 @@ export class DemoUiSelectionComponent extends AppComponentBase {
                     message += `<div><strong>id</strong>: ${item.value} - <strong>name</strong>: ${item.name}</div>`;
                 });
 
-                var $div = document.createElement("div");
+                let $div = document.createElement('div');
                 $div.innerHTML = message;
 
                 (abp as any).libs.sweetAlert.config.info.content = $div;
-                this.message.info("", this.l('PostedValue'));
+                this.message.info('', this.l('PostedValue'));
                 this.notify.info(this.l('SavedSuccessfully'));
                 (abp as any).libs.sweetAlert.config.info.content = '';
             });
