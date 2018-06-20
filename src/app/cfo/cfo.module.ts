@@ -45,6 +45,8 @@ import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, SyncS
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 
+import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
+
 import {
     DxButtonModule,
     DxCheckBoxModule,
@@ -115,7 +117,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         RoundProgressModule,
         DashboardWidgetsModule,
         DxRangeSliderModule,
-        DxSwitchModule
+        DxSwitchModule,
+        GooglePlaceModule,
     ],
     declarations: [
         StartComponent,
