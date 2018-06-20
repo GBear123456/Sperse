@@ -165,8 +165,7 @@
                            placeholder="{{l('BusinessEntity_State')}}"
                            [width]="'360px'"
                            [searchEnabled]="true"
-                           [(value)]="address.state"
-                           (onValueChanged)="onStateChange($event)">
+                           [(value)]="address.state">
             </dx-select-box>
             <span [class]="address.state && 'clear-contact' || 'hidden'" (click)="emptyAddressValue('state')">+</span>
         </div>
