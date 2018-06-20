@@ -15,6 +15,7 @@ import { LocalStorageService } from '@shared/utils/local-storage.service';
 import { ChatSignalrService } from './chat-signalr.service';
 import { AppChatMessageReadState, AppChatSide, AppFriendshipState } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
+import { UserHelper } from '../../helpers/UserHelper';
 
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -51,7 +52,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     loadingPreviousUserMessages = false;
     userNameFilter = '';
     serverClientTimeDifference = 0;
-    isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     appChatSide: typeof AppChatSide = AppChatSide;
     appChatMessageReadState: typeof AppChatMessageReadState = AppChatMessageReadState;
 
@@ -167,13 +167,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getShownUserName(friend: ChatFriendDto): string {
-        if (!this.isMultiTenancyEnabled) {
-            return friend.friendUserName;
-        }
-
-        return friend.friendTenantId == abp.session.tenantId ?
-            friend.friendUserName :
-            (friend.friendTenantId ? friend.friendTenancyName : '.') + '\\' + friend.friendUserName;
+        return UserHelper.getShownUserName(friend.friendUserName, friend.friendTenantId, friend.friendTenancyName);
     }
 
     getProfilePicture(): void {
