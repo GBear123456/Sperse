@@ -1,0 +1,105 @@
+:host {
+    .user-info {
+        margin: 0;
+
+        h3 {
+            font-size: 12px;
+            line-height: 1.67;
+            letter-spacing: 0.7px;
+            text-align: left;
+            color: #677380;
+            margin-bottom: 22px;
+            font-weight: 400;
+        }
+    }
+
+    .item-edit-label {
+        display: inline-block;
+        min-width: 130px;
+        font-size: 13px;
+        font-weight: normal;
+        line-height: 35px;
+        letter-spacing: 0.7px;
+        color: #677380;
+    }
+
+    .section {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .section-item {
+        display: flex;
+        line-height: 35px;
+    }
+
+    .inplace-edit-view-mode {
+        cursor: pointer;
+        display: inline-block;
+
+        .placeholder {
+            font-style: italic;
+            font-size: 12px;
+            font-weight: 200;
+        }
+    }
+
+    .inplace-edit-edit-mode {
+        height: 35px;
+        display: inline-block;
+
+        /deep/ dx-text-box {
+            display: inline-block;
+
+            input {
+                margin: 0px;
+                padding: 0 0 0 5px;
+                font-size: 15px;
+                font-weight: 300;
+                line-height: 1.67;
+                letter-spacing: 0.3px;
+                text-align: left;
+                font-family: Montserrat;
+            }
+
+            .dx-placeholder {
+                font-size: 14px;
+                font-weight: 400;
+            }
+
+            &.dx-state-focused {
+                .dx-placeholder {
+                    top: -25px;
+                }
+            }
+        }
+
+        /deep/ dx-button {
+            border: none;
+            position: relative;
+            top: -14px;
+            display: inline-block;
+
+            &.button-update i {
+                color: #00aeef;
+            }
+
+            &.button-exit i {
+                color: #f44336;
+            }
+        }
+    }
+
+    /deep/ .validation-error-list {
+        padding-left: 1em;
+        margin-bottom: 0;
+
+        li {
+            list-style-type: disc;
+
+            & + li {
+                margin-top: 5px;
+            }
+        }
+    }
+}

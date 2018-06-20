@@ -1,0 +1,27 @@
+<div class="title">
+    User name
+</div>
+
+<ul *ngIf="data && data.user" class="items-list">
+    <li>
+        <dx-check-box [(value)]="data.user.setRandomPassword" [text]="l('SetRandomPassword')"></dx-check-box>
+    </li>
+    <li>
+        <dx-check-box [(value)]="data.user.shouldChangePasswordOnNextLogin" [text]="l('ShouldChangePasswordOnNextLogin')"></dx-check-box>
+    </li>
+    <li>
+        <dx-check-box [(value)]="data.user.sendActivationEmail" [text]="l('SendActivationEmail')"></dx-check-box>
+    </li>
+    <li>
+        <dx-check-box [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')"></dx-check-box>
+    </li>
+</ul>
+
+<div class="title">
+    {{l('Roles')}}
+</div>
+<ul class="items-list">
+    <li *ngFor="let role of data?.roles">
+        <dx-check-box [(value)]="role.isAssigned" text="{{role.roleDisplayName}}"></dx-check-box>
+    </li>
+</ul>
