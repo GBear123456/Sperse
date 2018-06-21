@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { MatDialog } from '@angular/material';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppService } from 'app/app.service';
 import { setTimeout } from 'timers';
+import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
     selector: 'setup',
@@ -28,7 +30,8 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         private _instanceServiceProxy: InstanceServiceProxy,
         private _router: Router,
         private _quovoService: QuovoService,
-        private _syncService: SyncServiceProxy
+        private _syncService: SyncServiceProxy,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -66,6 +69,10 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+
+        setTimeout(() => {
+            this.openDialog();
+        }, 100);
     }
 
     onStart(): void {
@@ -105,5 +112,16 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         if (!this.quovoHandler) {
             this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
         }
+    }
+
+    openDialog() {
+        const dialogRef = this.dialog.open(CfoIntroComponent, {
+            height: '655px',
+            width: '880px',
+            id: 'cfo-intro'
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            console.log(`Dialog result: ${result}`);
+        });
     }
 }
