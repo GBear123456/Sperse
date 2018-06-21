@@ -2865,7 +2865,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let textClientRect = textElement.getBoundingClientRect();
             let textWidth: number = Math.round(textClientRect.width);
             let textPaddingLeft = Math.round(textClientRect.left - cellClientRect.left);
-            let cellWidth = document.querySelector('.dx-area-description-cell').clientWidth - cellClientRect.left;
+            let descriptionClientRect = document.querySelector('.dx-area-description-cell').getBoundingClientRect();
+            let cellWidth = descriptionClientRect.left + descriptionClientRect.width - cellClientRect.left;
             let newTextWidth = this.getNewTextWidth(cellWidth, textWidth, textPaddingLeft, options.general.isAccountHeaderCell);
             if (newTextWidth) {
                 this.applyNewTextWidth(e, textElement, newTextWidth);
