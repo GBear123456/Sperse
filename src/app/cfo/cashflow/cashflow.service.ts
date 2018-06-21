@@ -44,6 +44,10 @@ export class CashflowService {
         return categorization;
     }
 
+    isHorizontalCopying(sourceCellObj: any, targetCellObjs: any[]) {
+        return targetCellObjs.every(targetCell => targetCell.rowIndex === sourceCellObj.rowIndex && targetCell.columnIndex !== sourceCellObj.columnIndex);
+    }
+
     /**
      * Get Category value by prefix
      * @param {any[]} path
