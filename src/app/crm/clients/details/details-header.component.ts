@@ -14,6 +14,7 @@ import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, Instanc
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { ClientService } from '@app/crm/clients/clients.service';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'details-header',
@@ -99,8 +100,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
-                let base64OrigImage = this.getBase64(result.origImage),
-                    base64ThumbImage = this.getBase64(result.thumImage),
+                let base64OrigImage = StringHelper.getBase64(result.origImage),
+                    base64ThumbImage = StringHelper.getBase64(result.thumImage),
                     dataField = (isCompany ? 'organization': 'primary') + 'ContactInfo';
                 this.data[dataField].primaryPhoto = ContactPhotoDto.fromJS({
                     original: base64OrigImage,
@@ -116,11 +117,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             }
         });
         event.stopPropagation();
-    }
-
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 
     getNameInplaceEditData(field = 'primaryContactInfo') {

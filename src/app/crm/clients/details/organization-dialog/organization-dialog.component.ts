@@ -12,6 +12,7 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 
 import * as moment from 'moment';
 import * as _ from 'underscore';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'organization-dialog',
@@ -198,8 +199,8 @@ export class OrganizationDialogComponent extends AppComponentBase {
           hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
-                let base64OrigImage = this.getBase64(result.origImage);
-                let base64Thumbnail = this.getBase64(result.thumImage);
+                let base64OrigImage = StringHelper.getBase64(result.origImage);
+                let base64Thumbnail = StringHelper.getBase64(result.thumImage);
                 this._contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
                         contactId: this.data.id,
@@ -215,10 +216,5 @@ export class OrganizationDialogComponent extends AppComponentBase {
             }
         });
         event.stopPropagation();
-    }
-
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 }

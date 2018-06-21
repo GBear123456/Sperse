@@ -1,9 +1,10 @@
 import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
+import { FileSystemFileEntry } from 'ngx-file-drop';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
-import { CustomersServiceProxy, CustomerInfoDto /*, DocumentsServiceProxy */} from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, CustomerInfoDto, DocumentsServiceProxy, UploadDocumentInput } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
 
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
@@ -11,11 +12,12 @@ import { UploadEvent, UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [/*DocumentsServiceProxy*/]
+    providers: [ DocumentsServiceProxy ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -31,7 +33,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-//        private _documentsService: DocumentsServiceProxy,
+        private _documentsService: DocumentsServiceProxy,
         private _customerService: CustomersServiceProxy
     ) {
         super(injector);
@@ -45,12 +47,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     ngOnInit() {
         this.data = this._customerService['data'];
-        this.dataSource = [];
-/*
+        this.loadDocuments();
+    }
+
+    loadDocuments() {
         this._documentsService.getDocuments(this.data.customerInfo.id).subscribe((result) => {
             this.dataSource = result;
         });
-*/
     }
 
     onToolbarPreparing($event) {
@@ -85,6 +88,28 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     uploadFiles(list) {
+        for (const droppedFile of list) {
+            if (droppedFile.fileEntry.isFile)
+                this.uploadFile(droppedFile);
+        }
+    }
+
+    uploadFile(droppedFile) {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file((file: File) => {
+        let myReader: FileReader = new FileReader();
+        myReader.onloadend = (loadEvent: any) => {
+            this._documentsService.uploadDocument(UploadDocumentInput.fromJS({
+                customerId: this.data.customerInfo.id,
+                fileName: file.name,
+                size: file.size,
+                fileBase64: StringHelper.getBase64(loadEvent.target.result)
+            })).subscribe(() => {
+                this.loadDocuments();
+            });
+        };
+        myReader.readAsDataURL(file);
+        });
     }
 
     onShowingPopup(e) {

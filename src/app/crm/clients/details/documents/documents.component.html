@@ -17,11 +17,14 @@
 
             <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
+            <dxi-column dataField="fileName" caption="{{l('DocumentReceived')}}"></dxi-column>
+            <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
             <dxi-column dataField="size" caption="{{l('DocumentSize')}}"></dxi-column>
-            <dxi-column dataField="dateTime" caption="{{l('Date')}}" cssClass="tabular" [calculateCellValue]="calculateDateCellValue"></dxi-column>
-            <dxi-column dataField="received" caption="{{l('DocumentReceived')}}"></dxi-column>
-            <dxi-column dataField="checkList" caption="{{l('DocumentCheckList')}}"></dxi-column>
 
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: formatting.dateTime}}
+            </div>
+            
             <div *dxTemplate="let data of 'title'">
                 <h2 class="title">{{l('Documents')}}</h2>
             </div>

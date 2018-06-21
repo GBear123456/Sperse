@@ -8535,6 +8535,338 @@ export class DashboardServiceProxy {
 }
 
 @Injectable()
+export class DocumentsServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getDocuments(customerId: number): Observable<DocumentInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Documents/GetDocuments?";
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetDocuments(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetDocuments(response_);
+                } catch (e) {
+                    return <Observable<DocumentInfo[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<DocumentInfo[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetDocuments(response: Response): Observable<DocumentInfo[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(DocumentInfo.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<DocumentInfo[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    uploadDocument(input: UploadDocumentInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Documents/UploadDocument";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUploadDocument(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUploadDocument(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUploadDocument(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class WopiServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    filesGet(id: string): Observable<HttpResponseMessage> {
+        let url_ = this.baseUrl + "/wopi/files/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processFilesGet(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processFilesGet(response_);
+                } catch (e) {
+                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processFilesGet(response: Response): Observable<HttpResponseMessage> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<HttpResponseMessage>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    filesPost(id: string): Observable<HttpResponseMessage> {
+        let url_ = this.baseUrl + "/wopi/files/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processFilesPost(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processFilesPost(response_);
+                } catch (e) {
+                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processFilesPost(response: Response): Observable<HttpResponseMessage> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<HttpResponseMessage>(<any>null);
+    }
+}
+
+@Injectable()
+export class FilesServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    contentsGet(id: string): Observable<HttpResponseMessage> {
+        let url_ = this.baseUrl + "/wopi/files/{id}/contents";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processContentsGet(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processContentsGet(response_);
+                } catch (e) {
+                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processContentsGet(response: Response): Observable<HttpResponseMessage> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<HttpResponseMessage>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    contentsPost(id: string): Observable<HttpResponseMessage> {
+        let url_ = this.baseUrl + "/wopi/files/{id}/contents";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processContentsPost(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processContentsPost(response_);
+                } catch (e) {
+                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processContentsPost(response: Response): Observable<HttpResponseMessage> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<HttpResponseMessage>(<any>null);
+    }
+}
+
+@Injectable()
 export class EditionServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -14523,8 +14855,8 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountAsync(instanceType: InstanceType76, instanceId: number, syncAccountId: number): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccountAsync?";
+    syncAccount(instanceType: InstanceType76, instanceId: number, syncAccountId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14544,11 +14876,11 @@ export class SyncServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSyncAccountAsync(response_);
+            return this.processSyncAccount(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processSyncAccountAsync(response_);
+                    return this.processSyncAccount(response_);
                 } catch (e) {
                     return <Observable<boolean>><any>Observable.throw(e);
                 }
@@ -14557,7 +14889,7 @@ export class SyncServiceProxy {
         });
     }
 
-    protected processSyncAccountAsync(response: Response): Observable<boolean> {
+    protected processSyncAccount(response: Response): Observable<boolean> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -17071,6 +17403,240 @@ export class TestServiceProxy {
     constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    run1(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CFO/Test/Run1";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRun1(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRun1(response_);
+                } catch (e) {
+                    return <Observable<string>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRun1(response: Response): Observable<string> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    run2(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CFO/Test/Run2";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRun2(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRun2(response_);
+                } catch (e) {
+                    return <Observable<string>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<string>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRun2(response: Response): Observable<string> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    get(): Observable<ThreadPoolInfo> {
+        let url_ = this.baseUrl + "/api/services/CFO/Test/Get";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGet(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGet(response_);
+                } catch (e) {
+                    return <Observable<ThreadPoolInfo>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<ThreadPoolInfo>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGet(response: Response): Observable<ThreadPoolInfo> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ThreadPoolInfo.fromJS(resultData200) : new ThreadPoolInfo();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<ThreadPoolInfo>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    set(workerThreads: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/Test/Set?";
+        if (workerThreads === undefined || workerThreads === null)
+            throw new Error("The parameter 'workerThreads' must be defined and cannot be null.");
+        else
+            url_ += "workerThreads=" + encodeURIComponent("" + workerThreads) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSet(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSet(response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<boolean>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSet(response: Response): Observable<boolean> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<boolean>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    setConnectionLimit(count: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Test/SetConnectionLimit?";
+        if (count === undefined || count === null)
+            throw new Error("The parameter 'count' must be defined and cannot be null.");
+        else
+            url_ += "count=" + encodeURIComponent("" + count) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSetConnectionLimit(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSetConnectionLimit(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSetConnectionLimit(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
     }
 
     /**
@@ -31875,6 +32441,422 @@ export interface IGetCustomersByRegionOutput {
     stateId: string;
 }
 
+export class DocumentInfo implements IDocumentInfo {
+    id: string;
+    fileName: string;
+    size: string;
+    creationTime: moment.Moment;
+
+    constructor(data?: IDocumentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DocumentInfo {
+        let result = new DocumentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IDocumentInfo {
+    id: string;
+    fileName: string;
+    size: string;
+    creationTime: moment.Moment;
+}
+
+export class UploadDocumentInput implements IUploadDocumentInput {
+    customerId: number;
+    fileName: string;
+    size: number;
+    fileBase64: string;
+
+    constructor(data?: IUploadDocumentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.fileBase64 = data["fileBase64"];
+        }
+    }
+
+    static fromJS(data: any): UploadDocumentInput {
+        let result = new UploadDocumentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["fileBase64"] = this.fileBase64;
+        return data; 
+    }
+}
+
+export interface IUploadDocumentInput {
+    customerId: number;
+    fileName: string;
+    size: number;
+    fileBase64: string;
+}
+
+export class HttpResponseMessage implements IHttpResponseMessage {
+    version: Version;
+    content: HttpContent;
+    statusCode: HttpResponseMessageStatusCode;
+    reasonPhrase: string;
+    headers: KeyValuePairOfStringAndIEnumerableOfString[];
+    requestMessage: HttpRequestMessage;
+    isSuccessStatusCode: boolean;
+
+    constructor(data?: IHttpResponseMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.version = data["version"] ? Version.fromJS(data["version"]) : <any>undefined;
+            this.content = data["content"] ? HttpContent.fromJS(data["content"]) : <any>undefined;
+            this.statusCode = data["statusCode"];
+            this.reasonPhrase = data["reasonPhrase"];
+            if (data["headers"] && data["headers"].constructor === Array) {
+                this.headers = [];
+                for (let item of data["headers"])
+                    this.headers.push(KeyValuePairOfStringAndIEnumerableOfString.fromJS(item));
+            }
+            this.requestMessage = data["requestMessage"] ? HttpRequestMessage.fromJS(data["requestMessage"]) : <any>undefined;
+            this.isSuccessStatusCode = data["isSuccessStatusCode"];
+        }
+    }
+
+    static fromJS(data: any): HttpResponseMessage {
+        let result = new HttpResponseMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["version"] = this.version ? this.version.toJSON() : <any>undefined;
+        data["content"] = this.content ? this.content.toJSON() : <any>undefined;
+        data["statusCode"] = this.statusCode;
+        data["reasonPhrase"] = this.reasonPhrase;
+        if (this.headers && this.headers.constructor === Array) {
+            data["headers"] = [];
+            for (let item of this.headers)
+                data["headers"].push(item.toJSON());
+        }
+        data["requestMessage"] = this.requestMessage ? this.requestMessage.toJSON() : <any>undefined;
+        data["isSuccessStatusCode"] = this.isSuccessStatusCode;
+        return data; 
+    }
+}
+
+export interface IHttpResponseMessage {
+    version: Version;
+    content: HttpContent;
+    statusCode: HttpResponseMessageStatusCode;
+    reasonPhrase: string;
+    headers: KeyValuePairOfStringAndIEnumerableOfString[];
+    requestMessage: HttpRequestMessage;
+    isSuccessStatusCode: boolean;
+}
+
+export class Version implements IVersion {
+    major: number;
+    minor: number;
+    build: number;
+    revision: number;
+    majorRevision: number;
+    minorRevision: number;
+
+    constructor(data?: IVersion) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.major = data["major"];
+            this.minor = data["minor"];
+            this.build = data["build"];
+            this.revision = data["revision"];
+            this.majorRevision = data["majorRevision"];
+            this.minorRevision = data["minorRevision"];
+        }
+    }
+
+    static fromJS(data: any): Version {
+        let result = new Version();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["major"] = this.major;
+        data["minor"] = this.minor;
+        data["build"] = this.build;
+        data["revision"] = this.revision;
+        data["majorRevision"] = this.majorRevision;
+        data["minorRevision"] = this.minorRevision;
+        return data; 
+    }
+}
+
+export interface IVersion {
+    major: number;
+    minor: number;
+    build: number;
+    revision: number;
+    majorRevision: number;
+    minorRevision: number;
+}
+
+export class HttpContent implements IHttpContent {
+    headers: KeyValuePairOfStringAndIEnumerableOfString[];
+
+    constructor(data?: IHttpContent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["headers"] && data["headers"].constructor === Array) {
+                this.headers = [];
+                for (let item of data["headers"])
+                    this.headers.push(KeyValuePairOfStringAndIEnumerableOfString.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): HttpContent {
+        let result = new HttpContent();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.headers && this.headers.constructor === Array) {
+            data["headers"] = [];
+            for (let item of this.headers)
+                data["headers"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IHttpContent {
+    headers: KeyValuePairOfStringAndIEnumerableOfString[];
+}
+
+export class KeyValuePairOfStringAndIEnumerableOfString implements IKeyValuePairOfStringAndIEnumerableOfString {
+    key: string;
+    value: string[];
+
+    constructor(data?: IKeyValuePairOfStringAndIEnumerableOfString) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.key = data["key"];
+            if (data["value"] && data["value"].constructor === Array) {
+                this.value = [];
+                for (let item of data["value"])
+                    this.value.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): KeyValuePairOfStringAndIEnumerableOfString {
+        let result = new KeyValuePairOfStringAndIEnumerableOfString();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        if (this.value && this.value.constructor === Array) {
+            data["value"] = [];
+            for (let item of this.value)
+                data["value"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IKeyValuePairOfStringAndIEnumerableOfString {
+    key: string;
+    value: string[];
+}
+
+export class HttpRequestMessage implements IHttpRequestMessage {
+    version: Version;
+    content: HttpContent;
+    method: HttpMethod;
+    requestUri: string;
+    headers: KeyValuePairOfStringAndIEnumerableOfString[];
+    properties: { [key: string] : any; };
+
+    constructor(data?: IHttpRequestMessage) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.version = data["version"] ? Version.fromJS(data["version"]) : <any>undefined;
+            this.content = data["content"] ? HttpContent.fromJS(data["content"]) : <any>undefined;
+            this.method = data["method"] ? HttpMethod.fromJS(data["method"]) : <any>undefined;
+            this.requestUri = data["requestUri"];
+            if (data["headers"] && data["headers"].constructor === Array) {
+                this.headers = [];
+                for (let item of data["headers"])
+                    this.headers.push(KeyValuePairOfStringAndIEnumerableOfString.fromJS(item));
+            }
+            if (data["properties"]) {
+                this.properties = {};
+                for (let key in data["properties"]) {
+                    if (data["properties"].hasOwnProperty(key))
+                        this.properties[key] = data["properties"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): HttpRequestMessage {
+        let result = new HttpRequestMessage();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["version"] = this.version ? this.version.toJSON() : <any>undefined;
+        data["content"] = this.content ? this.content.toJSON() : <any>undefined;
+        data["method"] = this.method ? this.method.toJSON() : <any>undefined;
+        data["requestUri"] = this.requestUri;
+        if (this.headers && this.headers.constructor === Array) {
+            data["headers"] = [];
+            for (let item of this.headers)
+                data["headers"].push(item.toJSON());
+        }
+        if (this.properties) {
+            data["properties"] = {};
+            for (let key in this.properties) {
+                if (this.properties.hasOwnProperty(key))
+                    data["properties"][key] = this.properties[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IHttpRequestMessage {
+    version: Version;
+    content: HttpContent;
+    method: HttpMethod;
+    requestUri: string;
+    headers: KeyValuePairOfStringAndIEnumerableOfString[];
+    properties: { [key: string] : any; };
+}
+
+export class HttpMethod implements IHttpMethod {
+    method: string;
+
+    constructor(data?: IHttpMethod) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.method = data["method"];
+        }
+    }
+
+    static fromJS(data: any): HttpMethod {
+        let result = new HttpMethod();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["method"] = this.method;
+        return data; 
+    }
+}
+
+export interface IHttpMethod {
+    method: string;
+}
+
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
     items: EditionListDto[];
 
@@ -42505,6 +43487,57 @@ export interface IAddTenantSslCertificateInput {
     password: string;
 }
 
+export class ThreadPoolInfo implements IThreadPoolInfo {
+    availableWorkerThreads: number;
+    minWorkerThreads: number;
+    maxWorkerThreads: number;
+    occupiedThreads: number;
+    defaultConnectionLimit: number;
+
+    constructor(data?: IThreadPoolInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.availableWorkerThreads = data["availableWorkerThreads"];
+            this.minWorkerThreads = data["minWorkerThreads"];
+            this.maxWorkerThreads = data["maxWorkerThreads"];
+            this.occupiedThreads = data["occupiedThreads"];
+            this.defaultConnectionLimit = data["defaultConnectionLimit"];
+        }
+    }
+
+    static fromJS(data: any): ThreadPoolInfo {
+        let result = new ThreadPoolInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["availableWorkerThreads"] = this.availableWorkerThreads;
+        data["minWorkerThreads"] = this.minWorkerThreads;
+        data["maxWorkerThreads"] = this.maxWorkerThreads;
+        data["occupiedThreads"] = this.occupiedThreads;
+        data["defaultConnectionLimit"] = this.defaultConnectionLimit;
+        return data; 
+    }
+}
+
+export interface IThreadPoolInfo {
+    availableWorkerThreads: number;
+    minWorkerThreads: number;
+    maxWorkerThreads: number;
+    occupiedThreads: number;
+    defaultConnectionLimit: number;
+}
+
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
     items: NameValueDto[];
 
@@ -45576,6 +46609,56 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     KbaIsNotPassed = <any>"KbaIsNotPassed", 
     UnsupportedPackage = <any>"UnsupportedPackage", 
     NoPayment = <any>"NoPayment", 
+}
+
+export enum HttpResponseMessageStatusCode {
+    _100 = 100, 
+    _101 = 101, 
+    _200 = 200, 
+    _201 = 201, 
+    _202 = 202, 
+    _203 = 203, 
+    _204 = 204, 
+    _205 = 205, 
+    _206 = 206, 
+    _300 = 300, 
+    _300 = 300, 
+    _301 = 301, 
+    _301 = 301, 
+    _302 = 302, 
+    _302 = 302, 
+    _303 = 303, 
+    _303 = 303, 
+    _304 = 304, 
+    _305 = 305, 
+    _306 = 306, 
+    _307 = 307, 
+    _307 = 307, 
+    _400 = 400, 
+    _401 = 401, 
+    _402 = 402, 
+    _403 = 403, 
+    _404 = 404, 
+    _405 = 405, 
+    _406 = 406, 
+    _407 = 407, 
+    _408 = 408, 
+    _409 = 409, 
+    _410 = 410, 
+    _411 = 411, 
+    _412 = 412, 
+    _413 = 413, 
+    _414 = 414, 
+    _415 = 415, 
+    _416 = 416, 
+    _417 = 417, 
+    _426 = 426, 
+    _500 = 500, 
+    _501 = 501, 
+    _502 = 502, 
+    _503 = 503, 
+    _504 = 504, 
+    _505 = 505, 
 }
 
 export enum GetStatusOutputStatus {
