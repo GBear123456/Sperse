@@ -23,7 +23,7 @@
                         <div class="item-edit-label">{{l("UserName")}}:</div>
                         <div>{{data?.user?.userName}}</div>
                     </div>
-                    <ng-container *ngIf="data && data.user && !data.user.setRandomPassword">
+                    <ng-container *ngIf="data && data.user && !data.user['setRandomPassword']">
                         <div class="section-item">
                             <div class="item-edit-label">{{l("Password")}}:</div>
 
