@@ -5295,7 +5295,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
 
-                let hideFromCashflow = !underscore.contains(this.selectedBankAccounts, paramValue);
+                let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccounts, paramValue);
                 this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
                 this.getCellOptionsFromCell.cache = {};
