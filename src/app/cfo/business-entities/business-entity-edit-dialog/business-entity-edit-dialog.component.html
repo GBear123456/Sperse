@@ -130,7 +130,20 @@
                          [width]="'360px'"
                          (onKeyUp)="onKeyUp($event, 'address')">
             </dx-text-box>
-            <span [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="emptyValue('address')">+</span>
+            <input *ngIf="googleAutoComplete" type="text"
+                   name="Address"
+                   placeholder=""
+                   [(value)]="address.address"
+                   class="dx-texteditor-input"
+                   (country)="address.country=$event"
+                   (street_number)='address.streetNumber=$event'
+                   (street)='address.street=$event'
+                   (city)='businessEntity.city=$event'
+                   (state)='address.state=$event'
+                   (postal_code)='businessEntity.zip=$event'
+                   ng2-google-place-autocomplete />
+            <span *ngIf="!googleAutoComplete" [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="emptyValue('address')">+</span>
+            <span *ngIf="googleAutoComplete" [class]="address.address && 'clear-contact' || 'hidden'" (click)="emptyAddress()">+</span>
         </div>
         <div class="field addr">
             <label></label>
@@ -147,14 +160,14 @@
             <label></label>
             <dx-select-box [dataSource]="states"
                            displayExpr="name"
-                           valueExpr="code"
+                           valueExpr="name"
                            name="state"
                            placeholder="{{l('BusinessEntity_State')}}"
                            [width]="'360px'"
                            [searchEnabled]="true"
-                           [(value)]="businessEntity.stateId">
+                           [(value)]="address.state">
             </dx-select-box>
-            <span [class]="businessEntity.stateId && 'clear-contact' || 'hidden'" (click)="emptyValue('stateId')">+</span>
+            <span [class]="address.state && 'clear-contact' || 'hidden'" (click)="emptyAddressValue('state')">+</span>
         </div>
         <div class="field addr">
             <label></label>
@@ -171,15 +184,15 @@
             <label></label>
             <dx-select-box [dataSource]="countries"
                            displayExpr="name"
-                           valueExpr="code"
+                           valueExpr="name"
                            name="country"
                            placeholder="{{l('BusinessEntity_Country')}}"
                            [width]="'360px'"
                            [searchEnabled]="true"
-                           [(value)]="businessEntity.countryId"
+                           [(value)]="address.country"
                            (onValueChanged)="onCountryChange($event)">
             </dx-select-box>
-            <span [class]="businessEntity.countryId && 'clear-contact' || 'hidden'" (click)="emptyValue('countryId')">+</span>
+            <span [class]="address.country && 'clear-contact' || 'hidden'" (click)="emptyAddressValue('country')">+</span>
         </div>
     </div>
 </modal-dialog>

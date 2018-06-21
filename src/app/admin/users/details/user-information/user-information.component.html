@@ -1,0 +1,54 @@
+<mat-tab-group>
+    <mat-tab label="PERSONAL">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="user-info row">
+                <div class="col-md-12">
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("Name")}}:</div>
+                        <inplace-edit [data]="getPropData('name')" (valueChanged)="updateValue($event, 'name')"></inplace-edit>
+                    </div>
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("Surname")}}:</div>
+                        <inplace-edit [data]="getPropData('surname')" (valueChanged)="updateValue($event, 'surname')"></inplace-edit>
+                    </div>
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("EmailAddress")}}:</div>
+                        <div>{{data?.user?.emailAddress}}</div>
+                    </div>
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
+                        <inplace-edit [data]="getPropData('phoneNumber')" (valueChanged)="updateValue($event, 'phoneNumber')"></inplace-edit>
+                    </div>
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("UserName")}}:</div>
+                        <div>{{data?.user?.userName}}</div>
+                    </div>
+                    <ng-container *ngIf="data && data.user && !data.user.setRandomPassword">
+                        <div class="section-item">
+                            <div class="item-edit-label">{{l("Password")}}:</div>
+
+                            <div *ngIf="data && data.user">
+                                <div *ngIf="!passwordObject.passwordInplaceEdit" class="inplace-edit-view-mode">
+                                    <span [ngClass]="{ 'placeholder': !data.user.password }" (click)="startPasswordEdit()">{{showPassword(data.user.password) || l('EditValuePlaceholder')}}</span>
+                                </div>
+                                <div *ngIf="passwordObject.passwordInplaceEdit" class="inplace-edit-edit-mode">
+                                    <dx-validation-group>
+                                        <dx-text-box [placeholder]="l('EditValuePlaceholder')" [(value)]="passwordObject.value">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validatePassword"></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                        <dx-button class="button-update" icon="todo" (onClick)="updatePassword($event)"></dx-button>
+                                        <dx-button class="button-exit" icon="refresh" (onClick)="closePasswordEdit()"></dx-button>
+                                    </dx-validation-group>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </mat-tab>
+</mat-tab-group>
