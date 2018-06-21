@@ -1588,6 +1588,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                    transactionObj.cashflowTypeId === Reconciliation ||
                                    transactionObj.cashflowTypeId === NetChange;
         let key, parentKey = null;
+        if (transactionObj[`level${levelNumber}`]) {
+            for (let i = levelNumber; i < 5; i++) {
+                if (transactionObj[`level${i}`]) {
+                    delete transactionObj[`level${i}`];
+                }
+            }
+        }
         this.categorization.every((level) => {
             if (transactionObj[level.statsKeyName]) {
 
@@ -1612,11 +1619,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
-        if (transactionObj[`level${levelNumber}`]) {
-            for (let i = levelNumber; i < 5; i++) {
-                delete transactionObj[`level${i}`];
-            }
-        }
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
@@ -2526,7 +2528,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (this.hasChildsByPath(childPath)) {
                 let dataSource = this.pivotGrid.instance.getDataSource();
                 dataSource.expandHeaderItem('row', childPath);
-                    
+
                 this.pivotGrid.instance.getDataSource().load().then((d) => {
                     var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
                     if (currentDepth != stopDepth)
@@ -2863,7 +2865,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let textClientRect = textElement.getBoundingClientRect();
             let textWidth: number = Math.round(textClientRect.width);
             let textPaddingLeft = Math.round(textClientRect.left - cellClientRect.left);
-            let cellWidth = document.querySelector('.dx-area-description-cell').clientWidth - cellClientRect.left;
+            let descriptionClientRect = document.querySelector('.dx-area-description-cell').getBoundingClientRect();
+            let cellWidth = descriptionClientRect.left + descriptionClientRect.width - cellClientRect.left;
             let newTextWidth = this.getNewTextWidth(cellWidth, textWidth, textPaddingLeft, options.general.isAccountHeaderCell);
             if (newTextWidth) {
                 this.applyNewTextWidth(e, textElement, newTextWidth);
@@ -3027,7 +3030,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** add current classes for the cells that belongs to the current periods */
             if (area === 'data' || (area === 'column' || rowIndex >= 1)) {
-                let currentPeriodClass = this.getCurrentPeriodsClass(cell);
+                let currentPeriodClass = this.getCurrentPeriodsClass(cell, area);
                 if (currentPeriodClass) {
                     options.classes.push(currentPeriodClass);
                 }
@@ -3441,7 +3444,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 date: moment(date),
                 amount: forecast.debit !== null ? -forecast.debit : forecast.credit,
                 categoryId: targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor || sourceData.transactionDescriptor,
+                transactionDescriptor: targetData.transactionDescriptor || forecast.description,
                 bankAccountId: forecast.accountId
             });
 
@@ -3488,11 +3491,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
-                if (!target.subCategoryId && !target.transactionDescriptor && !moment(sourceCellInfo.date.startDate).isSame(target.date.startDate)) {
+                if (
+                    !target.subCategoryId &&
+                    !target.transactionDescriptor &&
+                    !moment(sourceCellInfo.date.startDate).isSame(target.date.startDate)
+                ) {
                     let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
                     target.subCategoryId = cashflowObj.subCategoryId;
                     target.transactionDescriptor = cashflowObj.transactionDescriptor;
                 }
+                /** Get target descriptor or if we copy to category - get transaction description  */
+                target.transactionDescriptor = target.transactionDescriptor || transaction.description;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
@@ -3522,6 +3531,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Change forecast locally */
             forecastInCashflow.date = date.add(timezoneOffset, 'minutes');
             forecastInCashflow.initialDate = targetData.date.startDate.utc();
+            forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
             forecastInCashflow.subCategoryId = targetData.subCategoryId;
             forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor;
@@ -3802,10 +3812,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Get the classes for the current cells such as currentYear, currentQuarter and currentMonth
        @todo refactor
      */
-    getCurrentPeriodsClass(cell) {
+    getCurrentPeriodsClass(cell, area) {
         let className;
-        let path = cell.path || cell.columnPath;
-        if (path) {
+        const path = cell.path || cell.columnPath;
+        if (area !== 'row' && path && path.length) {
             let fieldIndex = path.length - 1;
             let cellField = this.getColumnFields()[fieldIndex];
             let fieldCaption = cellField.caption.toLowerCase();
@@ -4474,12 +4484,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param columnFields
      * @return {any}
      */
-    getDateByPath(path, columnFields, lowestCaption ?: string) {
-        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(path, columnFields);
+    getDateByPath(columnPath, columnFields, lowestCaption ?: string) {
+        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(columnPath, columnFields);
         let date = moment.unix(0).tz('UTC');
         columnFields.every(dateField => {
             let areaIndex = this.getAreaIndexByCaption(dateField.caption, 'column');
-            let fieldValue = path[areaIndex];
+            let fieldValue = columnPath[areaIndex];
             if (dateField.dataType === 'date') {
                 let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval;
                 if (fieldValue) {
@@ -5260,7 +5270,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         data.id
                     );
 
-            } else {                
+            } else {
                 /* Set descriptor */
                 if (paramName != 'description') {
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
@@ -5670,6 +5680,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getBankAccountName(bankAccount) {
-        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber; 
+        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber;
     }
 }
