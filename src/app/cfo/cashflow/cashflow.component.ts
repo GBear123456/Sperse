@@ -677,9 +677,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Selected cell on cashflow grid (dxPivotGridPivotGridCell) interface */
     private selectedCell;
 
-    /** Moved cell on cashflow grid (dxPivotGridPivotGridCell) interface */
-    private movedCell;
-
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     private copiedCell;
 
@@ -3217,7 +3214,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let items = this.getDataItemsByCell(cellObj);
                 /** If there are some forecasts for this cell */
                 let moveOnlyHistorical = !items.some(item => !!item.forecastId);
-                this.movedCell = cellObj;
+                e.dataTransfer.setData('movedCell', JSON.stringify(cellObj));
                 e.dataTransfer.setData('moveOnlyHistorical', moveOnlyHistorical);
 
                 this.dragImg.style.display = '';
@@ -3336,16 +3333,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let historicalItemsIds, moveForecastsModels;
             let cellObj = this.getCellObjectFromCellElement(targetCell);
             let targetCellData = this.getCellInfo(cellObj);
+            const movedCell = JSON.parse(e.dataTransfer.getData('movedCell'));
             /** Get the transactions of moved cell if so */
-            let sourceCellInfo = this.getCellInfo(this.movedCell);
-            this.statsDetailFilter = this.getDetailFilterFromCell(this.movedCell);
+            let sourceCellInfo = this.getCellInfo(movedCell);
+            this.statsDetailFilter = this.getDetailFilterFromCell(movedCell);
             let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).flatMap(x => x);
             const forecastsObservable = statsDetailObservable.filter(transaction => !!transaction.forecastId).toArray();
             const historicalsObservable = statsDetailObservable.filter(transaction => !!!transaction.forecastId).toArray();
             Observable.forkJoin(
                 historicalsObservable.mergeMap(historicalTransactions => {
                     const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
-                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(this.movedCell, targetCellData) : Observable.of('empty');
+                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(movedCell, targetCellData) : Observable.of('empty');
                 }),
                 forecastsObservable.mergeMap(forecastsTransactions => {
                     if (forecastsTransactions && forecastsTransactions.length) {
@@ -3358,7 +3356,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             ).subscribe(
                 res => {
                     if (res) {
-                        let itemsToMove = this.getDataItemsByCell(this.movedCell);
+                        let itemsToMove = this.getDataItemsByCell(movedCell);
                         if (res[0] !== 'empty') {
                             let historicalItems = itemsToMove.filter(item => !item.forecastId);
                             this.updateMovedHistoricals(historicalItems, targetCellData);
