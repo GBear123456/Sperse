@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
     selector: 'setup-steps',
 })
 export class SetupStepComponent extends CFOComponentBase implements OnInit {
-
+    @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts' },
@@ -37,5 +37,9 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         if (index < this.SelectedStepIndex) return 'passed';
         else if (index == this.SelectedStepIndex) return 'current';
         else return '';
+    }
+
+    showDialog() {
+        this.openIntro.emit(event);
     }
 }

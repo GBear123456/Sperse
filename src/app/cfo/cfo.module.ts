@@ -5,6 +5,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { StartComponent } from './start/start.component';
 import { SetupComponent } from './start/setup/setup.component';
+import { CfoIntroComponent } from './shared/cfo-intro/cfo-intro.component';
 import { DashboardComponent } from './start/dashboard/dashboard.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
@@ -38,12 +39,14 @@ import { OperationsComponent } from './cashflow/operations/operations.component'
 
 import { StatementsComponent } from './statements/statements.component';
 
-import { MatTabsModule, MatDialogModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule, MatStepperModule } from '@angular/material';
 
 import { CFOService } from '@shared/cfo/cfo.service';
 import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
+
+import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
 
 import {
     DxButtonModule,
@@ -112,14 +115,17 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
+        MatStepperModule,
         RoundProgressModule,
         DashboardWidgetsModule,
         DxRangeSliderModule,
-        DxSwitchModule
+        DxSwitchModule,
+        GooglePlaceModule,
     ],
     declarations: [
         StartComponent,
         SetupComponent,
+        CfoIntroComponent,
         DashboardComponent,
         BankAccountsComponent,
         BankAccountsGeneralComponent,
@@ -156,7 +162,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent,
         ChooseResetRulesComponent,
-        BusinessEntityEditDialogComponent
+        BusinessEntityEditDialogComponent,
+        CfoIntroComponent
     ],
     providers: [
         InstanceServiceProxy,

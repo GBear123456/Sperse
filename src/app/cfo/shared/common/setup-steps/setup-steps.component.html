@@ -7,5 +7,9 @@
                 <span [ngClass]="{'link': _cfoService.hasTransactions && step.component}" (click)="onClick(i, step)">{{l('SetupStep_' + step.caption)}}</span>
             </li>
         </ng-template>
+        <li class="steps-progress-item">
+            <div class="img icon-info"></div>
+            <span class="btn-link intro-link" (click)="showDialog()">{{l('Introduction Tour')}}</span>
+        </li>
     </ul>
 </div>
