@@ -294,14 +294,21 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }).filter(Boolean);
     }
 
-    highlightSelectedCard(event) {
+    private setCardSelection(card, selectedValue) {
+        let method = selectedValue ? 'add' : 'remove';
+        card.classList[method]('selected');
+        var checkBoxElm = card.getElementsByTagName('dx-check-box')[0];
+        if (checkBoxElm)
+            checkBoxElm.classList[method]('dx-checkbox-checked');
+    }
+
+    private highlightSelectedCard(event) {
         let card;
         event.path.every((elm) => {
             let isCard = elm.classList.contains('card');
             if (isCard) {
                 card = elm;
-                let stageName = card.getAttribute('stage');
-                elm.classList.toggle('selected');
+                this.setCardSelection(card, !elm.classList.contains('selected'));
             }
             return !isCard;    
         });        
@@ -309,13 +316,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             .contains('selected');
     }
 
-    deselectAllCards() {
-        let elements = this.getSelectedCards();
-        while(elements.length)
-            elements[0].classList.remove('selected');
-    }
-
-    toogleHighlightShiftArea(lead, checked) {
+    private toogleHighlightShiftArea(lead, checked) {
         if (this.shiftStartLead && 
             this.shiftStartLead.Stage == lead.Stage
         ) {
@@ -328,15 +329,21 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 endCard = stored;
             }
             
-            let method = checked ? 'add': 'remove';
             while(startCard != endCard) {
                 if (startCard.nodeType == Node.ELEMENT_NODE)
-                    startCard.classList[method]('selected');
+                    this.setCardSelection(startCard, checked);
                 startCard = startCard.nextSibling;
             } 
-            endCard.classList[method]('selected');
+            this.setCardSelection(endCard, checked);
         } else 
             this.shiftStartLead = lead;
+    }
+
+    deselectAllCards() {
+        let elements = this.getSelectedCards();
+        while(elements.length){
+            this.setCardSelection(elements[0], false);
+        }
     }
 
     onKeyUp(event) {
@@ -345,14 +352,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCardClick(lead, event) {
-         if (event.ctrlKey || event.shiftKey) {
+        let clickedOnCheckbox = event.target.classList.contains('dx-checkbox-icon');
+        if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
             let checkedCard = this.highlightSelectedCard(event);
             if (!checkedCard && event.ctrlKey && event.shiftKey)
                 this.deselectAllCards();
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(lead, checkedCard);
-            this.selectedLeads = this.getSelectedLeads();            
-         } else
+            this.selectedLeads = this.getSelectedLeads();
+        } else
             lead && this._router.navigate(
                 ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
                     queryParams: {
