@@ -3490,9 +3490,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 };
                 /** To update local data */
                 if (isHorizontalCopying) {
-                    let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
-                    target.subCategoryId = cashflowObj.subCategoryId;
-                    target.transactionDescriptor = cashflowObj.transactionDescriptor;
+                    target.subCategoryId = transaction.categoryId;
+                    target.transactionDescriptor = transaction.description;
                 }
                 /** Get target descriptor or if we copy to category - get transaction description */
                 target.transactionDescriptor = target.transactionDescriptor || transaction.description;
