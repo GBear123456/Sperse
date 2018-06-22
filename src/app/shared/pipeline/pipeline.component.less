@@ -338,9 +338,11 @@
     }
 
     .pipeline-photo-wrap {
-        padding: 0 8px;
-        min-width: 56px;
-    }
+        min-width: 40px;
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+}
     .related-contact {  
         display: none;
     }
@@ -372,7 +374,6 @@
         }
         .full-name {
             max-height: 42px;
-            max-width: calc(~"100% - 56px");
             width: 100%;
             padding: 0px 10px;
             text-overflow: ellipsis;
@@ -400,9 +401,11 @@
         }
         .days-ago {
             height: 20px;
-            padding-left: 17px;
             text-overflow: ellipsis;
             overflow: hidden;
+            position: absolute;
+            bottom: 12px;
+            left: 40px;
             span {
                 font-size: 12px;
                 font-weight: 300;
@@ -415,6 +418,11 @@
                 padding: 5px;
                 vertical-align: middle;
             }
+        }
+        .check-box {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
         }                
     }
 }
