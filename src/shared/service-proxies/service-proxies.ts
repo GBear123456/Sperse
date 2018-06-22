@@ -14523,8 +14523,8 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccountAsync(instanceType: InstanceType76, instanceId: number, syncAccountId: number): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccountAsync?";
+    syncAccount(instanceType: InstanceType76, instanceId: number, syncAccountId: number): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -14544,11 +14544,11 @@ export class SyncServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSyncAccountAsync(response_);
+            return this.processSyncAccount(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processSyncAccountAsync(response_);
+                    return this.processSyncAccount(response_);
                 } catch (e) {
                     return <Observable<boolean>><any>Observable.throw(e);
                 }
@@ -14557,7 +14557,7 @@ export class SyncServiceProxy {
         });
     }
 
-    protected processSyncAccountAsync(response: Response): Observable<boolean> {
+    protected processSyncAccount(response: Response): Observable<boolean> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -21487,6 +21487,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     id: number;
     date: moment.Moment;
     cashflowTypeId: string;
+    categoryId: number;
     bankName: string;
     accountId: number;
     accountName: string;
@@ -21515,6 +21516,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.id = data["id"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.cashflowTypeId = data["cashflowTypeId"];
+            this.categoryId = data["categoryId"];
             this.bankName = data["bankName"];
             this.accountId = data["accountId"];
             this.accountName = data["accountName"];
@@ -21542,6 +21544,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["id"] = this.id;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["cashflowTypeId"] = this.cashflowTypeId;
+        data["categoryId"] = this.categoryId;
         data["bankName"] = this.bankName;
         data["accountId"] = this.accountId;
         data["accountName"] = this.accountName;
@@ -21563,6 +21566,7 @@ export interface ICashFlowStatsDetailDto {
     id: number;
     date: moment.Moment;
     cashflowTypeId: string;
+    categoryId: number;
     bankName: string;
     accountId: number;
     accountName: string;
