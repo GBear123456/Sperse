@@ -11,10 +11,10 @@ import { MatHorizontalStepper } from '@angular/material';
     animations: [appModuleAnimation()]
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
+    @ViewChild('stepper') stepper: MatHorizontalStepper;
     isLinear = false;
     firstFormGroup: FormGroup;
     secondFormGroup: FormGroup;
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
     videoIndex = 6;
 
     constructor(

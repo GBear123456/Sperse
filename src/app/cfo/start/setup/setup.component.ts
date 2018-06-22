@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
+import { Component, OnInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 import { MatDialog, MatDialogConfig } from '@angular/material';
@@ -73,7 +73,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
 
         setTimeout(() => {
             this.openDialog();
-        }, 100);
+        }, 300);
     }
 
     onStart(): void {
@@ -119,11 +119,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';
         this.dialogConfig.id = 'cfo-intro';
-        this.dialogConfig.panelClass = 'cfo-intro';
+        this.dialogConfig.panelClass = ['cfo-intro', 'setup'];
 
         const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
         dialogRef.afterClosed().subscribe(result => {
-            console.log(`Dialog result: ${result}`);
+            if (result.isGetStartedButtonClicked) this.onStart();
         });
     }
 }
