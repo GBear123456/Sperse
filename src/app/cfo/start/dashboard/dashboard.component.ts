@@ -10,7 +10,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
@@ -30,6 +30,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     private rootComponent: any;
 
     headlineConfig;
+    dialogConfig = new MatDialogConfig();
 
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
@@ -97,11 +98,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     openDialog() {
-        const dialogRef = this.dialog.open(CfoIntroComponent, {
-            height: '655px',
-            width: '880px',
-            id: 'cfo-intro'
-        });
+        this.dialogConfig.height = '655px';
+        this.dialogConfig.width = '880px';
+        this.dialogConfig.id = 'cfo-intro';
+        this.dialogConfig.panelClass = 'cfo-intro';
+
+        const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
         dialogRef.afterClosed().subscribe(result => {
             console.log(`Dialog result: ${result}`);
         });

@@ -1,8 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { MatDialog } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatHorizontalStepper } from '@angular/material';
 
 @Component({
@@ -19,9 +18,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     videoIndex = 6;
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
-        private _formBuilder: FormBuilder
+        injector: Injector
     ) {
         super(injector);
     }
