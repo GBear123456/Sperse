@@ -1,7 +1,7 @@
 import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { PipelineDto, LeadServiceProxy, StageDto } from '@shared/service-proxies/service-proxies';
+import { PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -61,7 +61,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private subscribers = [];
 
     constructor(injector: Injector,
-        private _leadService: LeadServiceProxy,
         private _dragulaService: DragulaService,
         private _pipelineService: PipelineService,
         private _router: Router
