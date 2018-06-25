@@ -3822,7 +3822,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     case 'year'    : periodFormat = 'YYYY'; break;
                     case 'quarter' : periodFormat = 'YYYY.QQ'; break;
                     case 'month'   : periodFormat = 'YYYY.MM'; break;
-                    case 'week'    : periodFormat = 'w.YYYY'; break;
+                    case 'week'    : periodFormat = 'W.YYYY'; break;
                     case 'day'     : periodFormat = 'YYYY.MM.DD'; break;
                 }
                 let cellDate = this.getDateByPath(path, this.getColumnFields(), fieldCaption);
