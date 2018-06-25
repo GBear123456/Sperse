@@ -109,7 +109,7 @@
                 .card {
                     cursor: not-allowed;
                     min-height: 95px;
-                    padding: 13px 0px 0px 0px;
+                    padding: 10px 0px 0px 0px;
                     margin-bottom: 11px;
                     font-size: 15px;
                     line-height: 1.4;
@@ -120,12 +120,6 @@
                     overflow: visible;
                     &.selected {
                         background-color: #effafe;
-                        &:after {
-                            content:  "\2713 ";
-                            position: absolute;
-                            right: 15px;
-                            bottom: 12px;
-                        }
                     }
                     &.locked {
                         opacity: 0.3;
@@ -135,8 +129,10 @@
                         background: #fafafa;
                     }
                     .pipeline-photo-wrap {
-                        padding: 0 8px;
-                        min-width: 56px;
+                        min-width: 40px;
+                        position: absolute;
+                        right: 5px;
+                        bottom: 5px;
                     }
                     .row {
                         margin-right: -15px;
@@ -176,7 +172,6 @@
                             }
                         }
                         .full-name {
-                            max-width: calc(~"100% - 56px");
                             display: inline-block;
                             max-height: 42px;
                             padding: 0px 10px;
@@ -205,9 +200,11 @@
                         }
                         .days-ago {
                             height: 20px;
-                            padding-left: 17px;
                             text-overflow: ellipsis;
                             overflow: hidden;
+                            position: absolute;
+                            bottom: 12px;
+                            left: 40px;
                             span {
                                 font-size: 12px;
                                 font-weight: 300;
@@ -219,6 +216,16 @@
                                 color: #94979a;
                                 padding: 5px;
                                 vertical-align: middle;
+                            }
+                        }
+                        .check-box {
+                            position: absolute;
+                            bottom: 11px;
+                            left: 10px;
+
+                            /deep/ .dx-checkbox-icon {
+                                width: 18px;
+                                height: 18px;
                             }
                         }                
                     }
@@ -336,9 +343,11 @@
     }
 
     .pipeline-photo-wrap {
-        padding: 0 8px;
-        min-width: 56px;
-    }
+        min-width: 40px;
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+}
     .related-contact {  
         display: none;
     }
@@ -370,7 +379,6 @@
         }
         .full-name {
             max-height: 42px;
-            max-width: calc(~"100% - 56px");
             width: 100%;
             padding: 0px 10px;
             text-overflow: ellipsis;
@@ -398,9 +406,11 @@
         }
         .days-ago {
             height: 20px;
-            padding-left: 17px;
             text-overflow: ellipsis;
             overflow: hidden;
+            position: absolute;
+            bottom: 12px;
+            left: 40px;
             span {
                 font-size: 12px;
                 font-weight: 300;
@@ -412,6 +422,16 @@
                 color: #94979a;
                 padding: 5px;
                 vertical-align: middle;
+            }
+        }
+        .check-box {
+            position: absolute;
+            bottom: 11px;
+            left: 10px;
+
+            /deep/ .dx-checkbox-icon {
+                width: 18px;
+                height: 18px;
             }
         }                
     }

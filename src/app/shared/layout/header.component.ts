@@ -1,7 +1,6 @@
 import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import {
     ProfileServiceProxy,
     UserLinkServiceProxy,
@@ -27,6 +26,7 @@ import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNot
 import { AppConsts } from '@shared/AppConsts';
 import { EditionPaymentType } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { UserHelper } from '../helpers/UserHelper';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -69,7 +69,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _abpSessionService: AbpSessionService,
-        private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
         private _authService: AppAuthService,
@@ -141,13 +140,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
-        if (!this._abpMultiTenancyService.isEnabled) {
-            return linkedUser.username;
-        }
-
-        return linkedUser.tenantId == abp.session.tenantId ?
-            linkedUser.username :
-            (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
+        return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
     }
 
     getProfilePicture(): void {

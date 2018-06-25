@@ -3,11 +3,11 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserLinkServiceProxy, LinkedUserDto, UnlinkUserInput } from '@shared/service-proxies/service-proxies';
 import { LinkAccountModalComponent } from './link-account-modal.component';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { DataTable } from 'primeng/components/datatable/datatable';
 import { Paginator } from 'primeng/components/paginator/paginator';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
+import { UserHelper } from '../helpers/UserHelper';
 
 @Component({
     selector: 'linkedAccountsModal',
@@ -26,7 +26,6 @@ export class LinkedAccountsModalComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
-        private abpMultiTenancyService: AbpMultiTenancyService,
         private _userLinkService: UserLinkServiceProxy,
         private _linkedAccountService: LinkedAccountService
     ) {
@@ -48,11 +47,7 @@ export class LinkedAccountsModalComponent extends AppComponentBase {
     }
 
     getShownLinkedUserName(linkedUser: LinkedUserDto): string {
-        if (!this.abpMultiTenancyService.isEnabled) {
-            return linkedUser.username;
-        }
-
-        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
+        return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
     }
 
     deleteLinkedUser(linkedUser: LinkedUserDto): void {

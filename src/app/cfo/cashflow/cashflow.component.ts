@@ -677,9 +677,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Selected cell on cashflow grid (dxPivotGridPivotGridCell) interface */
     private selectedCell;
 
-    /** Moved cell on cashflow grid (dxPivotGridPivotGridCell) interface */
-    private movedCell;
-
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     private copiedCell;
 
@@ -1588,6 +1585,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                    transactionObj.cashflowTypeId === Reconciliation ||
                                    transactionObj.cashflowTypeId === NetChange;
         let key, parentKey = null;
+        if (transactionObj[`level${levelNumber}`]) {
+            for (let i = levelNumber; i < 5; i++) {
+                if (transactionObj[`level${i}`]) {
+                    delete transactionObj[`level${i}`];
+                }
+            }
+        }
         this.categorization.every((level) => {
             if (transactionObj[level.statsKeyName]) {
 
@@ -1612,11 +1616,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
             return true;
         });
-        if (transactionObj[`level${levelNumber}`]) {
-            for (let i = levelNumber; i < 5; i++) {
-                delete transactionObj[`level${i}`];
-            }
-        }
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
@@ -2526,7 +2525,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (this.hasChildsByPath(childPath)) {
                 let dataSource = this.pivotGrid.instance.getDataSource();
                 dataSource.expandHeaderItem('row', childPath);
-                    
+
                 this.pivotGrid.instance.getDataSource().load().then((d) => {
                     var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
                     if (currentDepth != stopDepth)
@@ -2863,7 +2862,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let textClientRect = textElement.getBoundingClientRect();
             let textWidth: number = Math.round(textClientRect.width);
             let textPaddingLeft = Math.round(textClientRect.left - cellClientRect.left);
-            let cellWidth = document.querySelector('.dx-area-description-cell').clientWidth - cellClientRect.left;
+            let descriptionClientRect = document.querySelector('.dx-area-description-cell').getBoundingClientRect();
+            let cellWidth = descriptionClientRect.left + descriptionClientRect.width - cellClientRect.left;
             let newTextWidth = this.getNewTextWidth(cellWidth, textWidth, textPaddingLeft, options.general.isAccountHeaderCell);
             if (newTextWidth) {
                 this.applyNewTextWidth(e, textElement, newTextWidth);
@@ -3027,7 +3027,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             /** add current classes for the cells that belongs to the current periods */
             if (area === 'data' || (area === 'column' || rowIndex >= 1)) {
-                let currentPeriodClass = this.getCurrentPeriodsClass(cell);
+                let currentPeriodClass = this.getCurrentPeriodsClass(cell, area);
                 if (currentPeriodClass) {
                     options.classes.push(currentPeriodClass);
                 }
@@ -3214,7 +3214,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let items = this.getDataItemsByCell(cellObj);
                 /** If there are some forecasts for this cell */
                 let moveOnlyHistorical = !items.some(item => !!item.forecastId);
-                this.movedCell = cellObj;
+                e.dataTransfer.setData('movedCell', JSON.stringify(cellObj));
                 e.dataTransfer.setData('moveOnlyHistorical', moveOnlyHistorical);
 
                 this.dragImg.style.display = '';
@@ -3333,16 +3333,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let historicalItemsIds, moveForecastsModels;
             let cellObj = this.getCellObjectFromCellElement(targetCell);
             let targetCellData = this.getCellInfo(cellObj);
+            const movedCell = JSON.parse(e.dataTransfer.getData('movedCell'));
             /** Get the transactions of moved cell if so */
-            let sourceCellInfo = this.getCellInfo(this.movedCell);
-            this.statsDetailFilter = this.getDetailFilterFromCell(this.movedCell);
+            let sourceCellInfo = this.getCellInfo(movedCell);
+            this.statsDetailFilter = this.getDetailFilterFromCell(movedCell);
             let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).flatMap(x => x);
             const forecastsObservable = statsDetailObservable.filter(transaction => !!transaction.forecastId).toArray();
             const historicalsObservable = statsDetailObservable.filter(transaction => !!!transaction.forecastId).toArray();
             Observable.forkJoin(
                 historicalsObservable.mergeMap(historicalTransactions => {
                     const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
-                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(this.movedCell, targetCellData) : Observable.of('empty');
+                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(movedCell, targetCellData) : Observable.of('empty');
                 }),
                 forecastsObservable.mergeMap(forecastsTransactions => {
                     if (forecastsTransactions && forecastsTransactions.length) {
@@ -3355,7 +3356,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             ).subscribe(
                 res => {
                     if (res) {
-                        let itemsToMove = this.getDataItemsByCell(this.movedCell);
+                        let itemsToMove = this.getDataItemsByCell(movedCell);
                         if (res[0] !== 'empty') {
                             let historicalItems = itemsToMove.filter(item => !item.forecastId);
                             this.updateMovedHistoricals(historicalItems, targetCellData);
@@ -3441,7 +3442,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 date: moment(date),
                 amount: forecast.debit !== null ? -forecast.debit : forecast.credit,
                 categoryId: targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor || sourceData.transactionDescriptor,
+                transactionDescriptor: targetData.transactionDescriptor || forecast.description,
                 bankAccountId: forecast.accountId
             });
 
@@ -3468,7 +3469,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         );
     }
 
-    createCopyItemsModels(transactions: CashFlowStatsDetailDto[], sourceCellInfo: CellInfo, targetsData: CellInfo[]): CreateForecastsInput {
+    createCopyItemsModels(transactions: CashFlowStatsDetailDto[], sourceCellInfo: CellInfo, targetsData: CellInfo[], isHorizontalCopying: boolean): CreateForecastsInput {
         let forecastsItems: AddForecastInput[] = [];
         let activeAccountIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.requestFilter.accountIds);
         targetsData.forEach((targetData, index) => {
@@ -3488,11 +3489,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
-                if (!target.subCategoryId && !target.transactionDescriptor && !moment(sourceCellInfo.date.startDate).isSame(target.date.startDate)) {
-                    let cashflowObj = this.cashflowData.find(item => item.forecastId == transaction.forecastId);
-                    target.subCategoryId = cashflowObj.subCategoryId;
-                    target.transactionDescriptor = cashflowObj.transactionDescriptor;
+                if (isHorizontalCopying) {
+                    target.subCategoryId = transaction.categoryId;
+                    target.transactionDescriptor = transaction.description;
                 }
+                /** Get target descriptor or if we copy to category - get transaction description */
+                target.transactionDescriptor = target.transactionDescriptor || transaction.description;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
@@ -3522,6 +3524,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Change forecast locally */
             forecastInCashflow.date = date.add(timezoneOffset, 'minutes');
             forecastInCashflow.initialDate = targetData.date.startDate.utc();
+            forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
             forecastInCashflow.subCategoryId = targetData.subCategoryId;
             forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor;
@@ -3802,10 +3805,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Get the classes for the current cells such as currentYear, currentQuarter and currentMonth
        @todo refactor
      */
-    getCurrentPeriodsClass(cell) {
+    getCurrentPeriodsClass(cell, area) {
         let className;
-        let path = cell.path || cell.columnPath;
-        if (path) {
+        const path = cell.path || cell.columnPath;
+        if (area !== 'row' && path && path.length) {
             let fieldIndex = path.length - 1;
             let cellField = this.getColumnFields()[fieldIndex];
             let fieldCaption = cellField.caption.toLowerCase();
@@ -4074,11 +4077,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (targetCellsObj.length) {
                 let targetsData = targetCellsObj.map(cell => this.getCellInfo(cell));
                 let sourceCellInfo = this.getCellInfo(sourceCellObject);
+                const isHorizontalCopying = this.cashflowService.isHorizontalCopying(sourceCellObject, targetCellsObj);
                 this.statsDetailFilter = this.getDetailFilterFromCell(sourceCellObject);
                 this._cashflowServiceProxy
                     .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                     .map(transactions => {
-                        copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData) : null;
+                        copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData, isHorizontalCopying) : null;
                         return copyItemsModels;
                     })
                     .mergeMap(forecastModels => this.copyForecasts(forecastModels))
@@ -4474,12 +4478,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param columnFields
      * @return {any}
      */
-    getDateByPath(path, columnFields, lowestCaption ?: string) {
-        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(path, columnFields);
+    getDateByPath(columnPath, columnFields, lowestCaption ?: string) {
+        lowestCaption = lowestCaption || this.getLowestFieldCaptionFromPath(columnPath, columnFields);
         let date = moment.unix(0).tz('UTC');
         columnFields.every(dateField => {
             let areaIndex = this.getAreaIndexByCaption(dateField.caption, 'column');
-            let fieldValue = path[areaIndex];
+            let fieldValue = columnPath[areaIndex];
             if (dateField.dataType === 'date') {
                 let method = dateField.groupInterval === 'day' ? 'date' : dateField.groupInterval;
                 if (fieldValue) {
@@ -5260,7 +5264,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         data.id
                     );
 
-            } else {                
+            } else {
                 /* Set descriptor */
                 if (paramName != 'description') {
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
@@ -5290,7 +5294,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
 
-                let hideFromCashflow = !underscore.contains(this.selectedBankAccounts, paramValue);
+                let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccounts, paramValue);
                 this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
                 this.getCellOptionsFromCell.cache = {};
@@ -5670,6 +5674,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getBankAccountName(bankAccount) {
-        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber; 
+        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber;
     }
 }

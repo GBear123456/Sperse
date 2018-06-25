@@ -1,8 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { MatDialog } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatHorizontalStepper } from '@angular/material';
 
 @Component({
@@ -12,16 +11,14 @@ import { MatHorizontalStepper } from '@angular/material';
     animations: [appModuleAnimation()]
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
+    @ViewChild('stepper') stepper: MatHorizontalStepper;
     isLinear = false;
     firstFormGroup: FormGroup;
     secondFormGroup: FormGroup;
-    @ViewChild('stepper') stepper: MatHorizontalStepper;
     videoIndex = 6;
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
-        private _formBuilder: FormBuilder
+        injector: Injector
     ) {
         super(injector);
     }

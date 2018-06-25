@@ -1,8 +1,7 @@
-import { Injector } from '@angular/core';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ChatFriendDto } from './ChatFriendDto';
 import { AppConsts } from '@shared/AppConsts';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { UserHelper } from '../../helpers/UserHelper';
 
 @Component({
     templateUrl: './chat-friend-list-item.component.html',
@@ -16,20 +15,8 @@ export class ChatFriendListItemComponent {
     @Input() friend: ChatFriendDto;
     @Output() selectChatFriend: EventEmitter<string> = new EventEmitter<string>();
 
-    multiTenancy: AbpMultiTenancyService;
-
-    constructor(injector: Injector) {
-        this.multiTenancy = injector.get(AbpMultiTenancyService);
-    }
-
     getShownUserName(friend: ChatFriendDto): string {
-        if (!this.multiTenancy.isEnabled) {
-            return friend.friendUserName;
-        }
-
-        return friend.friendTenantId == abp.session.tenantId ?
-            friend.friendUserName :
-            (friend.friendTenantId ? friend.friendTenancyName : '.') + '\\' + friend.friendUserName;
+        return UserHelper.getShownUserName(friend.friendUserName, friend.friendTenantId, friend.friendTenancyName);
     }
 
     getRemoteImageUrl(profilePictureId: string, userId: number, tenantId?: number): string {
