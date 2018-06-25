@@ -581,7 +581,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                             categories.push({
                                 key: parseInt(key),
                                 parent: item.parentId || (this.settings.showAT ?
-                                    item.accountingTypeId + accounting.typeId : 'root'),
+                                    item.accountingTypeId.toString() + accounting.typeId : 'root'),
                                 coAID: item.coAID,
                                 name: item.name,
                                 typeId: accounting.typeId
