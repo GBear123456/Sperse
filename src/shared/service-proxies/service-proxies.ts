@@ -8647,226 +8647,6 @@ export class DocumentsServiceProxy {
 }
 
 @Injectable()
-export class WopiServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    filesGet(id: string): Observable<HttpResponseMessage> {
-        let url_ = this.baseUrl + "/wopi/files/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processFilesGet(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processFilesGet(response_);
-                } catch (e) {
-                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processFilesGet(response: Response): Observable<HttpResponseMessage> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<HttpResponseMessage>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    filesPost(id: string): Observable<HttpResponseMessage> {
-        let url_ = this.baseUrl + "/wopi/files/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processFilesPost(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processFilesPost(response_);
-                } catch (e) {
-                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processFilesPost(response: Response): Observable<HttpResponseMessage> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<HttpResponseMessage>(<any>null);
-    }
-}
-
-@Injectable()
-export class FilesServiceProxy {
-    private http: Http;
-    private baseUrl: string;
-    protected jsonParseReviver: (key: string, value: any) => any = undefined;
-
-    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    contentsGet(id: string): Observable<HttpResponseMessage> {
-        let url_ = this.baseUrl + "/wopi/files/{id}/contents";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processContentsGet(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processContentsGet(response_);
-                } catch (e) {
-                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processContentsGet(response: Response): Observable<HttpResponseMessage> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<HttpResponseMessage>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    contentsPost(id: string): Observable<HttpResponseMessage> {
-        let url_ = this.baseUrl + "/wopi/files/{id}/contents";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processContentsPost(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processContentsPost(response_);
-                } catch (e) {
-                    return <Observable<HttpResponseMessage>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<HttpResponseMessage>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processContentsPost(response: Response): Observable<HttpResponseMessage> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? HttpResponseMessage.fromJS(resultData200) : new HttpResponseMessage();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<HttpResponseMessage>(<any>null);
-    }
-}
-
-@Injectable()
 export class EditionServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -14145,6 +13925,73 @@ export class ProfileServiceProxy {
 }
 
 @Injectable()
+export class QuestionnaireServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @identifier (optional) 
+     * @return Success
+     */
+    getQuestionnaire(instanceType: InstanceType72, instanceId: number, identifier: string): Observable<QuestionnaireDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/GetQuestionnaire?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (identifier !== undefined)
+            url_ += "identifier=" + encodeURIComponent("" + identifier) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetQuestionnaire(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetQuestionnaire(response_);
+                } catch (e) {
+                    return <Observable<QuestionnaireDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<QuestionnaireDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetQuestionnaire(response: Response): Observable<QuestionnaireDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? QuestionnaireDto.fromJS(resultData200) : new QuestionnaireDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<QuestionnaireDto>(<any>null);
+    }
+}
+
+@Injectable()
 export class QuickBookServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -14211,7 +14058,7 @@ export class QuickBookServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getQuickBookConnectionLink(instanceType: InstanceType72, instanceId: number): Observable<QuickBookConnectionLinkResult> {
+    getQuickBookConnectionLink(instanceType: InstanceType73, instanceId: number): Observable<QuickBookConnectionLinkResult> {
         let url_ = this.baseUrl + "/api/services/CFO/QuickBook/GetQuickBookConnectionLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14462,6 +14309,130 @@ export class RoleServiceProxy {
 }
 
 @Injectable()
+export class SecurityManagementServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    assignBankAccountPermissionForUser(instanceType: InstanceType74, instanceId: number, bankAccountId: number, userId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/AssignBankAccountPermissionForUser?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (bankAccountId === undefined || bankAccountId === null)
+            throw new Error("The parameter 'bankAccountId' must be defined and cannot be null.");
+        else
+            url_ += "bankAccountId=" + encodeURIComponent("" + bankAccountId) + "&"; 
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processAssignBankAccountPermissionForUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processAssignBankAccountPermissionForUser(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processAssignBankAccountPermissionForUser(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    removeBankAccountPermissionForUser(instanceType: InstanceType75, instanceId: number, bankAccountId: number, userId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/RemoveBankAccountPermissionForUser?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (bankAccountId === undefined || bankAccountId === null)
+            throw new Error("The parameter 'bankAccountId' must be defined and cannot be null.");
+        else
+            url_ += "bankAccountId=" + encodeURIComponent("" + bankAccountId) + "&"; 
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRemoveBankAccountPermissionForUser(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRemoveBankAccountPermissionForUser(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRemoveBankAccountPermissionForUser(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class SessionServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -14685,7 +14656,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    createProviderUIToken(instanceType: InstanceType73, instanceId: number): Observable<GetProviderUITokenOutput> {
+    createProviderUIToken(instanceType: InstanceType76, instanceId: number): Observable<GetProviderUITokenOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14739,7 +14710,7 @@ export class SyncServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType74, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType77, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14795,7 +14766,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType75, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType78, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14855,7 +14826,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccount(instanceType: InstanceType76, instanceId: number, syncAccountId: number): Observable<boolean> {
+    syncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14911,7 +14882,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType77, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType80, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14964,7 +14935,7 @@ export class SyncServiceProxy {
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType78, instanceId: number, syncAccountIds: number[]): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType81, instanceId: number, syncAccountIds: number[]): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15032,7 +15003,7 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(instanceType: InstanceType79, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+    rename(instanceType: InstanceType82, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15083,7 +15054,7 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    delete(instanceType: InstanceType80, instanceId: number, syncAccountId: number): Observable<void> {
+    delete(instanceType: InstanceType83, instanceId: number, syncAccountId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17406,240 +17377,6 @@ export class TestServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    run1(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/CFO/Test/Run1";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRun1(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRun1(response_);
-                } catch (e) {
-                    return <Observable<string>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<string>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRun1(response: Response): Observable<string> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<string>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    run2(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/CFO/Test/Run2";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processRun2(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processRun2(response_);
-                } catch (e) {
-                    return <Observable<string>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<string>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processRun2(response: Response): Observable<string> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<string>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    get(): Observable<ThreadPoolInfo> {
-        let url_ = this.baseUrl + "/api/services/CFO/Test/Get";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "get",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGet(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processGet(response_);
-                } catch (e) {
-                    return <Observable<ThreadPoolInfo>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<ThreadPoolInfo>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processGet(response: Response): Observable<ThreadPoolInfo> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ThreadPoolInfo.fromJS(resultData200) : new ThreadPoolInfo();
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<ThreadPoolInfo>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    set(workerThreads: number): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/Test/Set?";
-        if (workerThreads === undefined || workerThreads === null)
-            throw new Error("The parameter 'workerThreads' must be defined and cannot be null.");
-        else
-            url_ += "workerThreads=" + encodeURIComponent("" + workerThreads) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSet(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSet(response_);
-                } catch (e) {
-                    return <Observable<boolean>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<boolean>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSet(response: Response): Observable<boolean> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return Observable.of(result200);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<boolean>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    setConnectionLimit(count: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Test/SetConnectionLimit?";
-        if (count === undefined || count === null)
-            throw new Error("The parameter 'count' must be defined and cannot be null.");
-        else
-            url_ += "count=" + encodeURIComponent("" + count) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            method: "post",
-            headers: new Headers({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processSetConnectionLimit(response_);
-        }).catch((response_: any) => {
-            if (response_ instanceof Response) {
-                try {
-                    return this.processSetConnectionLimit(response_);
-                } catch (e) {
-                    return <Observable<void>><any>Observable.throw(e);
-                }
-            } else
-                return <Observable<void>><any>Observable.throw(response_);
-        });
-    }
-
-    protected processSetConnectionLimit(response: Response): Observable<void> {
-        const status = response.status; 
-
-        let _headers: any = response.headers ? response.headers.toJSON() : {};
-        if (status === 200) {
-            const _responseText = response.text();
-            return Observable.of<void>(<any>null);
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.text();
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Observable.of<void>(<any>null);
-    }
-
-    /**
      * @strings (optional) 
      * @return Success
      */
@@ -18231,7 +17968,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType81, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType84, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -18283,7 +18020,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType82, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType85, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -18335,7 +18072,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType83, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType86, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -19648,6 +19385,118 @@ export class WebLogServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<FileDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class WopiServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getViewRequestInfo(documentId: string): Observable<WopiRequestOutcoming> {
+        let url_ = this.baseUrl + "/api/services/CRM/Wopi/GetViewRequestInfo?";
+        if (documentId === undefined || documentId === null)
+            throw new Error("The parameter 'documentId' must be defined and cannot be null.");
+        else
+            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetViewRequestInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetViewRequestInfo(response_);
+                } catch (e) {
+                    return <Observable<WopiRequestOutcoming>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<WopiRequestOutcoming>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetViewRequestInfo(response: Response): Observable<WopiRequestOutcoming> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<WopiRequestOutcoming>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getEditRequestInfo(documentId: string): Observable<WopiRequestOutcoming> {
+        let url_ = this.baseUrl + "/api/services/CRM/Wopi/GetEditRequestInfo?";
+        if (documentId === undefined || documentId === null)
+            throw new Error("The parameter 'documentId' must be defined and cannot be null.");
+        else
+            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetEditRequestInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetEditRequestInfo(response_);
+                } catch (e) {
+                    return <Observable<WopiRequestOutcoming>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<WopiRequestOutcoming>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetEditRequestInfo(response: Response): Observable<WopiRequestOutcoming> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<WopiRequestOutcoming>(<any>null);
     }
 }
 
@@ -32539,328 +32388,6 @@ export interface IUploadDocumentInput {
     fileBase64: string;
 }
 
-export class HttpResponseMessage implements IHttpResponseMessage {
-    version: Version;
-    content: HttpContent;
-    statusCode: HttpResponseMessageStatusCode;
-    reasonPhrase: string;
-    headers: KeyValuePairOfStringAndIEnumerableOfString[];
-    requestMessage: HttpRequestMessage;
-    isSuccessStatusCode: boolean;
-
-    constructor(data?: IHttpResponseMessage) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.version = data["version"] ? Version.fromJS(data["version"]) : <any>undefined;
-            this.content = data["content"] ? HttpContent.fromJS(data["content"]) : <any>undefined;
-            this.statusCode = data["statusCode"];
-            this.reasonPhrase = data["reasonPhrase"];
-            if (data["headers"] && data["headers"].constructor === Array) {
-                this.headers = [];
-                for (let item of data["headers"])
-                    this.headers.push(KeyValuePairOfStringAndIEnumerableOfString.fromJS(item));
-            }
-            this.requestMessage = data["requestMessage"] ? HttpRequestMessage.fromJS(data["requestMessage"]) : <any>undefined;
-            this.isSuccessStatusCode = data["isSuccessStatusCode"];
-        }
-    }
-
-    static fromJS(data: any): HttpResponseMessage {
-        let result = new HttpResponseMessage();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["version"] = this.version ? this.version.toJSON() : <any>undefined;
-        data["content"] = this.content ? this.content.toJSON() : <any>undefined;
-        data["statusCode"] = this.statusCode;
-        data["reasonPhrase"] = this.reasonPhrase;
-        if (this.headers && this.headers.constructor === Array) {
-            data["headers"] = [];
-            for (let item of this.headers)
-                data["headers"].push(item.toJSON());
-        }
-        data["requestMessage"] = this.requestMessage ? this.requestMessage.toJSON() : <any>undefined;
-        data["isSuccessStatusCode"] = this.isSuccessStatusCode;
-        return data; 
-    }
-}
-
-export interface IHttpResponseMessage {
-    version: Version;
-    content: HttpContent;
-    statusCode: HttpResponseMessageStatusCode;
-    reasonPhrase: string;
-    headers: KeyValuePairOfStringAndIEnumerableOfString[];
-    requestMessage: HttpRequestMessage;
-    isSuccessStatusCode: boolean;
-}
-
-export class Version implements IVersion {
-    major: number;
-    minor: number;
-    build: number;
-    revision: number;
-    majorRevision: number;
-    minorRevision: number;
-
-    constructor(data?: IVersion) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.major = data["major"];
-            this.minor = data["minor"];
-            this.build = data["build"];
-            this.revision = data["revision"];
-            this.majorRevision = data["majorRevision"];
-            this.minorRevision = data["minorRevision"];
-        }
-    }
-
-    static fromJS(data: any): Version {
-        let result = new Version();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["major"] = this.major;
-        data["minor"] = this.minor;
-        data["build"] = this.build;
-        data["revision"] = this.revision;
-        data["majorRevision"] = this.majorRevision;
-        data["minorRevision"] = this.minorRevision;
-        return data; 
-    }
-}
-
-export interface IVersion {
-    major: number;
-    minor: number;
-    build: number;
-    revision: number;
-    majorRevision: number;
-    minorRevision: number;
-}
-
-export class HttpContent implements IHttpContent {
-    headers: KeyValuePairOfStringAndIEnumerableOfString[];
-
-    constructor(data?: IHttpContent) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["headers"] && data["headers"].constructor === Array) {
-                this.headers = [];
-                for (let item of data["headers"])
-                    this.headers.push(KeyValuePairOfStringAndIEnumerableOfString.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): HttpContent {
-        let result = new HttpContent();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.headers && this.headers.constructor === Array) {
-            data["headers"] = [];
-            for (let item of this.headers)
-                data["headers"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IHttpContent {
-    headers: KeyValuePairOfStringAndIEnumerableOfString[];
-}
-
-export class KeyValuePairOfStringAndIEnumerableOfString implements IKeyValuePairOfStringAndIEnumerableOfString {
-    key: string;
-    value: string[];
-
-    constructor(data?: IKeyValuePairOfStringAndIEnumerableOfString) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.key = data["key"];
-            if (data["value"] && data["value"].constructor === Array) {
-                this.value = [];
-                for (let item of data["value"])
-                    this.value.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): KeyValuePairOfStringAndIEnumerableOfString {
-        let result = new KeyValuePairOfStringAndIEnumerableOfString();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["key"] = this.key;
-        if (this.value && this.value.constructor === Array) {
-            data["value"] = [];
-            for (let item of this.value)
-                data["value"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface IKeyValuePairOfStringAndIEnumerableOfString {
-    key: string;
-    value: string[];
-}
-
-export class HttpRequestMessage implements IHttpRequestMessage {
-    version: Version;
-    content: HttpContent;
-    method: HttpMethod;
-    requestUri: string;
-    headers: KeyValuePairOfStringAndIEnumerableOfString[];
-    properties: { [key: string] : any; };
-
-    constructor(data?: IHttpRequestMessage) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.version = data["version"] ? Version.fromJS(data["version"]) : <any>undefined;
-            this.content = data["content"] ? HttpContent.fromJS(data["content"]) : <any>undefined;
-            this.method = data["method"] ? HttpMethod.fromJS(data["method"]) : <any>undefined;
-            this.requestUri = data["requestUri"];
-            if (data["headers"] && data["headers"].constructor === Array) {
-                this.headers = [];
-                for (let item of data["headers"])
-                    this.headers.push(KeyValuePairOfStringAndIEnumerableOfString.fromJS(item));
-            }
-            if (data["properties"]) {
-                this.properties = {};
-                for (let key in data["properties"]) {
-                    if (data["properties"].hasOwnProperty(key))
-                        this.properties[key] = data["properties"][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): HttpRequestMessage {
-        let result = new HttpRequestMessage();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["version"] = this.version ? this.version.toJSON() : <any>undefined;
-        data["content"] = this.content ? this.content.toJSON() : <any>undefined;
-        data["method"] = this.method ? this.method.toJSON() : <any>undefined;
-        data["requestUri"] = this.requestUri;
-        if (this.headers && this.headers.constructor === Array) {
-            data["headers"] = [];
-            for (let item of this.headers)
-                data["headers"].push(item.toJSON());
-        }
-        if (this.properties) {
-            data["properties"] = {};
-            for (let key in this.properties) {
-                if (this.properties.hasOwnProperty(key))
-                    data["properties"][key] = this.properties[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface IHttpRequestMessage {
-    version: Version;
-    content: HttpContent;
-    method: HttpMethod;
-    requestUri: string;
-    headers: KeyValuePairOfStringAndIEnumerableOfString[];
-    properties: { [key: string] : any; };
-}
-
-export class HttpMethod implements IHttpMethod {
-    method: string;
-
-    constructor(data?: IHttpMethod) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.method = data["method"];
-        }
-    }
-
-    static fromJS(data: any): HttpMethod {
-        let result = new HttpMethod();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["method"] = this.method;
-        return data; 
-    }
-}
-
-export interface IHttpMethod {
-    method: string;
-}
-
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
     items: EditionListDto[];
 
@@ -40408,6 +39935,167 @@ export interface IChangeUserLanguageDto {
     languageName: string;
 }
 
+export class QuestionnaireDto implements IQuestionnaireDto {
+    id: number;
+    identifier: string;
+    questions: QuestionDto[];
+
+    constructor(data?: IQuestionnaireDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.identifier = data["identifier"];
+            if (data["questions"] && data["questions"].constructor === Array) {
+                this.questions = [];
+                for (let item of data["questions"])
+                    this.questions.push(QuestionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): QuestionnaireDto {
+        let result = new QuestionnaireDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["identifier"] = this.identifier;
+        if (this.questions && this.questions.constructor === Array) {
+            data["questions"] = [];
+            for (let item of this.questions)
+                data["questions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IQuestionnaireDto {
+    id: number;
+    identifier: string;
+    questions: QuestionDto[];
+}
+
+export class QuestionDto implements IQuestionDto {
+    id: number;
+    questionnaireId: number;
+    type: QuestionDtoType;
+    text: string;
+    sortOrder: number;
+    options: OptionDto[];
+
+    constructor(data?: IQuestionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.questionnaireId = data["questionnaireId"];
+            this.type = data["type"];
+            this.text = data["text"];
+            this.sortOrder = data["sortOrder"];
+            if (data["options"] && data["options"].constructor === Array) {
+                this.options = [];
+                for (let item of data["options"])
+                    this.options.push(OptionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): QuestionDto {
+        let result = new QuestionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["questionnaireId"] = this.questionnaireId;
+        data["type"] = this.type;
+        data["text"] = this.text;
+        data["sortOrder"] = this.sortOrder;
+        if (this.options && this.options.constructor === Array) {
+            data["options"] = [];
+            for (let item of this.options)
+                data["options"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IQuestionDto {
+    id: number;
+    questionnaireId: number;
+    type: QuestionDtoType;
+    text: string;
+    sortOrder: number;
+    options: OptionDto[];
+}
+
+export class OptionDto implements IOptionDto {
+    id: number;
+    questionId: number;
+    sortOrder: number;
+    text: string;
+
+    constructor(data?: IOptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.questionId = data["questionId"];
+            this.sortOrder = data["sortOrder"];
+            this.text = data["text"];
+        }
+    }
+
+    static fromJS(data: any): OptionDto {
+        let result = new OptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["questionId"] = this.questionId;
+        data["sortOrder"] = this.sortOrder;
+        data["text"] = this.text;
+        return data; 
+    }
+}
+
+export interface IOptionDto {
+    id: number;
+    questionId: number;
+    sortOrder: number;
+    text: string;
+}
+
 export class QuickBookConnectionLinkResult implements IQuickBookConnectionLinkResult {
     connectionLink: string;
 
@@ -43491,57 +43179,6 @@ export interface IAddTenantSslCertificateInput {
     password: string;
 }
 
-export class ThreadPoolInfo implements IThreadPoolInfo {
-    availableWorkerThreads: number;
-    minWorkerThreads: number;
-    maxWorkerThreads: number;
-    occupiedThreads: number;
-    defaultConnectionLimit: number;
-
-    constructor(data?: IThreadPoolInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.availableWorkerThreads = data["availableWorkerThreads"];
-            this.minWorkerThreads = data["minWorkerThreads"];
-            this.maxWorkerThreads = data["maxWorkerThreads"];
-            this.occupiedThreads = data["occupiedThreads"];
-            this.defaultConnectionLimit = data["defaultConnectionLimit"];
-        }
-    }
-
-    static fromJS(data: any): ThreadPoolInfo {
-        let result = new ThreadPoolInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["availableWorkerThreads"] = this.availableWorkerThreads;
-        data["minWorkerThreads"] = this.minWorkerThreads;
-        data["maxWorkerThreads"] = this.maxWorkerThreads;
-        data["occupiedThreads"] = this.occupiedThreads;
-        data["defaultConnectionLimit"] = this.defaultConnectionLimit;
-        return data; 
-    }
-}
-
-export interface IThreadPoolInfo {
-    availableWorkerThreads: number;
-    minWorkerThreads: number;
-    maxWorkerThreads: number;
-    occupiedThreads: number;
-    defaultConnectionLimit: number;
-}
-
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
     items: NameValueDto[];
 
@@ -45920,6 +45557,49 @@ export interface IGetLatestWebLogsOutput {
     latestWebLogLines: string[];
 }
 
+export class WopiRequestOutcoming implements IWopiRequestOutcoming {
+    accessToken: string;
+    accessTokenTtl: number;
+    wopiUrlsrc: string;
+
+    constructor(data?: IWopiRequestOutcoming) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accessToken = data["accessToken"];
+            this.accessTokenTtl = data["accessTokenTtl"];
+            this.wopiUrlsrc = data["wopiUrlsrc"];
+        }
+    }
+
+    static fromJS(data: any): WopiRequestOutcoming {
+        let result = new WopiRequestOutcoming();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accessToken"] = this.accessToken;
+        data["accessTokenTtl"] = this.accessTokenTtl;
+        data["wopiUrlsrc"] = this.wopiUrlsrc;
+        return data; 
+    }
+}
+
+export interface IWopiRequestOutcoming {
+    accessToken: string;
+    accessTokenTtl: number;
+    wopiUrlsrc: string;
+}
+
 export enum InstanceType {
     User = <any>"User", 
     Main = <any>"Main", 
@@ -46360,6 +46040,21 @@ export enum InstanceType80 {
     Main = <any>"Main", 
 }
 
+export enum InstanceType81 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType82 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType83 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum SalesSummaryDatePeriod {
     _1 = 1, 
     _2 = 2, 
@@ -46391,17 +46086,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType81 {
+export enum InstanceType84 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType82 {
+export enum InstanceType85 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
 
-export enum InstanceType83 {
+export enum InstanceType86 {
     User = <any>"User", 
     Main = <any>"Main", 
 }
@@ -46615,56 +46310,6 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     NoPayment = <any>"NoPayment", 
 }
 
-export enum HttpResponseMessageStatusCode {
-    _100 = 100, 
-    _101 = 101, 
-    _200 = 200, 
-    _201 = 201, 
-    _202 = 202, 
-    _203 = 203, 
-    _204 = 204, 
-    _205 = 205, 
-    _206 = 206, 
-    _300 = 300, 
-    _300 = 300, 
-    _301 = 301, 
-    _301 = 301, 
-    _302 = 302, 
-    _302 = 302, 
-    _303 = 303, 
-    _303 = 303, 
-    _304 = 304, 
-    _305 = 305, 
-    _306 = 306, 
-    _307 = 307, 
-    _307 = 307, 
-    _400 = 400, 
-    _401 = 401, 
-    _402 = 402, 
-    _403 = 403, 
-    _404 = 404, 
-    _405 = 405, 
-    _406 = 406, 
-    _407 = 407, 
-    _408 = 408, 
-    _409 = 409, 
-    _410 = 410, 
-    _411 = 411, 
-    _412 = 412, 
-    _413 = 413, 
-    _414 = 414, 
-    _415 = 415, 
-    _416 = 416, 
-    _417 = 417, 
-    _426 = 426, 
-    _500 = 500, 
-    _501 = 501, 
-    _502 = 502, 
-    _503 = 503, 
-    _504 = 504, 
-    _505 = 505, 
-}
-
 export enum GetStatusOutputStatus {
     NotInitialized = <any>"NotInitialized", 
     Active = <any>"Active", 
@@ -46793,6 +46438,10 @@ export enum ExecutePaymentDtoEditionPaymentType {
 export enum ExecutePaymentDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum QuestionDtoType {
+    _0 = 0, 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
