@@ -21488,6 +21488,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     date: moment.Moment;
     cashflowTypeId: string;
     categoryId: number;
+    descriptor: string;
     bankName: string;
     accountId: number;
     accountName: string;
@@ -21517,6 +21518,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
+            this.descriptor = data["descriptor"];
             this.bankName = data["bankName"];
             this.accountId = data["accountId"];
             this.accountName = data["accountName"];
@@ -21545,6 +21547,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
+        data["descriptor"] = this.descriptor;
         data["bankName"] = this.bankName;
         data["accountId"] = this.accountId;
         data["accountName"] = this.accountName;
@@ -21567,6 +21570,7 @@ export interface ICashFlowStatsDetailDto {
     date: moment.Moment;
     cashflowTypeId: string;
     categoryId: number;
+    descriptor: string;
     bankName: string;
     accountId: number;
     accountName: string;

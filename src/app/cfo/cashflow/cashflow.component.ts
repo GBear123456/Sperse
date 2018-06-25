@@ -1019,7 +1019,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.cashflowTypes = this.initialData.cashflowTypes;
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
-        this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y));
+        this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y), []);
         this.activeBankAccounts = this.bankAccounts.filter(b => b.isActive);
         this.createFilters(initialDataResult, bankAccounts);
         this.setupFilters(this.filters);
@@ -3493,10 +3493,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 /** To update local data */
                 if (isHorizontalCopying) {
                     target.subCategoryId = transaction.categoryId;
-                    target.transactionDescriptor = transaction.description;
+                    target.transactionDescriptor = transaction.descriptor;
                 }
                 /** Get target descriptor or if we copy to category - get transaction description */
-                target.transactionDescriptor = target.transactionDescriptor || transaction.description;
+                target.transactionDescriptor = target.transactionDescriptor || transaction.descriptor;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
