@@ -2193,10 +2193,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getDataItemsByCell(cellObj): TransactionStatsDtoExtended[] {
         return this.cashflowData.filter(cashflowItem => {
-            let rowPathPropertyName = 'rowPath' || 'path';
-            let columnPathPropertyName = 'columnPath' || 'path';
+            let rowPathPropertyName = cellObj.area === 'data' ? 'rowPath' : 'path';
+            let columnPathPropertyName = cellObj.area === 'data' ? 'columnPath' : 'path';
             return cashflowItem.amount &&
-                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => fieldValue === cashflowItem[`level${index}`])) &&
+                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => !fieldValue || fieldValue === cashflowItem[`level${index}`])) &&
                    (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
@@ -3369,8 +3369,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 },
                 e => { console.log(e); this.notify.error(e); },
                 () => {
-                    this.updateDataSource();
-                    this.notify.success(this.l('Cell_moved'));
+                    this.updateDataSource()
+                        .then(() => {
+                            this.notify.success(this.l('Cell_moved'));
+                        });
                 }
             );
         }
@@ -4091,8 +4093,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             if (copyItemsModels && copyItemsModels.forecasts && copyItemsModels.forecasts.length) {
                                 let localItems = this.getDataItemsByCell(sourceCellObject);
                                 this.createForecastsFromCopiedItems(res, copyItemsModels.forecasts, sourceCellInfo);
-                                this.updateDataSource();
-                                this.notify.success(this.l('Cell_pasted'));
+                                this.updateDataSource()
+                                    .then(() => {
+                                        this.notify.success(this.l('Cell_pasted'));
+                                    });
                             }
                         }
                     );
@@ -4100,13 +4104,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    updateDataSource() {
+    updateDataSource(): Promise<any> & JQueryPromise<any> {
         this.treePathes = {};
         this.cashflowData.forEach(item => this.updateTreePathes(item));
         this.getUserPreferencesForCell.cache = {};
         this.getCellOptionsFromCell.cache = {};
         this.getNewTextWidth.cache = {};
-        this.pivotGrid.instance.getDataSource().reload();
+        return this.pivotGrid.instance.getDataSource().reload();
     }
 
     /**
@@ -4213,13 +4217,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                                     }));
 
                                                 this.updateTreePathes(item, true);
-
                                             });
                                         });
                                     });
 
-                                    this.updateDataSource();
-                                    this.notify.success(this.l('Forecasts_deleted'));
+                                    this.updateDataSource()
+                                        .then(() => {
+                                            this.notify.success(this.l('Forecasts_deleted'));
+                                        });
                                 });
                         }
                     }
@@ -4464,9 +4469,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         forecastId: res
                     }, savedCellObj.cell.rowPath));
                     this.getApiDataSource();
-                    this.pivotGrid.instance.getDataSource().reload();
-                    this.notify.success(this.l('Forecasts_added'));
-                    abp.ui.clearBusy();
+                    this.pivotGrid.instance.getDataSource().reload()
+                        .then(() => {
+                            this.notify.success(this.l('Forecasts_added'));
+                            abp.ui.clearBusy();
+                        });
+
                 });
         }
         this.removeModifyingCellNumberBox();
@@ -5638,8 +5646,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     ).subscribe(res => {
                         this.deleteStatsFromCashflow('amount', 0, record.forecastId, record.forecastDate, false);
                         this.getCellOptionsFromCell.cache = {};
-                        this.pivotGrid.instance.getDataSource().reload();
-                        abp.ui.clearBusy();
+                        this.pivotGrid.instance.getDataSource().reload()
+                            .then(() => { abp.ui.clearBusy(); });
                         this.statsDetailResult.every((v, index) => {
                             if (v.forecastId == record.forecastId) {
                                 this.statsDetailResult.splice(index, 1);
