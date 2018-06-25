@@ -20,6 +20,12 @@ export class CashflowService {
      */
     getCategorizationFromForecastAndTarget(source: CellInfo, target: CellInfo, subCategoryIsCategory = true) {
 
+        let categorization = {};
+        if (this.isUnclassified(target)) {
+            categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = target.cashflowTypeId;
+            return categorization;
+        }
+
         let cashflowTypeId = target.cashflowTypeId != source.cashflowTypeId ? target.cashflowTypeId : source.cashflowTypeId;
         let accountingTypeId = target.accountingTypeId && target.accountingTypeId != source.accountingTypeId ? target.accountingTypeId : source.accountingTypeId;
         let subCategoryId;
@@ -28,7 +34,7 @@ export class CashflowService {
         }
         let categoryId = target.categoryId && target.categoryId != source.categoryId ? target.categoryId : source.categoryId;
         let transactionDescriptor = target.transactionDescriptor && target.transactionDescriptor != source.transactionDescriptor ? target.transactionDescriptor : source.transactionDescriptor;
-        const categorization = {
+        categorization = {
             categoryId: subCategoryIsCategory && subCategoryId ? subCategoryId : categoryId,
             transactionDescriptor: transactionDescriptor,
             accountingTypeId: accountingTypeId
@@ -36,12 +42,14 @@ export class CashflowService {
 
         if (!subCategoryIsCategory) {
             categorization['subCategoryId'] = subCategoryId;
-            categorization['cashflowTypeId'] = cashflowTypeId;
-        } else {
-            /** @todo change when parameters will be the same */
-            categorization['cashFlowTypeId'] = cashflowTypeId;
         }
+
+        categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = cashflowTypeId;
         return categorization;
+    }
+
+    isUnclassified(cell: CellInfo)  {
+        return !cell.accountingTypeId && !cell.categoryId && !cell.subCategoryId && !cell.transactionDescriptor;
     }
 
     isHorizontalCopying(sourceCellObj: any, targetCellObjs: any[]) {
