@@ -153,17 +153,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     viewDocument() {
         this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
-            this.wopiSubmit(response);
+            this.submitWopiRequest(response);
         });
     }
 
     editDocument() {
         this._wopiService.getEditRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
-            this.wopiSubmit(response);
+            this.submitWopiRequest(response);
         });
     }
 
-    wopiSubmit(wopiRequestInfo: WopiRequestOutcoming) {
+    submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
         let formData = new FormData();
         formData.append('accessToken', wopiRequestInfo.accessToken);
         formData.append('accessTokenTtl', wopiRequestInfo.accessTokenTtl.toString());
