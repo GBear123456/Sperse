@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
-import { BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { BankAccountDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 
@@ -48,7 +48,7 @@ export class CashflowService {
         return categorization;
     }
 
-    isUnclassified(cell: CellInfo)  {
+    isUnclassified(cell: CellInfo): boolean {
         return !cell.accountingTypeId && !cell.categoryId && !cell.subCategoryId && !cell.transactionDescriptor;
     }
 
@@ -125,6 +125,10 @@ export class CashflowService {
         const allowedForecastsInterval = this.getAllowedForecastsInterval(futureForecastsYearCount);
         return cellInterval.endDate.isBefore(allowedForecastsInterval.endDate) ||
                cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
+    }
+
+    isSubCategory(categoryId: number, categoryTree: GetCategoryTreeOutput): boolean {
+        return !!categoryTree.categories[categoryId].parentId;
     }
 
 }

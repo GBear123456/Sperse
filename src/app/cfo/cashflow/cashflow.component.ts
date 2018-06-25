@@ -3492,8 +3492,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 };
                 /** To update local data */
                 if (isHorizontalCopying) {
-                    target.subCategoryId = transaction.categoryId;
                     target.transactionDescriptor = transaction.descriptor;
+                    if (this.cashflowService.isSubCategory(transaction.categoryId, this.categoryTree)) {
+                        target.subCategoryId = transaction.categoryId;
+                    }
                 }
                 /** Get target descriptor or if we copy to category - get transaction description */
                 target.transactionDescriptor = target.transactionDescriptor || transaction.descriptor;
