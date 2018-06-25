@@ -5,7 +5,7 @@
             <h3>{{l('Sync_status')}}</h3>
             <dx-progress-bar #progressBar
                              id="progress-bar-status"
-                             width="162"
+                             width="200"
                              [ngClass]="{'error': hasFailedAccounts, 'complete': progressBar.value == maxValue }"
                              [min]="0"
                              [max]="100"
