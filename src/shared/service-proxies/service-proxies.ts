@@ -8535,7 +8535,7 @@ export class DashboardServiceProxy {
 }
 
 @Injectable()
-export class DocumentsServiceProxy {
+export class DocumentServiceProxy {
     private http: Http;
     private baseUrl: string;
     protected jsonParseReviver: (key: string, value: any) => any = undefined;
@@ -8548,8 +8548,8 @@ export class DocumentsServiceProxy {
     /**
      * @return Success
      */
-    getDocuments(customerId: number): Observable<DocumentInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Documents/GetDocuments?";
+    getAll(customerId: number): Observable<DocumentInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/GetAll?";
         if (customerId === undefined || customerId === null)
             throw new Error("The parameter 'customerId' must be defined and cannot be null.");
         else
@@ -8565,11 +8565,11 @@ export class DocumentsServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processGetDocuments(response_);
+            return this.processGetAll(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processGetDocuments(response_);
+                    return this.processGetAll(response_);
                 } catch (e) {
                     return <Observable<DocumentInfo[]>><any>Observable.throw(e);
                 }
@@ -8578,7 +8578,7 @@ export class DocumentsServiceProxy {
         });
     }
 
-    protected processGetDocuments(response: Response): Observable<DocumentInfo[]> {
+    protected processGetAll(response: Response): Observable<DocumentInfo[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -8603,8 +8603,8 @@ export class DocumentsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    uploadDocument(input: UploadDocumentInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Documents/UploadDocument";
+    upload(input: UploadDocumentInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/Upload";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -8618,11 +8618,11 @@ export class DocumentsServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processUploadDocument(response_);
+            return this.processUpload(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processUploadDocument(response_);
+                    return this.processUpload(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -8631,7 +8631,7 @@ export class DocumentsServiceProxy {
         });
     }
 
-    protected processUploadDocument(response: Response): Observable<void> {
+    protected processUpload(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};

@@ -6,7 +6,7 @@ import { FileSystemFileEntry } from 'ngx-file-drop';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
-import { CustomersServiceProxy, CustomerInfoDto, DocumentsServiceProxy, UploadDocumentInput,
+import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
     DocumentInfo, WopiServiceProxy, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
 
@@ -20,7 +20,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentsServiceProxy, WopiServiceProxy ]
+    providers: [ DocumentServiceProxy, WopiServiceProxy ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -42,7 +42,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        private _documentsService: DocumentsServiceProxy,
+        private _documentService: DocumentServiceProxy,
         private _customerService: CustomersServiceProxy,
         private _wopiService: WopiServiceProxy,
         private http: Http,
@@ -74,7 +74,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     loadDocuments() {
-        this._documentsService.getDocuments(this.data.customerInfo.id).subscribe((result) => {
+        this._documentService.getAll(this.data.customerInfo.id).subscribe((result) => {
             this.dataSource = result;
         });
     }
@@ -122,7 +122,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         fileEntry.file((file: File) => {
         let myReader: FileReader = new FileReader();
         myReader.onloadend = (loadEvent: any) => {
-            this._documentsService.uploadDocument(UploadDocumentInput.fromJS({
+            this._documentService.upload(UploadDocumentInput.fromJS({
                 customerId: this.data.customerInfo.id,
                 fileName: file.name,
                 size: file.size,
