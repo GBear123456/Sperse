@@ -31,7 +31,6 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     ngOnInit() {
         this._authService.logout(false);
-
         this.model.leadRequestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
         this.registerTenant();
     }
@@ -41,10 +40,8 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
     }
 
     registerTenant(): void {
-
         this.model.adminPassword = this.generatePassword();
         this.model.tenantHostType = <any>TenantHostType.PlatformUi;
-
         this.saving = true;
         this.startLoading(true);
         this._tenantRegistrationService.completeTenantRegistration(this.model)

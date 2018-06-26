@@ -1,10 +1,19 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
-    <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-lists-list>
-    <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-user-assignment-list>
-    <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-rating>
-    <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"></crm-stars-list>
+    <crm-static-list 
+        [width]="'210px'"
+        [title]="l('Stages')"
+        [selectedKeys]="selectedClientKeys" 
+        [filterModel]="filterModelStages" 
+        [targetSelector]="'[aria-label=Stage]'" 
+        [list]="stages" 
+        (onItemSelected)="updateLeadsStage($event)">
+    </crm-static-list>
+    <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
+    <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelAssignment"></crm-user-assignment-list>
+    <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
+    <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
     <div [hidden]="(isDataLoaded && !totalRowCount) || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
@@ -18,8 +27,8 @@
                                 [pager]="defaultGridPagerConfig"
                                 (onContentReady)="onContentReady($event)"
                                 (onCellClick)="onCellClick($event)"
-                                (onEditingStart)="showLeadDetails($event)"                    
-                                (onSelectionChanged)="onSelectionChanged($event)"                
+                                (onEditingStart)="showLeadDetails($event)"
+                                (onSelectionChanged)="onSelectionChanged($event)"
                                 (onDataErrorOccurred)="httpConfig.handleError($event.error)">
                         <dxo-selection
                             selectAllMode="page"
@@ -28,7 +37,16 @@
                         </dxo-selection>
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
-                        <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" sortOrder="desc"></dxi-column>
+                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <div *dxTemplate="let data of 'photoTemplate'">
+                            <img [src]="getPhoto(data.data.Photo)"
+                                alt="{{l('AltPersonPhoto')}}"
+                                width="38"
+                                class="img-circle" />
+                        </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
                         <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
@@ -41,13 +59,13 @@
                         <dxi-column dataField="CampaignCode" caption="{{l('CampaignCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="ChannelCode" caption="{{l('ChannelCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="EntryUrl" caption="{{l('EntryUrl')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="LastModificationTime" caption="{{l('ModificationDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="StreetAddress" caption="{{l('Contact.StreetAddress')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Zip" caption="{{l('Contact.Zip')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="Zip" caption="{{l('Contact.Zip')}}" [visible]="false" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="Website" caption="{{l('Website')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="Title" caption="{{l('Title')}}" [visible]="false"></dxi-column>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}
@@ -70,6 +88,7 @@
                     <app-pipeline 
                         [dataSource]="pipelineDataSource" 
                         [pipelinePurposeId]="pipelinePurposeId" 
+                        [(selectedLeads)]="selectedLeads"
                         (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
                     </app-pipeline>

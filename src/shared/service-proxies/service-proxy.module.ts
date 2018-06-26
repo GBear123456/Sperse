@@ -11,7 +11,6 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.EditionServiceProxy,
         ApiServiceProxies.FriendshipServiceProxy,
         ApiServiceProxies.HostSettingsServiceProxy,
-        ApiServiceProxies.InstallServiceProxy,
         ApiServiceProxies.LanguageServiceProxy,
         ApiServiceProxies.NotificationServiceProxy,
         ApiServiceProxies.OrganizationUnitServiceProxy,
@@ -32,10 +31,8 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.TenantRegistrationServiceProxy,
         ApiServiceProxies.HostDashboardServiceProxy,
         ApiServiceProxies.PaymentServiceProxy,
-        ApiServiceProxies.DemoUiComponentsServiceProxy,
         ApiServiceProxies.InvoiceServiceProxy,
         ApiServiceProxies.SubscriptionServiceProxy,
-        ApiServiceProxies.InstallServiceProxy,
         ApiServiceProxies.UiCustomizationSettingsServiceProxy
     ]
 })

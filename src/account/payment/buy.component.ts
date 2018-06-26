@@ -1,10 +1,9 @@
-import { Component, Injector, OnInit, ComponentFactoryResolver, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 
 import {
     EditionSelectDto,
-    PaymentServiceProxy,
     TenantRegistrationServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import {
@@ -12,7 +11,7 @@ import {
     SubscriptionPaymentGatewayType,
     EditionPaymentType
 } from '@shared/AppEnums';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     templateUrl: './buy.component.html',
@@ -31,11 +30,7 @@ export class BuyComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _activatedRoute: ActivatedRoute,
-        private _router: Router,
-        private _paymentAppService: PaymentServiceProxy,
-        private _tenantRegistrationService: TenantRegistrationServiceProxy,
-        private vcRef: ViewContainerRef,
-        private _componentFactoryResolver: ComponentFactoryResolver
+        private _tenantRegistrationService: TenantRegistrationServiceProxy
     ) {
         super(injector);
     }

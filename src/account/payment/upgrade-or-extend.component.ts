@@ -5,7 +5,6 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import {
     EditionSelectDto,
     PaymentServiceProxy,
-    TenantRegistrationServiceProxy,
     PaymentInfoDto
 } from '@shared/service-proxies/service-proxies';
 import {
@@ -35,8 +34,7 @@ export class UpgradeOrExtendComponent extends AppComponentBase implements OnInit
     constructor(
         injector: Injector,
         private _activatedRoute: ActivatedRoute,
-        private _paymentAppService: PaymentServiceProxy,
-        private _tenantRegistrationService: TenantRegistrationServiceProxy
+        private _paymentAppService: PaymentServiceProxy
     ) {
         super(injector);
     }

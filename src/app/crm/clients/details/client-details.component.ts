@@ -10,7 +10,7 @@ import {
     StageDto,
     LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -18,6 +18,7 @@ import { VerificationChecklistItemType, VerificationChecklistItem, VerificationC
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { ClientDetailsService } from './client-details.service';
+import { CacheService } from 'ng2-cache-service';
 
 import * as _ from 'underscore';
 
@@ -39,36 +40,48 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     leadId: number;
     leadInfo: LeadInfoDto;
     leadStages = [];
+    configMode: boolean;
 
     private initialData: string;
 
     navLinks = [
-        {'label': 'Contact Information', 'route': 'contact-information', active: true},
-        {'label': 'Lead Information', 'route': 'lead-information', active: true},
-        {'label': 'Questionnaire', 'route': 'questionnaire', active: true},
-        {'label': 'Documents', 'route': 'required-documents', active: true},
-        {'label': 'Application Status', 'route': 'application-status', active: true},
-        {'label': 'Referral History', 'route': 'referal-history', active: true},
-        {'label': 'Payment Information', 'route': 'payment-information', active: true},
-        {'label': 'Activity Logs', 'route': 'activity-logs', active: true},
-        {'label': 'Notes', 'route': 'notes', active: true}
+        {'label': 'Contact Information', 'route': 'contact-information'},
+        {'label': 'Lead Information', 'route': 'lead-information'},
+        {'label': 'Questionnaire', 'route': 'questionnaire'},
+        {'label': 'Documents', 'route': 'documents'},
+        {'label': 'Application Status', 'route': 'application-status', 'hiddenForLeads': true},
+        {'label': 'Referral History', 'route': 'referral-history'},
+        {'label': 'Payment Information', 'route': 'payment-information', 'hiddenForLeads': true},
+        {'label': 'Activity Logs', 'route': 'activity-logs'},
+        {'label': 'Notes', 'route': 'notes'}
     ];
+
+    rightPanelSetting: any = {
+        clientScores: true,
+        totalApproved: true,
+        verification: true,
+        opened: true
+    };
 
     private rootComponent: any;
     private paramsSubscribe: any = [];
     private referrerParams;
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
+    private readonly LOCAL_STORAGE = 0;
+
     constructor(injector: Injector,
                 private _router: Router,
                 private _dialog: MatDialog,
                 private _route: ActivatedRoute,
+                private _cacheService: CacheService,
                 private _customerService: CustomersServiceProxy,
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
                 private _clientDetailsService: ClientDetailsService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
+        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
         _customerService['data'] = {customerInfo: null, leadInfo: null};
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
@@ -106,6 +119,16 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         _clientDetailsService.verificationSubscribe(
             this.initVerificationChecklist.bind(this)
         );
+        let optionTimeout = null;
+        this._router.events.subscribe((event) => {
+            if(event instanceof ActivationEnd && !optionTimeout)
+                optionTimeout = setTimeout(() => {
+                    optionTimeout = null;
+                    let data = event.snapshot.data;
+                    this.rightPanelSetting.opened = data.hasOwnProperty(
+                        'rightPanelOpened') ? data.rightPanelOpened: true;
+                });
+        });
     }
 
     private fillCustomerDetails(result) {
@@ -232,6 +255,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     ngOnInit() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
+
+        let key = this.getCacheKey(abp.session.userId);
+        if (this._cacheService.exists(key))
+            this.rightPanelSetting = this._cacheService.get(key);
     }
 
     ngOnDestroy() {
@@ -290,5 +317,17 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         this.toolbarComponent.refresh();
         $event.event.stopPropagation();
+    }
+
+    toggleConfigMode() {
+        this.configMode = !this.configMode;
+    }
+
+    toggleSectionVisibility(event, section) {
+        event.stopPropagation();
+
+        this.rightPanelSetting[section] = event.target.checked;
+        this._cacheService.set(this.getCacheKey(
+            abp.session.userId), this.rightPanelSetting);
     }
 }

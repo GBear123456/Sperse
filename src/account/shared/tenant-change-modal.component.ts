@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Injector, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ModalDirective } from 'ngx-bootstrap';
 import { AccountServiceProxy } from '@shared/service-proxies/service-proxies';

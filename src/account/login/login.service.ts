@@ -6,6 +6,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppConsts } from '@shared/AppConsts';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 import { MessageService } from '@abp/message/message.service';
 import { LogService } from '@abp/log/log.service';
@@ -67,13 +68,15 @@ export class LoginService {
         private _messageService: MessageService,
         private _tokenService: TokenService,
         private _logService: LogService,
-        private _accountService: AccountServiceProxy
+        private _accountService: AccountServiceProxy,
+        private _authService: AppAuthService
     ) {
         this.clear();
     }
 
     authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {
         finallyCallback = finallyCallback || (() => { });
+        this._authService.stopTokenCheck();
 
         //We may switch to localStorage instead of cookies
         this.authenticateModel.twoFactorRememberClientToken = this._utilsService.getCookieValue(LoginService.twoFactorRememberClientTokenName);
@@ -86,6 +89,7 @@ export class LoginService {
             .finally(finallyCallback)
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
+                this._authService.startTokenCheck();
             });
     }
 
@@ -117,6 +121,7 @@ export class LoginService {
 
     externalAuthenticate(provider: ExternalLoginProvider): void {
         this.ensureExternalLoginProviderInitialized(provider, () => {
+            this._authService.stopTokenCheck();
             if (provider.name === ExternalLoginProvider.FACEBOOK) {
                 FB.login(response => {
                     this.facebookLoginStatusChangeCallback(response);
@@ -128,11 +133,12 @@ export class LoginService {
                     scope: ['wl.signin', 'wl.basic', 'wl.emails']
                 });
             }
+            this._authService.startTokenCheck();
         });
     }
 
     init(): void {
-        this.initExternalLoginProviders();
+        //this.initExternalLoginProviders();
     }
 
     private processAuthenticateResult(authenticateResult: AuthenticateResultModel, redirectUrl?: string) {
@@ -168,7 +174,7 @@ export class LoginService {
                 authenticateResult.encryptedAccessToken,
                 authenticateResult.expireInSeconds,
                 this.rememberMe,
-                authenticateResult.twoFactorRememberClientToken, 
+                authenticateResult.twoFactorRememberClientToken,
                 redirectUrl
             );
 
@@ -209,8 +215,9 @@ export class LoginService {
             );
         }
 
-        redirectUrl = redirectUrl || 
-            sessionStorage.getItem('redirectUrl');
+        abp.multiTenancy.setTenantIdCookie();
+
+        redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
             sessionStorage.removeItem('redirectUrl');
             location.href = redirectUrl;
@@ -230,7 +237,6 @@ export class LoginService {
         this.authenticateModel.rememberClient = false;
         this.authenticateResult = null;
         this.rememberMe = false;
-
         this.resetPasswordModel = null;
         this.resetPasswordResult = null;
     }
@@ -261,7 +267,7 @@ export class LoginService {
                 FB.getLoginStatus(response => {
                     this.facebookLoginStatusChangeCallback(response);
                     if (response.status !== 'connected') {
-                        callback();     
+                        callback();
                     }
                 });
             });
@@ -304,7 +310,7 @@ export class LoginService {
             model.providerKey = resp.authResponse.userID;
             model.singleSignIn = UrlHelper.getSingleSignIn();
             model.returnUrl = UrlHelper.getReturnUrl();
-            
+
             this._tokenAuthService.externalAuthenticate(model)
                 .subscribe((result: ExternalAuthenticateResultModel) => {
                     if (result.waitingForActivation) {

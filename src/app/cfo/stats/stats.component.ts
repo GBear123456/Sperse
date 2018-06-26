@@ -11,7 +11,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
-
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import { DxChartComponent } from 'devextreme-angular';
@@ -22,7 +22,6 @@ import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/sy
 
 import {
     StatsFilter,
-    CashflowServiceProxy,
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
     GroupBy,
@@ -39,7 +38,7 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ CashflowServiceProxy, BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService, StatsService],
+    'providers': [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService, StatsService],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })
@@ -157,12 +156,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         injector: Injector,
         private _appService: AppService,
         private _filtersService: FiltersService,
-        private _cashflowService: CashflowServiceProxy,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _statsService: StatsService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
         this._appService.narrowingPageContentWhenFixedFilter = false;
@@ -222,6 +221,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
+                            adaptive: false,
                             onSelectionChanged: (e) => {
                                 if (e) {
                                     this.changeSelectedForecastModel(e);
@@ -379,12 +379,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     setBankAccountCount(bankAccountIds, visibleAccountCount) {
-        if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = '';
-        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
-            this.bankAccountCount = bankAccountIds.length;
-        else
-            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
+        this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     }
 
     /** Recalculates the height of the charts to squeeze them both into the window to avoid scrolling */
@@ -488,9 +483,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             accountIds,
             startDate,
             endDate,
-            undefined,
-            GroupBy.Monthly,
-            false
+            GroupBy.Monthly
         ).subscribe(result => {
             if (result) {
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
@@ -528,7 +521,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     getUpdatedDataSource() {
-        this.loadStatsData();
+        this.bankAccountSelector.getBankAccounts(true);
     }
 
     ngAfterViewInit(): void {
@@ -607,15 +600,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (!accountFilter) {
-            setTimeout(() => {
-                this.setBankAccountsFilter(data);
-            }, 300);
+            setTimeout(() => { this.setBankAccountsFilter(data); }, 300);
         } else {
-            if (data.bankAccountIds) {
-                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
-            } else {
-                accountFilter.items['element'].setValue([], accountFilter);
-            }
+            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.bankAccountSelector.initDataSource);
             this.visibleAccountCount = data.visibleAccountCount;
             this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this._filtersService.change(accountFilter);
@@ -767,9 +754,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.setupFilters();
         this.initFiltering();
         this.bankAccountSelector.handleSelectedBankAccounts();
-        if (this.synchProgressComponent.completed) {
-            this.synchProgressComponent.getSynchProgressAjax();
-        }
+        this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
 

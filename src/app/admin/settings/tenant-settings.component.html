@@ -255,7 +255,10 @@
                         </div>
                         <div class="form-group" *ngIf="!setRandomPassword" [hidden]="settings.email.smtpUseDefaultCredentials">
                             <label>{{l("Password")}}</label>
-                            <input type="password" name="SmtpPassword" class="form-control" [ngClass]="{'edited':settings.email.smtpPassword}" [(ngModel)]="settings.email.smtpPassword" maxlength="128">
+                            <input type="text" class="hidden-field">
+                            <input type="password" class="hidden-field">
+                            <input type="password" name="SmtpPassword" class="form-control" [ngClass]="{'edited':settings.email.smtpPassword}" [(ngModel)]="settings.email.smtpPassword"
+                                   maxlength="128" autocomplete="off">
                         </div>
                         <hr />
                         <h5>{{l("TestEmailSettingsHeader")}}</h5>

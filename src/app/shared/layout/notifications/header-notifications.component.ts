@@ -5,6 +5,7 @@ import { UserNotificationHelper, IFormattedUserNotification } from './UserNotifi
 
 @Component({
     templateUrl: './header-notifications.component.html',
+    styleUrls: ['./header-notifications.component.less'],
     selector: '[headerNotifications]',
     encapsulation: ViewEncapsulation.None
 })
@@ -24,6 +25,12 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     ngOnInit(): void {
         this.loadNotifications();
         this.registerToEvents();
+    }
+
+    hideDropDown() {
+        let element: any = $('#header_notification_bar');
+        let dropDown = element.mDropdown();
+        dropDown && dropDown.hide();
     }
 
     loadNotifications(): void {

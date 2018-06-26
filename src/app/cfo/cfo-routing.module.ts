@@ -29,7 +29,7 @@ import { StatementsComponent } from './statements/statements.component';
                             {
                                 path: '',
                                 component: BankAccountsComponent,
-                                data: { permission: '', reuse: true },
+                                data: { permission: '' },
                             },
                             {
                                 path: 'quovo',

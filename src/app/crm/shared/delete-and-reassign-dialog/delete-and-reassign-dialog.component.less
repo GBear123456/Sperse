@@ -1,0 +1,49 @@
+:host {
+    z-index: 2000;
+
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: 0.4px;
+        color: #202b35;
+    }
+
+    md-dialog-actions {
+        justify-content: flex-end;
+        button {
+            outline: none;
+        }
+    }
+
+    dx-check-box.delete-all-refs{
+        padding-bottom: 10px;
+    }
+
+    .assignment-list {
+        h3 {
+            font-size: 16px;
+            line-height: 1.38;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+        }
+
+        dx-radio-group {
+            border-radius: 8px;
+            border: solid 1px #e5e9ec;
+            background-color: #ffffff;
+
+            /deep/ .dx-radiobutton{
+                padding: 2px;
+                padding-left: 5px;
+                .dx-item-content{
+                    font-size: 14px;
+                    letter-spacing: 0.3px;
+                    font-weight: 300;
+                    color: #424c56;
+                }
+            }
+
+        }
+    }
+}

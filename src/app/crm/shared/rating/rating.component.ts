@@ -1,7 +1,7 @@
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, RateCustomerInput, CustomerRatingInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomerRatingsServiceProxy, RateCustomersInput, CustomerRatingInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -10,7 +10,8 @@ import { AppConsts } from '@shared/AppConsts';
   styleUrls: ['./rating.component.less'],
   providers: [CustomerRatingsServiceProxy]
 })
-export class RatingComponent extends AppComponentBase implements OnInit {
+export class RatingComponent extends AppComponentBase implements OnInit, AfterViewInit {
+    @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Rating']";
     @Input() bulkUpdateMode = false;
@@ -26,8 +27,9 @@ export class RatingComponent extends AppComponentBase implements OnInit {
     ratingValue: number;
     ratingStep = 1;
 
-    sliederComponent: any;
+    sliderComponent: any;
     tooltipVisible = false;
+    filtered: boolean = false;
 
     constructor(
         injector: Injector,
@@ -35,27 +37,44 @@ export class RatingComponent extends AppComponentBase implements OnInit {
         private _ratingService: CustomerRatingsServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this._filtersService.localizationSourceName = this.localizationSourceName;
     }
 
     toggle() {
-        this.tooltipVisible = !this.tooltipVisible;
+        if (this.tooltipVisible = !this.tooltipVisible)
+            this.highlightSelectedFilters();
     }
 
     apply(selectedKeys = undefined) {
         this.selectedKeys = selectedKeys || this.selectedKeys;
-        if (this.sliederComponent && this.selectedKeys && this.selectedKeys.length) {
-            this.selectedKeys.forEach((key) => {
-                this._ratingService.rateCustomer(RateCustomerInput.fromJS({
-                    customerId: key,
-                    ratingId: this.ratingValue
-                })).subscribe((result) => {});
-            });
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.ratingValue = this.ratingMin; }, 500);
+        if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
+            if (this.bulkUpdateMode) {
+                this.message.confirm(
+                    this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                    isConfirmed => {
+                        if (isConfirmed)
+                            this.process();
+                        else
+                            this.ratingValue = this.ratingMin;
+                    }
+                );
+            } else
+                this.process();
         }
         this.tooltipVisible = false;
+    }
+
+    process() {
+        this._ratingService.rateCustomers(RateCustomersInput.fromJS({
+            customerIds: this.selectedKeys,
+            ratingId: this.ratingValue
+        })).finally(() => {
+            if (this.bulkUpdateMode)
+                this.ratingValue = this.ratingMin;
+        }).subscribe((result) => {
+            this.notify.success(this.l('CustomersRated'));
+        }, (error) => {
+            this.notify.error(this.l('BulkActionErrorOccured'));
+        });
     }
 
     clear() {
@@ -64,8 +83,41 @@ export class RatingComponent extends AppComponentBase implements OnInit {
         this.ratingValue = this.ratingMin;
     }
 
+    clearFilterHighlight() {
+        this.filtered = false;
+    }
+
+    highlightSelectedFilters() {
+        let filterModelItems = this.filterModel && this.filterModel.items;
+        let filterId = filterModelItems && (filterModelItems.to.value || filterModelItems.from.value);
+        this.clearFilterHighlight();
+        if (this.sliderComponent && filterId) {
+            this.ratingValue = filterId;
+            this.filtered = true;
+        }
+    }
+
+    applyFilter($event) {
+        this.clearFilterHighlight();
+
+        let filterValue = this.ratingValue;
+        let modelItems = this.filterModel.items;
+        if (modelItems.from.value == filterValue && modelItems.to.value == filterValue) {
+            modelItems.from.value = modelItems.to.value = null;
+        }
+        else {
+            modelItems.from.value = modelItems.to.value = filterValue;
+            this.filtered = true;
+        }
+        this._filtersService.change(this.filterModel);
+    }
+
     onInitialized($event) {
-        this.sliederComponent = $event.component;
+        this.sliderComponent = $event.component;
+    }
+
+    ngAfterViewInit(): void {
+        this.highlightSelectedFilters();
     }
 
     ngOnInit() {

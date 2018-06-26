@@ -2,6 +2,27 @@
     position: relative;
     top: 74px;
 
+    &.fullscreen {
+        top: 0px !important;
+        #gridContainer {
+            height: calc(~"100vh - 60px");
+        }
+    }
+
+    /deep/ #gridContainer {
+        .dx-datagrid-rowsview tr td.tabular,
+        .dx-datagrid-rowsview tr td.tabular * {
+            font-family: 'Lato' !important;
+        }
+    }
+
+    .img-circle {
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        background-color: #fff;
+	}
+
     .funnel-wrapper {
         padding: 15px 0px;
         height: calc(~'100vh - 210px');

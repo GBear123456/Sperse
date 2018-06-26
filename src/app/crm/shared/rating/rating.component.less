@@ -2,16 +2,22 @@
     font-size: 15px;
     width: 300px!important;
     height: 150px!important;
-    
+
     .title {
         float: left;
-        font-size: 18px;        
+        font-size: 18px;
         font-weight: 500;
         padding-top: 5px;
     }
-   
+
     .actions {
         padding-bottom: 20px;
+        .actions-wrapper{
+            float: right;
+            .edit-actions{
+                float: left;
+            }
+        }
     }
 
     .filter-apply, .filter-clear {
@@ -22,21 +28,48 @@
         color: #00AEEF;
         padding: 10px 5px;
         float: right;
-        
+
         &:hover {
             color: lighten(#00AEEF, 20%);
         }
-    }        
+    }
 
     /deep/ .dx-widget {
        .dx-placeholder {
             font-weight: 400;
         }
-        .dx-item-content {  
+        .dx-item-content {
             text-align: left;
         }
         .dx-icon-clear {
             right: 0px;
+        }
+    }
+
+    .dx-link {
+        cursor: pointer;
+        width: 22px;
+        height: 22px;
+        color: transparent !important;
+
+        &.dx-link-filter {
+            float: right;
+            margin-top: 3px;
+            width: 30px;
+            height: 30px;
+            background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+
+            &.filtered {
+                &::after {
+                    content: '';
+                    float: right;
+                    display: block;
+                    width: 5px;
+                    height: 5px;
+                    border-radius: 50%;
+                    background: red;
+                }
+            }
         }
     }
 }

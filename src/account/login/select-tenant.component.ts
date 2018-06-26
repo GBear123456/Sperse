@@ -1,11 +1,9 @@
 ﻿import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { Router, CanActivate } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { LoginService } from './login.service';
-import { Observable } from 'rxjs/Rx';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { TenantModel } from "shared/service-proxies/service-proxies";
+import { TenantModel } from 'shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './select-tenant.component.html',

@@ -6,7 +6,7 @@
     <i class="icons type-{{address.usageTypeId || 'H'}}"></i>
     <div class="address">
       <h4>{{types[address.usageTypeId] || l("Undefined")}}</h4>
-      <p *ngIf="!address.inplaceEdit">{{address.streetAddress}}, {{address.city}}, {{address.state}}, {{address.zip}}, {{address.country}}</p>
+      <p *ngIf="!address.inplaceEdit">{{address | address: address.streetAddress:address.city:address.state:address.zip:address.country}}</p>
       <div *ngIf="address.inplaceEdit">
         <input type="text"
           name="Address"

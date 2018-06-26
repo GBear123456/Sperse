@@ -5,7 +5,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { CustomerStatus } from '@shared/AppEnums';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
-import { UploadPhotoDialogComponent } from '@app/crm/shared/upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, CreateContactPhotoInput, 
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, SetupInput, TenantHostType, 
@@ -129,7 +129,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             return {
                 id: contactInfo.id,
                 value: contactInfo.fullName,
-                validationRules: [],
+                validationRules: [
+                    {type: 'required', message: this.l('FullNameIsRequired')},
+                    {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
+                ],
                 isEditDialogEnabled: true,
                 lEntityName: "Name",
                 lEditPlaceholder: 'Enter value'

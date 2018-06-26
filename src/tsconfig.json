@@ -28,5 +28,9 @@
       "./**/*",
       "../node_modules/ng2-google-place-autocomplete/index.ts" 
   ],
-  "exclude": [ "node_modules" ]
+  "exclude": [ 
+      "node_modules",
+      "./account/register/**",
+      "./account/payment/**"
+  ]
 }

@@ -10,6 +10,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { CacheService } from 'ng2-cache-service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
@@ -47,7 +48,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     public headlineConfig;
     private bankAccountCount = '';
     visibleAccountCount = 0;
-    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
+    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [{ text: this.l('Periods_Historical') }], selectedItemIndex: 0 };
     private filters: FilterModel[] = new Array<FilterModel>();
     public sliderReportPeriod = {
         start: null,
@@ -67,7 +68,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Statements')],
-            onRefresh: this.refreshData.bind(this),
+            onRefresh: () => this.bankAccountSelector.getBankAccounts(true),
             iconSrc: 'assets/common/icons/credit-card-icon.svg'
         };
     }
@@ -117,8 +118,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             selectedIndex: this.forecastModelsObj.selectedItemIndex,
                             height: 39,
                             width: 243,
+                            adaptive: false,
                             onSelectionChanged: (e) => {
                                 if (e) {
+                                    this.forecastModelsObj.selectedItemIndex = e.itemIndex;
                                     this.refreshData();
                                 }
                             }
@@ -192,7 +195,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _filtersService: FiltersService,
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
 
@@ -251,11 +255,12 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     handleForecastModelResult(result) {
-        let items = result.map(forecastModelItem => {
-            return {
+        let items = [{ id: undefined, text: this.l('Periods_Historical') }];
+        result.forEach(forecastModelItem => {
+            items.push({
                 id: forecastModelItem.id,
                 text: forecastModelItem.name
-            };
+            });
         });
 
         this.forecastModelsObj = {
@@ -281,9 +286,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.requestFilter.accountIds,
             this.requestFilter.startDate,
             this.requestFilter.endDate,
-            undefined,
-            GroupBy.Monthly,
-            true
+            GroupBy.Monthly
         )
             .finally(() => abp.ui.clearBusy())
             .subscribe(result => {
@@ -314,7 +317,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
                                 currentPeriodTransaction['itemType'] = 'MTD';
                                 currentPeriodForecast['itemType'] = 'Forecast';
-                                clone['sourceData'] = [ currentPeriodTransaction, currentPeriodForecast ];
+                                clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
                                 result.splice(i, 2, clone);
                             }
                         }
@@ -364,12 +367,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     setBankAccountCount(bankAccountIds, visibleAccountCount) {
-        if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = '';
-        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
-            this.bankAccountCount = bankAccountIds.length;
-        else
-            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
+        this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     }
 
     toggleBankAccountTooltip() {
@@ -378,6 +376,17 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     toggleReportPeriodFilter() {
         this.reportPeriodSelector.toggleReportPeriodFilter();
+    }
+
+    onRowPrepared(e) {
+        if (e.rowType == 'data') {
+            if (e.data.date.isSame(moment(), 'month'))
+                e.rowElement.classList.add('current-row');
+            else if (e.data.isForecast)
+                e.rowElement.classList.add('forecast-row');
+            else
+                e.rowElement.classList.add('historical-row');
+        }
     }
 
     expandColapseRow(e) {
@@ -424,15 +433,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
         if (!accountFilter) {
-            setTimeout(() => {
-                this.setBankAccountsFilter(data);
-            }, 300);
+            setTimeout(() => { this.setBankAccountsFilter(data); }, 300);
         } else {
-            if (data.bankAccountIds) {
-                accountFilter.items['element'].setValue(data.bankAccountIds, accountFilter);
-            } else {
-                accountFilter.items['element'].setValue([], accountFilter);
-            }
+            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.bankAccountSelector.initDataSource);
             this.visibleAccountCount = data.visibleAccountCount;
             this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
             this._filtersService.change(accountFilter);
@@ -448,10 +451,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
-        this.getRootComponent().overflowHidden();
+        this.deactivate();
         super.ngOnDestroy();
     }
 
@@ -461,9 +461,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.setup(this.filters);
         this.initFiltering();
         this.bankAccountSelector.handleSelectedBankAccounts();
-        if (this.synchProgressComponent.completed) {
-            this.synchProgressComponent.getSynchProgressAjax();
-        }
+        this.synchProgressComponent.requestSyncAjax();
         this.getRootComponent().overflowHidden(true);
     }
 

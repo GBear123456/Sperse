@@ -18,7 +18,7 @@ export class RootComponent implements AfterViewInit {
                 private hostElement: ElementRef,
                 private _uiCustomizationService: AppUiCustomizationService,
                 private title: Title
-    ) { 
+    ) {
         this.pageHeaderFixed(true);
     }
 

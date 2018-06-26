@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { LoginService } from './login/login.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -45,10 +44,6 @@ export class AccountComponent extends AppComponentBase implements OnInit {
         }
 
         return false;
-    }
-
-    useFullWidthLayout(): boolean {
-        return this._router.url.indexOf('/account/select-edition') >= 0;
     }
 
     ngOnInit(): void {

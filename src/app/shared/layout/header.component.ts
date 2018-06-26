@@ -1,7 +1,6 @@
 import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import {
     ProfileServiceProxy,
     UserLinkServiceProxy,
@@ -25,8 +24,9 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { SubscriptionStartType, EditionPaymentType } from '@shared/AppEnums';
+import { EditionPaymentType } from '@shared/AppEnums';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { UserHelper } from '../helpers/UserHelper';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -64,16 +64,13 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-    subscriptionStartType = SubscriptionStartType;
     editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
 
     constructor(
         injector: Injector,
         private _abpSessionService: AbpSessionService,
-        private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
-        private _userServiceProxy: UserServiceProxy,
         private _authService: AppAuthService,
         private _impersonationService: ImpersonationService,
         private _linkedAccountService: LinkedAccountService,
@@ -143,11 +140,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
-        if (!this._abpMultiTenancyService.isEnabled) {
-            return linkedUser.username;
-        }
-
-        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
+        return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
     }
 
     getProfilePicture(): void {

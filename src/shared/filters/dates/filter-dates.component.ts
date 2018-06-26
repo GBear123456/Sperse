@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../models/filter-component';
+import * as _ from 'underscore.string';
 
 @Component({
     templateUrl: './filter-dates.component.html',
@@ -33,7 +34,7 @@ export class FilterDatesComponent extends AppComponentBase implements OnInit, Fi
         return field.value.length;
     }
 
-    checkMask(mask: string, value: string){
+    checkMask(mask: string, value: string) {
         return (value + mask.slice(value.length)).match(
             /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/
         );
@@ -41,9 +42,7 @@ export class FilterDatesComponent extends AppComponentBase implements OnInit, Fi
 
     validateDate(event) {
         event = event.jQueryEvent.originalEvent;
-        let value = require('underscore.string/splice')(event.target.value,
-                this.getCaretPosition(event.target), 0, event.key);
-
+        let value = _.splice(event.target.value, this.getCaretPosition(event.target), 0, event.key);
         if (['ArrowRight', 'ArrowLeft', 'Backspace', 'Delete', 'Tab'].indexOf(event.key) >= 0)
             return;
 

@@ -26,11 +26,13 @@ export class ToolBarComponent extends AppComponentBase {
     public showAdaptiveToolbar: boolean;
     private supportedButtons = {
         search: {
-            accessKey: 'search'
+            accessKey: 'search',
+            adaptive: false
         },
         filters: {
             hint: this.l('Filters'),
-            accessKey: 'filters'
+            accessKey: 'filters',
+            adaptive: false
         },
         expandTree: {
             text: this.l('Expand'),
@@ -283,7 +285,7 @@ export class ToolBarComponent extends AppComponentBase {
                     link, item.options['width']);
                 link.onClick = (event) => {
                     if (item.name == 'select-box')
-                        $('.dx-dropdownmenu-button[select-caption^="' + item.text + '"]')
+                        $('.dx-dropdownmenu-button[select-caption="' + item.text + '"]')
                             .attr('select-value', event.itemData.text);
                     /** if each item has its own click handler - call it */
                     (link.action && link.action.call(this, this.getOptions() || event)) ||
@@ -301,14 +303,10 @@ export class ToolBarComponent extends AppComponentBase {
             let count = group.items.length;
             group.items.forEach((item, index) => {
                 this.initDropDownMenu(item);
-                if ((item.name && item.name == 'filters') || (item.name && item.name == 'search')) {
-                    item.adaptive = false;
-                }
                 let isLast = count == index + 1;
                 let internalConfig = this.supportedButtons[item.name];
                 let mergedConfig = _.extend(internalConfig || {}, item.options);
-
-                if (item.adaptive === false || !this.showAdaptiveToolbar) {
+                if (mergedConfig.adaptive === false || !this.showAdaptiveToolbar) {
                     items.push({
                         location: group.location,
                         disabled: item.disabled,
@@ -328,7 +326,7 @@ export class ToolBarComponent extends AppComponentBase {
                         }, mergedConfig)
                     });
                 }
-                if (this.showAdaptiveToolbar && item.adaptive !== false) {
+                if (this.showAdaptiveToolbar && mergedConfig.adaptive !== false) {
                     let responsiveSubitems;
                     if (item.options && item.options.items) {
                         /** clone array */

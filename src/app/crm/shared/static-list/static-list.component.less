@@ -1,0 +1,109 @@
+.lists-tooltip-container {
+    font-size: 15px;
+    overflow: hidden;
+    
+    .title {
+        float: left;
+        font-size: 18px;        
+        font-weight: 500;
+        padding-top: 5px;
+    }
+   
+    .filter-apply, .filter-clear {
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #00AEEF;
+        padding: 10px 5px;
+        float: right;
+        
+        &:hover {
+            color: lighten(#00AEEF, 20%);
+        }
+    }        
+
+    /deep/ .dx-widget {
+       .dx-placeholder {
+            font-weight: 400;
+        }
+        .dx-item-content {  
+            text-align: left;
+        }
+        .dx-icon-clear {
+            right: 0px;
+        }
+
+        .dx-list-item.filtered {
+            background-color: #effafe!important;
+        }
+
+        .dx-list-item.dx-state-focused {
+            background-color: #FFF;
+            color: #333;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;            
+
+            a.dx-link-filter {
+                width: 30px;
+                background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+            }
+
+            &.new,
+            &.unreachable,
+            &.uninterested,
+            &.interested,
+            &.in-progress,
+            &.won,
+            &.lost {
+                position: relative;
+                border: 0;
+                padding-left: 15px;
+                &::before {
+                    width: 15px;
+                    height: 15px;
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    left: -5px;
+                    top: 45%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                }
+                &.new {
+                    &::before {
+                        background: #00aeef;
+                    }
+                }
+                &.unreachable, &.uninterested, &.lost {
+                    &::before {
+                        background: #e55e5e;
+                    }
+                }
+                &.interested, &.in-progress, &.won {
+                    &::before {
+                        background: #8dc53e;
+                    }
+                }
+                &.won, &.lost {
+                    &::before {
+                        opacity: 0.6;
+                    }
+                }
+                &.unreachable, &.in-progress {
+                    &::before {
+                        opacity: 0.4;
+                    }
+                }
+                &.interested, &.uninterested {
+                    &::before {
+                        opacity: 0.2;
+                    }
+                }
+            }
+        }
+    }
+}

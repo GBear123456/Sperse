@@ -39,35 +39,54 @@
         .dx-icon-clear {
             right: 0px;
         }
-    }
 
-    .star {
-        width: 25px;
-        height: 25px;
-        margin-bottom: 2px;
-        margin-left: 20px;
-        -webkit-mask-image: url(../../../../assets/common/icons/star-icon.svg);
-        -webkit-mask-repeat: no-repeat;
-        -webkit-mask-size: 25px;
-
-        &.star-yellow {
-            background-color: rgb(230, 230, 0);
+        .dx-list-item.filtered {
+            background-color: #effafe!important;
         }
 
-        &.star-blue {
-            background-color: blue;
+        .dx-list-item.dx-state-focused {
+            background-color: #FFF;
+            color: #333;
         }
 
-        &.star-green {
-            background-color: green;
-        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;            
 
-        &.star-purple {
-            background-color: purple;
-        }
+            a.dx-link-filter {
+                width: 30px;
+                background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+            }
 
-        &.star-red {
-            background-color: red;
+            .star {
+                display: inline-block;
+                width: 25px;
+                height: 25px;
+                margin-bottom: 2px;
+                -webkit-mask-image: url(../../../../assets/common/icons/star-icon.svg);
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-size: 25px;
+        
+                &.star-yellow {
+                    background-color: rgb(230, 230, 0);
+                }
+        
+                &.star-blue {
+                    background-color: blue;
+                }
+        
+                &.star-green {
+                    background-color: green;
+                }
+        
+                &.star-purple {
+                    background-color: purple;
+                }
+        
+                &.star-red {
+                    background-color: red;
+                }
+            }        
         }
     }
 }

@@ -9,11 +9,10 @@ import { FileUploader, FileUploaderOptions } from '@node_modules/ng2-file-upload
 import { TokenService } from '@abp/auth/token.service';
 import { IAjaxResponse } from '@abp/abpHttp';
 
-import * as moment from 'moment';
-
 @Component({
     templateUrl: './tenant-settings.component.html',
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    styleUrls: ['./tenant-settings.component.less']
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
@@ -57,11 +56,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
         $('tabset ul.nav').addClass('m-tabs-line');
         $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
-    };
+    }
 
     ngOnDestroy() {
         this.rootComponent.pageHeaderFixed(true);
-    }      
+    }
 
     getSettings(): void {
         this.loading = true;
@@ -104,7 +103,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             file.withCredentials = false;
         };
 
-        uploader.onSuccessItem = (item, response, status) => {
+        uploader.onSuccessItem = (item, response) => {
             const ajaxResponse = <IAjaxResponse>JSON.parse(response);
             if (ajaxResponse.success) {
                 this.notify.info(this.l('SavedSuccessfully'));
@@ -162,7 +161,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     sendTestEmail(): void {
         const input = new SendTestEmailInput();
         input.emailAddress = this.testEmailAddress;
-        this._tenantSettingsService.sendTestEmail(input).subscribe(result => {
+        this._tenantSettingsService.sendTestEmail(input).subscribe(() => {
             this.notify.info(this.l('TestEmailSentSuccessfully'));
         });
     }

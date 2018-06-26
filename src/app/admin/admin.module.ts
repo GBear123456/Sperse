@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import * as ngCommon from '@angular/common';
+import { CommonModule } from '@shared/common/common.module';
 import { FormsModule } from '@angular/forms';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -8,9 +9,14 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 
 import { UtilsModule } from '@shared/utils/utils.module';
-import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule,
-  DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule
+import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule, DxContextMenuModule,
+    DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule,
+    DxTextAreaModule, DxValidationGroupModule, DxNumberBoxModule
 } from 'devextreme-angular';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule, MatStepperModule, MatInputModule, 
+    MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
 
 import { UsersComponent } from './users/users.component';
 import { PermissionComboComponent } from './shared/permission-combo.component';
@@ -32,7 +38,6 @@ import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 
 import { HostSettingsComponent } from './settings/host-settings.component';
-import { InstallComponent } from './install/install.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { JobsComponent } from './jobs/jobs.component';
 import { ImpersonationService } from './users/impersonation.service';
@@ -51,28 +56,24 @@ import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-bind
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
 import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
-import { DemoUiComponentsComponent } from './demo-ui-components/demo-ui-components.component';
 import { DataTableModule } from 'primeng/primeng';
 import { PaginatorModule } from 'primeng/primeng';
 import { EditorModule } from 'primeng/primeng';
 import { AddMemberModalComponent } from 'app/admin/organization-units/add-member-modal.component';
 import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/primeng';
 import { AutoCompleteModule } from 'primeng/primeng';
-import { DemoUiDateTimeComponent } from './demo-ui-components/demo-ui-date-time.component';
-import { DemoUiSelectionComponent } from './demo-ui-components/demo-ui-selection.component';
-import { DemoUiFileUploadComponent } from './demo-ui-components/demo-ui-file-upload.component';
-import { DemoUiInputMaskComponent } from './demo-ui-components/demo-ui-input-mask.component';
-import { DemoUiEditorComponent } from './demo-ui-components/demo-ui-editor.component';
 import { InputMaskModule } from 'primeng/primeng';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
+import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 
 @NgModule({
     imports: [
         FormsModule,
+        ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
         AdminRoutingModule,
@@ -81,6 +82,8 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         TabsModule.forRoot(),
         TooltipModule.forRoot(),
         PopoverModule.forRoot(),
+
+        DxValidationGroupModule,
         DxValidationSummaryModule,
         DxFileUploaderModule,
         DxDataGridModule,
@@ -88,6 +91,20 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         DxSelectBoxModule,
         DxTextBoxModule,
         DxButtonModule,
+        DxTooltipModule,
+        DxTextAreaModule,
+        DxNumberBoxModule,
+        DxContextMenuModule,
+        DxListModule,
+
+        MatTabsModule,
+        MatInputModule,
+        MatSidenavModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatProgressBarModule,
+        MatStepperModule,
+
         UtilsModule,
         DataTableModule,
         PaginatorModule,
@@ -109,7 +126,6 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         AuditLogsComponent,
         AuditLogDetailModalComponent,
         HostSettingsComponent,
-        InstallComponent,
         MaintenanceComponent,
         JobsComponent,
         LanguagesComponent,
@@ -129,12 +145,6 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         InvoiceComponent,
         SubscriptionManagementComponent,
         AddMemberModalComponent,
-        DemoUiComponentsComponent,
-        DemoUiDateTimeComponent,
-        DemoUiSelectionComponent,
-        DemoUiFileUploadComponent,
-        DemoUiInputMaskComponent,
-        DemoUiEditorComponent,
         UiCustomizationComponent,
         EditionsComponent,
         CreateOrEditEditionModalComponent,
@@ -143,7 +153,11 @@ import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.co
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
-        TenantFeaturesModalComponent
+        TenantFeaturesModalComponent,
+        CreateUserDialogComponent
+    ],
+    entryComponents: [
+        CreateUserDialogComponent
     ],
     exports: [
         AddMemberModalComponent

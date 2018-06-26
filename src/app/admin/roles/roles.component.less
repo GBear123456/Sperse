@@ -1,0 +1,53 @@
+:host {
+	position: relative;
+	top: 74px;
+
+  &.fullscreen {
+      top: 0px !important;
+      #gridContainer {
+          height: calc(~"100vh - 60px");
+      }
+  }
+
+	/deep/ .grid-compact-view .dx-datagrid .dx-datagrid-rowsview .dx-column-lines td{
+		height: 40px !important;
+	}		
+
+	/deep/ #gridContainer {
+    table {
+        direction: rtl;
+        td {
+            direction: ltr;
+        }
+    }
+
+    .dx-datagrid .dx-link.dx-link-edit {
+        width: 18px!important;
+    }
+    td.dx-command-edit:before {
+        left: 60px!important;
+    }
+
+		.dx-datagrid-rowsview tr td.tabular,
+		.dx-datagrid-rowsview tr td.tabular * {
+			font-family: 'Lato' !important;
+		}
+		
+    .role-container {
+        display: inline!important;                
+    }
+  			
+		.dx-datagrid-rowsview {
+			.dx-column-lines {
+       		cursor: pointer; 
+       		& > td {
+  					span {
+  						text-align: center;
+  						display: inherit;
+
+  					}
+     		}
+			}
+		}
+	}	
+}

@@ -1,0 +1,288 @@
+import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef, OnDestroy } from '@angular/core';
+import { ModalDirective } from 'ngx-bootstrap';
+import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, 
+    OrganizationUnitDto, UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
+
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
+import { ContactTypes } from '@shared/AppEnums';
+import { DxTextBoxComponent, DxContextMenuComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { MatDialog } from '@angular/material';
+import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+
+import { CacheService } from 'ng2-cache-service';
+import * as _ from 'underscore';
+import * as nameParser from 'parse-full-name';
+
+import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } from '../../shared/organization-unit-tree.component';
+
+@Component({
+    templateUrl: 'create-user-dialog.component.html',
+    styleUrls: ['create-user-dialog.component.less'],
+    providers: [ ]
+})
+export class CreateUserDialogComponent extends ModalDialogComponent implements OnInit {
+    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
+
+    user = new UserEditDto();
+    roles: UserRoleDto[];
+    sendActivationEmail = true;
+    setRandomPassword = false;
+    passwordComplexityInfo = '';
+    canChangeUserName: boolean;
+
+    isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
+    isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
+    passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
+
+    private readonly SAVE_OPTION_DEFAULT   = 1;
+    private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
+    
+    saveButtonId: string = 'saveUserOptions';
+    saveContextMenuItems = [];
+
+    masks = AppConsts.masks;
+    phoneRegEx = AppConsts.regexPatterns.phone;
+    emailRegEx = AppConsts.regexPatterns.email;
+
+    photoOriginalData: string;
+    photoThumbnailData: string;
+
+    toolbarConfig = [];
+
+    constructor(
+        injector: Injector,
+        public dialog: MatDialog,
+        private _userService: UserServiceProxy,
+        private _profileService: ProfileServiceProxy,
+        private _cacheService: CacheService
+    ) {
+        super(injector);
+
+        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        this._cacheService = this._cacheService.useStorage(0);
+
+        this.saveContextMenuItems = [
+            {text: this.l('SaveAndAddNew'), selected: false}, 
+            {text: this.l('SaveAndClose'), selected: false}
+        ];
+
+        this.userDataInit();
+        this.initToolbarConfig();
+    }
+
+    userDataInit() {
+        this._userService.getUserForEdit(undefined).subscribe(userResult => {
+            this.user = userResult.user;
+            this.roles = userResult.roles;
+            this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
+
+            this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
+                allOrganizationUnits : userResult.allOrganizationUnits,
+                selectedOrganizationUnits: userResult.memberedOrganizationUnits
+            };
+
+            this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
+                this.passwordComplexitySetting = passwordComplexityResult.setting;
+                this.setPasswordComplexityInfo();
+            });
+        });
+    }
+
+    setPasswordComplexityInfo(): void {
+
+        this.passwordComplexityInfo = '<ul>';
+
+        if (this.passwordComplexitySetting.requireDigit) {
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireDigit_Hint') + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requireLowercase) {
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireLowercase_Hint') + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requireUppercase) {
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireUppercase_Hint') + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requireNonAlphanumeric) {
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireNonAlphanumeric_Hint') + '</li>';
+        }
+
+        if (this.passwordComplexitySetting.requiredLength) {
+            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequiredLength_Hint', this.passwordComplexitySetting.requiredLength) + '</li>';
+        }
+
+        this.passwordComplexityInfo += '</ul>';
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'after', items: [
+                    {
+                        name: 'discard',
+                        action: this.resetFullDialog.bind(this)
+                    }
+                ]
+            }
+        ];
+    }
+
+    saveOptionsInit() {
+        let cacheKey = this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+            selectedIndex = this.SAVE_OPTION_DEFAULT;
+        if (this._cacheService.exists(cacheKey))
+            selectedIndex = this._cacheService.get(cacheKey);
+        this.saveContextMenuItems[selectedIndex].selected = true;
+        this.data.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
+    }
+
+    updateSaveOption(option) {
+        this.data.buttons[0].title = option.text;
+        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY), 
+            this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+
+        this.data.editTitle = true;
+        this.data.titleClearButton = true;
+        this.data.placeholder = this.l('Contact.FullName');
+        this.data.buttons = [{
+            id: this.saveButtonId,
+            title: this.l('Save'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }];
+        this.saveOptionsInit();
+    }
+
+    private afterSave(): void {
+        this.notify.info(this.l('SavedSuccessfully'));
+
+        if (this.saveContextMenuItems[0].selected)
+            this.resetFullDialog();
+        else if (this.saveContextMenuItems[1].selected)
+            this.close();            
+        
+        this.data.refreshParent();
+    }
+
+    validateForm() {
+        if (!this.user.name || !this.user.surname)
+            return this.notify.error(this.l('FullNameIsRequired'));
+
+        if (this.user.emailAddress) {
+            if (!this.validateEmailAddress(this.user.emailAddress))
+                return this.notify.error(this.l('EmailIsNotValid'));
+        } else
+            return this.notify.error(this.l('EmailIsRequired'));
+
+        if (!this.validatePhoneNumber(this.user.phoneNumber))
+            return this.notify.error(this.l('PhoneValidationError'));
+
+        if (!this.user.userName)
+            return this.notify.error(this.l('InvalidUserNameOrPassword'));
+
+        return true;
+    }
+
+    save(): void {
+        if (!this.validateForm())
+            return ;
+
+        let saveButton: any = document.getElementById(this.saveButtonId);
+        saveButton.disabled = true;
+
+        let input = new CreateOrUpdateUserInput();
+
+        input.user = this.user;
+        input.setRandomPassword = this.setRandomPassword;
+        input.sendActivationEmail = this.sendActivationEmail;
+        input.assignedRoleNames =
+            _.map(
+                _.filter(this.roles, { isAssigned: true }), role => role.roleName
+            );
+
+        input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
+
+        input.tenantHostType = <any>TenantHostType.PlatformUi;
+        this._userService.createOrUpdateUser(input)
+            .finally(() => {  saveButton.disabled = false; })
+            .subscribe(() => this.afterSave() );
+    }
+
+    getBase64(data) {
+        let prefix = ';base64,';
+        return data && data.slice(data.indexOf(prefix) + prefix.length);
+    }
+
+    getDialogPossition(event, shiftX) {
+        return this.calculateDialogPosition(event, 
+            event.target.closest('div'), shiftX, -12);
+    }
+
+    getInputElementValue(event) {
+        return event.element.getElementsByTagName('input')[0].value;
+    }
+
+    validateEmailAddress(value): boolean {
+        return this.emailRegEx.test(value);
+    }
+
+    validatePhoneNumber(value): boolean {
+        return this.phoneRegEx.test(value);
+    }
+
+    showUploadPhoto($event) {
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: {
+                source: this.photoOriginalData
+            },
+            hasBackdrop: true
+        }).afterClosed().subscribe((result) => {
+            if (result) {
+                this.photoOriginalData = result.origImage;
+                this.photoThumbnailData = result.thumImage;
+            }
+        });
+        $event.stopPropagation();
+    }
+
+    resetFullDialog() {
+        this.data.title = '';
+        this.setRandomPassword = false;
+        this.sendActivationEmail = true;
+
+        this.user = new UserEditDto();
+    }
+
+    onSaveOptionSelectionChanged($event) {
+        let option = $event.addedItems.pop() || $event.removedItems.pop() ||
+            this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
+        option.selected = true;
+        $event.component.option('selectedItem', option);
+
+        this.updateSaveOption(option);
+        this.save();
+    }
+
+    onFullNameKeyUp(event) {
+        this.data.title = event;
+        if (event) {
+            let fullName = nameParser.parseFullName(event.trim());
+            this.user.name = fullName.first;
+            this.user.surname = fullName.last;
+        }
+    }
+
+    getAssignedRoleCount(): number {
+        return _.filter(this.roles, { isAssigned: true }).length;
+    }
+}

@@ -1,9 +1,8 @@
 import { Type } from '@angular/core';
 import { FilterItemModel, DisplayElement } from './filter-item.model';
 import { FilterComponent } from './filter-component';
-
 import * as _ from 'underscore';
-
+declare let require: any;
 let capitalize = require('underscore.string/capitalize');
 
 export class FilterModelBase<T extends FilterItemModel> {
@@ -14,6 +13,7 @@ export class FilterModelBase<T extends FilterItemModel> {
     items?: { [item: string]: T; };
     displayElements?: any[];
     options?: any;
+    isSelected: boolean = false;
 
     public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);

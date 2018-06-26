@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
+import { ODataSearchStrategy } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -25,6 +26,9 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
+import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
+import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
@@ -40,6 +44,8 @@ import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
+import { StaticListComponent } from '../shared/static-list/static-list.component';
+
 import query from 'devextreme/data/query';
 
 import DataSource from 'devextreme/data/data_source';
@@ -61,15 +67,36 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
+    private _selectedLeads: any;
+    get selectedLeads() {
+        return this._selectedLeads || [];
+    }
+    set selectedLeads(leads) {
+        this._selectedLeads = leads;
+        this.selectedClientKeys = [];
+        leads.forEach((lead) => {
+            if (lead && lead.CustomerId)
+                this.selectedClientKeys.push(lead.CustomerId);
+        });
+        this.initToolbarConfig();
+    }
+
+    stages = [];
     firstRefresh = false;
     pipelineDataSource: any;
     collection: any;
     showPipeline = true;
-    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
-    selectedLeads = [];
-    stages = [];
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;   
     selectedClientKeys = [];
+
+    filterModelLists: FilterModel;
+    filterModelTags: FilterModel;
+    filterModelAssignment: FilterModel;
+    filterModelStages: FilterModel;
+    filterModelRating: FilterModel;
+    filterModelStar: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -105,7 +132,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _leadService: LeadServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-   
+
         this.dataSource = {
             requireTotalCount: true,
             store: {
@@ -115,18 +142,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.headers['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
                 },
                 paginate: true
             }
-        };      
-        
-        this.searchColumns = ['FullName', 'CompanyName', 'Email'];
+        };
+
+        this.searchColumns = [
+            {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'Email', strategy: ODataSearchStrategy.Equals},
+            {name: 'City', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'State', strategy: ODataSearchStrategy.StartsWith},
+            {name: 'StateId', strategy: ODataSearchStrategy.Equals}
+        ];
+        FilterHelpers.nameParts.forEach(x => {
+            this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
+        });
         this.searchValue = '';
     }
-    
+
     private paramsSubscribe() {
-        if (!this.subRouteParams || this.subRouteParams.closed)    
+        if (!this.subRouteParams || this.subRouteParams.closed)
             this.subRouteParams = this._route.queryParams.subscribe(params => {
                 if (params['dataLayoutType']) {
                     let dataLayoutType = params['dataLayoutType'];
@@ -137,15 +172,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.toggleDataLayout(dataLayoutType);
                     }
                 }
-    
+
                 if ('addNew' == params['action'])
                     setTimeout(() => this.createLead());
                 if (params['refresh'])
                     this.refreshDataGrid();
-            });       
+            });
     }
 
     onContentReady(event) {
+        if (this.dataLayoutType == DataLayoutType.Grid)
+            this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -167,11 +204,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     toggleDataLayout(dataLayoutType) {
+        this.selectedClientKeys = [];
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        if (!this.showPipeline)
-            setTimeout(() => this.dataGrid.instance.repaint());            
+        if (this.showPipeline)
+            this.dataGrid.instance.deselectAll();
+        else {
+            this.pipelineComponent.deselectAllCards();
+            setTimeout(() => this.dataGrid.instance.repaint());
+        }
         if (this.filterChanged) {
             this.filterChanged = false;
             setTimeout(() => this.processFilterInternal());
@@ -187,13 +229,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this._filtersService.setup(this.filters = [
                     new FilterModel({
                         component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'Name',
-                        items: { FullName: new FilterItemModel() }
+                        operator: 'startswith',
+                        caption: 'name',
+                        items: { Name: new FilterItemModel() }
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
-                        operator: 'contains',
                         caption: 'Email',
                         items: { Email: new FilterItemModel() }
                     }),
@@ -205,7 +246,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         items: { from: new FilterItemModel(), to: new FilterItemModel() },
                         options: {method: 'getFilterByDate'}
                     }),
-                    new FilterModel({
+                    this.filterModelStages = new FilterModel({
                         component: FilterCheckBoxesComponent,
                         caption: 'stages',
                         items: {
@@ -218,33 +259,111 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }
                     }),
                     new FilterModel({
+                        component: FilterStatesComponent,
+                        caption: 'states',
+                        items: {
+                            countryStates: new FilterStatesModel()
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'city',
+                        items: { City: new FilterItemModel() }
+                    }),
+                    new FilterModel({
                         component: FilterInputsComponent,
                         operator: 'contains',
+                        caption: 'streetAddress',
+                        items: { StreetAddress: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'zipCode',
+                        items: { ZipCode: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
                         caption: 'SourceCode',
                         items: { SourceCode: new FilterItemModel() }
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
-                        operator: 'contains',
+                        operator: 'startswith',
                         caption: 'Industry',
                         items: { Industry: new FilterItemModel() }
                     }),
-                    new FilterModel({
-                        component: FilterInputsComponent,
-                        operator: 'contains',
-                        caption: 'Owner',
-                        items: { Owner: new FilterItemModel() }
+                    this.filterModelAssignment = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'assignedUser',
+                        field: 'AssignedUserId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.users,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
-                        operator: 'contains',
                         caption: 'Campaign',
+                        field: 'CampaignCode',
                         items: { Campaign: new FilterItemModel() }
                     }),
+                    this.filterModelLists = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'List',
+                        field: 'ListId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.lists,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    this.filterModelTags = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Tag',
+                        field: 'TagId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.tags,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    this.filterModelRating = new FilterModel({
+                        component: FilterRangeComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'Rating',
+                        field: 'Rating',
+                        items: FilterHelpers.getRatingFilterItems(result.ratings)
+                    }),
+                    this.filterModelStar = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Star',
+                        field: 'StarId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource: result.stars,
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    })
                 ], this._activatedRoute.snapshot.queryParams);
             });
 
         this._filtersService.apply(() => {
+            this.selectedClientKeys = [];
             this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
@@ -303,37 +422,45 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'before', items: [
                     {
                         name: 'assign',
-                        disabled: !this.selectedClientKeys.length,
-                        action: this.toggleUserAssignment.bind(this)
+                        action: this.toggleUserAssignment.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                        }
                     },
                     {
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.selectedLeads.length,
                         name: 'stage',
-                        options: {
-                            hint: this.l('Stage'),
-                            items: this.stages
+                        action: this.toggleStages.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
                         }
                     },
                     {
                         name: 'lists',
-                        disabled: !this.selectedClientKeys.length,
-                        action: this.toggleLists.bind(this)
+                        action: this.toggleLists.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
+                        }
                     },
                     {
                         name: 'tags',
-                        disabled: !this.selectedClientKeys.length,
-                        action: this.toggleTags.bind(this)
+                        action: this.toggleTags.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
+                        }
                     },
                     {
                         name: 'rating',
-                        disabled: !this.selectedClientKeys.length,
-                        action: this.toggleRating.bind(this)
+                        action: this.toggleRating.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
+                        }
                     },
                     {
                         name: 'star',
-                        disabled: !this.selectedClientKeys.length,
-                        action: this.toggleStars.bind(this)
+                        action: this.toggleStars.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
+                        }
                     }
                 ]
             },
@@ -420,7 +547,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    { name: 'fullscreen', action: Function() }
+                    { 
+                        name: 'fullscreen', 
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                        }
+                    }
                 ]
             }
         ];
@@ -430,13 +563,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
 
-    filterByEmail(filter: FilterModel) {
-        let filterField = filter.items.Email;
-        let filterValue = filterField && filterField.value;
-        if (filterValue)
-            return {
-                EmailAddresses: { any: 'contains(e,\'' + filterValue + '\')' }
-            };
+    filterByName(filter: FilterModel) {
+        return FilterHelpers.filterByClientName(filter);
     }
 
     filterByStages(filter: FilterModel) {
@@ -451,22 +579,28 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         return data;
     }
 
-    filterByLeadType(filter: FilterModel) {
-        let data = {};
-        let element = filter.items.element;
-        if (element && element.value) {
-            let filterData = _.map(element.value, x => {
-                let el = {};
-                el[filter.field] = x;
-                return el;
-            });
+    filterByStates(filter: FilterModel) {
+        return FilterHelpers.filterByStates(filter);
+    }
 
-            data = {
-                or: filterData
-            };
-        }
+    filterByAssignedUser(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
 
-        return data;
+    filterByList(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByTag(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
+    filterByRating(filter: FilterModel) {
+        return FilterHelpers.filterByRating(filter);
+    }
+
+    filterByStar(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
     }
 
     searchValueChange(e: object) {
@@ -495,7 +629,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     initDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
-                this.pipelineDataSource = new DataSource(this.dataSource);
+                this.pipelineDataSource = this.dataSource;
         }
     }
 
@@ -507,7 +641,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             data: {
                 refreshParent: (quite) => {
                     this.refreshDataGrid(quite, true);
-                }, 
+                },
                 isInLeadMode: true
             }
         });
@@ -515,36 +649,33 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onSelectionChanged($event) {
         this.selectedLeads = $event.component.getSelectedRowsData();
-        this.selectedClientKeys = [];
-        this.selectedLeads.forEach((item) => {
-            if (item.CustomerId)
-                this.selectedClientKeys.push(item.CustomerId);
-        });
-        this.initToolbarConfig();
     }
 
-    onStagesLoaded($event) {        
-        this.stages = $event.stages.map((stage) => {
+    onStagesLoaded($event) {
+        this.stages = _.sortBy($event.stages, function(x) {
+            return -x.sortOrder;
+        }).map((stage) => {
             return {
-                text: stage.name,
-                action: this.updateLeadsStage.bind(this)
+                id: this._pipelineService.pipeline.id + ':' + stage.id,
+                name: stage.name,
+                text: stage.name
             };
         });
         this.initToolbarConfig();
     }
 
     updateLeadsStage($event) {
-        let targetStage = $event.itemData.text,
+        let targetStage = $event.name,
             ignoredStages = [];
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage) 
+            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage)
                 && ignoredStages.indexOf(lead.Stage) < 0)
                     ignoredStages.push(lead.Stage);
         });
         if (ignoredStages.length)
             this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
         if (this.selectedLeads.length)
-            setTimeout(() => { //!!VP temporary solution for grid refresh 
+            setTimeout(() => { //!!VP temporary solution for grid refresh
                 this.refreshDataGrid();
             }, 1000);
     }
@@ -569,6 +700,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
+    }
+
+    toggleStages() {
+        this.stagesComponent.toggle();
     }
 
     toggleLists() {
@@ -607,33 +742,33 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     ngOnInit() {
         this.activate();
-    }    
-    
+    }
+
     ngAfterViewInit() {
         this.initDataSource();
     }
-    
+
     ngOnDestroy() {
         this.deactivate();
     }
 
     activate() {
-        this._filtersService.localizationSourceName = 
+        this._filtersService.localizationSourceName =
             this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);            
+        this.rootComponent.overflowHidden(true);
 
         this.showHostElement();
     }
-    
+
     deactivate() {
-        this._filtersService.localizationSourceName = 
+        this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
-        
+
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

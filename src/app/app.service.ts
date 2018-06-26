@@ -1,6 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
-import { AppServiceBase } from '@shared/common/app-service-base'
+import { AppServiceBase } from '@shared/common/app-service-base';
 import { PanelMenu } from 'app/shared/layout/panel-menu';
+declare let require: any;
 
 @Injectable()
 export class AppService extends AppServiceBase {

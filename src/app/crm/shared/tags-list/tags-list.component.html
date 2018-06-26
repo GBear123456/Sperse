@@ -1,25 +1,47 @@
-<dx-tooltip height="440"
+<dx-tooltip height="410"
             [target]="targetSelector"
             [(visible)]="tooltipVisible">
     <div *dxTemplate="let data of 'content'">
         <div class="tags-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Tags')}}</span>
-                <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
-                <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                <div [hidden]="bulkUpdateMode && !selectedKeys?.length">
+                    <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                </div>
             </div>
-            <span class="add-button" [hidden]="!showAddButton" (click)="addNewTag()">+</span>
-            <dx-list 
-                height="350"
-                [dataSource]="list"
+            <dx-tree-list 
+                width="300px"
+                height="350px"
+                keyExpr="id"
+                parentIdExpr="parent"
+                [rootValue]="0"
                 [noDataText]="l('AddNewTag')"
-                [searchEditorOptions]="{onInput: onSearch}"
-                [searchEnabled]="true"
-                [selectionMode]="'multiple'"
-                [showSelectionControls]="true"
-                [(selectedItems)]="selectedTags"                
-                (onInitialized)="onInitialized($event)">
-            </dx-list>
+                [showColumnLines]="false"
+                [showColumnHeaders]="false"
+                [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
+                [selection]="{allowSelectAll: false, mode: (bulkUpdateMode && !selectedKeys?.length) ? 'none' : 'multiple' }"
+                [selectedRowKeys]="selectedTags"
+                [(dataSource)]="list"
+                (onRowClick)="onRowClick($event)"
+                (onInitialized)="onInitialized($event)"
+                (onInitNewRow)="onInitNewRow($event)"
+                (onRowRemoving)="onRowRemoving($event)"
+                (onRowUpdating)="onRowUpdating($event)"
+                (onRowInserting)="onRowInserting($event)"
+                (onSelectionChanged)="onSelectionChanged($event)"
+                (onCellPrepared)="onCellPrepared($event)"
+                (onContentReady)="onContentReady($event)"
+                (onRowInserted)="onRowInserted($event)"
+                (onEditorPrepared)="editorPrepared($event)"
+                [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
+                <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
+                <dxo-editing mode="row"
+                    [texts]="{confirmDeleteMessage: ''}"
+                    [allowUpdating]="true"
+                    [allowAdding]="!bulkUpdateMode || selectedKeys?.length">
+                </dxo-editing>
+            </dx-tree-list>
         </div>
     </div>
 </dx-tooltip>

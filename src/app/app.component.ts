@@ -5,7 +5,6 @@ import {SignalRHelper} from 'shared/helpers/SignalRHelper';
 import {AppComponentBase} from 'shared/common/app-component-base';
 import {AppSessionService} from '@shared/common/session/app-session.service';
 import {FiltersService} from '@shared/filters/filters.service';
-import {SubscriptionStartType} from '@shared/AppEnums';
 import {AppService} from './app.service';
 import {AppConsts} from '@shared/AppConsts';
 import {UrlHelper} from '@shared/helpers/UrlHelper';
@@ -20,8 +19,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     private viewContainerRef: ViewContainerRef;
     private router: Router;
 
-    subscriptionStartType = SubscriptionStartType;
-    installationMode: boolean = true;
+    installationMode: boolean = false;
 
 
     public constructor(
@@ -44,8 +42,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         if (this.appSession.application && this.appSession.application.features['SignalR']) {
             SignalRHelper.initSignalR(() => {this._chatSignalrService.init();});
         }
-
-        this.installationMode = UrlHelper.isInstallUrl(location.href);
     }
 
     subscriptionStatusBarVisible(): boolean {
