@@ -801,10 +801,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     calculateSortValue(data) {
         let isNumber = (<any>this).dataType == 'number',
             fieldValue = isNumber ? Number(data.coAID) : data.name;
-        if (data.parent == 'root' && data.typeId == 'I')
-            fieldValue = ((<any>this).sortOrder == 'asc' ?
-                (isNumber ? -9999999999 : 'aaa') :
-                (isNumber ? 9999999999 : 'zzz')) + fieldValue;
+
+        if (data.parent == 'root') {
+            if (data.typeId == 'I')
+                fieldValue = ((<any>this).sortOrder == 'asc' ?
+                    (isNumber ? -9999999999 : 'aaa') :
+                    (isNumber ? 9999999999 : 'zzz')) + fieldValue;
+            else if (data.typeId == 'E')
+                fieldValue = ((<any>this).sortOrder == 'asc' ?
+                    (isNumber ? -9999999998 : 'aab') :
+                    (isNumber ? 9999999998 : 'zzy')) + fieldValue;
+        }
 
         return fieldValue;
     }
