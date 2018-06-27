@@ -412,8 +412,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
                 e.originalEvent.dropEffect = 'move';
 
-                sourceCategory.cashType = sourceCategory.element.classList.contains('inflows') ? 'inflows' : 'outflows';
-                let droppableQuery = 'dx-tree-list .dx-data-row.' + sourceCategory.cashType;
+                sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
+                let droppableQuery: string;
+                if (sourceCategory.cashType == 'unknown')
+                    droppableQuery = 'dx-tree-list .dx-data-row';
+                else
+                    droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
+
                 $(droppableQuery).addClass('droppable');
             }).on('dragend', (e) => {
                 clearDragAndDrop();
@@ -478,9 +483,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     checkCanDrop(targetElement, sourceCategory): boolean {
         if (sourceCategory) {
-            let targetCashType = targetElement.classList.contains('inflows') ? 'inflows' : 'outflows';
+            let targetCashType = this.getCashflowTypeFromClassList(targetElement.classList);
             if (sourceCategory.element == targetElement ||
-                sourceCategory.cashType != targetCashType)
+                (targetCashType != 'unknown' && sourceCategory.cashType != 'unknown' && sourceCategory.cashType != targetCashType))
                 return false;
         } else {
             if (targetElement.classList.contains('accountingType'))
@@ -488,6 +493,12 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         }
 
         return true;
+    }
+
+    getCashflowTypeFromClassList(classList): string {
+        return classList.contains('inflows') ? 'inflows' :
+            classList.contains('outflows') ? 'outflows' :
+                'unknown';
     }
 
     handleCategoryDrop(sourceId, targetId) {
@@ -790,10 +801,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     calculateSortValue(data) {
         let isNumber = (<any>this).dataType == 'number',
             fieldValue = isNumber ? Number(data.coAID) : data.name;
-        if (data.parent == 'root' && data.typeId == 'I')
-            fieldValue = ((<any>this).sortOrder == 'asc' ?
-                (isNumber ? -9999999999 : 'aaa') :
-                (isNumber ? 9999999999 : 'zzz')) + fieldValue;
+
+        if (data.parent == 'root') {
+            if (data.typeId == 'I')
+                fieldValue = ((<any>this).sortOrder == 'asc' ?
+                    (isNumber ? -9999999999 : 'aaa') :
+                    (isNumber ? 9999999999 : 'zzz')) + fieldValue;
+            else if (data.typeId == 'E')
+                fieldValue = ((<any>this).sortOrder == 'asc' ?
+                    (isNumber ? -9999999998 : 'aab') :
+                    (isNumber ? 9999999998 : 'zzy')) + fieldValue;
+        }
 
         return fieldValue;
     }
@@ -849,7 +867,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             $event.key >= 0 ? this.categorization.categories[$event.key]
                 .accountingTypeId : parseInt($event.key)];
         if (accounting) {
-            $event.rowElement.classList.add(accounting.typeId == 'I' ? 'inflows' : 'outflows');
+            let cashflowType = accounting.typeId == 'I' ? 'inflows' :
+                accounting.typeId == 'E' ? 'outflows' :
+                    'unknown';
+            $event.rowElement.classList.add(cashflowType);
             if (isNaN($event.key) && accounting.isSystem) {
                 $event.rowElement.classList.add('system-type');
             }

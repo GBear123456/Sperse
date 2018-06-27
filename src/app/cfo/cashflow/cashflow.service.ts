@@ -49,7 +49,7 @@ export class CashflowService {
     }
 
     isUnclassified(cell: CellInfo): boolean {
-        return !cell.accountingTypeId && !cell.categoryId && !cell.subCategoryId && !cell.transactionDescriptor;
+        return !cell.accountingTypeId && !cell.categoryId && !cell.subCategoryId;
     }
 
     isHorizontalCopying(sourceCellObj: any, targetCellObjs: any[]) {
