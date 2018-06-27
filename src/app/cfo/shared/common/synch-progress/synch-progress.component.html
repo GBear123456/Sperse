@@ -5,11 +5,11 @@
             <h3>{{l('Sync_status')}}</h3>
             <dx-progress-bar #progressBar
                              id="progress-bar-status"
-                             width="200"
+                             width="210"
                              [ngClass]="{'error': hasFailedAccounts, 'complete': progressBar.value == maxValue }"
                              [min]="0"
                              [max]="100"
-                             [statusFormat]="format"
+                             [showStatus]="false"
                              [value]="currentProgress">
             </dx-progress-bar>
             <i *ngIf="completed" class="fa fa-times-circle red-icon" (click)="toggleComponent()"></i>

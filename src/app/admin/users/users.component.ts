@@ -93,18 +93,18 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this._impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
                 }
             },
-            { 
+            {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
                 action: () => {
-                    this.createOrEditUserModal.show(this.actionRecord.id);
+                    this._router.navigate(['app/admin/user', this.actionRecord.id])
                 }
             },
             {
-                text: this.l('Edit Modern'),
+                text: this.l('Edit Old'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
                 action: () => {
-                    this._router.navigate(['app/admin/user', this.actionRecord.id])
+                    this.createOrEditUserModal.show(this.actionRecord.id);
                 }
             },
             { 
@@ -375,7 +375,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             let userId = event.data && event.data.id;
             if (userId) {
                 event.component.cancelEditData();
-                this.createOrEditUserModal.show(userId);
+                this._router.navigate(['app/admin/user', userId])
             }
         }
     }

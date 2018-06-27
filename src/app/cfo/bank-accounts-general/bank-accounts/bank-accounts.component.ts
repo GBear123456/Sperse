@@ -193,9 +193,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this.bankAccounts$ = Observable.from([newData]);
     }
 
-    isActiveChanged(e) {
+    isActiveChanged() {
         this.bankAccountIds = null;
-        this.filterDataSource();
+        this.reloadGrid();
     }
 
     updateCache() {
