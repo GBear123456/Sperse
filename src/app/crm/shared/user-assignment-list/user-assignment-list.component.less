@@ -45,9 +45,24 @@
             color: #333;
         }
 
+        .dx-state-disabled.dx-list-item, .dx-state-disabled .dx-list-item {
+            opacity: 1 !important;
+
+            span.item-name{
+                background: transparent;
+                opacity: 0.6;
+                font-style: italic;
+            }
+
+            a.dx-link-filter{
+                pointer-events: all;
+                cursor: pointer;
+            }
+        }
+
         .item-row {
             display: flex;
-            justify-content: space-between;            
+            justify-content: space-between;
 
             a.dx-link-filter {
                 width: 30px;

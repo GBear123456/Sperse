@@ -39,7 +39,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     private moveSelectedItemsToTop() {
         let index = 0;
-        if (!this.listComponent)
+        if (!this.listComponent || !this.selectedKeys || !this.selectedKeys.length)
             return;
 
         let items = this.listComponent.getDataSource().items();
@@ -49,6 +49,13 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             index++;
         }))
             this.listComponent.reorderItem(index, 0);
+    }
+
+    private disableInactiveUsers() {
+        this.list.forEach(el => {
+            if (!el.isActive)
+                el.disabled = true;
+        });
     }
 
     toggle() {
@@ -154,5 +161,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     onContentReady($event) {
         this.highlightSelectedFilters();
         this.moveSelectedItemsToTop();
+        this.disableInactiveUsers();
     }
 }
