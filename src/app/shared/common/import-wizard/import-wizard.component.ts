@@ -57,6 +57,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     mapDataSource: any;
     lookupFields: any;
 
+    isMapped = true;
+
     selectModeItems = [
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
@@ -103,7 +105,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             let mappedFields = this.mapGrid.instance.getSelectedRowsData();
             if (!mappedFields.length) {
-                mappedFields = this.mapDataSource.filter((row) => {
+                mappedFields = this.mapDataSource.store.data.filter((row) => {
                     return !!row.mappedField;
                 });
             }
@@ -154,19 +156,39 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         const FIRST_NAME_FIELD = 'first',
               LAST_NAME_FIELD = 'last';
         let isFistName = false, 
-            isLastName = false,
-            isMapped = rows.every((row) => {
-                isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
-                isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
-                if (!row.mappedField)
-                    this.message.error(this.l('MapAllRecords'));
-                return !!row.mappedField;
-            });
+            isLastName = false;
 
-        if (isMapped && (!isFistName || !isLastName))
+        this.isMapped = rows.every((row) => {
+            isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
+            isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
+            return !!row.mappedField;
+        });
+
+        if (!this.isMapped) {
+            this.highlightUnmappedFields(rows);
+            this.message.error(this.l('MapAllRecords'));
+        }
+
+        if (this.isMapped && (!isFistName || !isLastName))
             this.message.error(this.l('FieldsMapError'));
 
-        return isMapped && isFistName && isLastName;
+        return this.isMapped && isFistName && isLastName;
+    }
+
+    highlightUnmappedFields(rows) {
+        rows.forEach(row => {
+            if (!row.mappedField)
+                this.highlightUnmappedField(row);
+        });
+    }
+
+    highlightUnmappedField(row) {
+        let rowIndex = this.mapGrid.instance.getRowIndexByKey(row.id);
+        let cellElement = this.mapGrid.instance.getCellElement(rowIndex, 'mappedField');
+        let rows = cellElement.closest('.dx-datagrid-rowsview').querySelectorAll(`tr:nth-of-type(${rowIndex + 1})`);
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.add(`unmapped-field`);
+        }
     }
 
     checkFileDataValid() {
@@ -178,7 +200,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this._parser.parse(content.trim(), {
             complete: (results) => {
                 if (results.errors.length)
-                    this.message.error(results.errors[0].message);
+                    this.message.error(this.l('IncorrectFileFormatError'));
                 else {
                     this.fileHeaderWasGenerated = false;
                     this.fileData = results;
@@ -236,20 +258,28 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 this.fileHeaderWasGenerated = false;
             }
 
-            this.mapDataSource =
-                this.fileData.data[0].map((field, index) => {
-                    let fieldId;
-                    return {
-                        sourceField: field,
-                        sampleValue: this.lookForValueExample(index),
-                        mappedField: this.lookupFields.every((item) => {
-                            let isSameField = item.id.toLowerCase() == field.toLowerCase();
-                            if (isSameField)
-                                fieldId = item.id;
-                            return !isSameField;
-                        }) ? '' : fieldId
-                    };
-                });
+            let data = this.fileData.data[0].map((field, index) => {
+                let fieldId;
+                return {
+                    id: index,
+                    sourceField: field,
+                    sampleValue: this.lookForValueExample(index),
+                    mappedField: this.lookupFields.every((item) => {
+                        let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                        if (isSameField)
+                            fieldId = item.id;
+                        return !isSameField;
+                    }) ? '' : fieldId
+                };
+            });
+
+            this.mapDataSource = {
+                store: {
+                    type: 'array',
+                    key: 'id',
+                    data: data
+                }
+            };
         }
     }
 
@@ -325,12 +355,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     onRowValidating($event) {
-        this.mapDataSource.forEach((row) => {
+        this.mapDataSource.store.data.forEach((row) => {
             if ($event.newData.sourceField != row.sourceField 
                 && $event.newData.mappedField == row.mappedField
             ) {
                 $event.isValid = false;
-                $event.errorText = this.l('FieldMappedError', [row.sourceField]);
+                $event.errorText = this.l('FieldMapError', [row.sourceField]);
             }
         });
     }
@@ -338,5 +368,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     selectionModeChanged($event) {
         this.reviewGrid.instance.option(
             'selection.selectAllMode', $event.itemData.mode);
+    }
+
+    onContentReady($event) {
+        if (this.mapGrid && !this.isMapped) {
+            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+            this.highlightUnmappedFields(mappedFields);
+        }
     }
 }

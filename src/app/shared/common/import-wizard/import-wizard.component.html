@@ -50,7 +50,8 @@
                       [columnAutoWidth]="true"
                       [allowColumnResizing]="false"
                       [hoverStateEnabled]="true"
-                      (onRowValidating)="onRowValidating($event)">
+                      (onRowValidating)="onRowValidating($event)"
+                      (onContentReady)="onContentReady($event)">
               <dxo-selection
                   selectAllMode="page"
                   showCheckBoxesMode="always"
