@@ -2196,7 +2196,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let rowPathPropertyName = cellObj.area === 'data' ? 'rowPath' : 'path';
             let columnPathPropertyName = cellObj.area === 'data' ? 'columnPath' : 'path';
             return cashflowItem.amount &&
-                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => !fieldValue || fieldValue === cashflowItem[`level${index}`])) &&
+                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => (!fieldValue && !cashflowItem[`level${index}`]) || fieldValue === cashflowItem[`level${index}`])) &&
                    (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
@@ -3824,7 +3824,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     case 'year'    : periodFormat = 'YYYY'; break;
                     case 'quarter' : periodFormat = 'YYYY.QQ'; break;
                     case 'month'   : periodFormat = 'YYYY.MM'; break;
-                    case 'week'    : periodFormat = 'W.YYYY'; break;
+                    case 'week'    : periodFormat = 'YYYY.MM.WW'; break;
                     case 'day'     : periodFormat = 'YYYY.MM.DD'; break;
                 }
                 let cellDate = this.getDateByPath(path, this.getColumnFields(), fieldCaption);
