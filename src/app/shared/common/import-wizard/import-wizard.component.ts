@@ -50,6 +50,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     fileData: any;
     fileName: string = '';
     fileSize: string = '';
+    fileHasHeader: boolean = false;
+    fileHeaderWasGenerated = false;
 
     reviewDataSource: any;
     mapDataSource: any;
@@ -92,7 +94,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
             if (this.checkFileDataValid())
+            {
+                this.buildMappingDataSource();
                 this.stepper.next();
+            }
             else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
@@ -175,8 +180,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 if (results.errors.length)
                     this.message.error(results.errors[0].message);
                 else {
+                    this.fileHeaderWasGenerated = false;
                     this.fileData = results;
-                    this.buildMappingDataSource();
+                    this.checkIfFileHasHeaders();
                 }    
             }
         });
@@ -214,20 +220,58 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     buildMappingDataSource() {
-        this.mapDataSource = 
-            this.fileData.data[0].map((field, index) => {
-                let fieldId;
-                return {
-                  sourceField: field,
-                  sampleValue: this.lookForValueExample(index),
-                  mappedField: this.lookupFields.every((item) => {
-                      let isSameField = item.id.toLowerCase() == field.toLowerCase();
-                      if (isSameField)
-                          fieldId = item.id;
-                      return !isSameField;
-                  }) ? '': fieldId
-                };
-            });
+        if (this.fileData && this.fileData.data && this.fileData.data.length) {
+            if (!this.fileHasHeader && !this.fileHeaderWasGenerated) {
+                let columnsCount = this.fileData.data[0].length;
+                let headers: string[] = [];
+                for (let i = 0; i < columnsCount; i++) {
+                    headers.push(`Column ${i + 1}`);
+                }
+
+                this.fileData.data.unshift(headers);
+                this.fileHeaderWasGenerated = true;
+            }
+            else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
+                this.fileData.data.shift();
+                this.fileHeaderWasGenerated = false;
+            }
+
+            this.mapDataSource =
+                this.fileData.data[0].map((field, index) => {
+                    let fieldId;
+                    return {
+                        sourceField: field,
+                        sampleValue: this.lookForValueExample(index),
+                        mappedField: this.lookupFields.every((item) => {
+                            let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                            if (isSameField)
+                                fieldId = item.id;
+                            return !isSameField;
+                        }) ? '' : fieldId
+                    };
+                });
+        }
+    }
+
+    checkIfFileHasHeaders() {
+        if (this.fileData.data.length) {
+            const constNames = ['Name', 'Email', 'Phone'];
+            let fileHasHeader = true;
+
+            for (let i = 0; i < constNames.length; i++) {
+                let nameIsPresent = false;
+                this.fileData.data[0].forEach((val: string) => {
+                    if (val.indexOf(constNames[i]) != -1)
+                        nameIsPresent = true;
+                });
+                if (!nameIsPresent) {
+                    fileHasHeader = false;
+                    break;
+                }
+            }
+
+            this.fileHasHeader = fileHasHeader;
+        }
     }
 
     lookForValueExample(fieldIndex) {
