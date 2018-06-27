@@ -1,0 +1,10 @@
+<app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+<dx-tree-view dataStructure="plain"
+              [dataSource]="permissionsDataSource"
+              parentIdExpr="parentName"
+              keyExpr="name"
+              displayExpr="displayName"
+              showCheckBoxesMode="normal"
+              [selectNodesRecursive]="false"
+              [searchEnabled]="searchEnabled">
+</dx-tree-view>

@@ -39,7 +39,11 @@
                         </div>
                     </dx-scroll-view>
                 </mat-tab>
-                <mat-tab label="Permissions">Permissions</mat-tab>
+                <mat-tab label="{{l('Permissions')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <permission-tree #permissionTree></permission-tree>
+                    </dx-scroll-view>
+                </mat-tab>
             </mat-tab-group>
         </mat-sidenav>
     </mat-sidenav-container>
