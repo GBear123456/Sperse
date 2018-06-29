@@ -88,7 +88,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelineDataSource: any;
     collection: any;
     showPipeline = true;
-    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;   
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
 
     filterModelLists: FilterModel;
@@ -547,8 +547,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    { 
-                        name: 'fullscreen', 
+                    {
+                        name: 'fullscreen',
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -723,7 +723,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     deleteLeads() {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        let selectedIds: number[] = this.selectedLeads.map(lead => lead.Id);
         this.message.confirm(
             this.l('LeadsDeleteWarningMessage'),
             isConfirmed => {
