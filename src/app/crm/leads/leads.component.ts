@@ -665,15 +665,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        let targetStage = $event.name,
-            ignoredStages = [];
+        let targetStage = $event.name;
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage)
-                && ignoredStages.indexOf(lead.Stage) < 0)
-                    ignoredStages.push(lead.Stage);
+            this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage);
         });
-        if (ignoredStages.length)
-            this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
         if (this.selectedLeads.length)
             setTimeout(() => { //!!VP temporary solution for grid refresh
                 this.refreshDataGrid();
