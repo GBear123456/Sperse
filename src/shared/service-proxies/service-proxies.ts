@@ -8535,6 +8535,118 @@ export class DashboardServiceProxy {
 }
 
 @Injectable()
+export class DocumentServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(customerId: number): Observable<DocumentInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/GetAll?";
+        if (customerId === undefined || customerId === null)
+            throw new Error("The parameter 'customerId' must be defined and cannot be null.");
+        else
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetAll(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetAll(response_);
+                } catch (e) {
+                    return <Observable<DocumentInfo[]>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<DocumentInfo[]>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetAll(response: Response): Observable<DocumentInfo[]> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(DocumentInfo.fromJS(item));
+            }
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<DocumentInfo[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    upload(input: UploadDocumentInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/Upload";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpload(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpload(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpload(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class EditionServiceProxy {
     private http: Http;
     private baseUrl: string;
@@ -19273,6 +19385,118 @@ export class WebLogServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<FileDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class WopiServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getViewRequestInfo(documentId: string): Observable<WopiRequestOutcoming> {
+        let url_ = this.baseUrl + "/api/services/CRM/Wopi/GetViewRequestInfo?";
+        if (documentId === undefined || documentId === null)
+            throw new Error("The parameter 'documentId' must be defined and cannot be null.");
+        else
+            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetViewRequestInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetViewRequestInfo(response_);
+                } catch (e) {
+                    return <Observable<WopiRequestOutcoming>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<WopiRequestOutcoming>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetViewRequestInfo(response: Response): Observable<WopiRequestOutcoming> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<WopiRequestOutcoming>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getEditRequestInfo(documentId: string): Observable<WopiRequestOutcoming> {
+        let url_ = this.baseUrl + "/api/services/CRM/Wopi/GetEditRequestInfo?";
+        if (documentId === undefined || documentId === null)
+            throw new Error("The parameter 'documentId' must be defined and cannot be null.");
+        else
+            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetEditRequestInfo(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetEditRequestInfo(response_);
+                } catch (e) {
+                    return <Observable<WopiRequestOutcoming>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<WopiRequestOutcoming>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetEditRequestInfo(response: Response): Observable<WopiRequestOutcoming> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<WopiRequestOutcoming>(<any>null);
     }
 }
 
@@ -32072,6 +32296,100 @@ export interface IGetCustomersByRegionOutput {
     customerCount: number;
     countryId: string;
     stateId: string;
+}
+
+export class DocumentInfo implements IDocumentInfo {
+    id: string;
+    fileName: string;
+    size: string;
+    creationTime: moment.Moment;
+
+    constructor(data?: IDocumentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DocumentInfo {
+        let result = new DocumentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IDocumentInfo {
+    id: string;
+    fileName: string;
+    size: string;
+    creationTime: moment.Moment;
+}
+
+export class UploadDocumentInput implements IUploadDocumentInput {
+    customerId: number;
+    fileName: string;
+    size: number;
+    fileBase64: string;
+
+    constructor(data?: IUploadDocumentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.customerId = data["customerId"];
+            this.fileName = data["fileName"];
+            this.size = data["size"];
+            this.fileBase64 = data["fileBase64"];
+        }
+    }
+
+    static fromJS(data: any): UploadDocumentInput {
+        let result = new UploadDocumentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerId"] = this.customerId;
+        data["fileName"] = this.fileName;
+        data["size"] = this.size;
+        data["fileBase64"] = this.fileBase64;
+        return data; 
+    }
+}
+
+export interface IUploadDocumentInput {
+    customerId: number;
+    fileName: string;
+    size: number;
+    fileBase64: string;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
@@ -45241,6 +45559,49 @@ export class GetLatestWebLogsOutput implements IGetLatestWebLogsOutput {
 
 export interface IGetLatestWebLogsOutput {
     latestWebLogLines: string[];
+}
+
+export class WopiRequestOutcoming implements IWopiRequestOutcoming {
+    accessToken: string;
+    accessTokenTtl: number;
+    wopiUrlsrc: string;
+
+    constructor(data?: IWopiRequestOutcoming) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accessToken = data["accessToken"];
+            this.accessTokenTtl = data["accessTokenTtl"];
+            this.wopiUrlsrc = data["wopiUrlsrc"];
+        }
+    }
+
+    static fromJS(data: any): WopiRequestOutcoming {
+        let result = new WopiRequestOutcoming();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accessToken"] = this.accessToken;
+        data["accessTokenTtl"] = this.accessTokenTtl;
+        data["wopiUrlsrc"] = this.wopiUrlsrc;
+        return data; 
+    }
+}
+
+export interface IWopiRequestOutcoming {
+    accessToken: string;
+    accessTokenTtl: number;
+    wopiUrlsrc: string;
 }
 
 export enum InstanceType {
