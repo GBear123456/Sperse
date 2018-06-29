@@ -360,9 +360,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     onRowValidating($event) {
         this.mapDataSource.store.data.forEach((row) => {
-            if ($event.newData.sourceField != row.sourceField 
-                && $event.newData.mappedField == row.mappedField
-            ) {
+            if ($event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
             }

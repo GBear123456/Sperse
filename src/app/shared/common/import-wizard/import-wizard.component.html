@@ -44,39 +44,36 @@
       </mat-step>
       <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')" 
           [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-          <dx-data-grid id="gridContainer" #mapGrid
-                      [dataSource]="mapDataSource"
-                      [allowColumnReordering]="false"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="false"
-                      [hoverStateEnabled]="true"
-                      (onRowValidating)="onRowValidating($event)"
-                      (onContentReady)="onContentReady($event)">
-              <dxo-selection
-                  selectAllMode="page"
-                  showCheckBoxesMode="always"
-                  mode="multiple">
-              </dxo-selection>
-
-               <dxo-editing
-                   mode="cell"
-                   [allowUpdating]="true"
-                   [allowDeleting]="false"
-                   [allowAdding]="false">
-              </dxo-editing>
-
-              <dxi-column dataField="sourceField" caption="{{l('SourceField')}}" [allowEditing]="false"></dxi-column>
-              <dxi-column dataField="sampleValue" caption="{{l('SampleValue')}}" [allowEditing]="false"></dxi-column>
-              <dxi-column dataField="mappedField" 
-                      [showEditorAlways]="true"
-                      [caption]="l('MappedField')">
-                  <dxo-lookup
-                      [dataSource]="lookupFields"
-                      displayExpr="name"
-                      valueExpr="id">
-                  </dxo-lookup>
-              </dxi-column>
-          </dx-data-grid>
+            <dx-data-grid id="gridContainer" #mapGrid
+                        [dataSource]="mapDataSource"
+                        [allowColumnReordering]="false"
+                        [columnAutoWidth]="true"
+                        [allowColumnResizing]="false"
+                        [hoverStateEnabled]="true"
+                        (onRowValidating)="onRowValidating($event)"
+                        (onContentReady)="onContentReady($event)">
+                <dxo-selection selectAllMode="page"
+                                showCheckBoxesMode="always"
+                                mode="multiple">
+                </dxo-selection>
+                <dxo-editing mode="cell"
+                            [allowUpdating]="true"
+                            [allowDeleting]="false"
+                            [allowAdding]="false">
+                </dxo-editing>
+                <dxi-column dataField="sourceField" caption="{{l('SourceField')}}" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="sampleValue" caption="{{l('SampleValue')}}" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="mappedField"
+                            [showEditorAlways]="true"
+                            [editorOptions]="{ placeholder: l('MapFieldPlaceholder') }"
+                            [caption]="l('MappedField')">
+                    <dxo-lookup [dataSource]="lookupFields"
+                                [allowClearing]="true"
+                                displayExpr="name"
+                                valueExpr="id">
+                    </dxo-lookup>
+                </dxi-column>
+            </dx-data-grid>
       </mat-step>
       <mat-step [label]="l('Review')"
           [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">

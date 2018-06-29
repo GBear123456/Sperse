@@ -15,9 +15,9 @@
     h3 {
         padding-bottom: 20px;
         font-size: 18px;
-    }    
+    }
 
-    .actions {  
+    .actions {
         position: absolute;
         right: 20px;
         top: 13px;
@@ -27,31 +27,39 @@
         padding: 30px 0px;
         display: flex;
         justify-content: center;
+
         .center {
             line-height: 10;
             color: #e5e9ec;
         }
+
         .block {
             width: 400px;
             margin: 20px;
+
             &.right {
                 margin-left: 50px;
             }
+
             &.left {
                 margin-right: 50px;
             }
+
             input {
                 padding: 7px;
                 border-radius: 5px;
             }
+
             .file-info {
                 padding: 20px;
+
                 p {
-                    margin: 0px; 
+                    margin: 0px;
                 }
             }
         }
-        .full-width { 
+
+        .full-width {
             width: 100%;
         }
     }
@@ -61,35 +69,41 @@
             justify-content: space-around;
             border-bottom: 1px solid #e5e9ec;
             padding: 0px 20%;
+
             .mat-step-label-active {
                 .mat-step-text-label {
-                    font-weight: 500!important;
+                    font-weight: 500 !important;
                 }
             }
+
             .mat-step-text-label {
-                font-size: 16px!important;
+                font-size: 16px !important;
                 font-weight: 300;
-                letter-spacing: 0.2px!important;
-                color: #677380!important;
+                letter-spacing: 0.2px !important;
+                color: #677380 !important;
             }
+
             .mat-step-icon {
                 font-weight: 500;
-                color: #00aeef!important;
-                background: #FFF!important;
+                color: #00aeef !important;
+                background: #FFF !important;
                 border: 1px solid #00aeef;
             }
+
             .mat-step-icon-not-touched {
-                color: #677380!important;
-                background: #FFF!important;
+                color: #677380 !important;
+                background: #FFF !important;
                 border: 1px solid #e5e9ec;
             }
+
             .mat-stepper-horizontal-line:nth-last-child(2), mat-step-header:last-child {
-                display: none!important;
+                display: none !important;
             }
         }
+
         .mat-stepper-horizontal-line {
-            border-top-width: 0px!important;
-            flex: none!important;
+            border-top-width: 0px !important;
+            flex: none !important;
             width: 50px;
             padding-left: 15px;
 
@@ -103,6 +117,7 @@
                 position: relative;
                 transform: rotate(45deg);
             }
+
             &:after {
                 top: 7px;
                 content: '';
@@ -125,13 +140,17 @@
             height: 170px;
             border: 2px dashed #e5e9ec;
             border-radius: 10px;
+
             .content {
                 color: #677380;
+
                 p {
                     text-align: center;
                     margin-top: 75px;
+
                     a {
                         position: relative;
+
                         input {
                             position: absolute;
                             cursor: pointer;
@@ -144,22 +163,28 @@
     }
 
     /deep/ dx-data-grid {
-        height: calc(~"100vh - 150px")!important;
+        height: calc(~"100vh - 150px") !important;
 
         .dx-datagrid-focus-overlay {
-            display: none!important;
+            display: none !important;
         }
+
         input {
-            border-bottom: none!important;
+            border-bottom: none !important;
         }
+
         .dx-state-focused {
             .dx-placeholder {
-                top: -25px!important;
-            }            
+                top: -25px !important;
+            }
         }
 
         .dx-selection.unmapped-field td {
             background-color: #FFFBF5 !important;
+        }
+
+        .dx-dropdowneditor .dx-placeholder {
+            color: #85d5f7;
         }
     }
 }
