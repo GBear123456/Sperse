@@ -1,9 +1,10 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { Router, CanActivate } from '@angular/router';
-import { TokenAuthServiceProxy, SendTwoFactorAuthCodeModel } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { LoginService } from './login.service';
+import { CanActivate, Router } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { SendTwoFactorAuthCodeModel, TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LoginService } from './login.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './send-two-factor-code.component.html',
@@ -47,7 +48,7 @@ export class SendTwoFactorCodeComponent extends AppComponentBase implements CanA
         this.submitting = true;
         this._tokenAuthService
             .sendTwoFactorAuthCode(model)
-            .finally(() => this.submitting = false)
+            .pipe(finalize(() => this.submitting = false))
             .subscribe(() => {
                 this._router.navigate(['account/verify-code']);
             });

@@ -32,15 +32,15 @@ import { CompleteTenantRegistrationComponent } from './register/complete-tenant-
 //                    { path: 'upgrade', component: UpgradeOrExtendComponent },
 //                    { path: 'register-tenant', component: RegisterTenantComponent },
 //                    { path: 'register-tenant-result', component: RegisterTenantResultComponent },
-                    { path: 'forgot-password', component: ForgotPasswordComponent },
-                    { path: 'reset-password', component: ResetPasswordComponent },
-                    { path: 'email-activation', component: EmailActivationComponent },
-                    { path: 'confirm-email', component: ConfirmEmailComponent },
-                    { path: 'send-code', component: SendTwoFactorCodeComponent },
-                    { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
-                    { path: 'select-tenant', component: SelectTenantComponent },
+                    { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [AccountRouteGuard] },
+                    { path: 'reset-password', component: ResetPasswordComponent, canActivate: [AccountRouteGuard] },
+                    { path: 'email-activation', component: EmailActivationComponent, canActivate: [AccountRouteGuard] },
+                    { path: 'confirm-email', component: ConfirmEmailComponent, canActivate: [AccountRouteGuard] },
+                    { path: 'send-code', component: SendTwoFactorCodeComponent, canActivate: [AccountRouteGuard] },
+                    { path: 'verify-code', component: ValidateTwoFactorCodeComponent, canActivate: [AccountRouteGuard] },
+                    { path: 'select-tenant', component: SelectTenantComponent, canActivate: [AccountRouteGuard] },
 //                    { path: 'select-edition', component: SelectEditionComponent },
-                    { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }
+                    { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent, canActivate: [AccountRouteGuard] }
                 ]
             }
         ])

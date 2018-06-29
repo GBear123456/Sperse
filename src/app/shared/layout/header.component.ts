@@ -1,35 +1,25 @@
-import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { AbpSessionService } from '@abp/session/abp-session.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
-import {
-    ProfileServiceProxy,
-    UserLinkServiceProxy,
-    UserServiceProxy,
-    LinkedUserDto,
-    ChangeUserLanguageDto,
-    TenantLoginInfoDto,
-    GetCurrentLoginInformationsOutput,
-    SessionServiceProxy
-} from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
-
-import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
-import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
-import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
-import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
-import { MySettingsModalComponent } from './profile/my-settings-modal.component';
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { Component, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { ImpersonationService } from '@admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
-import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
+import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { AppConsts } from '@shared/AppConsts';
 import { EditionPaymentType } from '@shared/AppEnums';
-import { LayoutService } from '@app/shared/layout/layout.service';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { ChangeUserLanguageDto, GetCurrentLoginInformationsOutput, LinkedUserDto, ProfileServiceProxy, SessionServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
+//import { LayoutService } from '@app/shared/layout/layout.service';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
+import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
+import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
+import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
+import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 
 @Component({
     templateUrl: './header.component.html',
@@ -39,7 +29,6 @@ import * as moment from 'moment';
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
-
     @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordModalComponent;
@@ -49,13 +38,18 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
+    isMultiTenancyEnabled = false;
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName? };
-
-    profilePicture = '/assets/common/images/default-profile-picture.png';
     helpLink: string = AppConsts.helpLink;
 
+    shownLoginName = '';
+    tenancyName = '';
+    userName = '';
+
+    profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    defaultLogo = AppConsts.appBaseUrl + '/assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
@@ -78,7 +72,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
         private _appSessionService: AppSessionService,
-        public _layoutService: LayoutService
+        //public _layoutService: LayoutService
     ) {
         super(injector);
     }
@@ -88,6 +82,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
+        this.isMultiTenancyEnabled = this._abpMultiTenancyService.isEnabled;
         this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
 
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
@@ -227,12 +222,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getTrialSubscriptionNotification(): string {
-        return abp.utils.formatString(this.l('TrialSubscriptionNotification'),
+        return this.l('TrialSubscriptionNotification',
             '<strong>' + this._appSessionService.tenant.edition.displayName + '</strong>',
             '<a href=\'/account/buy?editionId=' + this._appSessionService.tenant.edition.id + '&editionPaymentType=' + this.editionPaymentType.BuyNow + '\'>' + this.l('ClickHere') + '</a>');
     }
 
     getExpireNotification(localizationKey: string): string {
-        return abp.utils.formatString(this.l(localizationKey), this.getSubscriptionExpiringDayCount());
+        return this.l(localizationKey, this.getSubscriptionExpiringDayCount());
     }
 }

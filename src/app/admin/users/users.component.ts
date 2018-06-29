@@ -85,35 +85,35 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden(true);
 
         this.actionMenuItems = [
-            { 
+            {
                 text: this.l('LoginAsThisUser'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Impersonation'),
                 action: () => {
                     this._impersonationService.impersonate(this.actionRecord.id, this.appSession.tenantId);
                 }
             },
-            { 
+            {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
                 action: () => {
                     this.createOrEditUserModal.show(this.actionRecord.id);
                 }
             },
-            { 
+            {
                 text: this.l('Permissions'),
                 visible: this.permission.isGranted('Pages.Administration.Users.ChangePermissions'),
                 action: () => {
                     this.editUserPermissionsModal.show(this.actionRecord.id, this.actionRecord.userName);
                 }
             },
-            { 
+            {
                 text: this.l('Unlock'),
                 visible: this.permission.isGranted('Pages.Administration.Users.ChangePermissions'),
                 action: () => {
                     this.unlockUser(this.actionRecord);
                 }
             },
-            { 
+            {
                 text: this.l('Delete'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Delete'),
                 action: () => {
@@ -131,7 +131,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     return this._userServiceProxy.getUsers(
                             this.searchValue || undefined,
                             this.selectedPermission || undefined,
-                            this.role || undefined, 
+                            this.role || undefined,
                             (loadOptions.sort || []).map((item) => {
                                 return item.selector + ' ' + (item.desc ? 'DESC': 'ASC')
                             }).join(','), loadOptions.take, loadOptions.skip
@@ -140,7 +140,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 data: response.items,
                                 totalCount: response.totalCount
                             };
-                        });                    
+                        });
                 }
         });
     }
@@ -232,8 +232,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             {
                 location: 'after',
                 items: [
-                    { 
-                        name: 'fullscreen', 
+                    {
+                        name: 'fullscreen',
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -254,7 +254,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     new FilterModel({
                         component: FilterRadioGroupComponent,
                         caption: 'permission',
-                        items: { 
+                        items: {
                             element: new FilterRadioGroupModel({
                                 value: this.selectedPermission,
                                 list: res[0].items.map((item) => {
@@ -265,13 +265,13 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                         displayName: item.displayName
                                     };
                                 })
-                            })                        
+                            })
                         }
                     }),
                     new FilterModel({
                         component: FilterRadioGroupComponent,
                         caption: 'role',
-                        items: { 
+                        items: {
                             element: new FilterRadioGroupModel({
                                 value: this.role,
                                 list: res[1].items.map((item) => {
@@ -288,12 +288,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
 
         this._filtersService.apply((filter) => {
-            let filterValue = filter && 
+            let filterValue = filter &&
                 filter.items.element.value;
             if (filterValue) {
                 if (filter.caption == 'role')
                     this.role = filterValue;
-                else 
+                else
                     this.selectedPermission = filterValue;
             }
 
@@ -350,6 +350,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
         this.message.confirm(
             this.l('UserDeleteWarningMessage', user.userName),
+            this.l('AreYouSure'),
             (isConfirmed) => {
                 if (isConfirmed) {
                     this._userServiceProxy.deleteUser(user.id)
@@ -374,7 +375,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._filtersService.localizationSourceName = 
+        this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();

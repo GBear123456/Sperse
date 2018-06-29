@@ -1,27 +1,39 @@
+import { AbpModule } from '@abp/abp.module';
 import * as ngCommon from '@angular/common';
-import {NgModule} from '@angular/core';
-
-import {LayoutModule} from './shared/layout/layout.module';
-import {AppCommonModule} from './shared/common/app-common.module';
-import {AppRoutingModule} from './app-routing.module';
-
-import {AppComponent} from './app.component';
-import {AppService} from './app.service';
-
-import {ImpersonationService} from '@admin/users/impersonation.service';
-
-import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';
-import {CacheService} from 'ng2-cache-service';
-import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
-import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
-
-export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
-    accountUrl = 'sperse.zendesk.com';
-    beforePageLoad(zE) {
-        zE.setLocale('en');
-        zE.hide();
-    }
-}
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule, JsonpModule } from '@angular/http';
+import { QuickSideBarChat } from '@app/shared/layout/chat/QuickSideBarChat';
+import { ChatSignalrService } from '@app/shared/layout/chat/chat-signalr.service';
+import { LinkAccountModalComponent } from '@app/shared/layout/link-account-modal.component';
+import { LinkedAccountsModalComponent } from '@app/shared/layout/linked-accounts-modal.component';
+import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal.component';
+import { ChangePasswordModalComponent } from '@app/shared/layout/profile/change-password-modal.component';
+import { ChangeProfilePictureModalComponent } from '@app/shared/layout/profile/change-profile-picture-modal.component';
+import { MySettingsModalComponent } from '@app/shared/layout/profile/my-settings-modal.component';
+import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
+import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { FileUploadModule } from 'ng2-file-upload';
+import { ModalModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
+import { FileUploadModule as PrimeNgFileUploadModule, PaginatorModule, ProgressBarModule } from 'primeng/primeng';
+import { TableModule } from 'primeng/table';
+import { ImpersonationService } from './admin/users/impersonation.service';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { AppCommonModule } from './shared/common/app-common.module';
+import { ChatBarComponent } from './shared/layout/chat/chat-bar.component';
+import { ChatFriendListItemComponent } from './shared/layout/chat/chat-friend-list-item.component';
+import { ChatMessageComponent } from './shared/layout/chat/chat-message.component';
+import { FooterComponent } from './shared/layout/footer.component';
+import { HeaderComponent } from './shared/layout/header.component';
+import { LinkedAccountService } from './shared/layout/linked-account.service';
+import { SideBarMenuComponent } from './shared/layout/nav/side-bar-menu.component';
+import { TopBarMenuComponent } from './shared/layout/nav/top-bar-menu.component';
+import { UserNotificationHelper } from './shared/layout/notifications/UserNotificationHelper';
+import { HeaderNotificationsComponent } from './shared/layout/notifications/header-notifications.component';
+import { NotificationSettingsModalComponent } from './shared/layout/notifications/notification-settings-modal.component';
+import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 
 @NgModule({
     declarations: [

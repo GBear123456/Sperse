@@ -1,14 +1,13 @@
-import * as moment from 'moment';
-import { AppConsts } from '@shared/AppConsts';
-import { UrlHelper } from './shared/helpers/UrlHelper';
-import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
-import * as _ from 'lodash';
-import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyNameFinder';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
 import { UtilsService } from '@abp/utils/utils.service';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
+import { CompilerOptions, NgModuleRef, Type } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { AppConsts } from '@shared/AppConsts';
+import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyNameFinder';
+import * as moment from 'moment';
+import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
+import { UrlHelper } from './shared/helpers/UrlHelper';
+import { environment } from './environments/environment';
 
 export class AppPreBootstrap {
 
@@ -43,7 +42,8 @@ export class AppPreBootstrap {
         return platformBrowserDynamic().bootstrapModule(moduleType, compilerOptions);
     }
 
-    private static getApplicationConfig(callback: () => void) {
+    private static getApplicationConfig(appRootUrl: string, callback: () => void) {
+
         return abp.ajax({
             url: '/assets/appconfig.json',
             method: 'GET'

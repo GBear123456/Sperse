@@ -1,13 +1,14 @@
-import { Component, OnInit, OnDestroy, AfterViewChecked, Injector } from '@angular/core';
-import { TenantSettingsServiceProxy, DefaultTimezoneScope, TenantSettingsEditDto, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
-import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppTimezoneScope } from '@shared/AppEnums';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { FileUploader, FileUploaderOptions } from '@node_modules/ng2-file-upload';
+import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { TokenService } from '@abp/auth/token.service';
-import { IAjaxResponse } from '@abp/abpHttp';
+import { AfterViewChecked, Component, Injector, OnInit } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
+import { AppTimezoneScope } from '@shared/AppEnums';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { DefaultTimezoneScope, SendTestEmailInput, TenantSettingsEditDto, TenantSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -65,9 +66,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     getSettings(): void {
         this.loading = true;
         this._tenantSettingsService.getAllSettings()
-            .finally(() => {
-                this.loading = false;
-            })
+            .pipe(finalize(() => { this.loading = false; }))
             .subscribe((result: TenantSettingsEditDto) => {
                 this.settings = result;
                 if (this.settings.general) {

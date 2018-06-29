@@ -16,7 +16,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     private checkSameRoute(route, handle) {
         return handle && (handle.route.value.snapshot.routeConfig == route.routeConfig);
     }
-    
+
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         if (!route.routeConfig || route.routeConfig.loadChildren)
             return false;
@@ -26,7 +26,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
         if (handle && (<any>handle).componentRef.instance.deactivate)
-            (<any>handle).componentRef.instance.deactivate();             
+            (<any>handle).componentRef.instance.deactivate();
         this.handlers[this.getKey(route)] = handle;
     }
 
@@ -41,7 +41,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         let handle = <any>this.handlers[this.getKey(route)];
         if (handle && handle.componentRef.instance.activate) {
             clearTimeout(this.activateTimeout);
-            this.activateTimeout = setTimeout(() => 
+            this.activateTimeout = setTimeout(() =>
                 handle.componentRef.instance.activate());
         }
         return (this.checkSameRoute(route, handle) ? handle: null);

@@ -38,4 +38,8 @@ export class UrlHelper {
 
         return false;
     }
+
+    static isInstallUrl(url): boolean {
+        return url && url.indexOf('app/admin/install') >= 0;
+    }
 }

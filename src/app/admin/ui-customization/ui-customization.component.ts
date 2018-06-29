@@ -1,5 +1,6 @@
 import { Component, Injector, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 
@@ -7,7 +8,7 @@ import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } f
     templateUrl: './ui-customization.component.html',
     animations: [appModuleAnimation()]
 })
-export class UiCustomizationComponent extends AppComponentBase implements OnDestroy {
+export class UiCustomizationComponent extends AppComponentBase implements AfterViewChecked, OnInit, OnDestroy {
 
     settings: UiCustomizationSettingsEditDto;
     private rootComponent: any;
@@ -38,7 +39,7 @@ export class UiCustomizationComponent extends AppComponentBase implements OnDest
     }
 
     leftMenuPositionSelected(): boolean {
-        return this.settings.menu.position === "left";
+        return this.settings.menu.position === 'left';
     }
 
     updateDefaultUiManagementSettings(): void {

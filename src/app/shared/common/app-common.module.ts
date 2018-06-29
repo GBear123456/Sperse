@@ -1,4 +1,9 @@
+import { AbpModule } from '@abp/abp.module';
 import * as ngCommon from '@angular/common';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap';
@@ -6,9 +11,15 @@ import { ModalModule } from 'ngx-bootstrap';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { ModalModule } from 'ngx-bootstrap';
+import { PaginatorModule } from 'primeng/primeng';
+import { TableModule } from 'primeng/table';
+import { AppAuthService } from './auth/app-auth.service';
+import { AppRouteGuard } from './auth/auth-route-guard';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressBarModule, MatStepperModule, MatInputModule, 
+import { MatProgressBarModule, MatStepperModule, MatInputModule,
     MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
 
 import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
@@ -26,8 +37,10 @@ import { CommonLookupModalComponent } from './lookup/common-lookup-modal.compone
 import { DateRangePickerComponent } from './timing/date-range-picker.component';
 import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
+import { DateRangePickerComponent } from './timing/date-range-picker.component';
 import { PeriodComponent } from './period/period.component';
 import { DateTimeService } from './timing/date-time.service';
+import { TimeZoneComboComponent } from './timing/timezone-combo.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
 import { DataTableModule } from 'primeng/primeng';
@@ -47,6 +60,8 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         UtilsModule,
         AbpModule,
         CommonModule,
+        TableModule,
+        PaginatorModule,
         DataTableModule,
         PaginatorModule,
 

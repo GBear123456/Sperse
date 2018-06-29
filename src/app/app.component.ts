@@ -1,14 +1,13 @@
-import {Component, ViewContainerRef, OnInit, AfterViewInit, Injector} from '@angular/core';
-import {Router} from '@angular/router';
-import {ChatSignalrService} from 'app/shared/layout/chat/chat-signalr.service';
-import {SignalRHelper} from 'shared/helpers/SignalRHelper';
-import {AppComponentBase} from 'shared/common/app-component-base';
-import {AppSessionService} from '@shared/common/session/app-session.service';
-import {FiltersService} from '@shared/filters/filters.service';
-import {AppService} from './app.service';
-import {AppConsts} from '@shared/AppConsts';
-import {UrlHelper} from '@shared/helpers/UrlHelper';
+import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppConsts } from '@shared/AppConsts';
+import { SubscriptionStartType } from '@shared/AppEnums';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
 import * as moment from 'moment';
+import { AppComponentBase } from 'shared/common/app-component-base';
+import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 
 @Component({
     templateUrl: './app.component.html',
@@ -20,7 +19,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     private router: Router;
 
     installationMode: boolean = false;
-
 
     public constructor(
         injector: Injector,
@@ -42,6 +40,8 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         if (this.appSession.application && this.appSession.application.features['SignalR']) {
             SignalRHelper.initSignalR(() => {this._chatSignalrService.init();});
         }
+
+        this.installationMode = UrlHelper.isInstallUrl(location.href);
     }
 
     subscriptionStatusBarVisible(): boolean {
@@ -52,8 +52,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
     subscriptionIsExpiringSoon(): boolean {
         if (this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days')
-                >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
+            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
 
         return false;
