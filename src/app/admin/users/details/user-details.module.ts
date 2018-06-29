@@ -10,7 +10,7 @@ import {
 } from '@angular/material';
 
 import {
-    DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
+    DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeViewModule,
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
     DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule
 } from 'devextreme-angular';
@@ -24,6 +24,7 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { UserInformationComponent } from './user-information/user-information.component';
 import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
+import { PermissionTreeComponent } from './permission-tree/permission-tree.component'
 import { ImageCropperModule } from 'ng2-img-cropper';
 
 import { UserDetailsRoutingModule } from './user-details-routing.module';
@@ -42,6 +43,7 @@ import {
         LoginAttempsComponent,
         UserAccountComponent,
         OperationsWidgetComponent,
+        PermissionTreeComponent
     ],
     imports: [
         FormsModule,
@@ -70,7 +72,7 @@ import {
         DxTooltipModule,
         DxListModule,
         DxSliderModule,
-        DxTreeListModule,
+        DxTreeViewModule,
         DxValidationGroupModule,
         ImageCropperModule,
         DxRadioGroupModule,

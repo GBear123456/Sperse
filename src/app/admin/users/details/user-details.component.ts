@@ -4,7 +4,11 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { OperationsWidgetComponent } from './operations-widget.component';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
+import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/forkJoin';
 
 import * as _ from 'underscore';
 
@@ -15,6 +19,7 @@ import * as _ from 'underscore';
 })
 export class UserDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+    @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
 
     userId: number;
     userData: GetUserForEditOutput = new GetUserForEditOutput();
@@ -44,16 +49,22 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             .subscribe(params => {
                 this.userId = params['userId'];
                 this.startLoading(true);
-                this._userService.getUserForEdit(this.userId)
-                    .finally(() => this.finishLoading(true))
-                    .subscribe((result) => {
-                        this._userService['data'].user = result.user;
-                        result.user['setRandomPassword'] = false;
-                        result.user['sendActivationEmail'] = false;
-                        this._userService['data'].roles = result.roles;
-                        this.userData = result;
+                Observable.forkJoin(
+                    this._userService.getUserForEdit(this.userId),
+                    this._userService.getUserPermissionsForEdit(this.userId)
+                ).finally(() => this.finishLoading(true))
+                    .subscribe(([userEditOutput, permissionsOutput]) => {
+                        //user
+                        this._userService['data'].user = userEditOutput.user;
+                        userEditOutput.user['setRandomPassword'] = false;
+                        userEditOutput.user['sendActivationEmail'] = false;
+                        this._userService['data'].roles = userEditOutput.roles;
+                        this.userData = userEditOutput;
 
-                        this.setProfilePicture(result.profilePictureId);
+                        this.setProfilePicture(userEditOutput.profilePictureId);
+
+                        //permissions
+                        this.permissionTree.setPermissionsData(permissionsOutput);
                     });
             });
 
@@ -120,25 +131,32 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
     }
 
     update() {
-        let input = new CreateOrUpdateUserInput();
-
-        input.user = this.userData.user;
-        input.setRandomPassword = this.userData.user['setRandomPassword'];
-        input.sendActivationEmail = this.userData.user['sendActivationEmail'];
-        input.assignedRoleNames =
+        let userInput = new CreateOrUpdateUserInput();
+        userInput.user = this.userData.user;
+        userInput.setRandomPassword = this.userData.user['setRandomPassword'];
+        userInput.sendActivationEmail = this.userData.user['sendActivationEmail'];
+        userInput.assignedRoleNames =
             _.map(
                 _.filter(this.userData.roles, { isAssigned: true }), role => role.roleName
             );
+        userInput.tenantHostType = <any>TenantHostType.PlatformUi;
 
         //input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
+        let permissionsInput = new UpdateUserPermissionsInput();
+        permissionsInput.id = this.userId;
+        permissionsInput.grantedPermissionNames = this.permissionTree.getGrantedPermissionNames();
+
 
         this.startLoading(true);
-        input.tenantHostType = <any>TenantHostType.PlatformUi;
-        this._userService.createOrUpdateUser(input)
-            .finally(() => this.finishLoading(true))
+        this._userService.createOrUpdateUser(userInput)
             .subscribe(() => {
-                this.close();
-                this.notify.info(this.l('SavedSuccessfully'));
-            });
+                this.startLoading(true);
+                this._userService.updateUserPermissions(permissionsInput)
+                    .finally(() => this.finishLoading(true))
+                    .subscribe(() => {
+                        this.close();
+                        this.notify.info(this.l('SavedSuccessfully'));
+                    });
+            }, undefined, () => this.finishLoading(true));
     }
 }

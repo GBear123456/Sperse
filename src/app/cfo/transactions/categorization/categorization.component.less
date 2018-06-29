@@ -306,6 +306,21 @@
                         }
                     }
 
+                    &.unknown {
+                        .dx-treelist-expanded,
+                        .dx-treelist-collapsed {
+                            color: #959595;
+                        }
+
+                        &[aria-level="2"] {
+                            td:first-child {
+                                &:before {
+                                    background-color: #959595;
+                                }
+                            }
+                        }
+                    }
+
                     &.system-type {
                         .dx-command-edit {
                             .dx-link-delete {

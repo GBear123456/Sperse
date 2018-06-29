@@ -22,6 +22,7 @@
                 </file-drop>
                 <div class="file-info" [hidden]="!dropZoneProgress">
                     <p>{{l('File')}}: {{fileName}}</p>
+                    <p><label><input type="checkbox" name="hasHeadersCheckBox" [(ngModel)]="fileHasHeader" [ngModelOptions]="{standalone: true}"/> {{l('My file has headers')}}</label></p>
                     <p>{{l('FileSize')}}: {{fileSize}}</p>
                     <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
                 </div>
@@ -49,7 +50,8 @@
                       [columnAutoWidth]="true"
                       [allowColumnResizing]="false"
                       [hoverStateEnabled]="true"
-                      (onRowValidating)="onRowValidating($event)">
+                      (onRowValidating)="onRowValidating($event)"
+                      (onContentReady)="onContentReady($event)">
               <dxo-selection
                   selectAllMode="page"
                   showCheckBoxesMode="always"
