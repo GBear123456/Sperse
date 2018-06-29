@@ -378,4 +378,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             this.highlightUnmappedFields(mappedFields);
         }
     }
+
+    mappedFieldChanged($event, cell) {
+        cell.setValue($event.value);
+    }
 }
