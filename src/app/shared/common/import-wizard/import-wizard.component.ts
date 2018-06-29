@@ -50,10 +50,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     fileData: any;
     fileName: string = '';
     fileSize: string = '';
+    fileHasHeader: boolean = false;
+    fileHeaderWasGenerated = false;
 
     reviewDataSource: any;
     mapDataSource: any;
     lookupFields: any;
+
+    isMapped = true;
 
     selectModeItems = [
         {text: 'Affect on page items', mode: 'page'},
@@ -83,6 +87,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
         this.showSteper = false;
         this.uploadFile.reset();
+
+        this.mapDataSource = [];
+        this.reviewDataSource = [];
+
         setTimeout(() => {
             this.showSteper = true;
             callback && callback();
@@ -92,13 +100,16 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
             if (this.checkFileDataValid())
+            {
+                this.buildMappingDataSource();
                 this.stepper.next();
+            }
             else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             let mappedFields = this.mapGrid.instance.getSelectedRowsData();
             if (!mappedFields.length) {
-                mappedFields = this.mapDataSource.filter((row) => {
+                mappedFields = this.mapDataSource.store.data.filter((row) => {
                     return !!row.mappedField;
                 });
             }
@@ -149,19 +160,39 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         const FIRST_NAME_FIELD = 'first',
               LAST_NAME_FIELD = 'last';
         let isFistName = false, 
-            isLastName = false,
-            isMapped = rows.every((row) => {
-                isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
-                isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
-                if (!row.mappedField)
-                    this.message.error(this.l('MapAllRecords'));
-                return !!row.mappedField;
-            });
+            isLastName = false;
 
-        if (isMapped && (!isFistName || !isLastName))
+        this.isMapped = rows.every((row) => {
+            isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
+            isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
+            return !!row.mappedField;
+        });
+
+        if (!this.isMapped) {
+            this.highlightUnmappedFields(rows);
+            this.message.error(this.l('MapAllRecords'));
+        }
+
+        if (this.isMapped && (!isFistName || !isLastName))
             this.message.error(this.l('FieldsMapError'));
 
-        return isMapped && isFistName && isLastName;
+        return this.isMapped && isFistName && isLastName;
+    }
+
+    highlightUnmappedFields(rows) {
+        rows.forEach(row => {
+            if (!row.mappedField)
+                this.highlightUnmappedField(row);
+        });
+    }
+
+    highlightUnmappedField(row) {
+        let rowIndex = this.mapGrid.instance.getRowIndexByKey(row.id);
+        let cellElement = this.mapGrid.instance.getCellElement(rowIndex, 'mappedField');
+        let rows = cellElement.closest('.dx-datagrid-rowsview').querySelectorAll(`tr:nth-of-type(${rowIndex + 1})`);
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.add(`unmapped-field`);
+        }
     }
 
     checkFileDataValid() {
@@ -173,10 +204,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this._parser.parse(content.trim(), {
             complete: (results) => {
                 if (results.errors.length)
-                    this.message.error(results.errors[0].message);
+                    this.message.error(this.l('IncorrectFileFormatError'));
                 else {
+                    this.fileHeaderWasGenerated = false;
                     this.fileData = results;
-                    this.buildMappingDataSource();
+                    this.checkIfFileHasHeaders();
                 }    
             }
         });
@@ -214,20 +246,66 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     buildMappingDataSource() {
-        this.mapDataSource = 
-            this.fileData.data[0].map((field, index) => {
+        if (this.fileData && this.fileData.data && this.fileData.data.length) {
+            if (!this.fileHasHeader && !this.fileHeaderWasGenerated) {
+                let columnsCount = this.fileData.data[0].length;
+                let headers: string[] = [];
+                for (let i = 0; i < columnsCount; i++) {
+                    headers.push(`Column ${i + 1}`);
+                }
+
+                this.fileData.data.unshift(headers);
+                this.fileHeaderWasGenerated = true;
+            }
+            else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
+                this.fileData.data.shift();
+                this.fileHeaderWasGenerated = false;
+            }
+
+            let data = this.fileData.data[0].map((field, index) => {
                 let fieldId;
                 return {
-                  sourceField: field,
-                  sampleValue: this.lookForValueExample(index),
-                  mappedField: this.lookupFields.every((item) => {
-                      let isSameField = item.id.toLowerCase() == field.toLowerCase();
-                      if (isSameField)
-                          fieldId = item.id;
-                      return !isSameField;
-                  }) ? '': fieldId
+                    id: index,
+                    sourceField: field,
+                    sampleValue: this.lookForValueExample(index),
+                    mappedField: this.lookupFields.every((item) => {
+                        let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                        if (isSameField)
+                            fieldId = item.id;
+                        return !isSameField;
+                    }) ? '' : fieldId
                 };
             });
+
+            this.mapDataSource = {
+                store: {
+                    type: 'array',
+                    key: 'id',
+                    data: data
+                }
+            };
+        }
+    }
+
+    checkIfFileHasHeaders() {
+        if (this.fileData.data.length) {
+            const constNames = ['Name', 'Email', 'Phone'];
+            let fileHasHeader = true;
+
+            for (let i = 0; i < constNames.length; i++) {
+                let nameIsPresent = false;
+                this.fileData.data[0].forEach((val: string) => {
+                    if (val.indexOf(constNames[i]) != -1)
+                        nameIsPresent = true;
+                });
+                if (!nameIsPresent) {
+                    fileHasHeader = false;
+                    break;
+                }
+            }
+
+            this.fileHasHeader = fileHasHeader;
+        }
     }
 
     lookForValueExample(fieldIndex) {
@@ -281,12 +359,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     onRowValidating($event) {
-        this.mapDataSource.forEach((row) => {
+        this.mapDataSource.store.data.forEach((row) => {
             if ($event.newData.sourceField != row.sourceField 
                 && $event.newData.mappedField == row.mappedField
             ) {
                 $event.isValid = false;
-                $event.errorText = this.l('FieldMappedError', [row.sourceField]);
+                $event.errorText = this.l('FieldMapError', [row.sourceField]);
             }
         });
     }
@@ -294,5 +372,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     selectionModeChanged($event) {
         this.reviewGrid.instance.option(
             'selection.selectAllMode', $event.itemData.mode);
+    }
+
+    onContentReady($event) {
+        if (this.mapGrid && !this.isMapped) {
+            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+            this.highlightUnmappedFields(mappedFields);
+        }
     }
 }
