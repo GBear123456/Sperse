@@ -30,10 +30,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     cancel() {
+        this.reset(() => {
+            this._router.navigate(['app/crm/dashboard']);
+        });
+    }
+
+    reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
-
-        this._router.navigate(['app/crm/dashboard']);
+        this.wizard.reset(callback);
     }
 
     complete(data) {
