@@ -87,6 +87,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
         this.showSteper = false;
         this.uploadFile.reset();
+
+        this.mapDataSource = [];
+        this.reviewDataSource = [];
+
         setTimeout(() => {
             this.showSteper = true;
             callback && callback();
