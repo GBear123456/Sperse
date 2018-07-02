@@ -88,7 +88,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelineDataSource: any;
     collection: any;
     showPipeline = true;
-    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;   
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
 
     filterModelLists: FilterModel;
@@ -547,8 +547,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    { 
-                        name: 'fullscreen', 
+                    {
+                        name: 'fullscreen',
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -665,15 +665,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        let targetStage = $event.name,
-            ignoredStages = [];
+        let targetStage = $event.name;
         this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage)
-                && ignoredStages.indexOf(lead.Stage) < 0)
-                    ignoredStages.push(lead.Stage);
+            this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage);
         });
-        if (ignoredStages.length)
-            this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
         if (this.selectedLeads.length)
             setTimeout(() => { //!!VP temporary solution for grid refresh
                 this.refreshDataGrid();
@@ -723,7 +718,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     deleteLeads() {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        let selectedIds: number[] = this.selectedLeads.map(lead => lead.Id);
         this.message.confirm(
             this.l('LeadsDeleteWarningMessage'),
             isConfirmed => {

@@ -101,25 +101,36 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     fileSelected($event) {
-        if ($event.target.files.length)
-            this.uploadFiles($event.target.files);
+        let files = $event.target.files;
+        if (files.length)
+            this.uploadSelectedFiles(files);
     }
 
-    fileDropped($event) {
-        if ($event.files.length)
-            this.uploadFiles($event.files);
-    }
-
-    uploadFiles(list) {
-        for (const droppedFile of list) {
-            if (droppedFile.fileEntry.isFile)
-                this.uploadFile(droppedFile);
+    uploadSelectedFiles(files) {
+        for (let file of files) {
+            this.uploadFile(file);
         }
     }
 
-    uploadFile(droppedFile) {
-        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        fileEntry.file((file: File) => {
+    fileDropped($event) {
+        let files = $event.files;
+        if (files.length)
+            this.uploadDroppedFiles(files);
+    }
+
+    uploadDroppedFiles(list) {
+        for (let droppedFile of list) {
+            if (droppedFile.fileEntry.isFile)
+                this.uploadDroppedFile(droppedFile);
+        }
+    }
+
+    uploadDroppedFile(droppedFile) {
+        let fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file((file: File) => this.uploadFile(file));
+    }
+
+    uploadFile(file) {
         let myReader: FileReader = new FileReader();
         myReader.onloadend = (loadEvent: any) => {
             this._documentService.upload(UploadDocumentInput.fromJS({
@@ -132,7 +143,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             });
         };
         myReader.readAsDataURL(file);
-        });
     }
 
     onShowingPopup(e) {
