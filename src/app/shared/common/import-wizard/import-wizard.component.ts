@@ -19,8 +19,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
+    @ViewChild('importFileInput') dataFromInput: any;
 
     @Input() title: string;
+    @Input() icon: string;
     @Input() localizationSource: string;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
@@ -381,5 +383,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     mappedFieldChanged($event, cell) {
         cell.setValue($event.value);
+    }
+
+    cleanInput() {
+        this.dataFromInput.nativeElement.value = '';
+        this.dropZoneProgress = null;
     }
 }
