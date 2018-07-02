@@ -1,24 +1,31 @@
-import { AbpModule } from '@abp/abp.module';
-import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
-import { PlatformLocation, registerLocaleData } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, Injector, LOCALE_ID, NgModule } from '@angular/core';
+/** Core imports */
+import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppAuthService } from '@app/shared/common/auth/app-auth.service';
+import { PlatformLocation, registerLocaleData } from '@angular/common';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { RouteReuseStrategy } from '@angular/router';
+
+/** Third party imports */
+import { AbpModule } from '@abp/abp.module';
+import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
+import * as _ from 'lodash';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { CommonModule } from '@shared/common/common.module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { FiltersModule } from '@shared/filters/filters.module';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
-import * as localForage from 'localforage';
-import * as _ from 'lodash';
 import { AppPreBootstrap } from './AppPreBootstrap';
-import { AppModule } from './app/app.module';
-import { RootRoutingModule } from './root-routing.module';
-import { RootComponent } from './root.component';
+//import { MobileModule } from './mobile/mobile.module';
+import { RootComponent, AppRootComponent } from './root.components';
+import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 
 export function appInitializerFactory(
     injector: Injector,
@@ -31,17 +38,7 @@ export function appInitializerFactory(
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
             let appBaseUrl = getDocumentOrigin() + AppConsts.appBaseHref;
-            
             AppPreBootstrap.run(appBaseUrl, () => {
-                // Initialize local Forage
-                localForage.config({
-                    driver: localForage.LOCALSTORAGE,
-                    name: 'Platform',
-                    version: 1.0,
-                    storeName: 'abpzerotemplate_local_storage',
-                    description: 'Cached data for Platform'
-                });
-
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
@@ -92,7 +89,7 @@ export function appInitializerFactory(
 
 function getDocumentOrigin() {
     if (!document.location.origin) {
-        return document.location.protocol + "//" + document.location.hostname + (document.location.port ? ':' + document.location.port : '');
+        return document.location.protocol + '//' + document.location.hostname + (document.location.port ? ':' + document.location.port : '');
     }
 
     return document.location.origin;
@@ -124,7 +121,7 @@ export function getCurrentLanguage(): string {
 }
 
 export function getBaseHref(platformLocation: PlatformLocation): string {
-    var baseUrl = platformLocation.getBaseHrefFromDOM();
+    let baseUrl = platformLocation.getBaseHrefFromDOM();
     if (baseUrl) {
         return baseUrl;
     }
@@ -142,19 +139,21 @@ function handleLogoutRequest(authService: AppAuthService) {
 
 @NgModule({
     imports: [
+        HttpClientModule,
         BrowserModule,
         BrowserAnimationsModule,
-        AppModule,
+        //MobileModule,
         CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,
-        HttpClientModule,
-        RootRoutingModule
+        RootRoutingModule,
+        FiltersModule.forRoot()
     ],
     declarations: [
-        RootComponent
+        RootComponent, AppRootComponent
     ],
     providers: [
+        httpConfiguration,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         {
@@ -166,6 +165,10 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: LOCALE_ID,
             useFactory: getCurrentLanguage
+        },
+        {
+            provide: RouteReuseStrategy,
+            useClass: CustomReuseStrategy
         }
     ],
     bootstrap: [RootComponent]

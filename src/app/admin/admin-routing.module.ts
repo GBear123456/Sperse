@@ -2,9 +2,7 @@ import { NgModule } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
-import { DemoUiComponentsComponent } from './demo-ui-components/demo-ui-components.component';
 import { EditionsComponent } from './editions/editions.component';
-import { InstallComponent } from './install/install.component';
 import { LanguageTextsComponent } from './languages/language-texts.component';
 import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
@@ -17,6 +15,8 @@ import { SubscriptionManagementComponent } from './subscription-management/subsc
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { UsersComponent } from './users/users.component';
+import { JobsComponent } from './jobs/jobs.component';
+import { SystemSettingsComponent } from './settings/system-settings.component';
 
 @NgModule({
     imports: [

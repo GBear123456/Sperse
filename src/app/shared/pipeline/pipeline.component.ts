@@ -18,7 +18,7 @@ import DataSource from 'devextreme/data/data_source';
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less'],
     host: {
-        '(window:keyup)': 'onKeyUp($event)' 
+        '(window:keyup)': 'onKeyUp($event)'
     }
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -32,9 +32,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private shiftStartLead: any;
     private firstStage: any;
     private lastStage: any;
-    
-    @Output() selectedLeadsChange = new EventEmitter<any>();    
-    @Input() 
+
+    @Output() selectedLeadsChange = new EventEmitter<any>();
+    @Input()
     get selectedLeads() {
         return this._selectedLeads || [];
     }
@@ -42,7 +42,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._selectedLeads = leads;
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
-    
+
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
@@ -80,7 +80,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     .subscribe((result: PipelineDto) => {
                         this.pipeline = result;
                         if (!this.stages) {
-                            this.stages = result.stages.map((stage) => {  
+                            this.stages = result.stages.map((stage) => {
                                 _.extend(stage, {
                                     leads: [],
                                     full: true
@@ -117,12 +117,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadStagesLeads(page = 0, stageIndex = undefined, oneStageOnly = false) {
-        let index = stageIndex || 0, 
+        let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name];
         if (!dataSource)
-            dataSource = this._dataSources[stage.name] = 
-                new DataSource(this._dataSource);
+            dataSource = this._dataSources[stage.name] = new DataSource(this._dataSource);
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
@@ -136,7 +135,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stage['total'] = dataSource.totalCount();
             stage['full'] = stage['total'] <= stage['leads'].length;
             if (oneStageOnly || this.isAllStagesLoaded())
-                setTimeout(() => this.finishLoading(), 1000); 
+                setTimeout(() => this.finishLoading(), 1000);
         });
 
         if (!oneStageOnly && stages[index + 1])
@@ -188,7 +187,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
          this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             let leadId = this.getAccessKey(value[1]),
                 newStage = this.getStageByElement(value[2]);
-            
             if (value[1].classList.contains('selected')) {
                 this.getSelectedLeads().forEach((lead) => {
                     if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
@@ -205,10 +203,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                 oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
                             }
                         });
-                });                
+                });
                 this.selectedLeads = [];
-            } else            
-                this.updateLeadStage(leadId, newStage.name, 
+            } else
+                this.updateLeadStage(leadId, newStage.name,
                     this.getStageByElement(value[3]).name);
 
         }));
@@ -218,6 +216,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
         ));
 
+        const bag: any = this._dragulaService.find(this.dragulaName);
+        if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
         this._dragulaService.setOptions(this.dragulaName, {
             ignoreInputTextSelection: false,
             moves: (el, source) => {
@@ -289,7 +289,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     getSelectedLeads() {
         return [].map.call(this.getSelectedCards(), (card) => {
-            return !card.classList.contains('gu-mirror') && 
+            return !card.classList.contains('gu-mirror') &&
                 this.getLeadByElement(card, this.getStageByElement(card));
         }).filter(Boolean);
     }
@@ -303,22 +303,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 let stageName = card.getAttribute('stage');
                 elm.classList.toggle('selected');
             }
-            return !isCard;    
-        });        
+            return !isCard;
+        });
         return card && card.classList
             .contains('selected');
     }
 
     deselectAllCards() {
         let elements = this.getSelectedCards();
-        while(elements.length)
+        while (elements.length)
             elements[0].classList.remove('selected');
     }
 
     toogleHighlightShiftArea(lead, checked) {
-        if (this.shiftStartLead && 
-            this.shiftStartLead.Stage == lead.Stage
-        ) {
+        if (this.shiftStartLead && this.shiftStartLead.Stage == lead.Stage) {
             let startCard: any = document.querySelector('[accessKey="' + this.shiftStartLead.Id + '"]'),
                 endCard: any = document.querySelector('[accessKey="' + lead.Id + '"]');
 
@@ -327,15 +325,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 startCard = endCard;
                 endCard = stored;
             }
-            
-            let method = checked ? 'add': 'remove';
-            while(startCard != endCard) {
+            let method = checked ? 'add' : 'remove';
+            while (startCard != endCard) {
                 if (startCard.nodeType == Node.ELEMENT_NODE)
                     startCard.classList[method]('selected');
                 startCard = startCard.nextSibling;
-            } 
+            }
             endCard.classList[method]('selected');
-        } else 
+        } else
             this.shiftStartLead = lead;
     }
 
@@ -351,16 +348,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.deselectAllCards();
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(lead, checkedCard);
-            this.selectedLeads = this.getSelectedLeads();            
-         } else
-            lead && this._router.navigate(
-                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
-                    queryParams: {
-                        referrer: 'app/crm/leads',
-                        dataLayoutType: DataLayoutType.Pipeline
-                    }
-                }
-            );
+            this.selectedLeads = this.getSelectedLeads();
+         } else {
+             lead && this._router.navigate(
+                 ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
+                     queryParams: {
+                         referrer: 'app/crm/leads',
+                         dataLayoutType: DataLayoutType.Pipeline
+                     }
+                 }
+             );
+         }
         this.hideStageHighlighting();
     }
 }

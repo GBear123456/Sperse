@@ -24,11 +24,10 @@
       "@angular/*": [ "../node_modules/@angular/*" ]
     }
   },
-  "include": [ 
-      "./**/*",
-      "../node_modules/ng2-google-place-autocomplete/index.ts" 
+  "include": [
+      "./**/*"
   ],
-  "exclude": [ 
+  "exclude": [
       "node_modules",
       "./account/register/**",
       "./account/payment/**"

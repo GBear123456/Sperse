@@ -1,3 +1,4 @@
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { TokenService } from '@abp/auth/token.service';
 import { LogService } from '@abp/log/log.service';
 import { MessageService } from '@abp/message/message.service';
@@ -6,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { AuthenticateModel, AuthenticateResultModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, ExternalLoginProviderInfoModel, TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AuthenticateModel, AuthenticateResultModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, ExternalLoginProviderInfoModel, TokenAuthServiceProxy, TenantHostType, SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
 
@@ -96,7 +97,7 @@ export class LoginService {
         this.resetPasswordModel.tenantHostType = <any>TenantHostType.PlatformUi;
         this._accountService
             .sendPasswordResetCode(this.resetPasswordModel)
-            .finally(finallyCallback)
+            .pipe(finalize(finallyCallback))
             .subscribe((result: SendPasswordResetCodeOutput) => {
                 if (this.resetPasswordModel.autoDetectTenancy) {
                     this.resetPasswordResult = result;

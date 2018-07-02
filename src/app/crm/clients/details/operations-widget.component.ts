@@ -32,7 +32,7 @@ export class OperationsWidgetComponent implements OnInit {
         return this._stages;
     }
 
-    @Input() 
+    @Input()
     set stages(stages: any[]) {
         this._stages = stages;
         this.initToolbarConfig();
@@ -50,15 +50,15 @@ export class OperationsWidgetComponent implements OnInit {
                     name: 'assign',
                     action: this.toggleUserAssignment.bind(this)
                 },
-                this.leadId ? { 
+                this.leadId ? {
                     widget: 'dxDropDownMenu',
                     disabled: !this.stages.length,
-                    name: 'stage', 
+                    name: 'stage',
                     options: {
                         hint: 'Stage',
                         items: this.stages
                     }
-                } : 
+                } :
                 {
                     name: 'status',
                     widget: 'dxDropDownMenu',

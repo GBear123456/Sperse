@@ -5,7 +5,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { HostDashboardData, HostDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
-import { Table } from 'primeng/components/table/table';
+import { Table } from 'primeng/table';
 
 @Component({
     templateUrl: './host-dashboard.component.html',

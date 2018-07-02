@@ -14,6 +14,9 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 
+
+
+
 /** Application imports */
 import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
 import { PlatformSelectComponent } from './platform-select.component';
@@ -43,7 +46,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { SideBarMenuComponent } from './nav/side-bar-menu.component';
 import { TopBarMenuComponent } from './nav/top-bar-menu.component';
-//import { LayoutService } from '@app/shared/layout/layout.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 
 let COMPONENTS = [
     PlatformSelectComponent,
@@ -103,7 +106,7 @@ let COMPONENTS = [
         UserNotificationHelper,
         ChatSignalrService,
         QuickSideBarChat,
-        //LayoutService
+        LayoutService
     ]
 })
 export class LayoutModule {}

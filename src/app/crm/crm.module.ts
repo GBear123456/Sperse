@@ -1,38 +1,15 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+
+/** Third party imports */
+import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { CommonModule } from '@shared/common/common.module';
-
-import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
-
-import { FileUploadModule } from '@node_modules/ng2-file-upload';
-import { CrmRoutingModule } from './crm-routing.module';
-import { FiltersModule } from '@shared/filters/filters.module';
-import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
-import { ClientDetailsModule } from './clients/details/client-details.module';
-import { UtilsModule } from '@shared/utils/utils.module';
-import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
-
-import { ClientsComponent } from './clients/clients.component';
-import { CreateClientDialogComponent } from './shared/create-client-dialog/create-client-dialog.component';
-import { LeadsComponent } from './leads/leads.component';
-import { OrdersComponent } from './orders/orders.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
-import { ImportLeadsComponent } from './import-leads/import-leads.component';
-import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
-
-import { EditionComboComponent } from '@admin/shared/edition-combo.component';
-import { FeatureTreeComponent } from '@admin/shared/feature-tree.component';
-
-import { DataTableModule } from 'primeng/primeng';
-import { PaginatorModule } from 'primeng/primeng';
-
-import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
-import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
-  MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
-
+import { AngularGooglePlaceModule } from 'angular-google-place';
 import {
     DxListModule,
     DxTooltipModule,
@@ -42,7 +19,6 @@ import {
     DxDateBoxModule,
     DxTextBoxModule,
     DxValidatorModule,
-    DxDropDownBoxModule,
     DxValidationSummaryModule,
     DxValidationGroupModule,
     DxButtonModule,
@@ -57,10 +33,32 @@ import {
     DxRadioGroupModule,
     DxCheckBoxModule
 } from 'devextreme-angular';
+import { TableModule } from 'primeng/table';
+import { PaginatorModule } from 'primeng/primeng';
+import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
+import { FileDropModule } from 'ngx-file-drop';
+import { FileUploadModule } from 'ng2-file-upload';
+
+/** Application imports */
+import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { FiltersModule } from '@shared/filters/filters.module';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
+import { ClientDetailsModule } from './clients/details/client-details.module';
+import { CrmRoutingModule } from './crm-routing.module';
+import { ClientsComponent } from './clients/clients.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
+import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
+import { CreateClientDialogComponent } from './shared/create-client-dialog/create-client-dialog.component';
+import { LeadsComponent } from './leads/leads.component';
+import { OrdersComponent } from './orders/orders.component';
+import { ImportLeadsComponent } from './import-leads/import-leads.component';
 
 @NgModule({
     imports: [
+      FileDropModule,
       FormsModule,
       ngCommon.CommonModule,
       CommonModule,
@@ -93,7 +91,7 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
       MatDialogModule,
       MatProgressSpinnerModule,
       MatSelectModule,
-      GooglePlaceModule,
+      AngularGooglePlaceModule,
 
       CRMDashboardWidgetsModule,
       ClientDetailsModule,
@@ -106,19 +104,22 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
       UtilsModule,
       FiltersModule,
       PipelineModule,
-      DataTableModule,
+      TableModule,
       PaginatorModule
     ],
     declarations: [
       ClientsComponent,
       CreateClientDialogComponent,
       LeadsComponent,
-      OrdersComponent,          
+      OrdersComponent,
       DashboardComponent,
       DashboardMenuComponent,
       LeadsStatsComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent
+    ],
+    providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
     ],
     entryComponents: [
         CreateClientDialogComponent,

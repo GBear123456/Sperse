@@ -1,6 +1,6 @@
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { TokenService } from '@abp/auth/token.service';
-import { AfterViewChecked, Component, Injector, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';

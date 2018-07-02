@@ -2,7 +2,7 @@ import { AbpModule } from '@abp/abp.module';
 import * as ngCommon from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule, JsonpModule } from '@angular/http';
+import { JsonpModule } from '@angular/http';
 import { CommonModule } from '@shared/common/common.module';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { UtilsModule } from '@shared/utils/utils.module';
@@ -22,12 +22,13 @@ import { ForgotPasswordComponent } from './password/forgot-password.component';
 import { ResetPasswordComponent } from './password/reset-password.component';
 import { TenantChangeModalComponent } from './shared/tenant-change-modal.component';
 import { TenantChangeComponent } from './shared/tenant-change.component';
+import { SelectTenantComponent } from './login/select-tenant.component';
+import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
 
 @NgModule({
     imports: [
         ngCommon.CommonModule,
         FormsModule,
-        HttpModule,
         JsonpModule,
 
         RecaptchaModule.forRoot(),

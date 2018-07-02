@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, Injector, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';

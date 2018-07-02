@@ -1,8 +1,9 @@
-import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, Injector, OnInit, Input, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, RateCustomersInput, CustomerRatingInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomerRatingsServiceProxy, RateCustomersInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-rating',
@@ -13,7 +14,7 @@ import { AppConsts } from '@shared/AppConsts';
 export class RatingComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Rating']";
+    @Input() targetSelector = '[aria-label="Rating"]';
     @Input() bulkUpdateMode = false;
     @Input() set selectedItemKey(value) {
         this.ratingValue = value;
@@ -29,7 +30,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
 
     sliderComponent: any;
     tooltipVisible = false;
-    filtered: boolean = false;
+    filtered = false;
 
     constructor(
         injector: Injector,
@@ -67,10 +68,10 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
         this._ratingService.rateCustomers(RateCustomersInput.fromJS({
             customerIds: this.selectedKeys,
             ratingId: this.ratingValue
-        })).finally(() => {
+        })).pipe(finalize(() => {
             if (this.bulkUpdateMode)
                 this.ratingValue = this.ratingMin;
-        }).subscribe((result) => {
+        })).subscribe((result) => {
             this.notify.success(this.l('CustomersRated'));
         }, (error) => {
             this.notify.error(this.l('BulkActionErrorOccured'));

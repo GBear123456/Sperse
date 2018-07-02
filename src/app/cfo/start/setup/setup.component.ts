@@ -1,13 +1,10 @@
 import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
-
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
 import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
-import { AppService } from 'app/app.service';
-import { setTimeout } from 'timers';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'setup',
@@ -20,11 +17,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     private rootComponent: any;
     public headlineConfig;
     isDisabled = false;
-
     quovoHandler: any;
 
     constructor(injector: Injector,
-        private _appService: AppService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _router: Router,
         private _quovoService: QuovoService,
@@ -89,9 +84,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         if (e.addedIds.length) {
             this.startLoading(true);
             this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
-                .finally(() => {
+                .pipe(finalize(() => {
                     this.isDisabled = false;
-                })
+                }))
                 .subscribe(() => {
                     this.finishLoading(true);
                     this._cfoService.instanceChangeProcess(() => this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']));

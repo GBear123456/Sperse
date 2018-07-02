@@ -1,9 +1,7 @@
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
@@ -11,6 +9,7 @@ import {
     CanActivateChild
 } from '@angular/router';
 import { AppConsts } from 'shared/AppConsts';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Injectable()
 export class AppRouteGuard implements CanActivate, CanActivateChild {

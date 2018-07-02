@@ -1,14 +1,11 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { CreateNoteInput, CustomerInfoDto, NotesServiceProxy, ContactPhoneDto,
+import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
     UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format.pipe';
-
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
-
-import * as moment from 'moment';
 import * as _ from 'underscore';
 
 @Component({
@@ -42,7 +39,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     users = [];
     contacts = [];
     phones = [];
-    
+
     constructor(
         injector: Injector,
         private _dialog: MatDialog,
@@ -55,12 +52,12 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
         this.data = injector.get(MAT_DIALOG_DATA);
         this.elementRef = injector.get(ElementRef);
-        this.dialogRef = injector.get(MatDialogRef);
+        this.dialogRef = <any>injector.get(MatDialogRef);
 
         if (this.data.customerInfo.contactPersons.length) {
             let orgContact = this.data.customerInfo.organizationContactInfo,
                 contacts = this.data.customerInfo.contactPersons;
-            this.contacts = orgContact ? contacts.concat(orgContact): contacts;
+            this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
         }
 
@@ -123,7 +120,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.close();
             });
     }
-   
+
     onUserSearch($event) {
         $event.customItem = {id: $event.text, fullName: $event.text};
         clearTimeout(this.searchTimeout);
@@ -172,7 +169,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             data: dialogData,
             hasBackdrop: true,
             position: {
-                right: shift, 
+                right: shift,
                 bottom: shift
             }
         }).afterClosed().subscribe(result => {

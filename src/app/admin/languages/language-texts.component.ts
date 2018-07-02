@@ -5,8 +5,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 import { EditTextModalComponent } from './edit-text-modal.component';
 
 @Component({

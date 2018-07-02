@@ -1,4 +1,5 @@
 import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AppConsts } from '@shared/AppConsts';
 import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -6,6 +7,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from 'shared/helpers/UrlHelper';
 import { ExternalLoginProvider, LoginService } from './login.service';
+import * as _ from 'underscore';
 
 @Component({
     templateUrl: './login.component.html',

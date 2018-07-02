@@ -1,5 +1,4 @@
-import { NotifyService } from '@abp/notify/notify.service';
-import { Component, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail-modal.component';
 import { EntityChangeDetailModalComponent } from '@app/admin/audit-logs/entity-change-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -8,8 +7,8 @@ import { AuditLogListDto, AuditLogServiceProxy, EntityChangeListDto, NameValueDt
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import * as moment from 'moment';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 
 @Component({
@@ -18,7 +17,7 @@ import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class AuditLogsComponent extends AppComponentBase implements OnDestroy{
+export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
 
     @ViewChild('auditLogDetailModal') auditLogDetailModal: AuditLogDetailModalComponent;
     @ViewChild('entityChangeDetailModal') entityChangeDetailModal: EntityChangeDetailModalComponent;
@@ -40,8 +39,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy{
     public maxExecutionDuration: number;
     public entityTypeFullName: string;
     public objectTypes: NameValueDto[];
-
-    private _$auditLogsTable: JQuery;
     private rootComponent: any;
     primengTableHelperAuditLogs = new PrimengTableHelper();
     primengTableHelperEntityChanges = new PrimengTableHelper();
@@ -50,7 +47,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy{
     constructor(
         injector: Injector,
         private _auditLogService: AuditLogServiceProxy,
-        private _notifyService: NotifyService,
         private _fileDownloadService: FileDownloadService
     ) {
         super(injector);

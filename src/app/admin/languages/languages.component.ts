@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
-import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal.component';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 

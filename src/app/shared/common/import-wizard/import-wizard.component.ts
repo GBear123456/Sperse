@@ -2,12 +2,8 @@ import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } f
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatHorizontalStepper } from '@angular/material';
-import { PapaParseService } from 'ngx-papaparse';
-import { UploadEvent, UploadFile } from 'ngx-file-drop';
-
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
+import { Papa } from 'ngx-papaparse';
+import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
@@ -15,14 +11,16 @@ import { DxDataGridComponent } from 'devextreme-angular';
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase implements OnInit{
-    @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
+export class ImportWizardComponent extends AppComponentBase implements OnInit {
+    @ViewChild(MatHorizontalStepper) stepper: any;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
 
     @Input() title: string;
     @Input() localizationSource: string;
-    @Input() set fields(list: string[]) {
+
+    @Input()
+    set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
             return {
                 id: field,
@@ -38,18 +36,18 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     private files: UploadFile[] = [];
 
-    private readonly UPLOAD_STEP_INDEX  = 0;
+    private readonly UPLOAD_STEP_INDEX = 0;
     private readonly MAPPING_STEP_INDEX = 1;
-    private readonly REVIEW_STEP_INDEX  = 2;
-    private readonly FINISH_STEP_INDEX  = 3;
+    private readonly REVIEW_STEP_INDEX = 2;
+    private readonly FINISH_STEP_INDEX = 3;
 
-    showSteper: boolean = true;
-    loadProgress: number = 0;
-    dropZoneProgress: number = 0;
+    showSteper = true;
+    loadProgress = 0;
+    dropZoneProgress = 0;
 
     fileData: any;
-    fileName: string = '';
-    fileSize: string = '';
+    fileName = '';
+    fileSize = '';
 
     reviewDataSource: any;
     mapDataSource: any;
@@ -58,29 +56,25 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     selectModeItems = [
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
-    ]
+    ];
 
-    constructor(
-        injector: Injector,
-        private _parser: PapaParseService,
-        private _formBuilder: FormBuilder
-    ) { 
+    constructor(injector: Injector,
+                private _parser: Papa,
+                private _formBuilder: FormBuilder) {
         super(injector);
-
         this.uploadFile = _formBuilder.group({
-          url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
+            url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
         });
     }
 
-    ngOnInit() {  
+    ngOnInit() {
         this.localizationSourceName = this.localizationSource;
     }
 
-    reset(callback = null) { 
+    reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
         this.loadProgress = 0;
-
         this.showSteper = false;
         this.uploadFile.reset();
         setTimeout(() => {
@@ -103,14 +97,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 });
             }
             if (this.validateFieldsMapping(mappedFields))
-                this.initReviewDataSource(mappedFields); 
+                this.initReviewDataSource(mappedFields);
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
         }
     }
 
-    cancel() {        
+    cancel() {
         this.reset(() => {
             this.onCancel.emit();
         });
@@ -124,11 +118,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
     }
 
-    initReviewDataSource(mappedFields) {        
+    initReviewDataSource(mappedFields) {
         let columnsIndex = {};
         this.reviewDataSource = [];
         this.fileData.data.forEach((row, index) => {
-            if (index) {                
+            if (index) {
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
@@ -136,7 +130,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     });
                     this.reviewDataSource.push(data);
                 }
-            } else 
+            } else
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
                 });
@@ -147,8 +141,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     validateFieldsMapping(rows) {
         const FIRST_NAME_FIELD = 'first',
-              LAST_NAME_FIELD = 'last';
-        let isFistName = false, 
+            LAST_NAME_FIELD = 'last';
+        let isFistName = false,
             isLastName = false,
             isMapped = rows.every((row) => {
                 isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
@@ -165,7 +159,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     checkFileDataValid() {
-        return this.fileData && !this.fileData.errors.length 
+        return this.fileData && !this.fileData.errors.length
             && this.fileData.data.length;
     }
 
@@ -177,7 +171,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 else {
                     this.fileData = results;
                     this.buildMappingDataSource();
-                }    
+                }
             }
         });
     }
@@ -185,7 +179,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     getFileSize(size) {
         return (size / 1024).toFixed(2) + 'KB';
     }
- 
+
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
@@ -214,18 +208,18 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     buildMappingDataSource() {
-        this.mapDataSource = 
+        this.mapDataSource =
             this.fileData.data[0].map((field, index) => {
                 let fieldId;
                 return {
-                  sourceField: field,
-                  sampleValue: this.lookForValueExample(index),
-                  mappedField: this.lookupFields.every((item) => {
-                      let isSameField = item.id.toLowerCase() == field.toLowerCase();
-                      if (isSameField)
-                          fieldId = item.id;
-                      return !isSameField;
-                  }) ? '': fieldId
+                    sourceField: field,
+                    sampleValue: this.lookForValueExample(index),
+                    mappedField: this.lookupFields.every((item) => {
+                        let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                        if (isSameField)
+                            fieldId = item.id;
+                        return !isSameField;
+                    }) ? '' : fieldId
                 };
             });
     }
@@ -238,10 +232,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
         return this.fileData.data[notEmptyIndex][fieldIndex];
     }
-   
+
     fileSelected($event) {
         if ($event.target.files.length)
-            this.fileDropped({files: $event.target.files})
+            this.fileDropped({files: $event.target.files});
     }
 
     downloadFromURL() {
@@ -257,32 +251,32 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                         this.message.error(result.target.statusText);
                     }
                 });
-            else 
+            else
                 this.message.error(this.l('FieldEmptyError', [this.l('URL')]));
-        }   
+        }
     }
 
     getFile(path: string, callback: Function) {
         this.dropZoneProgress = 0;
         let request = new XMLHttpRequest();
-        request.addEventListener("load", (event) => {
+        request.addEventListener('load', (event) => {
             this.loadProgress = 101;
             callback(event);
         });
-        request.addEventListener("progress", (event) => {
+        request.addEventListener('progress', (event) => {
             if (event.total > event.loaded)
                 this.loadProgress = Math.round(event.loaded / event.total * 100);
         });
         request.open('GET', path, true);
-        request.setRequestHeader('Accept', "*/*");
-        request.setRequestHeader('Content-Type', "application/*");
+        request.setRequestHeader('Accept', '*/*');
+        request.setRequestHeader('Content-Type', 'application/*');
 
         request.send();
     }
 
     onRowValidating($event) {
         this.mapDataSource.forEach((row) => {
-            if ($event.newData.sourceField != row.sourceField 
+            if ($event.newData.sourceField != row.sourceField
                 && $event.newData.mappedField == row.mappedField
             ) {
                 $event.isValid = false;

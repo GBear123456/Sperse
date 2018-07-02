@@ -19,14 +19,11 @@ import DataSource from 'devextreme/data/data_source';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 
 import { AppService } from '@app/app.service';
-
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
+import { forkJoin } from 'rxjs';
 
 import { MatDialog } from '@angular/material';
 
@@ -133,7 +130,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             this.selectedPermission || undefined,
                             this.role || undefined,
                             (loadOptions.sort || []).map((item) => {
-                                return item.selector + ' ' + (item.desc ? 'DESC': 'ASC')
+                                return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                             }).join(','), loadOptions.take, loadOptions.skip
                         ).toPromise().then(response => {
                             return {
@@ -245,7 +242,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     initFilterConfig() {
-        Observable.forkJoin(
+        forkJoin(
             this._permissionService.getAllPermissions(),
             this._roleService.getRoles(undefined)
         ).subscribe((res) => {
@@ -339,7 +336,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             disableClose: true,
             closeOnNavigation: false,
             data: {refreshParent: this.refreshDataGrid.bind(this)}
-        }).afterClosed().subscribe(() => this.refreshDataGrid())
+        }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
 
     deleteUser(user: UserListDto): void {

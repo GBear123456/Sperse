@@ -47,7 +47,7 @@
         (state)='data.state=$event'
         (postal_code)='data.zip=$event'
         (setAddress)="onAddressChanged($event)"
-        ng2-google-place-autocomplete/>
+        angularGooglePlace/>
     </div>
 
     <div>
@@ -117,7 +117,7 @@
 
     <div *ngIf="!data.editAddressOnly">
       <label>{{l('Comment')}}</label>
-      <dx-text-box 
+      <dx-text-box
         name="comment"
         [disabled]="!isEditAllowed"
         [(value)]="data.comment">

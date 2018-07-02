@@ -24,8 +24,8 @@ import {
     InstanceType
 } from '@shared/service-proxies/service-proxies';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import * as _ from 'underscore';
@@ -214,7 +214,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD');
-        Observable.forkJoin(getForecastModelsObservable, getBankAccountsObservable)
+        forkJoin(getForecastModelsObservable, getBankAccountsObservable)
             .subscribe(result => {
                 this.handleForecastModelResult(result[0]);
                 this.createFilters(result[1]);
@@ -288,7 +288,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.requestFilter.endDate,
             GroupBy.Monthly
         )
-            .finally(() => abp.ui.clearBusy())
+            .pipe(finalize(() => abp.ui.clearBusy()))
             .subscribe(result => {
                 if (result) {
                     let currentPeriodTransaction: BankAccountDailyStatDto;

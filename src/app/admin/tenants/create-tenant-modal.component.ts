@@ -1,11 +1,14 @@
 import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    CommonLookupServiceProxy, CreateTenantInput,
-    PasswordComplexitySetting, ProfileServiceProxy,
-    TenantServiceProxy, SubscribableEditionComboboxItemDto
-} from
-    '@shared/service-proxies/service-proxies';
+    CommonLookupServiceProxy,
+    CreateTenantInput,
+    PasswordComplexitySetting,
+    ProfileServiceProxy,
+    TenantServiceProxy,
+    TenantHostType,
+    SubscribableEditionComboboxItemDto,
+} from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { ModalDirective } from 'ngx-bootstrap';
@@ -73,8 +76,8 @@ export class CreateTenantModalComponent extends AppComponentBase {
             .subscribe((result) => {
                 this.editions = result.items;
 
-                var notAssignedItem = new SubscribableEditionComboboxItemDto();
-                notAssignedItem.value = "0";
+                let notAssignedItem = new SubscribableEditionComboboxItemDto();
+                notAssignedItem.value = '0';
                 notAssignedItem.displayText = this.l('NotAssigned');
 
                 this.editions.unshift(notAssignedItem);
@@ -101,7 +104,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.isSelectedEditionFree = true;
         }
 
-        var selectedEdition = selectedEditions[0];
+        let selectedEdition = selectedEditions[0];
         this.isSelectedEditionFree = selectedEdition.isFree;
         return this.isSelectedEditionFree;
     }

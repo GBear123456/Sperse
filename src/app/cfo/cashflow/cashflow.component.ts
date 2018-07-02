@@ -63,7 +63,7 @@ import ScrollView from 'devextreme/ui/scroll_view';
 
 import * as _ from 'underscore.string';
 import * as underscore from 'underscore';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -80,16 +80,9 @@ import { IExpandLevel } from './models/expand-level';
 import * as $ from 'jquery';
 
 import { CacheService } from 'ng2-cache-service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/fromEventPattern';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/operator/pluck';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/buffer';
+import { Observable, forkJoin, of, from } from 'rxjs';
+import { pluck, mergeMap, map, filter, toArray } from 'rxjs/operators';
+
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { CellsCopyingService } from 'shared/common/xls-mode/cells-copying/cells-copying.service';
@@ -820,7 +813,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
+        forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0], result[4]);
@@ -1040,7 +1033,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             dataSource: bankAccounts,
                             nameField: 'name',
                             keyExpr: 'id'
-                        })
+                        }
+                    )
                 }
             }),
             new FilterModel({
@@ -1352,7 +1346,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         this.cachedRowsSparkLines.clear();
         this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
-            .pluck('transactionStats')
+            .pipe(pluck('transactionStats'))
             .subscribe(transactions => {
                 this.startDataLoading = true;
                 this.handleCashflowData(transactions, period);
@@ -1879,7 +1873,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (options && options.apply && options.model) {
             let model = new CashFlowGridSettingsDto(options.model);
             model.init(options.model);
-            preferencesObservable = Observable.from([options.model]);
+            preferencesObservable = from([options.model]);
             notificationMessage = this.l('AppliedSuccessfully');
         /** If settings were saved - get them from the api */
         } else {
@@ -2162,7 +2156,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
-            let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt($('.fixed-filters').css('marginLeft')) : 0;
+            const marginLeft: any = $('.fixed-filters').css('marginLeft');
+            let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt(marginLeft) : 0;
             /** Set new offset to stick the scrollbar to the bottom of the page */
             scrollElement.offset({
                 top: window.innerHeight - minusValue,
@@ -2526,7 +2521,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (this.hasChildsByPath(childPath)) {
                 let dataSource = this.pivotGrid.instance.getDataSource();
                 dataSource.expandHeaderItem('row', childPath);
-                    
+
                 this.pivotGrid.instance.getDataSource().load().then((d) => {
                     var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
                     if (currentDepth != stopDepth)
@@ -3336,22 +3331,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Get the transactions of moved cell if so */
             let sourceCellInfo = this.getCellInfo(this.movedCell);
             this.statsDetailFilter = this.getDetailFilterFromCell(this.movedCell);
-            let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).flatMap(x => x);
-            const forecastsObservable = statsDetailObservable.filter(transaction => !!transaction.forecastId).toArray();
-            const historicalsObservable = statsDetailObservable.filter(transaction => !!!transaction.forecastId).toArray();
-            Observable.forkJoin(
-                historicalsObservable.mergeMap(historicalTransactions => {
+            let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).pipe(mergeMap(x => x));
+            const forecastsObservable = statsDetailObservable.pipe(
+                filter((transaction: any) => <any>!!transaction.forecastId),
+                toArray()
+            );
+            const historicalsObservable = statsDetailObservable.pipe(
+                filter(transaction => <any>!!!transaction.forecastId),
+                toArray()
+            );
+            forkJoin(
+                historicalsObservable.pipe(mergeMap(historicalTransactions => {
                     const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
-                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(this.movedCell, targetCellData) : Observable.of('empty');
-                }),
-                forecastsObservable.mergeMap(forecastsTransactions => {
+                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(this.movedCell, targetCellData) : of('empty');
+                })),
+                forecastsObservable.pipe(mergeMap(forecastsTransactions => {
                     if (forecastsTransactions && forecastsTransactions.length) {
                         let moveForecastsModels = this.createMovedForecastsModels(forecastsTransactions, sourceCellInfo, targetCellData);
                         return <any>this.getMoveForecastsObservable(moveForecastsModels);
                     } else {
-                        return Observable.of('empty');
+                        return of('empty');
                     }
-                })
+                }))
             ).subscribe(
                 res => {
                     if (res) {
@@ -3969,7 +3970,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** Prevent default expanding */
                     this._cashflowServiceProxy
                         .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
-                        .pluck('transactionStats')
+                        .pipe(pluck('transactionStats'))
                         .subscribe((transactions: any) => {
 
                             /** Update cashflow data with the daily transactions */
@@ -4077,11 +4078,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.statsDetailFilter = this.getDetailFilterFromCell(sourceCellObject);
                 this._cashflowServiceProxy
                     .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                    .map(transactions => {
-                        copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData) : null;
-                        return copyItemsModels;
-                    })
-                    .mergeMap(forecastModels => this.copyForecasts(forecastModels))
+                    .pipe(
+                        map(transactions => {
+                            copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData) : null;
+                            return copyItemsModels;
+                        }),
+                        mergeMap(forecastModels => this.copyForecasts(forecastModels))
+                    )
                     .subscribe(
                         res => {
                             if (copyItemsModels && copyItemsModels.forecasts && copyItemsModels.forecasts.length) {
@@ -5260,7 +5263,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         data.id
                     );
 
-            } else {                
+            } else {
                 /* Set descriptor */
                 if (paramName != 'description') {
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
@@ -5670,6 +5673,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getBankAccountName(bankAccount) {
-        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber; 
+        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber;
     }
 }

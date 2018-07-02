@@ -1,13 +1,13 @@
-import { AfterViewChecked, Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EditionPaymentType, SubscriptionStartType } from '@shared/AppEnums';
+import { EditionPaymentType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ApplicationInfoDto, CreateInvoiceDto, InvoiceServiceProxy, PaymentServiceProxy, SessionServiceProxy, TenantLoginInfoDto, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
+import { ApplicationInfoDto, CreateInvoiceDto, InvoiceServiceProxy, PaymentServiceProxy, TenantLoginInfoDto, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
 
 @Component({
     templateUrl: './subscription-management.component.html',

@@ -1,19 +1,16 @@
-import { Component, Input, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CustomersServiceProxy,
     CustomerInfoDto,
-    PersonContactInfoDto,
     UpdateCustomerStatusInput,
     LeadServiceProxy,
-    StageDto,
     LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
+import { forkJoin } from 'rxjs';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -108,7 +105,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                                     action: this.updateLeadStage.bind(this)
                                 };
                             });
-                        });                    
+                        });
                 }
             }));
 
@@ -126,7 +123,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     optionTimeout = null;
                     let data = event.snapshot.data;
                     this.rightPanelSetting.opened = data.hasOwnProperty(
-                        'rightPanelOpened') ? data.rightPanelOpened: true;
+                        'rightPanelOpened') ? data.rightPanelOpened : true;
                 });
         });
     }
@@ -157,7 +154,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
         if (leadId) {
             let leadInfoObservable = this._leadService.getLeadInfo(leadId);
-            Observable.forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
+            forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
                 this.fillCustomerDetails(result[0]);
                 this.fillLeadDetails(result[1]);
                 this.finishLoading(true);
@@ -221,15 +218,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         );
     }
 
-    close() {        
+    close() {
         this._dialog.closeAll();
         let data = JSON.stringify(this._customerService['data']);
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
             { queryParams: _.extend(_.mapObject(this.referrerParams,
                 (val, key) => {
-                    return (key == 'referrer'? undefined: val)
-                }), this.initialData != data ? {refresh: true}: {})
+                    return (key == 'referrer' ? undefined : val);
+                }), this.initialData != data ? {refresh: true} : {})
             }
         );
     }

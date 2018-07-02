@@ -11,17 +11,17 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
-import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
+import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { environment } from 'environments/environment';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { AppUrlService } from '@shared/common/nav/app-url.service';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
 import { ODataSearchStrategy } from '@shared/AppEnums';
 declare let require: any;
-import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 
 export abstract class AppComponentBase {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -39,7 +39,6 @@ export abstract class AppComponentBase {
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
     httpConfig: httpConfiguration;
-    primengDatatableHelper: PrimengDatatableHelper;
     primengTableHelper: PrimengTableHelper;
     ui: AppUiCustomizationService;
     loading: boolean;
@@ -78,7 +77,8 @@ export abstract class AppComponentBase {
         this.httpConfig = _injector.get(httpConfiguration);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
-        this.primengDatatableHelper = new PrimengDatatableHelper();
+        this.primengTableHelper = new PrimengTableHelper();
+        this.appUrlService = _injector.get(AppUrlService);
     }
 
     @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -115,17 +115,14 @@ export abstract class AppComponentBase {
             sourcename = AppConsts.localization.defaultLocalizationSourceName;
 
         let localizedText = this.localization.localize(key, sourcename);
-
         if (!localizedText)
-
-        if (!localizedText) {
             localizedText = key;
 
         if (!args || !args.length)
             return localizedText;
 
-            args.unshift(localizedText);
-            return abp.utils.formatString.apply(this, args);
+        args.unshift(localizedText);
+        return abp.utils.formatString.apply(this, args);
     }
 
     getODataURL(uri: String, filter?: Object) {

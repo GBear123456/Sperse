@@ -5,8 +5,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 import Form from 'devextreme/ui/form';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
+import { forkJoin } from 'rxjs';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -325,7 +324,7 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             let businessEntitiesObservable = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
             /** @todo update when api will be ready */
             //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
-            Observable.forkJoin(businessEntitiesObservable/*, accountsTypesObservable*/)
+            forkJoin(businessEntitiesObservable/*, accountsTypesObservable*/)
                         .subscribe(result => {
                             this.businessEntities = this.businessEntities.concat(result[0]);
                             //this.accountsTypes = result[1];

@@ -1,6 +1,5 @@
 import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
-import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppRootComponent } from 'root.components';
 
@@ -44,7 +43,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
             this.activateTimeout = setTimeout(() =>
                 handle.componentRef.instance.activate());
         }
-        return (this.checkSameRoute(route, handle) ? handle: null);
+        return (this.checkSameRoute(route, handle) ? handle : null);
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {

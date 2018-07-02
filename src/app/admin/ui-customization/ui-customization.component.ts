@@ -1,4 +1,3 @@
-import { Component, Injector, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';

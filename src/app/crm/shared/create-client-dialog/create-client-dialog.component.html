@@ -124,7 +124,7 @@
               </dx-validation-group>
               <dx-validation-group>
                   <div class="field addr address H">
-                      <label>{{l('Address')}}</label>                   
+                      <label>{{l('Address')}}</label>
                       <input *ngIf="!googleAutoComplete" type="text"
                           name="Address"
                           placeholder="{{l('Street')}}"
@@ -142,7 +142,7 @@
                           (state)='contacts.addresses[type].state=$event'
                           (postal_code)='contacts.addresses[type].zip=$event'
                           (setAddress)="onAddressChanged($event, type)"
-                          ng2-google-place-autocomplete/>
+                          angularGooglePlace/>
                       <dx-select-box
                         width="100px"
                         name="addressType"
@@ -154,10 +154,10 @@
                         [value]="contacts.addresses[type].addressType"
                         (onValueChanged)="onTypeChanged($event, 'address')">
                       </dx-select-box>
-                      <span [class]="contacts.addresses[type].address && 'clear-contact' || 'hidden'" (click)="contacts.addresses[type] = {}">+</span>  
+                      <span [class]="contacts.addresses[type].address && 'clear-contact' || 'hidden'" (click)="contacts.addresses[type] = {}">+</span>
                   </div>
                   <div class="field addr">
-                      <label></label>                   
+                      <label></label>
                       <dx-text-box
                           name="city"
                           maxLength="50"
@@ -167,7 +167,7 @@
                       </dx-text-box>
                   </div>
                   <div class="field addr">
-                      <label></label>                   
+                      <label></label>
                       <dx-select-box
                           [dataSource]="states"
                           displayExpr="name"
@@ -180,7 +180,7 @@
                       </dx-select-box>
                   </div>
                   <div class="field addr">
-                      <label></label>                   
+                      <label></label>
                       <dx-text-box
                           name="zip"
                           maxLength="5"
@@ -190,7 +190,7 @@
                       </dx-text-box>
                   </div>
                   <div class="field">
-                      <label></label>                   
+                      <label></label>
                       <dx-select-box
                           [dataSource]="countries"
                           displayExpr="name"

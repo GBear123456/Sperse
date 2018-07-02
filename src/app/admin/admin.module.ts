@@ -1,27 +1,33 @@
-import { CommonModule } from '@angular/common';
+/** Core imports */
 import { NgModule } from '@angular/core';
+import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { UtilsModule } from '@shared/utils/utils.module';
-import { AddMemberModalComponent } from 'app/admin/organization-units/add-member-modal.component';
+
+/** Third party imports */
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule, MatStepperModule, MatInputModule,
+    MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
+import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule, DxContextMenuModule,
+    DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule,
+    DxTextAreaModule, DxValidationGroupModule, DxNumberBoxModule
+} from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule, PopoverModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
 import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUploadModule, InputMaskModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
+
+/** Application imports */
+import { CommonModule } from '@shared/common/common.module';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { AddMemberModalComponent } from 'app/admin/organization-units/add-member-modal.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
 import { EntityChangeDetailModalComponent } from './audit-logs/entity-change-detail-modal.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
-import { DemoUiComponentsComponent } from './demo-ui-components/demo-ui-components.component';
-import { DemoUiDateTimeComponent } from './demo-ui-components/demo-ui-date-time.component';
-import { DemoUiEditorComponent } from './demo-ui-components/demo-ui-editor.component';
-import { DemoUiFileUploadComponent } from './demo-ui-components/demo-ui-file-upload.component';
-import { DemoUiInputMaskComponent } from './demo-ui-components/demo-ui-input-mask.component';
-import { DemoUiSelectionComponent } from './demo-ui-components/demo-ui-selection.component';
 import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal.component';
 import { EditionsComponent } from './editions/editions.component';
-import { InstallComponent } from './install/install.component';
 import { CreateOrEditLanguageModalComponent } from './languages/create-or-edit-language-modal.component';
 import { EditTextModalComponent } from './languages/edit-text-modal.component';
 import { LanguageTextsComponent } from './languages/language-texts.component';
@@ -52,6 +58,11 @@ import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-moda
 import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
+import { JobsComponent } from './jobs/jobs.component';
+import { SystemSettingsComponent } from './settings/system-settings.component';
+import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
+import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
+import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 
 @NgModule({
     imports: [
@@ -89,7 +100,6 @@ import { UsersComponent } from './users/users.component';
         MatStepperModule,
 
         UtilsModule,
-        AppCommonModule,
         TableModule,
         PaginatorModule,
         PrimeNgFileUploadModule,

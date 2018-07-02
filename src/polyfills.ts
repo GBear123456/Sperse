@@ -19,4 +19,4 @@ import 'dom4/build/dom4.js';
 import { finalize } from 'rxjs/operators';
 import 'zone.js/dist/zone';
 
-import 'rxjs/add/operator/finally';
+(window as any).global = window;
