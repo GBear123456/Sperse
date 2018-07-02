@@ -18879,8 +18879,12 @@ export class UserAssignmentServiceProxy {
     /**
      * @return Success
      */
-    getUsers(): Observable<UserInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetUsers";
+    getUsers(includePhotos: boolean): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetUsers?";
+        if (includePhotos === undefined || includePhotos === null)
+            throw new Error("The parameter 'includePhotos' must be defined and cannot be null.");
+        else
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -31590,6 +31594,7 @@ export class UserInfoDto implements IUserInfoDto {
     id: number;
     name: string;
     isActive: boolean;
+    profilePicture: string;
 
     constructor(data?: IUserInfoDto) {
         if (data) {
@@ -31605,6 +31610,7 @@ export class UserInfoDto implements IUserInfoDto {
             this.id = data["id"];
             this.name = data["name"];
             this.isActive = data["isActive"];
+            this.profilePicture = data["profilePicture"];
         }
     }
 
@@ -31619,6 +31625,7 @@ export class UserInfoDto implements IUserInfoDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isActive"] = this.isActive;
+        data["profilePicture"] = this.profilePicture;
         return data; 
     }
 }
@@ -31627,6 +31634,7 @@ export interface IUserInfoDto {
     id: number;
     name: string;
     isActive: boolean;
+    profilePicture: string;
 }
 
 export class CustomerTagInfoDto implements ICustomerTagInfoDto {
