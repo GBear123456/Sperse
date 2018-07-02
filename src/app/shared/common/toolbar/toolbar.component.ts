@@ -173,7 +173,7 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.ls('CFO', 'CashflowToolbar_Report_Period')
         },
         addEntity: {
-            hint: this.l('AddEntity'),
+            hint: this.l('AddAccountingType'),
             icon: this.getImgURI('add-button')
         },
         tags: {

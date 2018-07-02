@@ -10,6 +10,8 @@ import { Subject } from 'rxjs/Subject';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 
+import * as _ from 'underscore';
+
 @Component({
     selector: 'import-wizard',
     templateUrl: 'import-wizard.component.html',
@@ -19,8 +21,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
+    @ViewChild('importFileInput') dataFromInput: any;
 
     @Input() title: string;
+    @Input() icon: string;
+    @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
@@ -360,9 +365,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     onRowValidating($event) {
         this.mapDataSource.store.data.forEach((row) => {
-            if ($event.newData.sourceField != row.sourceField 
-                && $event.newData.mappedField == row.mappedField
-            ) {
+            if ($event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
             }
@@ -379,5 +382,23 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             let mappedFields = this.mapGrid.instance.getSelectedRowsData();
             this.highlightUnmappedFields(mappedFields);
         }
+    }
+
+    mappedFieldChanged($event, cell) {
+        cell.setValue($event.value);
+    }
+
+    cleanInput() {
+        this.dataFromInput.nativeElement.value = '';
+        this.dropZoneProgress = null;
+    }
+
+    customizePreviewColumns = (columns) => {
+        columns.forEach((column) => {
+            let columnConfig = this.columnsConfig[column.dataField];
+            if (columnConfig) {
+                _.extend(column, columnConfig);
+            }
+        });
     }
 }

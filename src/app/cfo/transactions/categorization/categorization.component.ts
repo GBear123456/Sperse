@@ -199,7 +199,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                         name: 'addEntity',
                         widget: 'dxDropDownMenu',
                         options: {
-                            text: this.l('AddEntity'),
+                            text: this.l('AddAccountingType'),
                             visible: this.showAddEntity && this.settings.showAT,
                             items: addEntityItems
                         }

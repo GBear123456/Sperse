@@ -1,9 +1,44 @@
 :host {
+    .import-wrapper {
+        height: 100%;
+    }
+
     .success {
         width: 800px;
         display: inline-block;
         text-align: center;
         margin-left: calc(~"50% - 400px");
         margin-top: 150px;
+    }
+
+    left-menu {
+        top: 148px;
+
+        /deep/ .left-menu {
+            height: calc(~"100vh - 148px");
+        }
+    }
+
+    import-wizard {
+        margin: 0;
+        height: 100%;
+        max-width: 100% !important;
+
+        /deep/ h1 {
+            i {
+                position: relative;
+                top: 2px;
+                margin-right: 5px;
+            }
+        }
+
+        /deep/ .mat-horizontal-content-container {
+            padding: 0 0 0 320px !important;
+        }
+
+        /deep/ .mat-horizontal-stepper-header-container {
+            background-color: #f3f7fa;
+            border-bottom: 1px solid #dfdfdf;
+        }
     }
 }
