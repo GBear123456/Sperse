@@ -10,6 +10,8 @@ import { Subject } from 'rxjs/Subject';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 
+import * as _ from 'underscore';
+
 @Component({
     selector: 'import-wizard',
     templateUrl: 'import-wizard.component.html',
@@ -23,6 +25,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     @Input() title: string;
     @Input() icon: string;
+    @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
@@ -388,5 +391,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     cleanInput() {
         this.dataFromInput.nativeElement.value = '';
         this.dropZoneProgress = null;
+    }
+
+    customizePreviewColumns = (columns) => {
+        columns.forEach((column) => {
+            let columnConfig = this.columnsConfig[column.dataField];
+            if (columnConfig) {
+                _.extend(column, columnConfig);
+            }
+        });
     }
 }

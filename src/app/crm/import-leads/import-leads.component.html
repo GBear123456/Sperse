@@ -4,6 +4,7 @@
         [title]="l('Import leads')"
         icon="icon-globe"
         [fields]="mappingFileds"
+        [columnsConfig]="fieldsConfig"
         [localizationSource]="localizationSourceName"
         (onComplete)="complete($event)"
         (onCancel)="cancel()">

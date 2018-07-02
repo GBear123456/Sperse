@@ -239,6 +239,15 @@
     /deep/ dx-data-grid {
         height: calc(~"100vh - 150px") !important;
 
+        td.capitalize {
+            & {
+                text-transform: lowercase
+            }
+            &:first-letter {
+                text-transform: uppercase
+            }
+        }
+
         .dx-datagrid-focus-overlay {
             display: none !important;
         }

@@ -19,7 +19,23 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importedCount: number = 0;
     mappingFileds: any = [];
 
+    private fieldConfig = {
+        cssClass: 'capitalize'
+    };
+    private phoneConfig = {
+        cellTemplate: 'phoneCell'
+    };
     private rootComponent: any;
+
+    fieldsConfig = {
+        phoneNumber: this.phoneConfig,
+        faxNumber: this.phoneConfig,
+        first: this.fieldConfig,
+        nick: this.fieldConfig,
+        middle: this.fieldConfig,
+        last: this.fieldConfig,
+        city: this.fieldConfig
+    };
 
     constructor(
         injector: Injector,
