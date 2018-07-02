@@ -96,6 +96,7 @@
                                           displayExpr="name"
                                           [height]="300"
                                           [searchEnabled]="true"
+                                          [selectNodesRecursive]="false"
                                           (onContentReady)="onLookupFieldsContentReady($event, cell)"
                                           (onItemClick)="cell.setValue($event.node.key)">
                             </dx-tree-view>

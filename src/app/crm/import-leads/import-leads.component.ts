@@ -5,7 +5,10 @@ import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-w
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import { ImportLeadInput, ImportLeadsInput, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
+    LeadServiceProxy
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -19,7 +22,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importedCount: number = 0;
     mappingFields: any[] = [];
 
-    readonly mappingObjectNames: string[] = [];
+    fullName: ImportLeadFullName;
+    fullAddress: ImportLeadAddressInput;
+
+    readonly mappingObjectNames = {
+        personalInfo: ImportLeadPersonalInput.fromJS({}),
+        businessInfo: ImportLeadBusinessInput.fromJS({}),
+        fullName: ImportLeadFullName.fromJS({}),
+        fullAddress: ImportLeadAddressInput.fromJS({})
+    };
 
     private fieldConfig = {
         cssClass: 'capitalize'
@@ -46,7 +57,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.getMappingFields(ImportLeadInput.fromJS({}));
+        this.setMappingFields(ImportLeadInput.fromJS({}));
     }
 
     cancel() {
@@ -78,19 +89,25 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
     }
 
-    getMappingFields(obj: object, parent: string = 'Other') {
+    setMappingFields(obj: object, parent: string = null) {
         let keys: string[] = Object.keys(obj);
-        this.mappingFields.push({
-            id: parent, name: this.capitalize(parent), parent: null, expanded: true
-        });
         keys.forEach(v => {
-            if (this.mappingObjectNames.some(m => m == v)) {
-                //TODO
+            if (this.mappingObjectNames[v]) {
+                this.mappingFields.push({
+                    id: v, name: this.capitalize(v), parent: parent, expanded: true
+                });
+                this.setMappingFields(this.mappingObjectNames[v], v);
             }
             else {
-                this.mappingFields.push({ id: v, name: this.capitalize(v), parent: parent });
+                this.mappingFields.push({ id: v, name: this.capitalize(v), parent: parent || 'Other' });
             }
         });
+
+        if (!parent) {
+            this.mappingFields.push({
+                id: 'Other', name: this.capitalize('Other'), parent: null, expanded: true
+            });
+        }
     }
 
     ngAfterViewInit(): void {
