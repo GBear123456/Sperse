@@ -1,0 +1,50 @@
+<details-header (onUpdate)="update()"></details-header>
+<div class="close-details" (click)="close()"></div>
+<div class="box-shadow-wrapper">
+    <div class="under-header">
+        <div class="general-links" *ngIf="userData && userData.user">
+            <a class="fa fa-envelope-o" aria-hidden="true" href="mailto:{{userData.user.emailAddress}}"></a>
+            <a class="fa fa-phone" aria-hidden="true" [attr.href]="userData.user.phoneNumber ? 'tel:'+userData.user.phoneNumber : null" ></a>
+        </div>
+        <operations-widget (onDelete)="delete()"></operations-widget>
+    </div>
+    <mat-sidenav-container>
+        <mat-sidenav mode="side" opened="true" position="start">
+            <div class="short-contact">
+                <div class="small-phones">
+                    <div class="phone">
+                        <i class="icons phone type-P"></i>{{userData?.user?.phoneNumber}}
+                    </div>
+                </div>
+            </div>
+            <dx-scroll-view showScrollbar="onHover">
+                <nav mat-tab-nav-bar>
+                    <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.route" [routerLinkActive]="'active'">
+                        {{link.label}}
+                    </a>
+                </nav>
+            </dx-scroll-view>
+        </mat-sidenav>
+        <div class="main-content">
+            <router-outlet></router-outlet>
+        </div>
+        <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightPanelOpened">
+            <mat-tab-group>
+                <mat-tab label="{{l('User Account')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <div class="right-content">
+                            <div class="right-panel-block">
+                                <user-account></user-account>
+                            </div>
+                        </div>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="{{l('Permissions')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <permission-tree #permissionTree></permission-tree>
+                    </dx-scroll-view>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-sidenav>
+    </mat-sidenav-container>
+</div>

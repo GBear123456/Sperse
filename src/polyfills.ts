@@ -16,7 +16,6 @@ import 'core-js/es6/string';
 import 'core-js/es6/symbol';
 import 'core-js/es7/reflect';
 import 'dom4/build/dom4.js';
-import { finalize } from 'rxjs/operators';
 import 'zone.js/dist/zone';
 
 (window as any).global = window;

@@ -20,26 +20,26 @@ import { NotificationsComponent } from './shared/layout/notifications/notificati
                             { path: 'notifications', component: NotificationsComponent }
                         ]
                     },
-                    // {
-                    //     path: 'admin',
-                    //     loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
-                    //     data: { preload: true }
-                    // },
+                    {
+                        path: 'admin',
+                        loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
+                        data: { preload: true }
+                    },
                     {
                         path: 'api',
                         loadChildren: 'app/api/api.module#ApiModule', //Lazy load main module
                         data: { preload: true }
                     },
-                    // {
-                    //     path: 'crm',
-                    //     loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
-                    //     data: { preload: true }
-                    // },
-                    // {
-                    //     path: 'cfo/:instance',
-                    //     loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
-                    //     data: { preload: true }
-                    // },
+                    {
+                        path: 'crm',
+                        loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
+                        data: { preload: true }
+                    },
+                    {
+                        path: 'cfo/:instance',
+                        loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
+                        data: { preload: true }
+                    },
                     { path: '**', redirectTo: 'notifications' }
                 ]
             }

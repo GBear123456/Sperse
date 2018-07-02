@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
+
+import * as moment from 'moment';
+
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
-import * as moment from 'moment';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';

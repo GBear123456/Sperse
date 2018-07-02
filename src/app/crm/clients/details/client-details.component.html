@@ -18,7 +18,7 @@
     ></operations-widget>
   </div>
   <mat-sidenav-container>
-    <mat-sidenav mode="side" opened="true" align="start">
+    <mat-sidenav mode="side" opened="true" position="start">
       <div class="short-contact">
         <div class="small-phones">
           <div class="phone" *ngFor="let phone of primaryContact?.phones">
@@ -37,7 +37,7 @@
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
-    <mat-sidenav class="right_sidenav" mode="side" align="end" [opened]="rightPanelSetting.opened">
+    <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightPanelSetting.opened">
       <span class="gear-icon" (click)="toggleConfigMode()"></span>
       <mat-tab-group>
         <mat-tab label="{{l('Overview')}}">

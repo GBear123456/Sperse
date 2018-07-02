@@ -1,0 +1,16 @@
+<header>
+    <div class="avatar">
+        <div class="active"></div>
+        <div class="photo-area" [ngStyle]="{'background-image': data && data['photo'] ? 'url(' + data['photo'] + ')': null}"></div>
+    </div>
+    <div class="personal_info">
+        <div class="full_name">
+            <h1 *ngIf="data && data.user">
+                {{data.user.name}} {{data.user.surname}}
+            </h1>
+        </div>
+    </div>
+    <div class="header_buttons">
+        <button class="btn btn-layout" (click)="onUpdate.emit()">Update</button>
+    </div>
+</header>

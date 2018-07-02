@@ -23,7 +23,7 @@ import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
-//import { MobileModule } from './mobile/mobile.module';
+import { MobileModule } from './mobile/mobile.module';
 import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 
@@ -142,7 +142,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         HttpClientModule,
         BrowserModule,
         BrowserAnimationsModule,
-        //MobileModule,
+        MobileModule,
         CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,

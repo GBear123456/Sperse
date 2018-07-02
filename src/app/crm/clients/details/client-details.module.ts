@@ -50,7 +50,7 @@ import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-custome
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
-import { AngularGooglePlaceModule } from 'angular-google-place';
+//import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
@@ -112,7 +112,7 @@ import { FileDropModule } from 'ngx-file-drop';
     MatProgressSpinnerModule,
     MatSelectModule,
     ClientDetailsRoutingModule,
-    AngularGooglePlaceModule,
+    //AngularGooglePlaceModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxButtonModule,

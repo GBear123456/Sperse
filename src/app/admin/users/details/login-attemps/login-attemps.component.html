@@ -1,0 +1,21 @@
+<dx-data-grid id="gridContainer"
+              [allowColumnReordering]="true"
+              [columnAutoWidth]="true"
+              [allowColumnResizing]="true"
+              [hoverStateEnabled]="true"
+              [dataSource]="userLoginAttempts"
+              (onRowPrepared)="onRowPrepared($event)">
+    <dxi-column dataField="result" caption="" cellTemplate="statusTemplate"></dxi-column>
+    <dxi-column dataField="clientIpAddress" caption="{{l('IpAddress')}}"></dxi-column>
+    <dxi-column dataField="creationTime" caption="{{l('Time')}}" cellTemplate="dateTemplate"></dxi-column>
+    <dxi-column dataField="browserInfo" caption="{{l('Browser')}}"></dxi-column>
+
+    <div *dxTemplate="let cell of 'dateTemplate'">
+        {{cell.data.creationTimeFormatted}}
+    </div>
+
+    <div *dxTemplate="let cell of 'statusTemplate'">
+        <i *ngIf="cell.data.result == 'Success'" class="fa fa-check-circle" aria-hidden="true"></i>
+        <i *ngIf="cell.data.result != 'Success'" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    </div>
+</dx-data-grid>

@@ -37,6 +37,7 @@
               }
             ],
             "styles": [
+              "node_modules/simple-line-icons/css/simple-line-icons.css",
               "node_modules/tether/dist/css/tether.css",
               "node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css",
               "node_modules/prismjs/themes/prism.css",
@@ -65,22 +66,30 @@
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeng/resources/themes/bootstrap/theme.css",
               "node_modules/bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+
               "src/assets/metronic/src/vendors/line-awesome/css/line-awesome.css",
               "src/assets/metronic/src/vendors/flaticon/css/flaticon.css",
               "src/assets/metronic/src/vendors/metronic/css/styles.css",
               "src/assets/Jcrop/css/Jcrop.css",
+
+              "src/assets/primeng/datatable/css/primeng.datatable.css",
               "src/assets/primeng/file-upload/css/primeng.file-upload.css",
               "src/assets/primeng/autocomplete/css/primeng.autocomplete.css",
+              "src/assets/common/styles/metronic-customize.less",
+              "src/assets/common/styles/metronic-customize-angular.less",
+              "src/assets/fonts/fonts-poppins.css",
+              "src/assets/fonts/fonts-roboto.css",
 
               "src/node_modules/devextreme/dist/css/dx.common.css",
               "src/node_modules/devextreme/dist/css/dx.light.css",
+
               "node_modules/dragula/dist/dragula.css",
 
               "src/app/shared/core.less",
               "src/app/shared/layout/layout.less",
-              "src/assets/fonts/fonts-poppins.css",
-              "src/assets/fonts/fonts-roboto.css",
               "src/app/shared/dx-customs.less",
+
               "src/styles.css"
             ],
             "scripts": [
