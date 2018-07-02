@@ -80,16 +80,27 @@
                             [caption]="l('MappedField')">
                 </dxi-column>
 
-                <div *dxTemplate="let cell of 'mappedFieldTemplate'">
-                    <dx-select-box [dataSource]="lookupFields"
-                                   valueExpr="id"
-                                   displayExpr="name"
-                                   [placeholder]="l('MapFieldPlaceholder')"
-                                   [showClearButton]="true"
-                                   [searchEnabled]="true"
-                                   [value]="cell.value"
-                                   (onValueChanged)="mappedFieldChanged($event, cell)">
-                    </dx-select-box>
+                <div *dxTemplate="let cell of 'mappedFieldTemplate'" class="mapped-field-edit">
+                    <dx-drop-down-box [dataSource]="lookupFields"
+                                      valueExpr="id"
+                                      displayExpr="name"
+                                      [placeholder]="l('MapFieldPlaceholder')"
+                                      [showClearButton]="true"
+                                      [value]="cell.value"
+                                      (onValueChanged)="cell.setValue($event.value)">
+                        <div *dxTemplate="let data of 'content'">
+                            <dx-tree-view [dataSource]="lookupFields"
+                                          dataStructure="plain"
+                                          keyExpr="id"
+                                          parentIdExpr="parent"
+                                          displayExpr="name"
+                                          [height]="300"
+                                          [searchEnabled]="true"
+                                          (onContentReady)="onLookupFieldsContentReady($event, cell)"
+                                          (onItemClick)="cell.setValue($event.node.key)">
+                            </dx-tree-view>
+                        </div>
+                    </dx-drop-down-box>
                 </div>
 
             </dx-data-grid>

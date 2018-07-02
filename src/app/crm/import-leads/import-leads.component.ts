@@ -8,16 +8,18 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ImportLeadBusinessInput, ImportLeadBusinessesInput, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
-  templateUrl: 'import-leads.component.html',
-  styleUrls: ['import-leads.component.less'],
-  animations: [appModuleAnimation()]
+    templateUrl: 'import-leads.component.html',
+    styleUrls: ['import-leads.component.less'],
+    animations: [appModuleAnimation()]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
 
-    totalCount:  number = 0;
+    totalCount: number = 0;
     importedCount: number = 0;
-    mappingFileds: any = [];
+    mappingFields: any[] = [];
+
+    readonly mappingObjectNames: string[] = [];
 
     private fieldConfig = {
         cssClass: 'capitalize'
@@ -43,8 +45,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _router: Router
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-            
-        this.mappingFileds = Object.keys(ImportLeadBusinessInput.fromJS({}));
+
+        this.getMappingFields(ImportLeadBusinessInput.fromJS({}));
     }
 
     cancel() {
@@ -73,6 +75,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 this.wizard.showFinishStep();
             else
                 this.message.error(res[0].errorMessage);
+        });
+    }
+
+    getMappingFields(obj: object, parent: string = 'Other') {
+        let keys: string[] = Object.keys(obj);
+        this.mappingFields.push({
+            id: parent, name: this.capitalize(parent), parent: null, expanded: true
+        });
+        keys.forEach(v => {
+            if (this.mappingObjectNames.some(m => m == v)) {
+                //TODO
+            }
+            else {
+                this.mappingFields.push({ id: v, name: this.capitalize(v), parent: parent });
+            }
         });
     }
 

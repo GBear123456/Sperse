@@ -27,14 +27,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @Input() icon: string;
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
-    @Input() set fields(list: string[]) {
-        this.lookupFields = list.map((field) => {
-            return {
-                id: field,
-                name: this.capitalize(field)
-            };
-        });
-    }
+    @Input() lookupFields: any;
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
@@ -60,7 +53,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     reviewDataSource: any;
     mapDataSource: any;
-    lookupFields: any;
 
     isMapped = true;
 
@@ -168,8 +160,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             isLastName = false;
 
         this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
+            isFistName = isFistName || (row.mappedField && row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
+            isLastName = isLastName || (row.mappedField && row.mappedField.toLowerCase() == LAST_NAME_FIELD);
             return !!row.mappedField;
         });
 
@@ -365,7 +357,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     onRowValidating($event) {
         this.mapDataSource.store.data.forEach((row) => {
-            if ($event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
+            if ($event.oldData.sourceField != row.sourceField &&
+                $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
             }
@@ -384,8 +377,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         }
     }
 
-    mappedFieldChanged($event, cell) {
-        cell.setValue($event.value);
+    onLookupFieldsContentReady($event, cell) {
+        $event.component.unselectAll();
+        $event.component.selectItem(cell.value);
     }
 
     cleanInput() {

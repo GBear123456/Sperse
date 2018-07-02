@@ -1,14 +1,12 @@
 <div [@routerTransition] class="import-wrapper">
     <left-menu></left-menu>
-    <import-wizard
-        [title]="l('Import leads')"
-        icon="icon-globe"
-        [fields]="mappingFileds"
-        [columnsConfig]="fieldsConfig"
-        [localizationSource]="localizationSourceName"
-        (onComplete)="complete($event)"
-        (onCancel)="cancel()">
-
+    <import-wizard [title]="l('Import leads')"
+                   icon="icon-globe"
+                   [lookupFields]="mappingFields"
+                   [columnsConfig]="fieldsConfig"
+                   [localizationSource]="localizationSourceName"
+                   (onComplete)="complete($event)"
+                   (onCancel)="cancel()">
         <div class="success">
             <h1>{{l('ImportedLeadsHeader', totalCount, importedCount)}}</h1>
             <h3>{{l('ImportedLeadsMessage')}}</h3>
