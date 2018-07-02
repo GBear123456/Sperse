@@ -5,7 +5,7 @@ import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-w
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import { ImportLeadBusinessInput, ImportLeadBusinessesInput, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ImportLeadInput, ImportLeadsInput, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -46,7 +46,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.getMappingFields(ImportLeadBusinessInput.fromJS({}));
+        this.getMappingFields(ImportLeadInput.fromJS({}));
     }
 
     cancel() {
@@ -64,7 +64,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     complete(data) {
         this.startLoading(true);
         this.totalCount = data.length;
-        this._leadService.importLeadBusinesses(ImportLeadBusinessesInput.fromJS({
+        this._leadService.importLeads(ImportLeadsInput.fromJS({
             leads: data
         })).finally(() => this.finishLoading(true)).subscribe((res) => {
             res.forEach((reff) => {
