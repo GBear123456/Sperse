@@ -34,6 +34,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         fullAddress: ImportLeadAddressInput.fromJS({})
     };
 
+    private readonly compareFields: any = [
+        ['personalInfo_fullName_firstName:personalInfo_fullName_lastName'],
+        ['personalInfo_email1', 'personalInfo_email2', 'personalInfo_email3', 'businessInfo_companyEmail', 'businessInfo_workEmail1', 'businessInfo_workEmail2', 'businessInfo_workEmail3'],
+        ['personalInfo_mobilePhone', 'personalInfo_homePhone', 'personalInfo_homePhone', 'businessInfo_companyPhone', 'businessInfo_workPhone1', 'businessInfo_workPhone2'],
+        ['personalInfo_fullAddress', 'businessInfo_companyFullAddress']
+    ];
+
     private fieldConfig = {
         cssClass: 'capitalize'
     };
@@ -45,10 +52,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     fieldsConfig = {
         phoneNumber: this.phoneConfig,
         faxNumber: this.phoneConfig,
-        first: this.fieldConfig,
-        nick: this.fieldConfig,
-        middle: this.fieldConfig,
-        last: this.fieldConfig,
+        firstName: this.fieldConfig,
+        nickName: this.fieldConfig,
+        middleName: this.fieldConfig,
+        lastName: this.fieldConfig,
         city: this.fieldConfig
     };
 
@@ -159,9 +166,23 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.rootComponent.overflowHidden();
     }
 
-    checkSimilarRecord = (list, row, index) => {
-        for (let i = 1; i < list.length; i++) //!!VP Temporary solution(stub), will be implemented separate logic to determinate similar records
-            if (i != index && list[i] && list[i].join(',').indexOf(row['email1']) >= 0)
-                return row.compared = 'Similar items "' + row['email1'] + '"';
+    checkSimilarRecord = (record1, record2) => {
+        record1.compared = record1.personalInfo_fullName_firstName + 
+            ' ' + record1.personalInfo_fullName_lastName;
+
+        return !this.compareFields.every((fields) => {
+            return fields.every((field1) => {
+                return !fields.some((field2) => {
+                    let complexField1 = field1.split(':'),
+                        complexField2 = field2.split(':');
+                    if (complexField1.length > 1)
+                        return complexField1.map((fld) => record1[fld] || 1).join('_')
+                            == complexField2.map((fld) => record2[fld] || 2).join('_');
+                    else
+                        return record1[field1] && record2[field2] && 
+                            (record1[field1].toLowerCase() == record2[field2].toLowerCase());
+                });
+            });
+        });
     }
 }

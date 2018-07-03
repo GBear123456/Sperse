@@ -170,7 +170,22 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 });            
         }).forEach((row, index) => {
             row && this.reviewDataSource.push(
-                this.defineSimilarGroupField(row, index));
+                this.checkSimilarGroups(row));
+        });
+
+        let groups = this.reviewGroups.filter(Boolean);
+        groups.forEach((group, index) => {
+            if (group && group.length) {
+                if (group.length > 1) {
+                    let groupName = this.l('Similar items') + 
+                        '(' + group[0].compared + ')';
+                    group.forEach((item) => {
+                        item.compared = groupName;
+                    });
+                } else
+                    group[0].compared = this.l('Unique item(s)');
+                this.selectedPreviewRows.push(group[0].uniqueIdent);
+            }
         });
     }
 
@@ -192,16 +207,31 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             (count || 0) + 1) > 1;
     }
 
-    defineSimilarGroupField(row, index) {
-        if (!this.checkSimilarRecord(this.fileData.data, row, index)) {
-            this.selectedPreviewRows.push(row.uniqueIdent);
-            row.compared = 'Unique item(s)';
-        }
-              
-        if (this.reviewGroups.indexOf(row.compared) < 0) {
-            this.selectedPreviewRows.push(row.uniqueIdent);
-            this.reviewGroups.push(row.compared);
-        }
+    checkSimilarGroups(row) {
+        if (this.reviewGroups.length) {
+            let groupIndex = [];
+            this.reviewGroups.forEach((group, index) => {                
+                if (group && group.some((item) => {
+                    return this.checkSimilarRecord(row, item);
+                })) groupIndex.push(index);                
+            });
+  
+            if (groupIndex.length) {
+                if (groupIndex.length > 1) {
+                    let newGroup = [];
+                    groupIndex.forEach((index) => {
+                        newGroup = newGroup.concat(this.reviewGroups[index]);
+                        delete this.reviewGroups[index];
+                    });
+                    this.reviewGroups.push(newGroup);
+                } else
+                    this.reviewGroups[groupIndex[0]].push(row);
+
+                return row;
+            }
+        } 
+
+        this.reviewGroups.push([row]);
 
         return row;
     }
