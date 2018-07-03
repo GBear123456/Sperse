@@ -5,19 +5,34 @@ import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-w
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import { ImportLeadBusinessInput, ImportLeadBusinessesInput, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
+    LeadServiceProxy
+} from '@shared/service-proxies/service-proxies';
+
+import * as _s from 'underscore.string';
 
 @Component({
-  templateUrl: 'import-leads.component.html',
-  styleUrls: ['import-leads.component.less'],
-  animations: [appModuleAnimation()]
+    templateUrl: 'import-leads.component.html',
+    styleUrls: ['import-leads.component.less'],
+    animations: [appModuleAnimation()]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
 
-    totalCount:  number = 0;
+    totalCount: number = 0;
     importedCount: number = 0;
-    mappingFileds: any = [];
+    mappingFields: any[] = [];
+
+    fullName: ImportLeadFullName;
+    fullAddress: ImportLeadAddressInput;
+
+    readonly mappingObjectNames = {
+        personalInfo: ImportLeadPersonalInput.fromJS({}),
+        businessInfo: ImportLeadBusinessInput.fromJS({}),
+        fullName: ImportLeadFullName.fromJS({}),
+        fullAddress: ImportLeadAddressInput.fromJS({})
+    };
 
     private fieldConfig = {
         cssClass: 'capitalize'
@@ -43,8 +58,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _router: Router
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-            
-        this.mappingFileds = Object.keys(ImportLeadBusinessInput.fromJS({}));
+
+        this.setMappingFields(ImportLeadInput.fromJS({}));
     }
 
     cancel() {
@@ -62,7 +77,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     complete(data) {
         this.startLoading(true);
         this.totalCount = data.length;
-        this._leadService.importLeadBusinesses(ImportLeadBusinessesInput.fromJS({
+        this._leadService.importLeads(ImportLeadsInput.fromJS({
             leads: data
         })).finally(() => this.finishLoading(true)).subscribe((res) => {
             res.forEach((reff) => {
@@ -74,6 +89,28 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             else
                 this.message.error(res[0].errorMessage);
         });
+    }
+
+    setMappingFields(obj: object, parent: string = null) {
+        let keys: string[] = Object.keys(obj);
+        keys.forEach(v => {
+            let combinedName = parent ? `${parent}_${v}` : v;
+            if (this.mappingObjectNames[v]) {
+                this.mappingFields.push({
+                    id: combinedName, name: _s.humanize(v), parent: parent, expanded: true
+                });
+                this.setMappingFields(this.mappingObjectNames[v], combinedName);
+            }
+            else {
+                this.mappingFields.push({ id: combinedName, name: _s.humanize(v), parent: parent || 'Other' });
+            }
+        });
+
+        if (!parent) {
+            this.mappingFields.push({
+                id: 'Other', name: this.capitalize('Other'), parent: null, expanded: true
+            });
+        }
     }
 
     ngAfterViewInit(): void {
