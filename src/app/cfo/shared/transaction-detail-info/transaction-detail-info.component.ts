@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
+    CategoryTreeServiceProxy,
     ClassificationServiceProxy,
     InstanceType,
     TransactionDetailsDto,
@@ -45,6 +46,7 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
     constructor(
         injector: Injector,
         private _transactionsService: TransactionsServiceProxy,
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _commentServiceProxy: CommentServiceProxy
     ) {
@@ -131,7 +133,7 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
     }
 
     getCategoryTree() {
-        this._classificationServiceProxy.getCategoryTree(
+        this._categoryTreeServiceProxy.get(
             InstanceType[this.instanceType], this.instanceId, true
         ).subscribe(data => {
             let categories = [];
