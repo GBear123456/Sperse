@@ -11,6 +11,7 @@ import { Subject } from 'rxjs/Subject';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 import * as _ from 'underscore';
+import * as _s from 'underscore.string';
 
 @Component({
     selector: 'import-wizard',
@@ -31,6 +32,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+
+    public static readonly FieldSeparator = '_';
 
     uploadFile: FormGroup;
 
@@ -266,7 +269,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     sourceField: field,
                     sampleValue: this.lookForValueExample(index),
                     mappedField: this.lookupFields.every((item) => {
-                        let isSameField = item.id.split('_').pop().toLowerCase() == field.toLowerCase();
+                        let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
                         if (isSameField)
                             fieldId = item.id;
                         return !isSameField;
@@ -393,6 +396,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             if (columnConfig) {
                 _.extend(column, columnConfig);
             }
+
+            column.caption = _s.humanize(column.dataField.split(ImportWizardComponent.FieldSeparator).pop());
         });
     }
 }
