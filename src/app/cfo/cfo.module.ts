@@ -73,14 +73,17 @@ import {
     DxTagBoxModule,
     DxResizableModule,
     DxRangeSliderModule,
-    DxSwitchModule
+    DxSwitchModule,
+    DxPopupModule
 } from 'devextreme-angular';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
-import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-account-button/add-account-button.component';
+import { AddQuovoAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-quovo-account-button/add-quovo-account-button.component';
+import { XeroLoginButtonComponent } from 'app/cfo/shared/common/xero-login/xero-login.component';
+import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 
 @NgModule({
@@ -121,6 +124,7 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         DxRangeSliderModule,
         DxSwitchModule,
         GooglePlaceModule,
+        DxPopupModule
     ],
     declarations: [
         StartComponent,
@@ -154,6 +158,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         ReportPeriodComponent,
         BankAccountsQuovoComponent,
         AddAccountButtonComponent,
+        XeroLoginButtonComponent,
+        AddQuovoAccountButtonComponent,
         ImportFromQuickBooksButtonComponent
     ],
     entryComponents: [

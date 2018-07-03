@@ -13989,6 +13989,58 @@ export class QuestionnaireServiceProxy {
         }
         return Observable.of<QuestionnaireDto>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @questionnaireResponseInput (optional) 
+     * @return Success
+     */
+    submitQuestionnaireResponse(instanceType: InstanceType73, instanceId: number, questionnaireResponseInput: QuestionnaireResponseDto): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/SubmitQuestionnaireResponse?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(questionnaireResponseInput);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processSubmitQuestionnaireResponse(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processSubmitQuestionnaireResponse(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processSubmitQuestionnaireResponse(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -14058,7 +14110,7 @@ export class QuickBookServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getQuickBookConnectionLink(instanceType: InstanceType73, instanceId: number): Observable<QuickBookConnectionLinkResult> {
+    getQuickBookConnectionLink(instanceType: InstanceType74, instanceId: number): Observable<QuickBookConnectionLinkResult> {
         let url_ = this.baseUrl + "/api/services/CFO/QuickBook/GetQuickBookConnectionLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14324,7 +14376,7 @@ export class SecurityManagementServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    assignBankAccountPermissionForUser(instanceType: InstanceType74, instanceId: number, bankAccountId: number, userId: number): Observable<void> {
+    assignBankAccountPermissionForUser(instanceType: InstanceType75, instanceId: number, bankAccountId: number, userId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/AssignBankAccountPermissionForUser?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14380,7 +14432,7 @@ export class SecurityManagementServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    removeBankAccountPermissionForUser(instanceType: InstanceType75, instanceId: number, bankAccountId: number, userId: number): Observable<void> {
+    removeBankAccountPermissionForUser(instanceType: InstanceType76, instanceId: number, bankAccountId: number, userId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/RemoveBankAccountPermissionForUser?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14656,7 +14708,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    createProviderUIToken(instanceType: InstanceType76, instanceId: number): Observable<GetProviderUITokenOutput> {
+    createProviderUIToken(instanceType: InstanceType77, instanceId: number): Observable<GetProviderUITokenOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14710,7 +14762,7 @@ export class SyncServiceProxy {
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType77, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType78, instanceId: number, css: string, errorPage: string): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14766,7 +14818,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType78, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType79, instanceId: number, forcedSync: boolean, newOnly: boolean): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14826,7 +14878,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    syncAccount(instanceType: InstanceType79, instanceId: number, syncAccountId: number): Observable<boolean> {
+    syncAccount(instanceType: InstanceType80, instanceId: number, syncAccountId: number): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14882,7 +14934,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType80, instanceId: number): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType81, instanceId: number): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -14935,7 +14987,7 @@ export class SyncServiceProxy {
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType81, instanceId: number, syncAccountIds: number[]): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType82, instanceId: number, syncAccountIds: number[]): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15003,7 +15055,63 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(instanceType: InstanceType82, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
+    createSyncAccount(instanceType: InstanceType83, instanceId: number, input: CreateSyncAccountInput): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/CreateSyncAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processCreateSyncAccount(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processCreateSyncAccount(response_);
+                } catch (e) {
+                    return <Observable<number>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<number>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processCreateSyncAccount(response: Response): Observable<number> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<number>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    rename(instanceType: InstanceType84, instanceId: number, input: RenameSyncAccountInput): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -15054,7 +15162,7 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    delete(instanceType: InstanceType83, instanceId: number, syncAccountId: number): Observable<void> {
+    delete(instanceType: InstanceType85, instanceId: number, syncAccountId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17968,7 +18076,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType84, instanceId: number): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType86, instanceId: number): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -18020,7 +18128,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType85, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType87, instanceId: number): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -18072,7 +18180,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType86, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType88, instanceId: number, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -40112,6 +40220,100 @@ export interface IOptionDto {
     text: string;
 }
 
+export class QuestionnaireResponseDto implements IQuestionnaireResponseDto {
+    identifier: string;
+    answers: AnswerDto[];
+
+    constructor(data?: IQuestionnaireResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.identifier = data["identifier"];
+            if (data["answers"] && data["answers"].constructor === Array) {
+                this.answers = [];
+                for (let item of data["answers"])
+                    this.answers.push(AnswerDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): QuestionnaireResponseDto {
+        let result = new QuestionnaireResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["identifier"] = this.identifier;
+        if (this.answers && this.answers.constructor === Array) {
+            data["answers"] = [];
+            for (let item of this.answers)
+                data["answers"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IQuestionnaireResponseDto {
+    identifier: string;
+    answers: AnswerDto[];
+}
+
+export class AnswerDto implements IAnswerDto {
+    questionId: number;
+    choosedOptions: number[];
+
+    constructor(data?: IAnswerDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.questionId = data["questionId"];
+            if (data["choosedOptions"] && data["choosedOptions"].constructor === Array) {
+                this.choosedOptions = [];
+                for (let item of data["choosedOptions"])
+                    this.choosedOptions.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): AnswerDto {
+        let result = new AnswerDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["questionId"] = this.questionId;
+        if (this.choosedOptions && this.choosedOptions.constructor === Array) {
+            data["choosedOptions"] = [];
+            for (let item of this.choosedOptions)
+                data["choosedOptions"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IAnswerDto {
+    questionId: number;
+    choosedOptions: number[];
+}
+
 export class QuickBookConnectionLinkResult implements IQuickBookConnectionLinkResult {
     connectionLink: string;
 
@@ -41121,6 +41323,53 @@ export interface ISyncProgressDto {
     progressPercent: number;
     syncStatus: SyncProgressDtoSyncStatus;
     lastSyncDate: moment.Moment;
+}
+
+export class CreateSyncAccountInput implements ICreateSyncAccountInput {
+    typeId: string;
+    syncRef: string;
+    consumerKey: string;
+    consumerSecret: string;
+
+    constructor(data?: ICreateSyncAccountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.syncRef = data["syncRef"];
+            this.consumerKey = data["consumerKey"];
+            this.consumerSecret = data["consumerSecret"];
+        }
+    }
+
+    static fromJS(data: any): CreateSyncAccountInput {
+        let result = new CreateSyncAccountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["syncRef"] = this.syncRef;
+        data["consumerKey"] = this.consumerKey;
+        data["consumerSecret"] = this.consumerSecret;
+        return data; 
+    }
+}
+
+export interface ICreateSyncAccountInput {
+    typeId: string;
+    syncRef: string;
+    consumerKey: string;
+    consumerSecret: string;
 }
 
 export class RenameSyncAccountInput implements IRenameSyncAccountInput {
@@ -46071,6 +46320,16 @@ export enum InstanceType83 {
     Main = <any>"Main", 
 }
 
+export enum InstanceType84 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType85 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
 export enum SalesSummaryDatePeriod {
     _1 = 1, 
     _2 = 2, 
@@ -46102,17 +46361,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType84 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
-export enum InstanceType85 {
-    User = <any>"User", 
-    Main = <any>"Main", 
-}
-
 export enum InstanceType86 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType87 {
+    User = <any>"User", 
+    Main = <any>"Main", 
+}
+
+export enum InstanceType88 {
     User = <any>"User", 
     Main = <any>"Main", 
 }

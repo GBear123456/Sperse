@@ -9,39 +9,23 @@ import { QuovoService, QuovoHandler } from '@app/cfo/shared/common/quovo/QuovoSe
 })
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
-
-    quovoHandler: QuovoHandler;
+    tooltipVisible = false;
 
     constructor(
-        injector: Injector,
-        private _quovoService: QuovoService
+        injector: Injector
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
         super.ngOnInit();
-
-        if (!this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
-        }
     }
 
     addAccount(): void {
-        if (this.quovoHandler.isLoaded) {
-            if (this.loading) {
-                this.finishLoading(true);
-            }
-            this.quovoHandler.open((e) => this.onQuovoHanderClose(e));
-        } else {
-            if (!this.loading) {
-                this.startLoading(true);
-            }
-            setTimeout(() => this.addAccount(), 100);
-        }
+        this.tooltipVisible = !this.tooltipVisible;
     }
 
-    private onQuovoHanderClose(e) {
+    onQuovoHanderClose(e) {
         this.onClose.emit(e);
     }
 }
