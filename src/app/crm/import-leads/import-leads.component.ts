@@ -10,6 +10,8 @@ import {
     LeadServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
+import * as _s from 'underscore.string';
+
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
@@ -92,14 +94,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     setMappingFields(obj: object, parent: string = null) {
         let keys: string[] = Object.keys(obj);
         keys.forEach(v => {
+            let combinedName = parent ? `${parent}_${v}` : v;
             if (this.mappingObjectNames[v]) {
                 this.mappingFields.push({
-                    id: v, name: this.capitalize(v), parent: parent, expanded: true
+                    id: combinedName, name: _s.humanize(v), parent: parent, expanded: true
                 });
-                this.setMappingFields(this.mappingObjectNames[v], v);
+                this.setMappingFields(this.mappingObjectNames[v], combinedName);
             }
             else {
-                this.mappingFields.push({ id: v, name: this.capitalize(v), parent: parent || 'Other' });
+                this.mappingFields.push({ id: combinedName, name: _s.humanize(v), parent: parent || 'Other' });
             }
         });
 

@@ -154,14 +154,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     validateFieldsMapping(rows) {
-        const FIRST_NAME_FIELD = 'first',
-              LAST_NAME_FIELD = 'last';
+        const FIRST_NAME_FIELD = 'personalInfo_fullName_firstName',
+            LAST_NAME_FIELD = 'personalInfo_fullName_lastName';
         let isFistName = false, 
             isLastName = false;
 
         this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField && row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField && row.mappedField.toLowerCase() == LAST_NAME_FIELD);
+            isFistName = isFistName || (row.mappedField && row.mappedField == FIRST_NAME_FIELD);
+            isLastName = isLastName || (row.mappedField && row.mappedField == LAST_NAME_FIELD);
             return !!row.mappedField;
         });
 
@@ -266,7 +266,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     sourceField: field,
                     sampleValue: this.lookForValueExample(index),
                     mappedField: this.lookupFields.every((item) => {
-                        let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                        let isSameField = item.id.split('_').pop().toLowerCase() == field.toLowerCase();
                         if (isSameField)
                             fieldId = item.id;
                         return !isSameField;
