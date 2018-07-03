@@ -97,8 +97,10 @@
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <dx-data-grid id="gridContainer" #reviewGrid
+                          [keyExpr]="'uniqueIdent'"                          
                           [pager]="defaultGridPagerConfig"
                           [dataSource]="reviewDataSource"
+                          [selectedRowKeys]="selectedPreviewRows"
                           [allowColumnReordering]="false"
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"

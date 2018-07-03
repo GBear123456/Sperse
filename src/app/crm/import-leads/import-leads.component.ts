@@ -92,4 +92,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     deactivate() {
         this.rootComponent.overflowHidden();
     }
+
+    checkSimilarRecord = (list, row, index) => {
+        for (let i = 1; i < list.length; i++) //!!VP Temporary solution(stub), will be implemented separate logic to determinate similar records
+            if (i != index && list[i] && list[i].join(',').indexOf(row['email1']) >= 0)
+                return row.compared = 'Similar items "' + row['email1'] + '"';
+    }
 }

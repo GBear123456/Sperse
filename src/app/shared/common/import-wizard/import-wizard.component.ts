@@ -25,6 +25,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     @Input() title: string;
     @Input() icon: string;
+    @Input() checkSimilarRecord: Function;
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
     @Input() set fields(list: string[]) {
@@ -42,6 +43,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     uploadFile: FormGroup;
 
     private files: UploadFile[] = [];
+    private duplicateCounts: any = {};
+    private reviewGroups: any = [];
 
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
@@ -57,6 +60,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     fileSize: string = '';
     fileHasHeader: boolean = false;
     fileHeaderWasGenerated = false;
+
+    selectedPreviewRows: any = [];
 
     reviewDataSource: any;
     mapDataSource: any;
@@ -94,7 +99,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.uploadFile.reset();
 
         this.mapDataSource = [];
-        this.reviewDataSource = [];
+        this.emptyReviewData();
 
         setTimeout(() => {
             this.showSteper = true;
@@ -118,8 +123,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     return !!row.mappedField;
                 });
             }
-            if (this.validateFieldsMapping(mappedFields))
+            if (this.validateFieldsMapping(mappedFields)) {
                 this.initReviewDataSource(mappedFields); 
+                this.stepper.next();
+            }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
@@ -140,25 +147,68 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
     }
 
+    emptyReviewData() {
+        this.reviewDataSource = [];
+        this.selectedPreviewRows = [];
+        this.duplicateCounts = {};
+        this.reviewGroups = [];
+    }
+
     initReviewDataSource(mappedFields) {        
         let columnsIndex = {};
-        this.reviewDataSource = [];
-        this.fileData.data.forEach((row, index) => {
+        this.emptyReviewData();
+        this.fileData.data.map((row, index) => {
             if (index) {                
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
                         data[field.mappedField] = row[columnsIndex[field.sourceField]];
                     });
-                    this.reviewDataSource.push(data);
+                    if (this.checkDuplicate(data))
+                        delete this.fileData.data[index];
+                    else
+                        return data;
                 }
             } else 
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
-                });
+                });            
+        }).forEach((row, index) => {
+            row && this.reviewDataSource.push(
+                this.defineSimilarGroupField(row, index));
         });
+    }
 
-        this.stepper.next();
+    getRowUniqueIdent(row) {
+        return JSON.stringify(row)
+            .toLowerCase().split('').reduce(
+                (prev, next) => {
+                    return ((prev << 5) - prev) + 
+                        next.charCodeAt(0);                    
+                }, 0).toString();
+    }
+
+    checkDuplicate(row) {
+        let ident = this.getRowUniqueIdent(row),      
+            count = this.duplicateCounts[ident];
+
+        row.uniqueIdent = ident;
+        return (this.duplicateCounts[ident] = 
+            (count || 0) + 1) > 1;
+    }
+
+    defineSimilarGroupField(row, index) {
+        if (!this.checkSimilarRecord(this.fileData.data, row, index)) {
+            this.selectedPreviewRows.push(row.uniqueIdent);
+            row.compared = 'Unique item(s)';
+        }
+              
+        if (this.reviewGroups.indexOf(row.compared) < 0) {
+            this.selectedPreviewRows.push(row.uniqueIdent);
+            this.reviewGroups.push(row.compared);
+        }
+
+        return row;
     }
 
     validateFieldsMapping(rows) {
@@ -395,9 +445,20 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
-            let columnConfig = this.columnsConfig[column.dataField];
-            if (columnConfig) {
-                _.extend(column, columnConfig);
+            if (column.dataField == 'uniqueIdent')
+                column.visible = false;
+            else if (column.dataField == 'compared') {
+                if (this.reviewGroups.length > 1)
+                    column.groupIndex = 0;
+                else {
+                    column.visible = false;
+                    this.selectedPreviewRows = [];
+                }
+            } else {
+                let columnConfig = this.columnsConfig[column.dataField];
+                if (columnConfig) {
+                    _.extend(column, columnConfig);
+                }
             }
         });
     }
