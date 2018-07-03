@@ -77,9 +77,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     complete(data) {
         this.startLoading(true);
         this.totalCount = data.length;
-        this._leadService.importLeads(ImportLeadsInput.fromJS({
-            leads: data
-        })).finally(() => this.finishLoading(true)).subscribe((res) => {
+        let leadsInput = this.createLeadsInput(data);
+        this._leadService.importLeads(leadsInput).finally(() => this.finishLoading(true)).subscribe((res) => {
             res.forEach((reff) => {
                 if (!reff.errorMessage)
                     this.importedCount++;
@@ -91,10 +90,40 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
     }
 
+    createLeadsInput(data: any[]): ImportLeadsInput {
+        let result = ImportLeadsInput.fromJS({});
+        result.leads = [];
+
+        data.forEach(v => {
+            let lead = new ImportLeadInput();
+            let keys = Object.keys(v);
+            keys.forEach(key => {
+                let path = key.split(ImportWizardComponent.FieldSeparator);
+                if (path.length) {
+                    let currentObj = lead;
+
+                    for (let i = 0; i < path.length - 1; i++) {
+                        if (!currentObj[path[i]]) {
+                            currentObj[path[i]] = {};
+                        }
+
+                        currentObj = currentObj[path[i]];
+                    }
+
+                    currentObj[path[path.length - 1]] = v[key];
+                }
+            });
+
+            result.leads.push(lead);
+        });
+
+        return ImportLeadsInput.fromJS(result);
+    }
+
     setMappingFields(obj: object, parent: string = null) {
         let keys: string[] = Object.keys(obj);
         keys.forEach(v => {
-            let combinedName = parent ? `${parent}_${v}` : v;
+            let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${v}` : v;
             if (this.mappingObjectNames[v]) {
                 this.mappingFields.push({
                     id: combinedName, name: _s.humanize(v), parent: parent, expanded: true
