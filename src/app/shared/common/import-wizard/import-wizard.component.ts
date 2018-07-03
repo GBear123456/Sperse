@@ -17,7 +17,7 @@ import * as _ from 'underscore';
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase implements OnInit{
+export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
@@ -67,13 +67,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     selectModeItems = [
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
-    ]
+    ];
 
     constructor(
         injector: Injector,
         private _parser: PapaParseService,
         private _formBuilder: FormBuilder
-    ) { 
+    ) {
         super(injector);
 
         this.uploadFile = _formBuilder.group({
@@ -81,11 +81,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
     }
 
-    ngOnInit() {  
+    ngOnInit() {
         this.localizationSourceName = this.localizationSource;
     }
 
-    reset(callback = null) { 
+    reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
         this.loadProgress = 0;
@@ -104,12 +104,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
-            if (this.checkFileDataValid())
-            {
+            if (this.checkFileDataValid()) {
                 this.buildMappingDataSource();
                 this.stepper.next();
-            }
-            else
+            } else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             let mappedFields = this.mapGrid.instance.getSelectedRowsData();
@@ -119,14 +117,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 });
             }
             if (this.validateFieldsMapping(mappedFields))
-                this.initReviewDataSource(mappedFields); 
+                this.initReviewDataSource(mappedFields);
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
         }
     }
 
-    cancel() {        
+    cancel() {
         this.reset(() => {
             this.onCancel.emit();
         });
@@ -140,11 +138,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
     }
 
-    initReviewDataSource(mappedFields) {        
+    initReviewDataSource(mappedFields) {
         let columnsIndex = {};
         this.reviewDataSource = [];
         this.fileData.data.forEach((row, index) => {
-            if (index) {                
+            if (index) {
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
@@ -152,7 +150,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     });
                     this.reviewDataSource.push(data);
                 }
-            } else 
+            } else
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
                 });
@@ -164,7 +162,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     validateFieldsMapping(rows) {
         const FIRST_NAME_FIELD = 'first',
               LAST_NAME_FIELD = 'last';
-        let isFistName = false, 
+        let isFistName = false,
             isLastName = false;
 
         this.isMapped = rows.every((row) => {
@@ -201,7 +199,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     checkFileDataValid() {
-        return this.fileData && !this.fileData.errors.length 
+        return this.fileData && !this.fileData.errors.length
             && this.fileData.data.length;
     }
 
@@ -214,7 +212,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     this.fileHeaderWasGenerated = false;
                     this.fileData = results;
                     this.checkIfFileHasHeaders();
-                }    
+                }
             }
         });
     }
@@ -222,7 +220,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     getFileSize(size) {
         return (size / 1024).toFixed(2) + 'KB';
     }
- 
+
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
@@ -261,8 +259,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
                 this.fileData.data.unshift(headers);
                 this.fileHeaderWasGenerated = true;
-            }
-            else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
+            } else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
                 this.fileData.data.shift();
                 this.fileHeaderWasGenerated = false;
             }
@@ -321,10 +318,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
         return this.fileData.data[notEmptyIndex][fieldIndex];
     }
-   
+
     fileSelected($event) {
         if ($event.target.files.length)
-            this.fileDropped({files: $event.target.files})
+            this.fileDropped({files: $event.target.files});
     }
 
     downloadFromURL() {
@@ -340,9 +337,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                         this.message.error(result.target.statusText);
                     }
                 });
-            else 
+            else
                 this.message.error(this.l('FieldEmptyError', [this.l('URL')]));
-        }   
+        }
     }
 
     getFile(path: string, callback: Function) {
