@@ -40,7 +40,7 @@
             border: none;
             cursor: pointer;
             vertical-align: bottom;
-            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center; 
+            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
         }
     }
 
@@ -135,6 +135,7 @@
         .mat-form-field-wrapper {
             margin-top: 25px;
         }
+
         .mat-horizontal-stepper-header-container {
             justify-content: space-around;
             border-bottom: 1px solid #e5e9ec;
@@ -239,6 +240,16 @@
     /deep/ dx-data-grid {
         height: calc(~"100vh - 150px") !important;
 
+        td.capitalize {
+            & {
+                text-transform: lowercase
+            }
+
+            &:first-letter {
+                text-transform: uppercase
+            }
+        }
+
         .dx-datagrid-focus-overlay {
             display: none !important;
         }
@@ -260,5 +271,11 @@
         .dx-dropdowneditor .dx-placeholder {
             color: #85d5f7;
         }
+    }
+}
+
+#mappedFieldsTreeView {
+    /deep/ .dx-scrollable-content li[aria-level="1"] > .dx-item span {
+        font-weight: bold;
     }
 }

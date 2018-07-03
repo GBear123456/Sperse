@@ -21,7 +21,8 @@
                     </ng-template>
                     <file-drop [hidden]="dropZoneProgress"
                                (onFileDrop)="fileDropped($event)">
-                        <p>Drag and Drop files from your computer here<br>or<br>
+                        <p>
+                            Drag and Drop files from your computer here<br>or<br>
                             <a href="javascript:void(0);">
                                 <input name="importFile" type="file" #importFileInput (change)="fileSelected($event)" accept=".csv">browse
                             </a>
@@ -80,16 +81,29 @@
                             [caption]="l('MappedField')">
                 </dxi-column>
 
-                <div *dxTemplate="let cell of 'mappedFieldTemplate'">
-                    <dx-select-box [dataSource]="lookupFields"
-                                   valueExpr="id"
-                                   displayExpr="name"
-                                   [placeholder]="l('MapFieldPlaceholder')"
-                                   [showClearButton]="true"
-                                   [searchEnabled]="true"
-                                   [value]="cell.value"
-                                   (onValueChanged)="mappedFieldChanged($event, cell)">
-                    </dx-select-box>
+                <div *dxTemplate="let cell of 'mappedFieldTemplate'" class="mapped-field-edit">
+                    <dx-drop-down-box [dataSource]="lookupFields"
+                                      valueExpr="id"
+                                      displayExpr="name"
+                                      [placeholder]="l('MapFieldPlaceholder')"
+                                      [showClearButton]="true"
+                                      [value]="cell.value"
+                                      (onValueChanged)="cell.setValue($event.value)">
+                        <div *dxTemplate="let data of 'content'">
+                            <dx-tree-view id="mappedFieldsTreeView"
+                                          [dataSource]="lookupFields"
+                                          dataStructure="plain"
+                                          keyExpr="id"
+                                          parentIdExpr="parent"
+                                          displayExpr="name"
+                                          [height]="450"
+                                          [searchEnabled]="true"
+                                          [selectNodesRecursive]="false"
+                                          (onContentReady)="onLookupFieldsContentReady($event, cell)"
+                                          (onItemClick)="cell.setValue($event.node.key)">
+                            </dx-tree-view>
+                        </div>
+                    </dx-drop-down-box>
                 </div>
 
             </dx-data-grid>
@@ -97,16 +111,23 @@
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <dx-data-grid id="gridContainer" #reviewGrid
+                          [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"
                           [dataSource]="reviewDataSource"
+                          [selectedRowKeys]="selectedPreviewRows"
                           [allowColumnReordering]="false"
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
-                          [hoverStateEnabled]="true">
+                          [hoverStateEnabled]="true"
+                          [customizeColumns]="customizePreviewColumns">
                 <dxo-selection selectAllMode="page"
                                showCheckBoxesMode="always"
                                mode="multiple">
                 </dxo-selection>
+
+                <div *dxTemplate="let cellData of 'phoneCell'">
+                    {{cellData.value | phone}}
+                </div>
             </dx-data-grid>
         </mat-step>
         <mat-step [optional]="true">
