@@ -90,12 +90,13 @@
                                       [value]="cell.value"
                                       (onValueChanged)="cell.setValue($event.value)">
                         <div *dxTemplate="let data of 'content'">
-                            <dx-tree-view [dataSource]="lookupFields"
+                            <dx-tree-view id="mappedFieldsTreeView"
+                                          [dataSource]="lookupFields"
                                           dataStructure="plain"
                                           keyExpr="id"
                                           parentIdExpr="parent"
                                           displayExpr="name"
-                                          [height]="300"
+                                          [height]="450"
                                           [searchEnabled]="true"
                                           [selectNodesRecursive]="false"
                                           (onContentReady)="onLookupFieldsContentReady($event, cell)"
@@ -110,7 +111,7 @@
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <dx-data-grid id="gridContainer" #reviewGrid
-                          [keyExpr]="'uniqueIdent'"                          
+                          [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"
                           [dataSource]="reviewDataSource"
                           [selectedRowKeys]="selectedPreviewRows"
