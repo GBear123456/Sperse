@@ -18,7 +18,7 @@ import * as _ from 'underscore';
     selector: 'app-transaction-detail-info',
     templateUrl: './transaction-detail-info.component.html',
     styleUrls: ['./transaction-detail-info.component.less'],
-    providers: [ TransactionsServiceProxy, CommentServiceProxy ]
+    providers: [ CategoryTreeServiceProxy, TransactionsServiceProxy, CommentServiceProxy ]
 })
 export class TransactionDetailInfoComponent extends CFOComponentBase implements OnInit {
     @Input() transactionId: number;
