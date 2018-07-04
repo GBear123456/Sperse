@@ -63,8 +63,7 @@ import { SystemSettingsComponent } from './settings/system-settings.component';
 import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
-
-import { UserDetailsModule } from './users/details/user-details.module'
+import { UserDetailsModule } from './users/details/user-details.module';
 
 @NgModule({
     imports: [

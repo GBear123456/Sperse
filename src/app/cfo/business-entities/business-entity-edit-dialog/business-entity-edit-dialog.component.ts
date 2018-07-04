@@ -11,6 +11,7 @@ import {
     CountryServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
@@ -38,9 +39,6 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
     saving = false;
     isNew = false;
-
-    private validationError: string;
-
     businessEntity = new BusinessEntityInfoDto();
 
     constructor(

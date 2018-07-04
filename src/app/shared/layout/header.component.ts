@@ -1,4 +1,3 @@
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { Component, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -41,7 +40,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
-    isMultiTenancyEnabled = false;
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName? };
@@ -84,7 +82,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this.isMultiTenancyEnabled = this._abpMultiTenancyService.isEnabled;
         this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
 
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
