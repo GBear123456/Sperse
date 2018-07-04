@@ -58,7 +58,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
             if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO')) {
 
-                if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess'))
+                if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
                     return '/app/cfo/main/';
 
                 if (this._feature.isEnabled('CFO.Partner'))

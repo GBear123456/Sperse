@@ -175,8 +175,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
         let formData = new FormData();
-        formData.append('accessToken', wopiRequestInfo.accessToken);
-        formData.append('accessTokenTtl', wopiRequestInfo.accessTokenTtl.toString());
+        formData.append('access_token', wopiRequestInfo.accessToken);
+        formData.append('access_token_ttl', wopiRequestInfo.accessTokenTtl.toString());
         this.http.post(wopiRequestInfo.wopiUrlsrc, formData).subscribe((response) => {
             this.wopiResponseHtml = this.domSanitizer.bypassSecurityTrustHtml(response.text());
             this.openDocumentMode = true;

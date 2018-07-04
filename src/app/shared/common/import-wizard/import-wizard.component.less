@@ -40,7 +40,7 @@
             border: none;
             cursor: pointer;
             vertical-align: bottom;
-            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center; 
+            background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
         }
     }
 
@@ -135,10 +135,15 @@
         .mat-form-field-wrapper {
             margin-top: 25px;
         }
+
         .mat-horizontal-stepper-header-container {
-            justify-content: space-around;
+            justify-content: flex-start;
             border-bottom: 1px solid #e5e9ec;
             padding: 0px 20%;
+
+            .mat-horizontal-stepper-header {
+                padding: 0 35px;
+            }
 
             .mat-step-label-active {
                 .mat-step-text-label {
@@ -153,17 +158,13 @@
                 color: #677380 !important;
             }
 
-            .mat-step-icon {
+            .mat-step-icon,
+            .mat-step-icon-not-touched {
                 font-weight: 500;
                 color: #00aeef !important;
                 background: #FFF !important;
-                border: 1px solid #00aeef;
-            }
+                border: 2px solid #00aeef;
 
-            .mat-step-icon-not-touched {
-                color: #677380 !important;
-                background: #FFF !important;
-                border: 1px solid #e5e9ec;
             }
 
             .mat-stepper-horizontal-line:nth-last-child(2), mat-step-header:last-child {
@@ -243,6 +244,7 @@
             & {
                 text-transform: lowercase
             }
+
             &:first-letter {
                 text-transform: uppercase
             }
@@ -269,5 +271,11 @@
         .dx-dropdowneditor .dx-placeholder {
             color: #85d5f7;
         }
+    }
+}
+
+#mappedFieldsTreeView {
+    /deep/ .dx-scrollable-content li[aria-level="1"] > .dx-item span {
+        font-weight: bold;
     }
 }
