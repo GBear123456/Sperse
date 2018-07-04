@@ -2,6 +2,7 @@
   "name": "CFO",
   "search": false,
   "requiredFeature": "CFO",
+  "requiredPermission": "Pages.CFO",
   "navigation": [
     [
       "",
