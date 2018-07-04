@@ -43,6 +43,7 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
+import * as _ from 'underscore';
 
 @Component({
     templateUrl: './leads.component.html',

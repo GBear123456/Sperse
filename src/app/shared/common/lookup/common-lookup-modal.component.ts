@@ -5,7 +5,7 @@ import { NameValueDto, PagedResultDtoOfNameValueDto } from '@shared/service-prox
 import { ModalDirective } from 'ngx-bootstrap';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
+import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 
 export interface ICommonLookupModalOptions {

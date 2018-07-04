@@ -88,7 +88,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.startLoading(true);
         this.totalCount = data.length;
         let leadsInput = this.createLeadsInput(data);
-        let leadsInput = this.createLeadsInput(data);
         this._leadService.importLeads(leadsInput)
             .pipe(
                 finalize(() => this.finishLoading(true))

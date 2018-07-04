@@ -1,25 +1,31 @@
+/** Core imports */
 import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalModule } from 'ngx-bootstrap';
 
-import { UtilsModule } from '@shared/utils/utils.module';
-import { AbpModule } from '@abp/abp.module';
-import { CommonModule } from '@shared/common/common.module';
-
-import { MatFormFieldModule } from '@angular/material/form-field';
+/** Third party imports */
 import {
     MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule,
+    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule
 } from '@angular/material';
-
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
     DxTreeViewModule
 } from 'devextreme-angular';
+import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+import { TableModule } from 'primeng/table';
+import { PaginatorModule } from 'primeng/primeng';
+import { ModalModule } from 'ngx-bootstrap';
+import { FileDropModule } from 'ngx-file-drop';
+import { PapaParseModule } from 'ngx-papaparse';
+import { ImageCropperModule } from 'ng2-img-cropper';
 
+/** Application imports */
+import { AbpModule } from '@abp/abp.module';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
@@ -35,14 +41,7 @@ import { PeriodComponent } from './period/period.component';
 import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
-import { DataTableModule } from 'primeng/primeng';
-import { PaginatorModule } from 'primeng/primeng';
-import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
-
-import { FileDropModule } from 'ngx-file-drop';
-import { PapaParseModule } from 'ngx-papaparse';
-import { ImageCropperModule } from 'ng2-img-cropper';
 
 @NgModule({
     imports: [
@@ -52,7 +51,7 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         UtilsModule,
         AbpModule,
         CommonModule,
-        DataTableModule,
+        TableModule,
         PaginatorModule,
 
         MatTabsModule,

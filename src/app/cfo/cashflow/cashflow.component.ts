@@ -3340,7 +3340,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             forkJoin(
                 historicalsObservable.pipe(mergeMap(historicalTransactions => {
                     const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
-                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(this.movedCell, targetCellData) : of('empty');
+                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(movedCell, targetCellData) : of('empty');
                 })),
                 forecastsObservable.pipe(mergeMap(forecastsTransactions => {
                     if (forecastsTransactions && forecastsTransactions.length) {
