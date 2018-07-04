@@ -8,6 +8,7 @@ import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { LinkAccountModalComponent } from './link-account-modal.component';
+import { UserHelper } from '../helpers/UserHelper';
 
 @Component({
     selector: 'linkedAccountsModal',
@@ -26,7 +27,6 @@ export class LinkedAccountsModalComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
-        private abpMultiTenancyService: AbpMultiTenancyService,
         private _userLinkService: UserLinkServiceProxy,
         private _linkedAccountService: LinkedAccountService
     ) {
@@ -48,17 +48,12 @@ export class LinkedAccountsModalComponent extends AppComponentBase {
     }
 
     getShownLinkedUserName(linkedUser: LinkedUserDto): string {
-        if (!this.abpMultiTenancyService.isEnabled) {
-            return linkedUser.username;
-        }
-
-        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
+        return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
     }
 
     deleteLinkedUser(linkedUser: LinkedUserDto): void {
         this.message.confirm(
             this.l('LinkedUserDeleteWarningMessage', linkedUser.username),
-            this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
                     const unlinkUserInput = new UnlinkUserInput();

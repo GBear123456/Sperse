@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { ChatFriendDto } from './ChatFriendDto';
 import { ChatSignalrService } from './chat-signalr.service';
+import { UserHelper } from '../../helpers/UserHelper';
 
 @Component({
     templateUrl: './chat-bar.component.html',
@@ -45,7 +46,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     loadingPreviousUserMessages = false;
     userNameFilter = '';
     serverClientTimeDifference = 0;
-    isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     appChatSide: typeof AppChatSide = AppChatSide;
     appChatMessageReadState: typeof AppChatMessageReadState = AppChatMessageReadState;
 
@@ -160,12 +160,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         this.init();
     }
 
-    getShownUserName(tenanycName: string, userName: string): string {
-        if (!this.isMultiTenancyEnabled) {
-            return userName;
-        }
-
-        return (tenanycName ? tenanycName : '.') + '\\' + userName;
+    getShownUserName(friend: ChatFriendDto): string {
+        return UserHelper.getShownUserName(friend.friendUserName, friend.friendTenantId, friend.friendTenancyName);
     }
 
     getProfilePicture(): void {
@@ -297,7 +293,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     getFilteredFriends(state: FriendDtoState, userNameFilter: string): FriendDto[] {
         const foundFriends = _.filter(this.friends, friend => friend.state === state &&
-            this.getShownUserName(friend.friendTenancyName, friend.friendUserName)
+            this.getShownUserName(friend)
                 .toLocaleLowerCase()
                 .indexOf(userNameFilter.toLocaleLowerCase()) >= 0);
 

@@ -36,9 +36,7 @@ export class PipelineService {
                                     return a.sortOrder > b.sortOrder ? 1 : -1;
                                 }).forEach((item) => {
                                     item['index'] = Math.abs(item.sortOrder);
-                                    item['dragAllowed'] = !item.accessibleActions.every((action) => {
-                                        return !action.targetStageId;
-                                    });
+                                    item['dragAllowed'] = true;
                                 });
                                 this.pipeline = result;
                                 this.stages = result.stages;

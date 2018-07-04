@@ -891,6 +891,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     })
                 ).subscribe(() => {
                     if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) {
+                        this.dataGrid.instance.deselectAll();
                         this.refreshDataGrid();
                     } else {
                         let gridItems = this.dataGrid.instance.getDataSource().items().filter((v) => _.some(transactionIds, x => x == v.Id));

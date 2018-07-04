@@ -12,6 +12,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ChangeUserLanguageDto, GetCurrentLoginInformationsOutput, LinkedUserDto, ProfileServiceProxy, SessionServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { UserHelper } from '../helpers/UserHelper';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -65,7 +66,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _abpSessionService: AbpSessionService,
-        private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
         private _authService: AppAuthService,
@@ -138,11 +138,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
-        if (!this._abpMultiTenancyService.isEnabled) {
-            return linkedUser.username;
-        }
-
-        return (linkedUser.tenantId ? linkedUser.tenancyName : '.') + '\\' + linkedUser.username;
+        return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
     }
 
     getProfilePicture(): void {

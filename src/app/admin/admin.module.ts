@@ -64,6 +64,8 @@ import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl
 import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 
+import { UserDetailsModule } from './users/details/user-details.module'
+
 @NgModule({
     imports: [
         FormsModule,
@@ -105,7 +107,8 @@ import { CreateUserDialogComponent } from './users/create-user-dialog/create-use
         PrimeNgFileUploadModule,
         AutoCompleteModule,
         EditorModule,
-        InputMaskModule
+        InputMaskModule,
+        UserDetailsModule
     ],
     declarations: [
         UsersComponent,

@@ -5,7 +5,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 /** Third party imports */
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
-import { MatTabsModule, MatDialogModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule, MatStepperModule } from '@angular/material';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import {
     DxButtonModule,
@@ -44,6 +45,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
 import { StartComponent } from './start/start.component';
 import { SetupComponent } from './start/setup/setup.component';
+import { CfoIntroComponent } from './shared/cfo-intro/cfo-intro.component';
 import { DashboardComponent } from './start/dashboard/dashboard.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
@@ -110,14 +112,17 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         DxChartModule,
         MatTabsModule,
         MatDialogModule,
+        MatStepperModule,
         RoundProgressModule,
         DashboardWidgetsModule,
         DxRangeSliderModule,
-        DxSwitchModule
+        DxSwitchModule,
+        AngularGooglePlaceModule
     ],
     declarations: [
         StartComponent,
         SetupComponent,
+        CfoIntroComponent,
         DashboardComponent,
         BankAccountsComponent,
         BankAccountsGeneralComponent,
@@ -154,7 +159,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         CategoryDeleteDialogComponent,
         PreferencesDialogComponent,
         ChooseResetRulesComponent,
-        BusinessEntityEditDialogComponent
+        BusinessEntityEditDialogComponent,
+        CfoIntroComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },

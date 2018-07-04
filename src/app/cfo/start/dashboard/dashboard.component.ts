@@ -10,6 +10,9 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
+
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
@@ -27,6 +30,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     private rootComponent: any;
 
     headlineConfig;
+    dialogConfig = new MatDialogConfig();
 
     linksTo = [
         {name: 'View_Cash_Flow_Report', route: '../cashflow'},
@@ -37,7 +41,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -52,6 +57,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             onRefresh: this.refreshWidgets.bind(this),
             buttons: []
         };
+
+        this.rootComponent.overflowHidden(true);
+        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     ngAfterViewInit(): void {
@@ -62,6 +71,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.rootComponent.overflowHidden();
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
         this._dashboardService.unsubscribe();
+
+        this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+        this.rootComponent.overflowHidden();
     }
 
     filterByBankAccounts(data) {
@@ -84,4 +97,15 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.synchProgressComponent.requestSyncAjax();
     }
 
+    openDialog() {
+        this.dialogConfig.height = '655px';
+        this.dialogConfig.width = '880px';
+        this.dialogConfig.id = 'cfo-intro';
+        this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
+
+        const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
+        dialogRef.afterClosed().subscribe(result => {
+            console.log(`Dialog result: ${result}`);
+        });
+    }
 }

@@ -5,7 +5,10 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AccountServiceProxy, ActivateEmailInput, ResolveTenantIdInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
-    template: `<p>{{waitMessage}}</p>`
+    template: `
+        <div [@routerTransition] class="login-wraper">
+            <p class="col-12 text-center">{{waitMessage}}</p>
+        </div>`
 })
 export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
 

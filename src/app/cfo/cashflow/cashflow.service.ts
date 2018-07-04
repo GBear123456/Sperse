@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
-import { BankAccountDto } from '@shared/service-proxies/service-proxies';
+import { BankAccountDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
 import * as moment from 'moment-timezone';
 
@@ -19,18 +19,22 @@ export class CashflowService {
      * @return {{categoryId: number; transactionDescriptor: string}}
      */
     getCategorizationFromForecastAndTarget(source: CellInfo, target: CellInfo, subCategoryIsCategory = true) {
+
+        let categorization = {};
+        if (this.isUnclassified(target)) {
+            categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = target.cashflowTypeId;
+            return categorization;
+        }
+
         let cashflowTypeId = target.cashflowTypeId != source.cashflowTypeId ? target.cashflowTypeId : source.cashflowTypeId;
         let accountingTypeId = target.accountingTypeId && target.accountingTypeId != source.accountingTypeId ? target.accountingTypeId : source.accountingTypeId;
         let subCategoryId;
         if (target.subCategoryId) {
             subCategoryId = target.subCategoryId && target.subCategoryId != source.subCategoryId ? target.subCategoryId : source.subCategoryId;
         }
-
         let categoryId = target.categoryId && target.categoryId != source.categoryId ? target.categoryId : source.categoryId;
-
         let transactionDescriptor = target.transactionDescriptor && target.transactionDescriptor != source.transactionDescriptor ? target.transactionDescriptor : source.transactionDescriptor;
-
-        const categorization = {
+        categorization = {
             categoryId: subCategoryIsCategory && subCategoryId ? subCategoryId : categoryId,
             transactionDescriptor: transactionDescriptor,
             accountingTypeId: accountingTypeId
@@ -38,12 +42,18 @@ export class CashflowService {
 
         if (!subCategoryIsCategory) {
             categorization['subCategoryId'] = subCategoryId;
-            categorization['cashflowTypeId'] = cashflowTypeId;
-        } else {
-            /** @todo change when parameters will be the same */
-            categorization['cashFlowTypeId'] = cashflowTypeId;
         }
+
+        categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = cashflowTypeId;
         return categorization;
+    }
+
+    isUnclassified(cell: CellInfo): boolean {
+        return !cell.accountingTypeId && !cell.categoryId && !cell.subCategoryId;
+    }
+
+    isHorizontalCopying(sourceCellObj: any, targetCellObjs: any[]) {
+        return targetCellObjs.every(targetCell => targetCell.rowIndex === sourceCellObj.rowIndex && targetCell.columnIndex !== sourceCellObj.columnIndex);
     }
 
     /**
@@ -115,6 +125,10 @@ export class CashflowService {
         const allowedForecastsInterval = this.getAllowedForecastsInterval(futureForecastsYearCount);
         return cellInterval.endDate.isBefore(allowedForecastsInterval.endDate) ||
                cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
+    }
+
+    isSubCategory(categoryId: number, categoryTree: GetCategoryTreeOutput): boolean {
+        return !!categoryTree.categories[categoryId].parentId;
     }
 
 }

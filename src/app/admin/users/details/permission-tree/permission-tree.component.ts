@@ -63,7 +63,7 @@ export class PermissionTreeComponent extends AppComponentBase {
                 this.permissionsTree.instance.expandItem(item.key);
             else
                 this.permissionsTree.instance.collapseItem(item.key);
-
+            
             if (item.children && item.children.length) {
                 this.foreachNodes(item.children, expandLevel, currentLevel + 1);
             }

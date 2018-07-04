@@ -18,7 +18,7 @@
     <div class="filter-actions-is-active">
         <div class="is-active-filter">
             <span>{{isActive ? l('Active') : l('Disabled')}}</span>
-            <dx-switch [(value)]="isActive" (onValueChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
+            <dx-switch [(value)]="isActive" (onValueChanged)="isActiveChanged()" [width]="32"></dx-switch>
         </div>
     </div>
 

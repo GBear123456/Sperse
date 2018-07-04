@@ -1,10 +1,14 @@
 import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { Router } from '@angular/router';
-import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
+
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { finalize } from 'rxjs/operators';
+
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
+import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
     selector: 'setup',
@@ -17,13 +21,16 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     private rootComponent: any;
     public headlineConfig;
     isDisabled = false;
+    dialogConfig = new MatDialogConfig();
+
     quovoHandler: any;
 
     constructor(injector: Injector,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _router: Router,
         private _quovoService: QuovoService,
-        private _syncService: SyncServiceProxy
+        private _syncService: SyncServiceProxy,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -61,6 +68,10 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+
+        setTimeout(() => {
+            this.openDialog();
+        }, 300);
     }
 
     onStart(): void {
@@ -100,5 +111,17 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         if (!this.quovoHandler) {
             this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
         }
+    }
+
+    openDialog() {
+        this.dialogConfig.height = '655px';
+        this.dialogConfig.width = '880px';
+        this.dialogConfig.id = 'cfo-intro';
+        this.dialogConfig.panelClass = ['cfo-intro', 'setup'];
+
+        const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
+        dialogRef.afterClosed().subscribe(result => {
+            if (result.isGetStartedButtonClicked) this.onStart();
+        });
     }
 }

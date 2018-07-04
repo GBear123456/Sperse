@@ -218,11 +218,6 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             .subscribe(() => this.afterSave() );
     }
 
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
-    }
-
     getDialogPossition(event, shiftX) {
         return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }

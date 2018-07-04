@@ -45,13 +45,45 @@
             color: #333;
         }
 
+        .dx-state-disabled.dx-list-item, .dx-state-disabled .dx-list-item {
+            opacity: 1 !important;
+
+            span.item-name{
+                background: transparent;
+                opacity: 0.6;
+                font-style: italic;
+            }
+
+            a.dx-link-filter{
+                pointer-events: all;
+                cursor: pointer;
+            }
+        }
+
+        .dx-list-item-content {
+            padding: 5px 10px;
+        }
+
         .item-row {
             display: flex;
-            justify-content: space-between;            
+            justify-content: space-between;
 
             a.dx-link-filter {
                 width: 30px;
                 background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+            }
+
+            .user {
+                img {
+                    border-radius: 50%;
+                    height: 35px;
+                    width: 35px;
+                    background-color: #fff;
+                }
+
+                span.item-name {
+                    margin-left: 10px;
+                }
             }
         }
     }

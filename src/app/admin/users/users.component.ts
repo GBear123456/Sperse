@@ -1,5 +1,5 @@
 import { Component, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
     PermissionServiceProxy, FlatPermissionWithLevelDto } from '@shared/service-proxies/service-proxies';
@@ -65,6 +65,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private _router: Router,
         private _appService: AppService,
         private _filtersService: FiltersService,
         private _userServiceProxy: UserServiceProxy,
@@ -91,6 +92,13 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Edit'),
+                visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
+                action: () => {
+                    this._router.navigate(['app/admin/user', this.actionRecord.id])
+                }
+            },
+            {
+                text: this.l('Edit Old'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
                 action: () => {
                     this.createOrEditUserModal.show(this.actionRecord.id);
@@ -365,7 +373,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             let userId = event.data && event.data.id;
             if (userId) {
                 event.component.cancelEditData();
-                this.createOrEditUserModal.show(userId);
+                this._router.navigate(['app/admin/user', userId])
             }
         }
     }

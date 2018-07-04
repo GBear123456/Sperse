@@ -1,23 +1,24 @@
-import { AbpModule } from '@abp/abp.module';
 import * as ngCommon from '@angular/common';
-import { ModuleWithProviders, NgModule } from '@angular/core';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap';
+
 import { UtilsModule } from '@shared/utils/utils.module';
+import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
-import { TableModule } from 'primeng/table';
-import { PaginatorModule } from 'primeng/primeng';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
+import {
+    MatProgressBarModule, MatStepperModule, MatInputModule,
+    MatDialogModule, MatTabsModule, MatSidenavModule,
+} from '@angular/material';
 
-import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
+import {
+    DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
-    DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule } from 'devextreme-angular';
-import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+    DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
+    DxTreeViewModule
+} from 'devextreme-angular';
 
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
@@ -32,11 +33,16 @@ import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
 import { PeriodComponent } from './period/period.component';
 import { DateTimeService } from './timing/date-time.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
+import { DataTableModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/primeng';
+import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 
+import { FileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
-import { FileDropModule } from 'ngx-file-drop';
 
 @NgModule({
     imports: [
@@ -46,7 +52,7 @@ import { FileDropModule } from 'ngx-file-drop';
         UtilsModule,
         AbpModule,
         CommonModule,
-        TableModule,
+        DataTableModule,
         PaginatorModule,
 
         MatTabsModule,
@@ -57,6 +63,7 @@ import { FileDropModule } from 'ngx-file-drop';
         MatProgressBarModule,
         MatStepperModule,
         ReactiveFormsModule,
+        FileDropModule,
         PapaParseModule,
         ImageCropperModule,
 
@@ -74,7 +81,7 @@ import { FileDropModule } from 'ngx-file-drop';
         DxTextAreaModule,
         DxDataGridModule,
         DxContextMenuModule,
-        FileDropModule
+        DxTreeViewModule
     ],
     declarations: [
         TimeZoneComboComponent,

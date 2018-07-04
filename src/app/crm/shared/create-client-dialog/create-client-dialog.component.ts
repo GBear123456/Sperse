@@ -22,6 +22,7 @@ import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { finalize } from 'rxjs/operators';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -282,8 +283,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             organizationPhoneNumbers: this.getPhoneContactInput(ContactTypes.Business),
             organizationAddress: this.getAddressContactInput(ContactTypes.Business),
             photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
-                originalImage: this.getBase64(this.photoOriginalData),
-                thumbnail: this.getBase64(this.photoThumbnailData)
+                originalImage: StringHelper.getBase64(this.photoOriginalData),
+                thumbnail: StringHelper.getBase64(this.photoThumbnailData)
             }) : null,
             note: this.notes[ContactTypes.Personal],
             organizationNote: this.notes[ContactTypes.Business],
@@ -370,11 +371,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
               obj[field] && this.addContact(field, type);
             }
         );
-    }
-
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 
     getEmailContactInput(type) {

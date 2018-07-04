@@ -155,7 +155,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private checkCFOClientAccessPermission() {
-        return this.isGranted('Pages.CFO.ClientAccess');
+        return this.isGranted('Pages.CFO.ClientInstanceAdmin');
     }
 
     showColumnChooser() {
