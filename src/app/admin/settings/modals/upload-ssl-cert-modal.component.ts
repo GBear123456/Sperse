@@ -1,9 +1,9 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, ViewChild, Injector, Output, EventEmitter } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { TenantSslCertificateServiceProxy, AddTenantSslCertificateInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { DxFileUploaderComponent } from 'devextreme-angular';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'uploadSSLCertificateModal',
@@ -12,17 +12,15 @@ import { DxFileUploaderComponent } from 'devextreme-angular';
     providers: [ TenantSslCertificateServiceProxy ]
 })
 export class UploadSSLCertificateModalComponent extends AppComponentBase {
-    
     @ViewChild('createOrEditModal') modal: ModalDirective;
     @ViewChild('uploader') uploader: DxFileUploaderComponent;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     model: AddTenantSslCertificateInput = new AddTenantSslCertificateInput();
-    
     constructor(
         injector: Injector,
         private _sslService: TenantSslCertificateServiceProxy
@@ -32,11 +30,10 @@ export class UploadSSLCertificateModalComponent extends AppComponentBase {
 
     show(): void {
         this.model = new AddTenantSslCertificateInput();
-        
         this.active = true;
         this.modal.show();
     }
-    
+
     save(event): void {
         if (!this.validate(event)) return;
         this.saving = true;
@@ -48,7 +45,7 @@ export class UploadSSLCertificateModalComponent extends AppComponentBase {
             this.model.base64EncodedCertificate = btoa(reader.result);
 
             this._sslService.addTenantSslCertificate(this.model)
-                .finally(() => { this.saving = false; })
+                .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(result => {
                     this.notify.info(this.l('SavedSuccessfully'));
                     this.close();

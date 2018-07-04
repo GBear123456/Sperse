@@ -1,5 +1,6 @@
-import { Component, AfterViewInit, ElementRef, Injector } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 
@@ -79,7 +80,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             code: item.code,
             displayName: item.displayName,
             memberCount: item.memberCount,
-            text: item.displayName,
+            text: HtmlHelper.encodeText(item.displayName) ,
             dto: item,
             state: {
                 opened: true,
@@ -137,11 +138,11 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             if (data.node.state.selected) {
                 selectNodeAndAllParents(this._$tree.jstree('get_parent', data.node));
 
-                childrenNodes = $.makeArray(this._$tree.jstree('get_children_dom', data.node));
+                childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
                 this._$tree.jstree('select_node', childrenNodes);
 
             } else {
-                childrenNodes = $.makeArray(this._$tree.jstree('get_children_dom', data.node));
+                childrenNodes = $.makeArray(this._$tree.jstree('get_node', data.node).children);
                 this._$tree.jstree('deselect_node', childrenNodes);
             }
 

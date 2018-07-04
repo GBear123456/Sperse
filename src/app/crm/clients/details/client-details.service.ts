@@ -1,7 +1,6 @@
 import { Injectable, Injector  } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
-    
+import { Subject } from 'rxjs';
+
 @Injectable()
 export class ClientDetailsService {
     private verificationSubject: Subject<any>;
@@ -16,5 +15,5 @@ export class ClientDetailsService {
 
     verificationUpdate() {
         this.verificationSubject.next();
-    }    
+    }
 }

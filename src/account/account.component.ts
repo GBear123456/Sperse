@@ -1,11 +1,11 @@
-import { Component, ViewContainerRef, OnInit, Injector, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginService } from './login/login.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
-import * as moment from 'moment';
+import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import * as _ from 'lodash';
+import * as moment from 'moment';
+import { LoginService } from './login/login.service';
 
 @Component({
     templateUrl: './account.component.html',
@@ -53,6 +53,10 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     goToHome(): void {
         (window as any).location.href = '/';
+    }
+
+    getBgUrl(): string {
+        return 'url(./assets/metronic/dist/html/' + this.ui.getTheme() + '/assets/demo/' + this.ui.getTheme() +'/media/img/bg/bg-4.jpg)';
     }
 
     private supportsTenancyNameInUrl() {

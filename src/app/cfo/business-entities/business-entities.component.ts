@@ -7,13 +7,10 @@ import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
-import DsataSource from 'devextreme/data/data_source';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { BusinessEntityDto, BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
+import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
-
+import { Observable, forkJoin } from 'rxjs';
 import * as _ from 'underscore';
 
 @Component({
@@ -191,7 +188,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         }
 
         if (updateBankAccountsObservable.length) {
-            Observable.forkJoin(
+            forkJoin(
                 updateBankAccountsObservable
             )
                 .subscribe((result) => {

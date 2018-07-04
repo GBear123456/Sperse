@@ -1,22 +1,22 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
-import { UsersComponent } from './users/users.component';
-import { RolesComponent } from './roles/roles.component';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
+import { HostDashboardComponent } from './dashboard/host-dashboard.component';
+import { EditionsComponent } from './editions/editions.component';
+import { LanguageTextsComponent } from './languages/language-texts.component';
+import { LanguagesComponent } from './languages/languages.component';
+import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { OrganizationUnitsComponent } from './organization-units/organization-units.component';
+import { RolesComponent } from './roles/roles.component';
 import { HostSettingsComponent } from './settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
-import { SystemSettingsComponent } from './settings/system-settings.component';
-import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { JobsComponent } from './jobs/jobs.component';
-import { LanguagesComponent } from './languages/languages.component';
-import { LanguageTextsComponent } from './languages/language-texts.component';
-import { OrganizationUnitsComponent } from './organization-units/organization-units.component';
-import { HostDashboardComponent } from './dashboard/host-dashboard.component';
-import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
 import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
-import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
-import { EditionsComponent } from './editions/editions.component';
+import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
 import { TenantsComponent } from './tenants/tenants.component';
+import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
+import { UsersComponent } from './users/users.component';
+import { JobsComponent } from './jobs/jobs.component';
+import { SystemSettingsComponent } from './settings/system-settings.component';
 
 @NgModule({
     imports: [
@@ -53,9 +53,15 @@ import { TenantsComponent } from './tenants/tenants.component';
 
 export class AdminRoutingModule {
 
-    constructor(private router: Router) {
-        router.events.subscribe(() => {
+    constructor(
+        private router: Router
+    ) {
+        router.events.subscribe((event) => {
             this.hideOpenDataTableDropdownMenus();
+
+            if (event instanceof NavigationEnd) {
+                window.scroll(0, 0);
+            }
         });
     }
 

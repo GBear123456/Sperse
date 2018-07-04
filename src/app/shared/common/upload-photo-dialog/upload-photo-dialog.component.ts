@@ -1,10 +1,8 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, Inject, Injector, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
-
-import * as _ from 'underscore';
 
 @Component({
   selector: 'upload-photo-dialog',
@@ -39,7 +37,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
             image.src = this.data.source;
             this.cropper.setImage(image);
         } else {
-            var ctx = this.cropper.cropcanvas.nativeElement.getContext("2d");
+            let ctx = this.cropper.cropcanvas.nativeElement.getContext("2d");
             ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(0,0,500,300);
         }
@@ -103,7 +101,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
                 0, 0, canvas.width, canvas.height);
 
             this.thumbData = canvas.toDataURL();
-        }
+        };
         image.src = this.imageData.image;
     }
 

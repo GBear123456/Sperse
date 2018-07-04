@@ -6,6 +6,7 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { LoginService } from './../login/login.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './complete-tenant-registration.component.html',
@@ -45,7 +46,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
         this.saving = true;
         this.startLoading(true);
         this._tenantRegistrationService.completeTenantRegistration(this.model)
-            .finally(() => { this.saving = false; this.finishLoading(true); })
+            .pipe(finalize(() => { this.saving = false; this.finishLoading(true); }))
             .subscribe((result: CompleteTenantRegistrationOutput) => {
                 this.notify.success(this.l('SuccessfullyRegistered'));
                 this.login(result);

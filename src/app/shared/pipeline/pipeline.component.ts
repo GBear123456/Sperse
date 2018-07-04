@@ -42,7 +42,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._selectedLeads = leads;
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
-    
+
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
@@ -120,8 +120,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name];
         if (!dataSource)
-            dataSource = this._dataSources[stage.name] =
-                new DataSource(this._dataSource);
+            dataSource = this._dataSources[stage.name] = new DataSource(this._dataSource);
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
@@ -187,7 +186,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
          this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             let leadId = this.getAccessKey(value[1]),
                 newStage = this.getStageByElement(value[2]);
-            
             if (value[1].classList.contains('selected')) {
                 this.getSelectedLeads().forEach((lead) => {
                     if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
@@ -217,6 +215,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
         ));
 
+        const bag: any = this._dragulaService.find(this.dragulaName);
+        if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
         this._dragulaService.setOptions(this.dragulaName, {
             ignoreInputTextSelection: false,
             moves: (el, source) => {

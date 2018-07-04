@@ -1,20 +1,40 @@
+/** Core imports */
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
 
-import { Periods } from './enums/periods.enum';
-import { Projected } from './enums/projected.enum';
-import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
+/** Third party imports */
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
+import DevExpress from 'devextreme/bundles/dx.all';
+import config from 'devextreme/core/config';
+import TextBox from 'devextreme/ui/text_box';
+import NumberBox from 'devextreme/ui/number_box';
+import Button from 'devextreme/ui/button';
+import Tooltip from 'devextreme/ui/tooltip';
+import SparkLine from 'devextreme/viz/sparkline';
+import ScrollView from 'devextreme/ui/scroll_view';
+import * as moment from 'moment-timezone';
+import { CacheService } from 'ng2-cache-service';
+import { Observable, forkJoin, of, from } from 'rxjs';
+import { pluck, mergeMap, map, filter, toArray } from 'rxjs/operators';
+import * as $ from 'jquery';
+import * as underscore from 'underscore';
+import * as _ from 'underscore.string';
 
-import { IGroupbyItem } from './models/groupbyItem';
-import { IEventDescription } from './models/event-description';
-import { WeekInfo } from './models/week-info';
-import { CellInfo } from './models/cell-info';
-import { CategorizationModel } from './models/categorization-model';
-import { CellInterval } from './models/cell-interval';
-import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
+/** Application imports */
+import { AppService } from '@app/app.service';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-
-import { CashflowService } from './cashflow.service';
+import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
+import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { AppConsts } from '@shared/AppConsts';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { FiltersService } from '@shared/filters/filters.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
+import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import {
     CashflowServiceProxy,
     StatsFilter,
@@ -45,58 +65,27 @@ import {
     CreateForecastsInput,
     CashflowGridGeneralSettingsDtoSplitMonthType
 } from '@shared/service-proxies/service-proxies';
-import { UserPreferencesService } from './preferences-dialog/preferences.service';
-import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { OperationsComponent } from './operations/operations.component';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
-
-import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
-import DevExpress from 'devextreme/bundles/dx.all';
-import config from 'devextreme/core/config';
-import TextBox from 'devextreme/ui/text_box';
-import NumberBox from 'devextreme/ui/number_box';
-import Button from 'devextreme/ui/button';
-import Tooltip from 'devextreme/ui/tooltip';
-import SparkLine from 'devextreme/viz/sparkline';
-import ScrollView from 'devextreme/ui/scroll_view';
-
-import * as _ from 'underscore.string';
-import * as underscore from 'underscore';
-import * as moment from 'moment';
-
-import { AppService } from '@app/app.service';
-import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { MatDialog } from '@angular/material';
-import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
-import { GeneralScope } from './enums/general-scope.enum';
-import { IExpandLevel } from './models/expand-level';
-import * as $ from 'jquery';
-
-import { CacheService } from 'ng2-cache-service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/fromEventPattern';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/operator/pluck';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/buffer';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { CellsCopyingService } from 'shared/common/xls-mode/cells-copying/cells-copying.service';
-
-import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
-import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
+import { GeneralScope } from './enums/general-scope.enum';
+import { Periods } from './enums/periods.enum';
+import { Projected } from './enums/projected.enum';
+import { CashflowService } from './cashflow.service';
+import { CategorizationModel } from './models/categorization-model';
+import { CellInfo } from './models/cell-info';
+import { CellInterval } from './models/cell-interval';
+import { IExpandLevel } from './models/expand-level';
+import { IGroupbyItem } from './models/groupbyItem';
+import { IEventDescription } from './models/event-description';
+import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
+import { WeekInfo } from './models/week-info';
+import { OperationsComponent } from './operations/operations.component';
+import { UserPreferencesService } from './preferences-dialog/preferences.service';
+import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
+import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -817,7 +806,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
-        Observable.forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
+        forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0], result[4]);
@@ -1037,7 +1026,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             dataSource: bankAccounts,
                             nameField: 'name',
                             keyExpr: 'id'
-                        })
+                        }
+                    )
                 }
             }),
             new FilterModel({
@@ -1349,7 +1339,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         this.cachedRowsSparkLines.clear();
         this._cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.requestFilter)
-            .pluck('transactionStats')
+            .pipe(pluck('transactionStats'))
             .subscribe(transactions => {
                 this.startDataLoading = true;
                 this.handleCashflowData(transactions, period);
@@ -1878,7 +1868,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (options && options.apply && options.model) {
             let model = new CashFlowGridSettingsDto(options.model);
             model.init(options.model);
-            preferencesObservable = Observable.from([options.model]);
+            preferencesObservable = from([options.model]);
             notificationMessage = this.l('AppliedSuccessfully');
         /** If settings were saved - get them from the api */
         } else {
@@ -2161,7 +2151,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             } else if (this.cashflowGridSettings.visualPreferences.showFooterBar) {
                 minusValue += $('#cashflowFooterToolbar').length ? $('#cashflowFooterToolbar').height() : this.bottomToolbarHeight;
             }
-            let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt($('.fixed-filters').css('marginLeft')) : 0;
+            const marginLeft: any = $('.fixed-filters').css('marginLeft');
+            let fixedFiltersWidth: number = $('.fixed-filters').length ? parseInt(marginLeft) : 0;
             /** Set new offset to stick the scrollbar to the bottom of the page */
             scrollElement.offset({
                 top: window.innerHeight - minusValue,
@@ -3337,22 +3328,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Get the transactions of moved cell if so */
             let sourceCellInfo = this.getCellInfo(movedCell);
             this.statsDetailFilter = this.getDetailFilterFromCell(movedCell);
-            let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).flatMap(x => x);
-            const forecastsObservable = statsDetailObservable.filter(transaction => !!transaction.forecastId).toArray();
-            const historicalsObservable = statsDetailObservable.filter(transaction => !!!transaction.forecastId).toArray();
-            Observable.forkJoin(
-                historicalsObservable.mergeMap(historicalTransactions => {
+            let statsDetailObservable = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter).pipe(mergeMap(x => x));
+            const forecastsObservable = statsDetailObservable.pipe(
+                filter((transaction: any) => <any>!!transaction.forecastId),
+                toArray()
+            );
+            const historicalsObservable = statsDetailObservable.pipe(
+                filter(transaction => <any>!!!transaction.forecastId),
+                toArray()
+            );
+            forkJoin(
+                historicalsObservable.pipe(mergeMap(historicalTransactions => {
                     const historicalTransactionsExists = historicalTransactions && historicalTransactions.length && cellObj.cellElement.className.indexOf('next') === -1;
-                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(movedCell, targetCellData) : Observable.of('empty');
-                }),
-                forecastsObservable.mergeMap(forecastsTransactions => {
+                    return historicalTransactionsExists ? this.getMoveHistoricalObservable(movedCell, targetCellData) : of('empty');
+                })),
+                forecastsObservable.pipe(mergeMap(forecastsTransactions => {
                     if (forecastsTransactions && forecastsTransactions.length) {
                         let moveForecastsModels = this.createMovedForecastsModels(forecastsTransactions, sourceCellInfo, targetCellData);
                         return <any>this.getMoveForecastsObservable(moveForecastsModels);
                     } else {
-                        return Observable.of('empty');
+                        return of('empty');
                     }
-                })
+                }))
             ).subscribe(
                 res => {
                     if (res) {
@@ -3976,7 +3973,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** Prevent default expanding */
                     this._cashflowServiceProxy
                         .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
-                        .pluck('transactionStats')
+                        .pipe(pluck('transactionStats'))
                         .subscribe((transactions: any) => {
 
                             /** Update cashflow data with the daily transactions */
@@ -4085,11 +4082,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.statsDetailFilter = this.getDetailFilterFromCell(sourceCellObject);
                 this._cashflowServiceProxy
                     .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                    .map(transactions => {
-                        copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData, isHorizontalCopying) : null;
-                        return copyItemsModels;
-                    })
-                    .mergeMap(forecastModels => this.copyForecasts(forecastModels))
+                    .pipe(
+                        map(transactions => {
+                            copyItemsModels = transactions && transactions.length ? this.createCopyItemsModels(transactions, sourceCellInfo, targetsData, isHorizontalCopying) : null;
+                            return copyItemsModels;
+                        }),
+                        mergeMap(forecastModels => this.copyForecasts(forecastModels))
+                    )
                     .subscribe(
                         res => {
                             if (copyItemsModels && copyItemsModels.forecasts && copyItemsModels.forecasts.length) {
@@ -4608,8 +4607,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** get only transactions, filter out forecasts and adjustments */
         let transactions = this.cashFlowGrid.instance.getSelectedRowKeys().filter(item => item.date && item.cashflowTypeId !== StartedBalance);
         if (transactions.length) {
-            this.dialog.open(RuleDialogComponent, {
-                panelClass: 'slider', data: {
+            let config: any = {
+                panelClass: 'slider',
+                data: {
                     instanceId: this.instanceId,
                     instanceType: this.instanceType,
                     transactions: transactions.map((obj) => {
@@ -4626,7 +4626,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         }),
                     refershParent: this.refreshDataGrid.bind(this)
                 }
-            }).afterClosed().subscribe(result => { });
+            };
+            this.dialog.open(RuleDialogComponent, config).afterClosed().subscribe(result => { });
         }
     }
 

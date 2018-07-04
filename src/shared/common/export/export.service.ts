@@ -5,7 +5,7 @@ import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportGoogleSheetService } from './export-google-sheets/export-google-sheets';
 
-import { capitalize } from 'underscore.string';
+import * as capitalize from 'underscore.string';
 import * as moment from 'moment';
 
 @Injectable()

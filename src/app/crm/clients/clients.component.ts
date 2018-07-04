@@ -109,7 +109,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _customersServiceProxy: CustomersServiceProxy,
         private _clientService: ClientService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);       
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.dataSource = {
             store: {
@@ -125,7 +125,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.searchColumns = [
             {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Equals}, 
+            {name: 'Email', strategy: ODataSearchStrategy.Equals},
             {name: 'Phone', strategy: ODataSearchStrategy.Equals},
             {name: 'City', strategy: ODataSearchStrategy.StartsWith},
             {name: 'State', strategy: ODataSearchStrategy.StartsWith},
@@ -142,7 +142,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
     }
-    
+
     private paramsSubscribe() {
         if (!this.subRouteParams || this.subRouteParams.closed)
             this.subRouteParams = this._activatedRoute.queryParams
@@ -152,7 +152,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (params['refresh'])
                         this.refreshDataGrid();
             });
-    } 
+    }
 
     private checkCFOClientAccessPermission() {
         return this.isGranted('Pages.CFO.ClientInstanceAdmin');
@@ -171,8 +171,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     onSelectionChanged($event) {
-        this.selectedClientKeys = 
-            $event.component.getSelectedRowKeys();
+        this.selectedClientKeys = $event.component.getSelectedRowKeys();
         this.initToolbarConfig();
     }
 
@@ -193,7 +192,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             disableClose: true,
             closeOnNavigation: false,
             data: {refreshParent: this.refreshDataGrid.bind(this)}
-        }).afterClosed().subscribe(() => this.refreshDataGrid())
+        }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
 
     isClientCFOAvailable(userId) {
@@ -206,7 +205,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return;
 
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId], 
+        this._router.navigate(['app/crm/client', clientId],
             { queryParams: { referrer: 'app/crm/clients'} });
     }
 
@@ -220,7 +219,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     calculateAddressColumnValue(data) {
-        return (data.City || data.StateId) ? [data.City, data.StateId].join(", ") : null;
+        return (data.City || data.StateId) ? [data.City, data.StateId].join(', ') : null;
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -231,7 +230,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.filters) {
             this._filtersService.setup(this.filters);
             this._filtersService.checkIfAnySelected();
-        } else     
+        } else
             this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
                 this._filtersService.setup(
                     this.filters = [
@@ -500,8 +499,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             {
                 location: 'after',
                 items: [
-                    { 
-                        name: 'fullscreen', 
+                    {
+                        name: 'fullscreen',
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -633,10 +632,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     requestVerification(contactId: number) {
         this._clientService.requestVerification(contactId);
     }
-    
+
     activate() {
-        this._filtersService.localizationSourceName = 
-            this.localizationSourceName;
+        this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -650,15 +648,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.showHostElement();
     }
-    
+
     deactivate() {
-        this._filtersService.localizationSourceName = 
-            AppConsts.localization.defaultLocalizationSourceName;
+        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();   
+        this.rootComponent.overflowHidden();
 
         this.hideHostElement();
     }

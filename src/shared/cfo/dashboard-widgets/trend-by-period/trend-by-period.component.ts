@@ -3,20 +3,15 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
     BankAccountDailyStatDto,
-    GroupBy,
     InstanceType,
-    CashFlowForecastServiceProxy
+    CashFlowForecastServiceProxy,
+    GroupBy
 } from '@shared/service-proxies/service-proxies';
 import { TrendByPeriodModel } from './trend-by-period.model';
-import { Observable } from 'rxjs/Observable';
-import { asap } from 'rxjs/scheduler/asap';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/merge';
-import 'rxjs/add/operator/take';
+import { merge, from, asapScheduler } from 'rxjs';
+import { take, toArray } from 'rxjs/operators';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
-
-import * as moment from 'moment';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -94,19 +89,19 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     selectedForecastModelId = 1;
     periods: TrendByPeriodModel[] = [
          {
-             key: 0,
+             key: GroupBy.Daily,
              name: 'day',
              text: `30 ${this.ls('Platform', 'Periods_Day_plural')}`,
              amount: 30
          },
          {
-             key: 1,
+             key: GroupBy.Weekly,
              name: 'week',
              text: `15 ${this.ls('Platform', 'Periods_Week_plural')}`,
              amount: 15
         },
         {
-            key: 2,
+            key: GroupBy.Monthly,
             name: 'month',
             text: `12 ${this.l('Periods_Month_plural')}`,
             amount: 12
@@ -235,17 +230,18 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
      * @param forecast
      */
     mergeHistoricalAndForecast(historical, forecast) {
-        return Observable.merge(
-                    Observable.from(forecast, asap),
+        return merge(
+                    from(forecast, asapScheduler),
                     /** Get last values closer to the current date */
-                    Observable.from(
+                    from(
                         historical.slice(-this.selectedPeriod.amount)
                                   .sort((item1, item2) => item1.date < item2.date ? 1 : -1),
-                        asap
+                        asapScheduler
                     )
-                )
-            .take(this.selectedPeriod.amount)
-            .toArray();
+                ).pipe(
+                    take(this.selectedPeriod.amount),
+                    toArray()
+                );
     }
 
     onSelectChange(period) {

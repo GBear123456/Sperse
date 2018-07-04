@@ -1,11 +1,10 @@
 import { Injector } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
+import { Subscription, Subject } from 'rxjs';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import * as _ from 'underscore';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
-export abstract class AppServiceBase{
+export abstract class AppServiceBase {
     private readonly MODULE_DEFAULT: string;
 
     private _config: Subject<Object>;

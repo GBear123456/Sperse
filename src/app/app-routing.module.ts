@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Router, NavigationEnd, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
-import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
+import { NavigationEnd, RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
-
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
+import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 
 @NgModule({
     imports: [
@@ -11,8 +10,8 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
             {
                 path: '',
                 component: AppComponent,
-                canActivate: [AppRouteGuard],
-                canActivateChild: [AppRouteGuard],
+                canActivate: [ AppRouteGuard ],
+                canActivateChild: [ AppRouteGuard ],
                 children: [
                     {
                         path: '',
@@ -48,7 +47,6 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
     ],
     exports: [RouterModule]
 })
-
 export class AppRoutingModule {
     constructor(
         private router: Router
@@ -65,6 +63,7 @@ export class AppRoutingModule {
 
             if (event instanceof NavigationEnd) {
                 $('meta[property=og\\:url]').attr('content', window.location.href);
+                $('#m_aside_left').mOffcanvas().hide();
             }
 
         });

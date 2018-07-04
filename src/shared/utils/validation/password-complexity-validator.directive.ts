@@ -1,6 +1,5 @@
-import { Directive, forwardRef, Attribute, Input } from '@angular/core';
-import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
-
+import { Directive, Input, forwardRef } from '@angular/core';
+import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
 
 @Directive({
   selector: '[requireDigit],[requireLowercase],[requireNonAlphanumeric],[requireUppercase],[requiredLength]',
@@ -46,7 +45,7 @@ export class PasswordComplexityValidator implements Validator {
 
     // use upperCaseLetters
     const requireNonAlphanumeric = this.requireNonAlphanumeric;
-    if (requireNonAlphanumeric && givenPassword && /[0-9a-zA-Z]+$/.test(givenPassword)) {
+    if (requireNonAlphanumeric && givenPassword && /^[0-9a-zA-Z]+$/.test(givenPassword)) {
       validationResult = validationResult || {};
       validationResult.requireNonAlphanumeric = true;
     }

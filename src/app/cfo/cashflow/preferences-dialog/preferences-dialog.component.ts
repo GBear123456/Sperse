@@ -4,7 +4,8 @@ import { GeneralScope } from '../enums/general-scope.enum';
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CacheService } from 'ng2-cache-service';
-import { Observable } from 'rxjs/Observable';
+import { from } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'preferences-modal',
@@ -76,7 +77,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
             let data = this.userPreferencesService.getLocalModel();
             let model = new CashFlowGridSettingsDto();
             model.init(data);
-            cashflowGridObservable = Observable.from([model]);
+            cashflowGridObservable = from([model]);
         } else {
             cashflowGridObservable = this._cashflowService.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         }
@@ -113,7 +114,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
                         if (this.rememberLastSettings) {
                             this.saving = true;
                             this._cashflowService.saveCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId, this.model)
-                                .finally(() => { this.saving = false; })
+                                .pipe(finalize(() => { this.saving = false; }))
                                 .subscribe(result => {
                                     this.closeSuccessful();
                                 });

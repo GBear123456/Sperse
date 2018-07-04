@@ -1,17 +1,18 @@
+/** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AppComponentBase } from '@shared/common/app-component-base';
+
+/** Third party imports */
 import { MatHorizontalStepper } from '@angular/material';
-import { PapaParseService } from 'ngx-papaparse';
-import { UploadEvent, UploadFile } from 'ngx-file-drop';
-
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
+import { Papa } from 'ngx-papaparse';
+import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
-
+import { Observable, Subject } from 'rxjs';
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'import-wizard',
@@ -30,6 +31,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
     @Input() lookupFields: any;
+	@Input() preProcessFieldBeforeReview: Function;
+    @Input() validateFieldsMapping: Function;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
             return {
@@ -55,14 +58,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private readonly REVIEW_STEP_INDEX  = 2;
     private readonly FINISH_STEP_INDEX  = 3;
 
-    showSteper: boolean = true;
-    loadProgress: number = 0;
-    dropZoneProgress: number = 0;
+    showSteper = true;
+    loadProgress = 0;
+    dropZoneProgress = 0;
 
     fileData: any;
-    fileName: string = '';
-    fileSize: string = '';
-    fileHasHeader: boolean = false;
+    fileName = '';
+    fileSize = '';
+    fileHasHeader = false;
     fileHeaderWasGenerated = false;
 
     selectedPreviewRows: any = [];
@@ -79,11 +82,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _parser: PapaParseService,
+        private _parser: Papa,
         private _formBuilder: FormBuilder
     ) {
         super(injector);
-
         this.uploadFile = _formBuilder.group({
           url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
         });
@@ -97,7 +99,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.fileData = null;
         this.dropZoneProgress = 0;
         this.loadProgress = 0;
-
         this.showSteper = false;
         this.uploadFile.reset();
 
@@ -124,9 +125,16 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     return !!row.mappedField;
                 });
             }
-            if (this.validateFieldsMapping(mappedFields)) {
-                this.initReviewDataSource(mappedFields);
-                this.stepper.next();
+            if (this.validateFieldsMapping) {
+                let validationResult = this.validateFieldsMapping(mappedFields);
+                if (validationResult.isMapped && !validationResult.error) {
+                    this.initReviewDataSource(mappedFields);
+                    this.stepper.next();
+                } else {
+                    this.highlightUnmappedFields(mappedFields);
+                    let error = validationResult.isMapped ? validationResult.error : this.l('MapAllRecords');
+                    this.message.error(error);
+                }
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
@@ -163,7 +171,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
-                        data[field.mappedField] = row[columnsIndex[field.sourceField]];
+                        let rowValue = row[columnsIndex[field.sourceField]];
+                        if (
+                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data))
+                            &&
+                            !data[field.mappedField]
+                        )
+                            data[field.mappedField] = rowValue;
                     });
                     if (this.checkDuplicate(data))
                         delete this.fileData.data[index];
@@ -239,29 +253,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.reviewGroups.push([row]);
 
         return row;
-    }
-
-    validateFieldsMapping(rows) {
-        const FIRST_NAME_FIELD = 'personalInfo_fullName_firstName',
-            LAST_NAME_FIELD = 'personalInfo_fullName_lastName';
-        let isFistName = false,
-            isLastName = false;
-
-        this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField && row.mappedField == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField && row.mappedField == LAST_NAME_FIELD);
-            return !!row.mappedField;
-        });
-
-        if (!this.isMapped) {
-            this.highlightUnmappedFields(rows);
-            this.message.error(this.l('MapAllRecords'));
-        }
-
-        if (this.isMapped && (!isFistName || !isLastName))
-            this.message.error(this.l('FieldsMapError'));
-
-        return this.isMapped && isFistName && isLastName;
     }
 
     highlightUnmappedFields(rows) {
@@ -427,17 +418,17 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     getFile(path: string, callback: Function) {
         this.dropZoneProgress = 0;
         let request = new XMLHttpRequest();
-        request.addEventListener("load", (event) => {
+        request.addEventListener('load', (event) => {
             this.loadProgress = 101;
             callback(event);
         });
-        request.addEventListener("progress", (event) => {
+        request.addEventListener('progress', (event) => {
             if (event.total > event.loaded)
                 this.loadProgress = Math.round(event.loaded / event.total * 100);
         });
         request.open('GET', path, true);
-        request.setRequestHeader('Accept', "*/*");
-        request.setRequestHeader('Content-Type', "application/*");
+        request.setRequestHeader('Accept', '*/*');
+        request.setRequestHeader('Content-Type', 'application/*');
 
         request.send();
     }

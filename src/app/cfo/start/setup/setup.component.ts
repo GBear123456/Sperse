@@ -1,14 +1,13 @@
-import { Component, OnInit, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
+import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { finalize } from 'rxjs/operators';
+
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
-import { AppService } from 'app/app.service';
-import { setTimeout } from 'timers';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
@@ -27,7 +26,6 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     quovoHandler: any;
 
     constructor(injector: Injector,
-        private _appService: AppService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _router: Router,
         private _quovoService: QuovoService,
@@ -97,9 +95,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         if (e.addedIds.length) {
             this.startLoading(true);
             this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
-                .finally(() => {
+                .pipe(finalize(() => {
                     this.isDisabled = false;
-                })
+                }))
                 .subscribe(() => {
                     this.finishLoading(true);
                     this._cfoService.instanceChangeProcess(() => this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']));

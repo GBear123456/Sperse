@@ -1,8 +1,9 @@
 import { Component, Injector } from '@angular/core';
 import { Router } from '@angular/router';
+import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountServiceProxy, SendEmailActivationLinkInput, TenantHostType } from '@shared/service-proxies/service-proxies';
-import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './email-activation.component.html',
@@ -25,7 +26,7 @@ export class EmailActivationComponent extends AppComponentBase {
         this.saving = true;
         this.model.tenantHostType = <any>TenantHostType.PlatformUi;
         this._accountService.sendEmailActivationLink(this.model)
-            .finally(() => { this.saving = false; })
+            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
                 this.message.success(this.l('ActivationMailSentMessage'), this.l('MailSent')).done(() => {
                     this._router.navigate(['account/login']);

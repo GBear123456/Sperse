@@ -1,9 +1,9 @@
-﻿{
+{
   "extends": "../src/tsconfig.json",
   "compilerOptions": {
     "outDir": "../dist/out-tsc-e2e",
     "module": "commonjs",
-    "target": "es5",
+    "target": "esnext",
     "types": [
       "jasmine",
       "node"
@@ -11,5 +11,8 @@
     "typeRoots": [
       "../node_modules/@types"
     ]
-  }
+  },
+  "include": [
+    "./**/*"
+  ]
 }

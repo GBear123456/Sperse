@@ -1,11 +1,9 @@
-import { Component, ViewChild, Injector } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { UserServiceProxy, GetUserPermissionsForEditOutput, UpdateUserPermissionsInput, EntityDtoOfInt64 } from '@shared/service-proxies/service-proxies';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { EntityDtoOfInt64, UpdateUserPermissionsInput, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModalDirective } from 'ngx-bootstrap';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
-import { PermissionTreeEditModel } from '../shared/permission-tree-edit.model';
-
-import * as _ from 'lodash';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'editUserPermissionsModal',
@@ -47,7 +45,7 @@ export class EditUserPermissionsModalComponent extends AppComponentBase {
 
         this.saving = true;
         this._userService.updateUserPermissions(input)
-            .finally(() => { this.saving = false; })
+            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.close();

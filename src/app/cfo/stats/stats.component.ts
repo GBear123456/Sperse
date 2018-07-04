@@ -12,8 +12,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
+import { Observable, forkJoin } from 'rxjs';
 import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
@@ -319,7 +318,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD');
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
 
-        Observable.forkJoin(getBankAccountsObservable, getForecastModelsObservable)
+        forkJoin(getBankAccountsObservable, getForecastModelsObservable)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0]);

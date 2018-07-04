@@ -7,6 +7,10 @@ import * as parseFullName  from 'parse-full-name';
 export class NameParserService {
     constructor() { }
 
+    getParsed(value: string): any {
+        return value && parseFullName.parseFullName(value.trim());
+    }
+
     parseIntoPerson(value: string, person: PersonInfoDto) {
         if (value) {
             let res = parseFullName.parseFullName(value.trim());

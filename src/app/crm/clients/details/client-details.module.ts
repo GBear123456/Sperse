@@ -4,15 +4,12 @@ import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 
-import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
-    MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
+import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
-    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule, 
+    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
     DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
-
-import { RouterModule, Routes } from '@angular/router';
 
 import { ClientDetailsService } from './client-details.service';
 import { ClientDetailsComponent } from './client-details.component';
@@ -53,8 +50,7 @@ import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-custome
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
-import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
-import { FileDropModule } from 'ngx-file-drop';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
@@ -63,6 +59,8 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceP
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+
+import { FileDropModule } from 'ngx-file-drop';
 
 @NgModule({
   declarations: [
@@ -114,7 +112,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     MatProgressSpinnerModule,
     MatSelectModule,
     ClientDetailsRoutingModule,
-    GooglePlaceModule,
+    AngularGooglePlaceModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxButtonModule,

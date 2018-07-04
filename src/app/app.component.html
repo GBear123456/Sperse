@@ -1,7 +1,7 @@
 <app-header [hidden]="isFullscreenMode"></app-header>
 
 <div class="clearfix">
-</div>
+        </div>
 <div class="page-container" [ngClass]="{'subscription-bar-visible': subscriptionStatusBarVisible()}">
   <div class="page-sidebar-wrapper" [ngClass]="{'show-sidebar-wrapper': filtersService.enabled}">
     <side-bar></side-bar>
@@ -16,9 +16,9 @@
     </app-toolbar>
     <div class="page-content"
         [ngClass]="{'fixed-filters': appService.narrowingPageContentWhenFixedFilter && appService.toolbarConfig && filtersService.fixed}">
-      <router-outlet></router-outlet>
+            <router-outlet></router-outlet>
+        </div>
     </div>
-  </div>
 
   <!-- chat-bar.component here... -->
 

@@ -1,13 +1,11 @@
 import { AppConsts } from '@shared/AppConsts';
 import { LinkType, LinkUsageType } from '@shared/AppEnums';
 import { Component, OnInit, Injector, Input } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/takeWhile';
+import { BehaviorSubject } from 'rxjs';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialog } from '@angular/material';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
-import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto,
-    ContactEmploymentInfo, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
+import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 

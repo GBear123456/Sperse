@@ -36,7 +36,7 @@ export class AppService extends AppServiceBase {
                 crm: require('./crm/module.config.json'),
                 cfo: require('./cfo/module.config.json')
             },
-        )
+        );
     }
 
     setContactInfoVisibility(value: boolean) {
