@@ -57,7 +57,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private readonly MAPPING_STEP_INDEX = 1;
     private readonly REVIEW_STEP_INDEX  = 2;
     private readonly FINISH_STEP_INDEX  = 3;
-    
+
     showSteper = true;
     loadProgress = 0;
     dropZoneProgress = 0;
@@ -126,12 +126,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 });
             }
             if (this.validateFieldsMapping) {
-                var validationResult = this.validateFieldsMapping(mappedFields);
+                let validationResult = this.validateFieldsMapping(mappedFields);
                 if (validationResult.isMapped && !validationResult.error) {
-                    this.initReviewDataSource(mappedFields); 
-                    this.stepper.next();    
-                }
-                else {
+                    this.initReviewDataSource(mappedFields);
+                    this.stepper.next();
+                } else {
                     this.highlightUnmappedFields(mappedFields);
                     let error = validationResult.isMapped ? validationResult.error : this.l('MapAllRecords');
                     this.message.error(error);
@@ -174,8 +173,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     mappedFields.forEach((field) => {
                         let rowValue = row[columnsIndex[field.sourceField]];
                         if (
-                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data)) 
-                            && 
+                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data))
+                            &&
                             !data[field.mappedField]
                         )
                             data[field.mappedField] = rowValue;
@@ -254,29 +253,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.reviewGroups.push([row]);
 
         return row;
-    }
-
-    validateFieldsMapping(rows) {
-        const FIRST_NAME_FIELD = 'personalInfo_fullName_firstName',
-            LAST_NAME_FIELD = 'personalInfo_fullName_lastName';
-        let isFistName = false,
-            isLastName = false;
-
-        this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField && row.mappedField == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField && row.mappedField == LAST_NAME_FIELD);
-            return !!row.mappedField;
-        });
-
-        if (!this.isMapped) {
-            this.highlightUnmappedFields(rows);
-            this.message.error(this.l('MapAllRecords'));
-        }
-
-        if (this.isMapped && (!isFistName || !isLastName))
-            this.message.error(this.l('FieldsMapError'));
-
-        return this.isMapped && isFistName && isLastName;
     }
 
     highlightUnmappedFields(rows) {
