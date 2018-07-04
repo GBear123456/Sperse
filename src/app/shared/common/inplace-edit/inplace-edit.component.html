@@ -3,11 +3,11 @@
         <i *ngIf="data?.isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
         <i *ngIf="data?.isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
     </div>
-    <span [ngClass]="{ 'placeholder': !data?.value }" (click)="setEditModeEnabled(true)">{{data?.value || l(data?.lEditPlaceholder)}}</span>
+    <span [ngClass]="{ 'placeholder': !data?.value }" (click)="setEditModeEnabled(true)">{{data?.value || data?.lEditPlaceholder}}</span>
 </div>
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
     <dx-validation-group>        
-        <dx-text-box [placeholder]="l(data?.lEditPlaceholder)" [(value)]="valueOriginal">
+        <dx-text-box [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal">
             <dx-validator *ngIf="data?.validationRules?.length" [validationRules]="data?.validationRules"></dx-validator>
         </dx-text-box>
         <dx-button class="button-update" icon="todo" (onClick)="updateItem($event)"></dx-button>

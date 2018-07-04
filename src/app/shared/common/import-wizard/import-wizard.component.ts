@@ -11,6 +11,7 @@ import { Subject } from 'rxjs/Subject';
 import { DxDataGridComponent } from 'devextreme-angular';
 
 import * as _ from 'underscore';
+import * as _s from 'underscore.string';
 
 @Component({
     selector: 'import-wizard',
@@ -25,8 +26,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     @Input() title: string;
     @Input() icon: string;
+    @Input() checkSimilarRecord: Function;
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
+    @Input() lookupFields: any;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
             return {
@@ -39,9 +42,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
 
+    public static readonly FieldSeparator = '_';
+
     uploadFile: FormGroup;
 
     private files: UploadFile[] = [];
+    private duplicateCounts: any = {};
+    private reviewGroups: any = [];
 
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
@@ -58,9 +65,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     fileHasHeader: boolean = false;
     fileHeaderWasGenerated = false;
 
+    selectedPreviewRows: any = [];
+
     reviewDataSource: any;
     mapDataSource: any;
-    lookupFields: any;
 
     isMapped = true;
 
@@ -94,7 +102,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.uploadFile.reset();
 
         this.mapDataSource = [];
-        this.reviewDataSource = [];
+        this.emptyReviewData();
 
         setTimeout(() => {
             this.showSteper = true;
@@ -116,8 +124,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     return !!row.mappedField;
                 });
             }
-            if (this.validateFieldsMapping(mappedFields))
+            if (this.validateFieldsMapping(mappedFields)) {
                 this.initReviewDataSource(mappedFields);
+                this.stepper.next();
+            }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
@@ -138,36 +148,108 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
     }
 
+    emptyReviewData() {
+        this.reviewDataSource = [];
+        this.selectedPreviewRows = [];
+        this.duplicateCounts = {};
+        this.reviewGroups = [];
+    }
+
     initReviewDataSource(mappedFields) {
         let columnsIndex = {};
-        this.reviewDataSource = [];
-        this.fileData.data.forEach((row, index) => {
+        this.emptyReviewData();
+        this.fileData.data.map((row, index) => {
             if (index) {
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
                         data[field.mappedField] = row[columnsIndex[field.sourceField]];
                     });
-                    this.reviewDataSource.push(data);
+                    if (this.checkDuplicate(data))
+                        delete this.fileData.data[index];
+                    else
+                        return data;
                 }
             } else
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
                 });
+        }).forEach((row, index) => {
+            row && this.reviewDataSource.push(
+                this.checkSimilarGroups(row));
         });
 
-        this.stepper.next();
+        let groups = this.reviewGroups.filter(Boolean);
+        groups.forEach((group, index) => {
+            if (group && group.length) {
+                if (group.length > 1) {
+                    let groupName = this.l('Similar items') +
+                        '(' + group[0].compared + ')';
+                    group.forEach((item) => {
+                        item.compared = groupName;
+                    });
+                } else
+                    group[0].compared = this.l('Unique item(s)');
+                this.selectedPreviewRows.push(group[0].uniqueIdent);
+            }
+        });
+    }
+
+    getRowUniqueIdent(row) {
+        return JSON.stringify(row)
+            .toLowerCase().split('').reduce(
+                (prev, next) => {
+                    return ((prev << 5) - prev) +
+                        next.charCodeAt(0);
+                }, 0).toString();
+    }
+
+    checkDuplicate(row) {
+        let ident = this.getRowUniqueIdent(row),
+            count = this.duplicateCounts[ident];
+
+        row.uniqueIdent = ident;
+        return (this.duplicateCounts[ident] = (count || 0) + 1) > 1;
+    }
+
+    checkSimilarGroups(row) {
+        if (this.reviewGroups.length) {
+            let groupIndex = [];
+            this.reviewGroups.forEach((group, index) => {
+                if (group && group.some((item) => {
+                    return this.checkSimilarRecord(row, item);
+                })) groupIndex.push(index);
+            });
+
+            if (groupIndex.length) {
+                if (groupIndex.length > 1) {
+                    let newGroup = [];
+                    groupIndex.forEach((index) => {
+                        newGroup = newGroup.concat(this.reviewGroups[index]);
+                        delete this.reviewGroups[index];
+                    });
+                    this.reviewGroups.push(newGroup);
+                } else
+                    this.reviewGroups[groupIndex[0]].push(row);
+
+                return row;
+            }
+        }
+
+        this.reviewGroups.push([row]);
+
+        return row;
     }
 
     validateFieldsMapping(rows) {
-        const FIRST_NAME_FIELD = 'first',
-              LAST_NAME_FIELD = 'last';
+        const FIRST_NAME_FIELD = 'personalInfo_fullName_firstName',
+            LAST_NAME_FIELD = 'personalInfo_fullName_lastName';
         let isFistName = false,
             isLastName = false;
 
         this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
+            isFistName = isFistName || (row.mappedField && row.mappedField == FIRST_NAME_FIELD);
+            isLastName = isLastName || (row.mappedField && row.mappedField == LAST_NAME_FIELD);
             return !!row.mappedField;
         });
 
@@ -271,7 +353,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     sourceField: field,
                     sampleValue: this.lookForValueExample(index),
                     mappedField: this.lookupFields.every((item) => {
-                        let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                        let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
                         if (isSameField)
                             fieldId = item.id;
                         return !isSameField;
@@ -362,7 +444,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     onRowValidating($event) {
         this.mapDataSource.store.data.forEach((row) => {
-            if ($event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
+            if ($event.oldData.sourceField != row.sourceField &&
+                $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
             }
@@ -381,8 +464,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    mappedFieldChanged($event, cell) {
-        cell.setValue($event.value);
+    onLookupFieldsContentReady($event, cell) {
+        $event.component.unselectAll();
+        $event.component.selectItem(cell.value);
     }
 
     cleanInput() {
@@ -392,10 +476,23 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
-            let columnConfig = this.columnsConfig[column.dataField];
-            if (columnConfig) {
-                _.extend(column, columnConfig);
+            if (column.dataField == 'uniqueIdent')
+                column.visible = false;
+            else if (column.dataField == 'compared') {
+                if (this.reviewGroups.length > 1)
+                    column.groupIndex = 0;
+                else {
+                    column.visible = false;
+                    this.selectedPreviewRows = [];
+                }
+            } else {
+                let columnConfig = this.columnsConfig[column.dataField];
+                if (columnConfig) {
+                    _.extend(column, columnConfig);
+                }
             }
+
+            column.caption = _s.humanize(column.dataField.split(ImportWizardComponent.FieldSeparator).pop());
         });
     }
 }
