@@ -5,9 +5,6 @@ import { MatHorizontalStepper } from '@angular/material';
 import { PapaParseService } from 'ngx-papaparse';
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
 import { DxDataGridComponent } from 'devextreme-angular';
 
 import * as _ from 'underscore';
@@ -30,6 +27,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
     @Input() lookupFields: any;
+    @Input() preProcessFieldBeforeReview: Function;
+    @Input() validateFieldsMapping: Function;
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
@@ -46,7 +45,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     private readonly MAPPING_STEP_INDEX = 1;
     private readonly REVIEW_STEP_INDEX  = 2;
     private readonly FINISH_STEP_INDEX  = 3;
-
+    
     showSteper: boolean = true;
     loadProgress: number = 0;
     dropZoneProgress: number = 0;
@@ -118,9 +117,17 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     return !!row.mappedField;
                 });
             }
-            if (this.validateFieldsMapping(mappedFields)) {
-                this.initReviewDataSource(mappedFields); 
-                this.stepper.next();
+            if (this.validateFieldsMapping) {
+                var validationResult = this.validateFieldsMapping(mappedFields);
+                if (validationResult.isMapped && !validationResult.error) {
+                    this.initReviewDataSource(mappedFields); 
+                    this.stepper.next();    
+                }
+                else {
+                    this.highlightUnmappedFields(mappedFields);
+                    let error = validationResult.isMapped ? validationResult.error : this.l('MapAllRecords');
+                    this.message.error(error);
+                }
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
@@ -149,7 +156,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.reviewGroups = [];
     }
 
-    initReviewDataSource(mappedFields) {        
+    initReviewDataSource(mappedFields) {
         let columnsIndex = {};
         this.emptyReviewData();
         this.fileData.data.map((row, index) => {
@@ -157,7 +164,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
-                        data[field.mappedField] = row[columnsIndex[field.sourceField]];
+                        let rowValue = row[columnsIndex[field.sourceField]];
+                        if (
+                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data)) 
+                            && 
+                            !data[field.mappedField]
+                        )
+                            data[field.mappedField] = rowValue;
                     });
                     if (this.checkDuplicate(data))
                         delete this.fileData.data[index];
@@ -234,29 +247,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.reviewGroups.push([row]);
 
         return row;
-    }
-
-    validateFieldsMapping(rows) {
-        const FIRST_NAME_FIELD = 'personalInfo_fullName_firstName',
-            LAST_NAME_FIELD = 'personalInfo_fullName_lastName';
-        let isFistName = false, 
-            isLastName = false;
-
-        this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField && row.mappedField == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField && row.mappedField == LAST_NAME_FIELD);
-            return !!row.mappedField;
-        });
-
-        if (!this.isMapped) {
-            this.highlightUnmappedFields(rows);
-            this.message.error(this.l('MapAllRecords'));
-        }
-
-        if (this.isMapped && (!isFistName || !isLastName))
-            this.message.error(this.l('FieldsMapError'));
-
-        return this.isMapped && isFistName && isLastName;
     }
 
     highlightUnmappedFields(rows) {
