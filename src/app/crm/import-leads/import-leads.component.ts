@@ -12,6 +12,8 @@ import {
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
+import * as addressParser from 'parse-address';
+
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
 
@@ -23,6 +25,7 @@ import * as _s from 'underscore.string';
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
 
+    private readonly FULL_ADDRESS_FIELD = 'personalInfo_fullName';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
@@ -31,22 +34,32 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly NICK_NAME_FIELD = 'personalInfo_fullName_nickName';
     private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_suffix';
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
-    private readonly PERSONAL_ADDRESS_CITY = 'personalInfo_fullAddress_city';
-    private readonly BUSINESS_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
+    private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
+    private readonly PERSONAL_FULL_ADDRESS_CITY = 'personalInfo_fullAddress_city';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
+    private readonly BUSINESS_WORK_FULL_ADDRESS = 'businessInfo_workFullAddress';
     private readonly PERSONAL_MOBILE_PHONE = 'personalInfo_mobilePhone';
     private readonly PERSONAL_HOME_PHONE = 'personalInfo_homePhone';
     private readonly BUSINESS_COMPANY_PHONE = 'businessInfo_companyPhone';
     private readonly BUSINESS_WORK_PHONE_1 = 'businessInfo_workPhone1';
     private readonly BUSINESS_WORK_PHONE_2 = 'businessInfo_workPhone2';
     private readonly BUSINESS_FAX = 'businessInfo_companyFaxNumber';
+    private readonly PERSONAL_EMAIL1 = 'personalInfo_email1';
+    private readonly PERSONAL_EMAIL2 = 'personalInfo_email2'; 
+    private readonly PERSONAL_EMAIL3 = 'personalInfo_email3'; 
+    private readonly BUSINESS_COMPANY_EMAIL = 'businessInfo_companyEmail';
+    private readonly BUSINESS_WORK_EMAIL1 = 'businessInfo_workEmail1';
+    private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2'; 
+    private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
         this.MIDDLE_NAME_FIELD,
         this.LAST_NAME_FIELD,
         this.NICK_NAME_FIELD,
-        this.PERSONAL_ADDRESS_CITY,
-        this.BUSINESS_ADDRESS_CITY
+        this.PERSONAL_FULL_ADDRESS_CITY,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_CITY
     ];
 
     private readonly PHONE_FIELDS = [
@@ -77,16 +90,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     readonly mappingObjectNames = {
         personalInfo: ImportLeadPersonalInput.fromJS({}),
-        businessInfo: ImportLeadBusinessInput.fromJS({}),
         fullName: ImportLeadFullName.fromJS({}),
-        fullAddress: ImportLeadAddressInput.fromJS({})
+        fullAddress: ImportLeadAddressInput.fromJS({}),
+        businessInfo: ImportLeadBusinessInput.fromJS({}),
+        companyFullAddress: ImportLeadAddressInput.fromJS({}),
+        workFullAddress: ImportLeadAddressInput.fromJS({})
     };
 
     private readonly compareFields: any = [
-        ['personalInfo_fullName_firstName:personalInfo_fullName_lastName'],
-        ['personalInfo_email1', 'personalInfo_email2', 'personalInfo_email3', 'businessInfo_companyEmail', 'businessInfo_workEmail1', 'businessInfo_workEmail2', 'businessInfo_workEmail3'],
-        ['personalInfo_mobilePhone', 'personalInfo_homePhone', 'personalInfo_homePhone', 'businessInfo_companyPhone', 'businessInfo_workPhone1', 'businessInfo_workPhone2'],
-        ['personalInfo_fullAddress', 'businessInfo_companyFullAddress']
+        [this.FIRST_NAME_FIELD + ':' + this.LAST_NAME_FIELD],
+        [this.PERSONAL_EMAIL1, this.PERSONAL_EMAIL2, this.PERSONAL_EMAIL3, this.BUSINESS_COMPANY_EMAIL, this.BUSINESS_WORK_EMAIL1, this.BUSINESS_WORK_EMAIL2, this.BUSINESS_WORK_EMAIL3],
+        [this.PERSONAL_MOBILE_PHONE, this.PERSONAL_HOME_PHONE, this.BUSINESS_COMPANY_PHONE, this.BUSINESS_WORK_PHONE_1, this.BUSINESS_WORK_PHONE_2],
+        [this.PERSONAL_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_COMPANY_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD, this.BUSINESS_WORK_FULL_ADDRESS + ':' + this.LAST_NAME_FIELD]
     ];
 
     private rootComponent: any;
@@ -124,19 +139,36 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
     }
 
-    private setNamePartFieldIfDefined(value, fieldName, dataSource) {
-        if (value)
-            dataSource[fieldName] = value;
+    private setFieldIfDefined(value, fieldName, dataSource) {
+        value && (dataSource[fieldName] = value);
     }
 
     private parseFullNameIntoDataSource(fullName, dataSource) {
-        var parsed = this._nameParser.getParsed(fullName);
-        this.setNamePartFieldIfDefined(parsed.title, this.NAME_PREFIX_FIELD, dataSource);
-        this.setNamePartFieldIfDefined(parsed.first, this.FIRST_NAME_FIELD, dataSource);
-        this.setNamePartFieldIfDefined(parsed.middle, this.MIDDLE_NAME_FIELD, dataSource);
-        this.setNamePartFieldIfDefined(parsed.last, this.LAST_NAME_FIELD, dataSource);
-        this.setNamePartFieldIfDefined(parsed.nick, this.NICK_NAME_FIELD, dataSource);
-        this.setNamePartFieldIfDefined(parsed.suffix, this.NAME_SUFFIX_FIELD, dataSource);
+        let parsed = this._nameParser.getParsed(fullName);
+
+        this.setFieldIfDefined(parsed.title, this.NAME_PREFIX_FIELD, dataSource);
+        this.setFieldIfDefined(parsed.first, this.FIRST_NAME_FIELD, dataSource);
+        this.setFieldIfDefined(parsed.middle, this.MIDDLE_NAME_FIELD, dataSource);
+        this.setFieldIfDefined(parsed.last, this.LAST_NAME_FIELD, dataSource);
+        this.setFieldIfDefined(parsed.nick, this.NICK_NAME_FIELD, dataSource);
+        this.setFieldIfDefined(parsed.suffix, this.NAME_SUFFIX_FIELD, dataSource);
+
+        return true;
+    }
+
+    private parseFullAddressIntoDataSource(field, fullAddress, dataSource) {
+        let parsed = addressParser.parseLocation(fullAddress);
+
+        if (parsed) {
+            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);
+            this.setFieldIfDefined(parsed.state, field.mappedField + '_stateCode', dataSource);
+            this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
+            this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
+            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street, 
+                parsed.street1, parsed.street2].join(' '), field.mappedField + '_street', dataSource);
+        }
+
+        return true;
     }
 
     cancel() {
@@ -257,10 +289,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
-        if (field.mappedField == this.FULL_NAME_FIELD) {
-            this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
-            return true;
-        }
+        if (field.mappedField == this.FULL_NAME_FIELD)
+            return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
+        else if (field.mappedField.toLowerCase().indexOf('address') > 0)
+            return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
         return false;
     }
 
