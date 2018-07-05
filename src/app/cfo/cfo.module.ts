@@ -82,7 +82,9 @@ import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.servi
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 import { AddQuovoAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-quovo-account-button/add-quovo-account-button.component';
-import { XeroLoginButtonComponent } from 'app/cfo/shared/common/xero-login/xero-login.component';
+import { XeroLoginButtonComponent } from 'app/cfo/shared/common/xero/xero-login/xero-login.component';
+import { XeroLoginDialogComponent } from 'app/cfo/shared/common/xero/xero-login-dialog/xero-login-dialog.component';
+import { ImportXeroChartOfAccountsButtonComponent } from 'app/cfo/shared/common/xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 
@@ -159,6 +161,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         BankAccountsQuovoComponent,
         AddAccountButtonComponent,
         XeroLoginButtonComponent,
+        XeroLoginDialogComponent,
+        ImportXeroChartOfAccountsButtonComponent,
         AddQuovoAccountButtonComponent,
         ImportFromQuickBooksButtonComponent
     ],

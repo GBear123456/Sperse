@@ -1,0 +1,5 @@
+<div (click)="importChartOfAccount()" class="xero-container">
+    <img src="/assets/common/images/xero.svg" (click)="importChartOfAccount()" class="xero-button" />
+    <span>Import from Xero</span>
+</div>
+<xero-login-dialog (onComplete)="importChartOfAccount()"></xero-login-dialog>

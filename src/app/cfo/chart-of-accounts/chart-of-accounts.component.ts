@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
@@ -6,6 +6,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import DsataSource from 'devextreme/data/data_source';
+import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 
 @Component({
     selector: 'chart-of-accounts',
@@ -14,7 +15,7 @@ import DsataSource from 'devextreme/data/data_source';
     animations: [appModuleAnimation()]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
-
+    @ViewChild(CategorizationComponent) categorization: CategorizationComponent;
     headlineConfig: any;
     ActionTitle = 'CUSTOM CHART';
 
@@ -45,5 +46,9 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
 
     locationColumn_calculateCellValue(rowData) {
         return rowData.StateId + ', ' + rowData.CountryId;
+    }
+
+    refresh() {
+        this.categorization.refreshCategories();
     }
 }
