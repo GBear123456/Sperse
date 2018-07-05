@@ -50145,7 +50145,7 @@ export enum ExecutePaymentDtoPaymentPeriodType {
 }
 
 export enum QuestionDtoType {
-    _0 = 0, 
+    QuestionWhithOptions = "QuestionWhithOptions", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {

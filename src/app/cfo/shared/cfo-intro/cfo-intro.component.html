@@ -21,7 +21,8 @@
                 </div>
                 <div class="footer">
                     <a (click)="showVideo()">
-                        <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a>
+                        <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video
+                    </a>
                     <!-- <ul>
                         <li class="akk 0 q"></li>
                         <li class="next 2"></li>
@@ -44,15 +45,20 @@
                     <h2>Key Features</h2>
                     <ul class="treka">
                         <li>
-                            <img src="assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation</li>
+                            <img src="assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization</li>
+                            <img src="assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts</li>
+                            <img src="assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day</li>
+                            <img src="assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification</li>
+                            <img src="assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification
+                        </li>
                     </ul>
                 </div>
                 <div class="footer">
@@ -125,8 +131,10 @@
                         <div class="mainda">
                             <h3>TRANSACTION CATEGORIZATION RULES</h3>
                             <h2>Automate Transaction Classification</h2>
-                            <p>Define rules to automate the classification of your transactions into the categorization or grouping you want your cash flow
-                                reports to be organized by.</p>
+                            <p>
+                                Define rules to automate the classification of your transactions into the categorization or grouping you want your cash flow
+                                reports to be organized by.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -187,29 +195,14 @@
                 </div>
                 <div class="main">
                     <div class="conta">
-                        <div class="mainda">
+                        <div class="mainda" *ngIf="question">
                             <h3>
-                                What would you like to gain most from CFO?
+                                {{question.text}}
                             </h3>
                             <div class="imputara">
-                                <label class="container1">View all my financial accounts in one place
-                                    <input type="checkbox" checked="checked">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Get a better idea of my cash flow history
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Forecast and plan my future cash flow needs
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Share financial data with my team or accountant
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Improve business management with all of the above
-                                    <input type="checkbox">
+                                <label *ngFor="let option of question.options" class="container1">
+                                    {{option.text}}
+                                    <input type="checkbox" [value]="option['selected'] === true" (change)="option['selected'] = $event.target.checked;">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
@@ -227,7 +220,9 @@
                         <li class="akk next 6 u"></li>
                         <li class="next 7"></li>
                     </ul> -->
-                    <button class="btn btn-layout get-started" [mat-dialog-close]="{isGetStartedButtonClicked: true}" mat-button>Get started</button>
+                    <button class="btn btn-layout get-started" [mat-dialog-close]="{isGetStartedButtonClicked: true}" (click)="onSubmit()" mat-button>
+                        {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
+                    </button>
                 </div>
             </div>
         </mat-step>
