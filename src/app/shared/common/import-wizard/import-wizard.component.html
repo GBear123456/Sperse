@@ -62,7 +62,9 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
-                          [pager]="defaultGridPagerConfig"
+                          [pager]="defaultGridPagerConfig"                          
+                          (onCellClick)="onMapCellClick($event)"
+                          (onSelectionChanged)="onMapSelectionChanged($event)"
                           (onRowValidating)="onRowValidating($event)"
                           (onContentReady)="onContentReady($event)">
                 <dxo-selection selectAllMode="allPages"
@@ -100,6 +102,7 @@
                                           [height]="450"
                                           [searchEnabled]="true"
                                           [selectNodesRecursive]="false"
+                                          (onItemRendered)="onLookupFieldsItemRendered($event)"
                                           (onContentReady)="onLookupFieldsContentReady($event, cell)"
                                           (onItemClick)="cell.setValue($event.node.key)">
                             </dx-tree-view>
