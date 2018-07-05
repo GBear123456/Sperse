@@ -62,9 +62,10 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
                           (onRowValidating)="onRowValidating($event)"
                           (onContentReady)="onContentReady($event)">
-                <dxo-selection selectAllMode="page"
+                <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">
                 </dxo-selection>
@@ -120,7 +121,7 @@
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
                           [customizeColumns]="customizePreviewColumns">
-                <dxo-selection selectAllMode="page"
+                <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">
                 </dxo-selection>
