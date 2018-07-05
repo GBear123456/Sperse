@@ -246,7 +246,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 return row;
             }
         } 
-
         this.reviewGroups.push([row]);
 
         return row;
@@ -465,6 +464,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
+            let columnConfig = this.columnsConfig[column.dataField];
             if (column.dataField == 'uniqueIdent')
                 column.visible = false;
             else if (column.dataField == 'compared') {
@@ -475,14 +475,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     this.selectedPreviewRows = [];
                 }
             } else {
-                let columnConfig = this.columnsConfig[column.dataField];
-                if (columnConfig) {
+                if (columnConfig)
                     _.extend(column, columnConfig);
-                }
             }
 
-            column.caption = _s.humanize(column.dataField.split(
-                ImportWizardComponent.FieldSeparator).pop());
+            if (!columnConfig || !columnConfig['caption'])
+                column.caption = _s.humanize(column.dataField.split(
+                    ImportWizardComponent.FieldSeparator).pop());
         });
     }
 }

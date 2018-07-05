@@ -25,7 +25,6 @@ import * as _s from 'underscore.string';
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
 
-    private readonly FULL_ADDRESS_FIELD = 'personalInfo_fullName';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
@@ -35,10 +34,29 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly NAME_SUFFIX_FIELD = 'personalInfo_fullName_suffix';
     private readonly COMPANY_NAME_FIELD = 'businessInfo_companyName';
     private readonly PERSONAL_FULL_ADDRESS = 'personalInfo_fullAddress';
+    private readonly PERSONAL_FULL_ADDRESS_STREET = 'personalInfo_fullAddress_street';
     private readonly PERSONAL_FULL_ADDRESS_CITY = 'personalInfo_fullAddress_city';
+    private readonly PERSONAL_FULL_ADDRESS_STATE_NAME = 'personalInfo_fullAddress_stateName';
+    private readonly PERSONAL_FULL_ADDRESS_STATE_CODE = 'personalInfo_fullAddress_stateCode';
+    private readonly PERSONAL_FULL_ADDRESS_ZIP_CODE = 'personalInfo_fullAddress_zipCode';
+    private readonly PERSONAL_FULL_ADDRESS_COUNTRY_NAME = 'personalInfo_fullAddress_countryName';
+    private readonly PERSONAL_FULL_ADDRESS_COUNTRY_CODE = 'personalInfo_fullAddress_countryCode';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS = 'businessInfo_companyFullAddress';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_STREET = 'businessInfo_companyFullAddress_street';
     private readonly BUSINESS_COMPANY_FULL_ADDRESS_CITY = 'businessInfo_companyFullAddress_city';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME = 'businessInfo_companyFullAddress_stateName';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE = 'businessInfo_companyFullAddress_stateCode';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE = 'businessInfo_companyFullAddress_zipCode';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME = 'businessInfo_companyFullAddress_countryName';
+    private readonly BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_companyFullAddress_countryCode';
     private readonly BUSINESS_WORK_FULL_ADDRESS = 'businessInfo_workFullAddress';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_STREET = 'businessInfo_workFullAddress_street';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_CITY = 'businessInfo_workFullAddress_city';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_NAME = 'businessInfo_workFullAddress_stateName';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_STATE_CODE = 'businessInfo_workFullAddress_stateCode';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE = 'businessInfo_workFullAddress_zipCode';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME = 'businessInfo_workFullAddress_countryName';
+    private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_workFullAddress_countryCode';
     private readonly PERSONAL_MOBILE_PHONE = 'personalInfo_mobilePhone';
     private readonly PERSONAL_HOME_PHONE = 'personalInfo_homePhone';
     private readonly BUSINESS_COMPANY_PHONE = 'businessInfo_companyPhone';
@@ -79,6 +97,30 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.NAME_SUFFIX_FIELD,
         this.NICK_NAME_FIELD,
         this.COMPANY_NAME_FIELD
+    ];
+
+    private readonly FIELDS_CAPTIONS = [
+        this.PERSONAL_FULL_ADDRESS_STREET,
+        this.PERSONAL_FULL_ADDRESS_CITY,
+        this.PERSONAL_FULL_ADDRESS_STATE_NAME,
+        this.PERSONAL_FULL_ADDRESS_STATE_CODE,
+        this.PERSONAL_FULL_ADDRESS_ZIP_CODE,
+        this.PERSONAL_FULL_ADDRESS_COUNTRY_NAME,
+        this.PERSONAL_FULL_ADDRESS_COUNTRY_CODE,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_STREET,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_STATE_NAME,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_STATE_CODE,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_NAME,
+        this.BUSINESS_COMPANY_FULL_ADDRESS_COUNTRY_CODE,
+        this.BUSINESS_WORK_FULL_ADDRESS_STREET,
+        this.BUSINESS_WORK_FULL_ADDRESS_CITY,
+        this.BUSINESS_WORK_FULL_ADDRESS_STATE_NAME,
+        this.BUSINESS_WORK_FULL_ADDRESS_STATE_CODE,
+        this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE,
+        this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME,
+        this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE
     ];
 
     totalCount: number = 0;
@@ -136,6 +178,20 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             else
                 this.fieldsConfig[field] = { visibleIndex: fieldIndex };
             fieldIndex++;
+        });
+  
+        this.FIELDS_CAPTIONS.forEach(field => {
+            let parts = field.split('_'),
+                caption = _s.humanize(parts.pop()),
+                type = parts.pop();
+
+            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0)
+                caption = _s.humanize(type).split(' ').shift() + ' ' + caption;
+
+            if (this.fieldsConfig[field])
+                this.fieldsConfig[field].caption = caption;
+            else
+                this.fieldsConfig[field] = {caption: caption};
         });
     }
 
@@ -269,8 +325,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     checkSimilarRecord = (record1, record2) => {
-        record1.compared = record1.personalInfo_fullName_firstName + 
-            ' ' + record1.personalInfo_fullName_lastName;
+        record2.compared = record2[this.FIRST_NAME_FIELD] 
+            + ' ' + record2[this.LAST_NAME_FIELD];
 
         return !this.compareFields.every((fields) => {
             return fields.every((field1) => {
