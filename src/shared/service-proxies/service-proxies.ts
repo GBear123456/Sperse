@@ -7926,8 +7926,8 @@ export class CustomerListsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignListsToCustomer(input: AssignListsToCustomerInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AssignListsToCustomer";
+    updateCustomerLists(input: UpdateCustomerListsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/UpdateCustomerLists";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -7941,12 +7941,12 @@ export class CustomerListsServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignListsToCustomer(response_);
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCustomerLists(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignListsToCustomer(<any>response_);
+                    return this.processUpdateCustomerLists(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -7955,7 +7955,7 @@ export class CustomerListsServiceProxy {
         }));
     }
 
-    protected processAssignListsToCustomer(response: HttpResponseBase): Observable<void> {
+    protected processUpdateCustomerLists(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7978,8 +7978,8 @@ export class CustomerListsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToMultipleCustomers(input: AssignListsToCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AssignToMultipleCustomers";
+    addCustomersToLists(input: AddCustomersToListsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AddCustomersToLists";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -7994,11 +7994,11 @@ export class CustomerListsServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignToMultipleCustomers(response_);
+            return this.processAddCustomersToLists(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignToMultipleCustomers(<any>response_);
+                    return this.processAddCustomersToLists(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -8007,7 +8007,7 @@ export class CustomerListsServiceProxy {
         }));
     }
 
-    protected processAssignToMultipleCustomers(response: HttpResponseBase): Observable<void> {
+    protected processAddCustomersToLists(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -9027,8 +9027,8 @@ export class CustomerTagsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToCustomer(input: AssignToCustomerInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToCustomer";
+    updateCustomerTags(input: UpdateCustomerTagsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/UpdateCustomerTags";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -9042,12 +9042,12 @@ export class CustomerTagsServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignToCustomer(response_);
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCustomerTags(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignToCustomer(<any>response_);
+                    return this.processUpdateCustomerTags(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -9056,7 +9056,7 @@ export class CustomerTagsServiceProxy {
         }));
     }
 
-    protected processAssignToCustomer(response: HttpResponseBase): Observable<void> {
+    protected processUpdateCustomerTags(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -9079,8 +9079,8 @@ export class CustomerTagsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToMultipleCustomers(input: AssignToCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToMultipleCustomers";
+    tagCustomers(input: TagCustomersInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/TagCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -9095,11 +9095,11 @@ export class CustomerTagsServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignToMultipleCustomers(response_);
+            return this.processTagCustomers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignToMultipleCustomers(<any>response_);
+                    return this.processTagCustomers(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -9108,7 +9108,7 @@ export class CustomerTagsServiceProxy {
         }));
     }
 
-    protected processAssignToMultipleCustomers(response: HttpResponseBase): Observable<void> {
+    protected processTagCustomers(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21313,8 +21313,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignUserToCustomer(input: AssignUserToCustomerInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignUserToCustomer";
+    assignCustomer(input: AssignCustomerInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignCustomer";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -21329,11 +21329,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignUserToCustomer(response_);
+            return this.processAssignCustomer(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignUserToCustomer(<any>response_);
+                    return this.processAssignCustomer(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -21342,7 +21342,7 @@ export class UserAssignmentServiceProxy {
         }));
     }
 
-    protected processAssignUserToCustomer(response: HttpResponseBase): Observable<void> {
+    protected processAssignCustomer(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21365,8 +21365,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignUserToCustomers(input: AssignUserToCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignUserToCustomers";
+    assignCustomers(input: AssignCustomersInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -21381,11 +21381,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignUserToCustomers(response_);
+            return this.processAssignCustomers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignUserToCustomers(<any>response_);
+                    return this.processAssignCustomers(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -21394,7 +21394,7 @@ export class UserAssignmentServiceProxy {
         }));
     }
 
-    protected processAssignUserToCustomers(response: HttpResponseBase): Observable<void> {
+    protected processAssignCustomers(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -32651,11 +32651,11 @@ export interface ICustomerListInfoDto {
     name: string | undefined;
 }
 
-export class AssignListsToCustomerInput implements IAssignListsToCustomerInput {
+export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
     customerId!: number | undefined;
     lists!: CustomerListInput[] | undefined;
 
-    constructor(data?: IAssignListsToCustomerInput) {
+    constructor(data?: IUpdateCustomerListsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -32675,9 +32675,9 @@ export class AssignListsToCustomerInput implements IAssignListsToCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignListsToCustomerInput {
+    static fromJS(data: any): UpdateCustomerListsInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignListsToCustomerInput();
+        let result = new UpdateCustomerListsInput();
         result.init(data);
         return result;
     }
@@ -32694,7 +32694,7 @@ export class AssignListsToCustomerInput implements IAssignListsToCustomerInput {
     }
 }
 
-export interface IAssignListsToCustomerInput {
+export interface IUpdateCustomerListsInput {
     customerId: number | undefined;
     lists: CustomerListInput[] | undefined;
 }
@@ -32735,11 +32735,11 @@ export interface ICustomerListInput {
     name: string;
 }
 
-export class AssignListsToCustomersInput implements IAssignListsToCustomersInput {
+export class AddCustomersToListsInput implements IAddCustomersToListsInput {
     customerIds!: number[] | undefined;
     lists!: CustomerListInput[] | undefined;
 
-    constructor(data?: IAssignListsToCustomersInput) {
+    constructor(data?: IAddCustomersToListsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -32763,9 +32763,9 @@ export class AssignListsToCustomersInput implements IAssignListsToCustomersInput
         }
     }
 
-    static fromJS(data: any): AssignListsToCustomersInput {
+    static fromJS(data: any): AddCustomersToListsInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignListsToCustomersInput();
+        let result = new AddCustomersToListsInput();
         result.init(data);
         return result;
     }
@@ -32786,7 +32786,7 @@ export class AssignListsToCustomersInput implements IAssignListsToCustomersInput
     }
 }
 
-export interface IAssignListsToCustomersInput {
+export interface IAddCustomersToListsInput {
     customerIds: number[] | undefined;
     lists: CustomerListInput[] | undefined;
 }
@@ -34738,11 +34738,11 @@ export interface IMarkCustomersInput {
     starId: number | undefined;
 }
 
-export class AssignToCustomerInput implements IAssignToCustomerInput {
+export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
     customerId!: number | undefined;
     tags!: CustomerTagInput[] | undefined;
 
-    constructor(data?: IAssignToCustomerInput) {
+    constructor(data?: IUpdateCustomerTagsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -34762,9 +34762,9 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignToCustomerInput {
+    static fromJS(data: any): UpdateCustomerTagsInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignToCustomerInput();
+        let result = new UpdateCustomerTagsInput();
         result.init(data);
         return result;
     }
@@ -34781,16 +34781,16 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
     }
 }
 
-export interface IAssignToCustomerInput {
+export interface IUpdateCustomerTagsInput {
     customerId: number | undefined;
     tags: CustomerTagInput[] | undefined;
 }
 
-export class AssignToCustomersInput implements IAssignToCustomersInput {
+export class TagCustomersInput implements ITagCustomersInput {
     customerIds!: number[] | undefined;
     tags!: CustomerTagInput[] | undefined;
 
-    constructor(data?: IAssignToCustomersInput) {
+    constructor(data?: ITagCustomersInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -34814,9 +34814,9 @@ export class AssignToCustomersInput implements IAssignToCustomersInput {
         }
     }
 
-    static fromJS(data: any): AssignToCustomersInput {
+    static fromJS(data: any): TagCustomersInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignToCustomersInput();
+        let result = new TagCustomersInput();
         result.init(data);
         return result;
     }
@@ -34837,7 +34837,7 @@ export class AssignToCustomersInput implements IAssignToCustomersInput {
     }
 }
 
-export interface IAssignToCustomersInput {
+export interface ITagCustomersInput {
     customerIds: number[] | undefined;
     tags: CustomerTagInput[] | undefined;
 }
@@ -48787,11 +48787,11 @@ export interface ICreateOrUpdateUserInput {
     tenantHostType: CreateOrUpdateUserInputTenantHostType | undefined;
 }
 
-export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
+export class AssignCustomerInput implements IAssignCustomerInput {
     customerId!: number | undefined;
     userId!: number | undefined;
 
-    constructor(data?: IAssignUserToCustomerInput) {
+    constructor(data?: IAssignCustomerInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48807,9 +48807,9 @@ export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignUserToCustomerInput {
+    static fromJS(data: any): AssignCustomerInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignUserToCustomerInput();
+        let result = new AssignCustomerInput();
         result.init(data);
         return result;
     }
@@ -48822,16 +48822,16 @@ export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
     }
 }
 
-export interface IAssignUserToCustomerInput {
+export interface IAssignCustomerInput {
     customerId: number | undefined;
     userId: number | undefined;
 }
 
-export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
+export class AssignCustomersInput implements IAssignCustomersInput {
     customerIds!: number[] | undefined;
     userId!: number | undefined;
 
-    constructor(data?: IAssignUserToCustomersInput) {
+    constructor(data?: IAssignCustomersInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48851,9 +48851,9 @@ export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
         }
     }
 
-    static fromJS(data: any): AssignUserToCustomersInput {
+    static fromJS(data: any): AssignCustomersInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignUserToCustomersInput();
+        let result = new AssignCustomersInput();
         result.init(data);
         return result;
     }
@@ -48870,7 +48870,7 @@ export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
     }
 }
 
-export interface IAssignUserToCustomersInput {
+export interface IAssignCustomersInput {
     customerIds: number[] | undefined;
     userId: number | undefined;
 }
@@ -50145,7 +50145,7 @@ export enum ExecutePaymentDtoPaymentPeriodType {
 }
 
 export enum QuestionDtoType {
-    _0 = 0, 
+    QuestionWhithOptions = "QuestionWhithOptions", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
