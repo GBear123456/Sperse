@@ -76,8 +76,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.MIDDLE_NAME_FIELD,
         this.LAST_NAME_FIELD,
         this.NICK_NAME_FIELD,
+        this.NAME_PREFIX_FIELD,
+        this.NAME_SUFFIX_FIELD,
         this.PERSONAL_FULL_ADDRESS_CITY,
-        this.BUSINESS_COMPANY_FULL_ADDRESS_CITY
+        this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
+        this.BUSINESS_WORK_FULL_ADDRESS_CITY
     ];
 
     private readonly PHONE_FIELDS = [
@@ -347,7 +350,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
         if (field.mappedField == this.FULL_NAME_FIELD)
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
-        else if (field.mappedField.toLowerCase().indexOf('address') > 0)
+        else if (field.mappedField == this.PERSONAL_FULL_ADDRESS
+            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS    
+            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS
+        )
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
         return false;
     }
