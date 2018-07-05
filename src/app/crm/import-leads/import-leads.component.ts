@@ -155,22 +155,29 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     complete(data) {
-        this.startLoading(true);
         this.totalCount = data.length;
-        let leadsInput = this.createLeadsInput(data);
-        this._leadService.importLeads(leadsInput)
-            .pipe(
-                finalize(() => this.finishLoading(true))
-            ).subscribe((res) => {
-                res.forEach((reff) => {
-                    if (!reff.errorMessage)
-                        this.importedCount++;
-                });
-                if (this.importedCount > 0)
-                    this.wizard.showFinishStep();
-                else
-                    this.message.error(res[0].errorMessage);
-            });
+        this.message.confirm(
+            this.l('LeadsImportComfirmation', [this.totalCount]),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading(true);
+                    let leadsInput = this.createLeadsInput(data);
+                    this._leadService.importLeads(leadsInput)
+                        .pipe(
+                            finalize(() => this.finishLoading(true))
+                        ).subscribe((res) => {
+                            res.forEach((reff) => {
+                                if (!reff.errorMessage)
+                                    this.importedCount++;
+                            });
+                            if (this.importedCount > 0)
+                                this.wizard.showFinishStep();
+                            else
+                                this.message.error(res[0].errorMessage);
+                        });
+                }                    
+            }
+        );
     }
 
     createLeadsInput(data: any[]): ImportLeadsInput {

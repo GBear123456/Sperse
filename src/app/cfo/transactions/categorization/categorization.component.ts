@@ -99,6 +99,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     private currentTypeId: any;
 
     toolbarConfig: any;
+    excelData = [];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -655,6 +656,26 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 if (x.transactionsCount)
                     accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
             });
+        let data = this.categorization;
+        if (data.categories) {
+            let transactionCount = items[0] || [];
+            let categories = [];
+            _.mapObject(data.categories, (item, key) => {
+                let accType = data.accountingTypes[item.accountingTypeId];
+                let subCategory = data.categories[item.parentId];
+                let cashflowType = data.types[accType.typeId];
+                categories.push({
+                    CashflowType: cashflowType ? cashflowType.name : null,
+                    AccountingType: accType.name,
+                    Category: item.name,
+                    CategoryId: key,
+                    SubCategory: subCategory ? subCategory.name : '',
+                    SubCategoryId: item.parentId || null,
+                    TransactionCount: transactionCount[parseInt(key)] || null
+                });
+            });
+            this.excelData = categories;
+        }
     }
 
     refreshTransactionsCountDataSource() {

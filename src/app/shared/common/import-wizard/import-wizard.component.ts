@@ -31,7 +31,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
     @Input() lookupFields: any;
-	@Input() preProcessFieldBeforeReview: Function;
+    @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
@@ -72,8 +72,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     reviewDataSource: any;
     mapDataSource: any;
-
-    isMapped = true;
 
     selectModeItems = [
         {text: 'Affect on page items', mode: 'page'},
@@ -434,6 +432,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     onRowValidating($event) {
+        if ($event.newData.mappedField)
+            $event.component.selectRows([$event.key]);
+        else
+            $event.component.deselectRows([$event.key]);
+            
         this.mapDataSource.store.data.forEach((row) => {
             if ($event.oldData.sourceField != row.sourceField &&
                 $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
@@ -449,15 +452,38 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     onContentReady($event) {
-        if (this.mapGrid && !this.isMapped) {
-            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
-            this.highlightUnmappedFields(mappedFields);
-        }
+        let selectedRows = [];
+        $event.component.getVisibleRows().forEach((row) => {
+            if (row.data.mappedField)
+                selectedRows.push(row.data.id);            
+        }); 
+        $event.component.selectRows(selectedRows);
+    }
+
+    onMapCellClick($event) {
+        if (typeof($event.displayValue) === 'boolean') {
+            $event.component.deselectRows([$event.data.id]);
+            $event.data.mappedField = "";
+        }        
+    }
+
+    onMapSelectionChanged($event) {
+        $event.selectedRowsData.forEach((row) => {
+            if (!row.mappedField)
+                $event.component.deselectRows([row.id]);
+        });
     }
 
     onLookupFieldsContentReady($event, cell) {
         $event.component.unselectAll();
         $event.component.selectItem(cell.value);
+    }
+
+    onLookupFieldsItemRendered($event) {
+        this.mapGrid.instance.getSelectedRowsData().forEach((row) => {
+            if (row.mappedField == $event.itemIndex)
+                $event.itemElement.classList.add('mapped');
+        });
     }
 
     cleanInput() {
