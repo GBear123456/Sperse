@@ -484,8 +484,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             if (row.mappedField == $event.itemIndex)
                 $event.itemElement.classList.add('mapped');
         });
-
-        console.log($event);
     }
 
     cleanInput() {
