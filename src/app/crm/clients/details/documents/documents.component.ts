@@ -1,5 +1,5 @@
 import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSystemFileEntry } from 'ngx-file-drop';
@@ -45,7 +45,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         private _documentService: DocumentServiceProxy,
         private _customerService: CustomersServiceProxy,
         private _wopiService: WopiServiceProxy,
-        private http: Http,
+        private http: HttpClient,
         private domSanitizer: DomSanitizer
     ) {
         super(injector);
@@ -177,8 +177,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         let formData = new FormData();
         formData.append('access_token', wopiRequestInfo.accessToken);
         formData.append('access_token_ttl', wopiRequestInfo.accessTokenTtl.toString());
-        this.http.post(wopiRequestInfo.wopiUrlsrc, formData).subscribe((response) => {
-            this.wopiResponseHtml = this.domSanitizer.bypassSecurityTrustHtml(response.text());
+        this.http.post(wopiRequestInfo.wopiUrlsrc, formData, { responseType: 'text' }).subscribe((response) => {
+            this.wopiResponseHtml = this.domSanitizer.bypassSecurityTrustHtml(response.toString());
             this.openDocumentMode = true;
         });
     }
