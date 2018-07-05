@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerListsServiceProxy, AssignListsToCustomersInput, CustomerListInput,
+import { CustomerListsServiceProxy, AddCustomersToListsInput, CustomerListInput,
     UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -79,7 +79,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     process() {
-        this._listsService.assignToMultipleCustomers(AssignListsToCustomersInput.fromJS({
+        this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
             customerIds: this.selectedKeys,
             lists: this.selectedItems
         })).pipe(finalize(() => {
