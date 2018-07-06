@@ -16264,23 +16264,24 @@ export class SecurityManagementServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @bankAccountId (optional) 
      * @userId (optional) 
+     * @bankAccountIds (optional) 
      * @return Success
      */
-    revokeBankAccountPermissions(instanceType: InstanceType74 | null | undefined, instanceId: number | null | undefined, bankAccountId: number | null | undefined, userId: number | null | undefined): Observable<void> {
+    revokeBankAccountPermissions(instanceType: InstanceType74 | null | undefined, instanceId: number | null | undefined, userId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/RevokeBankAccountPermissions?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (bankAccountId !== undefined)
-            url_ += "bankAccountId=" + encodeURIComponent("" + bankAccountId) + "&"; 
         if (userId !== undefined)
             url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(bankAccountIds);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -21179,6 +21180,58 @@ export class UserServiceProxy {
     }
 
     protected processCreateOrUpdateUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @usersInput (optional) 
+     * @return Success
+     */
+    inviteUsers(usersInput: CreateOrUpdateUserInput[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/InviteUsers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(usersInput);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processInviteUsers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processInviteUsers(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processInviteUsers(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28911,6 +28964,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
     address!: AddressInfo | undefined;
+    workAddress!: AddressInfo | undefined;
     userId!: number | undefined;
     photo!: ContactPhotoInfo | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
@@ -28973,6 +29027,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.workAddress = data["workAddress"] ? AddressInfo.fromJS(data["workAddress"]) : <any>undefined;
             this.userId = data["userId"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
@@ -29047,6 +29102,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["workAddress"] = this.workAddress ? this.workAddress.toJSON() : <any>undefined;
         data["userId"] = this.userId;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
@@ -29106,6 +29162,7 @@ export interface IOrganizationBusinessInfo {
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     address: AddressInfo | undefined;
+    workAddress: AddressInfo | undefined;
     userId: number | undefined;
     photo: ContactPhotoInfo | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
@@ -29402,7 +29459,7 @@ export interface IContactPhoneInfo {
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
-    linkType!: string | undefined;
+    linkTypeId!: string | undefined;
     link!: string | undefined;
 
     constructor(data?: IContactLinkInfo) {
@@ -29416,7 +29473,7 @@ export class ContactLinkInfo implements IContactLinkInfo {
 
     init(data?: any) {
         if (data) {
-            this.linkType = data["linkType"];
+            this.linkTypeId = data["linkTypeId"];
             this.link = data["link"];
         }
     }
@@ -29430,14 +29487,14 @@ export class ContactLinkInfo implements IContactLinkInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["linkType"] = this.linkType;
+        data["linkTypeId"] = this.linkTypeId;
         data["link"] = this.link;
         return data; 
     }
 }
 
 export interface IContactLinkInfo {
-    linkType: string | undefined;
+    linkTypeId: string | undefined;
     link: string | undefined;
 }
 
@@ -39183,7 +39240,7 @@ export interface ILeadBusinessTeamContactInput {
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     leadRequestXref!: string | undefined;
-    companyName!: string | undefined;
+    leadName!: string | undefined;
     errorMessage!: string | undefined;
 
     constructor(data?: ILeadBusinessInfoOutput) {
@@ -39198,7 +39255,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
-            this.companyName = data["companyName"];
+            this.leadName = data["leadName"];
             this.errorMessage = data["errorMessage"];
         }
     }
@@ -39213,7 +39270,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
-        data["companyName"] = this.companyName;
+        data["leadName"] = this.leadName;
         data["errorMessage"] = this.errorMessage;
         return data; 
     }
@@ -39221,16 +39278,18 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
 export interface ILeadBusinessInfoOutput {
     leadRequestXref: string | undefined;
-    companyName: string | undefined;
+    leadName: string | undefined;
     errorMessage: string | undefined;
 }
 
 export class ImportLeadsInput implements IImportLeadsInput {
     leads!: ImportLeadInput[] | undefined;
     lists!: CustomerListInput[] | undefined;
+    tags!: CustomerTagInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
-    groupByCompany!: boolean | undefined;
+    starId!: number | undefined;
+    leadStageId!: number | undefined;
 
     constructor(data?: IImportLeadsInput) {
         if (data) {
@@ -39253,9 +39312,15 @@ export class ImportLeadsInput implements IImportLeadsInput {
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
-            this.groupByCompany = data["groupByCompany"];
+            this.starId = data["starId"];
+            this.leadStageId = data["leadStageId"];
         }
     }
 
@@ -39278,9 +39343,15 @@ export class ImportLeadsInput implements IImportLeadsInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
-        data["groupByCompany"] = this.groupByCompany;
+        data["starId"] = this.starId;
+        data["leadStageId"] = this.leadStageId;
         return data; 
     }
 }
@@ -39288,16 +39359,18 @@ export class ImportLeadsInput implements IImportLeadsInput {
 export interface IImportLeadsInput {
     leads: ImportLeadInput[] | undefined;
     lists: CustomerListInput[] | undefined;
+    tags: CustomerTagInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
-    groupByCompany: boolean | undefined;
+    starId: number | undefined;
+    leadStageId: number | undefined;
 }
 
 export class ImportLeadInput implements IImportLeadInput {
     personalInfo!: ImportLeadPersonalInput | undefined;
     businessInfo!: ImportLeadBusinessInput | undefined;
     notes!: string | undefined;
-    dateCreated!: string | undefined;
+    dateCreated!: moment.Moment | undefined;
     leadSource!: string | undefined;
     affiliateId!: string | undefined;
     campaignId!: string | undefined;
@@ -39322,7 +39395,7 @@ export class ImportLeadInput implements IImportLeadInput {
             this.personalInfo = data["personalInfo"] ? ImportLeadPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportLeadBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
-            this.dateCreated = data["dateCreated"];
+            this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadSource = data["leadSource"];
             this.affiliateId = data["affiliateId"];
             this.campaignId = data["campaignId"];
@@ -39347,7 +39420,7 @@ export class ImportLeadInput implements IImportLeadInput {
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
-        data["dateCreated"] = this.dateCreated;
+        data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadSource"] = this.leadSource;
         data["affiliateId"] = this.affiliateId;
         data["campaignId"] = this.campaignId;
@@ -39365,7 +39438,7 @@ export interface IImportLeadInput {
     personalInfo: ImportLeadPersonalInput | undefined;
     businessInfo: ImportLeadBusinessInput | undefined;
     notes: string | undefined;
-    dateCreated: string | undefined;
+    dateCreated: moment.Moment | undefined;
     leadSource: string | undefined;
     affiliateId: string | undefined;
     campaignId: string | undefined;
@@ -39393,7 +39466,7 @@ export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
     instagramUrl!: string | undefined;
     twitterUrl!: string | undefined;
     googlePlusUrl!: string | undefined;
-    angelistUrl!: string | undefined;
+    angelListUrl!: string | undefined;
     photoUrl!: string | undefined;
 
     constructor(data?: IImportLeadPersonalInput) {
@@ -39422,7 +39495,7 @@ export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
             this.instagramUrl = data["instagramUrl"];
             this.twitterUrl = data["twitterUrl"];
             this.googlePlusUrl = data["googlePlusUrl"];
-            this.angelistUrl = data["angelistUrl"];
+            this.angelListUrl = data["angelListUrl"];
             this.photoUrl = data["photoUrl"];
         }
     }
@@ -39451,7 +39524,7 @@ export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
         data["instagramUrl"] = this.instagramUrl;
         data["twitterUrl"] = this.twitterUrl;
         data["googlePlusUrl"] = this.googlePlusUrl;
-        data["angelistUrl"] = this.angelistUrl;
+        data["angelListUrl"] = this.angelListUrl;
         data["photoUrl"] = this.photoUrl;
         return data; 
     }
@@ -39473,7 +39546,7 @@ export interface IImportLeadPersonalInput {
     instagramUrl: string | undefined;
     twitterUrl: string | undefined;
     googlePlusUrl: string | undefined;
-    angelistUrl: string | undefined;
+    angelListUrl: string | undefined;
     photoUrl: string | undefined;
 }
 
