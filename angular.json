@@ -22,8 +22,8 @@
               "src/favicon.ico",
               {
                 "glob": "web.config",
-                "input": "/",
-				"output": "/"
+                "input": "",
+                "output": ""
               },
               {
                 "glob": "abp.signalr-client.js",
