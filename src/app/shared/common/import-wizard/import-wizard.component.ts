@@ -447,8 +447,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
-            }
+            }   
         });
+        if ($event.isValid)
+            this.mapGrid.instance.closeEditCell();
     }
 
     selectionModeChanged($event) {
@@ -495,5 +497,4 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     ImportWizardComponent.FieldSeparator).pop());
         });
     }
-
 }
