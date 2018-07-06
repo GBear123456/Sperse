@@ -118,10 +118,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.dialogConfig.width = '880px';
         this.dialogConfig.id = 'cfo-intro';
         this.dialogConfig.panelClass = ['cfo-intro', 'setup'];
+        this.dialogConfig.data = { alreadyStarted: false };
 
         const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
         dialogRef.afterClosed().subscribe(result => {
-            if (result.isGetStartedButtonClicked) this.onStart();
+            if (result && result.isGetStartedButtonClicked) this.onStart();
         });
     }
 }
