@@ -2,5 +2,5 @@ export const environment = {
     production: true,
     zenDeskEnabled: true,
     hmr: false,
-    appConfig: 'appconfig.prod.json'
+    appConfig: 'appconfig.beta.json'
 };
