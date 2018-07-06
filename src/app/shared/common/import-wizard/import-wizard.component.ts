@@ -7,7 +7,6 @@ import { MatHorizontalStepper } from '@angular/material';
 import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { Observable, Subject } from 'rxjs';
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
 
@@ -439,7 +438,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             $event.component.selectRows([$event.key]);
         else
             $event.component.deselectRows([$event.key]);
-            
+
         this.mapDataSource.store.data.forEach((row) => {
             if ($event.oldData.sourceField != row.sourceField &&
                 $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
@@ -458,8 +457,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         let selectedRows = [];
         $event.component.getVisibleRows().forEach((row) => {
             if (row.data.mappedField)
-                selectedRows.push(row.data.id);            
-        }); 
+                selectedRows.push(row.data.id);
+        });
         $event.component.selectRows(selectedRows);
     }
 
@@ -467,7 +466,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         if (typeof($event.displayValue) === 'boolean') {
             $event.component.deselectRows([$event.data.id]);
             $event.data.mappedField = "";
-        }        
+        }
     }
 
     onMapSelectionChanged($event) {

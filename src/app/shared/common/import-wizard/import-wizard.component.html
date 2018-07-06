@@ -11,6 +11,9 @@
                      target=".dx-header-row">
     </dx-context-menu>
     <mat-horizontal-stepper [linear]="true">
+        <ng-template matStepperIcon="edit" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
+        <ng-template matStepperIcon="done" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
+        <ng-template matStepperIcon="number" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
         <mat-step [stepControl]="uploadFile" [label]="l('Upload file')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <form [formGroup]="uploadFile">
@@ -62,7 +65,7 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
-                          [pager]="defaultGridPagerConfig"                          
+                          [pager]="defaultGridPagerConfig"
                           (onCellClick)="onMapCellClick($event)"
                           (onSelectionChanged)="onMapSelectionChanged($event)"
                           (onRowValidating)="onRowValidating($event)"
