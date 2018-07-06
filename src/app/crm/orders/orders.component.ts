@@ -1,21 +1,25 @@
+/** Core imports */
 import {
     Component,
     OnInit,
     AfterViewInit,
     OnDestroy,
     Injector,
-    Inject,
-    ViewEncapsulation,
     ViewChild
 } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { ActivatedRoute } from '@angular/router';
-import { AppComponentBase } from '@shared/common/app-component-base';
 
+/** Third party imports */
+import { DxDataGridComponent } from 'devextreme-angular';
+import * as _ from 'underscore';
+
+
+/** Application imports */
 import { AppService } from '@app/app.service';
-
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { AppConsts } from '@shared/AppConsts';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
@@ -24,14 +28,8 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-
-import { CommonLookupServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-
-import { DxDataGridComponent } from 'devextreme-angular';
-import 'devextreme/data/odata/store';
-import * as _ from 'underscore';
+import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -42,7 +40,7 @@ import * as _ from 'underscore';
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
-    showPipeline = true;
+    showPipeline = false;
     firstRefresh = false;
     gridDataSource: any = {};
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
@@ -71,9 +69,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 private _orderService: OrderServiceProxy,
-                private _appService: AppService,
-                private _activatedRoute: ActivatedRoute,
-                private _commonLookupService: CommonLookupServiceProxy) {
+                private _appService: AppService) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -88,7 +84,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 paginate: true
-            }
+                }
         };
 
         this.initToolbarConfig();
@@ -360,33 +356,33 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 location: 'after',
                 areItemsDependent: true,
                 items: [
-                    {
-                        name: 'box',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Box);
-                            },
-                        }
-                    },
-                    {
-                        name: 'pipeline',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Pipeline);
-                            },
-                        }
-                    },
-                    {
-                        name: 'grid',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Grid);
-                            },
-                        }
-                    }
+                    // {
+                    //     name: 'box',
+                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                    //     options: {
+                    //         checkPressed: () => {
+                    //             return (this.dataLayoutType == DataLayoutType.Box);
+                    //         },
+                    //     }
+                    // },
+                    // {
+                    //     name: 'pipeline',
+                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                    //     options: {
+                    //         checkPressed: () => {
+                    //             return (this.dataLayoutType == DataLayoutType.Pipeline);
+                    //         },
+                    //     }
+                    // },
+                    // {
+                    //     name: 'grid',
+                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                    //     options: {
+                    //         checkPressed: () => {
+                    //             return (this.dataLayoutType == DataLayoutType.Grid);
+                    //         },
+                    //     }
+                    // }
                 ]
             }
         ];
@@ -422,7 +418,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngAfterViewInit(): void {
-        this.gridDataSource = this.dataGrid.instance.getDataSource();
+        //this.gridDataSource = this.dataGrid.instance.getDataSource();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
