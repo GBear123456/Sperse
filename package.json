@@ -113,6 +113,7 @@
     "odata-query": "^5.0.0",
     "pace-progress": "^1.0.2",
     "papaparse": "4.4",
+    "parse-address": "^0.0.10",
     "parse-full-name": "^1.2.3",
     "popper.js": "^1.12.9",
     "primeng": "6.0.0-alpha.1",

@@ -164,6 +164,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     initReviewDataSource(mappedFields) {
         let columnsIndex = {};
         this.emptyReviewData();
+
         this.fileData.data.map((row, index) => {
             if (index) {
                 if (row.length == Object.keys(columnsIndex).length) {
@@ -192,11 +193,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         });
 
         let groups = this.reviewGroups.filter(Boolean);
+        this.reviewGroups = [];
         groups.forEach((group, index) => {
             if (group && group.length) {
                 if (group.length > 1) {
                     let groupName = this.l('Similar items') +
                         '(' + group[0].compared + ')';
+                    this.reviewGroups.push(groupName);
                     group.forEach((item) => {
                         item.compared = groupName;
                     });
@@ -493,23 +496,24 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
+            let columnConfig = this.columnsConfig[column.dataField];
             if (column.dataField == 'uniqueIdent')
                 column.visible = false;
             else if (column.dataField == 'compared') {
-                if (this.reviewGroups.length > 1)
+                if (this.reviewGroups.length)
                     column.groupIndex = 0;
                 else {
                     column.visible = false;
                     this.selectedPreviewRows = [];
                 }
             } else {
-                let columnConfig = this.columnsConfig[column.dataField];
-                if (columnConfig) {
+                if (columnConfig)
                     _.extend(column, columnConfig);
-                }
             }
 
-            column.caption = _s.humanize(column.dataField.split(ImportWizardComponent.FieldSeparator).pop());
+            if (!columnConfig || !columnConfig['caption'])
+                column.caption = _s.humanize(column.dataField.split(
+                    ImportWizardComponent.FieldSeparator).pop());
         });
     }
 }
