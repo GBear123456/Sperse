@@ -54,6 +54,7 @@ import { CategorizationComponent } from './transactions/categorization/categoriz
 import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
 import { SynchProgressComponent } from './shared/common/synch-progress/synch-progress.component';
 import { RulesComponent } from './rules/rules.component';
+import { PermissionsComponent } from './permissions/permissions.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
 import { RuleDeleteDialogComponent } from './rules/rule-delete-dialog/rule-delete-dialog.component';
 import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
@@ -140,6 +141,7 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         RuleDeleteDialogComponent,
         CategoryDeleteDialogComponent,
         RulesComponent,
+        PermissionsComponent,
         CFOModalDialogComponent,
         BusinessEntitiesComponent,
         BusinessEntityEditDialogComponent,

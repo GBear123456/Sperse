@@ -20,6 +20,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() selectedKeys: any;
     @Input() targetSelector: string;
     @Input() showConfirmation: boolean = true;
+    @Input() hideButtons = false;
 
     @Input() list: any;
 

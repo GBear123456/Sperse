@@ -204,18 +204,28 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 areItemsDependent: true,
                 items: [
                     {
-                        name: 'listsSmall',
+                        name: 'lists',
                         action: this.toggleLists.bind(this),
                         options: {
                             accessKey: 'ClientLists'
                         }
                     },
                     {
-                        name: 'tagsSmall',
+                        name: 'tags',
                         action: this.toggleTags.bind(this),
                         options: {
                             accessKey: 'ClientTags'
                         }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'discard',
+                        action: this.resetFullDialog.bind(this)
                     }
                 ]
             }

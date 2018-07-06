@@ -21,6 +21,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItems(value) {
         this.selectedTags = value;
     }

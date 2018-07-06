@@ -29,7 +29,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._questionnaireService.getQuestionnaire(this.identifier)
+        this._questionnaireService.get(this.identifier)
             .subscribe(result => {
                 this.question = result.questions[0];
             });
@@ -48,10 +48,10 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
         });
         response.answers.push(new AnswerDto({
             questionId: this.question.id,
-            choosedOptions: selectedAnswerIds
+            options: selectedAnswerIds
         }));
 
-        this._questionnaireService.submitQuestionnaireResponse(response)
+        this._questionnaireService.submitResponse(response)
             .subscribe((result) => { });
     }
 

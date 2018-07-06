@@ -7,7 +7,6 @@ import { MatHorizontalStepper } from '@angular/material';
 import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { Observable, Subject } from 'rxjs';
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
 
@@ -41,13 +40,21 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             };
         });
     }
+    @Input() toolbarConfig: any[];
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() userAssign: EventEmitter<any> = new EventEmitter();
+    @Output() listsSelect: EventEmitter<any> = new EventEmitter();
+    @Output() ratingSelect: EventEmitter<any> = new EventEmitter();
+    @Output() starSelect: EventEmitter<any> = new EventEmitter();
+    @Output() tagsSelect: EventEmitter<any> = new EventEmitter();
+
 
     public static readonly FieldSeparator = '_';
 
     uploadFile: FormGroup;
+    dataMapping: FormGroup;
 
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
@@ -85,7 +92,18 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
         this.uploadFile = _formBuilder.group({
-          url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
+            url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)],
+            valid: ['', () => {
+                return this.checkFileDataValid() ? null: { 'required': true };
+            }]
+        });
+        this.dataMapping = _formBuilder.group({
+            valid: ['', () => {
+                let validationResult = null;
+                if (this.validateFieldsMapping)
+                    validationResult = _.extend(this.validateFieldsMapping(this.getMappedFields()), { 'required': true });
+                return validationResult && validationResult.isMapped && !validationResult.error ? null: validationResult;
+            }]
         });
     }
 
@@ -111,28 +129,20 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
-            if (this.checkFileDataValid()) {
+            this.uploadFile.controls.valid.updateValueAndValidity();
+            if (this.uploadFile.valid) {                
                 this.buildMappingDataSource();
                 this.stepper.next();
             } else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
-            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
-            if (!mappedFields.length) {
-                mappedFields = this.mapDataSource.store.data.filter((row) => {
-                    return !!row.mappedField;
-                });
-            }
-            if (this.validateFieldsMapping) {
-                let validationResult = this.validateFieldsMapping(mappedFields);
-                if (validationResult.isMapped && !validationResult.error) {
-                    this.initReviewDataSource(mappedFields);
-                    this.stepper.next();
-                } else {
-                    this.highlightUnmappedFields(mappedFields);
-                    let error = validationResult.isMapped ? validationResult.error : this.l('MapAllRecords');
-                    this.message.error(error);
-                }
+            this.dataMapping.controls.valid.updateValueAndValidity();
+            if (this.dataMapping.valid) {
+                this.initReviewDataSource(this.getMappedFields()); 
+                this.stepper.next();    
+            } else {
+                this.highlightUnmappedFields(this.getMappedFields());
+                this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
@@ -140,7 +150,17 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    cancel() {
+    getMappedFields() {
+        let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+        if (!mappedFields.length) {
+            mappedFields = this.mapDataSource.store.data.filter((row) => {
+                return !!row.mappedField;
+            });
+        }
+        return mappedFields;
+    }
+
+    cancel() {        
         this.reset(() => {
             this.onCancel.emit();
         });
@@ -439,14 +459,16 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             $event.component.selectRows([$event.key]);
         else
             $event.component.deselectRows([$event.key]);
-            
+
         this.mapDataSource.store.data.forEach((row) => {
             if ($event.oldData.sourceField != row.sourceField &&
                 $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
-            }
+            }   
         });
+        if ($event.isValid)
+            this.mapGrid.instance.closeEditCell();
     }
 
     selectionModeChanged($event) {
@@ -458,8 +480,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         let selectedRows = [];
         $event.component.getVisibleRows().forEach((row) => {
             if (row.data.mappedField)
-                selectedRows.push(row.data.id);            
-        }); 
+                selectedRows.push(row.data.id);
+        });
         $event.component.selectRows(selectedRows);
     }
 
@@ -467,7 +489,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         if (typeof($event.displayValue) === 'boolean') {
             $event.component.deselectRows([$event.data.id]);
             $event.data.mappedField = "";
-        }        
+        }
     }
 
     onMapSelectionChanged($event) {
