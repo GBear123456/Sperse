@@ -36,6 +36,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     public static readonly FieldSeparator = '_';
 
     uploadFile: FormGroup;
+    dataMapping: FormGroup;
 
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
@@ -76,7 +77,18 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         super(injector);
 
         this.uploadFile = _formBuilder.group({
-          url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
+            url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)],
+            valid: ['', () => {
+                return this.checkFileDataValid() ? null: { 'required': true };
+            }]
+        });
+        this.dataMapping = _formBuilder.group({
+            valid: ['', () => {
+                let validationResult = null;
+                if (this.validateFieldsMapping)
+                    validationResult = _.extend(this.validateFieldsMapping(this.getMappedFields()), { 'required': true });
+                return validationResult && validationResult.isMapped && !validationResult.error ? null: validationResult;
+            }]
         });
     }
 
@@ -103,36 +115,35 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
-            if (this.checkFileDataValid())
-            {
+            this.uploadFile.controls.valid.updateValueAndValidity();
+            if (this.uploadFile.valid) {                
                 this.buildMappingDataSource();
                 this.stepper.next();
-            }
-            else
+            } else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
-            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
-            if (!mappedFields.length) {
-                mappedFields = this.mapDataSource.store.data.filter((row) => {
-                    return !!row.mappedField;
-                });
-            }
-            if (this.validateFieldsMapping) {
-                var validationResult = this.validateFieldsMapping(mappedFields);
-                if (validationResult.isMapped && !validationResult.error) {
-                    this.initReviewDataSource(mappedFields); 
-                    this.stepper.next();    
-                }
-                else {
-                    this.highlightUnmappedFields(mappedFields);
-                    let error = validationResult.isMapped ? validationResult.error : this.l('MapAllRecords');
-                    this.message.error(error);
-                }
+            this.dataMapping.controls.valid.updateValueAndValidity();
+            if (this.dataMapping.valid) {
+                this.initReviewDataSource(this.getMappedFields()); 
+                this.stepper.next();    
+            } else {
+                this.highlightUnmappedFields(this.getMappedFields());
+                this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
         }
+    }
+
+    getMappedFields() {
+        let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+        if (!mappedFields.length) {
+            mappedFields = this.mapDataSource.store.data.filter((row) => {
+                return !!row.mappedField;
+            });
+        }
+        return mappedFields;
     }
 
     cancel() {        
@@ -484,4 +495,5 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     ImportWizardComponent.FieldSeparator).pop());
         });
     }
+
 }
