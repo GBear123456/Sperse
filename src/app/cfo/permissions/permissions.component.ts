@@ -188,7 +188,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const instanceType = <any>this.instanceType;
         let methodObservable = permission ?
                                this.securityManagmentServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permission.All) :
-                               this.securityManagmentServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId);
+                               this.securityManagmentServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, [userId]);
         methodObservable.subscribe(res => {
             this.notify.success(this.ls('Platform', 'AppliedSuccessfully'));
         });
