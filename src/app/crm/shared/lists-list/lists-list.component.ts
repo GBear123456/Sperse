@@ -21,6 +21,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Lists']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItems(value) {
         this.selectedLists = value;
     }
@@ -31,7 +32,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     private _prevClickDate = new Date();
-    private selectedLists = [];
+    selectedLists = [];
     list: any;
 
     lastNewAdded: any;
@@ -301,5 +302,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             else if (this.lastNewAdded.name == item2)
                 return 1;
         }
+    }
+
+    onCellClick(event) {
+        this.selectedLists = this.listComponent.option('selectedRowKeys');
     }
 }

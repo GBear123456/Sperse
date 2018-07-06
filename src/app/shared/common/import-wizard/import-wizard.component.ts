@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatHorizontalStepper } from '@angular/material';
 import { PapaParseService } from 'ngx-papaparse';
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
+import { AppService } from '@app/app.service';
 
 import { DxDataGridComponent } from 'devextreme-angular';
 
@@ -29,9 +30,16 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @Input() lookupFields: any;
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
+    @Input() toolbarConfig: any[];
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() userAssign: EventEmitter<any> = new EventEmitter();
+    @Output() listsSelect: EventEmitter<any> = new EventEmitter();
+    @Output() ratingSelect: EventEmitter<any> = new EventEmitter();
+    @Output() starSelect: EventEmitter<any> = new EventEmitter();
+    @Output() tagsSelect: EventEmitter<any> = new EventEmitter();
+
 
     public static readonly FieldSeparator = '_';
 
@@ -46,7 +54,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     private readonly MAPPING_STEP_INDEX = 1;
     private readonly REVIEW_STEP_INDEX  = 2;
     private readonly FINISH_STEP_INDEX  = 3;
-    
+
     showSteper: boolean = true;
     loadProgress: number = 0;
     dropZoneProgress: number = 0;
@@ -72,6 +80,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     constructor(
         injector: Injector,
         private _parser: PapaParseService,
+        private _appService: AppService,
         private _formBuilder: FormBuilder
     ) { 
         super(injector);
@@ -468,11 +477,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         $event.component.selectItem(cell.value);
     }
 
-    cleanInput() {
-        this.dataFromInput.nativeElement.value = '';
-        this.dropZoneProgress = null;
-    }
-
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
             let columnConfig = this.columnsConfig[column.dataField];
@@ -495,5 +499,4 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     ImportWizardComponent.FieldSeparator).pop());
         });
     }
-
 }
