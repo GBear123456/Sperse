@@ -46,65 +46,65 @@ export class OperationsWidgetComponent implements OnInit {
         this.toolbarConfig = [
             {
                 location: 'before', items: [
-                {
-                    name: 'assign',
-                    action: this.toggleUserAssignment.bind(this)
-                },
-                this.leadId ? { 
-                    widget: 'dxDropDownMenu',
-                    disabled: !this.stages.length,
-                    name: 'stage', 
-                    options: {
-                        hint: 'Stage',
-                        items: this.stages
+                    {
+                        name: 'assign',
+                        action: this.toggleUserAssignment.bind(this)
+                    },
+                    this.leadId ? { 
+                        widget: 'dxDropDownMenu',
+                        disabled: !this.stages.length,
+                        name: 'stage', 
+                        options: {
+                            hint: 'Stage',
+                            items: this.stages
+                        }
+                    } : 
+                    {
+                        name: 'status',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: 'Status',
+                            items: [
+                                {
+                                    action: this.updateStatus.bind(this, 'A'),
+                                    text: 'Active',
+                                }, {
+                                    action: this.updateStatus.bind(this, 'I'),
+                                    text: 'Inactive',
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'lists',
+                        action: this.toggleLists.bind(this)
+                    },
+                    {
+                        name: 'tags',
+                        action: this.toggleTags.bind(this)
+                    },
+                    {
+                        name: 'rating',
+                        action: this.toggleRating.bind(this),
+                    },
+                    {
+                        name: 'star',
+                        action: this.toggleStars.bind(this),
                     }
-                } : 
-                {
-                    name: 'status',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: 'Status',
-                        items: [
-                            {
-                                action: this.updateStatus.bind(this, 'A'),
-                                text: 'Active',
-                            }, {
-                                action: this.updateStatus.bind(this, 'I'),
-                                text: 'Inactive',
-                            }
-                        ]
-                    }
-                },
-                {
-                    name: 'lists',
-                    action: this.toggleLists.bind(this)
-                },
-                {
-                    name: 'tags',
-                    action: this.toggleTags.bind(this)
-                },
-                {
-                    name: 'rating',
-                    action: this.toggleRating.bind(this),
-                },
-                {
-                    name: 'star',
-                    action: this.toggleStars.bind(this),
-                }
-            ]
+                ]
             },
             {
                 location: 'after', items: [
-                {
-                    name: 'print',
-                    action: this.print.emit.bind(this.print)
-                }
-            ]
+                    {
+                        name: 'print',
+                        action: this.print.emit.bind(this.print)
+                    }
+                ]
             }
         ];
 
         if (this.leadId) {
-            this.toolbarConfig[0]['items'].push({
+            this.toolbarConfig[1]['items'].push({
                 name: 'delete',
                 action: this.delete.bind(this)
             });
