@@ -275,7 +275,10 @@
 }
 
 #mappedFieldsTreeView {
-    /deep/ .dx-scrollable-content li[aria-level="1"] > .dx-item span {
-        font-weight: bold;
+    /deep/ .dx-scrollable-content li[aria-level="1"] > .dx-item {
+        pointer-events: none;
+        span {        
+            font-weight: bold;
+        }
     }
 }

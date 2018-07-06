@@ -90,14 +90,13 @@
                                       [showClearButton]="true"
                                       [value]="cell.value"
                                       (onValueChanged)="cell.setValue($event.value)">
-                        <div *dxTemplate="let data of 'content'">
+                        <div *dxTemplate="let data of 'content'" style="padding-bottom: 15px;">
                             <dx-tree-view id="mappedFieldsTreeView"
                                           [dataSource]="lookupFields"
                                           dataStructure="plain"
                                           keyExpr="id"
                                           parentIdExpr="parent"
                                           displayExpr="name"
-                                          [height]="450"
                                           [searchEnabled]="true"
                                           [selectNodesRecursive]="false"
                                           (onContentReady)="onLookupFieldsContentReady($event, cell)"
