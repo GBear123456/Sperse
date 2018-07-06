@@ -95,16 +95,16 @@ export class OperationsWidgetComponent implements OnInit {
             },
             {
                 location: 'after', items: [
-                {
-                    name: 'print',
-                    action: this.print.emit.bind(this.print)
-                }
-            ]
+                    {
+                        name: 'print',
+                        action: this.print.emit.bind(this.print)
+                    }
+                ]
             }
         ];
 
         if (this.leadId) {
-            this.toolbarConfig[0]['items'].push({
+            this.toolbarConfig[1]['items'].push({
                 name: 'delete',
                 action: this.delete.bind(this)
             });

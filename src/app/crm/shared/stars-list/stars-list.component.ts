@@ -16,6 +16,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
     }

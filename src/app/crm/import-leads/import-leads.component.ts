@@ -13,10 +13,16 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
-    LeadServiceProxy
+    LeadServiceProxy, CustomerListInput
 } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
+import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/crm/shared/rating/rating.component';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 
 import * as addressParser from 'parse-address';
 
@@ -28,6 +34,12 @@ import * as _ from 'underscore';
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
@@ -137,6 +149,59 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     fullName: ImportLeadFullName;
     fullAddress: ImportLeadAddressInput;
 
+    userId: any;
+    toolbarConfig = [
+        {
+            location: 'before', items: [
+                {
+                    name: 'assign',
+                    action: this.toggleUserAssignment.bind(this),
+                    attr: {
+                        'filter-selected': true
+                    }
+                },
+                {
+                    name: 'stage',
+                    attr: {
+                        'filter-selected': false
+                    }
+                },
+                {
+                    name: 'lists',
+                    action: this.toggleLists.bind(this),
+                    attr: {
+                        'filter-selected': false
+                    }
+                },
+                {
+                    name: 'tags',
+                    action: this.toggleTags.bind(this),
+                    attr: {
+                        'filter-selected': false
+                    }
+                },
+                {
+                    name: 'rating',
+                    action: this.toggleRating.bind(this),
+                    attr: {
+                        'filter-selected': true
+                    }
+                },
+                {
+                    name: 'star',
+                    action: this.toggleStars.bind(this),
+                    attr: {
+                        'filter-selected': false
+                    }
+                }
+            ]
+        }
+    ];
+    selectedClientKeys: any = [];
+    selectedItems: any = [];
+    defaultRating = 5;
+    stages = [];
+
     readonly mappingObjectNames = {
         personalInfo: ImportLeadPersonalInput.fromJS({}),
         fullName: ImportLeadFullName.fromJS({}),
@@ -166,6 +231,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportLeadInput.fromJS({}));
         this.initFieldsConfig();
+        this.userId = abp.session.userId;
+        this.selectedClientKeys.push(this.userId);
+        this.selectedItems.push(this.userId);
     }
 
     private initFieldsConfig() {
@@ -185,7 +253,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 this.fieldsConfig[field] = { visibleIndex: fieldIndex };
             fieldIndex++;
         });
-  
+
         this.FIELDS_CAPTIONS.forEach(field => {
             let parts = field.split('_'),
                 caption = _s.humanize(parts.pop()),
@@ -272,8 +340,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     createLeadsInput(data: any[]): ImportLeadsInput {
-        let result = ImportLeadsInput.fromJS({});
+        let result = ImportLeadsInput.fromJS({
+            assignedUserId: this.userAssignmentComponent.assignedUserId || this.userId,
+            ratingId: this.ratingComponent.ratingValue || this.defaultRating
+        });
         result.leads = [];
+        result.lists = [];
+
+        this.listsComponent.selectedLists.forEach(item => {
+            let obj  = this.listsComponent.list.find(el => el.id == item);
+            result.lists.push(new CustomerListInput({ name: obj.name }));
+        });
 
         data.forEach(v => {
             let lead = new ImportLeadInput();
@@ -390,5 +467,28 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             result.error = this.l('FieldsMapError');
 
         return result;
+    }
+    toggleUserAssignment() {
+        this.userAssignmentComponent.toggle();
+    }
+
+    toggleLists() {
+        this.listsComponent.toggle();
+    }
+
+    toggleTags() {
+        this.tagsComponent.toggle();
+    }
+
+    toggleRating() {
+        this.ratingComponent.toggle();
+    }
+
+    toggleStars() {
+        this.starsListComponent.toggle();
+    }
+
+    toggleStages() {
+        this.stagesComponent.toggle();
     }
 }
