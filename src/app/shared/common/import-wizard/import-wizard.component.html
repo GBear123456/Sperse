@@ -33,7 +33,7 @@
                         <div class="file-load-progress" [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 || loadProgress > 100 ? 100: dropZoneProgress || loadProgress) + '%, #fff 0%)'}">
                             <p>{{l('File')}}: {{fileName}}</p>
                             <p class="file-size">{{l('FileSize')}}: {{fileSize}}</p>
-                            <button class="remove-file" (click)="cleanInput()">
+                            <button class="remove-file" (click)="reset()">
                                 <i class="fa fa-times"></i>
                             </button>
                         </div>
