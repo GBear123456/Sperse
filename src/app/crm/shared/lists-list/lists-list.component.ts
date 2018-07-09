@@ -4,7 +4,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
 import { CustomerListsServiceProxy, AddCustomersToListsInput, CustomerListInput,
-    UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
+    UpdateCustomerListInput, UpdateCustomerListsInput} from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
@@ -53,42 +53,64 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined) {
+    apply(isRemove: boolean = false, selectedKeys = undefined) {
         if (this.listComponent) {
             this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length), 
+                        this.l(isRemove ? 'RemoveFromBulkUpdateConfirmation' : 'AddToListsBulkUpdateConfirmation', 
+                            this.selectedKeys.length, this.selectedLists.length || this.l('all')), 
                         isConfirmed => {
                             if (isConfirmed)
-                                this.process();
+                                this.process(isRemove);
                             else
                                 if (this.bulkUpdateMode)
                                     setTimeout(() => { this.listComponent.deselectAll(); }, 500);
                         }
                     );
                 else
-                    this.process();
+                    this.process(isRemove);
             }
             setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }
 
-    process() {
-        this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
-            customerIds: this.selectedKeys,
-            lists: this.selectedItems
-        })).finally(() => {
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-        }).subscribe((result) => {
-            this.notify.success(this.l('ListsAssigned'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
-        });
+    process(isRemove: boolean) {
+        let customerIds = this.selectedKeys;
+        let lists = this.selectedItems;
+        if (this.bulkUpdateMode) {
+            if (isRemove)
+                this._listsService.removeCustomersFromLists(customerIds, this.selectedLists
+                ).subscribe((result) => {
+                    this.notify.success(this.l('ListsUnassigned'));
+                },  (error) => {
+                    this.notify.error(this.l('BulkActionErrorOccured'));
+                });
+            else
+                if (lists && lists.length) 
+                    this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
+                        customerIds: customerIds,
+                        lists: lists 
+                    })).finally(() => {
+                        setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                    }).subscribe((result) => {
+                        this.notify.success(this.l('ListsAssigned'));
+                    }, (error) => {
+                        this.notify.error(this.l('BulkActionErrorOccured'));
+                    });
+        }
+        else
+            this._listsService.updateCustomerLists(UpdateCustomerListsInput.fromJS({
+                customerId: customerIds[0],
+                lists: lists
+            })).subscribe((result) => {
+                this.notify.success(this.l('CustomerListsUpdated'));
+            }, (error) => {
+                this.notify.error(this.l('BulkActionErrorOccured'));
+            });
     }
 
     refresh() {
