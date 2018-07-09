@@ -106,6 +106,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
         this.showSteper = false;
         this.uploadFile.reset();
+        this.dataMapping.reset();
 
         this.mapDataSource = [];
         this.emptyReviewData();
@@ -140,11 +141,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     getMappedFields() {
-        let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+        let mappedFields = this.mapGrid && 
+            this.mapGrid.instance.getSelectedRowsData() || [];
         if (!mappedFields.length) {
-            mappedFields = this.mapDataSource.store.data.filter((row) => {
-                return !!row.mappedField;
-            });
+            mappedFields = this.mapDataSource && this.mapDataSource.store &&
+                this.mapDataSource.store.data.filter((row) => {
+                    return !!row.mappedField;
+                }) || [];
         }
         return mappedFields;
     }
