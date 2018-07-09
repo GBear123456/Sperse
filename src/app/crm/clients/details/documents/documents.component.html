@@ -67,5 +67,9 @@
         <h4 class="file-name">{{ currentDocumentInfo.fileName }} <span class="file-size">({{ currentDocumentInfo.size | filesize }})</span></h4>
         <span class="close" (click)="closeDocument($event)"></span>
     </div>
-    <iframe class="open-document-iframe" [srcdoc]="wopiResponseHtml" (load)="onDocumentIframeLoad($event)" title="Office Online Frame" allowfullscreen="true"></iframe>
+    <form id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
+        <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
+        <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
+    </form>
+    <span id="frameholder" class="wopi-frame-holder"></span>
 </div>

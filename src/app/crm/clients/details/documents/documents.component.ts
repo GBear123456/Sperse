@@ -38,7 +38,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     public actionRecordData: any;
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
-    public wopiResponseHtml: any;
+    public wopiUrlsrc: string;
+    public wopiAccessToken: string;
+    public wopiAccessTokenTtl: string;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -174,21 +176,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
-        let formData = new FormData();
-        formData.append('access_token', wopiRequestInfo.accessToken);
-        formData.append('access_token_ttl', wopiRequestInfo.accessTokenTtl.toString());
-        this.http.post(wopiRequestInfo.wopiUrlsrc, formData, { responseType: 'text' }).subscribe((response) => {
-            this.wopiResponseHtml = this.domSanitizer.bypassSecurityTrustHtml(response.toString());
-            this.openDocumentMode = true;
-        });
+        this.openDocumentMode = true;
+        this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
+        this.wopiAccessToken = wopiRequestInfo.accessToken;
+        this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
+        setTimeout(() => {
+            window['submitWopiRequest']();
+        }, 500);
     }
 
     closeDocument() {
         this.openDocumentMode = false;
-    }
-
-    onDocumentIframeLoad(event) {
-        event.target.width = screen.width - 350;
-        event.target.height = screen.height - 390;
     }
 }
