@@ -5,7 +5,7 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{title}}</span>
-                <div *ngIf="selectedKeys.length" [hidden]="hideButtons">
+                <div *ngIf="hideButtons || selectedKeys.length">
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>

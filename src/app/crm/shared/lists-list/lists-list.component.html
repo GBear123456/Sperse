@@ -5,11 +5,11 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Lists')}}</span>
-                <div [hidden]="bulkUpdateMode" [hidden]="hideButtons">
+                <div [hidden]="hideButtons || bulkUpdateMode">
                     <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
-                <div [hidden]="!bulkUpdateMode || !selectedKeys?.length">
+                <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">
                     <span class="filter-clear" (click)="apply(true)">{{l('Remove')}}</span>
                     <span class="filter-apply" [class.disabled]="!listslist.selectedRowKeys?.length" (click)="apply()">{{l('Add')}}</span>
                 </div>
