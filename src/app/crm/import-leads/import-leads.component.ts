@@ -141,6 +141,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     totalCount: number = 0;
     importedCount: number = 0;
     mappingFields: any[] = [];
+    importType: number = 0;
 
     fullName: ImportLeadFullName;
     fullAddress: ImportLeadAddressInput;
@@ -149,6 +150,32 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     toolbarConfig = [
         {
             location: 'before', items: [
+                {
+                    text: '',
+                    name: 'select-box',  
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        width: 130,
+                        selectedIndex: this.importType,
+                        items: [
+                            {          
+                                action: this.importTypeChanged.bind(this),
+                                text: this.l('Leads')
+                            }, {
+                                action: this.importTypeChanged.bind(this),
+                                text: this.l('Clients')
+                            }, {
+                                disabled: true,
+                                action: this.importTypeChanged.bind(this),
+                                text: this.l('Partners')
+                            }, {
+                                disabled: true,
+                                action: this.importTypeChanged.bind(this),
+                                text: this.l('Orders')
+                            }
+                        ]
+                    }
+                },
                 {
                     name: 'assign',
                     action: this.toggleUserAssignment.bind(this),
@@ -231,6 +258,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
         this.selectedItems.push(this.userId);
+    }
+
+    private importTypeChanged(event) {
+        const IMPORT_TYPE_ITEM_INDEX = 0;
+        const STAGE_ITEM_INDEX = 2;
+
+        this.importType = event.itemIndex;  //event.itemData.text;
+        let configuration = _.clone(this.toolbarConfig),
+            items = configuration[0].items;
+        items[IMPORT_TYPE_ITEM_INDEX].options
+            .selectedIndex = this.importType;
+        items[STAGE_ITEM_INDEX].disabled = 
+            Boolean(event.itemIndex);
+
+        this.toolbarConfig = configuration;
     }
 
     private initFieldsConfig() {

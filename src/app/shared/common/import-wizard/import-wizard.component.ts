@@ -34,12 +34,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
-    @Output() userAssign: EventEmitter<any> = new EventEmitter();
-    @Output() listsSelect: EventEmitter<any> = new EventEmitter();
-    @Output() ratingSelect: EventEmitter<any> = new EventEmitter();
-    @Output() starSelect: EventEmitter<any> = new EventEmitter();
-    @Output() tagsSelect: EventEmitter<any> = new EventEmitter();
-
 
     public static readonly FieldSeparator = '_';
 
@@ -93,9 +87,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
         this.dataMapping = _formBuilder.group({
             valid: ['', () => {
-                let validationResult = null;
+                let validationResult: any = { 'required': true };
                 if (this.validateFieldsMapping)
-                    validationResult = _.extend(this.validateFieldsMapping(this.getMappedFields()), { 'required': true });
+                    _.extend(validationResult, this.validateFieldsMapping(this.getMappedFields()));
                 return validationResult && validationResult.isMapped && !validationResult.error ? null: validationResult;
             }]
         });
