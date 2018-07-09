@@ -15,53 +15,66 @@
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <form [formGroup]="uploadFile">
                 <div class="block left">
-                    <h3 *ngIf="dropZoneProgress < 101; else fileLoading" class="title">{{l('Upload from computer')}}</h3>
-                    <ng-template #fileLoading>
-                        <h3 class="title">{{l('File uploaded successfully')}} <b>{{l('Total')}} {{fileData?.data ? fileData?.data?.length - 1: ''}} {{l('records')}}</b></h3>
-                    </ng-template>
-                    <file-drop [hidden]="dropZoneProgress"
-                               (onFileDrop)="fileDropped($event)">
-                        <p>
-                            Drag and Drop files from your computer here<br>or<br>
+                    <h3 [hidden]="dropZoneProgress || loadProgress" class="title">{{l('Upload from computer')}}</h3>
+                    <file-drop [hidden]="dropZoneProgress || loadProgress" (onFileDrop)="fileDropped($event)">
+                        <p>Drag and Drop files from your computer here
+                            <br> or
+                            <br>
                             <a href="javascript:void(0);">
                                 <input name="importFile" type="file" #importFileInput (change)="fileSelected($event)" accept=".csv">browse
                             </a>
                         </p>
                     </file-drop>
-                    <div class="file-info" [hidden]="!dropZoneProgress">
-                        <div class="file-load-progress"
-                             [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 ? 100: dropZoneProgress) + '%, #fff 0%)'}">
+                    <!-- uploaded template -->
+                    <h3 class="title" [hidden]="!dropZoneProgress && !loadProgress">{{l('File uploaded successfully')}}
+                        <b>{{l('Total')}} {{fileData?.data ? fileData?.data?.length - 1: ''}} {{l('records')}}</b>
+                    </h3>
+                    <div class="file-info" [hidden]="!dropZoneProgress && !loadProgress">
+                        <div class="file-load-progress" [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 || loadProgress > 100 ? 100: dropZoneProgress || loadProgress) + '%, #fff 0%)'}">
                             <p>{{l('File')}}: {{fileName}}</p>
                             <p class="file-size">{{l('FileSize')}}: {{fileSize}}</p>
-                            <button class="remove-file" (click)="cleanInput()"><i class="fa fa-times"></i></button><!--todo: add action for remove file-->
+                            <button class="remove-file" (click)="reset()">
+                                <i class="fa fa-times"></i>
+                            </button>
                         </div>
-
-                        <p><label><input type="checkbox" name="hasHeadersCheckBox" [(ngModel)]="fileHasHeader" [ngModelOptions]="{standalone: true}" /> {{l('My file has headers')}}</label></p>
+                        <p>
+                            <label>
+                                <input type="checkbox" name="hasHeadersCheckBox" [(ngModel)]="fileHasHeader" [ngModelOptions]="{standalone: true}"
+                                /> {{l('My file has headers')}}</label>
+                        </p>
                     </div>
+                    <!-- end uploaded template -->
                 </div>
-                <div class="v-center">OR</div>
+                <div class="v-center" [hidden]="!dropZoneProgress || !loadProgress">OR</div>
                 <div class="block right">
-                    <h3>Load from URL</h3>
-                    <mat-form-field class="full-width">
-                        <input matInput type="url" formControlName="url" [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (loadProgress > 100 ? 100: (100 - loadProgress)) + '%, #00aeef 0%)'}">
-                    </mat-form-field>
-                    <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}} <i class="fa fa-angle-right"></i></button>
-                    <div class="file-info" [hidden]="!loadProgress">
-                        <p>{{l('File')}}: {{fileName}}</p>
-                        <p>{{l('FileSize')}}: {{fileSize}}</p>
-                        <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
+                    <div *ngIf="loadProgress < 101 && !dropZoneProgress">
+                        <h3 class="title">{{l('Load from URL')}}</h3>
+                        <mat-form-field class="full-width">
+                            <input matInput type="url" formControlName="url" #importFileInput>
+                        </mat-form-field>
+                        <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}}
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                    </div>
+                    <div [hidden]="!dropZoneProgress && !loadProgress">
+                        <h3 class="title settings">{{l('Default settings')}}&nbsp;
+                            <span>({{l('if no values are selected in uploaded file')}})</span>
+                        </h3>
+                        <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == UPLOAD_STEP_INDEX"></app-toolbar>
                     </div>
                 </div>
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
                           (onRowValidating)="onRowValidating($event)"
                           (onContentReady)="onContentReady($event)">
                 <dxo-selection selectAllMode="page"
@@ -89,14 +102,13 @@
                                       [showClearButton]="true"
                                       [value]="cell.value"
                                       (onValueChanged)="cell.setValue($event.value)">
-                        <div *dxTemplate="let data of 'content'">
+                        <div *dxTemplate="let data of 'content'" style="padding-bottom: 15px;">
                             <dx-tree-view id="mappedFieldsTreeView"
                                           [dataSource]="lookupFields"
                                           dataStructure="plain"
                                           keyExpr="id"
                                           parentIdExpr="parent"
                                           displayExpr="name"
-                                          [height]="450"
                                           [searchEnabled]="true"
                                           [selectNodesRecursive]="false"
                                           (onContentReady)="onLookupFieldsContentReady($event, cell)"
@@ -105,11 +117,11 @@
                         </div>
                     </dx-drop-down-box>
                 </div>
-
             </dx-data-grid>
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
                           [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"

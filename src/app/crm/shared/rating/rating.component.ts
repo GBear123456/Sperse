@@ -13,18 +13,20 @@ import { AppConsts } from '@shared/AppConsts';
 export class RatingComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
+    @Input() ratingValue: number;
     @Input() targetSelector = "[aria-label='Rating']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItemKey(value) {
         this.ratingValue = value;
     }
     get selectedItemKey() {
         return this.ratingValue;
     }
+    @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
 
     ratingMin: number;
     ratingMax: number;
-    ratingValue: number;
     ratingStep = 1;
 
     sliderComponent: any;
@@ -129,5 +131,8 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                     this.ratingValue = this.ratingMin;
             }
         });
+    }
+    onValueChange(event) {
+        this.onValueChanged.emit(event);
     }
 }

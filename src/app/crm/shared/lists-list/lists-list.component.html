@@ -5,7 +5,7 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Lists')}}</span>
-                <div [hidden]="bulkUpdateMode">
+                <div [hidden]="bulkUpdateMode" [hidden]="hideButtons">
                     <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
@@ -36,6 +36,7 @@
                 (onContentReady)="onContentReady($event)"
                 (onRowInserted)="onRowInserted($event)"
                 (onEditorPrepared)="editorPrepared($event)"
+                (onSelectionChanged)="onSelectionChange($event)"
                 [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"

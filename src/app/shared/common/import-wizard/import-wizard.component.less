@@ -13,8 +13,8 @@
     }
 
     h3 {
-        padding-bottom: 20px;
-        font-size: 18px;
+        // padding-bottom: 20px;
+        font-size: 16px;
     }
 
     .actions {
@@ -81,6 +81,10 @@
                 display: flex;
                 justify-content: space-between;
 
+                &.settings {
+                    justify-content: initial;
+                }
+
                 b {
                     margin-left: auto;
                     font-weight: normal;
@@ -88,7 +92,7 @@
             }
 
             .file-info {
-                padding: 20px 0;
+                padding: 10px 0;
 
                 .file-load-progress {
                     background: #e9f7fb;
@@ -112,6 +116,7 @@
                         color: red;
                         padding: 0;
                         margin: 0 0 0 10px;
+                        cursor: pointer;
 
                         i {
                             font-size: 18px;
@@ -132,8 +137,13 @@
     }
 
     /deep/ mat-horizontal-stepper {
-        .mat-form-field-wrapper {
-            margin-top: 25px;
+        // .mat-form-field-wrapper {
+        //     margin-top: 25px;
+        // }
+        .dx-toolbar {
+            .dx-toolbar-before {
+                margin: 0;
+            }
         }
 
         .mat-horizontal-stepper-header-container {
@@ -238,7 +248,7 @@
     }
 
     /deep/ dx-data-grid {
-        height: calc(~"100vh - 150px") !important;
+        height: calc(~"100vh - 210px") !important;
 
         td.capitalize {
             & {
@@ -275,7 +285,10 @@
 }
 
 #mappedFieldsTreeView {
-    /deep/ .dx-scrollable-content li[aria-level="1"] > .dx-item span {
-        font-weight: bold;
+    /deep/ .dx-scrollable-content li[aria-level="1"] > .dx-item {
+        pointer-events: none;
+        span {        
+            font-weight: bold;
+        }
     }
 }

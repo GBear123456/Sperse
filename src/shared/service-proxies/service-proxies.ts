@@ -35827,6 +35827,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
     ratingId: number;
     starId: number;
     leadStageId: number;
+    importType: ImportLeadsInputImportType;
 
     constructor(data?: IImportLeadsInput) {
         if (data) {
@@ -35858,6 +35859,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
             this.ratingId = data["ratingId"];
             this.starId = data["starId"];
             this.leadStageId = data["leadStageId"];
+            this.importType = data["importType"];
         }
     }
 
@@ -35888,6 +35890,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
         data["ratingId"] = this.ratingId;
         data["starId"] = this.starId;
         data["leadStageId"] = this.leadStageId;
+        data["importType"] = this.importType;
         return data; 
     }
 }
@@ -35900,6 +35903,7 @@ export interface IImportLeadsInput {
     ratingId: number;
     starId: number;
     leadStageId: number;
+    importType: ImportLeadsInputImportType;
 }
 
 export class ImportLeadInput implements IImportLeadInput {
@@ -46317,6 +46321,13 @@ export enum SubmitTenantCreationRequestInputPaymentPeriodType {
 export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum ImportLeadsInputImportType {
+    Lead = <any>"Lead", 
+    Client = <any>"Client", 
+    Partner = <any>"Partner", 
+    Order = <any>"Order", 
 }
 
 export enum MemberInfoDtoGender {

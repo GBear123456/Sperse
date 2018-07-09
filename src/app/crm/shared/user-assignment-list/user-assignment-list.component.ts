@@ -15,19 +15,23 @@ import * as _ from 'underscore';
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
+    @Input() selectedItems: any = [];
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
     }
     get selectedItemKey() {
         return this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined;
     }
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
     list: any;
-
+    assignedUserId: number;
     listComponent: any;
     tooltipVisible = false;
+    selectedMyKey: any;
 
     constructor(
         injector: Injector,
@@ -40,6 +44,10 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.highlightSelectedFilters();
+    }
+
+    onItemClick(event) {
+        this.assignedUserId = event.itemData.id;
     }
 
     apply(selectedKeys = undefined) {
@@ -91,6 +99,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this._userAssignmentService.getUsers().subscribe((result) => {
             this.list = result;
         });
+        if (this.selectedItems) {
+            this.highlightSelectedFilters();
+        }
     }
 
     reset() {
@@ -98,15 +109,15 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterIds = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             let items = this.listComponent.element()
                 .getElementsByClassName('item-row');
             _.each(items, (item) => {
                 if (filterIds.indexOf(Number(item.getAttribute('id'))) >= 0)
-                    item.parentNode.parentNode.classList.add('filtered');                
+                    item.parentNode.parentNode.classList.add('filtered');
             });
         }
     }
@@ -115,18 +126,17 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
 
     applyFilter(event, data) {
         event.stopPropagation();
-  
         this.clearFiltersHighlight();
 
         let modelItems = this.filterModel.items.element.value;
-        if (modelItems.length == 1 && modelItems[0] == data.id) 
+        if (modelItems.length == 1 && modelItems[0] == data.id)
             this.filterModel.items.element.value = [];
         else {
             this.filterModel.items.element.value = [data.id];
@@ -138,5 +148,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     onContentReady($event) {
         this.highlightSelectedFilters();
+    }
+
+    onSelectionChange(event) {
+        this.onSelectionChanged.emit(event);
     }
 }

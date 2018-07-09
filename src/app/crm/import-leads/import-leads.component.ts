@@ -1,21 +1,28 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import {
     ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
-    LeadServiceProxy
+    LeadServiceProxy, CustomerListInput, ImportLeadsInputImportType
 } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
+import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
+import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
+import { RatingComponent } from '@app/crm/shared/rating/rating.component';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 
 import * as addressParser from 'parse-address';
 
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
+import {PipelineService} from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -24,6 +31,12 @@ import * as _s from 'underscore.string';
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
@@ -64,11 +77,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_PHONE_2 = 'businessInfo_workPhone2';
     private readonly BUSINESS_FAX = 'businessInfo_companyFaxNumber';
     private readonly PERSONAL_EMAIL1 = 'personalInfo_email1';
-    private readonly PERSONAL_EMAIL2 = 'personalInfo_email2'; 
-    private readonly PERSONAL_EMAIL3 = 'personalInfo_email3'; 
+    private readonly PERSONAL_EMAIL2 = 'personalInfo_email2';
+    private readonly PERSONAL_EMAIL3 = 'personalInfo_email3';
     private readonly BUSINESS_COMPANY_EMAIL = 'businessInfo_companyEmail';
     private readonly BUSINESS_WORK_EMAIL1 = 'businessInfo_workEmail1';
-    private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2'; 
+    private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2';
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
 
     private readonly FIELDS_TO_CAPITALIZE = [
@@ -76,15 +89,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.MIDDLE_NAME_FIELD,
         this.LAST_NAME_FIELD,
         this.NICK_NAME_FIELD,
+        this.NAME_PREFIX_FIELD,
+        this.NAME_SUFFIX_FIELD,
         this.PERSONAL_FULL_ADDRESS_CITY,
-        this.BUSINESS_COMPANY_FULL_ADDRESS_CITY
+        this.BUSINESS_COMPANY_FULL_ADDRESS_CITY,
+        this.BUSINESS_WORK_FULL_ADDRESS_CITY
     ];
 
     private readonly PHONE_FIELDS = [
-        this.PERSONAL_MOBILE_PHONE, 
-        this.PERSONAL_HOME_PHONE, 
-        this.BUSINESS_COMPANY_PHONE, 
-        this.BUSINESS_WORK_PHONE_1, 
+        this.PERSONAL_MOBILE_PHONE,
+        this.PERSONAL_HOME_PHONE,
+        this.BUSINESS_COMPANY_PHONE,
+        this.BUSINESS_WORK_PHONE_1,
         this.BUSINESS_WORK_PHONE_2,
         this.BUSINESS_FAX
     ];
@@ -126,9 +142,25 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     totalCount: number = 0;
     importedCount: number = 0;
     mappingFields: any[] = [];
+    importTypeIndex: number = 0;
+    importType: ImportLeadsInputImportType = ImportLeadsInputImportType.Lead;
 
     fullName: ImportLeadFullName;
     fullAddress: ImportLeadAddressInput;
+
+    userId: any;
+    isUserSelected = true;
+    isRatingSelected = true;
+    isListsSelected = false;
+    isTagsSelected = false;
+    isStarSelected = false;
+    isStageSelected = false;
+    toolbarConfig = [];
+    selectedClientKeys: any = [];
+    selectedItems: any = [];
+    defaultRating = 5;
+    leadStages = [];
+    private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
         personalInfo: ImportLeadPersonalInput.fromJS({}),
@@ -152,14 +184,31 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
+        private _reuseService: RouteReuseStrategy,
         private _leadService: LeadServiceProxy,
         private _router: Router,
+        private _pipelineService: PipelineService,
         private _nameParser: NameParserService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.setMappingFields(ImportLeadInput.fromJS({}));
         this.initFieldsConfig();
+        this.userId = abp.session.userId;
+        this.selectedClientKeys.push(this.userId);
+        this.selectedItems.push(this.userId);
+
+
+    }
+
+    private importTypeChanged(event) {
+        const IMPORT_TYPE_ITEM_INDEX = 0;
+        const STAGE_ITEM_INDEX = 2;
+
+        this.importTypeIndex = event.itemIndex;
+        this.importType = event.itemData.value;
+
+        this.initToolbarConfig();
     }
 
     private initFieldsConfig() {
@@ -179,7 +228,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 this.fieldsConfig[field] = { visibleIndex: fieldIndex };
             fieldIndex++;
         });
-  
+
         this.FIELDS_CAPTIONS.forEach(field => {
             let parts = field.split('_'),
                 caption = _s.humanize(parts.pop()),
@@ -220,7 +269,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.setFieldIfDefined(parsed.state, field.mappedField + '_stateCode', dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
             this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
-            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street, 
+            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street,
                 parsed.street1, parsed.street2].join(' '), field.mappedField + '_street', dataSource);
         }
 
@@ -248,16 +297,26 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 if (!reff.errorMessage)
                     this.importedCount++;
             });
-            if (this.importedCount > 0)
+            if (this.importedCount > 0) {
                 this.wizard.showFinishStep();
-            else
+                (<any>this._reuseService).invalidate('leads');
+            } else
                 this.message.error(res[0].errorMessage);
         });
     }
 
     createLeadsInput(data: any[]): ImportLeadsInput {
-        let result = ImportLeadsInput.fromJS({});
+        let result = ImportLeadsInput.fromJS({
+            assignedUserId: this.userAssignmentComponent.assignedUserId || this.userId,
+            ratingId: this.ratingComponent.ratingValue || this.defaultRating
+        });
         result.leads = [];
+        result.lists = [];
+
+        this.listsComponent.selectedLists.forEach(item => {
+            let obj  = this.listsComponent.list.find(el => el.id == item);
+            result.lists.push(new CustomerListInput({ name: obj.name }));
+        });
 
         data.forEach(v => {
             let lead = new ImportLeadInput();
@@ -282,6 +341,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             result.leads.push(lead);
         });
 
+        result.importType = this.importType;
         return ImportLeadsInput.fromJS(result);
     }
 
@@ -312,12 +372,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.activate();
     }
 
+    getStages() {
+        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+            .subscribe(result => {
+                this.leadStages = result.stages;
+            });
+    }
+
     ngOnDestroy() {
         this.deactivate();
     }
 
     activate() {
         this.rootComponent.overflowHidden(true);
+        this.initToolbarConfig();
+        this.getStages();
     }
 
     deactivate() {
@@ -325,7 +394,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     checkSimilarRecord = (record1, record2) => {
-        record2.compared = record2[this.FIRST_NAME_FIELD] 
+        record2.compared = record2[this.FIRST_NAME_FIELD]
             + ' ' + record2[this.LAST_NAME_FIELD];
 
         return !this.compareFields.every((fields) => {
@@ -337,7 +406,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         return complexField1.map((fld) => record1[fld] || 1).join('_')
                             == complexField2.map((fld) => record2[fld] || 2).join('_');
                     else
-                        return record1[field1] && record2[field2] && 
+                        return record1[field1] && record2[field2] &&
                             (record1[field1].toLowerCase() == record2[field2].toLowerCase());
                 });
             });
@@ -347,13 +416,16 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
         if (field.mappedField == this.FULL_NAME_FIELD)
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
-        else if (field.mappedField.toLowerCase().indexOf('address') > 0)
+        else if (field.mappedField == this.PERSONAL_FULL_ADDRESS
+            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS
+            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS
+        )
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
         return false;
     }
 
     validateFieldsMapping = (rows) => {
-        let isFistName = false, 
+        let isFistName = false,
             isLastName = false,
             isFullName = false,
             isCompanyName = false;
@@ -371,5 +443,120 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             result.error = this.l('FieldsMapError');
 
         return result;
+    }
+
+    toggleUserAssignment(event) {
+        this.isUserSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
+    }
+
+    toggleStages(event) {
+        this.isStageSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
+    }
+
+    toggleLists(event) {
+        this.isListsSelected = !!event.selectedRowKeys.length;
+        this.initToolbarConfig();
+    }
+
+    toggleTags(event) {
+        this.isTagsSelected = !!event.selectedRowKeys.length;
+        this.initToolbarConfig();
+    }
+
+    toggleRating(event) {
+        this.isRatingSelected = !!event.value;
+        this.initToolbarConfig();
+    }
+
+    toggleStars(event) {
+        this.isStarSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    {
+                        text: '',
+                        name: 'select-box',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            width: 130,
+                            selectedIndex: this.importTypeIndex,
+                            items: [
+                                {
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Leads'),
+                                    value: ImportLeadsInputImportType.Lead
+                                }, {
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Clients'),
+                                    value: ImportLeadsInputImportType.Client
+                                }, {
+                                    disabled: true,
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Partners'),
+                                    value: ImportLeadsInputImportType.Partner
+                                }, {
+                                    disabled: true,
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Orders'),
+                                    value: ImportLeadsInputImportType.Order
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'assign',
+                        action: () => this.userAssignmentComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isUserSelected
+                        }
+                    },
+                    {
+                        name: 'stage',
+                        action: () => this.stagesComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isStageSelected
+                        },
+                        disabled: Boolean(this.importTypeIndex)
+                    },
+                    {
+                        name: 'lists',
+                        action: () => this.listsComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isListsSelected
+                        }
+                    },
+                    {
+                        name: 'tags',
+                        action: () => this.tagsComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isTagsSelected
+                        }
+                    },
+                    {
+                        name: 'rating',
+                        action: () => this.ratingComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isRatingSelected
+                        }
+                    },
+                    {
+                        name: 'star',
+                        options: {
+                            width: 30,
+                        },
+                        action: () => this.starsListComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isStarSelected
+                        }
+                    }
+                ]
+            }
+        ];
     }
 }
