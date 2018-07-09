@@ -7,7 +7,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import {
     ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
-    LeadServiceProxy, CustomerListInput
+    LeadServiceProxy, CustomerListInput, ImportLeadsInputImportType
 } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -142,7 +142,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     totalCount: number = 0;
     importedCount: number = 0;
     mappingFields: any[] = [];
-    importType: number = 0;
+    importTypeIndex: number = 0;
+    importType: ImportLeadsInputImportType = ImportLeadsInputImportType.Lead;
 
     fullName: ImportLeadFullName;
     fullAddress: ImportLeadAddressInput;
@@ -204,15 +205,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         const IMPORT_TYPE_ITEM_INDEX = 0;
         const STAGE_ITEM_INDEX = 2;
 
-        this.importType = event.itemIndex;  //event.itemData.text;
-        let configuration = _.clone(this.toolbarConfig),
-            items = configuration[0].items;
-        items[IMPORT_TYPE_ITEM_INDEX].options
-            .selectedIndex = this.importType;
-        items[STAGE_ITEM_INDEX].disabled =
-            Boolean(event.itemIndex);
+        this.importTypeIndex = event.itemIndex;
+        this.importType = event.itemData.value;
 
-        this.toolbarConfig = configuration;
+        this.initToolbarConfig();
     }
 
     private initFieldsConfig() {
@@ -345,6 +341,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             result.leads.push(lead);
         });
 
+        result.importType = this.importType;
         return ImportLeadsInput.fromJS(result);
     }
 
@@ -488,22 +485,26 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 130,
-                            selectedIndex: this.importType,
+                            selectedIndex: this.importTypeIndex,
                             items: [
                                 {
                                     action: this.importTypeChanged.bind(this),
-                                    text: this.l('Leads')
+                                    text: this.l('Leads'),
+                                    value: ImportLeadsInputImportType.Lead
                                 }, {
                                     action: this.importTypeChanged.bind(this),
-                                    text: this.l('Clients')
-                                }, {
-                                    disabled: true,
-                                    action: this.importTypeChanged.bind(this),
-                                    text: this.l('Partners')
+                                    text: this.l('Clients'),
+                                    value: ImportLeadsInputImportType.Client
                                 }, {
                                     disabled: true,
                                     action: this.importTypeChanged.bind(this),
-                                    text: this.l('Orders')
+                                    text: this.l('Partners'),
+                                    value: ImportLeadsInputImportType.Partner
+                                }, {
+                                    disabled: true,
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Orders'),
+                                    value: ImportLeadsInputImportType.Order
                                 }
                             ]
                         }
@@ -520,7 +521,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         action: () => this.stagesComponent.toggle(),
                         attr: {
                             'filter-selected': this.isStageSelected
-                        }
+                        },
+                        disabled: Boolean(this.importTypeIndex)
                     },
                     {
                         name: 'lists',

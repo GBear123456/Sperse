@@ -25666,6 +25666,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     phoneNumber: string;
     phoneExtension: string;
     address: AddressInfo;
+    workAddress: AddressInfo;
     userId: number;
     photo: ContactPhotoInfo;
     contactEmails: ContactEmailInfo[];
@@ -25728,6 +25729,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.workAddress = data["workAddress"] ? AddressInfo.fromJS(data["workAddress"]) : <any>undefined;
             this.userId = data["userId"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
@@ -25801,6 +25803,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["workAddress"] = this.workAddress ? this.workAddress.toJSON() : <any>undefined;
         data["userId"] = this.userId;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
@@ -25860,6 +25863,7 @@ export interface IOrganizationBusinessInfo {
     phoneNumber: string;
     phoneExtension: string;
     address: AddressInfo;
+    workAddress: AddressInfo;
     userId: number;
     photo: ContactPhotoInfo;
     contactEmails: ContactEmailInfo[];
@@ -26150,7 +26154,7 @@ export interface IContactPhoneInfo {
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
-    linkType: string;
+    linkTypeId: string;
     link: string;
 
     constructor(data?: IContactLinkInfo) {
@@ -26164,7 +26168,7 @@ export class ContactLinkInfo implements IContactLinkInfo {
 
     init(data?: any) {
         if (data) {
-            this.linkType = data["linkType"];
+            this.linkTypeId = data["linkTypeId"];
             this.link = data["link"];
         }
     }
@@ -26177,14 +26181,14 @@ export class ContactLinkInfo implements IContactLinkInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["linkType"] = this.linkType;
+        data["linkTypeId"] = this.linkTypeId;
         data["link"] = this.link;
         return data; 
     }
 }
 
 export interface IContactLinkInfo {
-    linkType: string;
+    linkTypeId: string;
     link: string;
 }
 
@@ -35625,7 +35629,7 @@ export interface ILeadBusinessTeamContactInput {
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     leadRequestXref: string;
-    companyName: string;
+    leadName: string;
     errorMessage: string;
 
     constructor(data?: ILeadBusinessInfoOutput) {
@@ -35640,7 +35644,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
-            this.companyName = data["companyName"];
+            this.leadName = data["leadName"];
             this.errorMessage = data["errorMessage"];
         }
     }
@@ -35654,7 +35658,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
-        data["companyName"] = this.companyName;
+        data["leadName"] = this.leadName;
         data["errorMessage"] = this.errorMessage;
         return data; 
     }
@@ -35662,16 +35666,19 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
 export interface ILeadBusinessInfoOutput {
     leadRequestXref: string;
-    companyName: string;
+    leadName: string;
     errorMessage: string;
 }
 
 export class ImportLeadsInput implements IImportLeadsInput {
     leads: ImportLeadInput[];
     lists: CustomerListInput[];
+    tags: CustomerTagInput[];
     assignedUserId: number;
     ratingId: number;
-    groupByCompany: boolean;
+    starId: number;
+    leadStageId: number;
+    importType: ImportLeadsInputImportType;
 
     constructor(data?: IImportLeadsInput) {
         if (data) {
@@ -35694,9 +35701,16 @@ export class ImportLeadsInput implements IImportLeadsInput {
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
-            this.groupByCompany = data["groupByCompany"];
+            this.starId = data["starId"];
+            this.leadStageId = data["leadStageId"];
+            this.importType = data["importType"];
         }
     }
 
@@ -35718,9 +35732,16 @@ export class ImportLeadsInput implements IImportLeadsInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
-        data["groupByCompany"] = this.groupByCompany;
+        data["starId"] = this.starId;
+        data["leadStageId"] = this.leadStageId;
+        data["importType"] = this.importType;
         return data; 
     }
 }
@@ -35728,16 +35749,19 @@ export class ImportLeadsInput implements IImportLeadsInput {
 export interface IImportLeadsInput {
     leads: ImportLeadInput[];
     lists: CustomerListInput[];
+    tags: CustomerTagInput[];
     assignedUserId: number;
     ratingId: number;
-    groupByCompany: boolean;
+    starId: number;
+    leadStageId: number;
+    importType: ImportLeadsInputImportType;
 }
 
 export class ImportLeadInput implements IImportLeadInput {
     personalInfo: ImportLeadPersonalInput;
     businessInfo: ImportLeadBusinessInput;
     notes: string;
-    dateCreated: string;
+    dateCreated: moment.Moment;
     leadSource: string;
     affiliateId: string;
     campaignId: string;
@@ -35762,7 +35786,7 @@ export class ImportLeadInput implements IImportLeadInput {
             this.personalInfo = data["personalInfo"] ? ImportLeadPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportLeadBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
-            this.dateCreated = data["dateCreated"];
+            this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadSource = data["leadSource"];
             this.affiliateId = data["affiliateId"];
             this.campaignId = data["campaignId"];
@@ -35786,7 +35810,7 @@ export class ImportLeadInput implements IImportLeadInput {
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
         data["notes"] = this.notes;
-        data["dateCreated"] = this.dateCreated;
+        data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadSource"] = this.leadSource;
         data["affiliateId"] = this.affiliateId;
         data["campaignId"] = this.campaignId;
@@ -35804,7 +35828,7 @@ export interface IImportLeadInput {
     personalInfo: ImportLeadPersonalInput;
     businessInfo: ImportLeadBusinessInput;
     notes: string;
-    dateCreated: string;
+    dateCreated: moment.Moment;
     leadSource: string;
     affiliateId: string;
     campaignId: string;
@@ -35832,7 +35856,7 @@ export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
     instagramUrl: string;
     twitterUrl: string;
     googlePlusUrl: string;
-    angelistUrl: string;
+    angelListUrl: string;
     photoUrl: string;
 
     constructor(data?: IImportLeadPersonalInput) {
@@ -35861,7 +35885,7 @@ export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
             this.instagramUrl = data["instagramUrl"];
             this.twitterUrl = data["twitterUrl"];
             this.googlePlusUrl = data["googlePlusUrl"];
-            this.angelistUrl = data["angelistUrl"];
+            this.angelListUrl = data["angelListUrl"];
             this.photoUrl = data["photoUrl"];
         }
     }
@@ -35889,7 +35913,7 @@ export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
         data["instagramUrl"] = this.instagramUrl;
         data["twitterUrl"] = this.twitterUrl;
         data["googlePlusUrl"] = this.googlePlusUrl;
-        data["angelistUrl"] = this.angelistUrl;
+        data["angelListUrl"] = this.angelListUrl;
         data["photoUrl"] = this.photoUrl;
         return data; 
     }
@@ -35911,7 +35935,7 @@ export interface IImportLeadPersonalInput {
     instagramUrl: string;
     twitterUrl: string;
     googlePlusUrl: string;
-    angelistUrl: string;
+    angelListUrl: string;
     photoUrl: string;
 }
 
@@ -46148,6 +46172,13 @@ export enum SubmitTenantCreationRequestInputPaymentPeriodType {
 export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum ImportLeadsInputImportType {
+    Lead = <any>"Lead", 
+    Client = <any>"Client", 
+    Partner = <any>"Partner", 
+    Order = <any>"Order", 
 }
 
 export enum MemberInfoDtoGender {
