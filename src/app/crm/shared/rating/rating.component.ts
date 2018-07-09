@@ -23,6 +23,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     get selectedItemKey() {
         return this.ratingValue;
     }
+    @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
 
     ratingMin: number;
     ratingMax: number;
@@ -130,5 +131,8 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                     this.ratingValue = this.ratingMin;
             }
         });
+    }
+    onValueChange(event) {
+        this.onValueChanged.emit(event);
     }
 }

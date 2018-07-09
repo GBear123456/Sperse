@@ -30,6 +30,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             return CustomerListInput.fromJS(_.findWhere(this.list, {id: item}));
         }).filter(Boolean);
     }
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
     selectedLists = [];
@@ -61,7 +62,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length), 
+                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process();
@@ -130,7 +131,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while(elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -149,7 +150,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;
-                    if (modelItems.length == 1 && modelItems[0] == $event.data.id) 
+                    if (modelItems.length == 1 && modelItems[0] == $event.data.id)
                         this.filterModel.items.element.value = [];
                     else {
                         this.filterModel.items.element.value = [$event.data.id];
@@ -234,20 +235,20 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     editorPrepared($event) {
         if (!$event.value && $event.editorName == 'dxTextBox') {
             if ($event.editorElement.closest('tr')) {
-                if (this.addNewTimeout) 
+                if (this.addNewTimeout)
                     this.addNewTimeout = null;
                 else {
                     $event.component.cancelEditData();
                     $event.component.getScrollable().scrollTo(0);
                     this.addNewTimeout = setTimeout(()=> {
                         $event.component.addRow();
-                    });               
-                } 
-            }    
+                    });
+                }
+            }
         }
     }
 
-    onInitNewRow($event) {        
+    onInitNewRow($event) {
         $event.data.name = $event.component.option('searchPanel.text');
     }
 
@@ -283,8 +284,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterIds = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             filterIds.forEach((id) => {
@@ -295,7 +296,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    customSortingMethod = (item1, item2) => { 
+    customSortingMethod = (item1, item2) => {
         if (this.lastNewAdded) {
             if (this.lastNewAdded.name == item1)
                 return -1;
@@ -304,7 +305,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    onCellClick(event) {
-        this.selectedLists = this.listComponent.option('selectedRowKeys');
+    onSelectionChange(event) {
+        this.onSelectionChanged.emit(event);
     }
 }

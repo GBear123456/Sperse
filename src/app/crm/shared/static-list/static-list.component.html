@@ -17,7 +17,8 @@
                 [keyExpr]="'id'"
                 [(selectedItems)]="selectedItems"
                 (onContentReady)="onContentReady($event)"
-                (onInitialized)="onInitialized($event)">
+                (onInitialized)="onInitialized($event)"
+                (onSelectionChanged)="onSelectionChange($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row {{data.name.replace(' ', '-') | lowercase}}" data-id="{{data.id}}"><span>{{data.name}}</span><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
                 </div>

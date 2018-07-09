@@ -25,6 +25,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     get selectedItemKey() {
         return this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined;
     }
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
     list: any;
     assignedUserId: number;
@@ -147,5 +148,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     onContentReady($event) {
         this.highlightSelectedFilters();
+    }
+
+    onSelectionChange(event) {
+        this.onSelectionChanged.emit(event);
     }
 }
