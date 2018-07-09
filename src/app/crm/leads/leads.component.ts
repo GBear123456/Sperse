@@ -199,6 +199,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
+    invalidate() {
+        this.refreshDataGrid(true, true);
+    }
+
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }

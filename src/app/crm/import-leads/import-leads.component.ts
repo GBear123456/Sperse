@@ -1,6 +1,6 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -247,6 +247,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
+        private _reuseService: RouteReuseStrategy,
         private _leadService: LeadServiceProxy,
         private _router: Router,
         private _nameParser: NameParserService
@@ -361,9 +362,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 if (!reff.errorMessage)
                     this.importedCount++;
             });
-            if (this.importedCount > 0)
+            if (this.importedCount > 0) {
                 this.wizard.showFinishStep();
-            else
+                (<any>this._reuseService).invalidate('leads');
+            } else
                 this.message.error(res[0].errorMessage);
         });
     }
