@@ -186,11 +186,27 @@
             ]
           },
           "configurations": {
-            "hmr": {
+            "dev": {
+              "optimization": false,
+              "sourceMap": false,
+              "extractCss": true,
+              "aot": false,
+              "showCircularDependencies": true,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "devstaging": {
+              "optimization": false,
+              "sourceMap": false,
+              "extractCss": true,
+              "aot": false,
+              "showCircularDependencies": true,
+              "vendorChunk": true,
+              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
+                  "with": "src/environments/environment.devstaging.ts"
                 }
               ]
             },
@@ -203,7 +219,7 @@
               "aot": true,
               "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "fileReplacements": [
                 {
@@ -221,7 +237,7 @@
               "aot": true,
               "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "fileReplacements": [
                 {
@@ -239,7 +255,7 @@
               "aot": true,
               "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": false,
+              "vendorChunk": true,
               "buildOptimizer": true,
               "fileReplacements": [
                 {
@@ -256,13 +272,17 @@
             "browserTarget": "abp-zero-template:build"
           },
           "configurations": {
-            "hmr": {
-              "browserTarget": "abp-zero-template:build:hmr"
+            "dev": {
+              "browserTarget": "abp-zero-template:build:dev",
+              "optimization": false,
+              "sourceMap": false,
+              "aot": false
             },
-            "production": {
-              "browserTarget": "abp-zero-template:build:production",
-              "showCircularDependencies": true,
-              "extractCss": true
+            "devstaging": {
+              "browserTarget": "abp-zero-template:build:devstaging",
+              "optimization": false,
+              "sourceMap": false,
+              "aot": false
             }
           }
         },

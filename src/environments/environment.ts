@@ -5,7 +5,7 @@
 
 export const environment = {
     production: false,
+    zenDeskEnabled: false,
     hmr: false,
-    appConfig: 'appconfig.json',
-    zenDeskEnabled: true,
+    appConfig: 'appconfig.json'
 };
