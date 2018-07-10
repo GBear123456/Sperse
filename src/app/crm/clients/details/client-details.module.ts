@@ -61,6 +61,7 @@ import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 
 import { FileDropModule } from 'ngx-file-drop';
+import { ImageViewerModule } from 'ng2-image-viewer';
 
 @NgModule({
   declarations: [
@@ -132,7 +133,8 @@ import { FileDropModule } from 'ngx-file-drop';
     DxValidationGroupModule,
     PipelineModule,
     DxRadioGroupModule,
-    FileDropModule
+    FileDropModule,
+    ImageViewerModule
   ],
   exports: [
     ClientDetailsComponent,

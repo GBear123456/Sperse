@@ -123,4 +123,17 @@
     .open-document-iframe {
         border: none;
     }
+
+    /deep/ app-image-viewer {
+        #imageViewer {
+            height: calc(~"100vh - 280px");
+            margin-top: 0px;
+            .image-container {
+                bottom: 0px;
+            }
+            .inline-icon, i.material-icons, .footer-info {
+                display: none;
+            }
+        }  
+    }
 }

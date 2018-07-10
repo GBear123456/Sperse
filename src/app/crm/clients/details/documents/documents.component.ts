@@ -39,6 +39,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
     public wopiResponseHtml: any;
+    public wopiViewerShow: boolean;
+
+    validImageExtensions: String[] = ['png', 'jpg', 'jpeg', 'gif'];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -162,9 +165,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     viewDocument() {
-        this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
-            this.submitWopiRequest(response);
-        });
+        let ext = this.currentDocumentInfo.fileName.split('.').pop();
+        if (this.wopiViewerShow = this.validImageExtensions.indexOf(ext) < 0)
+            this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {            
+                this.submitWopiRequest(response);
+            });
+        else
+            this.openDocumentMode = true;
     }
 
     editDocument() {
