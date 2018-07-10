@@ -248,8 +248,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSelectionChanged($event) {
+        this.selectedTags = $event.selectedRowKeys;
         this.onSelectedChanged.emit($event);
-        this.selectedTags = $event.component.getSelectedRowKeys('all');
     }
 
     editorPrepared($event) {

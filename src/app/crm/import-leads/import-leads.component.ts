@@ -160,6 +160,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     selectedItems: any = [];
     defaultRating = 5;
     leadStages = [];
+    starId: number;
+    selectedStageId: number;
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
@@ -191,14 +193,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _nameParser: NameParserService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
         this.setMappingFields(ImportLeadInput.fromJS({}));
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
         this.selectedItems.push(this.userId);
-
-
     }
 
     private importTypeChanged(event) {
@@ -269,8 +268,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.setFieldIfDefined(parsed.state, field.mappedField + '_stateCode', dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
             this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
-            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street, 
-                parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '), 
+            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street,
+                parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
                     field.mappedField + '_street', dataSource);
         }
 
@@ -309,10 +308,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     createLeadsInput(data: any[]): ImportLeadsInput {
         let result = ImportLeadsInput.fromJS({
             assignedUserId: this.userAssignmentComponent.assignedUserId || this.userId,
-            ratingId: this.ratingComponent.ratingValue || this.defaultRating
+            ratingId: this.ratingComponent.ratingValue || this.defaultRating,
+            starId: this.starsListComponent.selectedItemKey,
+            leadStageId: this.selectedStageId
         });
         result.leads = [];
         result.lists = [];
+        result.tags = this.tagsComponent.selectedItems;
 
         this.listsComponent.selectedLists.forEach(item => {
             let obj  = this.listsComponent.list.find(el => el.id == item);
@@ -453,6 +455,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     toggleStages(event) {
         this.isStageSelected = !!event.addedItems.length;
+        this.selectedStageId = event.addedItems[0].id;
         this.initToolbarConfig();
     }
 
@@ -473,6 +476,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     toggleStars(event) {
         this.isStarSelected = !!event.addedItems.length;
+        this.starId = event.addedItems[0].id;
         this.initToolbarConfig();
     }
 
