@@ -90,21 +90,16 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                     tagIds: this.selectedTags
                 })).subscribe((result) => {
                     this.notify.success(this.l('TagsUnassigned'));
-                }, (error) => {
-                    this.notify.error(this.l('BulkActionErrorOccured'));
                 });
             else
-                if (tags && tags.length)
-                    this._tagsService.tagCustomers(TagCustomersInput.fromJS({
-                        customerIds: customerIds,
-                        tags: tags 
-                    })).finally(() => {
-                        setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-                    }).subscribe((result) => {
-                        this.notify.success(this.l('TagsAssigned'));
-                    }, (error) => {
-                        this.notify.error(this.l('BulkActionErrorOccured'));
-                    });
+                this._tagsService.tagCustomers(TagCustomersInput.fromJS({
+                    customerIds: customerIds,
+                    tags: tags 
+                })).finally(() => {
+                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                }).subscribe((result) => {
+                    this.notify.success(this.l('TagsAssigned'));
+                });
         }
         else
             this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
@@ -112,8 +107,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 tags: tags
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomerTagsUpdated'));
-            }, (error) => {
-                this.notify.error(this.l('BulkActionErrorOccured'));
             });
     }
 

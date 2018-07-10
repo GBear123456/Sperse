@@ -74,8 +74,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             starId: this.selectedItemKey
         })).subscribe((result) => {
             this.notify.success(this.l('CustomersMarked'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 

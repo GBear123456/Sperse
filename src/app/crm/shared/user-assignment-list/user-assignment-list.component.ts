@@ -81,8 +81,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             userId: this.selectedItemKey
         })).subscribe((result) => {
             this.notify.success(this.l('UserAssigned'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 

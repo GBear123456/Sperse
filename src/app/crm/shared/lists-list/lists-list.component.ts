@@ -88,21 +88,16 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 this._listsService.removeCustomersFromLists(customerIds, this.selectedLists
                 ).subscribe((result) => {
                     this.notify.success(this.l('ListsUnassigned'));
-                },  (error) => {
-                    this.notify.error(this.l('BulkActionErrorOccured'));
                 });
             else
-                if (lists && lists.length) 
-                    this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
-                        customerIds: customerIds,
-                        lists: lists 
-                    })).finally(() => {
-                        setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-                    }).subscribe((result) => {
-                        this.notify.success(this.l('ListsAssigned'));
-                    }, (error) => {
-                        this.notify.error(this.l('BulkActionErrorOccured'));
-                    });
+                this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
+                    customerIds: customerIds,
+                    lists: lists 
+                })).finally(() => {
+                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                }).subscribe((result) => {
+                    this.notify.success(this.l('ListsAssigned'));
+                });
         }
         else
             this._listsService.updateCustomerLists(UpdateCustomerListsInput.fromJS({
@@ -110,8 +105,6 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 lists: lists
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomerListsUpdated'));
-            }, (error) => {
-                this.notify.error(this.l('BulkActionErrorOccured'));
             });
     }
 

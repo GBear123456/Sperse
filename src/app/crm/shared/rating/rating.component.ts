@@ -74,8 +74,6 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                 this.ratingValue = this.ratingMin;
         }).subscribe((result) => {
             this.notify.success(this.l('CustomersRated'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 
