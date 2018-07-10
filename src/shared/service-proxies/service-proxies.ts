@@ -16327,8 +16327,8 @@ export class SecurityManagementServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getBankAccountUserWithPermissions(instanceType: InstanceType75 | null | undefined, instanceId: number | null | undefined): Observable<BankAccountUsers[]> {
-        let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/GetBankAccountUserWithPermissions?";
+    getBankAccountAssignedUsers(instanceType: InstanceType75 | null | undefined, instanceId: number | null | undefined): Observable<BankAccountUsers[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/GetBankAccountAssignedUsers?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -16345,11 +16345,11 @@ export class SecurityManagementServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetBankAccountUserWithPermissions(response_);
+            return this.processGetBankAccountAssignedUsers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetBankAccountUserWithPermissions(<any>response_);
+                    return this.processGetBankAccountAssignedUsers(<any>response_);
                 } catch (e) {
                     return <Observable<BankAccountUsers[]>><any>_observableThrow(e);
                 }
@@ -16358,7 +16358,7 @@ export class SecurityManagementServiceProxy {
         }));
     }
 
-    protected processGetBankAccountUserWithPermissions(response: HttpResponseBase): Observable<BankAccountUsers[]> {
+    protected processGetBankAccountAssignedUsers(response: HttpResponseBase): Observable<BankAccountUsers[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 

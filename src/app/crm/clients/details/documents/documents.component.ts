@@ -17,6 +17,8 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
+import { ImageViewerComponent } from 'ng2-image-viewer'
+
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
@@ -24,6 +26,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
 
     public data: {
         customerInfo: CustomerInfoDto
@@ -39,6 +42,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
     public wopiResponseHtml: any;
+    public showViewerType: number;
+
+    public readonly WOPI_VIEWER  = 0;
+    public readonly IMAGE_VIEWER = 1;
+    public readonly TEXT_VIEWER  = 2;
+
+    validImageExtensions: String[] = ['png', 'jpg', 'jpeg', 'gif'];
+    validTextExtensions: String[] = ['txt', 'text'];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -162,9 +173,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     viewDocument() {
-        this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
-            this.submitWopiRequest(response);
-        });
+        let ext = this.currentDocumentInfo.fileName.split('.').pop();
+        this.showViewerType = this.validImageExtensions.indexOf(ext) < 0 ? 
+            (this.validTextExtensions.indexOf(ext) < 0 ? this.WOPI_VIEWER: this.TEXT_VIEWER) : this.IMAGE_VIEWER;
+        if (!this.showViewerType)
+            this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {            
+                this.submitWopiRequest(response);
+            });
+        else
+            this.openDocumentMode = true;
     }
 
     editDocument() {

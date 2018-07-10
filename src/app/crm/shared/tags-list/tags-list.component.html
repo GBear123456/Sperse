@@ -5,7 +5,7 @@
         <div class="tags-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Tags')}}</span>
-                <div [hidden]="bulkUpdateMode && !selectedKeys?.length">
+                <div [hidden]="bulkUpdateMode && !selectedKeys?.length" [hidden]="hideButtons">
                     <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>

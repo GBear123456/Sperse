@@ -656,9 +656,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
                 if (x.transactionsCount)
                     accountingType.transactionsCount = accountingType.transactionsCount ? accountingType.transactionsCount + x.transactionsCount : x.transactionsCount;
             });
+        this.setExcelData(items[0]);
+    }
+
+    setExcelData(items) {
         let data = this.categorization;
         if (data.categories) {
-            let transactionCount = items[0] || [];
+            let transactionCount = items || [];
             let categories = [];
             _.mapObject(data.categories, (item, key) => {
                 let accType = data.accountingTypes[item.accountingTypeId];

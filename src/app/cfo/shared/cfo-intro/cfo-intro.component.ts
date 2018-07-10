@@ -2,30 +2,52 @@ import { Component, Injector, Inject, OnInit, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FormGroup } from '@angular/forms';
-import { MatHorizontalStepper, MAT_DIALOG_DATA } from '@angular/material';
-import { QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto } from 'shared/service-proxies/service-proxies';
+import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import {
+    QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto, RoleServiceProxy, RoleListDto, UserServiceProxy,
+    CreateOrUpdateUserInput, TenantHostType, InstanceType
+} from 'shared/service-proxies/service-proxies';
+import { ImportUserData } from './cfo-intro.model'
+import * as nameParser from 'parse-full-name';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-cfo-intro',
     templateUrl: './cfo-intro.component.html',
     styleUrls: ['./cfo-intro.component.less'],
     animations: [appModuleAnimation()],
-    providers: [QuestionnaireServiceProxy]
+    providers: [QuestionnaireServiceProxy, RoleServiceProxy, UserServiceProxy]
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
+    dialogRef: MatDialogRef<CfoIntroComponent, any>;
     isLinear = false;
-    videoIndex = 6;
+    videoIndex = 7;
     readonly identifier = 'CFO-Instance-Setup';
 
     question: QuestionDto;
+    roles: RoleListDto[] = [];
+    importUsers: ImportUserData[] = [new ImportUserData(), new ImportUserData(), new ImportUserData()];
+    importValidators: any[] = [];
+
+    showImportUsersStep: boolean;
 
     constructor(
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private _questionnaireService: QuestionnaireServiceProxy
+        private _questionnaireService: QuestionnaireServiceProxy,
+        private _roleService: RoleServiceProxy,
+        private _userService: UserServiceProxy
     ) {
         super(injector);
+
+        this.dialogRef = <any>injector.get(MatDialogRef);
+
+        this.showImportUsersStep = this.instanceType == InstanceType.Main &&
+            (!abp.session.tenantId || this.feature.isEnabled('Admin'))
+            && this.permission.isGranted('Pages.Administration.Users')
+            && this.permission.isGranted('Pages.Administration.Users.Create')
+            && this.permission.isGranted('Pages.Administration.Roles');
     }
 
     ngOnInit() {
@@ -33,9 +55,32 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
             .subscribe(result => {
                 this.question = result.questions[0];
             });
+
+        this._roleService.getRoles(undefined).subscribe(result => {
+            this.roles = result.items;
+        });
+    }
+
+    showVideo() {
+        this.stepper.selectedIndex = this.videoIndex;
     }
 
     onSubmit() {
+        if (this.showImportUsersStep) {
+            if (!this.validateUsers())
+                return;
+
+            this.startLoading(true);
+            this.submitInviteUsers()
+                .subscribe(() => this.submitQuestionnaire(), () => this.finishLoading(true));
+        }
+        else {
+            this.startLoading(true);
+            this.submitQuestionnaire();
+        }
+    }
+
+    submitQuestionnaire() {
         let response = new QuestionnaireResponseDto();
         response.identifier = this.identifier;
         response.answers = [];
@@ -46,16 +91,102 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 selectedAnswerIds.push(v.id);
             }
         });
-        response.answers.push(new AnswerDto({
-            questionId: this.question.id,
-            options: selectedAnswerIds
-        }));
 
-        this._questionnaireService.submitResponse(response)
-            .subscribe((result) => { });
+        if (selectedAnswerIds.length) {
+            response.answers.push(new AnswerDto({
+                questionId: this.question.id,
+                options: selectedAnswerIds
+            }));
+
+            this._questionnaireService.submitResponse(response)
+                .pipe(finalize(() => this.finishLoading(true)))
+                .subscribe((result) => {
+                    this.dialogRef.close({ isGetStartedButtonClicked: true });
+                });
+        }
+        else {
+            this.dialogRef.close({ isGetStartedButtonClicked: true });
+            this.finishLoading(true);
+        }
     }
 
-    showVideo() {
-        this.stepper.selectedIndex = this.videoIndex;
+    validateUsers() {
+        let result = true;
+        this.importValidators.forEach((v) => { result = result && v.validate().isValid; });
+        return result;
+    }
+
+    submitInviteUsers() {
+        let users: CreateOrUpdateUserInput[] = [];
+        this.importUsers.forEach(v => {
+            if (v.email) {
+                let parsedName = nameParser.parseFullName(v.fullName.trim());
+                users.push(CreateOrUpdateUserInput.fromJS({
+                    assignedRoleNames: v.roleNames,
+                    sendActivationEmail: true,
+                    setRandomPassword: true,
+                    tenantHostType: TenantHostType.PlatformUi,
+                    organizationUnits: [],
+                    user: {
+                        userName: v.email,
+                        emailAddress: v.email,
+                        name: parsedName.first,
+                        surname: parsedName.last,
+
+                        isLockoutEnabled: true,
+                        isTwoFactorEnabled: false,
+                        shouldChangePasswordOnNextLogin: true,
+                        isActive: true
+                    }
+                }));
+            }
+        });
+
+        return this._userService.inviteUsers(users);
+    }
+
+    addImportUser() {
+        this.importUsers.push(new ImportUserData());
+    }
+
+    removeImportUser(index: number) {
+        this.importUsers.splice(index, 1);
+        this.importValidators.splice(index, 1);
+    }
+
+    validateInviteUserRow = (e) => {
+        let rowIndex = e.validator.element().parentElement.getAttribute('index');
+        let user = this.importUsers[rowIndex];
+
+        let validFields = 0;
+        if (user.email) validFields++;
+        if (user.fullName) validFields++;
+        if (user.roleNames && user.roleNames.length) validFields++;
+
+        if (validFields % 3 == 0 || (e.value && e.value.length)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    validateFullName = (e) => {
+        let fullName = nameParser.parseFullName(e.value.trim());
+        if (!fullName.first || !fullName.last)
+            return false;
+
+        return true;
+    }
+
+    validateInviteUserGroup(index) {
+        this.importValidators[index].validate();
+    }
+
+    onMultiTagPreparing(args) {
+        args.text = args.selectedItems.map(x => x.displayName).join(', ');
+    }
+
+    onInviteUserValidationGroupInitialized(e) {
+        this.importValidators.push(e.component);
     }
 }
