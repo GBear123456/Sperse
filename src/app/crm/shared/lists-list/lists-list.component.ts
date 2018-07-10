@@ -321,6 +321,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSelectionChange(event) {
+        this.selectedItems = event.selectedRowKeys;
         this.onSelectionChanged.emit(event);
     }
 

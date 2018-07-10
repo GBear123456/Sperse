@@ -16,7 +16,6 @@ import * as _ from 'underscore';
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() selectedItems: any = [];
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
@@ -29,10 +28,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
     list: any;
-    assignedUserId: number;
     listComponent: any;
     tooltipVisible = false;
-    selectedMyKey: any;
 
     constructor(
         injector: Injector,
@@ -47,15 +44,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this.highlightSelectedFilters();
     }
 
-    onItemClick(event) {
-        this.assignedUserId = event.itemData.id;
-    }
-
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item.id;
-            }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
@@ -68,8 +58,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
 
             setTimeout(() => { this.listComponent.option('searchValue', undefined); }, 500);
         }
@@ -91,6 +79,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             })).subscribe((result) => {
                 this.notify.success(this.l('UserAssigned'));
             });
+
+        if (this.bulkUpdateMode)
+            setTimeout(() => { this.listComponent.unselectAll(); }, 500);
     }
 
     clear() {
@@ -106,9 +97,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this._userAssignmentService.getUsers().subscribe((result) => {
             this.list = result;
         });
-        if (this.selectedItems) {
-            this.highlightSelectedFilters();
-        }
     }
 
     reset() {
@@ -158,11 +146,12 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     onSelectionChange(event) {
+        this.selectedItemKey = event && event.addedItems.length ? event.addedItems[0].id : undefined;
         this.onSelectionChanged.emit(event);
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageAssignments') && 
+        return this.permission.isGranted('Pages.CRM.Customers.ManageAssignments') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

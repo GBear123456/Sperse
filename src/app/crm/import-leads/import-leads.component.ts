@@ -157,11 +157,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     isStageSelected = false;
     toolbarConfig = [];
     selectedClientKeys: any = [];
-    selectedItems: any = [];
     defaultRating = 5;
     leadStages = [];
-    starId: number;
-    selectedStageId: number;
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
@@ -197,7 +194,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
-        this.selectedItems.push(this.userId);
     }
 
     private importTypeChanged(event) {
@@ -307,13 +303,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     createLeadsInput(data: any[]): ImportLeadsInput {
         let result = ImportLeadsInput.fromJS({
-            assignedUserId: this.userAssignmentComponent.assignedUserId || this.userId,
+            assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
-            leadStageId: this.selectedStageId
+            leadStageId: this.stagesComponent.selectedItems[0].id
         });
         result.leads = [];
-        result.lists = [];
+        result.lists = this.listsComponent.selectedItems;
         result.tags = this.tagsComponent.selectedItems;
 
         this.listsComponent.selectedLists.forEach(item => {
@@ -448,35 +444,33 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         return result;
     }
 
-    toggleUserAssignment(event) {
+    onUserAssignmentChanged(event) {
         this.isUserSelected = !!event.addedItems.length;
         this.initToolbarConfig();
     }
 
-    toggleStages(event) {
+    onStagesChanged(event) {
         this.isStageSelected = !!event.addedItems.length;
-        this.selectedStageId = event.addedItems[0].id;
         this.initToolbarConfig();
     }
 
-    toggleLists(event) {
+    onListsChanged(event) {
         this.isListsSelected = !!event.selectedRowKeys.length;
         this.initToolbarConfig();
     }
 
-    toggleTags(event) {
+    onTagsChanged(event) {
         this.isTagsSelected = !!event.selectedRowKeys.length;
         this.initToolbarConfig();
     }
 
-    toggleRating(event) {
+    onRatingChanged(event) {
         this.isRatingSelected = !!event.value;
         this.initToolbarConfig();
     }
 
-    toggleStars(event) {
+    onStarsChanged(event) {
         this.isStarSelected = !!event.addedItems.length;
-        this.starId = event.addedItems[0].id;
         this.initToolbarConfig();
     }
 
