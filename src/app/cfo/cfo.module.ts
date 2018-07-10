@@ -80,6 +80,7 @@ import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-w
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
+import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
 
 @NgModule({
     imports: [
@@ -153,7 +154,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         ReportPeriodComponent,
         BankAccountsQuovoComponent,
         AddAccountButtonComponent,
-        ImportFromQuickBooksButtonComponent
+        ImportFromQuickBooksButtonComponent,
+        UsersDialogComponent
     ],
     entryComponents: [
         RuleDialogComponent,
@@ -162,7 +164,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         PreferencesDialogComponent,
         ChooseResetRulesComponent,
         BusinessEntityEditDialogComponent,
-        CfoIntroComponent
+        CfoIntroComponent,
+        UsersDialogComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
