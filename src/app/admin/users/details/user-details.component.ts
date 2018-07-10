@@ -1,16 +1,19 @@
-import { Component, Input, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+/** Core imports */
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { OperationsWidgetComponent } from './operations-widget.component';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
-import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
-
+/** Third party libraries **/
+ import { MatDialog } from '@angular/material';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { OperationsWidgetComponent } from './operations-widget.component';
+import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 
 @Component({
     selector: 'user-details',
@@ -49,10 +52,10 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             .subscribe(params => {
                 this.userId = params['userId'];
                 this.startLoading(true);
-                Observable.forkJoin(
+                forkJoin(
                     this._userService.getUserForEdit(this.userId),
                     this._userService.getUserPermissionsForEdit(this.userId)
-                ).finally(() => this.finishLoading(true))
+                ).pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(([userEditOutput, permissionsOutput]) => {
                         //user
                         this._userService['data'].user = userEditOutput.user;
@@ -120,7 +123,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
                 if (isConfirmed) {
                     this.startLoading(true);
                     this._userService.deleteUser(this.userData.user.id)
-                        .finally(() => this.finishLoading(true))
+                        .pipe(finalize(() => this.finishLoading(true)))
                         .subscribe(() => {
                             this.close();
                             this.notify.success(this.l('SuccessfullyDeleted'));
@@ -152,7 +155,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             .subscribe(() => {
                 this.startLoading(true);
                 this._userService.updateUserPermissions(permissionsInput)
-                    .finally(() => this.finishLoading(true))
+                    .pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(() => {
                         this.close();
                         this.notify.info(this.l('SavedSuccessfully'));

@@ -21,16 +21,8 @@
                 </div>
                 <div class="footer">
                     <a (click)="showVideo()">
-                        <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a>
-                    <!-- <ul>
-                        <li class="akk 0 q"></li>
-                        <li class="next 2"></li>
-                        <li class="next 3"></li>
-                        <li class="next 4"></li>
-                        <li class="next 5"></li>
-                        <li class="next 6"></li>
-                        <li class="next 7"></li>
-                    </ul> -->
+                        <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video
+                    </a>
                     <button mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
             </div>
@@ -44,28 +36,24 @@
                     <h2>Key Features</h2>
                     <ul class="treka">
                         <li>
-                            <img src="assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation</li>
+                            <img src="assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization</li>
+                            <img src="assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts</li>
+                            <img src="assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day</li>
+                            <img src="assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day
+                        </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification</li>
+                            <img src="assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification
+                        </li>
                     </ul>
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <!-- <ul>
-                        <li class="0"></li>
-                        <li class="akk next 2 e"></li>
-                        <li class="next 3"></li>
-                        <li class="next 4"></li>
-                        <li class="next 5"></li>
-                        <li class="next 6"></li>
-                        <li class="next 7"></li>
-                    </ul> -->
                     <button mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
             </div>
@@ -102,15 +90,6 @@
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <!-- <ul>
-                        <li class="0"></li>
-                        <li class="next 2"></li>
-                        <li class="akk next 3 r"></li>
-                        <li class="next 4"></li>
-                        <li class="next 5"></li>
-                        <li class="next 6"></li>
-                        <li class="next 7"></li>
-                    </ul> -->
                     <button mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
             </div>
@@ -125,22 +104,15 @@
                         <div class="mainda">
                             <h3>TRANSACTION CATEGORIZATION RULES</h3>
                             <h2>Automate Transaction Classification</h2>
-                            <p>Define rules to automate the classification of your transactions into the categorization or grouping you want your cash flow
-                                reports to be organized by.</p>
+                            <p>
+                                Define rules to automate the classification of your transactions into the categorization or grouping you want your cash flow
+                                reports to be organized by.
+                            </p>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <!-- <ul>
-                        <li class="0"></li>
-                        <li class="next 2"></li>
-                        <li class="next 3"></li>
-                        <li class="akk next 4 t"></li>
-                        <li class="next 5"></li>
-                        <li class="next 6"></li>
-                        <li class="next 7"></li>
-                    </ul> -->
                     <button mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
             </div>
@@ -167,15 +139,6 @@
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <!-- <ul>
-                        <li class="0"></li>
-                        <li class="next 2"></li>
-                        <li class="next 3"></li>
-                        <li class="next 4"></li>
-                        <li class="akk next 5 z"></li>
-                        <li class="next 6"></li>
-                        <li class="next 7"></li>
-                    </ul> -->
                     <button mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
             </div>
@@ -187,29 +150,14 @@
                 </div>
                 <div class="main">
                     <div class="conta">
-                        <div class="mainda">
+                        <div class="mainda" *ngIf="question">
                             <h3>
-                                What would you like to gain most from CFO?
+                                {{question.text}}
                             </h3>
                             <div class="imputara">
-                                <label class="container1">View all my financial accounts in one place
-                                    <input type="checkbox" checked="checked">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Get a better idea of my cash flow history
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Forecast and plan my future cash flow needs
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Share financial data with my team or accountant
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="container1">Improve business management with all of the above
-                                    <input type="checkbox">
+                                <label *ngFor="let option of question.options" class="container1">
+                                    {{option.text}}
+                                    <input type="checkbox" [value]="option['selected'] === true" (change)="option['selected'] = $event.target.checked;">
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
@@ -218,20 +166,15 @@
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <!-- <ul>
-                        <li class="0"></li>
-                        <li class="next 2"></li>
-                        <li class="next 3"></li>
-                        <li class="next 4"></li>
-                        <li class="next 5"></li>
-                        <li class="akk next 6 u"></li>
-                        <li class="next 7"></li>
-                    </ul> -->
-                    <button class="btn btn-layout get-started" [mat-dialog-close]="{isGetStartedButtonClicked: true}" mat-button>Get started</button>
+
+                    <button *ngIf="!showImportUsersStep" class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
+                        {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
+                    </button>
+                    <button *ngIf="showImportUsersStep" mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
             </div>
         </mat-step>
-        <!-- <mat-step>
+        <mat-step *ngIf="showImportUsersStep">
             <div class="seventh-step step-item">
                 <div class="header">
                     <img src="/assets/common/images/sperse-logo.png">
@@ -240,61 +183,71 @@
                     <div class="conta">
                         <div class="mainda">
                             <h3>
-                                Invite Your Team Members With Assigned Roles
+                                Invite Your Team Members <br />
+                                With Assigned Roles
                             </h3>
                             <div class="imputara">
-                                <ul>
-                                    <li>
-                                        <input type="email" placeholder="Email Adress">
-                                        <input type="text" placeholder="Full Name">
-                                        <span>CFO</span>
-                                        <span>CRM</span>
-                                    </li>
-                                    <li>
-                                        <input type="email" placeholder="Email Adress">
-                                        <input type="text" placeholder="Full Name">
-                                        <span>CFO</span>
-                                        <span>CRM</span>
-                                    </li>
-                                    <li>
-                                        <input type="email" placeholder="Email Adress">
-                                        <input type="text" placeholder="Full Name">
-                                        <span>CFO</span>
-                                        <span>CRM</span>
-                                    </li>
-                                    <li>
-                                        <input type="email" placeholder="Email Adress">
-                                        <input type="text" placeholder="Full Name">
-                                        <span>CFO</span>
-                                        <span>CRM</span>
-                                    </li>
-                                    <li>
-                                        <input type="email" placeholder="Email Adress">
-                                        <input type="text" placeholder="Full Name">
-                                        <span>CFO</span>
-                                        <span>CRM</span>
-                                    </li>
-                                </ul>
+                                <dx-scroll-view height="350" showScrollbar="onHover">
+                                    <div style="position:relative">
+                                        <dx-validation-group *ngFor="let user of importUsers; let i = index" (onInitialized)="onInviteUserValidationGroupInitialized($event)">
+                                            <div class="row import-user-row" [attr.index]="i">
+                                                <dx-text-box [(value)]="user.email"
+                                                             placeholder="Email"
+                                                             (onValueChanged)="validateInviteUserGroup(i)"
+                                                             class="col-4">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+                                                        <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                                        <dxi-validation-rule type="stringLength" [max]="64"></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
+                                                <dx-text-box [(value)]="user.fullName"
+                                                             placeholder="Full name"
+                                                             (onValueChanged)="validateInviteUserGroup(i)"
+                                                             class="col-4">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                                        <dxi-validation-rule type="custom" [validationCallback]="validateFullName" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                                        <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
+                                                <dx-tag-box [dataSource]="roles"
+                                                            valueExpr="name"
+                                                            displayExpr="displayName"
+                                                            placeholder="Role"
+                                                            [(value)]="user.roleNames"
+                                                            tagTemplate="customTagTemplate"
+                                                            [showSelectionControls]="true"
+                                                            [maxDisplayedTags]="0"
+                                                            [showMultiTagOnly]="true"
+                                                            (onMultiTagPreparing)="onMultiTagPreparing($event)"
+                                                            (onValueChanged)="validateInviteUserGroup(i)"
+                                                            class="col-4">
+                                                    <div *dxTemplate="let tag of 'customTagTemplate'">
+                                                        <span class="tag-value">{{tag}}</span>
+                                                    </div>
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('RequiredField', l('Role'))}}"></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-tag-box>
+                                                <div class="remove-import-user" (click)="removeImportUser(i)"><i class="fa fa-minus"></i></div>
+                                            </div>
+                                        </dx-validation-group>
+                                        <div><span class="add-import-user" (click)="addImportUser()">+ADD</span></div>
+                                    </div>
+                                </dx-scroll-view>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <a href="#">
-                            <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a>
-                    <ul>
-                        <li class="0"></li>
-                        <li class="next 2"></li>
-                        <li class="next 3"></li>
-                        <li class="next 4"></li>
-                        <li class="next 5"></li>
-                        <li class="next 6"></li>
-                        <li class="next 7 akk i"></li>
-                    </ul>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <button class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
+                        {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
+                    </button>
                 </div>
             </div>
-        </mat-step> -->
+        </mat-step>
         <mat-step>
             <div class="video step-item">
                 <div class="header">
@@ -310,8 +263,6 @@
                     </div>
                 </div>
                 <div class="footer">
-                    <!-- <a href="javascript:;">
-                            <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a> -->
                 </div>
             </div>
         </mat-step>

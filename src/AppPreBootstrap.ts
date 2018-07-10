@@ -1,24 +1,23 @@
-import * as moment from 'moment';
-import { AppConsts } from '@shared/AppConsts';
-import { UrlHelper } from './shared/helpers/UrlHelper';
-import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
-import * as _ from 'lodash';
-import { SubdomainTenancyNameFinder } from '@shared/helpers/SubdomainTenancyNameFinder';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { Type, CompilerOptions, NgModuleRef } from '@angular/core';
 import { UtilsService } from '@abp/utils/utils.service';
+import { CompilerOptions, NgModuleRef, Type } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { AppConsts } from '@shared/AppConsts';
+import * as moment from 'moment-timezone';
+import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
+import { UrlHelper } from './shared/helpers/UrlHelper';
+import { environment } from './environments/environment';
 import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
 
 export class AppPreBootstrap {
 
-    static run(callback: () => void, resolve: any, reject: any): void {
+    static run(appRootUrl: string, callback: () => void, resolve: any, reject: any): void {
         let abpAjax: any = abp.ajax;
         if (abpAjax.defaultError) {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
         }
 
-        AppPreBootstrap.getApplicationConfig(() => {
+        AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
                 if (queryStringObj.forceNewRegistration) {
@@ -43,10 +42,11 @@ export class AppPreBootstrap {
         return platformBrowserDynamic().bootstrapModule(moduleType, compilerOptions);
     }
 
-    private static getApplicationConfig(callback: () => void) {
+    private static getApplicationConfig(appRootUrl: string, callback: () => void) {
+
         return abp.ajax({
-            url: '/assets/appconfig.json',
-            method: 'GET'
+            url: appRootUrl + 'assets/' + environment.appConfig,
+            method: 'GET',
         }).done(result => {
             AppConsts.appBaseUrlFormat = result.appBaseUrl;
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
@@ -57,7 +57,7 @@ export class AppPreBootstrap {
 
             if (result.appBaseUrl !== AppConsts.appBaseUrl) {
                 abp.ajax({
-                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent("" + AppConsts.tenantHostType),
+                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent('' + AppConsts.tenantHostType),
                     method: 'GET',
                     headers: {
                         'Accept-Language': abp.utils.getCookieValue('Abp.Localization.CultureName')
@@ -108,7 +108,7 @@ export class AppPreBootstrap {
             abp.multiTenancy.setTenantIdCookie();
             location.search = '';
             callback();
-        }).fail(result => {
+        }).fail(() => {
             location.href = AppConsts.appBaseUrl + '/account/login';
         });
     }

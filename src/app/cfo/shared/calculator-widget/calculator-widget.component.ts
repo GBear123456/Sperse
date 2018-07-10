@@ -9,19 +9,19 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 })
 
 export class CalculatorComponent extends CFOComponentBase implements OnChanges {
-    input: string = '';
+    input = '';
     historyEquation = '';
-    lastOperation: string = '';
-    openedBrackets: number = 0;
-    closedBrackets: number = 0;
+    lastOperation = '';
+    openedBrackets = 0;
+    closedBrackets = 0;
 
     calcHistory: CalcHistory[] = [];
 
     readonly allowedChars: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '(', ')', '.', '%'];
     readonly allowedOperators: string[] = ['+', '-', '*', '/'];
 
-    isScientificMode: boolean = false;
-    isEditHistoryEnabled: boolean = false;
+    isScientificMode = false;
+    isEditHistoryEnabled = false;
     @Input()
     parentEquation: string;
 
@@ -251,8 +251,8 @@ export class CalculatorComponent extends CFOComponentBase implements OnChanges {
 }
 
 class CalcHistory {
-    operator: string = '';
-    operand: string = '';
-    result: string = '';
+    operator = '';
+    operand = '';
+    result = '';
 }
 

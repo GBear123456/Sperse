@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
+import { Subscription, Subject } from 'rxjs';
 import { FilterModel } from './models/filter.model';
 import * as _ from 'underscore';
 

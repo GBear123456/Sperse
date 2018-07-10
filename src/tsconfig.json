@@ -5,7 +5,7 @@
     "experimentalDecorators": true,
     "lib": [ "es6", "dom" ],
     "mapRoot": "./",
-    "module": "es6",
+    "module": "esnext",
     "skipLibCheck": true,
     "moduleResolution": "node",
     "outDir": "../dist/out-tsc",
@@ -16,7 +16,7 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@abp/*": [ "../node_modules/abp-ng2-module/src/*" ],
+      "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
       "@app/*": [ "./app/*" ],
       "@admin/*": [ "./app/admin/*" ],
       "@shared/*": [ "./shared/*" ],
@@ -24,11 +24,10 @@
       "@angular/*": [ "../node_modules/@angular/*" ]
     }
   },
-  "include": [ 
-      "./**/*",
-      "../node_modules/ng2-google-place-autocomplete/index.ts" 
+  "include": [
+      "./**/*"
   ],
-  "exclude": [ 
+  "exclude": [
       "node_modules",
       "./account/register/**",
       "./account/payment/**"

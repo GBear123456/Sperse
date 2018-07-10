@@ -3,9 +3,13 @@
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
-        [fields]="mappingFileds"
+        [lookupFields]="mappingFields"
         [columnsConfig]="fieldsConfig"
         [localizationSource]="localizationSourceName"
+        [checkSimilarRecord]="checkSimilarRecord"
+        [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
+        [validateFieldsMapping]="validateFieldsMapping"
+        [toolbarConfig]="toolbarConfig"
         (onComplete)="complete($event)"
         (onCancel)="cancel()">
 
@@ -17,3 +21,17 @@
         </div>
     </import-wizard>
 </div>
+
+<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-tags-list>
+<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-lists-list>
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [selectedItems]="selectedItems" [hideButtons]="true"></crm-user-assignment-list>
+<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true"></crm-rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-stars-list>
+<crm-static-list
+    [width]="'210px'"
+    [title]="l('Stages')"
+    [selectedKeys]="selectedClientKeys"
+    [targetSelector]="'[aria-label=Stage]'"
+    [hideButtons]="true"
+    [list]="stages">
+</crm-static-list>

@@ -48,6 +48,10 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         return rowData.StateId + ', ' + rowData.CountryId;
     }
 
+    downloadExcel() {
+        this.exportToXLS('all');
+    }
+
     refresh() {
         this.categorization.refreshCategories();
     }

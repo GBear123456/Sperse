@@ -1,0 +1,83 @@
+:host {
+    position: relative;
+    top: 75px;
+    .content-wrap {
+        display: flex;
+
+        .frame-wrap {
+            flex: 1;
+            padding: 21px 30px 0;
+
+            /deep/ .dx-datagrid {
+
+                .dx-datagrid-headers {
+                    border-bottom: none;
+                    .dx-header-row {
+                        td {
+                            font-size: 13px;
+                            font-weight: 700;
+                            letter-spacing: 0.5px;
+                            color: #686f76;
+                            text-transform: uppercase;
+                            padding-bottom: 14px;
+                            padding-top: 21px;
+                            .userFullName {
+                                font-size: 15px;
+                                color: #212c36;
+                                text-transform: lowercase;
+                            }
+                            .userEmail {
+                                font-weight: 500;
+                                color: #677380;
+                                text-transform: lowercase;
+                            }
+                        }
+                    }
+                }
+
+                .dx-row {
+                    border: none;
+                    td {
+                        padding: 6px 24px 6px 19px;
+                        vertical-align: middle;
+                        &.userColumn {
+                            padding-left: 25px;
+                            padding-right: 25px;
+                            &.hovered {
+                                background: rgba(243, 247, 250, .7)
+                            }
+                        }
+                        &.dx-datagrid-group-space {
+                            width: 0px;
+                            min-width: 0px;
+                            padding: 0;
+                        }
+                    }
+
+                    &.dx-row-alt > td {
+                        background-color: #f3f7fa !important;
+                    }
+                }
+
+                .dx-group-row {
+                    background-color: #fff;
+                    height: 77px;
+                    font-size: 16px;
+                    font-weight: 700;
+                    letter-spacing: 0.3px;
+                    color: #212c36;
+                }
+
+                .dx-data-row {
+                    td {
+                        font-size: 15px;
+                        font-weight: 500;
+                        letter-spacing: 0.3px;
+                        color: #424c56;
+                    }
+                }
+
+            }
+        }
+    }
+}

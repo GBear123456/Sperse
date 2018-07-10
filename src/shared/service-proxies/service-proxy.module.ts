@@ -1,5 +1,6 @@
+import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-
 import * as ApiServiceProxies from './service-proxies';
 
 @NgModule({
@@ -33,7 +34,8 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.PaymentServiceProxy,
         ApiServiceProxies.InvoiceServiceProxy,
         ApiServiceProxies.SubscriptionServiceProxy,
-        ApiServiceProxies.UiCustomizationSettingsServiceProxy
+        ApiServiceProxies.UiCustomizationSettingsServiceProxy,
+        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })
 export class ServiceProxyModule { }

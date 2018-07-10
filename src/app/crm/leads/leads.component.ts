@@ -4,8 +4,6 @@ import {
     AfterViewInit,
     OnDestroy,
     Injector,
-    Inject,
-    ViewEncapsulation,
     ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
@@ -45,13 +43,7 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
-
-import query from 'devextreme/data/query';
-
-import DataSource from 'devextreme/data/data_source';
-
 import * as _ from 'underscore';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './leads.component.html',

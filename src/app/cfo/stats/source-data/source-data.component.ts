@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { BankAccountDailyStatDto } from '@shared/service-proxies/service-proxies';
 
 @Component({

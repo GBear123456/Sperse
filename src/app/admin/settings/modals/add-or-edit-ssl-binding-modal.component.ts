@@ -5,7 +5,7 @@ import {
     TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingCertificateInput
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'addOrEditSSLBindingModal',
@@ -14,17 +14,16 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy]
 })
 export class AddOrEditSSLBindingModal extends AppComponentBase {
-    
     @ViewChild('createOrEditModal') modal: ModalDirective;
     @Input() hostTypes: any;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    active = false;
+    saving = false;
 
     model: AddSslBindingInput = new AddSslBindingInput();
     sslCertificates: TenantSslCertificateInfo[];
-    editing: boolean = false;
+    editing = false;
     titleText: string;
 
     constructor(
@@ -54,7 +53,7 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
                 this.modal.show();
             });
     }
-    
+
     save(event): void {
         if (!this.validate(event)) return;
         this.saving = true;
@@ -65,15 +64,13 @@ export class AddOrEditSSLBindingModal extends AppComponentBase {
             updateModel.sslCertificateId = this.model.sslCertificateId;
 
             this._tenantHostService.updateSslBindingCertificate(updateModel)
-                .finally(() => { this.saving = false; })
+                .pipe(finalize(() => { this.saving = false; }))
                 .subscribe(result => {
                     this.closeSuccess();
             });
-        }
-        else
-        {
+        } else {
             this._tenantHostService.addSslBinding(this.model)
-            .finally(() => { this.saving = false; })
+            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(result => {
                 this.closeSuccess();
             });

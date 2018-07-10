@@ -1,11 +1,8 @@
 import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { AppConsts } from '@shared/AppConsts';
 import { DashboardServiceProxy, GetTotalsOutput } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
-
-import * as moment from 'moment';
+import { DashboardWidgetsService } from '../dashboard-widgets.service';
 
 @Component({
     selector: 'counts-and-totals',
@@ -21,23 +18,22 @@ export class CountsAndTotalsComponent extends AppComponentBase implements OnInit
     fields: any;
 
     constructor(
-        injector: Injector,        
+        injector: Injector,
         private _dashboardService: DashboardWidgetsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.fields = _dashboardService.totalsDataFields;
 
-        _dashboardService.subscribeTotalsData(result => {                        
+        _dashboardService.subscribeTotalsData(result => {
             this.data = result;
-            this.onDataLoaded.emit(result['totalOrderAmount'] || 
-                result['totalLeadCount'] || result['totalClientCount'] ? [result]: []);
-          
+            this.onDataLoaded.emit(result['totalOrderAmount'] ||
+                result['totalLeadCount'] || result['totalClientCount'] ? [result] : []);
             this.fields.forEach((field) => {
                 field.percent = _dashboardService.getPercentage(
                     result[field.name.replace('total', 'new')], result[field.name]);
             });
-        }); 
+        });
     }
 
     ngOnInit() {

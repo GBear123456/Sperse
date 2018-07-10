@@ -5,7 +5,7 @@
     </div>
     <div class="personal_info">
         <div class="full_name">
-            <h1 *ngIf="data && data?.primaryContactInfo?.fullName">
+            <h1 *ngIf="data && data?.primaryContactInfo">
                 <inplace-edit [data]="getNameInplaceEditData()" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
             </h1>
             <div *ngIf="data?.contactPersons?.length > 1" class="contact-persons-info" (click)="showContactPersons($event)">
@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="rating">
-            <mat-progress-bar color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
+            <mat-progress-bar mode="determinate" color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
             <span class="rating_int">{{person.rating}}/10</span>
         </div>
     </div>

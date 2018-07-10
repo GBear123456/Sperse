@@ -1,14 +1,15 @@
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import {Component, Injector, OnInit, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerListsServiceProxy, AssignListsToCustomersInput, CustomerListInput, 
+import { CustomerListsServiceProxy, AddCustomersToListsInput, CustomerListInput,
     UpdateCustomerListInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { MatDialog } from '@angular/material';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-lists-list',
@@ -21,6 +22,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Lists']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItems(value) {
         this.selectedLists = value;
     }
@@ -31,7 +33,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     private _prevClickDate = new Date();
-    private selectedLists = [];
+    selectedLists = [];
     list: any;
 
     lastNewAdded: any;
@@ -60,7 +62,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length), 
+                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process();
@@ -78,13 +80,13 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     process() {
-        this._listsService.assignToMultipleCustomers(AssignListsToCustomersInput.fromJS({
+        this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
             customerIds: this.selectedKeys,
             lists: this.selectedItems
-        })).finally(() => {
+        })).pipe(finalize(() => {
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-        }).subscribe((result) => {
+        })).subscribe((result) => {
             this.notify.success(this.l('ListsAssigned'));
         }, (error) => {
             this.notify.error(this.l('BulkActionErrorOccured'));
@@ -129,7 +131,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while(elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -148,7 +150,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;
-                    if (modelItems.length == 1 && modelItems[0] == $event.data.id) 
+                    if (modelItems.length == 1 && modelItems[0] == $event.data.id)
                         this.filterModel.items.element.value = [];
                     else {
                         this.filterModel.items.element.value = [$event.data.id];
@@ -233,20 +235,20 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     editorPrepared($event) {
         if (!$event.value && $event.editorName == 'dxTextBox') {
             if ($event.editorElement.closest('tr')) {
-                if (this.addNewTimeout) 
+                if (this.addNewTimeout)
                     this.addNewTimeout = null;
                 else {
                     $event.component.cancelEditData();
                     $event.component.getScrollable().scrollTo(0);
                     this.addNewTimeout = setTimeout(()=> {
                         $event.component.addRow();
-                    });               
-                } 
-            }    
+                    });
+                }
+            }
         }
     }
 
-    onInitNewRow($event) {        
+    onInitNewRow($event) {
         $event.data.name = $event.component.option('searchPanel.text');
     }
 
@@ -282,8 +284,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterIds = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             filterIds.forEach((id) => {
@@ -294,12 +296,16 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    customSortingMethod = (item1, item2) => { 
+    customSortingMethod = (item1, item2) => {
         if (this.lastNewAdded) {
             if (this.lastNewAdded.name == item1)
                 return -1;
             else if (this.lastNewAdded.name == item2)
                 return 1;
         }
+    }
+
+    onCellClick(event) {
+        this.selectedLists = this.listComponent.option('selectedRowKeys');
     }
 }

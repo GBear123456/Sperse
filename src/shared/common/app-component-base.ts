@@ -11,11 +11,12 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
-import { PrimengDatatableHelper } from 'shared/helpers/PrimengDatatableHelper';
+import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { environment } from 'environments/environment';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { AppUrlService } from '@shared/common/nav/app-url.service';
 
 import buildQuery from 'odata-query';
 import * as _ from 'underscore';
@@ -38,9 +39,10 @@ export abstract class AppComponentBase {
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
     httpConfig: httpConfiguration;
-    primengDatatableHelper: PrimengDatatableHelper;
+    primengTableHelper: PrimengTableHelper;
     ui: AppUiCustomizationService;
     loading: boolean;
+    appUrlService: AppUrlService;
 
     public searchValue: string;
     public searchColumns: any[];
@@ -75,7 +77,8 @@ export abstract class AppComponentBase {
         this.httpConfig = _injector.get(httpConfiguration);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
-        this.primengDatatableHelper = new PrimengDatatableHelper();
+        this.primengTableHelper = new PrimengTableHelper();
+        this.appUrlService = _injector.get(AppUrlService);
     }
 
     @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -101,7 +104,9 @@ export abstract class AppComponentBase {
     }
 
     l(key: string, ...args: any[]): string {
-        return this.ls(this.localizationSourceName, key, ...args);
+        args.unshift(key);
+        args.unshift(this.localizationSourceName);
+        return this.ls.apply(this, args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
@@ -110,7 +115,6 @@ export abstract class AppComponentBase {
             sourcename = AppConsts.localization.defaultLocalizationSourceName;
 
         let localizedText = this.localization.localize(key, sourcename);
-
         if (!localizedText)
             localizedText = key;
 
@@ -118,7 +122,6 @@ export abstract class AppComponentBase {
             return localizedText;
 
         args.unshift(localizedText);
-
         return abp.utils.formatString.apply(this, args);
     }
 
@@ -339,5 +342,9 @@ export abstract class AppComponentBase {
             clearTimeout(this.showZendeskWebwidgetTimeout);
             service.hide();
         }
+    }
+
+    appRootUrl(): string {
+        return this.appUrlService.appRootUrl;
     }
 }

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Route } from '@angular/router';
 import { StartComponent } from './start/start.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
@@ -9,6 +8,7 @@ import { CashflowComponent } from './cashflow/cashflow.component';
 import { StatsComponent } from './stats/stats.component';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { RulesComponent } from './rules/rules.component';
+import { PermissionsComponent } from './permissions/permissions.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { StatementsComponent } from './statements/statements.component';
@@ -43,6 +43,7 @@ import { StatementsComponent } from './statements/statements.component';
                     { path: 'stats', component: StatsComponent, data: { permission: '', reuse: true } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '', reuse: true } },
                     { path: 'rules', component: RulesComponent, data: { permission: '' } },
+                    { path: 'permissions', component: PermissionsComponent, data: { permission: '' } },
                     { path: 'statements', component: StatementsComponent, data: { permission: '', reuse: true } }
                 ]
             }

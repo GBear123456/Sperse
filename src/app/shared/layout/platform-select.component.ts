@@ -32,7 +32,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                     name: module
                 });
             } else {
-                let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.BusinessAccess');
+                let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
                 this.modules.push({
                     code: module,
                     name: 'CFO',

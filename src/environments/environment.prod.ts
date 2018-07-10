@@ -1,7 +1,6 @@
-// "Production" enabled environment
-
 export const environment = {
     production: true,
     zenDeskEnabled: true,
-    hmr: false
+    hmr: false,
+    appConfig: 'appconfig.prod.json'
 };

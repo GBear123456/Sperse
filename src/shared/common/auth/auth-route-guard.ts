@@ -1,16 +1,15 @@
-import { Injectable } from '@angular/core';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { AppSessionService } from '../session/app-session.service';
+import { Injectable } from '@angular/core';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
     CanActivateChild
-    } from '@angular/router';
+} from '@angular/router';
 import { AppConsts } from 'shared/AppConsts';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Injectable()
 export class AppRouteGuard implements CanActivate, CanActivateChild {
@@ -23,6 +22,11 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+
+        if (state && UrlHelper.isInstallUrl(state.url)) {
+            return true;
+        }
+
         if (!this._sessionService.user) {
             this._router.navigate(['/account/login']);
             return false;
@@ -58,7 +62,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
             if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO')) {
 
-                if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess'))
+                if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
                     return '/app/cfo/main/';
 
                 if (this._feature.isEnabled('CFO.Partner'))
@@ -75,15 +79,16 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (this._permissionChecker.isGranted('Pages.Tenants')) {
-            return '/app/crm/tenants';
+            return '/app/admin/tenants';
         }
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Users')) {
+        if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST ||  this._feature.isEnabled('Admin'))
+            && this._permissionChecker.isGranted('Pages.Administration.Users')) {
             return '/app/admin/users';
         }
 
         if (this._permissionChecker.isGranted('Pages.CRM')) {
-            return '/app/crm/clients';
+            return '/app/crm/dashboard';
         }
 
         if (this._feature.isEnabled('Notification')) {

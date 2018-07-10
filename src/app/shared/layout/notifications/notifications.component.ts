@@ -1,14 +1,13 @@
-import { Component, Injector, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AppUserNotificationState } from '@shared/AppEnums';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
-import { UserNotificationHelper, IFormattedUserNotification } from './UserNotificationHelper';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppUserNotificationState } from '@shared/AppEnums';
-import { DataTable } from 'primeng/components/datatable/datatable';
-import { Paginator } from 'primeng/components/paginator/paginator';
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-
 import * as moment from 'moment';
+import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
+import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 
 @Component({
     templateUrl: './notifications.component.html',
@@ -18,7 +17,7 @@ import * as moment from 'moment';
 })
 export class NotificationsComponent extends AppComponentBase {
 
-    @ViewChild('dataTable') dataTable: DataTable;
+    @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
 
     readStateFilter = 'ALL';
@@ -27,8 +26,7 @@ export class NotificationsComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         private _notificationService: NotificationServiceProxy,
-        private _userNotificationHelper: UserNotificationHelper,
-        private changeDetectorRef: ChangeDetectorRef
+        private _userNotificationHelper: UserNotificationHelper
     ) {
         super(injector);
     }
@@ -74,22 +72,22 @@ export class NotificationsComponent extends AppComponentBase {
     }
 
     getNotifications(event?: LazyLoadEvent): void {
-        if (this.primengDatatableHelper.shouldResetPaging(event)) {
+        if (this.primengTableHelper.shouldResetPaging(event)) {
             this.paginator.changePage(0);
 
             return;
         }
 
-        this.primengDatatableHelper.showLoadingIndicator();
+        this.primengTableHelper.showLoadingIndicator();
 
         this._notificationService.getUserNotifications(
             this.readStateFilter === 'ALL' ? undefined : AppUserNotificationState.Unread,
-            this.primengDatatableHelper.getMaxResultCount(this.paginator, event),
-            this.primengDatatableHelper.getSkipCount(this.paginator, event)
+            this.primengTableHelper.getMaxResultCount(this.paginator, event),
+            this.primengTableHelper.getSkipCount(this.paginator, event)
         ).subscribe((result) => {
-            this.primengDatatableHelper.totalRecordsCount = result.totalCount;
-            this.primengDatatableHelper.records = this.formatNotifications(result.items);
-            this.primengDatatableHelper.hideLoadingIndicator();
+            this.primengTableHelper.totalRecordsCount = result.totalCount;
+            this.primengTableHelper.records = this.formatNotifications(result.items);
+            this.primengTableHelper.hideLoadingIndicator();
         });
     }
 

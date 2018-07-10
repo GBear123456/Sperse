@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, Input, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { UserAssignmentServiceProxy, AssignUserToCustomersInput } from '@shared/service-proxies/service-proxies';
+import { UserAssignmentServiceProxy, AssignCustomersInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
 import * as _ from 'underscore';
@@ -15,8 +15,10 @@ import * as _ from 'underscore';
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
+    @Input() selectedItems: any = [];
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItemKey(value) {
         this.selectedItemKeys = [value];
     }
@@ -25,9 +27,10 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
     private selectedItemKeys = [];
     list: any;
-
+    assignedUserId: number;
     listComponent: any;
     tooltipVisible = false;
+    selectedMyKey: any;
 
     constructor(
         injector: Injector,
@@ -63,6 +66,10 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this.highlightSelectedFilters();
     }
 
+    onItemClick(event) {
+        this.assignedUserId = event.itemData.id;
+    }
+
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
             this.selectedItemKeys = this.list.map((item, index) => {
@@ -89,7 +96,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     process() {
-        this._userAssignmentService.assignUserToCustomers(AssignUserToCustomersInput.fromJS({
+        this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
             customerIds: this.selectedKeys,
             userId: this.selectedItemKey
         })).subscribe((result) => {
@@ -113,6 +120,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this._userAssignmentService.getUsers(true).subscribe((result) => {
             this.list = result;
         });
+        if (this.selectedItems) {
+            this.highlightSelectedFilters();
+        }
     }
 
     reset() {
@@ -120,15 +130,15 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterIds = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             let items = this.listComponent.element()
                 .getElementsByClassName('item-row');
             _.each(items, (item) => {
                 if (filterIds.indexOf(Number(item.getAttribute('id'))) >= 0)
-                    item.parentNode.parentNode.classList.add('filtered');                
+                    item.parentNode.parentNode.classList.add('filtered');
             });
         }
     }
@@ -137,18 +147,17 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
 
     applyFilter(event, data) {
         event.stopPropagation();
-  
         this.clearFiltersHighlight();
 
         let modelItems = this.filterModel.items.element.value;
-        if (modelItems.length == 1 && modelItems[0] == data.id) 
+        if (modelItems.length == 1 && modelItems[0] == data.id)
             this.filterModel.items.element.value = [];
         else {
             this.filterModel.items.element.value = [data.id];

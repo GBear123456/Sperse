@@ -4,10 +4,9 @@ import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm
 import { MatDialog } from '@angular/material';
 
 import { AppConsts } from '@shared/AppConsts';
-import { Observable } from "rxjs";
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/switchMap';
-import * as _ from "underscore";
+import { Observable, Subject, of } from 'rxjs';
+import { map, switchMap, finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 @Injectable()
 export class PipelineService {
@@ -20,33 +19,33 @@ export class PipelineService {
         private _dialog: MatDialog,
         private _leadService: LeadServiceProxy,
         private _pipelineServiceProxy: PipelineServiceProxy
-    ) {  
+    ) {
         this.stageChange = new Subject<any>();
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
         return this._pipelineServiceProxy
             .getPipelinesData(pipelinePurposeId)
-            .switchMap(result => {
+            .pipe(switchMap(result => {
                 let pipelineId = result[0].id;
                 if ((!this.pipeline || pipelineId != this.pipeline.id) && result.length > 0)
                     return this._pipelineServiceProxy.getPipelineDefinition(result[0].id)
-                        .map(result => {
-                            result.stages.sort((a, b) => {
-                                return a.sortOrder > b.sortOrder ? 1: -1;
-                            }).forEach((item) => {
-                                item['index'] = Math.abs(item.sortOrder);
-                                item['dragAllowed'] = true;
-                            });
-                            
-                            this.pipeline = result; 
-                            this.stages = result.stages;
-                            
-                            return result;
-                        });
+                        .pipe(
+                            map(result => {
+                                result.stages.sort((a, b) => {
+                                    return a.sortOrder > b.sortOrder ? 1 : -1;
+                                }).forEach((item) => {
+                                    item['index'] = Math.abs(item.sortOrder);
+                                    item['dragAllowed'] = true;
+                                });
+                                this.pipeline = result;
+                                this.stages = result.stages;
+                                return result;
+                            })
+                        );
                 else
-                    return Observable.of(this.pipeline);
-            });
+                    return of(this.pipeline);
+            }));
     }
 
     updateLeadStageByLeadId(leadId, oldStageName, newStageName, complete = null) {
@@ -67,7 +66,7 @@ export class PipelineService {
                 lead.locked = true;
                 if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_LEAD)
                     this._dialog.open(LeadCancelDialogComponent, {
-                        data: { }
+                        data: {}
                     }).afterClosed().subscribe(result => {
                         if (result) {
                             this._leadService.cancelLead(
@@ -76,10 +75,10 @@ export class PipelineService {
                                     cancellationReasonId: result.reasonId,
                                     comment: result.comment
                                 })
-                            ).finally(() => {
+                            ).pipe(finalize(() => {
                                 lead.locked = false;
                                 complete && complete();
-                            }).subscribe((result) => { 
+                            })).subscribe((result) => {
                                 this.completeLeadUpdate(lead, fromStage, toStage);
                             });
                         } else {
@@ -90,13 +89,13 @@ export class PipelineService {
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
                     this._leadService.updateLeadStage(
                         UpdateLeadStageInfo.fromJS({
-                            leadId: leadId, 
+                            leadId: leadId,
                             stageId: toStage.id
                         })
-                    ).finally(() => {
+                    ).pipe(finalize(() => {
                         lead.locked = false;
                         complete && complete();
-                    }).subscribe((res) => { 
+                    })).subscribe((res) => {
                         this.completeLeadUpdate(lead, fromStage, toStage);
                     });
                 else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
@@ -104,12 +103,12 @@ export class PipelineService {
                         ProcessLeadInput.fromJS({
                             leadId: leadId
                         })
-                    ).finally(() => {
+                    ).pipe(finalize(() => {
                         lead.locked = false;
                         complete && complete();
-                    }).subscribe((res) => { 
+                    })).subscribe((res) => {
                         this.completeLeadUpdate(lead, fromStage, toStage);
-                    }); 
+                    });
                 else {
                     lead.locked = false;
                     complete && complete();
@@ -118,13 +117,12 @@ export class PipelineService {
                 this.moveLeadTo(lead, toStage, fromStage);
                 complete && complete();
             }
-                
             return action;
         } else
             complete && complete();
     }
 
-    moveLeadTo(lead, sourceStage, targetStage) {        
+    moveLeadTo(lead, sourceStage, targetStage) {
         if (sourceStage.leads && targetStage.leads)
             targetStage.leads.unshift(
                 sourceStage.leads.splice(

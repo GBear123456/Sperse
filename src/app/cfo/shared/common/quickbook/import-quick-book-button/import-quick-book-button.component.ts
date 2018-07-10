@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuickBookServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'import-quick-book-button',
@@ -25,10 +26,10 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
     buttonClick(): void {
         abp.ui.setBusy();
         this._quickBookService.getQuickBookConnectionLink(InstanceType[this.instanceType], this.instanceId)
-            .finally(() => { abp.ui.clearBusy(); })
+            .pipe(finalize(() => { abp.ui.clearBusy(); }))
             .subscribe((result) => {
                 if (result.connectionLink) {
-                    window.open(result.connectionLink, "Quick Book Connection", "menubar=0,scrollbars=1,width=780,height=900,top=10");
+                    window.open(result.connectionLink, 'Quick Book Connection', 'menubar=0,scrollbars=1,width=780,height=900,top=10');
                 }
             });
     }

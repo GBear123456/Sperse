@@ -20,7 +20,7 @@
             <div class="file">
                 <p class="file-upload links">+ Upload file</p>
             </div>
-            <div class="links-wrap">
+            <div class="links-wrap" (click)="downloadExcel()">
                 <p class="links">Download Excel template </p>
             </div>
             <div class="links-wrap">
@@ -32,4 +32,8 @@
         </div>
 
     </div>
+
+    <dx-data-grid id="gridForExcelContainer" class="hidden-grid" [dataSource]="categorizationComponent.excelData">
+        <dxo-export [enabled]="true"></dxo-export>
+    </dx-data-grid>
 </div>

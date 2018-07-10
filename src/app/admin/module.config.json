@@ -2,6 +2,7 @@
   "name": "Admin",
   "search": false,
   "requiredFeature": "Admin",
+  "requiredPermission": "Pages.Administration",
   "navigation": [
     [ "Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard" ],
     [ "Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants", "Admin.Advanced" ],

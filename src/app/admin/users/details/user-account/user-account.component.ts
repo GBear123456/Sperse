@@ -11,7 +11,6 @@ import { UserServiceProxy, GetUserForEditOutput, UserRoleDto } from '@shared/ser
 export class UserAccountComponent extends AppComponentBase implements OnInit {
     data: GetUserForEditOutput;
     roles: UserRoleDto[] = [];
-    
     sendActivationEmail = false;
     setRandomPassword = false;
 

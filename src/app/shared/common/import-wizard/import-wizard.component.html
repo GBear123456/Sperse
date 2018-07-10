@@ -11,59 +11,78 @@
                      target=".dx-header-row">
     </dx-context-menu>
     <mat-horizontal-stepper [linear]="true">
+        <ng-template matStepperIcon="edit" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
+        <ng-template matStepperIcon="done" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
+        <ng-template matStepperIcon="number" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
         <mat-step [stepControl]="uploadFile" [label]="l('Upload file')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <form [formGroup]="uploadFile">
                 <div class="block left">
-                    <h3 *ngIf="dropZoneProgress < 101; else fileLoading" class="title">{{l('Upload from computer')}}</h3>
-                    <ng-template #fileLoading>
-                        <h3 class="title">{{l('File uploaded successfully')}} <b>{{l('Total')}} {{fileData?.data ? fileData?.data?.length - 1: ''}} {{l('records')}}</b></h3>
-                    </ng-template>
-                    <file-drop [hidden]="dropZoneProgress"
-                               (onFileDrop)="fileDropped($event)">
-                        <p>Drag and Drop files from your computer here<br>or<br>
+                    <h3 [hidden]="dropZoneProgress || loadProgress" class="title">{{l('Upload from computer')}}</h3>
+                    <file-drop [hidden]="dropZoneProgress || loadProgress" (onFileDrop)="fileDropped($event)">
+                        <p>Drag and Drop files from your computer here
+                            <br> or
+                            <br>
                             <a href="javascript:void(0);">
                                 <input name="importFile" type="file" #importFileInput (change)="fileSelected($event)" accept=".csv">browse
                             </a>
                         </p>
                     </file-drop>
-                    <div class="file-info" [hidden]="!dropZoneProgress">
-                        <div class="file-load-progress"
-                             [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 ? 100: dropZoneProgress) + '%, #fff 0%)'}">
+                    <!-- uploaded template -->
+                    <h3 class="title" [hidden]="!dropZoneProgress && !loadProgress">{{l('File uploaded successfully')}}
+                        <b>{{l('Total')}} {{fileData?.data ? fileData?.data?.length - 1: ''}} {{l('records')}}</b>
+                    </h3>
+                    <div class="file-info" [hidden]="!dropZoneProgress && !loadProgress">
+                        <div class="file-load-progress" [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 || loadProgress > 100 ? 100: dropZoneProgress || loadProgress) + '%, #fff 0%)'}">
                             <p>{{l('File')}}: {{fileName}}</p>
                             <p class="file-size">{{l('FileSize')}}: {{fileSize}}</p>
-                            <button class="remove-file" (click)="cleanInput()"><i class="fa fa-times"></i></button><!--todo: add action for remove file-->
+                            <button class="remove-file" (click)="cleanInput()">
+                                <i class="fa fa-times"></i>
+                            </button>
                         </div>
-
-                        <p><label><input type="checkbox" name="hasHeadersCheckBox" [(ngModel)]="fileHasHeader" [ngModelOptions]="{standalone: true}" /> {{l('My file has headers')}}</label></p>
+                        <p>
+                            <label>
+                                <input type="checkbox" name="hasHeadersCheckBox" [(ngModel)]="fileHasHeader" [ngModelOptions]="{standalone: true}"
+                                /> {{l('My file has headers')}}</label>
+                        </p>
                     </div>
+                    <!-- end uploaded template -->
                 </div>
-                <div class="v-center">OR</div>
+                <div class="v-center" [hidden]="!dropZoneProgress || !loadProgress">OR</div>
                 <div class="block right">
-                    <h3>Load from URL</h3>
-                    <mat-form-field class="full-width">
-                        <input matInput type="url" formControlName="url" [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (loadProgress > 100 ? 100: (100 - loadProgress)) + '%, #00aeef 0%)'}">
-                    </mat-form-field>
-                    <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}} <i class="fa fa-angle-right"></i></button>
-                    <div class="file-info" [hidden]="!loadProgress">
-                        <p>{{l('File')}}: {{fileName}}</p>
-                        <p>{{l('FileSize')}}: {{fileSize}}</p>
-                        <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
+                    <div *ngIf="loadProgress < 101 && !dropZoneProgress">
+                        <h3 class="title">{{l('Load from URL')}}</h3>
+                        <mat-form-field class="full-width">
+                            <input matInput type="url" formControlName="url" #importFileInput>
+                        </mat-form-field>
+                        <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}}
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                    </div>
+                    <div [hidden]="!dropZoneProgress && !loadProgress">
+                        <h3 class="title settings">{{l('Default settings')}}&nbsp;
+                            <span>({{l('if no values are selected in uploaded file')}})</span>
+                        </h3>
+                        <app-toolbar [config]="toolbarConfig"></app-toolbar>
                     </div>
                 </div>
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="toolbarConfig"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
+                          (onCellClick)="onMapCellClick($event)"
+                          (onSelectionChanged)="onMapSelectionChanged($event)"
                           (onRowValidating)="onRowValidating($event)"
                           (onContentReady)="onContentReady($event)">
-                <dxo-selection selectAllMode="page"
+                <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">
                 </dxo-selection>
@@ -80,31 +99,45 @@
                             [caption]="l('MappedField')">
                 </dxi-column>
 
-                <div *dxTemplate="let cell of 'mappedFieldTemplate'">
-                    <dx-select-box [dataSource]="lookupFields"
-                                   valueExpr="id"
-                                   displayExpr="name"
-                                   [placeholder]="l('MapFieldPlaceholder')"
-                                   [showClearButton]="true"
-                                   [searchEnabled]="true"
-                                   [value]="cell.value"
-                                   (onValueChanged)="mappedFieldChanged($event, cell)">
-                    </dx-select-box>
+                <div *dxTemplate="let cell of 'mappedFieldTemplate'" class="mapped-field-edit">
+                    <dx-drop-down-box [dataSource]="lookupFields"
+                                      valueExpr="id"
+                                      displayExpr="name"
+                                      [placeholder]="l('MapFieldPlaceholder')"
+                                      [showClearButton]="true"
+                                      [value]="cell.value"
+                                      (onValueChanged)="cell.setValue($event.value)">
+                        <div *dxTemplate="let data of 'content'" style="padding-bottom: 15px;">
+                            <dx-tree-view id="mappedFieldsTreeView"
+                                          [dataSource]="lookupFields"
+                                          dataStructure="plain"
+                                          keyExpr="id"
+                                          parentIdExpr="parent"
+                                          displayExpr="name"
+                                          [searchEnabled]="true"
+                                          [selectNodesRecursive]="false"
+                                          (onItemRendered)="onLookupFieldsItemRendered($event)"
+                                          (onContentReady)="onLookupFieldsContentReady($event, cell)"
+                                          (onItemClick)="cell.setValue($event.node.key)">
+                            </dx-tree-view>
+                        </div>
+                    </dx-drop-down-box>
                 </div>
-
             </dx-data-grid>
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
             <dx-data-grid id="gridContainer" #reviewGrid
+                          [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"
                           [dataSource]="reviewDataSource"
+                          [selectedRowKeys]="selectedPreviewRows"
                           [allowColumnReordering]="false"
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
                           [customizeColumns]="customizePreviewColumns">
-                <dxo-selection selectAllMode="page"
+                <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">
                 </dxo-selection>
@@ -112,7 +145,6 @@
                 <div *dxTemplate="let cellData of 'phoneCell'">
                     {{cellData.value | phone}}
                 </div>
-
             </dx-data-grid>
         </mat-step>
         <mat-step [optional]="true">

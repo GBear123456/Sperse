@@ -122,7 +122,7 @@ export class ContactTypes {
 export class CustomerStatus {
     static Prospective = 'P';
     static Active = 'A';
-    static Inactive = 'I'; 
+    static Inactive = 'I';
 }
 
 export class ODataSearchStrategy {

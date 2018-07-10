@@ -1,0 +1,21 @@
+<app-headline [config]="headlineConfig">
+    <synch-progress class="synch-progress"></synch-progress>
+</app-headline>
+<div class="content-wrap">
+    <setup-steps SelectedStepIndex="4"></setup-steps>
+    <div class="frame-wrap">
+        <dx-scroll-view class="cashflow-scroll" [height]="calculatePermissionsTableHeight()">
+            <dx-data-grid
+                [dataSource]="dataSource"
+                [customizeColumns]="customizeColumns"
+                [rowAlternationEnabled]="true"
+                [showColumnLines]="false"
+                [showRowLines]="false"
+                (onCellHoverChanged)="onCellHoverChanged($event)"
+                (onRowUpdating)="onRowUpdating($event)">
+                <dxo-editing [allowUpdating]="true" mode="cell"></dxo-editing>
+                <dxo-grouping [allowCollapsing]="false"></dxo-grouping>
+            </dx-data-grid>
+        </dx-scroll-view>
+    </div>
+</div>

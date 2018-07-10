@@ -31,7 +31,7 @@ export class PersonDialogComponent extends AppComponentBase {
             value: this.data.person[propName],
             validationRules: [],
             lEntityName: propName,
-            lEditPlaceholder: 'Enter value'        
+            lEditPlaceholder: this.l('EditValuePlaceholder')
         }
     }
 

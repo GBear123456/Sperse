@@ -1,22 +1,19 @@
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { TokenService } from '@abp/auth/token.service';
+import { LogService } from '@abp/log/log.service';
+import { MessageService } from '@abp/message/message.service';
+import { UtilsService } from '@abp/utils/utils.service';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    TokenAuthServiceProxy, AuthenticateModel, AuthenticateResultModel, ExternalLoginProviderInfoModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel,
-    SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput, TenantHostType
-} from '@shared/service-proxies/service-proxies';
-import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
-
-import { MessageService } from '@abp/message/message.service';
-import { LogService } from '@abp/log/log.service';
-import { TokenService } from '@abp/auth/token.service';
-import { UtilsService } from '@abp/utils/utils.service';
-
+import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { AuthenticateModel, AuthenticateResultModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, ExternalLoginProviderInfoModel, TokenAuthServiceProxy, TenantHostType, SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
-declare const FB: any; //Facebook API
-declare const gapi: any; //Facebook API
-declare const WL: any; //Microsoft API
+import { finalize } from 'rxjs/operators';
+
+declare const FB: any; // Facebook API
+declare const gapi: any; // Facebook API
+declare const WL: any; // Microsoft API
 
 export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
 
@@ -86,7 +83,7 @@ export class LoginService {
 
         this._tokenAuthService
             .authenticate(this.authenticateModel)
-            .finally(finallyCallback)
+            .pipe(finalize(finallyCallback))
             .subscribe((result: AuthenticateResultModel) => {
                 this.processAuthenticateResult(result, redirectUrl);
                 this._authService.startTokenCheck();
@@ -100,7 +97,7 @@ export class LoginService {
         this.resetPasswordModel.tenantHostType = <any>TenantHostType.PlatformUi;
         this._accountService
             .sendPasswordResetCode(this.resetPasswordModel)
-            .finally(finallyCallback)
+            .pipe(finalize(finallyCallback))
             .subscribe((result: SendPasswordResetCodeOutput) => {
                 if (this.resetPasswordModel.autoDetectTenancy) {
                     this.resetPasswordResult = result;
@@ -127,7 +124,9 @@ export class LoginService {
                     this.facebookLoginStatusChangeCallback(response);
                 }, { scope: 'email' });
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
-                gapi.auth2.getAuthInstance().signIn();
+                gapi.auth2.getAuthInstance().signIn().then(() => {
+                    this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
+                });
             } else if (provider.name === ExternalLoginProvider.MICROSOFT) {
                 WL.login({
                     scope: ['wl.signin', 'wl.basic', 'wl.emails']
@@ -145,7 +144,7 @@ export class LoginService {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {
-            //Password reset
+            // Password reset
 
             let tenantId = authenticateResult.detectedTenancies[0].id;
             this._router.navigate(['account/reset-password'], {
@@ -159,12 +158,12 @@ export class LoginService {
             this.clear();
 
         } else if (authenticateResult.requiresTwoFactorVerification) {
-            //Two factor authentication
+            // Two factor authentication
 
             this._router.navigate(['account/send-code']);
 
         } else if (authenticateResult.accessToken) {
-            //Successfully logged in
+            // Successfully logged in
             if (authenticateResult.returnUrl && !redirectUrl) {
                 redirectUrl = authenticateResult.returnUrl;
             }
@@ -182,7 +181,7 @@ export class LoginService {
             //Select tenant
             this._router.navigate(['account/select-tenant']);
         } else {
-            //Unexpected result!
+            // Unexpected result!
 
             this._logService.warn('Unexpected authenticateResult!');
             this._router.navigate(['account/login']);
@@ -210,7 +209,7 @@ export class LoginService {
             this._utilsService.setCookieValue(
                 LoginService.twoFactorRememberClientTokenName,
                 twoFactorRememberClientToken,
-                new Date(new Date().getTime() + 365 * 86400000), //1 year
+                new Date(new Date().getTime() + 365 * 86400000), // 1 year
                 abp.appPath
             );
         }
@@ -279,14 +278,8 @@ export class LoginService {
                             clientId: loginProvider.clientId,
                             scope: 'openid profile email'
                         }).then(() => {
-                            gapi.auth2.getAuthInstance().isSignedIn.listen((isSignedIn) => {
-                                this.googleLoginStatusChangeCallback(isSignedIn);
-                            });
-
-                            this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
+                            callback();
                         });
-
-                        callback();
                     });
             });
         } else if (loginProvider.name === ExternalLoginProvider.MICROSOFT) {
@@ -352,7 +345,7 @@ export class LoginService {
         const model = new ExternalAuthenticateModel();
         model.authProvider = ExternalLoginProvider.MICROSOFT;
         model.providerAccessCode = WL.getSession().access_token;
-        model.providerKey = WL.getSession().id; //How to get id?
+        model.providerKey = WL.getSession().id; // How to get id?
         model.singleSignIn = UrlHelper.getSingleSignIn();
         model.returnUrl = UrlHelper.getReturnUrl();
 

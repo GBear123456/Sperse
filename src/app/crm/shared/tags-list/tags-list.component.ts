@@ -3,11 +3,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerTagsServiceProxy, AssignToCustomersInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
+import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { MatDialog } from '@angular/material';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-tags-list',
@@ -20,6 +21,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Tags']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItems(value) {
         this.selectedTags = value;
     }
@@ -31,7 +33,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     private _prevClickDate = new Date();
     private selectedTags = [];
-    
+
     list: any = [];
 
     lastNewAdded: any;
@@ -78,13 +80,13 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     process() {
-        this._tagsService.assignToMultipleCustomers(AssignToCustomersInput.fromJS({
+        this._tagsService.tagCustomers(TagCustomersInput.fromJS({
             customerIds: this.selectedKeys,
             tags: this.selectedItems
-        })).finally(() => {
+        })).pipe(finalize(() => {
             if (this.bulkUpdateMode)
                 setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-        }).subscribe((result) => {
+        })).subscribe((result) => {
             this.notify.success(this.l('TagsAssigned'));
         }, (error) => {
             this.notify.error(this.l('BulkActionErrorOccured'));
@@ -129,7 +131,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while(elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -148,7 +150,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;
-                    if (modelItems.length == 1 && modelItems[0] == $event.data.id) 
+                    if (modelItems.length == 1 && modelItems[0] == $event.data.id)
                         this.filterModel.items.element.value = [];
                     else {
                         this.filterModel.items.element.value = [$event.data.id];
@@ -235,20 +237,20 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     editorPrepared($event) {
         if (!$event.value && $event.editorName == 'dxTextBox') {
             if ($event.editorElement.closest('tr')) {
-                if (this.addNewTimeout) 
+                if (this.addNewTimeout)
                     this.addNewTimeout = null;
                 else {
                     $event.component.cancelEditData();
                     $event.component.getScrollable().scrollTo(0);
                     this.addNewTimeout = setTimeout(()=> {
                         $event.component.addRow();
-                    });               
-                } 
-            }    
+                    });
+                }
+            }
         }
     }
 
-    onInitNewRow($event) {        
+    onInitNewRow($event) {
         $event.data.name = $event.component.option('searchPanel.text');
     }
 
@@ -284,8 +286,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterIds = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             filterIds.forEach((id) => {
@@ -296,7 +298,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    customSortingMethod = (item1, item2) => { 
+    customSortingMethod = (item1, item2) => {
         if (this.lastNewAdded) {
             if (this.lastNewAdded.name == item1)
                 return -1;

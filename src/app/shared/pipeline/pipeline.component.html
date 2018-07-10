@@ -9,7 +9,8 @@
                         <div class="container-fluid">                                        
                             <div class="row">
                                 <div class="full-name">
-                                    <span>{{lead?.Name}}</span>
+                                    <span *ngIf="lead?.Name">{{ lead?.Name }}</span>
+                                    <span *ngIf="!lead?.Name" class="no-name">{{ l('ClientNoName') }}</span>
                                     <div class="company-name">
                                         <span>{{ lead?.CompanyName }}</span>
                                     </div>

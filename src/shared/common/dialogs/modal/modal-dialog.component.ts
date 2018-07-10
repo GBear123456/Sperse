@@ -12,7 +12,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
   private elementRef: ElementRef;
   private slider: any;
   public data: any;
-  public dialogRef: MatDialogRef<ModalDialogComponent>;
+  public dialogRef: MatDialogRef<ModalDialogComponent, any>;
 
   @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
 
@@ -23,7 +23,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
 
     this.data = injector.get(MAT_DIALOG_DATA);
     this.elementRef = injector.get(ElementRef);
-    this.dialogRef = injector.get(MatDialogRef);
+    this.dialogRef = <any>injector.get(MatDialogRef);
 
     this.localizationSourceName = this.data.localization;
   }
@@ -69,7 +69,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
           this.dialogRef.close(closeData);
   }
 
-  onTitleChanged() {  
+  onTitleChanged() {
       this.data.isTitleValid = true;
   }
 

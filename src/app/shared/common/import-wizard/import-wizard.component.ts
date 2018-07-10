@@ -1,23 +1,24 @@
+/** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AppComponentBase } from '@shared/common/app-component-base';
+
+/** Third party imports */
 import { MatHorizontalStepper } from '@angular/material';
-import { PapaParseService } from 'ngx-papaparse';
-import { UploadEvent, UploadFile } from 'ngx-file-drop';
-
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
+import { Papa } from 'ngx-papaparse';
+import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
-
 import * as _ from 'underscore';
+import * as _s from 'underscore.string';
+
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'import-wizard',
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase implements OnInit{
+export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
@@ -25,8 +26,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     @Input() title: string;
     @Input() icon: string;
+    @Input() checkSimilarRecord: Function;
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
+    @Input() lookupFields: any;
+    @Input() preProcessFieldBeforeReview: Function;
+    @Input() validateFieldsMapping: Function;
     @Input() set fields(list: string[]) {
         this.lookupFields = list.map((field) => {
             return {
@@ -35,66 +40,86 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             };
         });
     }
+    @Input() toolbarConfig: any[];
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() userAssign: EventEmitter<any> = new EventEmitter();
+    @Output() listsSelect: EventEmitter<any> = new EventEmitter();
+    @Output() ratingSelect: EventEmitter<any> = new EventEmitter();
+    @Output() starSelect: EventEmitter<any> = new EventEmitter();
+    @Output() tagsSelect: EventEmitter<any> = new EventEmitter();
+
+
+    public static readonly FieldSeparator = '_';
 
     uploadFile: FormGroup;
+    dataMapping: FormGroup;
 
     private files: UploadFile[] = [];
+    private duplicateCounts: any = {};
+    private reviewGroups: any = [];
 
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
     private readonly REVIEW_STEP_INDEX  = 2;
     private readonly FINISH_STEP_INDEX  = 3;
 
-    showSteper: boolean = true;
-    loadProgress: number = 0;
-    dropZoneProgress: number = 0;
+    showSteper = true;
+    loadProgress = 0;
+    dropZoneProgress = 0;
 
     fileData: any;
-    fileName: string = '';
-    fileSize: string = '';
-    fileHasHeader: boolean = false;
+    fileName = '';
+    fileSize = '';
+    fileHasHeader = false;
     fileHeaderWasGenerated = false;
+
+    selectedPreviewRows: any = [];
 
     reviewDataSource: any;
     mapDataSource: any;
-    lookupFields: any;
-
-    isMapped = true;
 
     selectModeItems = [
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
-    ]
+    ];
 
     constructor(
         injector: Injector,
-        private _parser: PapaParseService,
+        private _parser: Papa,
         private _formBuilder: FormBuilder
-    ) { 
+    ) {
         super(injector);
-
         this.uploadFile = _formBuilder.group({
-          url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)]
+            url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)],
+            valid: ['', () => {
+                return this.checkFileDataValid() ? null: { 'required': true };
+            }]
+        });
+        this.dataMapping = _formBuilder.group({
+            valid: ['', () => {
+                let validationResult = null;
+                if (this.validateFieldsMapping)
+                    validationResult = _.extend(this.validateFieldsMapping(this.getMappedFields()), { 'required': true });
+                return validationResult && validationResult.isMapped && !validationResult.error ? null: validationResult;
+            }]
         });
     }
 
-    ngOnInit() {  
+    ngOnInit() {
         this.localizationSourceName = this.localizationSource;
     }
 
-    reset(callback = null) { 
+    reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
         this.loadProgress = 0;
-
         this.showSteper = false;
         this.uploadFile.reset();
 
         this.mapDataSource = [];
-        this.reviewDataSource = [];
+        this.emptyReviewData();
 
         setTimeout(() => {
             this.showSteper = true;
@@ -104,26 +129,35 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
-            if (this.checkFileDataValid())
-            {
+            this.uploadFile.controls.valid.updateValueAndValidity();
+            if (this.uploadFile.valid) {                
                 this.buildMappingDataSource();
                 this.stepper.next();
-            }
-            else
+            } else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
-            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
-            if (!mappedFields.length) {
-                mappedFields = this.mapDataSource.store.data.filter((row) => {
-                    return !!row.mappedField;
-                });
+            this.dataMapping.controls.valid.updateValueAndValidity();
+            if (this.dataMapping.valid) {
+                this.initReviewDataSource(this.getMappedFields()); 
+                this.stepper.next();    
+            } else {
+                this.highlightUnmappedFields(this.getMappedFields());
+                this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
-            if (this.validateFieldsMapping(mappedFields))
-                this.initReviewDataSource(mappedFields); 
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let data = this.reviewGrid.instance.getSelectedRowsData();
             this.complete(data.length && data || this.reviewDataSource);
         }
+    }
+
+    getMappedFields() {
+        let mappedFields = this.mapGrid.instance.getSelectedRowsData();
+        if (!mappedFields.length) {
+            mappedFields = this.mapDataSource.store.data.filter((row) => {
+                return !!row.mappedField;
+            });
+        }
+        return mappedFields;
     }
 
     cancel() {        
@@ -140,48 +174,106 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
     }
 
-    initReviewDataSource(mappedFields) {        
-        let columnsIndex = {};
+    emptyReviewData() {
         this.reviewDataSource = [];
-        this.fileData.data.forEach((row, index) => {
-            if (index) {                
+        this.selectedPreviewRows = [];
+        this.duplicateCounts = {};
+        this.reviewGroups = [];
+    }
+
+    initReviewDataSource(mappedFields) {
+        let columnsIndex = {};
+        this.emptyReviewData();
+
+        this.fileData.data.map((row, index) => {
+            if (index) {
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
-                        data[field.mappedField] = row[columnsIndex[field.sourceField]];
+                        let rowValue = row[columnsIndex[field.sourceField]];
+                        if (
+                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data))
+                            &&
+                            !data[field.mappedField]
+                        )
+                            data[field.mappedField] = rowValue;
                     });
-                    this.reviewDataSource.push(data);
+                    if (this.checkDuplicate(data))
+                        delete this.fileData.data[index];
+                    else
+                        return data;
                 }
-            } else 
+            } else
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
                 });
+        }).forEach((row, index) => {
+            row && this.reviewDataSource.push(
+                this.checkSimilarGroups(row));
         });
 
-        this.stepper.next();
+        let groups = this.reviewGroups.filter(Boolean);
+        this.reviewGroups = [];
+        groups.forEach((group, index) => {
+            if (group && group.length) {
+                if (group.length > 1) {
+                    let groupName = this.l('Similar items') +
+                        '(' + group[0].compared + ')';
+                    this.reviewGroups.push(groupName);
+                    group.forEach((item) => {
+                        item.compared = groupName;
+                    });
+                } else
+                    group[0].compared = this.l('Unique item(s)');
+                this.selectedPreviewRows.push(group[0].uniqueIdent);
+            }
+        });
     }
 
-    validateFieldsMapping(rows) {
-        const FIRST_NAME_FIELD = 'first',
-              LAST_NAME_FIELD = 'last';
-        let isFistName = false, 
-            isLastName = false;
+    getRowUniqueIdent(row) {
+        return JSON.stringify(row)
+            .toLowerCase().split('').reduce(
+                (prev, next) => {
+                    return ((prev << 5) - prev) +
+                        next.charCodeAt(0);
+                }, 0).toString();
+    }
 
-        this.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField.toLowerCase() == FIRST_NAME_FIELD);
-            isLastName = isLastName || (row.mappedField.toLowerCase() == LAST_NAME_FIELD);
-            return !!row.mappedField;
-        });
+    checkDuplicate(row) {
+        let ident = this.getRowUniqueIdent(row),
+            count = this.duplicateCounts[ident];
 
-        if (!this.isMapped) {
-            this.highlightUnmappedFields(rows);
-            this.message.error(this.l('MapAllRecords'));
+        row.uniqueIdent = ident;
+        return (this.duplicateCounts[ident] = (count || 0) + 1) > 1;
+    }
+
+    checkSimilarGroups(row) {
+        if (this.reviewGroups.length) {
+            let groupIndex = [];
+            this.reviewGroups.forEach((group, index) => {
+                if (group && group.some((item) => {
+                    return this.checkSimilarRecord(row, item);
+                })) groupIndex.push(index);
+            });
+
+            if (groupIndex.length) {
+                if (groupIndex.length > 1) {
+                    let newGroup = [];
+                    groupIndex.forEach((index) => {
+                        newGroup = newGroup.concat(this.reviewGroups[index]);
+                        delete this.reviewGroups[index];
+                    });
+                    this.reviewGroups.push(newGroup);
+                } else
+                    this.reviewGroups[groupIndex[0]].push(row);
+
+                return row;
+            }
         }
 
-        if (this.isMapped && (!isFistName || !isLastName))
-            this.message.error(this.l('FieldsMapError'));
+        this.reviewGroups.push([row]);
 
-        return this.isMapped && isFistName && isLastName;
+        return row;
     }
 
     highlightUnmappedFields(rows) {
@@ -201,7 +293,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     checkFileDataValid() {
-        return this.fileData && !this.fileData.errors.length 
+        return this.fileData && !this.fileData.errors.length
             && this.fileData.data.length;
     }
 
@@ -214,7 +306,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     this.fileHeaderWasGenerated = false;
                     this.fileData = results;
                     this.checkIfFileHasHeaders();
-                }    
+                }
             }
         });
     }
@@ -222,7 +314,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     getFileSize(size) {
         return (size / 1024).toFixed(2) + 'KB';
     }
- 
+
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
@@ -261,8 +353,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
                 this.fileData.data.unshift(headers);
                 this.fileHeaderWasGenerated = true;
-            }
-            else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
+            } else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
                 this.fileData.data.shift();
                 this.fileHeaderWasGenerated = false;
             }
@@ -274,7 +365,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     sourceField: field,
                     sampleValue: this.lookForValueExample(index),
                     mappedField: this.lookupFields.every((item) => {
-                        let isSameField = item.id.toLowerCase() == field.toLowerCase();
+                        let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
                         if (isSameField)
                             fieldId = item.id;
                         return !isSameField;
@@ -321,10 +412,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
         return this.fileData.data[notEmptyIndex][fieldIndex];
     }
-   
+
     fileSelected($event) {
         if ($event.target.files.length)
-            this.fileDropped({files: $event.target.files})
+            this.fileDropped({files: $event.target.files});
     }
 
     downloadFromURL() {
@@ -340,36 +431,44 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                         this.message.error(result.target.statusText);
                     }
                 });
-            else 
+            else
                 this.message.error(this.l('FieldEmptyError', [this.l('URL')]));
-        }   
+        }
     }
 
     getFile(path: string, callback: Function) {
         this.dropZoneProgress = 0;
         let request = new XMLHttpRequest();
-        request.addEventListener("load", (event) => {
+        request.addEventListener('load', (event) => {
             this.loadProgress = 101;
             callback(event);
         });
-        request.addEventListener("progress", (event) => {
+        request.addEventListener('progress', (event) => {
             if (event.total > event.loaded)
                 this.loadProgress = Math.round(event.loaded / event.total * 100);
         });
         request.open('GET', path, true);
-        request.setRequestHeader('Accept', "*/*");
-        request.setRequestHeader('Content-Type', "application/*");
+        request.setRequestHeader('Accept', '*/*');
+        request.setRequestHeader('Content-Type', 'application/*');
 
         request.send();
     }
 
     onRowValidating($event) {
+        if ($event.newData.mappedField)
+            $event.component.selectRows([$event.key]);
+        else
+            $event.component.deselectRows([$event.key]);
+
         this.mapDataSource.store.data.forEach((row) => {
-            if ($event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
+            if ($event.oldData.sourceField != row.sourceField &&
+                $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
-            }
+            }   
         });
+        if ($event.isValid)
+            this.mapGrid.instance.closeEditCell();
     }
 
     selectionModeChanged($event) {
@@ -378,14 +477,38 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     onContentReady($event) {
-        if (this.mapGrid && !this.isMapped) {
-            let mappedFields = this.mapGrid.instance.getSelectedRowsData();
-            this.highlightUnmappedFields(mappedFields);
+        let selectedRows = [];
+        $event.component.getVisibleRows().forEach((row) => {
+            if (row.data.mappedField)
+                selectedRows.push(row.data.id);
+        });
+        $event.component.selectRows(selectedRows);
+    }
+
+    onMapCellClick($event) {
+        if (typeof($event.displayValue) === 'boolean') {
+            $event.component.deselectRows([$event.data.id]);
+            $event.data.mappedField = "";
         }
     }
 
-    mappedFieldChanged($event, cell) {
-        cell.setValue($event.value);
+    onMapSelectionChanged($event) {
+        $event.selectedRowsData.forEach((row) => {
+            if (!row.mappedField)
+                $event.component.deselectRows([row.id]);
+        });
+    }
+
+    onLookupFieldsContentReady($event, cell) {
+        $event.component.unselectAll();
+        $event.component.selectItem(cell.value);
+    }
+
+    onLookupFieldsItemRendered($event) {
+        this.mapGrid.instance.getSelectedRowsData().forEach((row) => {
+            if (row.mappedField == $event.itemIndex)
+                $event.itemElement.classList.add('mapped');
+        });
     }
 
     cleanInput() {
@@ -396,9 +519,23 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
             let columnConfig = this.columnsConfig[column.dataField];
-            if (columnConfig) {
-                _.extend(column, columnConfig);
+            if (column.dataField == 'uniqueIdent')
+                column.visible = false;
+            else if (column.dataField == 'compared') {
+                if (this.reviewGroups.length)
+                    column.groupIndex = 0;
+                else {
+                    column.visible = false;
+                    this.selectedPreviewRows = [];
+                }
+            } else {
+                if (columnConfig)
+                    _.extend(column, columnConfig);
             }
+
+            if (!columnConfig || !columnConfig['caption'])
+                column.caption = _s.humanize(column.dataField.split(
+                    ImportWizardComponent.FieldSeparator).pop());
         });
     }
 }

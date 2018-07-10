@@ -25,7 +25,7 @@ export class ContactInfoPanelComponent extends AppComponentBase implements OnIni
   };
   constructor(
     injector: Injector
-  ) { 
+  ) {
     super(injector);
   }
 
