@@ -17208,8 +17208,8 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createSyncAccount(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, input: CreateSyncAccountInput | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/CreateSyncAccount?";
+    create(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, input: CreateSyncAccountInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Create?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -17229,11 +17229,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateSyncAccount(response_);
+            return this.processCreate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateSyncAccount(<any>response_);
+                    return this.processCreate(<any>response_);
                 } catch (e) {
                     return <Observable<number>><any>_observableThrow(e);
                 }
@@ -17242,7 +17242,7 @@ export class SyncAccountServiceProxy {
         }));
     }
 
-    protected processCreateSyncAccount(response: HttpResponseBase): Observable<number> {
+    protected processCreate(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -45161,7 +45161,6 @@ export interface ISyncProgressDto {
 
 export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
-    syncRef!: string | undefined;
     consumerKey!: string | undefined;
     consumerSecret!: string | undefined;
 
@@ -45177,7 +45176,6 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     init(data?: any) {
         if (data) {
             this.typeId = data["typeId"];
-            this.syncRef = data["syncRef"];
             this.consumerKey = data["consumerKey"];
             this.consumerSecret = data["consumerSecret"];
         }
@@ -45193,7 +45191,6 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["typeId"] = this.typeId;
-        data["syncRef"] = this.syncRef;
         data["consumerKey"] = this.consumerKey;
         data["consumerSecret"] = this.consumerSecret;
         return data; 
@@ -45202,7 +45199,6 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
 
 export interface ICreateSyncAccountInput {
     typeId: string;
-    syncRef: string | undefined;
     consumerKey: string | undefined;
     consumerSecret: string | undefined;
 }
