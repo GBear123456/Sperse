@@ -5,12 +5,16 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Lists')}}</span>
-                <div [hidden]="bulkUpdateMode && !selectedKeys?.length" [hidden]="hideButtons">
+                <div [hidden]="hideButtons || bulkUpdateMode">
                     <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
+                <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">
+                    <span class="filter-clear" (click)="apply(true)">{{l('Remove')}}</span>
+                    <span class="filter-apply" [class.disabled]="!listslist.selectedRowKeys?.length" (click)="apply()">{{l('Add')}}</span>
+                </div>
             </div>
-            <dx-tree-list 
+            <dx-tree-list #listslist
                 width="300px"
                 height="350px"
                 keyExpr="id"
@@ -32,7 +36,7 @@
                 (onContentReady)="onContentReady($event)"
                 (onRowInserted)="onRowInserted($event)"
                 (onEditorPrepared)="editorPrepared($event)"
-                (onCellClick)="onCellClick($event)"
+                (onSelectionChanged)="onSelectionChange($event)"
                 [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
                 <dxo-editing mode="row"

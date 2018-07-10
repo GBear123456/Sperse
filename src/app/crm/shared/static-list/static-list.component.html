@@ -5,7 +5,7 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{title}}</span>
-                <div *ngIf="selectedKeys.length" [hidden]="hideButtons">
+                <div *ngIf="hideButtons || selectedKeys.length">
                     <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>
@@ -17,7 +17,8 @@
                 [keyExpr]="'id'"
                 [(selectedItems)]="selectedItems"
                 (onContentReady)="onContentReady($event)"
-                (onInitialized)="onInitialized($event)">
+                (onInitialized)="onInitialized($event)"
+                (onSelectionChanged)="onSelectionChange($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row {{data.name.replace(' ', '-') | lowercase}}" data-id="{{data.id}}"><span>{{data.name}}</span><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
                 </div>

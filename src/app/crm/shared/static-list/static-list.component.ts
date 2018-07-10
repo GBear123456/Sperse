@@ -13,6 +13,7 @@ import * as _ from 'underscore';
 })
 export class StaticListComponent extends AppComponentBase {
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     @Input() width: string;
     @Input() title: string;
@@ -62,8 +63,8 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     highlightSelectedFilters() {
-        let filterValue = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterValue = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterValue) {
             let items = this.listComponent.element()
@@ -71,7 +72,7 @@ export class StaticListComponent extends AppComponentBase {
             _.each(items, (item) => {
                 let itemValue = item.id;
                 if (filterValue.join && filterValue.indexOf(itemValue) >= 0 || filterValue == itemValue)
-                    item.parentNode.parentNode.classList.add('filtered');                
+                    item.parentNode.parentNode.classList.add('filtered');
             });
         }
     }
@@ -80,15 +81,15 @@ export class StaticListComponent extends AppComponentBase {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while(elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
 
     applyFilter(event, data) {
-        event.stopPropagation();  
+        event.stopPropagation();
         this.clearFiltersHighlight();
-        if (this.filterModel.items.element.value == data.id) 
+        if (this.filterModel.items.element.value == data.id)
             this.filterModel.items.element.value = [];
         else {
             this.filterModel.items.element.value = [data.id];
@@ -99,5 +100,9 @@ export class StaticListComponent extends AppComponentBase {
 
     onContentReady($event) {
         this.highlightSelectedFilters();
+    }
+
+    onSelectionChange(event) {
+        this.onSelectionChanged.emit(event);
     }
 }

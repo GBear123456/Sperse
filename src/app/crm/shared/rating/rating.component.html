@@ -19,7 +19,8 @@
                     [max]="ratingMax"
                     [(value)]="ratingValue"
                     [step]="ratingStep"
-                    (onInitialized)="onInitialized($event)">
+                    (onInitialized)="onInitialized($event)"
+                    (onValueChanged)="onValueChange($event)">
                     <dxo-tooltip
                         [enabled]="true"
                         [format]="format"

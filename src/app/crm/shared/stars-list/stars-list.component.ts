@@ -26,6 +26,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     private selectedItemKeys = [];
 
     @Input() targetSelector = "[aria-label='star-icon']";
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     list: any;
 
     listComponent: any;
@@ -73,8 +74,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             starId: this.selectedItemKey
         })).subscribe((result) => {
             this.notify.success(this.l('CustomersMarked'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
         });
     }
 
@@ -82,17 +81,17 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         this.listComponent.unselectAll();
         this.apply();
     }
-    
+
     highlightSelectedFilters() {
-        let filterIds = this.filterModel && 
-            this.filterModel.items.element.value;        
+        let filterIds = this.filterModel &&
+            this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterIds && filterIds.length) {
             let items = this.listComponent.element()
                 .getElementsByClassName('item-row');
             _.each(items, (item) => {
                 if (filterIds.indexOf(Number(item.getAttribute('id'))) >= 0)
-                    item.parentNode.parentNode.classList.add('filtered');                
+                    item.parentNode.parentNode.classList.add('filtered');
             });
         }
     }
@@ -101,18 +100,18 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)        
+            while(elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
 
     applyFilter(event, data) {
         event.stopPropagation();
-  
+
         this.clearFiltersHighlight();
 
         let modelItems = this.filterModel.items.element.value;
-        if (modelItems.length == 1 && modelItems[0] == data.id) 
+        if (modelItems.length == 1 && modelItems[0] == data.id)
             this.filterModel.items.element.value = [];
         else {
             this.filterModel.items.element.value = [data.id];
@@ -134,5 +133,9 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         this._starsService.getStars().subscribe((result) => {
             this.list = result;
         });
+    }
+
+    onSelectionChange(event) {
+        this.onSelectionChanged.emit(event);
     }
 }

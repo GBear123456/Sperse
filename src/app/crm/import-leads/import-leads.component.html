@@ -22,16 +22,19 @@
     </import-wizard>
 </div>
 
-<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-tags-list>
-<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-lists-list>
-<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [selectedItems]="selectedItems" [hideButtons]="true"></crm-user-assignment-list>
-<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true"></crm-rating>
-<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-stars-list>
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [selectedItems]="selectedItems"
+                          [hideButtons]="true" (onSelectionChanged)="toggleUserAssignment($event)"></crm-user-assignment-list>
 <crm-static-list
     [width]="'210px'"
     [title]="l('Stages')"
     [selectedKeys]="selectedClientKeys"
     [targetSelector]="'[aria-label=Stage]'"
     [hideButtons]="true"
-    [list]="stages">
+    (onSelectionChanged)="toggleStages($event)"
+    [list]="leadStages">
 </crm-static-list>
+<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="toggleLists($event)"></crm-lists-list>
+<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="toggleTags($event)"></crm-tags-list>
+<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true" (onValueChanged)="toggleRating($event)"></crm-rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="toggleStars($event)"></crm-stars-list>
+

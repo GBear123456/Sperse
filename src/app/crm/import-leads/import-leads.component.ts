@@ -7,7 +7,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import {
     ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
-    LeadServiceProxy, CustomerListInput
+    LeadServiceProxy, CustomerListInput, ImportLeadsInputImportType
 } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -22,6 +22,7 @@ import * as addressParser from 'parse-address';
 
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
+import {PipelineService} from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -76,11 +77,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_PHONE_2 = 'businessInfo_workPhone2';
     private readonly BUSINESS_FAX = 'businessInfo_companyFaxNumber';
     private readonly PERSONAL_EMAIL1 = 'personalInfo_email1';
-    private readonly PERSONAL_EMAIL2 = 'personalInfo_email2'; 
-    private readonly PERSONAL_EMAIL3 = 'personalInfo_email3'; 
+    private readonly PERSONAL_EMAIL2 = 'personalInfo_email2';
+    private readonly PERSONAL_EMAIL3 = 'personalInfo_email3';
     private readonly BUSINESS_COMPANY_EMAIL = 'businessInfo_companyEmail';
     private readonly BUSINESS_WORK_EMAIL1 = 'businessInfo_workEmail1';
-    private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2'; 
+    private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2';
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
 
     private readonly FIELDS_TO_CAPITALIZE = [
@@ -96,10 +97,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly PHONE_FIELDS = [
-        this.PERSONAL_MOBILE_PHONE, 
-        this.PERSONAL_HOME_PHONE, 
-        this.BUSINESS_COMPANY_PHONE, 
-        this.BUSINESS_WORK_PHONE_1, 
+        this.PERSONAL_MOBILE_PHONE,
+        this.PERSONAL_HOME_PHONE,
+        this.BUSINESS_COMPANY_PHONE,
+        this.BUSINESS_WORK_PHONE_1,
         this.BUSINESS_WORK_PHONE_2,
         this.BUSINESS_FAX
     ];
@@ -141,89 +142,25 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     totalCount: number = 0;
     importedCount: number = 0;
     mappingFields: any[] = [];
-    importType: number = 0;
+    importTypeIndex: number = 0;
+    importType: ImportLeadsInputImportType = ImportLeadsInputImportType.Lead;
 
     fullName: ImportLeadFullName;
     fullAddress: ImportLeadAddressInput;
 
     userId: any;
-    toolbarConfig = [
-        {
-            location: 'before', items: [
-                {
-                    text: '',
-                    name: 'select-box',  
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        width: 130,
-                        selectedIndex: this.importType,
-                        items: [
-                            {          
-                                action: this.importTypeChanged.bind(this),
-                                text: this.l('Leads')
-                            }, {
-                                action: this.importTypeChanged.bind(this),
-                                text: this.l('Clients')
-                            }, {
-                                disabled: true,
-                                action: this.importTypeChanged.bind(this),
-                                text: this.l('Partners')
-                            }, {
-                                disabled: true,
-                                action: this.importTypeChanged.bind(this),
-                                text: this.l('Orders')
-                            }
-                        ]
-                    }
-                },
-                {
-                    name: 'assign',
-                    action: this.toggleUserAssignment.bind(this),
-                    attr: {
-                        'filter-selected': true
-                    }
-                },
-                {
-                    name: 'stage',
-                    attr: {
-                        'filter-selected': false
-                    }
-                },
-                {
-                    name: 'lists',
-                    action: this.toggleLists.bind(this),
-                    attr: {
-                        'filter-selected': false
-                    }
-                },
-                {
-                    name: 'tags',
-                    action: this.toggleTags.bind(this),
-                    attr: {
-                        'filter-selected': false
-                    }
-                },
-                {
-                    name: 'rating',
-                    action: this.toggleRating.bind(this),
-                    attr: {
-                        'filter-selected': true
-                    }
-                },
-                {
-                    name: 'star',
-                    action: this.toggleStars.bind(this),
-                    attr: {
-                        'filter-selected': false
-                    }
-                }
-            ]
-        }
-    ];
+    isUserSelected = true;
+    isRatingSelected = true;
+    isListsSelected = false;
+    isTagsSelected = false;
+    isStarSelected = false;
+    isStageSelected = false;
+    toolbarConfig = [];
     selectedClientKeys: any = [];
     selectedItems: any = [];
     defaultRating = 5;
-    stages = [];
+    leadStages = [];
+    private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
         personalInfo: ImportLeadPersonalInput.fromJS({}),
@@ -250,6 +187,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _reuseService: RouteReuseStrategy,
         private _leadService: LeadServiceProxy,
         private _router: Router,
+        private _pipelineService: PipelineService,
         private _nameParser: NameParserService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -259,21 +197,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
         this.selectedItems.push(this.userId);
+
+
     }
 
     private importTypeChanged(event) {
         const IMPORT_TYPE_ITEM_INDEX = 0;
         const STAGE_ITEM_INDEX = 2;
 
-        this.importType = event.itemIndex;  //event.itemData.text;
-        let configuration = _.clone(this.toolbarConfig),
-            items = configuration[0].items;
-        items[IMPORT_TYPE_ITEM_INDEX].options
-            .selectedIndex = this.importType;
-        items[STAGE_ITEM_INDEX].disabled = 
-            Boolean(event.itemIndex);
+        this.importTypeIndex = event.itemIndex;
+        this.importType = event.itemData.value;
 
-        this.toolbarConfig = configuration;
+        this.initToolbarConfig();
     }
 
     private initFieldsConfig() {
@@ -407,6 +342,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             result.leads.push(lead);
         });
 
+        result.importType = this.importType;
         return ImportLeadsInput.fromJS(result);
     }
 
@@ -437,12 +373,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.activate();
     }
 
+    getStages() {
+        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+            .subscribe(result => {
+                this.leadStages = result.stages;
+            });
+    }
+
     ngOnDestroy() {
         this.deactivate();
     }
 
     activate() {
         this.rootComponent.overflowHidden(true);
+        this.initToolbarConfig();
+        this.getStages();
     }
 
     deactivate() {
@@ -450,7 +395,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     checkSimilarRecord = (record1, record2) => {
-        record2.compared = record2[this.FIRST_NAME_FIELD] 
+        record2.compared = record2[this.FIRST_NAME_FIELD]
             + ' ' + record2[this.LAST_NAME_FIELD];
 
         return !this.compareFields.every((fields) => {
@@ -462,7 +407,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         return complexField1.map((fld) => record1[fld] || 1).join('_')
                             == complexField2.map((fld) => record2[fld] || 2).join('_');
                     else
-                        return record1[field1] && record2[field2] && 
+                        return record1[field1] && record2[field2] &&
                             (record1[field1].toLowerCase() == record2[field2].toLowerCase());
                 });
             });
@@ -473,7 +418,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         if (field.mappedField == this.FULL_NAME_FIELD)
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
         else if (field.mappedField == this.PERSONAL_FULL_ADDRESS
-            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS    
+            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS
         )
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
@@ -481,7 +426,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     validateFieldsMapping = (rows) => {
-        let isFistName = false, 
+        let isFistName = false,
             isLastName = false,
             isFullName = false,
             isCompanyName = false;
@@ -500,27 +445,119 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
         return result;
     }
-    toggleUserAssignment() {
-        this.userAssignmentComponent.toggle();
+
+    toggleUserAssignment(event) {
+        this.isUserSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
     }
 
-    toggleLists() {
-        this.listsComponent.toggle();
+    toggleStages(event) {
+        this.isStageSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
     }
 
-    toggleTags() {
-        this.tagsComponent.toggle();
+    toggleLists(event) {
+        this.isListsSelected = !!event.selectedRowKeys.length;
+        this.initToolbarConfig();
     }
 
-    toggleRating() {
-        this.ratingComponent.toggle();
+    toggleTags(event) {
+        this.isTagsSelected = !!event.selectedRowKeys.length;
+        this.initToolbarConfig();
     }
 
-    toggleStars() {
-        this.starsListComponent.toggle();
+    toggleRating(event) {
+        this.isRatingSelected = !!event.value;
+        this.initToolbarConfig();
     }
 
-    toggleStages() {
-        this.stagesComponent.toggle();
+    toggleStars(event) {
+        this.isStarSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    {
+                        text: '',
+                        name: 'select-box',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            width: 130,
+                            selectedIndex: this.importTypeIndex,
+                            items: [
+                                {
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Leads'),
+                                    value: ImportLeadsInputImportType.Lead
+                                }, {
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Clients'),
+                                    value: ImportLeadsInputImportType.Client
+                                }, {
+                                    disabled: true,
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Partners'),
+                                    value: ImportLeadsInputImportType.Partner
+                                }, {
+                                    disabled: true,
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l('Orders'),
+                                    value: ImportLeadsInputImportType.Order
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'assign',
+                        action: () => this.userAssignmentComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isUserSelected
+                        }
+                    },
+                    {
+                        name: 'stage',
+                        action: () => this.stagesComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isStageSelected
+                        },
+                        disabled: Boolean(this.importTypeIndex)
+                    },
+                    {
+                        name: 'lists',
+                        action: () => this.listsComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isListsSelected
+                        }
+                    },
+                    {
+                        name: 'tags',
+                        action: () => this.tagsComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isTagsSelected
+                        }
+                    },
+                    {
+                        name: 'rating',
+                        action: () => this.ratingComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isRatingSelected
+                        }
+                    },
+                    {
+                        name: 'star',
+                        options: {
+                            width: 30,
+                        },
+                        action: () => this.starsListComponent.toggle(),
+                        attr: {
+                            'filter-selected': this.isStarSelected
+                        }
+                    }
+                ]
+            }
+        ];
     }
 }

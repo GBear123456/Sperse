@@ -76,7 +76,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         private _parser: PapaParseService,
         private _appService: AppService,
         private _formBuilder: FormBuilder
-    ) { 
+    ) {
         super(injector);
 
         this.uploadFile = _formBuilder.group({
@@ -95,11 +95,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
     }
 
-    ngOnInit() {  
+    ngOnInit() {
         this.localizationSourceName = this.localizationSource;
     }
 
-    reset(callback = null) { 
+    reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
         this.loadProgress = 0;
@@ -120,7 +120,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
             this.uploadFile.controls.valid.updateValueAndValidity();
-            if (this.uploadFile.valid) {                
+            if (this.uploadFile.valid) {
                 this.buildMappingDataSource();
                 this.stepper.next();
             } else
@@ -128,8 +128,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             this.dataMapping.controls.valid.updateValueAndValidity();
             if (this.dataMapping.valid) {
-                this.initReviewDataSource(this.getMappedFields()); 
-                this.stepper.next();    
+                this.initReviewDataSource(this.getMappedFields());
+                this.stepper.next();
             } else {
                 this.highlightUnmappedFields(this.getMappedFields());
                 this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
@@ -152,7 +152,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         return mappedFields;
     }
 
-    cancel() {        
+    cancel() {
         this.reset(() => {
             this.onCancel.emit();
         });
@@ -178,14 +178,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         this.emptyReviewData();
 
         this.fileData.data.map((row, index) => {
-            if (index) {                
+            if (index) {
                 if (row.length == Object.keys(columnsIndex).length) {
                     let data = {};
                     mappedFields.forEach((field) => {
                         let rowValue = row[columnsIndex[field.sourceField]];
                         if (
-                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data)) 
-                            && 
+                            (!this.preProcessFieldBeforeReview || !this.preProcessFieldBeforeReview(field, rowValue, data))
+                            &&
                             !data[field.mappedField]
                         )
                             data[field.mappedField] = rowValue;
@@ -195,10 +195,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     else
                         return data;
                 }
-            } else 
+            } else
                 row.forEach((item, index) => {
                     columnsIndex[item] = index;
-                });            
+                });
         }).forEach((row, index) => {
             row && this.reviewDataSource.push(
                 this.checkSimilarGroups(row));
@@ -209,7 +209,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         groups.forEach((group, index) => {
             if (group && group.length) {
                 if (group.length > 1) {
-                    let groupName = this.l('Similar items') + 
+                    let groupName = this.l('Similar items') +
                         '(' + group[0].compared + ')';
                     this.reviewGroups.push(groupName);
                     group.forEach((item) => {
@@ -226,29 +226,29 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         return JSON.stringify(row)
             .toLowerCase().split('').reduce(
                 (prev, next) => {
-                    return ((prev << 5) - prev) + 
-                        next.charCodeAt(0);                    
+                    return ((prev << 5) - prev) +
+                        next.charCodeAt(0);
                 }, 0).toString();
     }
 
     checkDuplicate(row) {
-        let ident = this.getRowUniqueIdent(row),      
+        let ident = this.getRowUniqueIdent(row),
             count = this.duplicateCounts[ident];
 
         row.uniqueIdent = ident;
-        return (this.duplicateCounts[ident] = 
+        return (this.duplicateCounts[ident] =
             (count || 0) + 1) > 1;
     }
 
     checkSimilarGroups(row) {
         if (this.reviewGroups.length) {
             let groupIndex = [];
-            this.reviewGroups.forEach((group, index) => {                
+            this.reviewGroups.forEach((group, index) => {
                 if (group && group.some((item) => {
                     return this.checkSimilarRecord(row, item);
-                })) groupIndex.push(index);                
+                })) groupIndex.push(index);
             });
-  
+
             if (groupIndex.length) {
                 if (groupIndex.length > 1) {
                     let newGroup = [];
@@ -262,7 +262,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
                 return row;
             }
-        } 
+        }
         this.reviewGroups.push([row]);
 
         return row;
@@ -285,7 +285,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     checkFileDataValid() {
-        return this.fileData && !this.fileData.errors.length 
+        return this.fileData && !this.fileData.errors.length
             && this.fileData.data.length;
     }
 
@@ -298,7 +298,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     this.fileHeaderWasGenerated = false;
                     this.fileData = results;
                     this.checkIfFileHasHeaders();
-                }    
+                }
             }
         });
     }
@@ -306,7 +306,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     getFileSize(size) {
         return (size / 1024).toFixed(2) + 'KB';
     }
- 
+
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
@@ -405,7 +405,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         });
         return this.fileData.data[notEmptyIndex][fieldIndex];
     }
-   
+
     fileSelected($event) {
         if ($event.target.files.length)
             this.fileDropped({files: $event.target.files})
@@ -424,9 +424,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                         this.message.error(result.target.statusText);
                     }
                 });
-            else 
+            else
                 this.message.error(this.l('FieldEmptyError', [this.l('URL')]));
-        }   
+        }
     }
 
     getFile(path: string, callback: Function) {
@@ -453,7 +453,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                 $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
                 $event.isValid = false;
                 $event.errorText = this.l('FieldMapError', [row.sourceField]);
-            }   
+            }
         });
         if ($event.isValid)
             this.mapGrid.instance.closeEditCell();
