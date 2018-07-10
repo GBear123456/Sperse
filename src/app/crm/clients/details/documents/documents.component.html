@@ -67,10 +67,11 @@
         <h4 class="file-name">{{ currentDocumentInfo.fileName }} <span class="file-size">({{ currentDocumentInfo.size | filesize }})</span></h4>
         <span class="close" (click)="closeDocument($event)"></span>
     </div>
-    <iframe *ngIf="wopiViewerShow" class="open-document-iframe" [srcdoc]="wopiResponseHtml" (load)="onDocumentIframeLoad($event)" title="Office Online Frame" allowfullscreen="true"></iframe>
-    <app-image-viewer *ngIf="!wopiViewerShow"
+    <iframe *ngIf="showViewerType == WOPI_VIEWER" class="open-document-iframe" [srcdoc]="wopiResponseHtml" (load)="onDocumentIframeLoad($event)" title="Office Online Frame" allowfullscreen="true"></iframe>
+    <app-image-viewer *ngIf="showViewerType == IMAGE_VIEWER"
         [images]="['iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==']"
         [idContainer]="'imageViewer'"
         [loadOnInit]="true">
     </app-image-viewer>
+    <textarea *ngIf="showViewerType == TEXT_VIEWER" readonly>{{textContent}}</textarea>
 </div>
