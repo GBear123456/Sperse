@@ -1,6 +1,4 @@
 import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {DomSanitizer} from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSystemFileEntry } from 'ngx-file-drop';
 import { ActivatedRoute } from '@angular/router';
@@ -41,7 +39,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     public actionRecordData: any;
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
-    public wopiResponseHtml: any;
+    public wopiUrlsrc: string;
+    public wopiAccessToken: string;
+    public wopiAccessTokenTtl: string;
     public showViewerType: number;
 
     public readonly WOPI_VIEWER  = 0;
@@ -56,8 +56,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         private _documentService: DocumentServiceProxy,
         private _customerService: CustomersServiceProxy,
         private _wopiService: WopiServiceProxy,
-        private http: HttpClient,
-        private domSanitizer: DomSanitizer
     ) {
         super(injector);
 
@@ -174,10 +172,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     viewDocument() {
         let ext = this.currentDocumentInfo.fileName.split('.').pop();
-        this.showViewerType = this.validImageExtensions.indexOf(ext) < 0 ? 
-            (this.validTextExtensions.indexOf(ext) < 0 ? this.WOPI_VIEWER: this.TEXT_VIEWER) : this.IMAGE_VIEWER;
-        if (!this.showViewerType)
-            this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {            
+        this.showViewerType = this.validImageExtensions.indexOf(ext) < 0 ?
+            (this.validTextExtensions.indexOf(ext) < 0 ? this.WOPI_VIEWER : this.TEXT_VIEWER) : this.IMAGE_VIEWER;
+        if (this.showViewerType == this.WOPI_VIEWER)
+            this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
                 this.submitWopiRequest(response);
             });
         else
@@ -191,21 +189,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
-        let formData = new FormData();
-        formData.append('access_token', wopiRequestInfo.accessToken);
-        formData.append('access_token_ttl', wopiRequestInfo.accessTokenTtl.toString());
-        this.http.post(wopiRequestInfo.wopiUrlsrc, formData, { responseType: 'text' }).subscribe((response) => {
-            this.wopiResponseHtml = this.domSanitizer.bypassSecurityTrustHtml(response.toString());
-            this.openDocumentMode = true;
-        });
+        this.openDocumentMode = true;
+        this.showViewerType = this.WOPI_VIEWER;
+        this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
+        this.wopiAccessToken = wopiRequestInfo.accessToken;
+        this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
+        setTimeout(() => {
+            window['submitWopiRequest']();
+        }, 500);
     }
 
     closeDocument() {
         this.openDocumentMode = false;
-    }
-
-    onDocumentIframeLoad(event) {
-        event.target.width = screen.width - 350;
-        event.target.height = screen.height - 390;
     }
 }
