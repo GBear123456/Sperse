@@ -1,8 +1,9 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { UserAssignmentServiceProxy, AssignCustomersInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { FiltersService } from '@shared/filters/filters.service';
+import { AssignCustomerInput, AssignCustomersInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -76,12 +77,20 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     process() {
-        this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
-            customerIds: this.selectedKeys,
-            userId: this.selectedItemKey
-        })).subscribe((result) => {
-            this.notify.success(this.l('UserAssigned'));
-        });
+        if (this.bulkUpdateMode)
+            this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
+                customerIds: this.selectedKeys,
+                userId: this.selectedItemKey
+            })).subscribe((result) => {
+                this.notify.success(this.l('UserAssigned'));
+            });
+        else
+            this._userAssignmentService.assignCustomer(AssignCustomerInput.fromJS({
+                customerId: this.selectedKeys[0],
+                userId: this.selectedItemKey
+            })).subscribe((result) => {
+                this.notify.success(this.l('UserAssigned'));
+            });
     }
 
     clear() {
@@ -150,5 +159,10 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     onSelectionChange(event) {
         this.onSelectionChanged.emit(event);
+    }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageAssignments') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

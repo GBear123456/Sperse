@@ -323,4 +323,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     onSelectionChange(event) {
         this.onSelectionChanged.emit(event);
     }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+    }
 }

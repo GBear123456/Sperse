@@ -325,4 +325,9 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         }
         return 0;
     }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
+    }
 }
