@@ -9813,6 +9813,61 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getContent(id: string | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/GetContent?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContent(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContent(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -9862,6 +9917,116 @@ export class DocumentServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @documentId (optional) 
+     * @return Success
+     */
+    getViewWopiRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/GetViewWopiRequestInfo?";
+        if (documentId !== undefined)
+            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetViewWopiRequestInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetViewWopiRequestInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<WopiRequestOutcoming>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<WopiRequestOutcoming>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetViewWopiRequestInfo(response: HttpResponseBase): Observable<WopiRequestOutcoming> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<WopiRequestOutcoming>(<any>null);
+    }
+
+    /**
+     * @documentId (optional) 
+     * @return Success
+     */
+    getEditWopiRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/GetEditWopiRequestInfo?";
+        if (documentId !== undefined)
+            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEditWopiRequestInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEditWopiRequestInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<WopiRequestOutcoming>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<WopiRequestOutcoming>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEditWopiRequestInfo(response: HttpResponseBase): Observable<WopiRequestOutcoming> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<WopiRequestOutcoming>(<any>null);
     }
 }
 
@@ -21935,128 +22100,6 @@ export class WebLogServiceProxy {
             }));
         }
         return _observableOf<FileDto>(<any>null);
-    }
-}
-
-@Injectable()
-export class WopiServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @documentId (optional) 
-     * @return Success
-     */
-    getViewRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
-        let url_ = this.baseUrl + "/api/services/CRM/Wopi/GetViewRequestInfo?";
-        if (documentId !== undefined)
-            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetViewRequestInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetViewRequestInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<WopiRequestOutcoming>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<WopiRequestOutcoming>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetViewRequestInfo(response: HttpResponseBase): Observable<WopiRequestOutcoming> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<WopiRequestOutcoming>(<any>null);
-    }
-
-    /**
-     * @documentId (optional) 
-     * @return Success
-     */
-    getEditRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
-        let url_ = this.baseUrl + "/api/services/CRM/Wopi/GetEditRequestInfo?";
-        if (documentId !== undefined)
-            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetEditRequestInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetEditRequestInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<WopiRequestOutcoming>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<WopiRequestOutcoming>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetEditRequestInfo(response: HttpResponseBase): Observable<WopiRequestOutcoming> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? WopiRequestOutcoming.fromJS(resultData200) : new WopiRequestOutcoming();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<WopiRequestOutcoming>(<any>null);
     }
 }
 
@@ -35382,6 +35425,7 @@ export class DocumentInfo implements IDocumentInfo {
     fileName!: string | undefined;
     size!: string | undefined;
     creationTime!: moment.Moment | undefined;
+    isSupportedByWopi!: boolean | undefined;
 
     constructor(data?: IDocumentInfo) {
         if (data) {
@@ -35398,6 +35442,7 @@ export class DocumentInfo implements IDocumentInfo {
             this.fileName = data["fileName"];
             this.size = data["size"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.isSupportedByWopi = data["isSupportedByWopi"];
         }
     }
 
@@ -35414,6 +35459,7 @@ export class DocumentInfo implements IDocumentInfo {
         data["fileName"] = this.fileName;
         data["size"] = this.size;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["isSupportedByWopi"] = this.isSupportedByWopi;
         return data; 
     }
 }
@@ -35423,6 +35469,7 @@ export interface IDocumentInfo {
     fileName: string | undefined;
     size: string | undefined;
     creationTime: moment.Moment | undefined;
+    isSupportedByWopi: boolean | undefined;
 }
 
 export class UploadDocumentInput implements IUploadDocumentInput {
@@ -35471,6 +35518,50 @@ export interface IUploadDocumentInput {
     fileName: string;
     size: number | undefined;
     fileBase64: string;
+}
+
+export class WopiRequestOutcoming implements IWopiRequestOutcoming {
+    accessToken!: string | undefined;
+    accessTokenTtl!: number | undefined;
+    wopiUrlsrc!: string | undefined;
+
+    constructor(data?: IWopiRequestOutcoming) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accessToken = data["accessToken"];
+            this.accessTokenTtl = data["accessTokenTtl"];
+            this.wopiUrlsrc = data["wopiUrlsrc"];
+        }
+    }
+
+    static fromJS(data: any): WopiRequestOutcoming {
+        data = typeof data === 'object' ? data : {};
+        let result = new WopiRequestOutcoming();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accessToken"] = this.accessToken;
+        data["accessTokenTtl"] = this.accessTokenTtl;
+        data["wopiUrlsrc"] = this.wopiUrlsrc;
+        return data; 
+    }
+}
+
+export interface IWopiRequestOutcoming {
+    accessToken: string | undefined;
+    accessTokenTtl: number | undefined;
+    wopiUrlsrc: string | undefined;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
@@ -49432,50 +49523,6 @@ export class GetLatestWebLogsOutput implements IGetLatestWebLogsOutput {
 
 export interface IGetLatestWebLogsOutput {
     latestWebLogLines: string[] | undefined;
-}
-
-export class WopiRequestOutcoming implements IWopiRequestOutcoming {
-    accessToken!: string | undefined;
-    accessTokenTtl!: number | undefined;
-    wopiUrlsrc!: string | undefined;
-
-    constructor(data?: IWopiRequestOutcoming) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accessToken = data["accessToken"];
-            this.accessTokenTtl = data["accessTokenTtl"];
-            this.wopiUrlsrc = data["wopiUrlsrc"];
-        }
-    }
-
-    static fromJS(data: any): WopiRequestOutcoming {
-        data = typeof data === 'object' ? data : {};
-        let result = new WopiRequestOutcoming();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accessToken"] = this.accessToken;
-        data["accessTokenTtl"] = this.accessTokenTtl;
-        data["wopiUrlsrc"] = this.wopiUrlsrc;
-        return data; 
-    }
-}
-
-export interface IWopiRequestOutcoming {
-    accessToken: string | undefined;
-    accessTokenTtl: number | undefined;
-    wopiUrlsrc: string | undefined;
 }
 
 export enum InstanceType {
