@@ -107,7 +107,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             0
         );
         const bankAccountsObservable = this.bankAccountsServiceProxy.getBankAccounts(instanceType, this.instanceId, 'USD');
-        const usersPermissionsObservable = this.securityManagmentServiceProxy.getBankAccountUserWithPermissions(instanceType, this.instanceId);
+        const usersPermissionsObservable = this.securityManagmentServiceProxy.getBankAccountAssignedUsers(instanceType, this.instanceId);
         forkJoin(
             usersObservable,
             bankAccountsObservable,
