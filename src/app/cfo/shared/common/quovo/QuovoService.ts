@@ -1,5 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
 
@@ -163,12 +164,14 @@ export class QuovoHandler {
 @Injectable()
 export class QuovoService {
     _cfoService: CFOService;
+    _permissionChecker: PermissionCheckerService;
 
     constructor(
         injector: Injector,
         private _syncService: SyncServiceProxy,
     ) {
         this._cfoService = injector.get(CFOService);
+        this._permissionChecker = injector.get(PermissionCheckerService);
     }
 
     private quovoHandlers: { [id: string]: QuovoHandler } = {};
@@ -176,8 +179,8 @@ export class QuovoService {
     getQuovoHandler(instanceType: string, instanceId: number) {
         let handlerId = instanceType + instanceId;
         let quovoHandler = this.quovoHandlers[handlerId];
-
-        if (!quovoHandler) {
+        
+        if (!quovoHandler && (instanceType == InstanceType.User || (instanceType == InstanceType.Main && this._permissionChecker.isGranted('Pages.CFO.MainInstanceAdmin')))) {
             quovoHandler = new QuovoHandler(instanceType, instanceId,
                 (token, onLoad, onOpen, onClose, onAdd) => this.createQuovoHandler(token, onLoad, onOpen, onClose, onAdd),
                 (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id),
