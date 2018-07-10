@@ -1,1 +1,3 @@
-<a (click)="addAccount()" class="add-link">+ {{l('Add_account')}}</a>
+<ng-container *ngIf="canShow">
+    <a (click)="addAccount()" class="add-link">+ {{l('Add_account')}}</a>
+</ng-container>

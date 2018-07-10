@@ -160,6 +160,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     onUpdateAccount(event) {
+        if (!this.isInstanceAdmin)
+            return;
+
         if (this.quovoHandler.isLoaded) {
             if (this.loading) {
                 this.finishLoading(true);
