@@ -442,7 +442,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return !!row.mappedField;
         });
 
-        if (!(isCompanyName || isFullName || (isFistName && isLastName)))
+        if (!isCompanyName && !isFullName && !isFistName && !isLastName)
             result.error = this.l('FieldsMapError');
 
         return result;
