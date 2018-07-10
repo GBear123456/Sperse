@@ -15,7 +15,7 @@ import { CategorizationComponent } from '@app/cfo/transactions/categorization/ca
     animations: [appModuleAnimation()]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
-    @ViewChild(CategorizationComponent) categorization: CategorizationComponent;
+    @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     headlineConfig: any;
     ActionTitle = 'CUSTOM CHART';
 
@@ -53,6 +53,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     }
 
     refresh() {
-        this.categorization.refreshCategories();
+        this.categorizationComponent.refreshCategories();
     }
 }

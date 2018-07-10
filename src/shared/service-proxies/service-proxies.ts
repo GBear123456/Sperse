@@ -3853,7 +3853,65 @@ export class CategoryTreeServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    import(instanceType: InstanceType42 | null | undefined, instanceId: number | null | undefined, input: ImportDto | null | undefined): Observable<void> {
+    sync(instanceType: InstanceType42 | null | undefined, instanceId: number | null | undefined, input: SyncDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Sync?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSync(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSync(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSync(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    import(instanceType: InstanceType43 | null | undefined, instanceId: number | null | undefined, input: AccountingCategoryDto[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Import?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3887,64 +3945,6 @@ export class CategoryTreeServiceProxy {
     }
 
     protected processImport(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    importManually(instanceType: InstanceType43 | null | undefined, instanceId: number | null | undefined, input: AccountingCategoryDto[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/ImportManually?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processImportManually(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processImportManually(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processImportManually(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -26410,10 +26410,10 @@ export interface IUpdateAccountingTypeInput {
     cashflowTypeId: string | undefined;
 }
 
-export class ImportDto implements IImportDto {
+export class SyncDto implements ISyncDto {
     syncAccountId!: number | undefined;
 
-    constructor(data?: IImportDto) {
+    constructor(data?: ISyncDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -26428,9 +26428,9 @@ export class ImportDto implements IImportDto {
         }
     }
 
-    static fromJS(data: any): ImportDto {
+    static fromJS(data: any): SyncDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ImportDto();
+        let result = new SyncDto();
         result.init(data);
         return result;
     }
@@ -26442,7 +26442,7 @@ export class ImportDto implements IImportDto {
     }
 }
 
-export interface IImportDto {
+export interface ISyncDto {
     syncAccountId: number | undefined;
 }
 

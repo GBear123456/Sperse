@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { SyncAccountServiceProxy, CategoryTreeServiceProxy, InstanceType, ImportDto } from 'shared/service-proxies/service-proxies';
+import { SyncAccountServiceProxy, CategoryTreeServiceProxy, InstanceType, SyncDto } from 'shared/service-proxies/service-proxies';
 import { XeroLoginDialogComponent } from '@app/cfo/shared/common/xero/xero-login-dialog/xero-login-dialog.component';
 import { finalize } from 'rxjs/operators';
 
@@ -36,10 +36,10 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
                     abp.ui.clearBusy();
                     this.xeroLoginDialog.show();
                 } else {
-                    let importInput = ImportDto.fromJS({
+                    let syncInput = SyncDto.fromJS({
                         syncAccountId: result[0]
                     });
-                    this._categoryTreeServiceProxy.import(InstanceType[this.instanceType], this.instanceId, importInput)
+                    this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, syncInput)
                         .pipe(finalize(() => { abp.ui.clearBusy(); }))
                         .subscribe(result => {
                             this.notify.info(this.l('SavedSuccessfully'));
