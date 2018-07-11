@@ -203,6 +203,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
 
+
+        if (this.importTypeIndex != IMPORT_TYPE_ITEM_INDEX)
+            this.stagesComponent.selectedItems = [];
+
         this.initToolbarConfig();
     }
 
@@ -306,7 +310,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
-            leadStageId: this.stagesComponent.selectedItems[0].id
+            leadStageId: this.stagesComponent.selectedItems.length ? this.stagesComponent.selectedItems[0].id : undefined
         });
         result.leads = [];
         result.lists = this.listsComponent.selectedItems;

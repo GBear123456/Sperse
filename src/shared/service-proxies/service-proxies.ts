@@ -35777,7 +35777,6 @@ export interface ILeadBusinessTeamContactInput {
 }
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
-    leadRequestXref: string;
     leadName: string;
     errorMessage: string;
 
@@ -35792,7 +35791,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
     init(data?: any) {
         if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
             this.leadName = data["leadName"];
             this.errorMessage = data["errorMessage"];
         }
@@ -35806,7 +35804,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
         data["leadName"] = this.leadName;
         data["errorMessage"] = this.errorMessage;
         return data; 
@@ -35814,7 +35811,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 }
 
 export interface ILeadBusinessInfoOutput {
-    leadRequestXref: string;
     leadName: string;
     errorMessage: string;
 }
