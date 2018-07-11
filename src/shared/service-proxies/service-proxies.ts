@@ -45108,6 +45108,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
     consumerKey!: string | undefined;
     consumerSecret!: string | undefined;
+    isSyncBankAccountsEnabled!: boolean | undefined;
 
     constructor(data?: ICreateSyncAccountInput) {
         if (data) {
@@ -45123,6 +45124,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
             this.typeId = data["typeId"];
             this.consumerKey = data["consumerKey"];
             this.consumerSecret = data["consumerSecret"];
+            this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
         }
     }
 
@@ -45138,6 +45140,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         data["typeId"] = this.typeId;
         data["consumerKey"] = this.consumerKey;
         data["consumerSecret"] = this.consumerSecret;
+        data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
         return data; 
     }
 }
@@ -45146,6 +45149,7 @@ export interface ICreateSyncAccountInput {
     typeId: string;
     consumerKey: string | undefined;
     consumerSecret: string | undefined;
+    isSyncBankAccountsEnabled: boolean | undefined;
 }
 
 export class RenameSyncAccountInput implements IRenameSyncAccountInput {

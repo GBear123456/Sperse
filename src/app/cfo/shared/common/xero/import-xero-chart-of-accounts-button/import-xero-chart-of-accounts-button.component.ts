@@ -34,6 +34,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
             .subscribe(result => {
                 if (result.length == 0) {
                     abp.ui.clearBusy();
+                    this.xeroLoginDialog.isSyncBankAccountsEnabled = false;
                     this.xeroLoginDialog.show();
                 } else {
                     let syncInput = SyncDto.fromJS({

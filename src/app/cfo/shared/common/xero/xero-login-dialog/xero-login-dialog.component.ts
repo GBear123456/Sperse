@@ -15,6 +15,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     popupVisible = false;
     consumerKey: string;
     consumerSecret: string;
+    isSyncBankAccountsEnabled = true;
 
     constructor(
         injector: Injector,
@@ -35,9 +36,10 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
         abp.ui.setBusy();
         this._syncAccountServiceProxy.create(InstanceType[this.instanceType], this.instanceId,
             new CreateSyncAccountInput({
+                typeId: 'X',
                 consumerKey: this.consumerKey,
                 consumerSecret: this.consumerSecret,
-                typeId: 'X'
+                isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled
             }))
             .pipe(finalize(() => {
                 abp.ui.clearBusy();
