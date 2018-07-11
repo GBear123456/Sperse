@@ -193,7 +193,7 @@ export class QuovoService {
     }
 
     public getUIToken(quovoHandler: QuovoHandler, callback) {
-        this._syncService.createProviderUIToken(InstanceType[quovoHandler.instanceType], quovoHandler.instanceId)
+        this._syncService.createProviderUIToken(InstanceType[quovoHandler.instanceType], quovoHandler.instanceId, 'Q')
             .subscribe((data) => callback(data.token));
     }
 
