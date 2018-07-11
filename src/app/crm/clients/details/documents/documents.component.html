@@ -1,15 +1,12 @@
 <div *ngIf="!openDocumentMode" class="wrapper">
-    <dx-tooltip width="120px"
-            [target]="'.dx-state-hover .dx-link.dx-link-edit'"
-            [visible]="actionRecordData"
-            (onHidden)="actionRecordData = null">
-    <div *dxTemplate="let data of 'content'">
-        <div class="lists-tooltip-container">
-            <dx-list [dataSource]="actionMenuItems"
-                (onItemClick)="onMenuItemClick($event)">
-            </dx-list>
+    <dx-tooltip width="120px">
+        <div *dxTemplate="let data of 'content'">
+            <div class="lists-tooltip-container">
+                <dx-list [dataSource]="actionMenuItems"
+                    (onItemClick)="onMenuItemClick($event)">
+                </dx-list>
+            </div>
         </div>
-    </div>
     </dx-tooltip>
     <div class="grid-view">
         <dx-data-grid id="gridContainer"
@@ -20,20 +17,27 @@
                     [allowColumnResizing]="true"
                     [hoverStateEnabled]="true"
                     [pager]="defaultGridPagerConfig"
+                    (onCellClick)="onCellClick($event)"
                     (onContentReady)="onContentReady($event)"
                     (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                    (onToolbarPreparing)="onToolbarPreparing($event)"
-                    (onEditingStart)="showActionsMenu($event)">
+                    (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-            <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-
             <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
             <dxi-column dataField="size" caption="{{l('DocumentSize')}}" cellTemplate="fileSizeCell"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
             <dxi-column dataField="fileName" caption="{{l('DocumentReceived')}}"></dxi-column>
-            
+
+            <dxi-column
+                alignment="center"
+                width="133px"
+                cellTemplate="actionsCellTemplate"
+                headerCellTemplate="actionsCellTemplate">
+            </dxi-column>
+
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+
             <div *dxTemplate="let cellData of 'dateCell'">
                 {{cellData.value | date: formatting.dateTime}}
             </div>
@@ -53,7 +57,7 @@
     </div>
     <div class="drop-down">
         <h1>{{l('DropYourFile')}}</h1>
-        <file-drop 
+        <file-drop
             (onFileDrop)="fileDropped($event)">
             <p>{{l('DragAndDrop')}}</p>
         </file-drop>

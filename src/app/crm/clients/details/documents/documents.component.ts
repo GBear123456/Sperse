@@ -1,18 +1,13 @@
-import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
+import {Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSystemFileEntry } from 'ngx-file-drop';
-import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppService } from '@app/app.service';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
     DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
 
-import { UploadEvent, UploadFile } from 'ngx-file-drop';
-
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
-import * as _ from 'underscore';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
 import { ImageViewerComponent } from 'ng2-image-viewer';
@@ -27,6 +22,7 @@ import { finalize } from 'rxjs/operators';
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
+    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     public data: {
         customerInfo: CustomerInfoDto
@@ -155,14 +151,22 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         myReader.readAsDataURL(file);
     }
 
-    onShowingPopup(e) {
-        e.component.option('visible', false);
-        e.component.hide();
+    showActionsMenu(data, target) {
+        this.actionRecordData = data;
+        this.actionsTooltip.instance.show(target);
     }
 
-    showActionsMenu(event) {
-        this.actionRecordData = event.data;
-        event.cancel = true;
+    onCellClick($event) {
+        const target = $event.event.target;
+        if ($event.rowType === 'data') {
+            /** If user click on actions icon */
+            if (target.closest('.dx-link.dx-link-edit')) {
+                this.showActionsMenu($event.data, target);
+            } else {
+                /** If user click the whole row */
+                this.viewDocument($event);
+            }
+        }
     }
 
     onMenuItemClick($event) {
@@ -171,7 +175,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.actionRecordData = null;
     }
 
-    viewDocument() {
+    viewDocument($event) {
+        if ($event && $event.data) {
+            this.currentDocumentInfo = $event.data;
+        }
         let ext = this.currentDocumentInfo.fileName.split('.').pop();
         this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER:
             (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER: this.TEXT_VIEWER);
@@ -183,13 +190,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             })).subscribe((response) => {
                 this.submitWopiRequest(response);
             });
-        else            
+        else
             this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe((response) => {
                 this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response): response;
                 this.openDocumentMode = true;
-            }); 
+            });
     }
 
     editDocument() {
