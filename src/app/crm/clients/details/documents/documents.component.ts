@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
-    DocumentInfo, WopiServiceProxy, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+    DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
 
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
@@ -15,12 +15,12 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
-import { ImageViewerComponent } from 'ng2-image-viewer'
+import { ImageViewerComponent } from 'ng2-image-viewer';
 
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentServiceProxy, WopiServiceProxy ]
+    providers: [ DocumentServiceProxy ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -54,8 +54,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _documentService: DocumentServiceProxy,
-        private _customerService: CustomersServiceProxy,
-        private _wopiService: WopiServiceProxy,
+        private _customerService: CustomersServiceProxy
     ) {
         super(injector);
 
@@ -175,7 +174,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.showViewerType = this.validImageExtensions.indexOf(ext) < 0 ?
             (this.validTextExtensions.indexOf(ext) < 0 ? this.WOPI_VIEWER : this.TEXT_VIEWER) : this.IMAGE_VIEWER;
         if (this.showViewerType == this.WOPI_VIEWER)
-            this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
+            this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
                 this.submitWopiRequest(response);
             });
         else
@@ -183,7 +182,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     editDocument() {
-        this._wopiService.getEditRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
+        this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
             this.submitWopiRequest(response);
         });
     }
