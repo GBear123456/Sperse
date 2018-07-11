@@ -4458,9 +4458,13 @@ jquery.uniform@^4.2.0:
   dependencies:
     jquery "^1.6"
 
-"jquery@>= 1.7", jquery@>=1.10, jquery@>=1.12.0, jquery@>=1.2.3, jquery@>=1.5.0, jquery@>=1.7, jquery@>=1.7.2, jquery@>=1.7.x, jquery@>=1.8, jquery@>=1.9.0, jquery@>=1.9.1, jquery@^1.6, "jquery@^1.7 || ^2.0 || ^3.1", "jquery@^1.8.3 || ^2.0 || ^3.0", jquery@^3.1.1, jquery@^3.2.1, jquery@~1.11.3:
+"jquery@>= 1.7", jquery@>=1.10, jquery@>=1.2.3, jquery@>=1.5.0, jquery@>=1.7, jquery@>=1.7.2, jquery@>=1.7.x, jquery@>=1.8, jquery@>=1.9.0, jquery@>=1.9.1, jquery@^1.6, "jquery@^1.7 || ^2.0 || ^3.1", "jquery@^1.8.3 || ^2.0 || ^3.0", jquery@~1.11.3:
   version "1.11.3"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-1.11.3.tgz#dd8b74278b27102d29df63eae28308a8cfa1b583"
+
+jquery@>=1.12.0, jquery@^3.1.1, jquery@^3.2.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 jqueryui@^1.11.1:
   version "1.11.1"
@@ -5189,9 +5193,13 @@ moment-timezone@^0.5.17:
   dependencies:
     moment ">= 2.9.0"
 
-moment@2.18.1, "moment@>= 2.6.0", "moment@>= 2.9.0", moment@^2.10, moment@^2.10.2, moment@^2.22.1, moment@^2.9.0:
+moment@2.18.1, "moment@>= 2.6.0", "moment@>= 2.9.0", moment@^2.10, moment@^2.10.2, moment@^2.9.0:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
+
+moment@^2.22.1:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 morris.js@^0.5.0:
   version "0.5.0"
@@ -6073,9 +6081,9 @@ pretty-error@^2.0.2:
     renderkid "^2.0.1"
     utila "~0.4"
 
-primeng@6.0.0-alpha.1:
-  version "6.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/primeng/-/primeng-6.0.0-alpha.1.tgz#bda5fb05ccc93e16706c85a3d617a0136967bf55"
+primeng@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-6.0.0.tgz#73a3523098f2b95da0f18d3705d86cf66f6f0d0e"
 
 printj@~1.1.0, printj@~1.1.2:
   version "1.1.2"
