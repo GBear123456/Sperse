@@ -86,6 +86,7 @@ import { XeroLoginDialogComponent } from 'app/cfo/shared/common/xero/xero-login-
 import { ImportXeroChartOfAccountsButtonComponent } from 'app/cfo/shared/common/xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
+import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
 
 @NgModule({
     imports: [
@@ -165,7 +166,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         XeroLoginDialogComponent,
         ImportXeroChartOfAccountsButtonComponent,
         AddQuovoAccountButtonComponent,
-        ImportFromQuickBooksButtonComponent
+        ImportFromQuickBooksButtonComponent,
+        UsersDialogComponent
     ],
     entryComponents: [
         RuleDialogComponent,
@@ -174,7 +176,8 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
         PreferencesDialogComponent,
         ChooseResetRulesComponent,
         BusinessEntityEditDialogComponent,
-        CfoIntroComponent
+        CfoIntroComponent,
+        UsersDialogComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },

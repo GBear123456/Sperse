@@ -6,6 +6,7 @@ import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
 import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { ClientDetailsService } from './client-details.service';
 
 @Component({
     selector: 'operations-widget',
@@ -42,8 +43,8 @@ export class OperationsWidgetComponent implements OnInit {
 
     toolbarConfig = [];
 
-    initToolbarConfig() {
-        this.toolbarConfig = [
+    initToolbarConfig(config = null) {
+        this.toolbarConfig = config || [
             {
                 location: 'before', items: [
                 {
@@ -135,7 +136,13 @@ export class OperationsWidgetComponent implements OnInit {
         this.starsListComponent.toggle();
     }
 
-    constructor() { }
+    constructor(
+        private _clientService: ClientDetailsService
+    ) { 
+        _clientService.toolbarSubscribe((config) => {
+            this.initToolbarConfig(config);
+        });
+    }
 
     ngOnInit() {
         this.initToolbarConfig();

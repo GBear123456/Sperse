@@ -5451,10 +5451,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.dialog.closeAll();
-
-                let filterDetails = this.statsDetailFilter;
-                let discardDiscrepanciesInput = DiscardDiscrepanciesInput.fromJS({
+                const filterDetails = this.getDetailFilterFromCell(cellObj);
+                const discardDiscrepanciesInput = DiscardDiscrepanciesInput.fromJS({
                     bankAccountIds: filterDetails.accountIds,
                     currencyId: filterDetails.currencyId,
                     startDate: filterDetails.startDate,

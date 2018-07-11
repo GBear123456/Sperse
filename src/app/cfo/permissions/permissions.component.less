@@ -11,6 +11,7 @@
             /deep/ .dx-datagrid {
 
                 .dx-datagrid-headers {
+                    margin-top: 7px;
                     border-bottom: none;
                     .dx-header-row {
                         td {
@@ -20,7 +21,8 @@
                             color: #686f76;
                             text-transform: uppercase;
                             padding-bottom: 14px;
-                            padding-top: 21px;
+                            padding-top: 14px;
+                            position: relative;
                             .userFullName {
                                 font-size: 15px;
                                 color: #212c36;
@@ -30,6 +32,18 @@
                                 font-weight: 500;
                                 color: #677380;
                                 text-transform: lowercase;
+                            }
+                            .removeUserButton {
+                                display: none;
+                                position: absolute;
+                                right: 8px;
+                                top: 11px;
+                                z-index: 1;
+                            }
+                            &.userColumn.hovered {
+                                .removeUserButton {
+                                    display: block;
+                                }
                             }
                         }
                     }
@@ -75,6 +89,15 @@
                         letter-spacing: 0.3px;
                         color: #424c56;
                     }
+                }
+
+                .addUserButton {
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    margin: auto;
+                    cursor: pointer;
                 }
 
             }

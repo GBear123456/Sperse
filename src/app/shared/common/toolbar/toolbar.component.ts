@@ -199,6 +199,10 @@ export class ToolBarComponent extends AppComponentBase {
         star: {
             hint: this.l('Star'),
             icon: this.getImgURI('star-icon')
+        },
+        close: {
+            hint: this.l('Close'),
+            icon: this.getImgURI('close')
         }
     };
 

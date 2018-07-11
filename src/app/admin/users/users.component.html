@@ -44,6 +44,15 @@
                         <dxi-column dataField="surname" caption="{{l('Surname')}}"></dxi-column>
                         <dxi-column dataField="name" caption="{{l('Name')}}"></dxi-column>
                         <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
+                        <dxi-column dataField="profilePicture" caption=" " cellTemplate="photoTemplate"
+                            [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <div *dxTemplate="let data of 'photoTemplate'">
+                            <img [src]="getPhoto(data.data.profilePicture)"
+                                alt="{{l('AltPersonPhoto')}}"
+                                width="38"
+                                class="img-circle" />
+                        </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'">
                             <span class="role-container" *ngFor="let item of cellData.value; let i = index">{{(i ? ',&nbsp;': '') + item.roleName}}</span>

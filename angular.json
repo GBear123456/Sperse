@@ -72,6 +72,7 @@
               "node_modules/primeng/resources/themes/bootstrap/theme.css",
               "node_modules/bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
               "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/ng2-image-viewer/imageviewer.scss",
 
               "src/assets/metronic/src/vendors/line-awesome/css/line-awesome.css",
               "src/assets/metronic/src/vendors/flaticon/css/flaticon.css",
@@ -156,6 +157,7 @@
               "node_modules/jquery.inputmask/dist/jquery.inputmask.bundle.js",
               "node_modules/quill/dist/quill.js",
               "node_modules/bootstrap4-datetimepicker/build/js/bootstrap-datetimepicker.min.js",
+              "node_modules/ng2-image-viewer/imageviewer.js",
               "src/assets/bootstrap4-datepicker/defaults.js",
               "src/assets/Jcrop/js/jquery.color.js",
               "src/assets/Jcrop/js/Jcrop.js",

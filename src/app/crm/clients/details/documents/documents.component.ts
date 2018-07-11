@@ -1,15 +1,15 @@
 import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {DomSanitizer} from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { FileSystemFileEntry } from 'ngx-file-drop';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
-    DocumentInfo, WopiServiceProxy, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
-import { MatDialog } from '@angular/material';
+    DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 
+import { MatDialog } from '@angular/material';
+import { ClientDetailsService } from '../client-details.service';
 import { UploadEvent, UploadFile } from 'ngx-file-drop';
 
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -17,13 +17,18 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
+import { ImageViewerComponent } from 'ng2-image-viewer';
+
+import { finalize } from 'rxjs/operators';
+
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentServiceProxy, WopiServiceProxy ]
+    providers: [ DocumentServiceProxy, FileSizePipe ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
 
     public data: {
         customerInfo: CustomerInfoDto
@@ -34,19 +39,30 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     dataSource: any;
 
+    public previewContent: string;
     public actionMenuItems: any;
     public actionRecordData: any;
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
-    public wopiResponseHtml: any;
+    public wopiUrlsrc: string;
+    public wopiAccessToken: string;
+    public wopiAccessTokenTtl: string;
+    public showViewerType: number;
+
+    public readonly WOPI_VIEWER  = 0;
+    public readonly IMAGE_VIEWER = 1;
+    public readonly TEXT_VIEWER  = 2;
+
+    validTextExtensions: String[] = ['txt', 'text'];
+
+    viewerToolbarConfig: any = [];
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
         private _customerService: CustomersServiceProxy,
-        private _wopiService: WopiServiceProxy,
-        private http: HttpClient,
-        private domSanitizer: DomSanitizer
+        private _clientService: ClientDetailsService
     ) {
         super(injector);
 
@@ -60,6 +76,80 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             {
                 text: this.l('Edit'),
                 action: this.editDocument.bind(this)
+            }
+        ];
+    }
+
+    initViewerToolbar(conf: any = {}) {
+        this.viewerToolbarConfig = [
+            {
+                location: 'before', items: [
+                    {
+                        name: 'back',
+                        action: this.closeDocument.bind(this)
+                    },
+                    {
+                        html: '<div class="file-name">' + this.currentDocumentInfo.fileName + 
+                            '<span class="file-size">(' + this._fileSizePipe.transform(this.currentDocumentInfo.size) + ')</span></div>'
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'edit',
+                        action: this.editDocument.bind(this),
+                        disabled: conf.editDisabled
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'delete',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'download',
+                        action: Function()
+                    },
+                    {
+                        name: 'print',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'prev',
+                        action: Function()
+                    },
+                    {
+                        name: 'next',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'fullscreen',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'close',
+                        action: this.closeDocument.bind(this)
+                    }
+                ]
             }
         ];
     }
@@ -152,6 +242,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     showActionsMenu(event) {
         this.actionRecordData = event.data;
+        this.actionMenuItems[1].disabled = 
+            !event.data.isSupportedByWopi;
         event.cancel = true;
     }
 
@@ -162,33 +254,57 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     viewDocument() {
-        this._wopiService.getViewRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
-            this.submitWopiRequest(response);
+        let ext = this.currentDocumentInfo.fileName.split('.').pop();
+        this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER:
+            (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER: this.TEXT_VIEWER);
+
+        this.startLoading(true);
+        this.initViewerToolbar({
+            editDisabled: !this.currentDocumentInfo.isSupportedByWopi
         });
+        this._clientService.toolbarUpdate(
+            this.viewerToolbarConfig);
+        if (this.showViewerType == this.WOPI_VIEWER)
+            this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.finishLoading(true);
+            })).subscribe((response) => {
+                this.submitWopiRequest(response);
+            });
+        else            
+            this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.finishLoading(true);
+            })).subscribe((response) => {
+                this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response): response;
+                this.openDocumentMode = true;
+            }); 
     }
 
     editDocument() {
-        this._wopiService.getEditRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
+        this.initViewerToolbar({
+            editDisabled: true
+        });
+        this.startLoading(true);
+        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
+        this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.finishLoading(true);
+        })).subscribe((response) => {
             this.submitWopiRequest(response);
         });
     }
 
     submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
-        let formData = new FormData();
-        formData.append('access_token', wopiRequestInfo.accessToken);
-        formData.append('access_token_ttl', wopiRequestInfo.accessTokenTtl.toString());
-        this.http.post(wopiRequestInfo.wopiUrlsrc, formData, { responseType: 'text' }).subscribe((response) => {
-            this.wopiResponseHtml = this.domSanitizer.bypassSecurityTrustHtml(response.toString());
-            this.openDocumentMode = true;
-        });
+        this.openDocumentMode = true;
+        this.showViewerType = this.WOPI_VIEWER;
+        this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
+        this.wopiAccessToken = wopiRequestInfo.accessToken;
+        this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
+        setTimeout(() => {
+            window['submitWopiRequest']();
+        }, 500);
     }
 
     closeDocument() {
         this.openDocumentMode = false;
-    }
-
-    onDocumentIframeLoad(event) {
-        event.target.width = screen.width - 350;
-        event.target.height = screen.height - 390;
+        this._clientService.toolbarUpdate();
     }
 }
