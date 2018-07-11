@@ -100,7 +100,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     openDialog() {
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';
-        this.dialogConfig.id = 'cfo-intro';
+        this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';
         this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
         this.dialogConfig.data = { alreadyStarted: true };
 

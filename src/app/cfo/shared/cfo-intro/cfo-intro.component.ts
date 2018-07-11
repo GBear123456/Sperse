@@ -5,7 +5,7 @@ import { FormGroup } from '@angular/forms';
 import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import {
     QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto, RoleServiceProxy, RoleListDto, UserServiceProxy,
-    CreateOrUpdateUserInput, TenantHostType, InstanceType
+    InviteUserInput, TenantHostType, InstanceType
 } from 'shared/service-proxies/service-proxies';
 import { ImportUserData } from './cfo-intro.model'
 import * as nameParser from 'parse-full-name';
@@ -56,9 +56,11 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 this.question = result.questions[0];
             });
 
-        this._roleService.getRoles(undefined).subscribe(result => {
-            this.roles = result.items;
-        });
+        if (this.showImportUsersStep) {
+            this._roleService.getRoles(undefined).subscribe(result => {
+                this.roles = result.items;
+            });
+        }
     }
 
     showVideo() {
@@ -117,27 +119,16 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     }
 
     submitInviteUsers() {
-        let users: CreateOrUpdateUserInput[] = [];
+        let users: InviteUserInput[] = [];
         this.importUsers.forEach(v => {
             if (v.email) {
                 let parsedName = nameParser.parseFullName(v.fullName.trim());
-                users.push(CreateOrUpdateUserInput.fromJS({
+                users.push(InviteUserInput.fromJS({
+                    emailAddress: v.email,
+                    name: parsedName.first,
+                    surname: parsedName.last,
                     assignedRoleNames: v.roleNames,
-                    sendActivationEmail: true,
-                    setRandomPassword: true,
-                    tenantHostType: TenantHostType.PlatformUi,
-                    organizationUnits: [],
-                    user: {
-                        userName: v.email,
-                        emailAddress: v.email,
-                        name: parsedName.first,
-                        surname: parsedName.last,
-
-                        isLockoutEnabled: true,
-                        isTwoFactorEnabled: false,
-                        shouldChangePasswordOnNextLogin: true,
-                        isActive: true
-                    }
+                    tenantHostType: TenantHostType.PlatformUi
                 }));
             }
         });
@@ -171,10 +162,11 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     }
 
     validateFullName = (e) => {
-        let fullName = nameParser.parseFullName(e.value.trim());
-        if (!fullName.first || !fullName.last)
-            return false;
-
+        if (e.value) {
+            let fullName = nameParser.parseFullName(e.value.trim());
+            if (!fullName.first || !fullName.last)
+                return false;
+        }
         return true;
     }
 
