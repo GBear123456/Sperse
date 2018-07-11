@@ -17,6 +17,8 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 
 import { ImageViewerComponent } from 'ng2-image-viewer';
 
+import { finalize } from 'rxjs/operators';
+
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
@@ -35,6 +37,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     dataSource: any;
 
+    public previewContent: string;
     public actionMenuItems: any;
     public actionRecordData: any;
     public openDocumentMode = false;
@@ -48,7 +51,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     public readonly IMAGE_VIEWER = 1;
     public readonly TEXT_VIEWER  = 2;
 
-    validImageExtensions: String[] = ['png', 'jpg', 'jpeg', 'gif'];
     validTextExtensions: String[] = ['txt', 'text'];
 
     constructor(injector: Injector,
@@ -171,14 +173,23 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     viewDocument() {
         let ext = this.currentDocumentInfo.fileName.split('.').pop();
-        this.showViewerType = this.validImageExtensions.indexOf(ext) < 0 ?
-            (this.validTextExtensions.indexOf(ext) < 0 ? this.WOPI_VIEWER : this.TEXT_VIEWER) : this.IMAGE_VIEWER;
+        this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER:
+            (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER: this.TEXT_VIEWER);
+
+        this.startLoading(true);
         if (this.showViewerType == this.WOPI_VIEWER)
-            this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
+            this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.finishLoading(true);
+            })).subscribe((response) => {
                 this.submitWopiRequest(response);
             });
-        else
-            this.openDocumentMode = true;
+        else            
+            this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.finishLoading(true);
+            })).subscribe((response) => {
+                this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response): response;
+                this.openDocumentMode = true;
+            }); 
     }
 
     editDocument() {
