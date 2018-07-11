@@ -9,7 +9,7 @@ import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { MatDialog } from '@angular/material';
 import { ClientDetailsService } from '../client-details.service';
 
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
@@ -263,8 +263,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             this.currentDocumentInfo = $event.data;
         }
         let ext = this.currentDocumentInfo.fileName.split('.').pop();
-        this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER:
-            (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER: this.TEXT_VIEWER);
+        this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER :
+            (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
 
         this.startLoading(true);
         this.initViewerToolbar({
@@ -282,7 +282,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe((response) => {
-                this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response): response;
+                this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response) : response;
                 this.openDocumentMode = true;
             });
     }
