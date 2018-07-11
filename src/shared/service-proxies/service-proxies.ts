@@ -21027,6 +21027,7 @@ export class UserServiceProxy {
     }
 
     /**
+     * @includePhotos (optional) 
      * @filter (optional) 
      * @permission (optional) 
      * @role (optional) 
@@ -21035,8 +21036,10 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(includePhotos: boolean | null | undefined, filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
         if (permission !== undefined)
@@ -21418,7 +21421,7 @@ export class UserServiceProxy {
      * @usersInput (optional) 
      * @return Success
      */
-    inviteUsers(usersInput: CreateOrUpdateUserInput[] | null | undefined): Observable<void> {
+    inviteUsers(usersInput: InviteUserInput[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/User/InviteUsers";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -48572,6 +48575,7 @@ export class UserListDto implements IUserListDto {
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     profilePictureId!: string | undefined;
+    profilePicture!: string | undefined;
     isEmailConfirmed!: boolean | undefined;
     roles!: UserListRoleDto[] | undefined;
     lastLoginTime!: moment.Moment | undefined;
@@ -48596,6 +48600,7 @@ export class UserListDto implements IUserListDto {
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.profilePictureId = data["profilePictureId"];
+            this.profilePicture = data["profilePicture"];
             this.isEmailConfirmed = data["isEmailConfirmed"];
             if (data["roles"] && data["roles"].constructor === Array) {
                 this.roles = [];
@@ -48624,6 +48629,7 @@ export class UserListDto implements IUserListDto {
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["profilePictureId"] = this.profilePictureId;
+        data["profilePicture"] = this.profilePicture;
         data["isEmailConfirmed"] = this.isEmailConfirmed;
         if (this.roles && this.roles.constructor === Array) {
             data["roles"] = [];
@@ -48645,6 +48651,7 @@ export interface IUserListDto {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     profilePictureId: string | undefined;
+    profilePicture: string | undefined;
     isEmailConfirmed: boolean | undefined;
     roles: UserListRoleDto[] | undefined;
     lastLoginTime: moment.Moment | undefined;
@@ -49110,6 +49117,69 @@ export interface ICreateOrUpdateUserInput {
     setRandomPassword: boolean | undefined;
     organizationUnits: number[] | undefined;
     tenantHostType: CreateOrUpdateUserInputTenantHostType | undefined;
+}
+
+export class InviteUserInput implements IInviteUserInput {
+    name!: string;
+    surname!: string;
+    emailAddress!: string;
+    assignedRoleNames!: string[];
+    tenantHostType!: InviteUserInputTenantHostType | undefined;
+
+    constructor(data?: IInviteUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.assignedRoleNames = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.surname = data["surname"];
+            this.emailAddress = data["emailAddress"];
+            if (data["assignedRoleNames"] && data["assignedRoleNames"].constructor === Array) {
+                this.assignedRoleNames = [];
+                for (let item of data["assignedRoleNames"])
+                    this.assignedRoleNames.push(item);
+            }
+            this.tenantHostType = data["tenantHostType"];
+        }
+    }
+
+    static fromJS(data: any): InviteUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new InviteUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["emailAddress"] = this.emailAddress;
+        if (this.assignedRoleNames && this.assignedRoleNames.constructor === Array) {
+            data["assignedRoleNames"] = [];
+            for (let item of this.assignedRoleNames)
+                data["assignedRoleNames"].push(item);
+        }
+        data["tenantHostType"] = this.tenantHostType;
+        return data; 
+    }
+}
+
+export interface IInviteUserInput {
+    name: string;
+    surname: string;
+    emailAddress: string;
+    assignedRoleNames: string[];
+    tenantHostType: InviteUserInputTenantHostType | undefined;
 }
 
 export class AssignCustomerInput implements IAssignCustomerInput {
@@ -50512,6 +50582,12 @@ export enum ActivateUserForContactInputTenantHostType {
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
+    PlatformApi = "PlatformApi", 
+    PlatformUi = "PlatformUi", 
+    FundingUi = "FundingUi", 
+}
+
+export enum InviteUserInputTenantHostType {
     PlatformApi = "PlatformApi", 
     PlatformUi = "PlatformUi", 
     FundingUi = "FundingUi", 

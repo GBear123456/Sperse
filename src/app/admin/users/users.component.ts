@@ -1,8 +1,10 @@
 import { Component, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
-    PermissionServiceProxy, FlatPermissionWithLevelDto } from '@shared/service-proxies/service-proxies';
+import {
+    UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
+    PermissionServiceProxy, FlatPermissionWithLevelDto
+} from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -131,22 +133,23 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.initToolbarConfig();
 
         this.dataSource = new DataSource({
-                key: 'id',
-                load: (loadOptions) => {
-                    return this._userServiceProxy.getUsers(
-                            this.searchValue || undefined,
-                            this.selectedPermission || undefined,
-                            this.role || undefined,
-                            (loadOptions.sort || []).map((item) => {
-                                return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                            }).join(','), loadOptions.take, loadOptions.skip
-                        ).toPromise().then(response => {
-                            return {
-                                data: response.items,
-                                totalCount: response.totalCount
-                            };
-                        });
-                }
+            key: 'id',
+            load: (loadOptions) => {
+                return this._userServiceProxy.getUsers(
+                    true,
+                    this.searchValue || undefined,
+                    this.selectedPermission || undefined,
+                    this.role || undefined,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','), loadOptions.take, loadOptions.skip
+                ).toPromise().then(response => {
+                    return {
+                        data: response.items,
+                        totalCount: response.totalCount
+                    };
+                });
+            }
         });
     }
 
@@ -343,7 +346,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {refreshParent: this.refreshDataGrid.bind(this)}
+            data: { refreshParent: this.refreshDataGrid.bind(this) }
         }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
 

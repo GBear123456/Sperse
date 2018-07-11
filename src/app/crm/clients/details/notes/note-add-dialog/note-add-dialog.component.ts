@@ -126,7 +126,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             if ($event.text)
-                this._userService.getUsers($event.text, 'Pages.CRM', undefined, undefined, 10, 0).subscribe((result) => {
+                this._userService.getUsers(false, $event.text, 'Pages.CRM', undefined, undefined, 10, 0).subscribe((result) => {
                     this.users = result.items.map((user) => {
                         return {
                             id: user.id,
