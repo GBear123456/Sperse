@@ -56,9 +56,11 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 this.question = result.questions[0];
             });
 
-        this._roleService.getRoles(undefined).subscribe(result => {
-            this.roles = result.items;
-        });
+        if (this.showImportUsersStep) {
+            this._roleService.getRoles(undefined).subscribe(result => {
+                this.roles = result.items;
+            });
+        }
     }
 
     showVideo() {
@@ -160,10 +162,11 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     }
 
     validateFullName = (e) => {
-        let fullName = nameParser.parseFullName(e.value.trim());
-        if (!fullName.first || !fullName.last)
-            return false;
-
+        if (e.value) {
+            let fullName = nameParser.parseFullName(e.value.trim());
+            if (!fullName.first || !fullName.last)
+                return false;
+        }
         return true;
     }
 
