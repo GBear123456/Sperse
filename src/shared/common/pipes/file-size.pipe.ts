@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
     name: 'filesize'
 })
 export class FileSizePipe implements PipeTransform {
-  transform(sizeBytes, args) {
+  transform(sizeBytes, args = []) {
       let kb = 1024;
 
       if (sizeBytes < kb) {

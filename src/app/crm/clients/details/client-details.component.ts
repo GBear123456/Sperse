@@ -34,8 +34,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     customerInfo: CustomerInfoDto;
     primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
-    leadId: number;
     leadInfo: LeadInfoDto;
+    leadId: number;
     leadStages = [];
     configMode: boolean;
 
@@ -63,7 +63,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private rootComponent: any;
     private paramsSubscribe: any = [];
     private referrerParams;
-    private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
+    private pipelinePurposeId: string = 
+        AppConsts.PipelinePurposeIds.lead;
 
     private readonly LOCAL_STORAGE = 0;
 
@@ -212,7 +213,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         });
         return this.getVerificationChecklistItem(
             type,
-            confirmedCount > 0 ? VerificationChecklistItemStatus.success : VerificationChecklistItemStatus.unsuccess,
+            confirmedCount > 0 ? VerificationChecklistItemStatus.success 
+                : VerificationChecklistItemStatus.unsuccess,
             confirmedCount,
             items.length
         );

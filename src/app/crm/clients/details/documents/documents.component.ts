@@ -4,9 +4,12 @@ import { FileSystemFileEntry } from 'ngx-file-drop';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
     DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
-import { MatDialog } from '@angular/material';
+import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 
-import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
+import { MatDialog } from '@angular/material';
+import { ClientDetailsService } from '../client-details.service';
+
+import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
@@ -17,7 +20,7 @@ import { finalize } from 'rxjs/operators';
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentServiceProxy ]
+    providers: [ DocumentServiceProxy, FileSizePipe ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -49,10 +52,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     validTextExtensions: String[] = ['txt', 'text'];
 
+    viewerToolbarConfig: any = [];
+
     constructor(injector: Injector,
         public dialog: MatDialog,
+        private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
-        private _customerService: CustomersServiceProxy
+        private _customerService: CustomersServiceProxy,
+        private _clientService: ClientDetailsService
     ) {
         super(injector);
 
@@ -70,6 +77,80 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         ];
     }
 
+    initViewerToolbar(conf: any = {}) {
+        this.viewerToolbarConfig = [
+            {
+                location: 'before', items: [
+                    {
+                        name: 'back',
+                        action: this.closeDocument.bind(this)
+                    },
+                    {
+                        html: '<div class="file-name">' + this.currentDocumentInfo.fileName +
+                            '<span class="file-size">(' + this._fileSizePipe.transform(this.currentDocumentInfo.size) + ')</span></div>'
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'edit',
+                        action: this.editDocument.bind(this),
+                        disabled: conf.editDisabled
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'delete',
+                        action: this.deleteDocument.bind(this)
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'download',
+                        action: Function()
+                    },
+                    {
+                        name: 'print',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'prev',
+                        action: Function()
+                    },
+                    {
+                        name: 'next',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'fullscreen',
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'close',
+                        action: this.closeDocument.bind(this)
+                    }
+                ]
+            }
+        ];
+    }
+
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
     }
@@ -79,9 +160,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.loadDocuments();
     }
 
-    loadDocuments() {
+    loadDocuments(callback = null) {
         this._documentService.getAll(this.data.customerInfo.id).subscribe((result) => {
             this.dataSource = result;
+            callback && callback();
         });
     }
 
@@ -153,6 +235,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     showActionsMenu(data, target) {
         this.actionRecordData = data;
+        this.actionMenuItems[1].disabled = !data.isSupportedByWopi;
         this.actionsTooltip.instance.show(target);
     }
 
@@ -184,6 +267,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER: this.TEXT_VIEWER);
 
         this.startLoading(true);
+        this.initViewerToolbar({
+            editDisabled: !this.currentDocumentInfo.isSupportedByWopi
+        });
+        this._clientService.toolbarUpdate(
+            this.viewerToolbarConfig);
         if (this.showViewerType == this.WOPI_VIEWER)
             this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
@@ -200,7 +288,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     editDocument() {
-        this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).subscribe((response) => {
+        this.initViewerToolbar({
+            editDisabled: true
+        });
+        this.startLoading(true);
+        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
+        this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+            this.finishLoading(true);
+        })).subscribe((response) => {
             this.submitWopiRequest(response);
         });
     }
@@ -216,7 +311,18 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         }, 500);
     }
 
+    deleteDocument() {
+        this.startLoading(true);
+        this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
+            this.loadDocuments(() => {
+                this.closeDocument();
+                this.finishLoading(true);
+            });
+        });
+    }
+
     closeDocument() {
         this.openDocumentMode = false;
+        this._clientService.toolbarUpdate();
     }
 }

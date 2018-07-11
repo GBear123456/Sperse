@@ -1,4 +1,15 @@
-﻿:host {
+﻿/deep/ .file-name {
+    padding-left: 15px;
+    font-weight: 500;
+
+    .file-size {
+        padding-left: 5px;
+        color: #677380;
+        font-size: 13px;
+    }
+}
+
+:host {
     .wrapper {
         display: flex;
         margin: 0px 23px;
@@ -87,15 +98,6 @@
         }
     }
 
-    .file-name {
-        padding: 15px;
-
-        .file-size {
-            color: #677380;
-            font-size: 13px;
-        }
-    }
-
     .open-document-header {
         display: flex;
         flex-direction: row;
@@ -137,13 +139,13 @@
         width: 100%;
         outline: 0;
         padding: 10px;
-        height: calc(~"100vh - 281px");
+        height: calc(~"100vh - 220px");
         resize: none;
     }
 
     /deep/ app-image-viewer {
         #imageViewer {
-            height: calc(~"100vh - 281px");
+            height: calc(~"100vh - 220px");
             margin-top: 0px;
             .image-container {
                 bottom: 0px;
