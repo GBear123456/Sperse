@@ -6,6 +6,7 @@
                 <div [hidden]="showPipeline">
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
+                                      accesskey="narrowHeaderPanel"
                                       [dataSource]="dataSource"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
@@ -33,7 +34,7 @@
                             <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
-                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell" 
+                            <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell"
                                 [editorOptions]="{
                                     mask: masks.phone,
                                     maskInvalidMessage: l('PhoneValidationError')

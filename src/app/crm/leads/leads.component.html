@@ -1,12 +1,12 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
-    <crm-static-list 
+    <crm-static-list
         [width]="'210px'"
         [title]="l('Stages')"
-        [selectedKeys]="selectedClientKeys" 
-        [filterModel]="filterModelStages" 
-        [targetSelector]="'[aria-label=Stage]'" 
-        [list]="stages" 
+        [selectedKeys]="selectedClientKeys"
+        [filterModel]="filterModelStages"
+        [targetSelector]="'[aria-label=Stage]'"
+        [list]="stages"
         (onItemSelected)="updateLeadsStage($event)">
     </crm-static-list>
     <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
@@ -19,6 +19,7 @@
             <div>
                 <div id="LeadsTable">
                     <dx-data-grid id="gridContainer"
+                                accessKey="narrowHeaderPanel"
                                 [dataSource]="dataSource"
                                 [allowColumnReordering]="true"
                                 [columnAutoWidth]="true"
@@ -85,9 +86,9 @@
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
-                    <app-pipeline 
-                        [dataSource]="pipelineDataSource" 
-                        [pipelinePurposeId]="pipelinePurposeId" 
+                    <app-pipeline
+                        [dataSource]="pipelineDataSource"
+                        [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
                         (onStagesLoaded)="onStagesLoaded($event)">
                         Loading...
