@@ -21027,6 +21027,7 @@ export class UserServiceProxy {
     }
 
     /**
+     * @includePhotos (optional) 
      * @filter (optional) 
      * @permission (optional) 
      * @role (optional) 
@@ -21035,8 +21036,10 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(includePhotos: boolean | null | undefined, filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
         if (permission !== undefined)
@@ -48572,6 +48575,7 @@ export class UserListDto implements IUserListDto {
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     profilePictureId!: string | undefined;
+    profilePicture!: string | undefined;
     isEmailConfirmed!: boolean | undefined;
     roles!: UserListRoleDto[] | undefined;
     lastLoginTime!: moment.Moment | undefined;
@@ -48596,6 +48600,7 @@ export class UserListDto implements IUserListDto {
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.profilePictureId = data["profilePictureId"];
+            this.profilePicture = data["profilePicture"];
             this.isEmailConfirmed = data["isEmailConfirmed"];
             if (data["roles"] && data["roles"].constructor === Array) {
                 this.roles = [];
@@ -48624,6 +48629,7 @@ export class UserListDto implements IUserListDto {
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["profilePictureId"] = this.profilePictureId;
+        data["profilePicture"] = this.profilePicture;
         data["isEmailConfirmed"] = this.isEmailConfirmed;
         if (this.roles && this.roles.constructor === Array) {
             data["roles"] = [];
@@ -48645,6 +48651,7 @@ export interface IUserListDto {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     profilePictureId: string | undefined;
+    profilePicture: string | undefined;
     isEmailConfirmed: boolean | undefined;
     roles: UserListRoleDto[] | undefined;
     lastLoginTime: moment.Moment | undefined;
