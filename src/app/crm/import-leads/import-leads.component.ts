@@ -1,6 +1,6 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
+import { Router, RouteReuseStrategy } from '@angular/router';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -21,7 +21,6 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 import * as addressParser from 'parse-address';
 
 import * as _ from 'underscore';
-import * as _s from 'underscore.string';
 import {PipelineService} from '@app/shared/pipeline/pipeline.service';
 
 @Component({
@@ -197,9 +196,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private importTypeChanged(event) {
-        const IMPORT_TYPE_ITEM_INDEX = 0;
-        const STAGE_ITEM_INDEX = 2;
-
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
 
@@ -225,13 +221,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
 
         this.FIELDS_CAPTIONS.forEach(field => {
-            let parts = field.split('_'),
-                caption = _s.humanize(parts.pop()),
-                type = parts.pop();
-
-            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0)
-                caption = _s.humanize(type).split(' ').shift() + ' ' + caption;
-
+            let caption = this.l(ImportWizardComponent.getFieldLocalizationName(field));
+            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0) {
+                let parts = field.split(ImportWizardComponent.FieldSeparator);
+                parts.pop();
+                caption = this.l(ImportWizardComponent.getFieldLocalizationName(
+                    parts.join(ImportWizardComponent.FieldSeparator))).split(' ').shift() + ' ' + caption;
+            }
             if (this.fieldsConfig[field])
                 this.fieldsConfig[field].caption = caption;
             else
@@ -350,18 +346,25 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${v}` : v;
             if (this.mappingObjectNames[v]) {
                 this.mappingFields.push({
-                    id: combinedName, name: _s.humanize(v), parent: parent, expanded: true
+                    id: combinedName, 
+                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),
+                    parent: parent, 
+                    expanded: true
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
             }
             else {
-                this.mappingFields.push({ id: combinedName, name: _s.humanize(v), parent: parent || 'Other' });
+                this.mappingFields.push({ 
+                    id: combinedName, 
+                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)), 
+                    parent: parent || 'Other' 
+                });
             }
         });
 
         if (!parent) {
             this.mappingFields.push({
-                id: 'Other', name: this.capitalize('Other'), parent: null, expanded: true
+                id: 'Other', name: this.l('Import_Other'), parent: null, expanded: true
             });
         }
     }

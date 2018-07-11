@@ -36,6 +36,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
 
     public static readonly FieldSeparator = '_';
+    public static readonly FieldLocalizationPrefix = 'Import';
 
     uploadFile: FormGroup;
     dataMapping: FormGroup;
@@ -476,6 +477,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         $event.component.selectItem(cell.value);
     }
 
+    public static getFieldLocalizationName(dataField: string): string {
+        let parts = dataField.split(ImportWizardComponent.FieldSeparator);
+        let partsCapitalized = parts.map(p => _s.capitalize(p));
+        partsCapitalized.unshift(ImportWizardComponent.FieldLocalizationPrefix);
+        return partsCapitalized.join(ImportWizardComponent.FieldSeparator);
+    }
+
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
             let columnConfig = this.columnsConfig[column.dataField];
@@ -494,8 +502,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             }
 
             if (!columnConfig || !columnConfig['caption'])
-                column.caption = _s.humanize(column.dataField.split(
-                    ImportWizardComponent.FieldSeparator).pop());
+                column.caption = this.l(ImportWizardComponent.getFieldLocalizationName(column.dataField));
         });
     }
 }
