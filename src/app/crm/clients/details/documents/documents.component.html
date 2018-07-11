@@ -63,10 +63,6 @@
     </div>
 </div>
 <div *ngIf="openDocumentMode">
-    <div class="open-document-header">
-        <h4 class="file-name">{{ currentDocumentInfo.fileName }} <span class="file-size">({{ currentDocumentInfo.size | filesize }})</span></h4>
-        <span class="close" (click)="closeDocument($event)"></span>
-    </div>
     <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
         <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
         <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
