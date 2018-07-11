@@ -21421,7 +21421,7 @@ export class UserServiceProxy {
      * @usersInput (optional) 
      * @return Success
      */
-    inviteUsers(usersInput: CreateOrUpdateUserInput[] | null | undefined): Observable<void> {
+    inviteUsers(usersInput: InviteUserInput[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/User/InviteUsers";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -49119,6 +49119,69 @@ export interface ICreateOrUpdateUserInput {
     tenantHostType: CreateOrUpdateUserInputTenantHostType | undefined;
 }
 
+export class InviteUserInput implements IInviteUserInput {
+    name!: string;
+    surname!: string;
+    emailAddress!: string;
+    assignedRoleNames!: string[];
+    tenantHostType!: InviteUserInputTenantHostType | undefined;
+
+    constructor(data?: IInviteUserInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.assignedRoleNames = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.surname = data["surname"];
+            this.emailAddress = data["emailAddress"];
+            if (data["assignedRoleNames"] && data["assignedRoleNames"].constructor === Array) {
+                this.assignedRoleNames = [];
+                for (let item of data["assignedRoleNames"])
+                    this.assignedRoleNames.push(item);
+            }
+            this.tenantHostType = data["tenantHostType"];
+        }
+    }
+
+    static fromJS(data: any): InviteUserInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new InviteUserInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["emailAddress"] = this.emailAddress;
+        if (this.assignedRoleNames && this.assignedRoleNames.constructor === Array) {
+            data["assignedRoleNames"] = [];
+            for (let item of this.assignedRoleNames)
+                data["assignedRoleNames"].push(item);
+        }
+        data["tenantHostType"] = this.tenantHostType;
+        return data; 
+    }
+}
+
+export interface IInviteUserInput {
+    name: string;
+    surname: string;
+    emailAddress: string;
+    assignedRoleNames: string[];
+    tenantHostType: InviteUserInputTenantHostType | undefined;
+}
+
 export class AssignCustomerInput implements IAssignCustomerInput {
     customerId!: number | undefined;
     userId!: number | undefined;
@@ -50519,6 +50582,12 @@ export enum ActivateUserForContactInputTenantHostType {
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
+    PlatformApi = "PlatformApi", 
+    PlatformUi = "PlatformUi", 
+    FundingUi = "FundingUi", 
+}
+
+export enum InviteUserInputTenantHostType {
     PlatformApi = "PlatformApi", 
     PlatformUi = "PlatformUi", 
     FundingUi = "FundingUi", 
