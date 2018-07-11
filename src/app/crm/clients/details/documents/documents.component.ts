@@ -107,7 +107,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
                 location: 'after', items: [
                     {
                         name: 'delete',
-                        action: Function()
+                        action: this.deleteDocument.bind(this)
                     }
                 ]
             },
@@ -163,9 +163,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.loadDocuments();
     }
 
-    loadDocuments() {
+    loadDocuments(callback = null) {
         this._documentService.getAll(this.data.customerInfo.id).subscribe((result) => {
             this.dataSource = result;
+            callback && callback();
         });
     }
 
@@ -286,7 +287,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.startLoading(true);
         this._clientService.toolbarUpdate(this.viewerToolbarConfig);
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
-                this.finishLoading(true);
+            this.finishLoading(true);
         })).subscribe((response) => {
             this.submitWopiRequest(response);
         });
@@ -301,6 +302,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         setTimeout(() => {
             window['submitWopiRequest']();
         }, 500);
+    }
+
+    deleteDocument() {
+        this.startLoading(true);
+        this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
+            this.loadDocuments(() => {
+                this.closeDocument();
+                this.finishLoading(true);
+            });            
+        });
     }
 
     closeDocument() {
