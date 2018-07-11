@@ -8,12 +8,12 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-family: Montserrat !important;
 }
 
-#gridContainer .dx-datagrid-header-panel .dx-toolbar {
+#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-header-panel .dx-toolbar {
     height: 25px;
     margin: 0;
 }
 
-.dx-datagrid-group-panel {
+#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel {
     height: 40px;
     margin: 0 15px 0 0 !important;
     border: none;
@@ -21,12 +21,12 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     background-color: #f9fbfc;
 }
 
-.dx-datagrid-group-panel .dx-group-panel-message {
+#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel .dx-group-panel-message {
     padding-top: 0px;
     padding-bottom: 0;
 }
 
-.dx-datagrid-group-panel .dx-group-panel-item {
+#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel .dx-group-panel-item {
     padding: 4px 10px;
     font-size: 13px;
     letter-spacing: 0.5px;
