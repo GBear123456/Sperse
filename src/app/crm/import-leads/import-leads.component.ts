@@ -283,6 +283,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
+        this.clearToolbarSelectedItems();
         this.wizard.reset(callback);
     }
 
@@ -297,6 +298,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             });
             if (this.importedCount > 0) {
                 this.wizard.showFinishStep();
+                this.clearToolbarSelectedItems();
                 (<any>this._reuseService).invalidate('leads');
             } else
                 this.message.error(res[0].errorMessage);
@@ -561,5 +563,16 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
+    }
+
+    clearToolbarSelectedItems() {
+        this.isListsSelected = false;
+        this.isTagsSelected = false;
+        this.isStarSelected = false;
+        this.isStageSelected = false;
+        this.stagesComponent.selectedItems = [];
+        this.starsListComponent.selectedItemKey = [];
+        this.listsComponent.reset();
+        this.tagsComponent.reset();
     }
 }
