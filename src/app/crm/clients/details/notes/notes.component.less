@@ -1,30 +1,27 @@
 ﻿:host {
     .wrapper {
         margin: 0px 23px;
+        display: flex;
 
-        .add-new-note {
-            border: none;
-            background-color: #FFF;
-            font-size: 16px;
-            font-weight: normal;
-            font-style: normal;
-            font-stretch: normal;
-            letter-spacing: 0.3px;
-            color: #00aeef; 
-            cursor: pointer;
-            outline: none;
+        .left-side {
+            flex: 3 1 auto;
+            /deep/ dx-data-grid {
+                td.text-wrap {
+                    white-space: initial;
+                }
+                .title {
+                    margin-top: 20px;
+                }
+                input {
+                    border-bottom: none;
+                }
+            }
         }
 
-        /deep/ dx-data-grid {
-            td.text-wrap {
-                white-space: initial;
-            }
-            .title {
-                margin-top: 20px;
-            }
-            input {
-                border-bottom: none;
-            }
+        .right-side {
+            flex: 2 1 auto;
+
         }
+
     }
 }

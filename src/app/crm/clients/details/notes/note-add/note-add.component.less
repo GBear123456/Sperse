@@ -1,51 +1,13 @@
-/deep/ .cdk-overlay-container {
-    .cdk-overlay-pane.note-add-dialog {
-        transition: margin 1s!important;
-        &.hide {
-            display: none;
-        }
-        .mat-dialog-container {
-            overflow: visible;
-            padding: 0px;
-            margin: 0px;
-        }
-    }
-}
-
 :host {
     height: 100%;
     position: relative;
     display: block;
 
     h2 {
-        padding: 31px 23px 0px;        
-    }    
-
-    span.close-note-dialog {
-        z-index: 999;
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        top: 30px;
-        right: 20px;
-        cursor: pointer;
-        &:before, &:after {
-            position: absolute;
-            right: 9px;
-            content: ' ';
-            height: 20px;
-            width: 2px;
-            background-color: #1b1b1b;
-        }
-        &:before {
-            transform: rotate(45deg);
-        }
-        &:after {
-            transform: rotate(-45deg);
-        }
+        padding: 31px 23px 0px;
     }
-    
-    mat-dialog-content {
+
+    .content {
         height: 100%;
         margin: 0px;
         max-height: calc(~"100% - 230px");
@@ -56,7 +18,7 @@
           color: #00aeef;
           font-size: 32px;
           font-weight: 100;
-          display: inline-block;      
+          display: inline-block;
           vertical-align: top;
           padding-left: 7px;
           cursor: pointer;
@@ -88,7 +50,7 @@
                 /deep/ .dx-widget {
                     display: inline-block;
                 }
-            }            
+            }
             /deep/ .dx-widget {
                 &:not(.dx-state-focused) .dx-placeholder {
                     font-weight: 400;
