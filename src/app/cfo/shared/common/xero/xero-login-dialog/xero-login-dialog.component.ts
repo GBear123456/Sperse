@@ -2,6 +2,7 @@ import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'xero-login-dialog',
@@ -16,12 +17,14 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     consumerKey: string;
     consumerSecret: string;
     isSyncBankAccountsEnabled = true;
+    getXeroCertificateUrl: string;
 
     constructor(
         injector: Injector,
         private _syncAccountServiceProxy: SyncAccountServiceProxy
     ) {
         super(injector);
+        this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + "/Xero/GetCertificate";
     }
 
     show(): void {
