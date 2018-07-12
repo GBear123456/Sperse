@@ -568,7 +568,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     clearToolbarSelectedItems() {
         this.stagesComponent.selectedItems = [];
         this.starsListComponent.selectedItemKey = [];
+        this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();
+        this.ratingComponent.ratingValue = this.defaultRating;
     }
 }
