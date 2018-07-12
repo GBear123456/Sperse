@@ -196,6 +196,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private importTypeChanged(event) {
+        const IMPORT_TYPE_ITEM_INDEX = 0;
+
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
 
