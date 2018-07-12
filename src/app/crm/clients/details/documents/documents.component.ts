@@ -178,6 +178,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         return data.dateTime.format(this.formatting.dateTime.toUpperCase());
     }
 
+    calculateFileSizeValue = (data: DocumentInfo) => this._fileSizePipe.transform(data.size);
+
     ngAfterViewInit(): void {
     }
 
