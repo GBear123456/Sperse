@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCustomerTagInput } from '@shared/service-proxies/service-proxies';
+import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCustomerTagInput, UntagCustomersInput, UpdateCustomerTagsInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { MatDialog } from '@angular/material';
@@ -30,6 +30,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             return CustomerTagInput.fromJS(_.findWhere(this.list, {id: item}));
         });
     }
+    @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
     private selectedTags = [];
@@ -55,16 +56,17 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             this.highlightSelectedFilters();
     }
 
-    apply(selectedKeys = undefined) {
+    apply(isRemove: boolean = false, selectedKeys = undefined) {
         if (this.listComponent) {
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                        this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation', 
+                            this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed) {
-                                this.process();
+                                this.process(isRemove);
                             } else {
                                 if (this.bulkUpdateMode)
                                     setTimeout(() => { this.listComponent.deselectAll(); }, 500);
@@ -72,25 +74,42 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                         }
                     );
                 else
-                    this.process();
+                    this.process(isRemove);
             }
             setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
         }
         this.tooltipVisible = false;
     }
 
-    process() {
-        this._tagsService.tagCustomers(TagCustomersInput.fromJS({
-            customerIds: this.selectedKeys,
-            tags: this.selectedItems
-        })).pipe(finalize(() => {
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-        })).subscribe((result) => {
-            this.notify.success(this.l('TagsAssigned'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
-        });
+    process(isRemove: boolean) {
+        let customerIds = this.selectedKeys;
+        let tags = this.selectedItems;
+        if (this.bulkUpdateMode) {
+            if (isRemove)
+                this._tagsService.untagCustomers(UntagCustomersInput.fromJS({
+                    customerIds: customerIds,
+                    tagIds: this.selectedTags
+                })).subscribe((result) => {
+                    this.notify.success(this.l('TagsUnassigned'));
+                });
+            else
+                this._tagsService.tagCustomers(TagCustomersInput.fromJS({
+                    customerIds: customerIds,
+                    tags: tags 
+                })).pipe(finalize(() => {
+                    if (this.bulkUpdateMode)
+                        setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                })).subscribe((result) => {
+                    this.notify.success(this.l('TagsAssigned'));
+                });
+        }
+        else
+            this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
+                customerId: customerIds[0],
+                tags: tags
+            })).subscribe((result) => {
+                this.notify.success(this.l('CustomerTagsUpdated'));
+            });
     }
 
     clear() {
@@ -231,7 +250,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSelectionChanged($event) {
-        this.selectedTags = $event.component.getSelectedRowKeys('all');
+        this.selectedTags = $event.selectedRowKeys;
+        this.onSelectedChanged.emit($event);
     }
 
     editorPrepared($event) {
@@ -306,5 +326,10 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 return 1;
         }
         return 0;
+    }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

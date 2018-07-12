@@ -36,7 +36,7 @@
                         <div class="file-load-progress" [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 || loadProgress > 100 ? 100: dropZoneProgress || loadProgress) + '%, #fff 0%)'}">
                             <p>{{l('File')}}: {{fileName}}</p>
                             <p class="file-size">{{l('FileSize')}}: {{fileSize}}</p>
-                            <button class="remove-file" (click)="cleanInput()">
+                            <button class="remove-file" (click)="reset()">
                                 <i class="fa fa-times"></i>
                             </button>
                         </div>
@@ -63,14 +63,14 @@
                         <h3 class="title settings">{{l('Default settings')}}&nbsp;
                             <span>({{l('if no values are selected in uploaded file')}})</span>
                         </h3>
-                        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+                        <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == UPLOAD_STEP_INDEX"></app-toolbar>
                     </div>
                 </div>
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="toolbarConfig"></app-toolbar>
+            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"
@@ -127,6 +127,7 @@
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
                           [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"

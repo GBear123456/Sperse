@@ -15,23 +15,26 @@
 
         <div class="success">
             <h1>{{l('ImportedLeadsHeader', totalCount, importedCount)}}</h1>
-            <h3>{{l('ImportedLeadsMessage')}}</h3>
+            <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
             <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
             <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
         </div>
     </import-wizard>
 </div>
 
-<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-tags-list>
-<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-lists-list>
-<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [selectedItems]="selectedItems" [hideButtons]="true"></crm-user-assignment-list>
-<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true"></crm-rating>
-<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true"></crm-stars-list>
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"
+                          [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
 <crm-static-list
     [width]="'210px'"
     [title]="l('Stages')"
     [selectedKeys]="selectedClientKeys"
     [targetSelector]="'[aria-label=Stage]'"
     [hideButtons]="true"
-    [list]="stages">
+    (onSelectionChanged)="onStagesChanged($event)"
+    [list]="leadStages">
 </crm-static-list>
+<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
+<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></crm-tags-list>
+<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></crm-rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
+

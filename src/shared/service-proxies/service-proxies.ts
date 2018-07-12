@@ -8027,6 +8027,60 @@ export class CustomerListsServiceProxy {
     }
 
     /**
+     * @customerIds (optional) 
+     * @listIds (optional) 
+     * @return Success
+     */
+    removeCustomersFromLists(customerIds: number[] | null | undefined, listIds: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/RemoveCustomersFromLists?";
+        if (customerIds !== undefined)
+            customerIds && customerIds.forEach(item => { url_ += "CustomerIds=" + encodeURIComponent("" + item) + "&"; });
+        if (listIds !== undefined)
+            listIds && listIds.forEach(item => { url_ += "ListIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRemoveCustomersFromLists(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRemoveCustomersFromLists(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRemoveCustomersFromLists(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -9109,6 +9163,58 @@ export class CustomerTagsServiceProxy {
     }
 
     protected processTagCustomers(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    untagCustomers(input: UntagCustomersInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/UntagCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUntagCustomers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUntagCustomers(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUntagCustomers(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -34157,9 +34263,9 @@ export interface IContactLinkDto {
 
 export class CreateCustomerInput implements ICreateCustomerInput {
     namePrefix!: string | undefined;
-    firstName!: string;
+    firstName!: string | undefined;
     middleName!: string | undefined;
-    lastName!: string;
+    lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
     emailAddresses!: CreateContactEmailInput[] | undefined;
@@ -34303,9 +34409,9 @@ export class CreateCustomerInput implements ICreateCustomerInput {
 
 export interface ICreateCustomerInput {
     namePrefix: string | undefined;
-    firstName: string;
+    firstName: string | undefined;
     middleName: string | undefined;
-    lastName: string;
+    lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
     emailAddresses: CreateContactEmailInput[] | undefined;
@@ -35056,6 +35162,62 @@ export class TagCustomersInput implements ITagCustomersInput {
 export interface ITagCustomersInput {
     customerIds: number[] | undefined;
     tags: CustomerTagInput[] | undefined;
+}
+
+export class UntagCustomersInput implements IUntagCustomersInput {
+    customerIds!: number[] | undefined;
+    tagIds!: number[] | undefined;
+
+    constructor(data?: IUntagCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            if (data["tagIds"] && data["tagIds"].constructor === Array) {
+                this.tagIds = [];
+                for (let item of data["tagIds"])
+                    this.tagIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UntagCustomersInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UntagCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        if (this.tagIds && this.tagIds.constructor === Array) {
+            data["tagIds"] = [];
+            for (let item of this.tagIds)
+                data["tagIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUntagCustomersInput {
+    customerIds: number[] | undefined;
+    tagIds: number[] | undefined;
 }
 
 export class UpdateCustomerTagInput implements IUpdateCustomerTagInput {
@@ -38159,9 +38321,9 @@ export interface IUpdateLanguageTextInput {
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
     namePrefix!: string | undefined;
-    firstName!: string;
+    firstName!: string | undefined;
     middleName!: string | undefined;
-    lastName!: string;
+    lastName!: string | undefined;
     nameSuffix!: string | undefined;
     nickName!: string | undefined;
     emailAddresses!: CreateContactEmailInput[] | undefined;
@@ -38308,9 +38470,9 @@ export class CreateLeadInput implements ICreateLeadInput {
 export interface ICreateLeadInput {
     leadTypeId: number | undefined;
     namePrefix: string | undefined;
-    firstName: string;
+    firstName: string | undefined;
     middleName: string | undefined;
-    lastName: string;
+    lastName: string | undefined;
     nameSuffix: string | undefined;
     nickName: string | undefined;
     emailAddresses: CreateContactEmailInput[] | undefined;
@@ -39384,7 +39546,6 @@ export interface ILeadBusinessTeamContactInput {
 }
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
-    leadRequestXref!: string | undefined;
     leadName!: string | undefined;
     errorMessage!: string | undefined;
 
@@ -39399,7 +39560,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
     init(data?: any) {
         if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
             this.leadName = data["leadName"];
             this.errorMessage = data["errorMessage"];
         }
@@ -39414,7 +39574,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
         data["leadName"] = this.leadName;
         data["errorMessage"] = this.errorMessage;
         return data; 
@@ -39422,7 +39581,6 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 }
 
 export interface ILeadBusinessInfoOutput {
-    leadRequestXref: string | undefined;
     leadName: string | undefined;
     errorMessage: string | undefined;
 }
@@ -39435,6 +39593,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
     ratingId!: number | undefined;
     starId!: number | undefined;
     leadStageId!: number | undefined;
+    importType!: ImportLeadsInputImportType | undefined;
 
     constructor(data?: IImportLeadsInput) {
         if (data) {
@@ -39466,6 +39625,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
             this.ratingId = data["ratingId"];
             this.starId = data["starId"];
             this.leadStageId = data["leadStageId"];
+            this.importType = data["importType"];
         }
     }
 
@@ -39497,6 +39657,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
         data["ratingId"] = this.ratingId;
         data["starId"] = this.starId;
         data["leadStageId"] = this.leadStageId;
+        data["importType"] = this.importType;
         return data; 
     }
 }
@@ -39509,6 +39670,7 @@ export interface IImportLeadsInput {
     ratingId: number | undefined;
     starId: number | undefined;
     leadStageId: number | undefined;
+    importType: ImportLeadsInputImportType | undefined;
 }
 
 export class ImportLeadInput implements IImportLeadInput {
@@ -50389,6 +50551,13 @@ export enum SubmitTenantCreationRequestInputPaymentPeriodType {
 export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum ImportLeadsInputImportType {
+    Lead = "Lead", 
+    Client = "Client", 
+    Partner = "Partner", 
+    Order = "Order", 
 }
 
 export enum MemberInfoDtoGender {
