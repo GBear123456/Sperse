@@ -314,11 +314,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         result.lists = this.listsComponent.selectedItems;
         result.tags = this.tagsComponent.selectedItems;
 
-        this.listsComponent.selectedLists.forEach(item => {
-            let obj  = this.listsComponent.list.find(el => el.id == item);
-            result.lists.push(new CustomerListInput({ name: obj.name }));
-        });
-
         data.forEach(v => {
             let lead = new ImportLeadInput();
             let keys = Object.keys(v);
