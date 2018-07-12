@@ -5,13 +5,16 @@ import { ListsListComponent } from '../../shared/lists-list/lists-list.component
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
-import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { StaticListComponent } from '../../shared/static-list/static-list.component';
+import { CustomerInfoDto, LeadInfoDto } from '@shared/service-proxies/service-proxies';
 import { ClientDetailsService } from './client-details.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less']
+    styleUrls: ['./operations-widget.component.less'],
+    providers: [ AppLocalizationService ]
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -19,29 +22,43 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
 
     @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
+    @Input() leadInfo: LeadInfoDto;
     @Input() leadId: number;
-    @Output() onDelete: EventEmitter<any> = new EventEmitter();
-    @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
-    @Output() print: EventEmitter<any> = new EventEmitter();
-
-    private _stages: any[] = [];
-
-    get stages(): any[] {
-        return this._stages;
-    }
-
     @Input()
     set stages(stages: any[]) {
         this._stages = stages;
         this.initToolbarConfig();
     }
+    @Output() onDelete: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
+    @Output() print: EventEmitter<any> = new EventEmitter();
 
+    private _stages: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
     toolbarConfig = [];
+    localizationService: AppLocalizationService;
+
+    constructor(
+        private _clientService: ClientDetailsService,
+        localizationService: AppLocalizationService
+    ) {
+        _clientService.toolbarSubscribe((config) => {
+            this.initToolbarConfig(config);
+        });
+    }
+
+    ngOnInit() {
+        this.initToolbarConfig();
+    }
+
+    get stages(): any[] {
+        return this._stages;
+    }
 
     initToolbarConfig(config = null) {
         this.toolbarConfig = config || [
@@ -52,13 +69,8 @@ export class OperationsWidgetComponent implements OnInit {
                     action: this.toggleUserAssignment.bind(this)
                 },
                 this.leadId ? {
-                    widget: 'dxDropDownMenu',
-                    disabled: !this.stages.length,
                     name: 'stage',
-                    options: {
-                        hint: 'Stage',
-                        items: this.stages
-                    }
+                    action: this.toggleStages.bind(this)
                 } :
                 {
                     name: 'status',
@@ -112,6 +124,10 @@ export class OperationsWidgetComponent implements OnInit {
         }
     }
 
+    toggleStages() {
+        this.stagesComponent.toggle();
+    }
+
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
     }
@@ -136,24 +152,16 @@ export class OperationsWidgetComponent implements OnInit {
         this.starsListComponent.toggle();
     }
 
-    constructor(
-        private _clientService: ClientDetailsService
-    ) { 
-        _clientService.toolbarSubscribe((config) => {
-            this.initToolbarConfig(config);
-        });
-    }
-
-    ngOnInit() {
-        this.initToolbarConfig();
-    }
-
     delete() {
         this.onDelete.emit();
     }
 
     updateStatus(statusId: string) {
         this.onUpdateStatus.emit(statusId);
+    }
+
+    updateStage(stage: string) {
+        this.onUpdateStage.emit(stage);
     }
 
     refresh() {

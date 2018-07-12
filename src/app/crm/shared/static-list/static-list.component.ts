@@ -20,7 +20,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector: string;
-    @Input() showConfirmation: boolean = true;
+    @Input() showConfirmation = true;
     @Input() hideButtons = false;
 
     @Input() list: any;
@@ -81,7 +81,7 @@ export class StaticListComponent extends AppComponentBase {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -102,7 +102,8 @@ export class StaticListComponent extends AppComponentBase {
         this.highlightSelectedFilters();
     }
 
-    onSelectionChange(event) {
+    onLeadChange(event) {
+        console.log('lead changed', event);
         this.onSelectionChanged.emit(event);
     }
 }

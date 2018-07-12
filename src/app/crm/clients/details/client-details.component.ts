@@ -63,8 +63,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private rootComponent: any;
     private paramsSubscribe: any = [];
     private referrerParams;
-    private pipelinePurposeId: string = 
-        AppConsts.PipelinePurposeIds.lead;
+    private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     private readonly LOCAL_STORAGE = 0;
 
@@ -102,6 +101,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                         .subscribe(result => {
                             this.leadStages = result.stages.map((stage) => {
                                 return {
+                                    name: stage.name,
                                     text: stage.name,
                                     action: this.updateLeadStage.bind(this)
                                 };
@@ -119,7 +119,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         );
         let optionTimeout = null;
         this._router.events.subscribe((event) => {
-            if(event instanceof ActivationEnd && !optionTimeout)
+            if (event instanceof ActivationEnd && !optionTimeout)
                 optionTimeout = setTimeout(() => {
                     optionTimeout = null;
                     let data = event.snapshot.data;
@@ -213,7 +213,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         });
         return this.getVerificationChecklistItem(
             type,
-            confirmedCount > 0 ? VerificationChecklistItemStatus.success 
+            confirmedCount > 0 ? VerificationChecklistItemStatus.success
                 : VerificationChecklistItemStatus.unsuccess,
             confirmedCount,
             items.length

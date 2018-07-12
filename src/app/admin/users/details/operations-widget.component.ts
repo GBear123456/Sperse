@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
-import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'operations-widget',
