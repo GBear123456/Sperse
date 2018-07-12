@@ -413,12 +413,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     downloadFromURL() {
-        if (!this.uploadFile.invalid) {
+        if (!this.uploadFile.get('url').invalid) {
             let url = this.uploadFile.value.url;
             if (url)
                 this.getFile(url, (result) => {
                     if (result.target.status == 200) {
-                        this.fileName = url.split('?')[0].split('/').pop();
+                        this.fileName = decodeURI(url.split('?')[0].split('/').pop());
                         this.fileSize = this.getFileSize(result.loaded);
                         this.parse(result.target.responseText);
                     } else {
