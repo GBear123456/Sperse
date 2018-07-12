@@ -67,10 +67,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
         this.actionMenuItems = [
             {
-                text: this.l('View'),
-                action: this.viewDocument.bind(this)
-            },
-            {
                 text: this.l('Edit'),
                 action: this.editDocument.bind(this)
             }
@@ -237,7 +233,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     showActionsMenu(data, target) {
         this.actionRecordData = data;
-        this.actionMenuItems[1].disabled = !data.isSupportedByWopi;
+        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).disabled = !data.isSupportedByWopi;
         this.actionsTooltip.instance.show(target);
     }
 
