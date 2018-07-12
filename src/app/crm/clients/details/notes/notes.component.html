@@ -5,7 +5,6 @@
                   [columnAutoWidth]="true"
                   [allowColumnResizing]="true"
                   [hoverStateEnabled]="true"
-                  (onContentReady)="onContentReady($event)"
                   (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                   (onToolbarPreparing)="onToolbarPreparing($event)">
         <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>

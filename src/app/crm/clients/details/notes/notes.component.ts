@@ -1,8 +1,7 @@
-import {Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewEncapsulation, ViewChild } from '@angular/core';
+import {Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { AppConsts } from '@shared/AppConsts';
-import { ActivatedRoute } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppService } from '@app/app.service';
 import { CustomersServiceProxy, CustomerInfoDto, NotesServiceProxy } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
 
@@ -10,14 +9,13 @@ import { NoteAddDialogComponent} from './note-add-dialog/note-add-dialog.compone
 
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './notes.component.html',
     styleUrls: ['./notes.component.less'],
     providers: [NotesServiceProxy]
 })
-export class NotesComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class NotesComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     public data: {
@@ -67,22 +65,14 @@ export class NotesComponent extends AppComponentBase implements OnInit, AfterVie
             closeOnNavigation: false,
             hasBackdrop: false,
             data: {
-                refreshParent: this.ngOnInit.bind(this),  
+                refreshParent: this.ngOnInit.bind(this),
                 customerInfo: this.data.customerInfo
             }
         }).afterClosed().subscribe(() => {});
     }
 
     calculateDateCellValue = (data) => {
-        return data.dateTime.format(this.formatting.dateTime.toUpperCase());
+        return formatDate(data.dateTime, this.formatting.dateTime, abp.localization.currentLanguage.name);
     }
 
-    ngAfterViewInit(): void {
-    }
-
-    onContentReady(event) {
-    }
-
-    ngOnDestroy() {        
-    }
 }
