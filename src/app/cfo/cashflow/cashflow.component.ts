@@ -2407,8 +2407,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getWeekHeaderCustomizer(): any {
         return (weekInfo: {value: string, valueText: string}) => {
             let weekInfoObj: WeekInfo = JSON.parse(weekInfo.value);
-            let startDate = moment(weekInfoObj.startDate).utc().format('DD.MM');
-            let endDate = moment(weekInfoObj.endDate).utc().format('DD.MM');
+            let startDate = moment(weekInfoObj.startDate).utc().format('MM.DD');
+            let endDate = moment(weekInfoObj.endDate).utc().format('MM.DD');
             let text = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
             return text;
         };
