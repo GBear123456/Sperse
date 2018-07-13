@@ -1,9 +1,11 @@
-import { Component, Injector, OnInit, Input, AfterViewInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, RateCustomersInput } from '@shared/service-proxies/service-proxies';
-import { AppConsts } from '@shared/AppConsts';
+import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+
 import { finalize } from 'rxjs/operators';
+
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
+import { FiltersService } from '@shared/filters/filters.service';
+import { CustomerRatingsServiceProxy, RateCustomerInput, RateCustomersInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-rating',
@@ -24,6 +26,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     get selectedItemKey() {
         return this.ratingValue;
     }
+    @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
 
     ratingMin: number;
     ratingMax: number;
@@ -66,17 +69,23 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     process() {
-        this._ratingService.rateCustomers(RateCustomersInput.fromJS({
-            customerIds: this.selectedKeys,
-            ratingId: this.ratingValue
-        })).pipe(finalize(() => {
-            if (this.bulkUpdateMode)
-                this.ratingValue = this.ratingMin;
-        })).subscribe((result) => {
-            this.notify.success(this.l('CustomersRated'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
-        });
+        if (this.bulkUpdateMode)
+            this._ratingService.rateCustomers(RateCustomersInput.fromJS({
+                customerIds: this.selectedKeys,
+                ratingId: this.ratingValue
+            })).pipe(finalize(() => {
+                if (this.bulkUpdateMode)
+                    this.ratingValue = this.ratingMin;
+            })).subscribe((result) => {
+                this.notify.success(this.l('CustomersRated'));
+            });
+        else
+            this._ratingService.rateCustomer(RateCustomerInput.fromJS({
+                customerId: this.selectedKeys[0],
+                ratingId: this.ratingValue
+            })).subscribe((result) => {
+                this.notify.success(this.l('CustomersRated'));
+            });
     }
 
     clear() {
@@ -131,5 +140,14 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                     this.ratingValue = this.ratingMin;
             }
         });
+    }
+    
+    onValueChange(event) {
+        this.onValueChanged.emit(event);
+    }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

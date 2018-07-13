@@ -106,11 +106,14 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             )
                 .pipe(finalize(() => { abp.ui.clearBusy(); }))
                 .subscribe((result) => {
-                    this.categorizationComponent.refreshCategories(false);
+                    this.refreshCategories();
                 });
         };
 
         reader.readAsBinaryString(target.files[0]);
+    }
+    refreshCategories() {
+        this.categorizationComponent.refreshCategories(false);
     }
 
     refresh() {

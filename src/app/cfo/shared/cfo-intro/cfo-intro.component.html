@@ -1,6 +1,6 @@
 <button mat-dialog-close class="close-dialog"><i class="la la-times"></i></button>
 <mat-dialog-content>
-    <mat-horizontal-stepper [linear]="false" #stepper>
+    <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
         <mat-step>
             <div class="first-step step-item">
                 <div class="header">
@@ -263,6 +263,7 @@
                     </div>
                 </div>
                 <div class="footer">
+                    <button mat-button (click)="goToStep(0)" class="btn btn-layout">Back</button>
                 </div>
             </div>
         </mat-step>

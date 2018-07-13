@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 
 /** Third party libraries **/
- import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
@@ -14,6 +14,7 @@ import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUp
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
+import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component'
 
 @Component({
     selector: 'user-details',
@@ -23,6 +24,7 @@ import { PermissionTreeComponent } from './permission-tree/permission-tree.compo
 export class UserDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
+    @ViewChild('organizationTree') organizationTree: OrganizationUnitsTreeComponent;
 
     userId: number;
     userData: GetUserForEditOutput = new GetUserForEditOutput();
@@ -63,6 +65,8 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
                         userEditOutput.user['sendActivationEmail'] = false;
                         this._userService['data'].roles = userEditOutput.roles;
                         this.userData = userEditOutput;
+
+                        this.organizationTree.setOrganizationUnitsData(userEditOutput.allOrganizationUnits, userEditOutput.memberedOrganizationUnits);
 
                         this.setProfilePicture(userEditOutput.profilePictureId);
 
@@ -144,7 +148,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             );
         userInput.tenantHostType = <any>TenantHostType.PlatformUi;
 
-        //input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
+        userInput.organizationUnits = this.organizationTree.getSelectedOrganizationUnits();
         let permissionsInput = new UpdateUserPermissionsInput();
         permissionsInput.id = this.userId;
         permissionsInput.grantedPermissionNames = this.permissionTree.getGrantedPermissionNames();

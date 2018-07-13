@@ -1,25 +1,41 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
-    UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PhoneFormatPipe } from '@shared/common/pipes/phone-format.pipe';
-import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
+/** Core imports */
+import { Component, EventEmitter, Input, Injector, ViewChild, Output } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { DxDateBoxComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 
-@Component({
-    selector: 'note-add-dialog',
-    templateUrl: 'note-add-dialog.component.html',
-    styleUrls: ['note-add-dialog.component.less'],
-    providers: [NotesServiceProxy, PhoneFormatPipe]
-})
-export class NoteAddDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    public dialogRef: MatDialogRef<NoteAddDialogComponent>;
-    public data: any;
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
+UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format.pipe';
+import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 
-    private elementRef: ElementRef;
-    private slider: any;
+@Component({
+    selector: 'note-add',
+    templateUrl: './note-add.component.html',
+    styleUrls: ['./note-add.component.less'],
+    providers: [ NotesServiceProxy, PhoneFormatPipe ]
+})
+export class NoteAddComponent extends AppComponentBase  {
+    @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
+    @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
+    @Input()
+    set customerInfo(customerInfo: any) {
+        if (customerInfo.contactPersons) {
+            this._customerInfo = customerInfo;
+            let orgContact = <any>customerInfo.organizationContactInfo,
+                contacts = customerInfo.contactPersons;
+            this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
+            this.onContactChanged({value: this.contacts[0].id});
+        }
+    }
+
+    @Output() onAdded: EventEmitter<any> = new EventEmitter();
+    private _customerInfo: CustomerInfoDto;
     private validator: any;
 
     masks = AppConsts.masks;
@@ -49,18 +65,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private _contactPhoneService: ContactPhoneServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this.data = injector.get(MAT_DIALOG_DATA);
-        this.elementRef = injector.get(ElementRef);
-        this.dialogRef = <any>injector.get(MatDialogRef);
-
-        if (this.data.customerInfo.contactPersons.length) {
-            let orgContact = this.data.customerInfo.organizationContactInfo,
-                contacts = this.data.customerInfo.contactPersons;
-            this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
-            this.onContactChanged({value: this.contacts[0].id});
-        }
-
         _notesService.getNoteTypes().subscribe((result) => {
             if (result.length) {
                 this.type = result[0].id;
@@ -69,44 +73,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
     }
 
-    ngOnInit() {
-        this.dialogRef.disableClose = true;
-        this.slider = this.elementRef.nativeElement.closest('.cdk-overlay-pane');
-        this.slider.classList.add('hide');
-        this.dialogRef.updateSize('0px', '0px');
-        this.dialogRef.updatePosition({
-            top: '157px',
-            right: '-100vw'
-        });
-    }
-
-    ngAfterViewInit() {
-        setTimeout(() => {
-            this.slider.classList.remove('hide');
-            this.dialogRef.updateSize('401px', '100vh');
-            setTimeout(() => {
-                this.dialogRef.updatePosition({
-                    top: '157px',
-                    right: '0px'
-                });
-            }, 100);
-        });
-    }
-
-    close(closeData = null) {
-        this.dialogRef.updatePosition({
-            top: '157px',
-            right: '-100vw'
-        });
-        setTimeout(() => {
-            this.dialogRef.close(closeData);
-        }, 300);
-    }
-
-    saveNote($event) {
+    saveNote() {
         if (this.validator.validate().isValid)
             this._notesService.createNote(CreateNoteInput.fromJS({
-                customerId: this.data.customerInfo.id,
+                customerId: this._customerInfo.id,
                 text: this.summary,
                 contactId: this.contact,
                 contactPhoneId: this.phone || undefined,
@@ -115,10 +85,17 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 dateTime: this.currentDate || undefined,
                 addedByUserId: parseInt(this.addedBy) || undefined
             })).subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.data.refreshParent();
-                this.close();
+                /** Clear the form data */
+                this.resetFields();
+                this.validator.reset();
+                this.onAdded.emit();
             });
+    }
+
+    resetFields() {
+        this.summary = null;
+        this.followUpDateBox.instance.reset();
+        this.currentDateBox.instance.reset();
     }
 
     onUserSearch($event) {
@@ -191,6 +168,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                     this.onContactChanged({value: this.contact});
                 }
             }
-        }, error => {});
+        });
     }
 }
