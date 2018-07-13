@@ -130,7 +130,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
                 location: 'after', items: [
                     {
                         name: 'fullscreen',
-                        action: Function()
+                        action: () => {
+                            const fullScreenSelector = '.documentView';
+                            let fullScreenTarget = document.querySelector(fullScreenSelector);
+                            /** If selector contains iframe - use it at fullScreen */
+                            const iframe = fullScreenTarget.querySelector('iframe');
+                            if (iframe) {
+                                fullScreenTarget = iframe;
+                            }
+                            this.toggleFullscreen(fullScreenTarget);
+                        }
                     }
                 ]
             },
@@ -276,8 +285,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1 // document is last in list
         });
-        this._clientService.toolbarUpdate(
-            this.viewerToolbarConfig);
+        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
         if (this.showViewerType == this.WOPI_VIEWER)
             this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);

@@ -63,7 +63,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="openDocumentMode">
+<div *ngIf="openDocumentMode" class="documentView">
     <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
         <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
         <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
