@@ -148,8 +148,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     fullAddress: ImportLeadAddressInput;
 
     userId: any;
-    isUserSelected = true;
-    isRatingSelected = true;
+    isUserSelected = false;
+    isRatingSelected = false;
     isListsSelected = false;
     isTagsSelected = false;
     isStarSelected = false;
@@ -518,7 +518,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'assign',
                         action: () => this.userAssignmentComponent.toggle(),
                         attr: {
-                            'filter-selected': this.isUserSelected
+                            'filter-selected': this.userAssignmentComponent.selectedItemKey ? true : this.isRatingSelected
                         }
                     },
                     {
@@ -547,7 +547,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'rating',
                         action: () => this.ratingComponent.toggle(),
                         attr: {
-                            'filter-selected': this.isRatingSelected
+                            'filter-selected': this.ratingComponent.ratingValue ? true : this.isRatingSelected
                         }
                     },
                     {
