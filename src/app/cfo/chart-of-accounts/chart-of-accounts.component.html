@@ -17,7 +17,7 @@
         </div>
         <div class="right-actions">
             <p *ngIf="ActionTitle" class="title">{{ActionTitle}}</p>
-            <div class="file">
+            <div class="file" *ngIf="isInstanceAdmin">
                 <label class="file-upload links">
                     + Upload file
                     <input type="file" (change)="uploadExcel($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="+ Upload file" class="no-display" />
@@ -26,8 +26,11 @@
             <div class="links-wrap" (click)="downloadExcel()">
                 <p class="links">Download Excel template </p>
             </div>
+            <div class="links-wrap" *ngIf="isInstanceAdmin">
+                <import-quick-book-button (onClose)="refreshCategories()"></import-quick-book-button>
+            </div>
             <div class="links-wrap">
-                <import-quick-book-button></import-quick-book-button>
+                <import-xero-chart-of-accounts-button (onComplete)="refresh()"></import-xero-chart-of-accounts-button>
             </div>
         </div>
 

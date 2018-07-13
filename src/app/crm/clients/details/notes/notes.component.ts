@@ -1,19 +1,20 @@
+/** Core imports */
 import {Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { formatDate } from '@angular/common';
+
+/** Third party imports */
+import { DxDataGridComponent } from 'devextreme-angular';
+import 'devextreme/data/odata/store';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, NotesServiceProxy } from '@shared/service-proxies/service-proxies';
-import { MatDialog } from '@angular/material';
-
-import { NoteAddDialogComponent} from './note-add-dialog/note-add-dialog.component';
-
-import { DxDataGridComponent } from 'devextreme-angular';
-import 'devextreme/data/odata/store';
 
 @Component({
     templateUrl: './notes.component.html',
     styleUrls: ['./notes.component.less'],
-    providers: [NotesServiceProxy]
+    providers: [ NotesServiceProxy ]
 })
 export class NotesComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -22,11 +23,9 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         customerInfo: CustomerInfoDto
     };
 
-    private masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
-        public dialog: MatDialog,
         private _notesService: NotesServiceProxy,
         private _customerService: CustomersServiceProxy
     ) {
@@ -50,29 +49,16 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         $event.toolbarOptions.items.push({
             location: 'before',
             template: 'title'
-        }, {
-            location: 'after',
-            template: 'addButton'
         });
-    }
-
-    showAddNoteDialog($event) {
-        this.dialog.closeAll();
-        this.dialog.open(NoteAddDialogComponent, {
-            id: 'permanent',
-            panelClass: 'note-add-dialog',
-            disableClose: true,
-            closeOnNavigation: false,
-            hasBackdrop: false,
-            data: {
-                refreshParent: this.ngOnInit.bind(this),
-                customerInfo: this.data.customerInfo
-            }
-        }).afterClosed().subscribe(() => {});
     }
 
     calculateDateCellValue = (data) => {
         return formatDate(data.dateTime, this.formatting.dateTime, abp.localization.currentLanguage.name);
+    }
+
+    noteAdded() {
+        this.notify.info(this.l('SavedSuccessfully'));
+        this.ngOnInit();
     }
 
 }

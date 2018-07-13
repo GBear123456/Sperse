@@ -30,6 +30,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit  {
         this._syncServiceProxy.getSetupAccountsLink(
             InstanceType[this.instanceType],
             this.instanceId,
+            'Q',
             AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',
             ''
         ).subscribe((data) => {

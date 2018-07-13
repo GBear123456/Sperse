@@ -55,12 +55,12 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return '/account/login';
         }
 
-        if (AppConsts.isMobile) {
-            return 'app/cfo';
-        }
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT && this._feature.isEnabled('CFO')) {
+            if (AppConsts.isMobile) {
+                return 'app/cfo';
+            }
 
-        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-            if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO')) {
+            if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
 
                 if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
                     return '/app/cfo/main/';
@@ -70,25 +70,24 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             }
         }
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
-            return '/app/admin/hostDashboard';
-        }
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('Admin')) {
+            if (this._permissionChecker.isGranted('Pages.Tenants')) {
+                return '/app/admin/tenants';
+            }
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Dashboard')) {
+            if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
+                return '/app/admin/hostDashboard';
+            }
+        }
+        
+        if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('CRM'))
+            && this._permissionChecker.isGranted('Pages.CRM')) {
             return '/app/crm/dashboard';
-        }
-
-        if (this._permissionChecker.isGranted('Pages.Tenants')) {
-            return '/app/admin/tenants';
         }
 
         if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST ||  this._feature.isEnabled('Admin'))
             && this._permissionChecker.isGranted('Pages.Administration.Users')) {
             return '/app/admin/users';
-        }
-
-        if (this._permissionChecker.isGranted('Pages.CRM')) {
-            return '/app/crm/dashboard';
         }
 
         if (this._feature.isEnabled('Notification')) {

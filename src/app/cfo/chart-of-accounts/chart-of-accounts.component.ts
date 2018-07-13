@@ -2,13 +2,12 @@ import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
-import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType } from '@shared/service-proxies/service-proxies';
+import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import DsataSource from 'devextreme/data/data_source';
-import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
-import * as _ from 'underscore';
+import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import * as XLSX from 'xlsx';
 import { finalize } from 'rxjs/operators';
 
@@ -31,12 +30,12 @@ class UploadCategoryModel{
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
-    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
     ActionTitle = 'CUSTOM CHART';
 
     constructor(injector: Injector,
         private _router: Router,
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy){
         super(injector);
     }
@@ -100,17 +99,24 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                     sortId: null
                 }));
             });
-            this._classificationServiceProxy.importAccountingTree(
+            this._categoryTreeServiceProxy.import(
                 InstanceType[this.instanceType],
                 this.instanceId,
                 accTypes
             )
                 .pipe(finalize(() => { abp.ui.clearBusy(); }))
                 .subscribe((result) => {
-                    this.categorizationComponent.refreshCategories(false);
+                    this.refreshCategories();
                 });
         };
 
         reader.readAsBinaryString(target.files[0]);
+    }
+    refreshCategories() {
+        this.categorizationComponent.refreshCategories(false);
+    }
+
+    refresh() {
+        this.categorizationComponent.refreshCategories();
     }
 }

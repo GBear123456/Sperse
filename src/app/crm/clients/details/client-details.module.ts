@@ -25,7 +25,7 @@ import { StarsListComponent } from '../../shared/stars-list/stars-list.component
 
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
-import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { NoteAddComponent } from './notes/note-add/note-add.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -92,7 +92,7 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent,
+    NoteAddComponent,
     TagsListComponent,
     ListsListComponent,
     UserAssignmentComponent,
@@ -154,7 +154,7 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent,
+    NoteAddComponent,
     LeadCancelDialogComponent
   ],
   bootstrap: [

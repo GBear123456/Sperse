@@ -181,4 +181,8 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     onInviteUserValidationGroupInitialized(e) {
         this.importValidators.push(e.component);
     }
+
+    goToStep(index) {
+        this.stepper.selectedIndex = index;
+    }
 }

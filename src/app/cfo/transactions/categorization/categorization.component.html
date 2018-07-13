@@ -29,8 +29,8 @@
                   (onNodesInitialized)="onNodesInitialized()">
         <dxo-editing mode="row"
                      [texts]="{confirmDeleteMessage: ''}"
-                     [allowUpdating]="true"
-                     [allowAdding]="true">
+                     [allowUpdating]="false"
+                     [allowAdding]="false">
         </dxo-editing>
         <dxi-column [cssClass]="columnClassName"
                     [cellTemplate]="'categoryTemplate'"
@@ -65,7 +65,7 @@
                 <div class="category-hover"></div>
                 <span> {{ cell.text }} </span>
                 <div class="category-drop-area">
-                    <div class="category-drop-add-rule">Add Rule</div>
+                    <div *ngIf="isInstanceAdmin" class="category-drop-add-rule">Add Rule</div>
                 </div>
             </ng-container>
         </div>

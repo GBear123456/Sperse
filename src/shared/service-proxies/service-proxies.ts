@@ -3354,6 +3354,617 @@ export class CashFlowForecastServiceProxy {
 }
 
 @Injectable()
+export class CategoryTreeServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @includeNonCashflowNodes (optional) 
+     * @return Success
+     */
+    get(instanceType: InstanceType34 | null | undefined, instanceId: number | null | undefined, includeNonCashflowNodes: boolean | null | undefined): Observable<GetCategoryTreeOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Get?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (includeNonCashflowNodes !== undefined)
+            url_ += "includeNonCashflowNodes=" + encodeURIComponent("" + includeNonCashflowNodes) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(<any>response_);
+                } catch (e) {
+                    return <Observable<GetCategoryTreeOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetCategoryTreeOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<GetCategoryTreeOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetCategoryTreeOutput.fromJS(resultData200) : new GetCategoryTreeOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetCategoryTreeOutput>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    createCategory(instanceType: InstanceType35 | null | undefined, instanceId: number | null | undefined, input: CreateCategoryInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/CreateCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateCategory(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    updateCategory(instanceType: InstanceType36 | null | undefined, instanceId: number | null | undefined, input: UpdateCategoryInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/UpdateCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateCategory(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    updateCategoryStatus(instanceType: InstanceType37 | null | undefined, instanceId: number | null | undefined, input: UpdateCategoryStatusInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/UpdateCategoryStatus?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCategoryStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCategoryStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateCategoryStatus(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @moveToCategoryId (optional) 
+     * @deleteAllReferences (optional) 
+     * @return Success
+     */
+    deleteCategory(instanceType: InstanceType38 | null | undefined, instanceId: number | null | undefined, moveToCategoryId: number | null | undefined, deleteAllReferences: boolean | null | undefined, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/DeleteCategory?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (moveToCategoryId !== undefined)
+            url_ += "MoveToCategoryId=" + encodeURIComponent("" + moveToCategoryId) + "&"; 
+        if (deleteAllReferences !== undefined)
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteCategory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteCategory(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteCategory(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    createAccountingType(instanceType: InstanceType39 | null | undefined, instanceId: number | null | undefined, input: CreateAccountingTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/CreateAccountingType?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateAccountingType(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateAccountingType(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateAccountingType(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    updateAccountingType(instanceType: InstanceType40 | null | undefined, instanceId: number | null | undefined, input: UpdateAccountingTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/UpdateAccountingType?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAccountingType(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAccountingType(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAccountingType(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @moveToAccountingTypeId (optional) 
+     * @deleteAllReferences (optional) 
+     * @return Success
+     */
+    deleteAccountingType(instanceType: InstanceType41 | null | undefined, instanceId: number | null | undefined, moveToAccountingTypeId: number | null | undefined, deleteAllReferences: boolean | null | undefined, id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/DeleteAccountingType?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (moveToAccountingTypeId !== undefined)
+            url_ += "MoveToAccountingTypeId=" + encodeURIComponent("" + moveToAccountingTypeId) + "&"; 
+        if (deleteAllReferences !== undefined)
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAccountingType(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAccountingType(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAccountingType(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    sync(instanceType: InstanceType42 | null | undefined, instanceId: number | null | undefined, input: SyncDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Sync?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSync(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSync(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSync(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    import(instanceType: InstanceType43 | null | undefined, instanceId: number | null | undefined, input: AccountingCategoryDto[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Import?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processImport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ChatServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -3544,71 +4155,10 @@ export class ClassificationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @includeNonCashflowNodes (optional) 
-     * @return Success
-     */
-    getCategoryTree(instanceType: InstanceType34 | null | undefined, instanceId: number | null | undefined, includeNonCashflowNodes: boolean | null | undefined): Observable<GetCategoryTreeOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/GetCategoryTree?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (includeNonCashflowNodes !== undefined)
-            url_ += "includeNonCashflowNodes=" + encodeURIComponent("" + includeNonCashflowNodes) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCategoryTree(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCategoryTree(<any>response_);
-                } catch (e) {
-                    return <Observable<GetCategoryTreeOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetCategoryTreeOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetCategoryTree(response: HttpResponseBase): Observable<GetCategoryTreeOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetCategoryTreeOutput.fromJS(resultData200) : new GetCategoryTreeOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetCategoryTreeOutput>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
-    getRules(instanceType: InstanceType35 | null | undefined, instanceId: number | null | undefined, input: any | null | undefined): Observable<RuleDto[]> {
+    getRules(instanceType: InstanceType44 | null | undefined, instanceId: number | null | undefined, input: any | null | undefined): Observable<RuleDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3673,7 +4223,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createRule(instanceType: InstanceType36 | null | undefined, instanceId: number | null | undefined, input: CreateRuleDto | null | undefined): Observable<void> {
+    createRule(instanceType: InstanceType45 | null | undefined, instanceId: number | null | undefined, input: CreateRuleDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3731,7 +4281,7 @@ export class ClassificationServiceProxy {
      * @id (optional) 
      * @return Success
      */
-    getRuleForEdit(instanceType: InstanceType37 | null | undefined, instanceId: number | null | undefined, id: number | null | undefined): Observable<EditRuleDto> {
+    getRuleForEdit(instanceType: InstanceType46 | null | undefined, instanceId: number | null | undefined, id: number | null | undefined): Observable<EditRuleDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetRuleForEdit?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3792,7 +4342,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    editRule(instanceType: InstanceType38 | null | undefined, instanceId: number | null | undefined, input: EditRuleDto | null | undefined): Observable<void> {
+    editRule(instanceType: InstanceType47 | null | undefined, instanceId: number | null | undefined, input: EditRuleDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/EditRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3850,7 +4400,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    moveRule(instanceType: InstanceType39 | null | undefined, instanceId: number | null | undefined, input: MoveRuleDto | null | undefined): Observable<void> {
+    moveRule(instanceType: InstanceType48 | null | undefined, instanceId: number | null | undefined, input: MoveRuleDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/MoveRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3910,7 +4460,7 @@ export class ClassificationServiceProxy {
      * @id (optional) 
      * @return Success
      */
-    deleteRule(instanceType: InstanceType40 | null | undefined, instanceId: number | null | undefined, sourceTransactionList: number[] | null | undefined, applyOption: ApplyOption | null | undefined, id: number | null | undefined): Observable<void> {
+    deleteRule(instanceType: InstanceType49 | null | undefined, instanceId: number | null | undefined, sourceTransactionList: number[] | null | undefined, applyOption: ApplyOption | null | undefined, id: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteRule?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -3971,7 +4521,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    addMapping(instanceType: InstanceType41 | null | undefined, instanceId: number | null | undefined, input: AddMappingDto | null | undefined): Observable<void> {
+    addMapping(instanceType: InstanceType50 | null | undefined, instanceId: number | null | undefined, input: AddMappingDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AddMapping?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4028,7 +4578,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    deleteMapping(instanceType: InstanceType42 | null | undefined, instanceId: number | null | undefined, name: string): Observable<void> {
+    deleteMapping(instanceType: InstanceType51 | null | undefined, instanceId: number | null | undefined, name: string): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteMapping?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4084,252 +4634,10 @@ export class ClassificationServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    createCategory(instanceType: InstanceType43 | null | undefined, instanceId: number | null | undefined, input: CreateCategoryInput | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateCategory?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateCategory(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateCategory(<any>response_);
-                } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<number>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateCategory(response: HttpResponseBase): Observable<number> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    updateCategory(instanceType: InstanceType44 | null | undefined, instanceId: number | null | undefined, input: UpdateCategoryInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategory?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCategory(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateCategory(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateCategory(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    updateCategoryStatus(instanceType: InstanceType45 | null | undefined, instanceId: number | null | undefined, input: UpdateCategoryStatusInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateCategoryStatus?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCategoryStatus(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateCategoryStatus(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateCategoryStatus(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @moveToCategoryId (optional) 
-     * @deleteAllReferences (optional) 
-     * @return Success
-     */
-    deleteCategory(instanceType: InstanceType46 | null | undefined, instanceId: number | null | undefined, moveToCategoryId: number | null | undefined, deleteAllReferences: boolean | null | undefined, id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteCategory?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (moveToCategoryId !== undefined)
-            url_ += "MoveToCategoryId=" + encodeURIComponent("" + moveToCategoryId) + "&"; 
-        if (deleteAllReferences !== undefined)
-            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteCategory(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteCategory(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDeleteCategory(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
      * @recategorizeInput (optional) 
      * @return Success
      */
-    reclassify(instanceType: InstanceType47 | null | undefined, instanceId: number | null | undefined, recategorizeInput: RecategorizeInput | null | undefined): Observable<void> {
+    reclassify(instanceType: InstanceType52 | null | undefined, instanceId: number | null | undefined, recategorizeInput: RecategorizeInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reclassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4386,7 +4694,7 @@ export class ClassificationServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    resetToDefaults(instanceType: InstanceType48 | null | undefined, instanceId: number | null | undefined): Observable<void> {
+    resetToDefaults(instanceType: InstanceType53 | null | undefined, instanceId: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ResetToDefaults?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4441,65 +4749,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    importAccountingTree(instanceType: InstanceType49 | null | undefined, instanceId: number | null | undefined, input: AccountingCategoryDto[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/ImportAccountingTree?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processImportAccountingTree(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processImportAccountingTree(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processImportAccountingTree(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    reset(instanceType: InstanceType50 | null | undefined, instanceId: number | null | undefined, input: ResetClassificationDto | null | undefined): Observable<void> {
+    reset(instanceType: InstanceType54 | null | undefined, instanceId: number | null | undefined, input: ResetClassificationDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/Reset?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4557,7 +4807,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategory(instanceType: InstanceType51 | null | undefined, instanceId: number | null | undefined, input: UpdateTransactionsCategoryInput | null | undefined): Observable<void> {
+    updateTransactionsCategory(instanceType: InstanceType55 | null | undefined, instanceId: number | null | undefined, input: UpdateTransactionsCategoryInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategory?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4615,7 +4865,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateTransactionsCategoryWithFilter(instanceType: InstanceType52 | null | undefined, instanceId: number | null | undefined, input: UpdateTransactionsCategoryWithFilterInput | null | undefined): Observable<void> {
+    updateTransactionsCategoryWithFilter(instanceType: InstanceType56 | null | undefined, instanceId: number | null | undefined, input: UpdateTransactionsCategoryWithFilterInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateTransactionsCategoryWithFilter?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4673,7 +4923,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getTransactionCommonDetails(instanceType: InstanceType53 | null | undefined, instanceId: number | null | undefined, input: GetTransactionCommonDetailsInput | null | undefined): Observable<TransactionCommonDetailsDto> {
+    getTransactionCommonDetails(instanceType: InstanceType57 | null | undefined, instanceId: number | null | undefined, input: GetTransactionCommonDetailsInput | null | undefined): Observable<TransactionCommonDetailsDto> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetTransactionCommonDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4735,7 +4985,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    autoClassify(instanceType: InstanceType54 | null | undefined, instanceId: number | null | undefined, input: AutoClassifyDto | null | undefined): Observable<void> {
+    autoClassify(instanceType: InstanceType58 | null | undefined, instanceId: number | null | undefined, input: AutoClassifyDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/AutoClassify?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4793,7 +5043,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    changeCategoryForRules(instanceType: InstanceType55 | null | undefined, instanceId: number | null | undefined, input: ChangeCategoryForRulesInput | null | undefined): Observable<void> {
+    changeCategoryForRules(instanceType: InstanceType59 | null | undefined, instanceId: number | null | undefined, input: ChangeCategoryForRulesInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/ChangeCategoryForRules?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4851,7 +5101,7 @@ export class ClassificationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    getKeyAttributeValues(instanceType: InstanceType56 | null | undefined, instanceId: number | null | undefined, input: GetKeyAttributeValuesInput | null | undefined): Observable<AttributeValuesDto[]> {
+    getKeyAttributeValues(instanceType: InstanceType60 | null | undefined, instanceId: number | null | undefined, input: GetKeyAttributeValuesInput | null | undefined): Observable<AttributeValuesDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Classification/GetKeyAttributeValues?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -4910,186 +5160,6 @@ export class ClassificationServiceProxy {
         }
         return _observableOf<AttributeValuesDto[]>(<any>null);
     }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    createAccountingType(instanceType: InstanceType57 | null | undefined, instanceId: number | null | undefined, input: CreateAccountingTypeInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/CreateAccountingType?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateAccountingType(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateAccountingType(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateAccountingType(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @input (optional) 
-     * @return Success
-     */
-    updateAccountingType(instanceType: InstanceType58 | null | undefined, instanceId: number | null | undefined, input: UpdateAccountingTypeInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/UpdateAccountingType?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateAccountingType(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateAccountingType(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateAccountingType(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @moveToAccountingTypeId (optional) 
-     * @deleteAllReferences (optional) 
-     * @return Success
-     */
-    deleteAccountingType(instanceType: InstanceType59 | null | undefined, instanceId: number | null | undefined, moveToAccountingTypeId: number | null | undefined, deleteAllReferences: boolean | null | undefined, id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Classification/DeleteAccountingType?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (moveToAccountingTypeId !== undefined)
-            url_ += "MoveToAccountingTypeId=" + encodeURIComponent("" + moveToAccountingTypeId) + "&"; 
-        if (deleteAllReferences !== undefined)
-            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteAccountingType(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteAccountingType(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDeleteAccountingType(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -5109,7 +5179,7 @@ export class CommentServiceProxy {
      * @threadId (optional) 
      * @return Success
      */
-    getComments(instanceType: InstanceType60 | null | undefined, instanceId: number | null | undefined, threadId: number | null | undefined): Observable<CommentDto[]> {
+    getComments(instanceType: InstanceType61 | null | undefined, instanceId: number | null | undefined, threadId: number | null | undefined): Observable<CommentDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/GetComments?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5174,7 +5244,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createComment(instanceType: InstanceType61 | null | undefined, instanceId: number | null | undefined, input: CreateCommentInput | null | undefined): Observable<CreateCommentOutput> {
+    createComment(instanceType: InstanceType62 | null | undefined, instanceId: number | null | undefined, input: CreateCommentInput | null | undefined): Observable<CreateCommentOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5236,7 +5306,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateComment(instanceType: InstanceType62 | null | undefined, instanceId: number | null | undefined, input: UpdateCommentInput | null | undefined): Observable<void> {
+    updateComment(instanceType: InstanceType63 | null | undefined, instanceId: number | null | undefined, input: UpdateCommentInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/UpdateComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5294,7 +5364,7 @@ export class CommentServiceProxy {
      * @commentId (optional) 
      * @return Success
      */
-    deleteComment(instanceType: InstanceType63 | null | undefined, instanceId: number | null | undefined, commentId: number | null | undefined): Observable<void> {
+    deleteComment(instanceType: InstanceType64 | null | undefined, instanceId: number | null | undefined, commentId: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/DeleteComment?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5351,7 +5421,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createTransactionCommentThread(instanceType: InstanceType64 | null | undefined, instanceId: number | null | undefined, input: CreateTransactionCommentThreadInput | null | undefined): Observable<CreateTransactionCommentThreadOutput> {
+    createTransactionCommentThread(instanceType: InstanceType65 | null | undefined, instanceId: number | null | undefined, input: CreateTransactionCommentThreadInput | null | undefined): Observable<CreateTransactionCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateTransactionCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5413,7 +5483,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createCashFlowCommentThread(instanceType: InstanceType65 | null | undefined, instanceId: number | null | undefined, input: CreateCashFlowCommentThreadInput | null | undefined): Observable<CreateCashFlowCommentThreadOutput> {
+    createCashFlowCommentThread(instanceType: InstanceType66 | null | undefined, instanceId: number | null | undefined, input: CreateCashFlowCommentThreadInput | null | undefined): Observable<CreateCashFlowCommentThreadOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/CreateCashFlowCommentThread?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -5475,7 +5545,7 @@ export class CommentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setResolved(instanceType: InstanceType66 | null | undefined, instanceId: number | null | undefined, input: SetResolvedInput | null | undefined): Observable<void> {
+    setResolved(instanceType: InstanceType67 | null | undefined, instanceId: number | null | undefined, input: SetResolvedInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Comment/SetResolved?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -9360,7 +9430,7 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType67 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType68 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -9421,7 +9491,7 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType68 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType69 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -9483,7 +9553,7 @@ export class DashboardServiceProxy {
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType69 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType70 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -10184,6 +10254,178 @@ export class DocumentServiceProxy {
             }));
         }
         return _observableOf<WopiRequestOutcoming>(<any>null);
+    }
+}
+
+@Injectable()
+export class DocumentTypeServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<DocumentTypeInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/DocumentType/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<DocumentTypeInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DocumentTypeInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<DocumentTypeInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(DocumentTypeInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DocumentTypeInfo[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    create(input: CreateDocumentTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/DocumentType/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    update(input: UpdateDocumentTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/DocumentType/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -11130,7 +11372,7 @@ export class InstanceServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType70 | null | undefined, instanceId: number | null | undefined): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType71 | null | undefined, instanceId: number | null | undefined): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -11187,7 +11429,7 @@ export class InstanceServiceProxy {
      * @instanceType (optional) 
      * @return Success
      */
-    setup(instanceType: InstanceType71 | null | undefined): Observable<SetupOutput> {
+    setup(instanceType: InstanceType72 | null | undefined): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16229,7 +16471,7 @@ export class QuickBookServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getQuickBookConnectionLink(instanceType: InstanceType72 | null | undefined, instanceId: number | null | undefined): Observable<QuickBookConnectionLinkResult> {
+    getQuickBookConnectionLink(instanceType: InstanceType73 | null | undefined, instanceId: number | null | undefined): Observable<QuickBookConnectionLinkResult> {
         let url_ = this.baseUrl + "/api/services/CFO/QuickBook/GetQuickBookConnectionLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16280,6 +16522,118 @@ export class QuickBookServiceProxy {
             }));
         }
         return _observableOf<QuickBookConnectionLinkResult>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    checkToken(instanceType: InstanceType74 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/QuickBook/CheckToken?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckToken(<any>response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<boolean>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCheckToken(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    syncChartOfAccounts(instanceType: InstanceType75 | null | undefined, instanceId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/QuickBook/SyncChartOfAccounts?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSyncChartOfAccounts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSyncChartOfAccounts(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSyncChartOfAccounts(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -16527,7 +16881,7 @@ export class SecurityManagementServiceProxy {
      * @permission (optional) 
      * @return Success
      */
-    grantBankAccountPermissions(instanceType: InstanceType73 | null | undefined, instanceId: number | null | undefined, bankAccountId: number | null | undefined, userId: number | null | undefined, permission: Permission | null | undefined): Observable<void> {
+    grantBankAccountPermissions(instanceType: InstanceType76 | null | undefined, instanceId: number | null | undefined, bankAccountId: number | null | undefined, userId: number | null | undefined, permission: Permission | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/GrantBankAccountPermissions?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16590,7 +16944,7 @@ export class SecurityManagementServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    revokeBankAccountPermissions(instanceType: InstanceType74 | null | undefined, instanceId: number | null | undefined, userId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<void> {
+    revokeBankAccountPermissions(instanceType: InstanceType77 | null | undefined, instanceId: number | null | undefined, userId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/RevokeBankAccountPermissions?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16649,7 +17003,7 @@ export class SecurityManagementServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getBankAccountAssignedUsers(instanceType: InstanceType75 | null | undefined, instanceId: number | null | undefined): Observable<BankAccountUsers[]> {
+    getBankAccountAssignedUsers(instanceType: InstanceType78 | null | undefined, instanceId: number | null | undefined): Observable<BankAccountUsers[]> {
         let url_ = this.baseUrl + "/api/services/CFO/SecurityManagement/GetBankAccountAssignedUsers?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -16952,14 +17306,17 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @syncTypeId (optional) 
      * @return Success
      */
-    createProviderUIToken(instanceType: InstanceType76 | null | undefined, instanceId: number | null | undefined): Observable<GetProviderUITokenOutput> {
+    createProviderUIToken(instanceType: InstanceType79 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/CreateProviderUIToken?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (syncTypeId !== undefined)
+            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -17010,16 +17367,19 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @syncTypeId (optional) 
      * @css (optional) 
      * @errorPage (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType77 | null | undefined, instanceId: number | null | undefined, css: string | null | undefined, errorPage: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
+    getSetupAccountsLink(instanceType: InstanceType80 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined, css: string | null | undefined, errorPage: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (syncTypeId !== undefined)
+            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
         if (css !== undefined)
             url_ += "css=" + encodeURIComponent("" + css) + "&"; 
         if (errorPage !== undefined)
@@ -17078,7 +17438,7 @@ export class SyncServiceProxy {
      * @newOnly (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType78 | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType81 | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17141,7 +17501,7 @@ export class SyncServiceProxy {
      * @syncAccountId (optional) 
      * @return Success
      */
-    syncAccount(instanceType: InstanceType79 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<boolean> {
+    syncAccount(instanceType: InstanceType82 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<boolean> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAccount?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17201,7 +17561,7 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getSyncProgress(instanceType: InstanceType80 | null | undefined, instanceId: number | null | undefined): Observable<SyncProgressOutput> {
+    getSyncProgress(instanceType: InstanceType83 | null | undefined, instanceId: number | null | undefined): Observable<SyncProgressOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSyncProgress?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17260,7 +17620,7 @@ export class SyncServiceProxy {
      * @syncAccountIds (optional) 
      * @return Success
      */
-    requestSyncForAccounts(instanceType: InstanceType81 | null | undefined, instanceId: number | null | undefined, syncAccountIds: number[] | null | undefined): Observable<number> {
+    requestSyncForAccounts(instanceType: InstanceType84 | null | undefined, instanceId: number | null | undefined, syncAccountIds: number[] | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestSyncForAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17331,10 +17691,137 @@ export class SyncAccountServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @syncTypeId (optional) 
+     * @return Success
+     */
+    getActive(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<number[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetActive?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (syncTypeId !== undefined)
+            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetActive(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetActive(<any>response_);
+                } catch (e) {
+                    return <Observable<number[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetActive(response: HttpResponseBase): Observable<number[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number[]>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @input (optional) 
      * @return Success
      */
-    rename(instanceType: InstanceType82 | null | undefined, instanceId: number | null | undefined, input: RenameSyncAccountInput | null | undefined): Observable<void> {
+    create(instanceType: InstanceType86 | null | undefined, instanceId: number | null | undefined, input: CreateSyncAccountInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Create?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    rename(instanceType: InstanceType87 | null | undefined, instanceId: number | null | undefined, input: RenameSyncAccountInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -17392,7 +17879,7 @@ export class SyncAccountServiceProxy {
      * @syncAccountId (optional) 
      * @return Success
      */
-    delete(instanceType: InstanceType83 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<void> {
+    delete(instanceType: InstanceType88 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -20623,7 +21110,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType84 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType89 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -20681,7 +21168,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -20739,7 +21226,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType86 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22260,6 +22747,66 @@ export class WebLogServiceProxy {
             }));
         }
         return _observableOf<FileDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class XeroServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getCertificate(): Observable<void> {
+        let url_ = this.baseUrl + "/Xero/GetCertificate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCertificate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCertificate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCertificate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -25915,6 +26462,538 @@ export interface IRenameForecastModelInput {
     newName: string;
 }
 
+export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
+    types!: { [key: string] : TypeDto; } | undefined;
+    accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
+    categories!: { [key: string] : CategoryDto; } | undefined;
+
+    constructor(data?: IGetCategoryTreeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["types"]) {
+                this.types = {};
+                for (let key in data["types"]) {
+                    if (data["types"].hasOwnProperty(key))
+                        this.types[key] = data["types"][key] ? TypeDto.fromJS(data["types"][key]) : new TypeDto();
+                }
+            }
+            if (data["accountingTypes"]) {
+                this.accountingTypes = {};
+                for (let key in data["accountingTypes"]) {
+                    if (data["accountingTypes"].hasOwnProperty(key))
+                        this.accountingTypes[key] = data["accountingTypes"][key] ? AccountingTypeDto.fromJS(data["accountingTypes"][key]) : new AccountingTypeDto();
+                }
+            }
+            if (data["categories"]) {
+                this.categories = {};
+                for (let key in data["categories"]) {
+                    if (data["categories"].hasOwnProperty(key))
+                        this.categories[key] = data["categories"][key] ? CategoryDto.fromJS(data["categories"][key]) : new CategoryDto();
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetCategoryTreeOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCategoryTreeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.types) {
+            data["types"] = {};
+            for (let key in this.types) {
+                if (this.types.hasOwnProperty(key))
+                    data["types"][key] = this.types[key];
+            }
+        }
+        if (this.accountingTypes) {
+            data["accountingTypes"] = {};
+            for (let key in this.accountingTypes) {
+                if (this.accountingTypes.hasOwnProperty(key))
+                    data["accountingTypes"][key] = this.accountingTypes[key];
+            }
+        }
+        if (this.categories) {
+            data["categories"] = {};
+            for (let key in this.categories) {
+                if (this.categories.hasOwnProperty(key))
+                    data["categories"][key] = this.categories[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetCategoryTreeOutput {
+    types: { [key: string] : TypeDto; } | undefined;
+    accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
+    categories: { [key: string] : CategoryDto; } | undefined;
+}
+
+export class TypeDto implements ITypeDto {
+    name!: string | undefined;
+
+    constructor(data?: ITypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): TypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ITypeDto {
+    name: string | undefined;
+}
+
+export class AccountingTypeDto implements IAccountingTypeDto {
+    typeId!: string | undefined;
+    name!: string | undefined;
+    isSystem!: boolean | undefined;
+
+    constructor(data?: IAccountingTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.name = data["name"];
+            this.isSystem = data["isSystem"];
+        }
+    }
+
+    static fromJS(data: any): AccountingTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AccountingTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["name"] = this.name;
+        data["isSystem"] = this.isSystem;
+        return data; 
+    }
+}
+
+export interface IAccountingTypeDto {
+    typeId: string | undefined;
+    name: string | undefined;
+    isSystem: boolean | undefined;
+}
+
+export class CategoryDto implements ICategoryDto {
+    accountingTypeId!: number | undefined;
+    parentId!: number | undefined;
+    coAID!: number | undefined;
+    name!: string | undefined;
+    isActive!: boolean | undefined;
+
+    constructor(data?: ICategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountingTypeId = data["accountingTypeId"];
+            this.parentId = data["parentId"];
+            this.coAID = data["coAID"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CategoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountingTypeId"] = this.accountingTypeId;
+        data["parentId"] = this.parentId;
+        data["coAID"] = this.coAID;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface ICategoryDto {
+    accountingTypeId: number | undefined;
+    parentId: number | undefined;
+    coAID: number | undefined;
+    name: string | undefined;
+    isActive: boolean | undefined;
+}
+
+export class CreateCategoryInput implements ICreateCategoryInput {
+    accountingTypeId!: number | undefined;
+    parentId!: number | undefined;
+    coAID!: number | undefined;
+    name!: string;
+
+    constructor(data?: ICreateCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountingTypeId = data["accountingTypeId"];
+            this.parentId = data["parentId"];
+            this.coAID = data["coAID"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreateCategoryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountingTypeId"] = this.accountingTypeId;
+        data["parentId"] = this.parentId;
+        data["coAID"] = this.coAID;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICreateCategoryInput {
+    accountingTypeId: number | undefined;
+    parentId: number | undefined;
+    coAID: number | undefined;
+    name: string;
+}
+
+export class UpdateCategoryInput implements IUpdateCategoryInput {
+    id!: number | undefined;
+    coAID!: number | undefined;
+    name!: string;
+    accountingTypeId!: number;
+    parentId!: number | undefined;
+
+    constructor(data?: IUpdateCategoryInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.coAID = data["coAID"];
+            this.name = data["name"];
+            this.accountingTypeId = data["accountingTypeId"];
+            this.parentId = data["parentId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCategoryInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCategoryInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["coAID"] = this.coAID;
+        data["name"] = this.name;
+        data["accountingTypeId"] = this.accountingTypeId;
+        data["parentId"] = this.parentId;
+        return data; 
+    }
+}
+
+export interface IUpdateCategoryInput {
+    id: number | undefined;
+    coAID: number | undefined;
+    name: string;
+    accountingTypeId: number;
+    parentId: number | undefined;
+}
+
+export class UpdateCategoryStatusInput implements IUpdateCategoryStatusInput {
+    id!: number | undefined;
+    isActive!: boolean | undefined;
+
+    constructor(data?: IUpdateCategoryStatusInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCategoryStatusInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCategoryStatusInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IUpdateCategoryStatusInput {
+    id: number | undefined;
+    isActive: boolean | undefined;
+}
+
+export class CreateAccountingTypeInput implements ICreateAccountingTypeInput {
+    cashflowTypeId!: string | undefined;
+    name!: string;
+    sortOrder!: number | undefined;
+
+    constructor(data?: ICreateAccountingTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.cashflowTypeId = data["cashflowTypeId"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreateAccountingTypeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateAccountingTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICreateAccountingTypeInput {
+    cashflowTypeId: string | undefined;
+    name: string;
+    sortOrder: number | undefined;
+}
+
+export class UpdateAccountingTypeInput implements IUpdateAccountingTypeInput {
+    id!: number | undefined;
+    name!: string;
+    cashflowTypeId!: string | undefined;
+
+    constructor(data?: IUpdateAccountingTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.cashflowTypeId = data["cashflowTypeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateAccountingTypeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateAccountingTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["cashflowTypeId"] = this.cashflowTypeId;
+        return data; 
+    }
+}
+
+export interface IUpdateAccountingTypeInput {
+    id: number | undefined;
+    name: string;
+    cashflowTypeId: string | undefined;
+}
+
+export class SyncDto implements ISyncDto {
+    syncAccountId!: number | undefined;
+
+    constructor(data?: ISyncDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.syncAccountId = data["syncAccountId"];
+        }
+    }
+
+    static fromJS(data: any): SyncDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["syncAccountId"] = this.syncAccountId;
+        return data; 
+    }
+}
+
+export interface ISyncDto {
+    syncAccountId: number | undefined;
+}
+
+export class AccountingCategoryDto implements IAccountingCategoryDto {
+    coAID!: number | undefined;
+    cashType!: string | undefined;
+    accountingType!: string;
+    category!: string;
+    subCategory!: string | undefined;
+    sortId!: number | undefined;
+
+    constructor(data?: IAccountingCategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.coAID = data["coAID"];
+            this.cashType = data["cashType"];
+            this.accountingType = data["accountingType"];
+            this.category = data["category"];
+            this.subCategory = data["subCategory"];
+            this.sortId = data["sortId"];
+        }
+    }
+
+    static fromJS(data: any): AccountingCategoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AccountingCategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["coAID"] = this.coAID;
+        data["cashType"] = this.cashType;
+        data["accountingType"] = this.accountingType;
+        data["category"] = this.category;
+        data["subCategory"] = this.subCategory;
+        data["sortId"] = this.sortId;
+        return data; 
+    }
+}
+
+export interface IAccountingCategoryDto {
+    coAID: number | undefined;
+    cashType: string | undefined;
+    accountingType: string;
+    category: string;
+    subCategory: string | undefined;
+    sortId: number | undefined;
+}
+
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
     serverTime!: moment.Moment | undefined;
     friends!: FriendDto[] | undefined;
@@ -26185,218 +27264,6 @@ export class MarkAllUnreadMessagesOfUserAsReadInput implements IMarkAllUnreadMes
 export interface IMarkAllUnreadMessagesOfUserAsReadInput {
     tenantId: number | undefined;
     userId: number | undefined;
-}
-
-export class GetCategoryTreeOutput implements IGetCategoryTreeOutput {
-    types!: { [key: string] : TypeDto; } | undefined;
-    accountingTypes!: { [key: string] : AccountingTypeDto; } | undefined;
-    categories!: { [key: string] : CategoryDto; } | undefined;
-
-    constructor(data?: IGetCategoryTreeOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["types"]) {
-                this.types = {};
-                for (let key in data["types"]) {
-                    if (data["types"].hasOwnProperty(key))
-                        this.types[key] = data["types"][key] ? TypeDto.fromJS(data["types"][key]) : new TypeDto();
-                }
-            }
-            if (data["accountingTypes"]) {
-                this.accountingTypes = {};
-                for (let key in data["accountingTypes"]) {
-                    if (data["accountingTypes"].hasOwnProperty(key))
-                        this.accountingTypes[key] = data["accountingTypes"][key] ? AccountingTypeDto.fromJS(data["accountingTypes"][key]) : new AccountingTypeDto();
-                }
-            }
-            if (data["categories"]) {
-                this.categories = {};
-                for (let key in data["categories"]) {
-                    if (data["categories"].hasOwnProperty(key))
-                        this.categories[key] = data["categories"][key] ? CategoryDto.fromJS(data["categories"][key]) : new CategoryDto();
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): GetCategoryTreeOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetCategoryTreeOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.types) {
-            data["types"] = {};
-            for (let key in this.types) {
-                if (this.types.hasOwnProperty(key))
-                    data["types"][key] = this.types[key];
-            }
-        }
-        if (this.accountingTypes) {
-            data["accountingTypes"] = {};
-            for (let key in this.accountingTypes) {
-                if (this.accountingTypes.hasOwnProperty(key))
-                    data["accountingTypes"][key] = this.accountingTypes[key];
-            }
-        }
-        if (this.categories) {
-            data["categories"] = {};
-            for (let key in this.categories) {
-                if (this.categories.hasOwnProperty(key))
-                    data["categories"][key] = this.categories[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface IGetCategoryTreeOutput {
-    types: { [key: string] : TypeDto; } | undefined;
-    accountingTypes: { [key: string] : AccountingTypeDto; } | undefined;
-    categories: { [key: string] : CategoryDto; } | undefined;
-}
-
-export class TypeDto implements ITypeDto {
-    name!: string | undefined;
-
-    constructor(data?: ITypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): TypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ITypeDto {
-    name: string | undefined;
-}
-
-export class AccountingTypeDto implements IAccountingTypeDto {
-    typeId!: string | undefined;
-    name!: string | undefined;
-    isSystem!: boolean | undefined;
-
-    constructor(data?: IAccountingTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.typeId = data["typeId"];
-            this.name = data["name"];
-            this.isSystem = data["isSystem"];
-        }
-    }
-
-    static fromJS(data: any): AccountingTypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new AccountingTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["typeId"] = this.typeId;
-        data["name"] = this.name;
-        data["isSystem"] = this.isSystem;
-        return data; 
-    }
-}
-
-export interface IAccountingTypeDto {
-    typeId: string | undefined;
-    name: string | undefined;
-    isSystem: boolean | undefined;
-}
-
-export class CategoryDto implements ICategoryDto {
-    accountingTypeId!: number | undefined;
-    parentId!: number | undefined;
-    coAID!: number | undefined;
-    name!: string | undefined;
-    isActive!: boolean | undefined;
-
-    constructor(data?: ICategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accountingTypeId = data["accountingTypeId"];
-            this.parentId = data["parentId"];
-            this.coAID = data["coAID"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-        }
-    }
-
-    static fromJS(data: any): CategoryDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accountingTypeId"] = this.accountingTypeId;
-        data["parentId"] = this.parentId;
-        data["coAID"] = this.coAID;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        return data; 
-    }
-}
-
-export interface ICategoryDto {
-    accountingTypeId: number | undefined;
-    parentId: number | undefined;
-    coAID: number | undefined;
-    name: string | undefined;
-    isActive: boolean | undefined;
 }
 
 export class RuleDto implements IRuleDto {
@@ -26849,146 +27716,6 @@ export interface IAddMappingDto {
     newName: string;
 }
 
-export class CreateCategoryInput implements ICreateCategoryInput {
-    accountingTypeId!: number | undefined;
-    parentId!: number | undefined;
-    coAID!: number | undefined;
-    name!: string;
-
-    constructor(data?: ICreateCategoryInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accountingTypeId = data["accountingTypeId"];
-            this.parentId = data["parentId"];
-            this.coAID = data["coAID"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CreateCategoryInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateCategoryInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accountingTypeId"] = this.accountingTypeId;
-        data["parentId"] = this.parentId;
-        data["coAID"] = this.coAID;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICreateCategoryInput {
-    accountingTypeId: number | undefined;
-    parentId: number | undefined;
-    coAID: number | undefined;
-    name: string;
-}
-
-export class UpdateCategoryInput implements IUpdateCategoryInput {
-    id!: number | undefined;
-    coAID!: number | undefined;
-    name!: string;
-    accountingTypeId!: number;
-    parentId!: number | undefined;
-
-    constructor(data?: IUpdateCategoryInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.coAID = data["coAID"];
-            this.name = data["name"];
-            this.accountingTypeId = data["accountingTypeId"];
-            this.parentId = data["parentId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCategoryInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCategoryInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["coAID"] = this.coAID;
-        data["name"] = this.name;
-        data["accountingTypeId"] = this.accountingTypeId;
-        data["parentId"] = this.parentId;
-        return data; 
-    }
-}
-
-export interface IUpdateCategoryInput {
-    id: number | undefined;
-    coAID: number | undefined;
-    name: string;
-    accountingTypeId: number;
-    parentId: number | undefined;
-}
-
-export class UpdateCategoryStatusInput implements IUpdateCategoryStatusInput {
-    id!: number | undefined;
-    isActive!: boolean | undefined;
-
-    constructor(data?: IUpdateCategoryStatusInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.isActive = data["isActive"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCategoryStatusInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCategoryStatusInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["isActive"] = this.isActive;
-        return data; 
-    }
-}
-
-export interface IUpdateCategoryStatusInput {
-    id: number | undefined;
-    isActive: boolean | undefined;
-}
-
 export class RecategorizeInput implements IRecategorizeInput {
     parseDescription!: boolean | undefined;
     bankAccountIds!: number[] | undefined;
@@ -27047,62 +27774,6 @@ export interface IRecategorizeInput {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     ruleId: number | undefined;
-}
-
-export class AccountingCategoryDto implements IAccountingCategoryDto {
-    coAID!: number | undefined;
-    cashType!: string | undefined;
-    accountingType!: string;
-    category!: string;
-    subCategory!: string | undefined;
-    sortId!: number | undefined;
-
-    constructor(data?: IAccountingCategoryDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.coAID = data["coAID"];
-            this.cashType = data["cashType"];
-            this.accountingType = data["accountingType"];
-            this.category = data["category"];
-            this.subCategory = data["subCategory"];
-            this.sortId = data["sortId"];
-        }
-    }
-
-    static fromJS(data: any): AccountingCategoryDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new AccountingCategoryDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["coAID"] = this.coAID;
-        data["cashType"] = this.cashType;
-        data["accountingType"] = this.accountingType;
-        data["category"] = this.category;
-        data["subCategory"] = this.subCategory;
-        data["sortId"] = this.sortId;
-        return data; 
-    }
-}
-
-export interface IAccountingCategoryDto {
-    coAID: number | undefined;
-    cashType: string | undefined;
-    accountingType: string;
-    category: string;
-    subCategory: string | undefined;
-    sortId: number | undefined;
 }
 
 export class ResetClassificationDto implements IResetClassificationDto {
@@ -27731,94 +28402,6 @@ export class AttributeValuesDto implements IAttributeValuesDto {
 export interface IAttributeValuesDto {
     attributeTypeId: string | undefined;
     attributeValues: string[] | undefined;
-}
-
-export class CreateAccountingTypeInput implements ICreateAccountingTypeInput {
-    cashflowTypeId!: string | undefined;
-    name!: string;
-    sortOrder!: number | undefined;
-
-    constructor(data?: ICreateAccountingTypeInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.cashflowTypeId = data["cashflowTypeId"];
-            this.name = data["name"];
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): CreateAccountingTypeInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateAccountingTypeInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["cashflowTypeId"] = this.cashflowTypeId;
-        data["name"] = this.name;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface ICreateAccountingTypeInput {
-    cashflowTypeId: string | undefined;
-    name: string;
-    sortOrder: number | undefined;
-}
-
-export class UpdateAccountingTypeInput implements IUpdateAccountingTypeInput {
-    id!: number | undefined;
-    name!: string;
-    cashflowTypeId!: string | undefined;
-
-    constructor(data?: IUpdateAccountingTypeInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.cashflowTypeId = data["cashflowTypeId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateAccountingTypeInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateAccountingTypeInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["cashflowTypeId"] = this.cashflowTypeId;
-        return data; 
-    }
-}
-
-export interface IUpdateAccountingTypeInput {
-    id: number | undefined;
-    name: string;
-    cashflowTypeId: string | undefined;
 }
 
 export class CommentDto implements ICommentDto {
@@ -35778,6 +36361,122 @@ export interface IWopiRequestOutcoming {
     accessToken: string | undefined;
     accessTokenTtl: number | undefined;
     wopiUrlsrc: string | undefined;
+}
+
+export class DocumentTypeInfo implements IDocumentTypeInfo {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IDocumentTypeInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): DocumentTypeInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new DocumentTypeInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IDocumentTypeInfo {
+    id: number | undefined;
+    name: string | undefined;
+}
+
+export class CreateDocumentTypeInput implements ICreateDocumentTypeInput {
+    name!: string;
+
+    constructor(data?: ICreateDocumentTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreateDocumentTypeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateDocumentTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICreateDocumentTypeInput {
+    name: string;
+}
+
+export class UpdateDocumentTypeInput implements IUpdateDocumentTypeInput {
+    id!: number | undefined;
+    name!: string;
+
+    constructor(data?: IUpdateDocumentTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UpdateDocumentTypeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateDocumentTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUpdateDocumentTypeInput {
+    id: number | undefined;
+    name: string;
 }
 
 export class ListResultDtoOfEditionListDto implements IListResultDtoOfEditionListDto {
@@ -45172,6 +45871,54 @@ export interface ISyncProgressDto {
     lastSyncDate: moment.Moment | undefined;
 }
 
+export class CreateSyncAccountInput implements ICreateSyncAccountInput {
+    typeId!: string;
+    consumerKey!: string | undefined;
+    consumerSecret!: string | undefined;
+    isSyncBankAccountsEnabled!: boolean | undefined;
+
+    constructor(data?: ICreateSyncAccountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+            this.consumerKey = data["consumerKey"];
+            this.consumerSecret = data["consumerSecret"];
+            this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
+        }
+    }
+
+    static fromJS(data: any): CreateSyncAccountInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSyncAccountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        data["consumerKey"] = this.consumerKey;
+        data["consumerSecret"] = this.consumerSecret;
+        data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
+        return data; 
+    }
+}
+
+export interface ICreateSyncAccountInput {
+    typeId: string;
+    consumerKey: string | undefined;
+    consumerSecret: string | undefined;
+    isSyncBankAccountsEnabled: boolean | undefined;
+}
+
 export class RenameSyncAccountInput implements IRenameSyncAccountInput {
     id!: number;
     newName!: string;
@@ -50016,13 +50763,6 @@ export enum InstanceType40 {
     Main = "Main", 
 }
 
-export enum ApplyOption {
-    None = "None", 
-    MatchedAndUnclassified = "MatchedAndUnclassified", 
-    SelectedOnly = "SelectedOnly", 
-    AllExisting = "AllExisting", 
-}
-
 export enum InstanceType41 {
     User = "User", 
     Main = "Main", 
@@ -50066,6 +50806,13 @@ export enum InstanceType48 {
 export enum InstanceType49 {
     User = "User", 
     Main = "Main", 
+}
+
+export enum ApplyOption {
+    None = "None", 
+    MatchedAndUnclassified = "MatchedAndUnclassified", 
+    SelectedOnly = "SelectedOnly", 
+    AllExisting = "AllExisting", 
 }
 
 export enum InstanceType50 {
@@ -50168,6 +50915,11 @@ export enum InstanceType69 {
     Main = "Main", 
 }
 
+export enum InstanceType70 {
+    User = "User", 
+    Main = "Main", 
+}
+
 export enum GroupBy2 {
     Daily = "Daily", 
     Weekly = "Weekly", 
@@ -50188,12 +50940,12 @@ export enum IncomeStatisticsDateInterval2 {
     _3 = 3, 
 }
 
-export enum InstanceType70 {
+export enum InstanceType71 {
     User = "User", 
     Main = "Main", 
 }
 
-export enum InstanceType71 {
+export enum InstanceType72 {
     User = "User", 
     Main = "Main", 
 }
@@ -50203,21 +50955,9 @@ export enum State {
     _1 = 1, 
 }
 
-export enum InstanceType72 {
-    User = "User", 
-    Main = "Main", 
-}
-
 export enum InstanceType73 {
     User = "User", 
     Main = "Main", 
-}
-
-export enum Permission {
-    None = "None", 
-    Read = "Read", 
-    Write = "Write", 
-    All = "All", 
 }
 
 export enum InstanceType74 {
@@ -50233,6 +50973,13 @@ export enum InstanceType75 {
 export enum InstanceType76 {
     User = "User", 
     Main = "Main", 
+}
+
+export enum Permission {
+    None = "None", 
+    Read = "Read", 
+    Write = "Write", 
+    All = "All", 
 }
 
 export enum InstanceType77 {
@@ -50270,6 +51017,31 @@ export enum InstanceType83 {
     Main = "Main", 
 }
 
+export enum InstanceType84 {
+    User = "User", 
+    Main = "Main", 
+}
+
+export enum InstanceType85 {
+    User = "User", 
+    Main = "Main", 
+}
+
+export enum InstanceType86 {
+    User = "User", 
+    Main = "Main", 
+}
+
+export enum InstanceType87 {
+    User = "User", 
+    Main = "Main", 
+}
+
+export enum InstanceType88 {
+    User = "User", 
+    Main = "Main", 
+}
+
 export enum SalesSummaryDatePeriod {
     _1 = 1, 
     _2 = 2, 
@@ -50301,17 +51073,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType84 {
+export enum InstanceType89 {
     User = "User", 
     Main = "Main", 
 }
 
-export enum InstanceType85 {
+export enum InstanceType90 {
     User = "User", 
     Main = "Main", 
 }
 
-export enum InstanceType86 {
+export enum InstanceType91 {
     User = "User", 
     Main = "Main", 
 }
