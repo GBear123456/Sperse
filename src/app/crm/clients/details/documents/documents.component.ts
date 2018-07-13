@@ -187,6 +187,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     }
 
     ngOnDestroy() {
+        if (this.openDocumentMode) {
+            this.closeDocument();
+        }
     }
 
     fileSelected($event) {
