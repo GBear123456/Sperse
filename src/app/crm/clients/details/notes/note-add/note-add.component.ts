@@ -17,12 +17,12 @@ import * as _ from 'underscore';
 export class NoteAddComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input()
     set customerInfo(customerInfo: any) {
-        if (customerInfo instanceof CustomerInfoDto) {
+        //if (customerInfo instanceof CustomerInfoDto) {
             let orgContact = customerInfo.organizationContactInfo,
                 contacts = customerInfo.contactPersons;
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
-        }
+        //}
     }
 
     @Output() onAdded: EventEmitter<any> = new EventEmitter();
