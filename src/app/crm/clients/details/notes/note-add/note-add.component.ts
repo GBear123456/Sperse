@@ -1,37 +1,41 @@
+/** Core imports */
+import { Component, EventEmitter, Input, Injector, ViewChild, Output } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { DxDateBoxComponent } from 'devextreme-angular';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { Component, EventEmitter, Input, Injector, OnInit, Output, AfterViewInit, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { MatDialog/*, MatDialogRef, MAT_DIALOG_DATA*/ } from '@angular/material';
 import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
-    UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
-import * as _ from 'underscore';
 
 @Component({
     selector: 'note-add',
     templateUrl: './note-add.component.html',
     styleUrls: ['./note-add.component.less'],
-    providers: [NotesServiceProxy, PhoneFormatPipe]
+    providers: [ NotesServiceProxy, PhoneFormatPipe ]
 })
-export class NoteAddComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class NoteAddComponent extends AppComponentBase  {
+    @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
+    @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
     @Input()
     set customerInfo(customerInfo: any) {
-        //if (customerInfo instanceof CustomerInfoDto) {
-            let orgContact = customerInfo.organizationContactInfo,
+        if (customerInfo.contactPersons) {
+            this._customerInfo = customerInfo;
+            let orgContact = <any>customerInfo.organizationContactInfo,
                 contacts = customerInfo.contactPersons;
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
-        //}
+        }
     }
 
     @Output() onAdded: EventEmitter<any> = new EventEmitter();
-
-    //public dialogRef: MatDialogRef<NoteAddDialogComponent>;
-    public data: any;
-
-    private elementRef: ElementRef;
-    //private slider: any;
+    private _customerInfo: CustomerInfoDto;
     private validator: any;
 
     masks = AppConsts.masks;
@@ -61,11 +65,6 @@ export class NoteAddComponent extends AppComponentBase implements OnInit, AfterV
         private _contactPhoneService: ContactPhoneServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        //this.data = injector.get(MAT_DIALOG_DATA);
-        //this.elementRef = injector.get(ElementRef);
-        //this.dialogRef = <any>injector.get(MatDialogRef);
-
         _notesService.getNoteTypes().subscribe((result) => {
             if (result.length) {
                 this.type = result[0].id;
@@ -74,44 +73,10 @@ export class NoteAddComponent extends AppComponentBase implements OnInit, AfterV
         });
     }
 
-    ngOnInit() {
-        //this.dialogRef.disableClose = true;
-        //this.slider = this.elementRef.nativeElement.closest('.cdk-overlay-pane');
-        //this.slider.classList.add('hide');
-        //this.dialogRef.updateSize('0px', '0px');
-        //this.dialogRef.updatePosition({
-         //   top: '157px',
-         //   right: '-100vw'
-        //});
-    }
-
-    ngAfterViewInit() {
-        //setTimeout(() => {
-           // this.slider.classList.remove('hide');
-            //this.dialogRef.updateSize('401px', '100vh');
-            //setTimeout(() => {
-                // this.dialogRef.updatePosition({
-                //     top: '157px',
-                //     right: '0px'
-                // });
-            //}, 100);
-        //});
-    }
-
-    // close(closeData = null) {
-    //     this.dialogRef.updatePosition({
-    //         top: '157px',
-    //         right: '-100vw'
-    //     });
-    //     setTimeout(() => {
-    //         this.dialogRef.close(closeData);
-    //     }, 300);
-    // }
-
-    saveNote($event) {
+    saveNote() {
         if (this.validator.validate().isValid)
             this._notesService.createNote(CreateNoteInput.fromJS({
-                customerId: this.data.customerInfo.id,
+                customerId: this._customerInfo.id,
                 text: this.summary,
                 contactId: this.contact,
                 contactPhoneId: this.phone || undefined,
@@ -120,10 +85,17 @@ export class NoteAddComponent extends AppComponentBase implements OnInit, AfterV
                 dateTime: this.currentDate || undefined,
                 addedByUserId: parseInt(this.addedBy) || undefined
             })).subscribe(() => {
+                /** Clear the form data */
+                this.resetFields();
+                this.validator.reset();
                 this.onAdded.emit();
-                //this.data.refreshParent();
-                //this.close();
             });
+    }
+
+    resetFields() {
+        this.summary = null;
+        this.followUpDateBox.instance.reset();
+        this.currentDateBox.instance.reset();
     }
 
     onUserSearch($event) {
@@ -196,6 +168,6 @@ export class NoteAddComponent extends AppComponentBase implements OnInit, AfterV
                     this.onContactChanged({value: this.contact});
                 }
             }
-        }, error => {});
+        });
     }
 }
