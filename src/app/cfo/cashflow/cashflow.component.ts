@@ -121,7 +121,7 @@ export class CellOptions {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CategoryTreeServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
