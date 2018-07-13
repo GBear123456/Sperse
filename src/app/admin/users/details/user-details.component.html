@@ -9,7 +9,7 @@
         <operations-widget (onDelete)="delete()"></operations-widget>
     </div>
     <mat-sidenav-container>
-        <mat-sidenav mode="side" opened="true" align="start">
+        <mat-sidenav mode="side" opened="true" position="start">
             <div class="short-contact">
                 <div class="small-phones">
                     <div class="phone">
@@ -28,7 +28,7 @@
         <div class="main-content">
             <router-outlet></router-outlet>
         </div>
-        <mat-sidenav class="right_sidenav" mode="side" align="end" [opened]="rightPanelOpened">
+        <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightPanelOpened">
             <mat-tab-group>
                 <mat-tab label="{{l('User Account')}}">
                     <dx-scroll-view showScrollbar="onHover">
@@ -42,6 +42,11 @@
                 <mat-tab label="{{l('Permissions')}}">
                     <dx-scroll-view showScrollbar="onHover">
                         <permission-tree #permissionTree></permission-tree>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="{{l('OrganizationUnits')}}">
+                    <dx-scroll-view showScrollbar="onHover">
+                        <oranization-units-tree #organizationTree></oranization-units-tree>
                     </dx-scroll-view>
                 </mat-tab>
             </mat-tab-group>
