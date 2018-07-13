@@ -1,5 +1,5 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
@@ -24,7 +24,7 @@ import * as _ from 'underscore';
         '(window:click)': 'toogleSearchInput($event)'
     }
 })
-export class CategorizationComponent extends CFOComponentBase implements OnInit {
+export class CategorizationComponent extends CFOComponentBase implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -113,6 +113,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     ngOnInit() {
         this.initSettings();
         this.refreshCategories(true);
+
+        if (!this.isInstanceAdmin)
+            this.showAddEntity = false;
+
         this.initToolbarConfig();
 
         this.transactionsCountDataSource = new DataSource({
@@ -126,6 +130,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             },
             onChanged: this.setTransactionsCount.bind(this)
         });
+
+    }
+
+    ngAfterViewInit(): void {
+        if (this.isInstanceAdmin) {
+            this.categoryList.editing.allowAdding = true;
+            this.categoryList.editing.allowUpdating = true;
+            this.categoryList.instance.refresh();
+        }
     }
 
     initToolbarConfig() {
@@ -397,33 +410,35 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         };
 
         let element = <any>$($event.element);
-        element.find('.dx-data-row')
-            .off('dragstart').off('dragend')
-            .on('dragstart', (e) => {
-                if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
-                    e.originalEvent.preventDefault();
-                    return;
-                }
+        if (this.isInstanceAdmin) {
+            element.find('.dx-data-row')
+                .off('dragstart').off('dragend')
+                .on('dragstart', (e) => {
+                    if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
+                        e.originalEvent.preventDefault();
+                        return;
+                    }
 
-                sourceCategory = {};
-                sourceCategory.element = e.currentTarget;
-                sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
-                let categoryName = this.categorization.categories[sourceCategory.key].name;
-                e.originalEvent.dataTransfer.setData('Text', categoryName);
-                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                e.originalEvent.dropEffect = 'move';
+                    sourceCategory = {};
+                    sourceCategory.element = e.currentTarget;
+                    sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+                    let categoryName = this.categorization.categories[sourceCategory.key].name;
+                    e.originalEvent.dataTransfer.setData('Text', categoryName);
+                    e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                    e.originalEvent.dropEffect = 'move';
 
-                sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
-                let droppableQuery: string;
-                if (sourceCategory.cashType == 'unknown')
-                    droppableQuery = 'dx-tree-list .dx-data-row';
-                else
-                    droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
+                    sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
+                    let droppableQuery: string;
+                    if (sourceCategory.cashType == 'unknown')
+                        droppableQuery = 'dx-tree-list .dx-data-row';
+                    else
+                        droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
 
-                $(droppableQuery).addClass('droppable');
-            }).on('dragend', (e) => {
-                clearDragAndDrop();
-            });
+                    $(droppableQuery).addClass('droppable');
+                }).on('dragend', (e) => {
+                    clearDragAndDrop();
+                });
+        }
 
         element.find('.category-drop-area')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
@@ -859,7 +874,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             this.categoryList.instance.deselectRows([$event.key]);
         this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
-        if ($event.level >= 0) {
+        if (this.isInstanceAdmin && $event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.event.originalEvent.preventDefault();

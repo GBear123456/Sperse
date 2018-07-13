@@ -25,7 +25,7 @@
                     <span class="category-type">{{l('Classified_Transactions')}}</span>
                     <span class="synch-status count"><a (click)="filterTransactions(true)">{{categorySynchData?.classifiedTransactionCount | number : '1.0-2'}}</a></span>
                     <span class="synch-status percent">{{categorySynchData?.classifiedTransactionPercent | number : '1.0-0'}}%</span>
-                    <a (click)="openDialog();" class="small-button btn-layout">
+                    <a *ngIf="isInstanceAdmin" (click)="openDialog();" class="small-button btn-layout">
                         {{l('Reset_Сlassifications')}}
                     </a>
                 </li>
@@ -33,7 +33,7 @@
                     <span class="category-type">{{l('Unclassified_Transactions')}}</span>
                     <span class="synch-status count"><a (click)="filterTransactions(false)">{{categorySynchData?.unclassifiedTransactionCount | number : '1.0-2'}}</a></span>
                     <span class="synch-status percent">{{categorySynchData?.unclassifiedTransactionPercent | number : '1.0-0'}}%</span>
-                    <a (click)="autoClassify();" class="small-button btn-layout">
+                    <a *ngIf="isInstanceAdmin" (click)="autoClassify();" class="small-button btn-layout">
                         {{l('Auto_Сlassify')}}
                     </a>
                 </li>

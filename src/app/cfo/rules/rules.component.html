@@ -8,7 +8,6 @@
                           [hoverStateEnabled]="true"
                           [dataSource]="ruleTreeListDataSource"
                           [sorting]="{mode: 'none'}"
-                          [editing]="{allowAdding: true, allowDeleting: true, allowUpdating: true, mode: 'popup', popup: {onShowing: onShowingPopup, height: '0px', width: '0px'}, texts: {confirmDeleteMessage: ''}}"
                           [selection]="{allowSelectAll: false, mode: 'none'}"
                           [autoExpandAll]="true"
                           [showColumnLines]="false"
@@ -19,6 +18,9 @@
                           keyExpr="id"
                           parentIdExpr="parentId"
                           [rootValue]="0">
+                <dxo-editing mode="popup" [allowAdding]="false" [allowDeleting]="false" [allowUpdating]="false" [texts]="{confirmDeleteMessage: ''}">
+                    <dxo-popup [onShowing]="onShowingPopup" height="0px" width="0px"></dxo-popup>
+                </dxo-editing>
 
                 <dxi-column dataField="isActive" caption="{{l('Status')}}"></dxi-column>
                 <dxi-column dataField="name" caption="{{l('RuleName')}}"></dxi-column>
