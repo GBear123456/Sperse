@@ -289,6 +289,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
+        this.clearToolbarSelectedItems();
         this.wizard.reset(callback);
     }
 
@@ -310,6 +311,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             });
                             if (this.importedCount > 0) {
                                 this.wizard.showFinishStep();
+                                this.clearToolbarSelectedItems();
                                 (<any>this._reuseService).invalidate('leads');
                             } else
                                 this.message.error(res[0].errorMessage);
@@ -329,11 +331,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         result.leads = [];
         result.lists = this.listsComponent.selectedItems;
         result.tags = this.tagsComponent.selectedItems;
-
-        this.listsComponent.selectedLists.forEach(item => {
-            let obj  = this.listsComponent.list.find(el => el.id == item);
-            result.lists.push(new CustomerListInput({ name: obj.name }));
-        });
 
         data.forEach(v => {
             let lead = new ImportLeadInput();
@@ -582,5 +579,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
+    }
+
+    clearToolbarSelectedItems() {
+        this.stagesComponent.selectedItems = [];
+        this.starsListComponent.selectedItemKey = [];
+        this.userAssignmentComponent.selectedKeys = [this.userId];
+        this.listsComponent.reset();
+        this.tagsComponent.reset();
+        this.ratingComponent.ratingValue = this.defaultRating;
     }
 }

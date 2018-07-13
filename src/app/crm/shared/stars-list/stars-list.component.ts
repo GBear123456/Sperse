@@ -48,9 +48,6 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item.id;
-            }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
@@ -145,6 +142,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSelectionChange(event) {
+        this.selectedItemKey = event && event.addedItems.length ? event.addedItems[0].id : undefined;
         this.onSelectionChanged.emit(event);
     }
 
