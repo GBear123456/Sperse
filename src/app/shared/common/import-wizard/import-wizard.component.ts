@@ -380,7 +380,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     checkIfFileHasHeaders() {
         if (this.fileData.data.length) {
             const constNames = ['name', 'email', 'number', 'phone'];
-            let fileHasHeader = true;
+            let namesFoundCount = 0;
 
             for (let i = 0; i < constNames.length; i++) {
                 let nameIsPresent = false;
@@ -388,13 +388,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
                     if (val.toLowerCase().indexOf(constNames[i]) != -1)
                         nameIsPresent = true;
                 });
-                if (!nameIsPresent) {
-                    fileHasHeader = false;
-                    break;
+                if (nameIsPresent) {
+                    namesFoundCount++;
                 }
             }
 
-            this.fileHasHeader = fileHasHeader;
+            this.fileHasHeader = namesFoundCount >= 2;
         }
     }
 
