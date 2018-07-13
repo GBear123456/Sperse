@@ -1,6 +1,6 @@
-import { Component, Injector, Input, Output, ViewChild, EventEmitter, ElementRef } from '@angular/core';
+import { Component, Injector, Input, Output, ViewChild, OnInit, EventEmitter, ElementRef } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy, SyncAccountBankDto, UpdateBankAccountDto, RenameSyncAccountInput } from 'shared/service-proxies/service-proxies';
-import { AppComponentBase } from 'shared/common/app-component-base';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 import Form from 'devextreme/ui/form';
@@ -12,9 +12,9 @@ import { AppConsts } from '@shared/AppConsts';
     selector: 'bank-accounts-widget',
     templateUrl: './bank-accounts-widget.component.html',
     styleUrls: ['./bank-accounts-widget.component.less'],
-    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
+    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy]
 })
-export class BankAccountsWidgetComponent extends AppComponentBase {
+export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit {
     private initBankAccountsTimeout: any;
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
@@ -74,17 +74,17 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
     instanceId;
 
     /** Default empty business entity */
-    businessEntities = [{ id: null, name: ''}];
+    businessEntities = [{ id: null, name: '' }];
 
     accountsTypes;
     cfoService: CFOService;
 
     isContextMenuVisible = false;
     contextMenuItems = [
-        { text: this.l('Edit_Name')},
-        { text: this.l('Sync_Now')},
-        { text: this.l('Update_Info')},
-        { text: this.l('Delete')}
+        { text: this.l('Edit_Name') },
+        { text: this.l('Sync_Now') },
+        { text: this.l('Update_Info') },
+        { text: this.l('Delete') }
     ];
     syncAccountId: number;
     syncAccountIds = [];
@@ -100,10 +100,18 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
         private _syncServiceProxy: SyncServiceProxy,
 
     ) {
-        super(injector, AppConsts.localization.CFOLocalizationSourceName);
+        super(injector);
         this.allAccountTypesFilter = this.l('AllAccounts');
         this.selectedBankAccountType = this.allAccountTypesFilter;
         this.cfoService = injector.get(CFOService, null);
+    }
+
+    ngOnInit(): void {
+        if (!this.isInstanceAdmin) {
+            this.contextMenuItems = [
+                { text: this.l('Sync_Now') }
+            ];
+        }
     }
 
     rowPrepared(e) {
@@ -325,10 +333,10 @@ export class BankAccountsWidgetComponent extends AppComponentBase {
             /** @todo update when api will be ready */
             //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
             forkJoin(businessEntitiesObservable/*, accountsTypesObservable*/)
-                        .subscribe(result => {
-                            this.businessEntities = this.businessEntities.concat(result[0]);
-                            //this.accountsTypes = result[1];
-                        });
+                .subscribe(result => {
+                    this.businessEntities = this.businessEntities.concat(result[0]);
+                    //this.accountsTypes = result[1];
+                });
         }
     }
 
