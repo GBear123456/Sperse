@@ -41,14 +41,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     public headlineConfig = {
         names: [this.l('Manage rules')],
         iconSrc: 'assets/common/icons/manage-icon.svg',
-        buttons: [
-            {
-                enabled: true,
-                action: this.showEditDialog.bind(this),
-                lable: this.l('+ Add New')
-            }
-        ]
-    };
+        buttons: []
+    };;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -144,11 +138,11 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     this.startLoading(true);
                     this._ClassificationService.deleteRule(InstanceType[this.instanceType], this.instanceId,
                         [], ApplyOption[dialogData.reclassify ? 'MatchedAndUnclassified' : 'None'], itemId)
-                            .subscribe((id) => {
-                                this.lastRemovedItemID = itemId;
-                                $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
-                                this.finishLoading(true);
-                            });
+                        .subscribe((id) => {
+                            this.lastRemovedItemID = itemId;
+                            $event.component.deleteRow($event.component.getRowIndexByKey(itemId));
+                            this.finishLoading(true);
+                        });
                 }
             });
     }
@@ -182,7 +176,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     caption: 'CreationDate',
                     field: 'creationTime',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: {method: 'getFilterByDate'}
+                    options: { method: 'getFilterByDate' }
                 })
             ]
         );
@@ -213,6 +207,19 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit(): void {
+        if (this.isInstanceAdmin) {
+            this.treeList.editing.allowAdding = true;
+            this.treeList.editing.allowDeleting = true;
+            this.treeList.editing.allowUpdating = true;
+            this.treeList.instance.refresh();
+
+            this.headlineConfig.buttons.push({
+                enabled: true,
+                action: this.showEditDialog.bind(this),
+                lable: this.l('+ Add New')
+            })
+        };
+
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }

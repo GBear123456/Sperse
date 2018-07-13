@@ -824,8 +824,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellClick($event) {
         if ($event.rowType === 'data') {
-            if (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
-                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId)) {
+            if (this.isInstanceAdmin &&
+                (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
+                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {
                     panelClass: 'slider',
                     data: {

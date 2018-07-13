@@ -31,9 +31,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     private lastSelectedBusinessEntity;
 
     constructor(injector: Injector,
-            public dialog: MatDialog,
-            private _businessEntityService: BusinessEntityServiceProxy,
-            private _router: Router) {
+        public dialog: MatDialog,
+        private _businessEntityService: BusinessEntityServiceProxy,
+        private _router: Router) {
         super(injector);
         this.rootComponent = this.getRootComponent();
     }
@@ -66,6 +66,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 }
             }
         };
+
+        this.isAddButtonDisabled = !this.isInstanceAdmin;
     }
 
     onNextClick() {
@@ -74,20 +76,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     onToolbarPreparing(e) {
         e.toolbarOptions.items.unshift(
-            {
-                location: 'before',
-                template: 'toolbarTitleTemplate'
-            },
-            {
-                location: 'after',
-                widget: 'dxButton',
-                options: {
-                    text: this.l('AddEntity'),
-                    onClick: this.addEntity.bind(this),
-                    bindingOptions: {'disabled': 'isAddButtonDisabled'},
-                    elementAttr: {'class': 'link'}
-                }
-            },
             {
                 location: 'after',
                 widget: 'dxButton',
@@ -98,6 +86,24 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 }
             }
         );
+        if (!this.isAddButtonDisabled) {
+            e.toolbarOptions.items.unshift({
+                location: 'after',
+                widget: 'dxButton',
+                options: {
+                    text: this.l('AddEntity'),
+                    onClick: this.addEntity.bind(this),
+                    bindingOptions: { 'disabled': this.isAddButtonDisabled },
+                    elementAttr: { 'class': 'link' }
+                }
+            });
+        }
+
+        e.toolbarOptions.items.unshift(
+            {
+                location: 'before',
+                template: 'toolbarTitleTemplate'
+            });
     }
 
     onCellPrepared($event) {
@@ -218,7 +224,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         }
 
         let businessEntityId = event.data && event.data.Id;
-        if (businessEntityId) {
+        if (businessEntityId && !this.isAddButtonDisabled) {
             this.showEditDialog(businessEntityId);
         }
     }

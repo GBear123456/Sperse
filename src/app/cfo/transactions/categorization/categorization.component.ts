@@ -1,12 +1,12 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Input, Output, EventEmitter, Injector, OnInit, ViewChild, HostBinding } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { DxTreeListComponent } from 'devextreme-angular';
 import { FiltersService } from '@shared/filters/filters.service';
 import {
-    ClassificationServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
+    CategoryTreeServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
     GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
@@ -19,12 +19,12 @@ import * as _ from 'underscore';
     selector: 'categorization',
     templateUrl: 'categorization.component.html',
     styleUrls: ['categorization.component.less'],
-    providers: [ClassificationServiceProxy],
+    providers: [CategoryTreeServiceProxy],
     host: {
         '(window:click)': 'toogleSearchInput($event)'
     }
 })
-export class CategorizationComponent extends CFOComponentBase implements OnInit {
+export class CategorizationComponent extends CFOComponentBase implements OnInit, AfterViewInit {
     @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
     @Output() close: EventEmitter<any> = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -104,7 +104,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _filtersService: FiltersService,
-        private _classificationServiceProxy: ClassificationServiceProxy) {
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -113,6 +113,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     ngOnInit() {
         this.initSettings();
         this.refreshCategories(true);
+
+        if (!this.isInstanceAdmin)
+            this.showAddEntity = false;
+
         this.initToolbarConfig();
 
         this.transactionsCountDataSource = new DataSource({
@@ -126,6 +130,15 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             },
             onChanged: this.setTransactionsCount.bind(this)
         });
+
+    }
+
+    ngAfterViewInit(): void {
+        if (this.isInstanceAdmin) {
+            this.categoryList.editing.allowAdding = true;
+            this.categoryList.editing.allowUpdating = true;
+            this.categoryList.instance.refresh();
+        }
     }
 
     initToolbarConfig() {
@@ -397,33 +410,35 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         };
 
         let element = <any>$($event.element);
-        element.find('.dx-data-row')
-            .off('dragstart').off('dragend')
-            .on('dragstart', (e) => {
-                if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
-                    e.originalEvent.preventDefault();
-                    return;
-                }
+        if (this.isInstanceAdmin) {
+            element.find('.dx-data-row')
+                .off('dragstart').off('dragend')
+                .on('dragstart', (e) => {
+                    if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
+                        e.originalEvent.preventDefault();
+                        return;
+                    }
 
-                sourceCategory = {};
-                sourceCategory.element = e.currentTarget;
-                sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
-                let categoryName = this.categorization.categories[sourceCategory.key].name;
-                e.originalEvent.dataTransfer.setData('Text', categoryName);
-                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                e.originalEvent.dropEffect = 'move';
+                    sourceCategory = {};
+                    sourceCategory.element = e.currentTarget;
+                    sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+                    let categoryName = this.categorization.categories[sourceCategory.key].name;
+                    e.originalEvent.dataTransfer.setData('Text', categoryName);
+                    e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                    e.originalEvent.dropEffect = 'move';
 
-                sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
-                let droppableQuery: string;
-                if (sourceCategory.cashType == 'unknown')
-                    droppableQuery = 'dx-tree-list .dx-data-row';
-                else
-                    droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
+                    sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
+                    let droppableQuery: string;
+                    if (sourceCategory.cashType == 'unknown')
+                        droppableQuery = 'dx-tree-list .dx-data-row';
+                    else
+                        droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
 
-                $(droppableQuery).addClass('droppable');
-            }).on('dragend', (e) => {
-                clearDragAndDrop();
-            });
+                    $(droppableQuery).addClass('droppable');
+                }).on('dragend', (e) => {
+                    clearDragAndDrop();
+                });
+        }
 
         element.find('.category-drop-area')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
@@ -535,7 +550,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         if (isMerge) {
             abp.message.confirm(this.l('CategoryMergeConfirmation', targetName), this.l('CategoryMergeConfirmationTitle'), (result) => {
                 if (result) {
-                    this._classificationServiceProxy.deleteCategory(
+                    this._categoryTreeServiceProxy.deleteCategory(
                         InstanceType[this.instanceType],
                         this.instanceId,
                         moveToId, false, sourceId)
@@ -550,7 +565,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         } else {
             abp.message.confirm(this.l('CategoryMoveConfirmation', sourceCategory.name, targetName), this.l('CategoryMoveConfirmationTitle'), (result) => {
                 if (result) {
-                    this._classificationServiceProxy.updateCategory(
+                    this._categoryTreeServiceProxy.updateCategory(
                         InstanceType[this.instanceType],
                         this.instanceId,
                         new UpdateCategoryInput({
@@ -571,7 +586,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
 
     refreshCategories(expandInitial: boolean = false) {
         this.startLoading();
-        this._classificationServiceProxy.getCategoryTree(
+        this._categoryTreeServiceProxy.get(
             InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
@@ -719,7 +734,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     updateAccountingType($event) {
         let id = parseInt($event.key),
             accounting = this.categorization.accountingTypes[id];
-        this._classificationServiceProxy.updateAccountingType(
+        this._categoryTreeServiceProxy.updateAccountingType(
             InstanceType[this.instanceType], this.instanceId,
             UpdateAccountingTypeInput.fromJS({
                 id: id,
@@ -739,7 +754,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
         } else {
             let category = this.categorization.categories[$event.key];
             $event.element.querySelector('.dx-treelist-focus-overlay').style.display = '';
-            this._classificationServiceProxy.updateCategory(
+            this._categoryTreeServiceProxy.updateCategory(
                 InstanceType[this.instanceType], this.instanceId,
                 UpdateCategoryInput.fromJS({
                     id: $event.key,
@@ -765,7 +780,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             return;
         }
 
-        this._classificationServiceProxy.createCategory(
+        this._categoryTreeServiceProxy.createCategory(
             InstanceType[this.instanceType], this.instanceId,
             CreateCategoryInput.fromJS({
                 accountingTypeId: hasParentCategory ? this.categorization
@@ -797,8 +812,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             data: dialogData
         }).afterClosed().subscribe((result) => {
             if (result)
-                this._classificationServiceProxy[isAccountingType ? 'deleteAccountingType' : 'deleteCategory'].call(
-                    this._classificationServiceProxy,
+                this._categoryTreeServiceProxy[isAccountingType ? 'deleteAccountingType' : 'deleteCategory'].call(
+                    this._categoryTreeServiceProxy,
                     InstanceType[this.instanceType],
                     this.instanceId,
                     dialogData.categoryId, dialogData.deleteAllReferences, parseInt(itemId))
@@ -859,7 +874,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
             this.categoryList.instance.deselectRows([$event.key]);
         this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
-        if ($event.level >= 0) {
+        if (this.isInstanceAdmin && $event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.event.originalEvent.preventDefault();
@@ -933,7 +948,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit 
     }
 
     insertAccountingType(typeId, name) {
-        this._classificationServiceProxy.createAccountingType(
+        this._categoryTreeServiceProxy.createAccountingType(
             InstanceType[this.instanceType], this.instanceId,
             CreateAccountingTypeInput.fromJS({
                 cashflowTypeId: typeId,

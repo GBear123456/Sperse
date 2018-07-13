@@ -27,6 +27,7 @@ export class BankAccountsQuovoComponent implements OnInit  {
         this._syncServiceProxy.getSetupAccountsLink(
             InstanceType[this._cfoSerfice.instanceType],
             this._cfoSerfice.instanceId,
+            'Q',
             AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',
             ''
         ).subscribe((data) => {
