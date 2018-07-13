@@ -18,7 +18,7 @@
                     [hoverStateEnabled]="true"
                     [pager]="defaultGridPagerConfig"
                     (onCellClick)="onCellClick($event)"
-                    (onContentReady)="onContentReady($event)"
+                    (onContentReady)="onContentReady()"
                     (onDataErrorOccurred)="httpConfig.handleError($event.error)"
                     (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
