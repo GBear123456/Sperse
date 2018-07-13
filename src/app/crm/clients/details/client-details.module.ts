@@ -48,6 +48,7 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
@@ -99,7 +100,8 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     RatingComponent,
     StarsListComponent,
     StaticListComponent,
-    DocumentsComponent
+    DocumentsComponent,
+    UploadDocumentDialogComponent
   ],
   imports: [
     FormsModule,
@@ -155,7 +157,8 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddComponent,
-    LeadCancelDialogComponent
+    LeadCancelDialogComponent,
+    UploadDocumentDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent
