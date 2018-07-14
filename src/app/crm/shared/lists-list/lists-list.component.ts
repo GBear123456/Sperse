@@ -68,8 +68,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                             if (isConfirmed)
                                 this.process(isRemove);
                             else
-                                if (this.bulkUpdateMode)
-                                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                                this.listComponent.deselectAll();
                         }
                     );
                 else
@@ -86,7 +85,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         if (this.bulkUpdateMode) {
             if (isRemove)
                 this._listsService.removeCustomersFromLists(customerIds, this.selectedLists
-                ).subscribe((result) => {
+                ).finally(() => {
+                    this.listComponent.deselectAll();
+                }).subscribe((result) => {
                     this.notify.success(this.l('ListsUnassigned'));
                 });
             else
@@ -94,7 +95,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     customerIds: customerIds,
                     lists: lists 
                 })).finally(() => {
-                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                    this.listComponent.deselectAll();
                 }).subscribe((result) => {
                     this.notify.success(this.l('ListsAssigned'));
                 });
