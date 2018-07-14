@@ -80,7 +80,10 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
             this._ratingService.rateCustomer(RateCustomerInput.fromJS({
                 customerId: this.selectedKeys[0],
                 ratingId: this.ratingValue
-            })).subscribe((result) => {
+            })).finally(() => {
+                if (!this.ratingValue)
+                    this.ratingValue = this.ratingMin;
+            }).subscribe((result) => {
                 this.notify.success(this.l('CustomersRated'));
             });
     }
@@ -88,7 +91,6 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     clear() {
         this.ratingValue = undefined;
         this.apply();
-        this.ratingValue = this.ratingMin;
     }
 
     clearFilterHighlight() {
