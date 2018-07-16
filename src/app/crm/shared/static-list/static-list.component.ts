@@ -105,4 +105,8 @@ export class StaticListComponent extends AppComponentBase {
     onSelectionChange(event) {
         this.onSelectionChanged.emit(event);
     }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.BulkUpdates');
+    }
 }
