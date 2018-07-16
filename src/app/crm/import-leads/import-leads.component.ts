@@ -265,8 +265,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let parsed = addressParser.parseLocation(fullAddress);
 
         if (parsed) {
-            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);
-            this.setFieldIfDefined(parsed.state, field.mappedField + '_stateCode', dataSource);
+            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);            
+            this.setFieldIfDefined(parsed.state, field.mappedField + 
+                (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateCode'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
             this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
             this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street, 
@@ -395,8 +396,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     checkSimilarRecord = (record1, record2) => {
-        record2.compared = record2[this.FIRST_NAME_FIELD]
-            + ' ' + record2[this.LAST_NAME_FIELD];
+        record2.compared = (record2[this.FIRST_NAME_FIELD] || ''
+            + ' ' + record2[this.LAST_NAME_FIELD] || '').trim();
 
         return !this.compareFields.every((fields) => {
             return fields.every((field1) => {
