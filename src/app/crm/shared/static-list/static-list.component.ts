@@ -1,4 +1,4 @@
-import { Component, Injector, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 
@@ -29,6 +29,7 @@ export class StaticListComponent extends AppComponentBase {
     listComponent: any;
     tooltipVisible: boolean;
     @Input() selectedItems: any = [];
+    @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
 
     constructor(
         injector: Injector,
