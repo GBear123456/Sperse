@@ -25,16 +25,51 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
 
     buttonClick(): void {
         abp.ui.setBusy();
-        this._quickBookService.getQuickBookConnectionLink(InstanceType[this.instanceType], this.instanceId)
-            .pipe(finalize(() => { abp.ui.clearBusy(); }))
+        this.checkConnection(true);
+    }
+
+    checkConnection(tryNewConnect: boolean) {
+        this._quickBookService.checkToken(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
-                if (result.connectionLink) {
-                    window.open(result.connectionLink, 'Quick Book Connection', 'menubar=0,scrollbars=1,width=780,height=900,top=10');
+                if (result) {
+                    this.syncCoA();
+                }
+                else {
+                    if (tryNewConnect)
+                        this.newConnect();
+                    else
+                        this.onDialogClose(null);
                 }
             });
     }
 
+    newConnect() {
+        this._quickBookService.getQuickBookConnectionLink(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                if (result.connectionLink) {
+                    let qbWindow = window.open(result.connectionLink, 'Quick Book Connection', 'menubar=0,scrollbars=1,width=780,height=900,top=10');
+                    this.checkWindowClose(qbWindow);
+                }
+            });
+    }
+
+    syncCoA() {
+        this._quickBookService.syncChartOfAccounts(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                this.onDialogClose(null);
+            });
+    }
+
+    checkWindowClose(qbWindow: Window) {
+        if (qbWindow.closed)
+            this.checkConnection(false);
+        else {
+            setTimeout(() => { this.checkWindowClose(qbWindow); }, 100);
+        }
+    }
+
     private onDialogClose(e) {
+        abp.ui.clearBusy(); 
         this.onClose.emit(e);
     }
 }

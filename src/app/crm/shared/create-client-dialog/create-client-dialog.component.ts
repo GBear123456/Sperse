@@ -333,9 +333,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             return this.saveContextComponent
                 .instance.option('visible', true);
 
-        if (!this.person.firstName || !this.person.lastName) {
+        if (!this.person.firstName && !this.person.lastName && !this.company) {
             this.data.isTitleValid = false;
-            return this.notify.error(this.l('FullNameIsRequired'));
+            return this.notify.error(this.l('NameFieldsValidationError'));
         }
 
         if (!ValidationHelper.ValidateName(this.data.title)) {

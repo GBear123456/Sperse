@@ -34,7 +34,8 @@ import {
     DxTagBoxModule,
     DxResizableModule,
     DxRangeSliderModule,
-    DxSwitchModule
+    DxSwitchModule,
+    DxPopupModule
 } from 'devextreme-angular';
 import { ModalModule } from 'ngx-bootstrap';
 
@@ -79,7 +80,11 @@ import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts-quovo/bank-accounts-quovo.component';
-import { AddAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-account-button/add-account-button.component';
+import { AddQuovoAccountButtonComponent } from 'app/cfo/shared/common/quovo/add-quovo-account-button/add-quovo-account-button.component';
+import { XeroLoginButtonComponent } from 'app/cfo/shared/common/xero/xero-login/xero-login.component';
+import { XeroLoginDialogComponent } from 'app/cfo/shared/common/xero/xero-login-dialog/xero-login-dialog.component';
+import { ImportXeroChartOfAccountsButtonComponent } from 'app/cfo/shared/common/xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
+import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
 
@@ -121,7 +126,8 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         DashboardWidgetsModule,
         DxRangeSliderModule,
         DxSwitchModule,
-        AngularGooglePlaceModule
+        AngularGooglePlaceModule,
+        DxPopupModule
     ],
     declarations: [
         StartComponent,
@@ -156,6 +162,10 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         ReportPeriodComponent,
         BankAccountsQuovoComponent,
         AddAccountButtonComponent,
+        XeroLoginButtonComponent,
+        XeroLoginDialogComponent,
+        ImportXeroChartOfAccountsButtonComponent,
+        AddQuovoAccountButtonComponent,
         ImportFromQuickBooksButtonComponent,
         UsersDialogComponent
     ],

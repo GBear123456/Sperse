@@ -28,7 +28,7 @@ import { NotesComponent } from './notes/notes.component';
                     {path: 'referral-history', component: ReferralHistoryComponent },
                     {path: 'payment-information', component: PaymentInformationComponent },
                     {path: 'activity-logs', component: ActivityLogsComponent },
-                    {path: 'notes', component: NotesComponent }
+                    {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
                 ]
               },
             {
@@ -42,7 +42,7 @@ import { NotesComponent } from './notes/notes.component';
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
                     {path: 'referral-history', component: ReferralHistoryComponent },
                     {path: 'activity-logs', component: ActivityLogsComponent },
-                    {path: 'notes', component: NotesComponent }
+                    {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
                 ]
             }
         ])

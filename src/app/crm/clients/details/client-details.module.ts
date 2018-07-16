@@ -25,7 +25,7 @@ import { StarsListComponent } from '../../shared/stars-list/stars-list.component
 
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
-import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { NoteAddComponent } from './notes/note-add/note-add.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -48,6 +48,7 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
@@ -92,14 +93,15 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent,
+    NoteAddComponent,
     TagsListComponent,
     ListsListComponent,
     UserAssignmentComponent,
     RatingComponent,
     StarsListComponent,
     StaticListComponent,
-    DocumentsComponent
+    DocumentsComponent,
+    UploadDocumentDialogComponent
   ],
   imports: [
     FormsModule,
@@ -154,8 +156,9 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent,
-    LeadCancelDialogComponent
+    NoteAddComponent,
+    LeadCancelDialogComponent,
+    UploadDocumentDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent

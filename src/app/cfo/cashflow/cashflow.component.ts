@@ -42,6 +42,7 @@ import {
     StatsDetailFilter,
     TransactionStatsDto,
     CashFlowForecastServiceProxy,
+    CategoryTreeServiceProxy,
     ClassificationServiceProxy,
     BankAccountsServiceProxy,
     GetCategoryTreeOutput,
@@ -120,7 +121,7 @@ export class CellOptions {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CategoryTreeServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -767,6 +768,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _filtersService: FiltersService,
                 private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
                 private _cacheService: CacheService,
+                private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
                 private _classificationServiceProxy: ClassificationServiceProxy,
                 private _bankAccountsServiceProxy: BankAccountsServiceProxy,
                 public dialog: MatDialog,
@@ -801,7 +803,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTreeObservable = this._classificationServiceProxy.getCategoryTree(InstanceType[this.instanceType], this.instanceId, false);
+        let getCategoryTreeObservable = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
@@ -2407,8 +2409,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getWeekHeaderCustomizer(): any {
         return (weekInfo: {value: string, valueText: string}) => {
             let weekInfoObj: WeekInfo = JSON.parse(weekInfo.value);
-            let startDate = moment(weekInfoObj.startDate).utc().format('DD.MM');
-            let endDate = moment(weekInfoObj.endDate).utc().format('DD.MM');
+            let startDate = moment(weekInfoObj.startDate).utc().format('MM.DD');
+            let endDate = moment(weekInfoObj.endDate).utc().format('MM.DD');
             let text = startDate === endDate ? startDate : `${startDate} - ${endDate}`;
             return text;
         };
@@ -4401,7 +4403,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         });
-        this.detailsContainsHistorical = this.statsDetailResult.some(item => !item.forecastId) ? 'always' : 'none';
+        this.detailsContainsHistorical = this.isInstanceAdmin && this.statsDetailResult.some(item => !item.forecastId) ? 'always' : 'none';
 
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);

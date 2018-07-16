@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{l("UploadDocument")}}</h2>
+<mat-dialog-content>    
+     <h3>
+         <span class="select-file-from-title" *ngIf="!file?.name">{{l("SelectFileFrom")}}</span>
+         <span class="selected-file-name" *ngIf="file?.name">{{ file.name }}</span>
+         <div class="file-upload">
+            <span class="text">{{l('Open')}}</span>
+            <input id="custom-input" type="file" (change)="fileChangeListener($event)">
+        </div>
+    </h3>
+    <p>
+        <dx-select-box
+            [dataSource]="documentTypes"
+            [(value)]="documentTypeId"
+            displayExpr="name"
+            valueExpr="id"
+            placeholder="Choose document type">
+        </dx-select-box>
+    </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+  <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ l('Upload') }}</button>
+</mat-dialog-actions>

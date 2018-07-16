@@ -262,6 +262,11 @@ export abstract class AppComponentBase {
             .style.display = 'none';
     }
 
+    invalidate() {
+        if (this.dataGrid)
+            this.dataGrid.instance.refresh();
+    }
+
     private getFilterExpression(colName: string, strategy: string, value: string): object {
         let el = {};
         el[colName] = {};

@@ -1,9 +1,8 @@
-<span class="close-note-dialog" (click)="close()"></span>
-<mat-dialog-content>
+<div class="content">
     <dx-scroll-view showScrollbar="onHover">
         <dx-validation-group (onInitialized)="initValidationGroup($event)">
             <div class="field type">
-                <dx-select-box      
+                <dx-select-box
                     [dataSource]="types"
                     [dropDownButtonTemplate]="''"
                     [displayExpr]="'name'"
@@ -13,10 +12,10 @@
             </div>
             <div class="field">
                 <label>{{l('Summary') | uppercase }}</label>
-                <dx-text-area [height]="'120px'" [(value)]="summary">
-                   <dx-validator>
-                       <dxi-validation-rule type="required" message="{{l('NoteIsRequired')}}"></dxi-validation-rule>
-                   </dx-validator>
+                <dx-text-area [height]="'100px'" [(value)]="summary">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{l('NoteIsRequired')}}"></dxi-validation-rule>
+                    </dx-validator>
                 </dx-text-area>
             </div>
             <div *ngIf="contacts.length > 1" class="field">
@@ -32,6 +31,7 @@
             <div class="field">
                 <label>{{l('FollowUpDate') | uppercase }}</label>
                 <dx-date-box
+                    #followUpDateBox
                     width="355px"
                     type="datetime"
                     [(value)]="followupDate">
@@ -53,6 +53,7 @@
                 <div class="field">
                     <label>{{l('Date') | uppercase }}</label>
                     <dx-date-box
+                        #currentDateBox
                         width="355px"
                         type="datetime"
                         [(value)]="currentDate">
@@ -74,7 +75,8 @@
             </div>
         </dx-validation-group>
     </dx-scroll-view>
-</mat-dialog-content>
-<mat-dialog-actions>
-    <button mat-button (click)="saveNote($event)" class="button-layout button-primary">{{l('AddNote')}}</button>
-</mat-dialog-actions>
+</div>
+
+<div class="add-note">
+    <button mat-button (click)="saveNote()" class="button-layout button-primary">{{l('AddNote')}}</button>
+</div>
