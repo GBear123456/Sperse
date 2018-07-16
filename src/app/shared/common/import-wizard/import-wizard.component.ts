@@ -36,6 +36,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
 
     public static readonly FieldSeparator = '_';
+    public static readonly FieldLocalizationPrefix = 'Import';
 
     uploadFile: FormGroup;
     dataMapping: FormGroup;
@@ -378,22 +379,21 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
 
     checkIfFileHasHeaders() {
         if (this.fileData.data.length) {
-            const constNames = ['Name', 'Email', 'Phone'];
-            let fileHasHeader = true;
+            const constNames = ['name', 'email', 'number', 'phone'];
+            let namesFoundCount = 0;
 
             for (let i = 0; i < constNames.length; i++) {
                 let nameIsPresent = false;
                 this.fileData.data[0].forEach((val: string) => {
-                    if (val.indexOf(constNames[i]) != -1)
+                    if (val.toLowerCase().indexOf(constNames[i]) != -1)
                         nameIsPresent = true;
                 });
-                if (!nameIsPresent) {
-                    fileHasHeader = false;
-                    break;
+                if (nameIsPresent) {
+                    namesFoundCount++;
                 }
             }
 
-            this.fileHasHeader = fileHasHeader;
+            this.fileHasHeader = namesFoundCount >= 2;
         }
     }
 
@@ -412,12 +412,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
     }
 
     downloadFromURL() {
-        if (!this.uploadFile.invalid) {
+        if (!this.uploadFile.get('url').invalid) {
             let url = this.uploadFile.value.url;
             if (url)
                 this.getFile(url, (result) => {
                     if (result.target.status == 200) {
-                        this.fileName = url.split('?')[0].split('/').pop();
+                        this.fileName = decodeURI(url.split('?')[0].split('/').pop());
                         this.fileSize = this.getFileSize(result.loaded);
                         this.parse(result.target.responseText);
                     } else {
@@ -476,6 +476,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
         $event.component.selectItem(cell.value);
     }
 
+    public static getFieldLocalizationName(dataField: string): string {
+        let parts = dataField.split(ImportWizardComponent.FieldSeparator);
+        let partsCapitalized = parts.map(p => _s.capitalize(p));
+        partsCapitalized.unshift(ImportWizardComponent.FieldLocalizationPrefix);
+        return partsCapitalized.join(ImportWizardComponent.FieldSeparator);
+    }
+
     customizePreviewColumns = (columns) => {
         columns.forEach((column) => {
             let columnConfig = this.columnsConfig[column.dataField];
@@ -494,8 +501,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit{
             }
 
             if (!columnConfig || !columnConfig['caption'])
-                column.caption = _s.humanize(column.dataField.split(
-                    ImportWizardComponent.FieldSeparator).pop());
+                column.caption = this.l(ImportWizardComponent.getFieldLocalizationName(column.dataField));
         });
     }
 }

@@ -1,8 +1,9 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { UserAssignmentServiceProxy, AssignCustomersInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { FiltersService } from '@shared/filters/filters.service';
+import { AssignCustomerInput, AssignCustomersInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -15,7 +16,6 @@ import * as _ from 'underscore';
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() selectedItems: any = [];
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
@@ -28,10 +28,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
     list: any;
-    assignedUserId: number;
     listComponent: any;
     tooltipVisible = false;
-    selectedMyKey: any;
 
     constructor(
         injector: Injector,
@@ -46,29 +44,23 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this.highlightSelectedFilters();
     }
 
-    onItemClick(event) {
-        this.assignedUserId = event.itemData.id;
-    }
-
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item.id;
-            }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed)
+                                this.process();
+                            else
+                                this.listComponent.unselectAll();
                         }
                     );
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
 
             setTimeout(() => { this.listComponent.option('searchValue', undefined); }, 500);
         }
@@ -76,12 +68,22 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     process() {
-        this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
-            customerIds: this.selectedKeys,
-            userId: this.selectedItemKey
-        })).subscribe((result) => {
-            this.notify.success(this.l('UserAssigned'));
-        });
+        if (this.bulkUpdateMode)
+            this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
+                customerIds: this.selectedKeys,
+                userId: this.selectedItemKey
+            })).finally(() => {
+                this.listComponent.unselectAll();
+            }).subscribe((result) => {
+                this.notify.success(this.l('UserAssigned'));
+            });
+        else
+            this._userAssignmentService.assignCustomer(AssignCustomerInput.fromJS({
+                customerId: this.selectedKeys[0],
+                userId: this.selectedItemKey
+            })).subscribe((result) => {
+                this.notify.success(this.l('UserAssigned'));
+            });
     }
 
     clear() {
@@ -97,9 +99,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this._userAssignmentService.getUsers().subscribe((result) => {
             this.list = result;
         });
-        if (this.selectedItems) {
-            this.highlightSelectedFilters();
-        }
     }
 
     reset() {
@@ -149,6 +148,12 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     onSelectionChange(event) {
+        this.selectedItemKey = event && event.addedItems.length ? event.addedItems[0].id : undefined;
         this.onSelectionChanged.emit(event);
+    }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageAssignments') &&
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

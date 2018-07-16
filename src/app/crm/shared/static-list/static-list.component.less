@@ -21,6 +21,12 @@
         &:hover {
             color: lighten(#00AEEF, 20%);
         }
+
+        &.disabled {
+            color: #999;
+            cursor: unset;
+            pointer-events: none; 
+        }
     }        
 
     /deep/ .dx-widget {

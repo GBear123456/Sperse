@@ -1,6 +1,6 @@
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
+import { Router, RouteReuseStrategy } from '@angular/router';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -21,7 +21,6 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 import * as addressParser from 'parse-address';
 
 import * as _ from 'underscore';
-import * as _s from 'underscore.string';
 import {PipelineService} from '@app/shared/pipeline/pipeline.service';
 
 @Component({
@@ -157,7 +156,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     isStageSelected = false;
     toolbarConfig = [];
     selectedClientKeys: any = [];
-    selectedItems: any = [];
     defaultRating = 5;
     leadStages = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
@@ -191,22 +189,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _nameParser: NameParserService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
         this.setMappingFields(ImportLeadInput.fromJS({}));
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
-        this.selectedItems.push(this.userId);
-
-
     }
 
     private importTypeChanged(event) {
         const IMPORT_TYPE_ITEM_INDEX = 0;
-        const STAGE_ITEM_INDEX = 2;
 
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
+
+
+        if (this.importTypeIndex != IMPORT_TYPE_ITEM_INDEX)
+            this.stagesComponent.selectedItems = [];
 
         this.initToolbarConfig();
     }
@@ -230,13 +227,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
 
         this.FIELDS_CAPTIONS.forEach(field => {
-            let parts = field.split('_'),
-                caption = _s.humanize(parts.pop()),
-                type = parts.pop();
-
-            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0)
-                caption = _s.humanize(type).split(' ').shift() + ' ' + caption;
-
+            let caption = this.l(ImportWizardComponent.getFieldLocalizationName(field));
+            if (field.indexOf(this.PERSONAL_FULL_ADDRESS) < 0) {
+                let parts = field.split(ImportWizardComponent.FieldSeparator);
+                parts.pop();
+                caption = this.l(ImportWizardComponent.getFieldLocalizationName(
+                    parts.join(ImportWizardComponent.FieldSeparator))).split(' ').shift() + ' ' + caption;
+            }
             if (this.fieldsConfig[field])
                 this.fieldsConfig[field].caption = caption;
             else
@@ -270,8 +267,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateCode'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
             this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
-            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street, 
-                parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '), 
+            this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street,
+                parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
                     field.mappedField + '_street', dataSource);
         }
 
@@ -287,6 +284,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
+        this.clearToolbarSelectedItems();
         this.wizard.reset(callback);
     }
 
@@ -301,6 +299,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             });
             if (this.importedCount > 0) {
                 this.wizard.showFinishStep();
+                this.clearToolbarSelectedItems();
                 (<any>this._reuseService).invalidate('leads');
             } else
                 this.message.error(res[0].errorMessage);
@@ -309,16 +308,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     createLeadsInput(data: any[]): ImportLeadsInput {
         let result = ImportLeadsInput.fromJS({
-            assignedUserId: this.userAssignmentComponent.assignedUserId || this.userId,
-            ratingId: this.ratingComponent.ratingValue || this.defaultRating
+            assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
+            ratingId: this.ratingComponent.ratingValue || this.defaultRating,
+            starId: this.starsListComponent.selectedItemKey,
+            leadStageId: this.stagesComponent.selectedItems.length ? this.stagesComponent.selectedItems[0].id : undefined
         });
         result.leads = [];
-        result.lists = [];
-
-        this.listsComponent.selectedLists.forEach(item => {
-            let obj  = this.listsComponent.list.find(el => el.id == item);
-            result.lists.push(new CustomerListInput({ name: obj.name }));
-        });
+        result.lists = this.listsComponent.selectedItems;
+        result.tags = this.tagsComponent.selectedItems;
 
         data.forEach(v => {
             let lead = new ImportLeadInput();
@@ -353,18 +350,25 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${v}` : v;
             if (this.mappingObjectNames[v]) {
                 this.mappingFields.push({
-                    id: combinedName, name: _s.humanize(v), parent: parent, expanded: true
+                    id: combinedName, 
+                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),
+                    parent: parent, 
+                    expanded: true
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
             }
             else {
-                this.mappingFields.push({ id: combinedName, name: _s.humanize(v), parent: parent || 'Other' });
+                this.mappingFields.push({ 
+                    id: combinedName, 
+                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)), 
+                    parent: parent || 'Other' 
+                });
             }
         });
 
         if (!parent) {
             this.mappingFields.push({
-                id: 'Other', name: this.capitalize('Other'), parent: null, expanded: true
+                id: 'Other', name: this.l('Import_Other'), parent: null, expanded: true
             });
         }
     }
@@ -441,38 +445,38 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return !!row.mappedField;
         });
 
-        if (!(isCompanyName || isFullName || (isFistName && isLastName)))
+        if (!isCompanyName && !isFullName && !isFistName && !isLastName)
             result.error = this.l('FieldsMapError');
 
         return result;
     }
 
-    toggleUserAssignment(event) {
+    onUserAssignmentChanged(event) {
         this.isUserSelected = !!event.addedItems.length;
         this.initToolbarConfig();
     }
 
-    toggleStages(event) {
+    onStagesChanged(event) {
         this.isStageSelected = !!event.addedItems.length;
         this.initToolbarConfig();
     }
 
-    toggleLists(event) {
+    onListsChanged(event) {
         this.isListsSelected = !!event.selectedRowKeys.length;
         this.initToolbarConfig();
     }
 
-    toggleTags(event) {
+    onTagsChanged(event) {
         this.isTagsSelected = !!event.selectedRowKeys.length;
         this.initToolbarConfig();
     }
 
-    toggleRating(event) {
+    onRatingChanged(event) {
         this.isRatingSelected = !!event.value;
         this.initToolbarConfig();
     }
 
-    toggleStars(event) {
+    onStarsChanged(event) {
         this.isStarSelected = !!event.addedItems.length;
         this.initToolbarConfig();
     }
@@ -560,5 +564,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
+    }
+
+    clearToolbarSelectedItems() {
+        this.stagesComponent.selectedItems = [];
+        this.starsListComponent.selectedItemKey = undefined;
+        this.userAssignmentComponent.selectedKeys = [this.userId];
+        this.listsComponent.reset();
+        this.tagsComponent.reset();
+        this.ratingComponent.ratingValue = this.defaultRating;
     }
 }

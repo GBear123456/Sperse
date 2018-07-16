@@ -94,7 +94,7 @@ export class OperationsWidgetComponent implements OnInit {
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'before', items: [
                     {
                         name: 'print',
                         action: this.print.emit.bind(this.print)

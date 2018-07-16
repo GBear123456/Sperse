@@ -1,8 +1,9 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerStarsServiceProxy, MarkCustomersInput } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { FiltersService } from '@shared/filters/filters.service';
+import { CustomerStarsServiceProxy, MarkCustomerInput, MarkCustomersInput } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -47,34 +48,42 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
-            this.selectedItemKeys = this.list.map((item, index) => {
-                return this.listComponent.isItemSelected(index) && item.id;
-            }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed) 
+                                this.process();
+                            else
+                                this.listComponent.unselectAll();
                         }
                     );
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
 
     process() {
-        this._starsService.markCustomers(MarkCustomersInput.fromJS({
-            customerIds: this.selectedKeys,
-            starId: this.selectedItemKey
-        })).subscribe((result) => {
-            this.notify.success(this.l('CustomersMarked'));
-        });
+        if (this.bulkUpdateMode)
+            this._starsService.markCustomers(MarkCustomersInput.fromJS({
+                customerIds: this.selectedKeys,
+                starId: this.selectedItemKey
+            })).finally(() => {
+                this.listComponent.unselectAll();
+            }).subscribe((result) => {
+                this.notify.success(this.l('CustomersMarked'));
+            });
+        else
+            this._starsService.markCustomer(MarkCustomerInput.fromJS({
+                customerId: this.selectedKeys[0],
+                starId: this.selectedItemKey
+            })).subscribe((result) => {
+                this.notify.success(this.l('CustomersMarked'));
+            });
     }
 
     clear() {
@@ -136,6 +145,12 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSelectionChange(event) {
+        this.selectedItemKey = event && event.addedItems.length ? event.addedItems[0].id : undefined;
         this.onSelectionChanged.emit(event);
+    }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }
