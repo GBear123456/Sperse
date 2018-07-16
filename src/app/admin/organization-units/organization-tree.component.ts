@@ -205,7 +205,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
 
             'delete': {
                 label: self.l('Delete'),
-                _disabled: !canManageOrganizationTree,
+                _disabled: !canManageOrganizationTree || node.original.code == '00001',
                 action: data => {
                     const instance = $.jstree.reference(data.reference);
 
