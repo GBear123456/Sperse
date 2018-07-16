@@ -37,6 +37,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     leadInfo: LeadInfoDto;
     leadId: number;
     leadStages = [];
+    clientStageId: number;
     configMode: boolean;
 
     private initialData: string;
@@ -89,25 +90,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     id: clientId
                 };
 
-                if (clientId)
-                    clientId = this.loadCustomerAndLeadDetails(clientId, leadId);
-
                 if (leadId) {
                     this.leadId = leadId;
-                    _customerService['data'].leadInfo = {
-                        id: leadId
-                    };
-                    _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                        .subscribe(result => {
-                            this.leadStages = result.stages.map((stage) => {
-                                return {
-                                    name: stage.name,
-                                    text: stage.name,
-                                    action: this.updateLeadStage.bind(this)
-                                };
-                            });
-                        });
                 }
+                this.loadData(clientId, leadId);
             }));
 
         this.paramsSubscribe.push(this._route.queryParams
@@ -149,22 +135,45 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.leadInfo = result;
     }
 
-    private loadCustomerAndLeadDetails(customerId, leadId) {
-        this.startLoading(true);
-        this.customerId = customerId;
-        let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
-        if (leadId) {
-            let leadInfoObservable = this._leadService.getLeadInfo(leadId);
-            forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
-                this.fillCustomerDetails(result[0]);
-                this.fillLeadDetails(result[1]);
-                this.finishLoading(true);
-            });
-        } else
-            customerInfoObservable.subscribe(result => {
-                this.fillCustomerDetails(result);
-                this.fillLeadDetails(result.lastLeadInfo);
-                this.finishLoading(true);
+    loadData(customerId: number, leadId: number) {
+        if (customerId) {
+            this.startLoading(true);
+            this.customerId = customerId;
+            let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
+            if (leadId) {
+                let leadInfoObservable = this._leadService.getLeadInfo(leadId);
+                forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
+                    this.fillCustomerDetails(result[0]);
+                    this.fillLeadDetails(result[1]);
+                    this.loadLeadsStages(leadId);
+                    this.finishLoading(true);
+                });
+            } else
+                customerInfoObservable.subscribe(result => {
+                    this.fillCustomerDetails(result);
+                    this.fillLeadDetails(result.lastLeadInfo);
+                    this.finishLoading(true);
+                });
+        } else if (leadId) {
+            this.loadLeadsStages(leadId);
+        }
+    }
+
+    private loadLeadsStages(leadId) {
+        this._customerService['data'].leadInfo = {
+            id: leadId
+        };
+        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+            .subscribe(result => {
+                this.leadStages = result.stages.map((stage) => {
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        text: stage.name,
+                        action: this.updateLeadStage.bind(this)
+                    };
+                });
+                this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
             });
     }
 
@@ -309,7 +318,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         let sourceStage = this.leadInfo.stage;
         let targetStage = $event.itemData.text;
-        if (this._pipelineService.updateLeadStage(this.leadInfo, sourceStage, targetStage))
+        let complete = () => {
+            this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
+        };
+        if (this._pipelineService.updateLeadStage(this.leadInfo, sourceStage, targetStage, complete))
             this.leadInfo.stage = targetStage;
         else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));

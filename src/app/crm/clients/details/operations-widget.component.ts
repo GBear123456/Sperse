@@ -8,13 +8,11 @@ import { StarsListComponent } from '../../shared/stars-list/stars-list.component
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { CustomerInfoDto, LeadInfoDto } from '@shared/service-proxies/service-proxies';
 import { ClientDetailsService } from './client-details.service';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less'],
-    providers: [ AppLocalizationService ]
+    styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -26,14 +24,15 @@ export class OperationsWidgetComponent implements OnInit {
 
     @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
-    @Input() leadInfo: LeadInfoDto;
     @Input() leadId: number;
+    @Input() selectedStageId: number;
     @Input()
     set stages(stages: any[]) {
         this._stages = stages;
         this.initToolbarConfig();
     }
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
@@ -41,11 +40,9 @@ export class OperationsWidgetComponent implements OnInit {
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
     toolbarConfig = [];
-    localizationService: AppLocalizationService;
 
     constructor(
-        private _clientService: ClientDetailsService,
-        localizationService: AppLocalizationService
+        private _clientService: ClientDetailsService
     ) {
         _clientService.toolbarSubscribe((config) => {
             this.initToolbarConfig(config);
@@ -160,11 +157,12 @@ export class OperationsWidgetComponent implements OnInit {
         this.onUpdateStatus.emit(statusId);
     }
 
-    updateStage(stage: string) {
-        this.onUpdateStage.emit(stage);
+    updateStage(event) {
+        this.onUpdateStage.emit(event);
     }
 
     refresh() {
+        this.stagesComponent.tooltipVisible = false;
         this.initToolbarConfig();
     }
 }

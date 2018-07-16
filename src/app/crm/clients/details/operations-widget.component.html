@@ -4,9 +4,13 @@
     <crm-static-list
         [width]="'210px'"
         [title]="'Stages'"
-        [selectedKeys]="[]"
+        [selectedKeys]="[selectedStageId]"
+        [selectedItems]=""
+        [hideButtons]="true"
+        [highlightSelected]="true"
         (onSelectionChanged)="updateStage($event)"
         [targetSelector]="'[aria-label=Stage]'"
+        [showTitle]="false"
         [list]="stages">
     </crm-static-list>
     <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.tags"></crm-tags-list>

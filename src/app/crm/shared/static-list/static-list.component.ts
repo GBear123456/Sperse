@@ -1,4 +1,4 @@
-import {Component, Injector, Input, EventEmitter, Output} from '@angular/core';
+import { Component, Injector, Input, EventEmitter, Output } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 
@@ -24,10 +24,11 @@ export class StaticListComponent extends AppComponentBase {
     @Input() hideButtons = false;
 
     @Input() list: any;
+    @Input() showTitle = true;
 
     listComponent: any;
     tooltipVisible: boolean;
-    selectedItems: any = [];
+    @Input() selectedItems: any = [];
 
     constructor(
         injector: Injector,
@@ -99,11 +100,15 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     onContentReady($event) {
+        if (this.selectedKeys && this.selectedKeys.length) {
+            this.listComponent.option('selectedItemKeys', this.selectedKeys);
+        }
         this.highlightSelectedFilters();
     }
 
-    onLeadChange(event) {
-        console.log('lead changed', event);
-        this.onSelectionChanged.emit(event);
+    onItemClick(event) {
+        if (event.itemData.action) {
+            event.itemData['action'](event);
+        }
     }
 }
