@@ -36272,6 +36272,7 @@ export interface IDocumentInfo {
 }
 
 export class UploadDocumentInput implements IUploadDocumentInput {
+    typeId!: number | undefined;
     customerId!: number | undefined;
     fileName!: string;
     size!: number | undefined;
@@ -36288,6 +36289,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
 
     init(data?: any) {
         if (data) {
+            this.typeId = data["typeId"];
             this.customerId = data["customerId"];
             this.fileName = data["fileName"];
             this.size = data["size"];
@@ -36304,6 +36306,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
         data["customerId"] = this.customerId;
         data["fileName"] = this.fileName;
         data["size"] = this.size;
@@ -36313,6 +36316,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
 }
 
 export interface IUploadDocumentInput {
+    typeId: number | undefined;
     customerId: number | undefined;
     fileName: string;
     size: number | undefined;

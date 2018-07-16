@@ -25,7 +25,7 @@ class UploadCategoryModel{
     selector: 'chart-of-accounts',
     templateUrl: './chart-of-accounts.component.html',
     styleUrls: ['./chart-of-accounts.component.less'],
-    providers: [ClassificationServiceProxy],
+    providers: [ClassificationServiceProxy, CategoryTreeServiceProxy],
     animations: [appModuleAnimation()]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
@@ -112,6 +112,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
 
         reader.readAsBinaryString(target.files[0]);
     }
+    
     refreshCategories() {
         this.categorizationComponent.refreshCategories(false);
     }

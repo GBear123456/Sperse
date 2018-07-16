@@ -14,8 +14,9 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
     DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { StringHelper } from '@shared/helpers/StringHelper';
+import { MatDialog } from '@angular/material';
 import { DocumentType } from './document-type.enum';
+import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 
 @Component({
@@ -52,6 +53,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
     public viewerToolbarConfig: any = [];
 
     constructor(injector: Injector,
+        public dialog: MatDialog,
         private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
         private _customerService: CustomersServiceProxy,
@@ -192,49 +194,63 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         }
     }
 
-    fileSelected($event) {
-        let files = $event.target.files;
-        if (files.length)
-            this.uploadSelectedFiles(files);
-    }
-
-    uploadSelectedFiles(files) {
-        for (let file of files) {
-            this.uploadFile(file);
-        }
-    }
-
     fileDropped($event) {
         let files = $event.files;
         if (files.length)
-            this.uploadDroppedFiles(files);
-    }
-
-    uploadDroppedFiles(list) {
-        for (let droppedFile of list) {
-            if (droppedFile.fileEntry.isFile)
-                this.uploadDroppedFile(droppedFile);
-        }
+            this.uploadDroppedFile(files[0]);
     }
 
     uploadDroppedFile(droppedFile) {
         let fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        fileEntry.file((file: File) => this.uploadFile(file));
+        fileEntry.file((file: File) => this.openShowUploadDocumentDialog(file));
     }
 
-    uploadFile(file) {
-        let myReader: FileReader = new FileReader();
-        myReader.onloadend = (loadEvent: any) => {
-            this._documentService.upload(UploadDocumentInput.fromJS({
-                customerId: this.data.customerInfo.id,
-                fileName: file.name,
-                size: file.size,
-                fileBase64: StringHelper.getBase64(loadEvent.target.result)
-            })).subscribe(() => {
-                this.loadDocuments();
-            });
-        };
-        myReader.readAsDataURL(file);
+    updateUploadProgress(data) {
+        if (data.progress < 90 || data.progress > 95)
+            document.querySelector('file-drop .content')['style'].background = 
+                'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
+    }
+
+    uploadFile(input) {
+        let data = {progress: 0},
+            progressInterval = setInterval(
+                this.updateUploadProgress.bind(this, data), 
+                Math.round(input.size / 10000)
+            );
+        this._documentService.upload(UploadDocumentInput.fromJS({
+            customerId: this.data.customerInfo.id,
+            typeId: input.typeId,
+            fileName: input.name,
+            size: input.size,
+            fileBase64: input.fileBase64
+        })).pipe(finalize(() => {
+            setTimeout(() => {
+                this.updateUploadProgress({progress: 0});
+            }, 5000);
+        })).subscribe(() => {
+            data.progress = 100;
+            this.updateUploadProgress(data);
+            clearInterval(progressInterval);
+
+            this.loadDocuments();
+        });
+    }
+
+    showUploadDocumentDialog($event) {
+        this.openShowUploadDocumentDialog();
+        $event.stopPropagation();
+    }
+
+    openShowUploadDocumentDialog(file?: File) {
+        this.dialog.open(UploadDocumentDialogComponent, {
+            hasBackdrop: true,
+            data: {
+                file: file
+            }
+        }).afterClosed().subscribe((result) => {
+            if (result)
+                this.uploadFile(result);
+        });
     }
 
     showActionsMenu(data, target) {

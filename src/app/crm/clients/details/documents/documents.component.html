@@ -58,7 +58,7 @@
             (onFileDrop)="fileDropped($event)">
             <p>{{l('DragAndDrop')}}</p>
         </file-drop>
-        <p class="alter-text">or <a href="javascript:void(0);"><input name="browseFile" type="file" onclick="this.value = null" (change)="fileSelected($event)">{{l('SelectFileFrom')}}</a></p>
+        <p class="alter-text">or <a href="javascript:void(0);" (click)="showUploadDocumentDialog($event)">{{l('SelectFileFrom')}}</a></p>
         <div class="file-container">
         </div>
     </div>
