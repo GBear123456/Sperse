@@ -74,7 +74,7 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
-                          [pager]="defaultGridPagerConfig"
+                          [paging]="{pageSize: 1000}"
                           (onRowValidating)="onRowValidating($event)"
                           (onContentReady)="onContentReady($event)">
                 <dxo-selection selectAllMode="page"
