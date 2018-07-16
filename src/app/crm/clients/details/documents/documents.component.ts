@@ -221,15 +221,33 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         fileEntry.file((file: File) => this.uploadFile(file));
     }
 
+    updateUploadProgress(data) {
+        if (data.progress < 90 || data.progress > 95)
+            document.querySelector('file-drop .content')['style'].background = 
+                'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
+    }
+
     uploadFile(file) {
         let myReader: FileReader = new FileReader();
         myReader.onloadend = (loadEvent: any) => {
+            let data = {progress: 0},
+                progressInterval = setInterval(
+                    this.updateUploadProgress.bind(this, data), 
+                    Math.round(file.size / 10000)
+                );
             this._documentService.upload(UploadDocumentInput.fromJS({
                 customerId: this.data.customerInfo.id,
                 fileName: file.name,
                 size: file.size,
                 fileBase64: StringHelper.getBase64(loadEvent.target.result)
             })).subscribe(() => {
+                data.progress = 100;
+                this.updateUploadProgress(data);
+                clearInterval(progressInterval);
+                setTimeout(() => {
+                    this.updateUploadProgress({progress: 0});
+                }, 5000);
+
                 this.loadDocuments();
             });
         };
