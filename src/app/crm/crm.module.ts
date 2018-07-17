@@ -5,7 +5,15 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
-import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
+import {
+    MatSidenavModule,
+    MatProgressBarModule,
+    MatTabsModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatStepperModule
+} from '@angular/material';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { CommonModule } from '@shared/common/common.module';
@@ -31,7 +39,8 @@ import {
     DxContextMenuModule,
     DxSliderModule,
     DxRadioGroupModule,
-    DxCheckBoxModule
+    DxCheckBoxModule,
+    DxTagBoxModule
 } from 'devextreme-angular';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -55,6 +64,7 @@ import { CreateClientDialogComponent } from './shared/create-client-dialog/creat
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
+import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 
 @NgModule({
     imports: [
@@ -84,6 +94,7 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
       DxSliderModule,
       DxRadioGroupModule,
       DxCheckBoxModule,
+      DxTagBoxModule,
 
       MatSidenavModule,
       MatProgressBarModule,
@@ -91,6 +102,7 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
       MatDialogModule,
       MatProgressSpinnerModule,
       MatSelectModule,
+      MatStepperModule,
       AngularGooglePlaceModule,
 
       CRMDashboardWidgetsModule,
@@ -116,14 +128,16 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
       DashboardMenuComponent,
       LeadsStatsComponent,
       ImportLeadsComponent,
-      DeleteAndReassignDialogComponent
+      DeleteAndReassignDialogComponent,
+      CrmIntroComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
     ],
     entryComponents: [
         CreateClientDialogComponent,
-        DeleteAndReassignDialogComponent
+        DeleteAndReassignDialogComponent,
+        CrmIntroComponent
     ]
 })
 export class CrmModule {

@@ -2,7 +2,7 @@
     <dx-tooltip width="120px">
         <div *dxTemplate="let data of 'content'">
             <div class="lists-tooltip-container">
-                <dx-list [dataSource]="actionMenuItems"
+                <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
                     (onItemClick)="onMenuItemClick($event)">
                 </dx-list>
             </div>
@@ -25,7 +25,7 @@
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
-            <dxi-column dataField="size" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
+            <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
             <dxi-column dataField="fileName" caption="{{l('DocumentReceived')}}"></dxi-column>
 

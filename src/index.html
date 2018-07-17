@@ -206,23 +206,6 @@
             transform: translate(-25px, -25px) scale(0.25) translate(25px, 25px);
         }
     </style>
-    <script>    
-        window.submitWopiRequest = function() {
-            var frameholder = document.getElementById("frameholder");
-            var office_frame = document.createElement("iframe");
-            office_frame.name = "office_frame";
-            office_frame.id ="office_frame";
-            office_frame.title = "Office Online Frame";
-            office_frame.setAttribute("allowfullscreen", "true");
-            office_frame.setAttribute("frameBorder", "0");
-            office_frame.onload = function(event) {
-                event.target.width = screen.width - 350;
-                event.target.height = screen.height - 390;
-            }
-            frameholder.appendChild(office_frame);
-            document.getElementById("office_form").submit();
-        }
-    </script>
  </head>
 <body>
     <!-- Spinner -->

@@ -1,14 +1,14 @@
 .lists-tooltip-container {
     font-size: 15px;
     overflow: hidden;
-    
+
     .title {
         float: left;
-        font-size: 18px;        
+        font-size: 18px;
         font-weight: 500;
         padding-top: 5px;
     }
-   
+
     .filter-apply, .filter-clear {
         cursor: pointer;
         font-size: 14px;
@@ -17,17 +17,31 @@
         color: #00AEEF;
         padding: 10px 5px;
         float: right;
-        
+
         &:hover {
             color: lighten(#00AEEF, 20%);
         }
+
+        &.disabled {
+            color: #999;
+            cursor: unset;
+            pointer-events: none; 
+        }
     }        
 
-    /deep/ .dx-widget {
-       .dx-placeholder {
+    /deep/ dx-list {
+        &.highlightSelected .dx-item.dx-list-item-selected {
+            background-color: #effafe;
+        }
+
+        .dx-list-item-before-bag.dx-list-select-radiobutton-container {
+            display: none;
+        }
+
+        .dx-placeholder {
             font-weight: 400;
         }
-        .dx-item-content {  
+        .dx-item-content {
             text-align: left;
         }
         .dx-icon-clear {
@@ -45,7 +59,7 @@
 
         .item-row {
             display: flex;
-            justify-content: space-between;            
+            justify-content: space-between;
 
             a.dx-link-filter {
                 width: 30px;
@@ -106,4 +120,5 @@
             }
         }
     }
+
 }

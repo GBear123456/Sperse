@@ -20,7 +20,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     ],
     providers: [
         AppLocalizationService,
-        ]
+    ]
 })
 export class AppCommonModule {
     static forRoot(): ModuleWithProviders {

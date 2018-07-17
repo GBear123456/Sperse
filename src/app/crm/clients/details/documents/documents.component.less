@@ -85,12 +85,12 @@
                 background-color: #F8F7FC;
                 text-transform: uppercase;
 
-                width: 300px; 
+                width: 300px;
                 .content {
                     height: 98px;
                     border-radius: 5px;
                 }
-                p { 
+                p {
                     color: #333333;
                     padding-top: 10px;
                     font-weight: 500;
@@ -164,5 +164,11 @@
                 display: none;
             }
         }
+    }
+}
+
+/deep/ dx-list[accesskey="actionsMenu"] {
+    .dx-state-invisible + .dx-list-item {
+        border-top: none;
     }
 }

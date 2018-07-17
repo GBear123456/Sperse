@@ -21,7 +21,7 @@ export class UploadDocumentDialogComponent extends AppComponentBase implements O
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
-        public documentTypeService: DocumentTypeServiceProxy
+        private documentTypeService: DocumentTypeServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }

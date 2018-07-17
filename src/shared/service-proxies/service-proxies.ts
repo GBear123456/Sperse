@@ -10044,6 +10044,61 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getUrl(id: string | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/GetUrl?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUrl(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUrl(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -16346,6 +16401,61 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
+     * @identifier (optional) 
+     * @return Success
+     */
+    getInternal(identifier: string | null | undefined): Observable<QuestionnaireDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/GetInternal?";
+        if (identifier !== undefined)
+            url_ += "identifier=" + encodeURIComponent("" + identifier) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInternal(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInternal(<any>response_);
+                } catch (e) {
+                    return <Observable<QuestionnaireDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<QuestionnaireDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInternal(response: HttpResponseBase): Observable<QuestionnaireDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? QuestionnaireDto.fromJS(resultData200) : new QuestionnaireDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<QuestionnaireDto>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -16379,6 +16489,58 @@ export class QuestionnaireServiceProxy {
     }
 
     protected processSubmitResponse(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    submitResponseInternal(input: QuestionnaireResponseDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/SubmitResponseInternal";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubmitResponseInternal(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubmitResponseInternal(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSubmitResponseInternal(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -40562,6 +40724,7 @@ export interface IImportLeadPersonalInput {
 
 export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     companyName!: string | undefined;
+    organizationType!: string | undefined;
     jobTitle!: string | undefined;
     employeeCount!: number | undefined;
     yearFounded!: number | undefined;
@@ -40600,6 +40763,7 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
+            this.organizationType = data["organizationType"];
             this.jobTitle = data["jobTitle"];
             this.employeeCount = data["employeeCount"];
             this.yearFounded = data["yearFounded"];
@@ -40638,6 +40802,7 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
+        data["organizationType"] = this.organizationType;
         data["jobTitle"] = this.jobTitle;
         data["employeeCount"] = this.employeeCount;
         data["yearFounded"] = this.yearFounded;
@@ -40669,6 +40834,7 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
 
 export interface IImportLeadBusinessInput {
     companyName: string | undefined;
+    organizationType: string | undefined;
     jobTitle: string | undefined;
     employeeCount: number | undefined;
     yearFounded: number | undefined;

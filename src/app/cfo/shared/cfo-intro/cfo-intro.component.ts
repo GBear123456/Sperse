@@ -51,7 +51,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._questionnaireService.get(this.identifier)
+        this._questionnaireService.getInternal(this.identifier)
             .subscribe(result => {
                 this.question = result.questions[0];
             });
@@ -100,7 +100,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponse(response)
+            this._questionnaireService.submitResponseInternal(response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });

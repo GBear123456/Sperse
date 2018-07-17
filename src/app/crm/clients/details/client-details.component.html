@@ -9,11 +9,13 @@
     </div>
     <operations-widget
         [clientId]="customerId"
-        [leadId] = "leadId"
+        [leadId]="leadId"
         [customerInfo]="customerInfo"
         [stages]="leadStages"
+        [selectedStageId]="clientStageId"
         (print)="printMainArea()"
         (onDelete)="delete()"
+        (onUpdateStage)="updateLeadStage($event)"
         (onUpdateStatus)="updateStatus($event)"
     ></operations-widget>
   </div>

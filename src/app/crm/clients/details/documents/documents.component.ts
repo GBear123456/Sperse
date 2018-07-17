@@ -1,5 +1,5 @@
 /** Core imports */
-import { AfterViewInit, Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
@@ -14,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
     DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
+import { PrinterService } from '@shared/common/printer/printer.service';
 import { MatDialog } from '@angular/material';
 import { DocumentType } from './document-type.enum';
 import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
@@ -22,9 +23,9 @@ import { ClientDetailsService } from '../client-details.service';
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentServiceProxy, FileSizePipe ]
+    providers: [ DocumentServiceProxy, FileSizePipe, PrinterService ]
 })
-export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class DocumentsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
@@ -57,7 +58,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
         private _customerService: CustomersServiceProxy,
-        private _clientService: ClientDetailsService
+        private _clientService: ClientDetailsService,
+        private printerService: PrinterService
     ) {
         super(injector);
 
@@ -67,6 +69,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             {
                 text: this.l('Edit'),
                 action: this.editDocument.bind(this)
+            },
+            {
+                text: this.l('Delete'),
+                action: this.deleteDocument.bind(this)
             }
         ];
     }
@@ -110,7 +116,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
                     },
                     {
                         name: 'print',
-                        action: Function()
+                        visible: !conf.printHidden,
+                        action: () => {
+                            const viewedDocument = <any>this.getViewedDocumentElement();
+                            if (this.showViewerType !== this.WOPI_VIEWER) {
+                                const printSrc = this.showViewerType == this.IMAGE_VIEWER ?
+                                    this.imageViewer.images[0] :
+                                    viewedDocument.textContent;
+                                const format = <any>this.currentDocumentInfo.fileName.split('.').pop();
+                                this.printerService.printDocument(printSrc, format);
+                            }
+                        }
                     }
                 ]
             },
@@ -133,13 +149,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
                     {
                         name: 'fullscreen',
                         action: () => {
-                            const fullScreenSelector = '.documentView';
-                            let fullScreenTarget = document.querySelector(fullScreenSelector);
-                            /** If selector contains iframe - use it at fullScreen */
-                            const iframe = fullScreenTarget.querySelector('iframe');
-                            if (iframe) {
-                                fullScreenTarget = iframe;
-                            }
+                            const fullScreenTarget = this.getViewedDocumentElement();
                             this.toggleFullscreen(fullScreenTarget);
                         }
                     }
@@ -154,6 +164,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
                 ]
             }
         ];
+    }
+
+    getViewedDocumentElement() {
+        const viewedDocumentSelector = '.documentView';
+        let viewedDocumentElement = document.querySelector(viewedDocumentSelector);
+        /** If selector contains iframe - use it at fullScreen */
+        const iframe = viewedDocumentElement.querySelector('iframe');
+        if (iframe) {
+            viewedDocumentElement = iframe;
+        }
+        return viewedDocumentElement;
     }
 
     refreshDataGrid() {
@@ -181,8 +202,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     calculateFileSizeValue = (data: DocumentInfo) => this._fileSizePipe.transform(data.size);
 
-    ngAfterViewInit(): void {
-    }
+    numerizeFileSizeSortValue = (rowData) => +rowData.size;
 
     onContentReady() {
         this.setGridDataLoaded();
@@ -207,14 +227,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     updateUploadProgress(data) {
         if (data.progress < 90 || data.progress > 95)
-            document.querySelector('file-drop .content')['style'].background = 
+            document.querySelector('file-drop .content')['style'].background =
                 'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
     }
 
     uploadFile(input) {
         let data = {progress: 0},
             progressInterval = setInterval(
-                this.updateUploadProgress.bind(this, data), 
+                this.updateUploadProgress.bind(this, data),
                 Math.round(input.size / 10000)
             );
         this._documentService.upload(UploadDocumentInput.fromJS({
@@ -255,7 +275,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     showActionsMenu(data, target) {
         this.actionRecordData = data;
-        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).disabled = !data.isSupportedByWopi;
+        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isSupportedByWopi;
         this.actionsTooltip.instance.show(target);
     }
 
@@ -302,14 +322,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.initViewerToolbar({
             editDisabled: !this.currentDocumentInfo.isSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
-            nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1 // document is last in list
+            nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
+            printHidden: this.showViewerType === this.WOPI_VIEWER
         });
         this._clientService.toolbarUpdate(this.viewerToolbarConfig);
         if (this.showViewerType == this.WOPI_VIEWER)
             this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe((response) => {
-                this.submitWopiRequest(response);
+                this.showOfficeOnline(response);
             });
         else
             this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
@@ -329,25 +350,46 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
             this.finishLoading(true);
         })).subscribe((response) => {
-            this.submitWopiRequest(response);
+            this.showOfficeOnline(response);
         });
     }
 
-    submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
+    showOfficeOnline(wopiRequestInfo: WopiRequestOutcoming) {
         this.openDocumentMode = true;
         this.showViewerType = this.WOPI_VIEWER;
         this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
         this.wopiAccessToken = wopiRequestInfo.accessToken;
         this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
         setTimeout(() => {
-            window['submitWopiRequest']();
+            this.submitWopiRequest();
         }, 500);
+    }
+
+    submitWopiRequest() {
+        let frameholder = document.getElementById('frameholder');
+        let office_frame = document.createElement('iframe');
+        office_frame.name = 'office_frame';
+        office_frame.id = 'office_frame';
+        office_frame.title = 'Office Online Frame';
+        office_frame.setAttribute('allowfullscreen', 'true');
+        office_frame.setAttribute('frameBorder', '0');
+        office_frame.onload = function(event) {
+            let eventTarget = <HTMLFormElement>event.target;
+            eventTarget.width = screen.width - 350;
+            eventTarget.height = screen.height - 390;
+        };
+        frameholder.appendChild(office_frame);
+        let officeForm = <HTMLFormElement>document.getElementById('office_form');
+        officeForm.submit();
     }
 
     deleteDocument() {
         this.startLoading(true);
         this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
             this.loadDocuments(() => {
+                if (this.actionsTooltip && this.actionsTooltip.visible) {
+                    this.actionsTooltip.instance.hide();
+                }
                 this.closeDocument();
                 this.finishLoading(true);
             });
