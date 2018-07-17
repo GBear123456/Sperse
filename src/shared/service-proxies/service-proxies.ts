@@ -12791,6 +12791,52 @@ export class LeadServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateLeadsStage(input: UpdateLeadStagesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadsStage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateLeadsStage(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateLeadsStage(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateLeadsStage(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
      * @processLeadInput (optional) 
      * @return Success
      */
@@ -41170,6 +41216,53 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
 export interface IUpdateLeadStageInfo {
     leadId: number | undefined;
     stageId: number | undefined;
+}
+
+export class UpdateLeadStagesInput implements IUpdateLeadStagesInput {
+    leadIds: number[];
+    stageId: number;
+
+    constructor(data?: IUpdateLeadStagesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["leadIds"] && data["leadIds"].constructor === Array) {
+                this.leadIds = [];
+                for (let item of data["leadIds"])
+                    this.leadIds.push(item);
+            }
+            this.stageId = data["stageId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadStagesInput {
+        let result = new UpdateLeadStagesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.leadIds && this.leadIds.constructor === Array) {
+            data["leadIds"] = [];
+            for (let item of this.leadIds)
+                data["leadIds"].push(item);
+        }
+        data["stageId"] = this.stageId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadStagesInput {
+    leadIds: number[];
+    stageId: number;
 }
 
 export class ProcessLeadInput implements IProcessLeadInput {

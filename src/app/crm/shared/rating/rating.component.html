@@ -10,7 +10,7 @@
                         <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{l('Clear')}}</span>
                         <span class="filter-apply" [class.disabled]="!checkPermissions()" (click)="apply()" >{{l('Apply')}}</span>
                     </div>
-                    <div class="dx-link dx-link-filter" [ngClass]="{'filtered': filtered}" (click)="applyFilter($event)"></div>
+                    <div class="dx-link dx-link-filter" *ngIf="filterModel" [ngClass]="{'filtered': filtered}" (click)="applyFilter($event)"></div>
                 </div>
             </div>
             <div>

@@ -65,12 +65,10 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                         this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation', 
                             this.selectedKeys.length),
                         isConfirmed => {
-                            if (isConfirmed) {
+                            if (isConfirmed)
                                 this.process(isRemove);
-                            } else {
-                                if (this.bulkUpdateMode)
-                                    setTimeout(() => { this.listComponent.deselectAll(); }, 500);
-                            }
+                            else
+                                this.listComponent.deselectAll();
                         }
                     );
                 else
@@ -89,6 +87,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 this._tagsService.untagCustomers(UntagCustomersInput.fromJS({
                     customerIds: customerIds,
                     tagIds: this.selectedTags
+                })).pipe(finalize(() => {
+                    this.listComponent.deselectAll();
                 })).subscribe((result) => {
                     this.notify.success(this.l('TagsUnassigned'));
                 });
@@ -97,8 +97,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                     customerIds: customerIds,
                     tags: tags 
                 })).pipe(finalize(() => {
-                    if (this.bulkUpdateMode)
-                        setTimeout(() => { this.listComponent.deselectAll(); }, 500);
+                    this.listComponent.deselectAll();
                 })).subscribe((result) => {
                     this.notify.success(this.l('TagsAssigned'));
                 });

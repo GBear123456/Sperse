@@ -54,14 +54,15 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed) 
+                                this.process();
+                            else
+                                this.listComponent.unselectAll();
                         }
                     );
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
@@ -71,7 +72,9 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             this._starsService.markCustomers(MarkCustomersInput.fromJS({
                 customerIds: this.selectedKeys,
                 starId: this.selectedItemKey
-            })).subscribe((result) => {
+            })).finally(() => {
+                this.listComponent.unselectAll();
+            }).subscribe((result) => {
                 this.notify.success(this.l('CustomersMarked'));
             });
         else
