@@ -7,5 +7,9 @@
                 <span class="link {{item.showPlus ? 'add-button': ''}}" (click)="onClick($event, item)">{{l('CRMDashboardMenu_' + item.caption)}}</span>
             </li>
         </ng-template>
+        <li class="item steps-progress-item">
+            <div class="img icon-info"></div>
+            <span class="link intro-link" (click)="showDialog()">{{l('Introduction Tour')}}</span>
+        </li>
     </ul>
 </div>
