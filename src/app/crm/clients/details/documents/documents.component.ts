@@ -1,5 +1,5 @@
 /** Core imports */
-import { AfterViewInit, Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
@@ -25,7 +25,7 @@ import { ClientDetailsService } from '../client-details.service';
     styleUrls: ['./documents.component.less'],
     providers: [ DocumentServiceProxy, FileSizePipe, PrinterService ]
 })
-export class DocumentsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class DocumentsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
@@ -202,8 +202,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     calculateFileSizeValue = (data: DocumentInfo) => this._fileSizePipe.transform(data.size);
 
-    ngAfterViewInit(): void {
-    }
+    numerizeFileSizeSortValue = (rowData) => +rowData.size;
 
     onContentReady() {
         this.setGridDataLoaded();
