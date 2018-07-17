@@ -327,7 +327,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe((response) => {
-                this.submitWopiRequest(response);
+                this.showOfficeOnline(response);
             });
         else
             this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
@@ -347,19 +347,37 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
             this.finishLoading(true);
         })).subscribe((response) => {
-            this.submitWopiRequest(response);
+            this.showOfficeOnline(response);
         });
     }
 
-    submitWopiRequest(wopiRequestInfo: WopiRequestOutcoming) {
+    showOfficeOnline(wopiRequestInfo: WopiRequestOutcoming) {
         this.openDocumentMode = true;
         this.showViewerType = this.WOPI_VIEWER;
         this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
         this.wopiAccessToken = wopiRequestInfo.accessToken;
         this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
         setTimeout(() => {
-            window['submitWopiRequest']();
+            this.submitWopiRequest();
         }, 500);
+    }
+
+    submitWopiRequest() {
+        let frameholder = document.getElementById('frameholder');
+        let office_frame = document.createElement('iframe');
+        office_frame.name = 'office_frame';
+        office_frame.id = 'office_frame';
+        office_frame.title = 'Office Online Frame';
+        office_frame.setAttribute('allowfullscreen', 'true');
+        office_frame.setAttribute('frameBorder', '0');
+        office_frame.onload = function(event) {
+            let eventTarget = <HTMLFormElement>event.target;
+            eventTarget.width = screen.width - 350;
+            eventTarget.height = screen.height - 390;
+        };
+        frameholder.appendChild(office_frame);
+        let officeForm = <HTMLFormElement>document.getElementById('office_form');
+        officeForm.submit();
     }
 
     deleteDocument() {

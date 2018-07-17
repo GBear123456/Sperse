@@ -59,12 +59,12 @@
                             <i class="fa fa-angle-right"></i>
                         </button>
                     </div>
-                    <div [hidden]="!dropZoneProgress && !loadProgress">
+                    <!-- div [hidden]="!dropZoneProgress && !loadProgress">
                         <h3 class="title settings">{{l('Default settings')}}&nbsp;
                             <span>({{l('if no values are selected in uploaded file')}})</span>
                         </h3>
                         <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == UPLOAD_STEP_INDEX"></app-toolbar>
-                    </div>
+                    </div -->
                 </div>
             </form>
         </mat-step>
@@ -77,7 +77,7 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
-                          [pager]="defaultGridPagerConfig"
+                          [paging]="{pageSize: 1000}"
                           (onCellClick)="onMapCellClick($event)"
                           (onSelectionChanged)="onMapSelectionChanged($event)"
                           (onRowValidating)="onRowValidating($event)"

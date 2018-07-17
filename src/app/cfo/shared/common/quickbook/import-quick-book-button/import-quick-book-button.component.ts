@@ -24,8 +24,12 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
     }
 
     buttonClick(): void {
-        abp.ui.setBusy();
-        this.checkConnection(true);
+        abp.message.confirm(this.l('ImportQbCoAConfirmation'), this.l('ImportQbCoAConfirmationTitle'), (result) => {
+            if (result) {
+                abp.ui.setBusy();
+                this.checkConnection(true);
+            }
+        });
     }
 
     checkConnection(tryNewConnect: boolean) {

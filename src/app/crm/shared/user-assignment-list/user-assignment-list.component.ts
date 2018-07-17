@@ -77,7 +77,10 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed)
+                                this.process();
+                            else
+                                this.listComponent.unselectAll();
                         }
                     );
                 else
@@ -95,7 +98,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                 customerIds: this.selectedKeys,
                 userId: this.selectedItemKey
             })).pipe(finalize(() => {
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
+                this.listComponent.unselectAll();
             })).subscribe((result) => {
                 this.notify.success(this.l('UserAssigned'));
             });

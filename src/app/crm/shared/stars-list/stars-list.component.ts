@@ -1,5 +1,7 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 
+import { finalize } from 'rxjs/operators';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -54,14 +56,15 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            isConfirmed && this.process();
+                            if (isConfirmed) 
+                                this.process();
+                            else
+                                this.listComponent.unselectAll();
                         }
                     );
                 else
                     this.process();
             }
-            if (this.bulkUpdateMode)
-                setTimeout(() => { this.listComponent.unselectAll(); }, 500);
         }
         this.tooltipVisible = false;
     }
@@ -71,6 +74,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             this._starsService.markCustomers(MarkCustomersInput.fromJS({
                 customerIds: this.selectedKeys,
                 starId: this.selectedItemKey
+            })).pipe(finalize(() => {
+                this.listComponent.unselectAll();
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomersMarked'));
             });

@@ -112,4 +112,8 @@ export class StaticListComponent extends AppComponentBase {
             event.itemData['action'](event);
         }
     }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.BulkUpdates');
+    }
 }

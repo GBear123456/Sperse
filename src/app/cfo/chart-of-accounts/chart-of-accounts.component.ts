@@ -30,6 +30,7 @@ class UploadCategoryModel{
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
     ActionTitle = 'CUSTOM CHART';
 
