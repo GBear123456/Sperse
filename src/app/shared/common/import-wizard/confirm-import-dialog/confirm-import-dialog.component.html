@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>{{l('Import_Confirmation_Title')}}</h2>
+<mat-dialog-content>
+    <dx-radio-group
+        [dataSource]="radioGroupItems"
+        displayExpr="text"
+        valueExpr="value"
+        [(value)]="data.option">
+    </dx-radio-group>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+  <button md-button [mat-dialog-close]="true" class="button-layout button-primary">{{l('Confirm')}}</button>
+</mat-dialog-actions>

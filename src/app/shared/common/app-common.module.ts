@@ -12,7 +12,7 @@ import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule
+    DxTreeViewModule, DxRadioGroupModule
 } from 'devextreme-angular';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { TableModule } from 'primeng/table';
@@ -28,6 +28,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
+import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
@@ -80,7 +81,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DxTextAreaModule,
         DxDataGridModule,
         DxContextMenuModule,
-        DxTreeViewModule
+        DxTreeViewModule,
+        DxRadioGroupModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -95,6 +97,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
+        ConfirmImportDialog,
         UploadPhotoDialogComponent
     ],
     exports: [
@@ -110,6 +113,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
+        ConfirmImportDialog,
         UploadPhotoDialogComponent
     ],
     providers: [
@@ -118,6 +122,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         AppNavigationService
     ],
     entryComponents: [
+        ConfirmImportDialog,
         UploadPhotoDialogComponent
     ]
 })
