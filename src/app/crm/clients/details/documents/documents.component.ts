@@ -69,6 +69,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
             {
                 text: this.l('Edit'),
                 action: this.editDocument.bind(this)
+            },
+            {
+                text: this.l('Delete'),
+                action: this.deleteDocument.bind(this)
             }
         ];
     }
@@ -272,7 +276,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
 
     showActionsMenu(data, target) {
         this.actionRecordData = data;
-        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).disabled = !data.isSupportedByWopi;
+        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isSupportedByWopi;
         this.actionsTooltip.instance.show(target);
     }
 
@@ -384,6 +388,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, Afte
         this.startLoading(true);
         this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
             this.loadDocuments(() => {
+                if (this.actionsTooltip && this.actionsTooltip.visible) {
+                    this.actionsTooltip.instance.hide();
+                }
                 this.closeDocument();
                 this.finishLoading(true);
             });

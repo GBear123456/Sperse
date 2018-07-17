@@ -2,7 +2,7 @@
     <dx-tooltip width="120px">
         <div *dxTemplate="let data of 'content'">
             <div class="lists-tooltip-container">
-                <dx-list [dataSource]="actionMenuItems"
+                <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
                     (onItemClick)="onMenuItemClick($event)">
                 </dx-list>
             </div>
