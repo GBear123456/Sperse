@@ -40562,6 +40562,7 @@ export interface IImportLeadPersonalInput {
 
 export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     companyName!: string | undefined;
+    organizationType!: string | undefined;
     jobTitle!: string | undefined;
     employeeCount!: number | undefined;
     yearFounded!: number | undefined;
@@ -40600,6 +40601,7 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
+            this.organizationType = data["organizationType"];
             this.jobTitle = data["jobTitle"];
             this.employeeCount = data["employeeCount"];
             this.yearFounded = data["yearFounded"];
@@ -40638,6 +40640,7 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
+        data["organizationType"] = this.organizationType;
         data["jobTitle"] = this.jobTitle;
         data["employeeCount"] = this.employeeCount;
         data["yearFounded"] = this.yearFounded;
@@ -40669,6 +40672,7 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
 
 export interface IImportLeadBusinessInput {
     companyName: string | undefined;
+    organizationType: string | undefined;
     jobTitle: string | undefined;
     employeeCount: number | undefined;
     yearFounded: number | undefined;
