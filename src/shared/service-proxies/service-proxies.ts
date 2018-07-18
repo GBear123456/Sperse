@@ -16401,11 +16401,14 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
+     * @moduleName (optional) 
      * @identifier (optional) 
      * @return Success
      */
-    get(identifier: string | null | undefined): Observable<QuestionnaireDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/Get?";
+    get(moduleName: string | null | undefined, identifier: string | null | undefined): Observable<QuestionnaireDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/Get?";
+        if (moduleName !== undefined)
+            url_ += "moduleName=" + encodeURIComponent("" + moduleName) + "&"; 
         if (identifier !== undefined)
             url_ += "identifier=" + encodeURIComponent("" + identifier) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -16456,11 +16459,14 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
+     * @moduleName (optional) 
      * @identifier (optional) 
      * @return Success
      */
-    getInternal(identifier: string | null | undefined): Observable<QuestionnaireDto> {
-        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/GetInternal?";
+    getInternal(moduleName: string | null | undefined, identifier: string | null | undefined): Observable<QuestionnaireDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/GetInternal?";
+        if (moduleName !== undefined)
+            url_ += "moduleName=" + encodeURIComponent("" + moduleName) + "&"; 
         if (identifier !== undefined)
             url_ += "identifier=" + encodeURIComponent("" + identifier) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -16511,11 +16517,14 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
+     * @moduleName (optional) 
      * @input (optional) 
      * @return Success
      */
-    submitResponse(input: QuestionnaireResponseDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/SubmitResponse";
+    submitResponse(moduleName: string | null | undefined, input: QuestionnaireResponseDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitResponse?";
+        if (moduleName !== undefined)
+            url_ += "moduleName=" + encodeURIComponent("" + moduleName) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -16563,11 +16572,14 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
+     * @moduleName (optional) 
      * @input (optional) 
      * @return Success
      */
-    submitResponseInternal(input: QuestionnaireResponseDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/SubmitResponseInternal";
+    submitResponseInternal(moduleName: string | null | undefined, input: QuestionnaireResponseDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitResponseInternal?";
+        if (moduleName !== undefined)
+            url_ += "moduleName=" + encodeURIComponent("" + moduleName) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);

@@ -95,7 +95,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponse(response)
+            this._questionnaireService.submitResponse(AppConsts.modules.CRMModule, response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });
