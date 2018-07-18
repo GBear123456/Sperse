@@ -434,6 +434,8 @@
               "src/node_modules/devextreme/dist/css/dx.light.css",
               "node_modules/dragula/dist/dragula.css",
 
+              "node_modules/videogular2/fonts/videogular.css",
+
               "src/app/shared/core.less",
               "src/app/shared/layout/layout.less",
               "src/assets/fonts/fonts-poppins.css",

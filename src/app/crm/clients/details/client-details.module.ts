@@ -8,7 +8,7 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, 
+    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
     DxRadioGroupModule, DxDropDownBoxModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -66,6 +66,10 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
 
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
+import { VgCoreModule } from 'videogular2/core';
+import { VgControlsModule } from 'videogular2/controls';
+import { VgOverlayPlayModule } from 'videogular2/overlay-play';
+import { VgBufferingModule } from 'videogular2/buffering';
 
 @NgModule({
   declarations: [
@@ -141,7 +145,11 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     DxRadioGroupModule,
     FileDropModule,
     ImageViewerModule,
-    DxDropDownBoxModule
+    DxDropDownBoxModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
   ],
   exports: [
     ClientDetailsComponent,

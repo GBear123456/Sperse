@@ -53,9 +53,12 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     public readonly WOPI_VIEWER  = 0;
     public readonly IMAGE_VIEWER = 1;
     public readonly TEXT_VIEWER  = 2;
+    public readonly VIDEO_VIEWER  = 3;
 
     public validTextExtensions: String[] = ['txt', 'text'];
+    public validVideoExtensions: String[] = ['mp4', 'mov'];
     public viewerToolbarConfig: any = [];
+    fileType: string;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -332,9 +335,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
         this.currentDocumentURL = '';
         this.showViewerType = undefined;
-        let ext = this.currentDocumentInfo.fileName.split('.').pop(),
+        let ext = this.fileType = this.currentDocumentInfo.fileName.split('.').pop(),
+            viewerType;
+
+        if (this.validVideoExtensions.indexOf(ext) >= 0) {
+            viewerType = this.VIDEO_VIEWER;
+        } else {
             viewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER :
                 (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
+        }
 
         this.startLoading(true);
         this.initViewerToolbar({
@@ -343,15 +352,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
             printHidden: viewerType === this.WOPI_VIEWER
-        });        
-        if (viewerType == this.WOPI_VIEWER)
-            this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
-                this.finishLoading(true);
-            })).subscribe((response) => {
-                this.showOfficeOnline(response);
-            });
-        else {
-            if (viewerType == this.TEXT_VIEWER)
+        });
+        switch (viewerType) {
+            case this.WOPI_VIEWER:
+                this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+                    this.finishLoading(true);
+                })).subscribe((response) => {
+                    this.showOfficeOnline(response);
+                });
+                break;
+            case this.TEXT_VIEWER:
                 this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
                     this.finishLoading(true);
                 })).subscribe((response) => {
@@ -359,12 +369,21 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     this.showViewerType = viewerType;
                     this.openDocumentMode = true;
                 });
-            else {  
+                break;
+            case this.VIDEO_VIEWER:
+                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
+                    this.currentDocumentURL = url;
+                    this.finishLoading(true);
+                    this.showViewerType = viewerType;
+                    this.openDocumentMode = true;
+                });
+                break;
+            default:
                 this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
                     this.currentDocumentURL = url;
                     this.downloadFileBlob(url, (blob) => {
                         let reader = new FileReader();
-                        reader.addEventListener("loadend", () => {
+                        reader.addEventListener('loadend', () => {
                             this.previewContent = StringHelper.getBase64(reader.result);
                             this.showViewerType = viewerType;
                             this.openDocumentMode = true;
@@ -372,9 +391,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                         reader.readAsDataURL(blob);
                         this.finishLoading(true);
                     });
-                });              
-
-            }  
+                });
+                break;
         }
     }
 
@@ -383,7 +401,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200)
                 callback(this.response);
-        }
+        };
 
         xhr.open('GET', url);
         xhr.responseType = 'blob';
@@ -391,7 +409,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
         xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 
-        xhr.send();  
+        xhr.send();
     }
 
     editDocument() {
@@ -451,7 +469,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     downloadDocument() {
         if (this.currentDocumentURL)
             window.open(this.currentDocumentURL, '_self');
-        else 
+        else
             this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
                 if (this.currentDocumentURL = url)
                     this.downloadDocument();

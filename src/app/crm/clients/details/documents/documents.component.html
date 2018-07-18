@@ -76,4 +76,10 @@
         [loadOnInit]="true">
     </app-image-viewer>
     <textarea *ngIf="showViewerType == TEXT_VIEWER" readonly>{{previewContent}}</textarea>
+
+    <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
+        <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
+            <source src="{{currentDocumentURL}}" type="video/{{fileType}}">
+        </video>
+    </vg-player>
 </div>

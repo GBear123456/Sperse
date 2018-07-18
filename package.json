@@ -148,6 +148,7 @@
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4",
     "urijs": "^1.19.0",
+    "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
     "xlsx": "^0.13.2",
     "zone.js": "^0.8.26"
