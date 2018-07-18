@@ -11,7 +11,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
 UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
-import { PhoneFormatPipe } from '@shared/common/pipes/phone-format.pipe';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 
 @Component({
