@@ -22,7 +22,7 @@
     </import-wizard>
 </div>
 
-<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [selectedItemKey]="userId" [bulkUpdateMode]="true"
                           [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
 <crm-static-list
     [width]="'210px'"
