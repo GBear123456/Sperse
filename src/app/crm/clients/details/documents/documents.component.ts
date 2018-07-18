@@ -130,12 +130,12 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 location: 'after', items: [
                     {
                         name: 'rotateLeft',
-                        action: this.rotateImageLeft.bind(this)
+                        action: this.rotateImageLeft.bind(this),
                         visible: this.showViewerType == this.IMAGE_VIEWER
                     },
                     {
                         name: 'rotateRight',
-                        action: this.rotateImageRight.bind(this)
+                        action: this.rotateImageRight.bind(this),
                         visible: this.showViewerType == this.IMAGE_VIEWER
                     }
                 ]

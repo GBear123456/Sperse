@@ -211,7 +211,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     },
                     {
                         name: 'rating',
-                        action: this.toggleRating.bind(this)
+                        action: this.toggleRating.bind(this),
                         options: {
                             accessKey: 'ClientRating'
                         }
