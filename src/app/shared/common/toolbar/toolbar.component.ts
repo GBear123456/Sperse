@@ -203,6 +203,14 @@ export class ToolBarComponent extends AppComponentBase {
         close: {
             hint: this.l('Close'),
             icon: this.getImgURI('close')
+        },
+        rotateRight: {
+            hint: this.l('Rotate right'),
+            icon: this.getImgURI('rotate-right-icon')
+        },
+        rotateLeft: {
+            hint: this.l('Rotate left'),
+            icon: this.getImgURI('rotate-left-icon')
         }
     };
 

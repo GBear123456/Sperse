@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
+import { RatingComponent } from '../rating/rating.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
@@ -30,6 +31,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
@@ -194,16 +196,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         }
                     },
                     {
-                        name: 'discard',
-                        action: this.resetFullDialog.bind(this)
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                areItemsDependent: true,
-                items: [
-                    {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
                         options: {
@@ -215,6 +207,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         action: this.toggleTags.bind(this),
                         options: {
                             accessKey: 'ClientTags'
+                        }
+                    },
+                    {
+                        name: 'rating',
+                        action: this.toggleRating.bind(this)
+                        options: {
+                            accessKey: 'ClientRating'
                         }
                     }
                 ]
@@ -276,6 +275,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         let assignedUserId = this.userAssignmentComponent.selectedItemKey;
         let lists = this.listsComponent.selectedItems;
         let tags = this.tagsComponent.selectedItems;
+        let ratingId = this.ratingComponent.ratingValue;
         let dataObj = {
             firstName: this.person.firstName,
             middleName: this.person.middleName,
@@ -300,7 +300,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             organizationNote: this.notes[ContactTypes.Business],
             assignedUserId: assignedUserId,
             lists: lists,
-            tags: tags
+            tags: tags,
+            ratingId: ratingId
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -465,6 +466,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     toggleLists() {
         this.listsComponent.toggle();
+    }
+
+    toggleRating() {
+        this.ratingComponent.toggle();
     }
 
     toggleUserAssignmen() {

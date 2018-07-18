@@ -97,11 +97,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                         name: 'edit',
                         action: this.editDocument.bind(this),
                         disabled: conf.editDisabled
-                    }
-                ]
-            },
-            {
-                location: 'after', items: [
+                    },
                     {
                         name: 'delete',
                         action: this.deleteDocument.bind(this)
@@ -127,6 +123,20 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                                 this.printerService.printDocument(printSrc, format);
                             }
                         }
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'rotateLeft',
+                        action: this.rotateImageLeft.bind(this)
+                        visible: this.showViewerType == this.IMAGE_VIEWER
+                    },
+                    {
+                        name: 'rotateRight',
+                        action: this.rotateImageRight.bind(this)
+                        visible: this.showViewerType == this.IMAGE_VIEWER
                     }
                 ]
             },
@@ -226,9 +236,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     updateUploadProgress(data) {
-        if (data.progress < 90 || data.progress > 95)
-            document.querySelector('file-drop .content')['style'].background =
-                'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
+        let elm = document.querySelector('file-drop .content');
+        if (elm && data.progress < 90 || data.progress > 95)
+            elm['style'].background = 'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
     }
 
     uploadFile(input) {
@@ -394,6 +404,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 this.finishLoading(true);
             });
         });
+    }
+
+    rotateImageRight() {
+        this.imageViewer.rotacionarDireita();
+    }
+
+    rotateImageLeft() {
+        this.imageViewer.rotacionarEsquerda();
     }
 
     closeDocument() {
