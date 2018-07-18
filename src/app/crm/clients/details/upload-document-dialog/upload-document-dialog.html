@@ -9,13 +9,7 @@
         </div>
     </h3>
     <p>
-        <dx-select-box
-            [dataSource]="documentTypes"
-            [(value)]="documentTypeId"
-            displayExpr="name"
-            valueExpr="id"
-            placeholder="{{l('ChooseDocumentType')}}">
-        </dx-select-box>
+        <crm-document-types-list></crm-document-types-list>
     </p>
 </mat-dialog-content>
 <mat-dialog-actions>
