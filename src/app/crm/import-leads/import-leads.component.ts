@@ -4,18 +4,10 @@ import { Router, RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
-import * as _s from 'underscore.string';
+import * as addressParser from 'parse-address';
+import * as _ from 'underscore';
 
 /** Application imports */
-import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
-import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import {
-    ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
-    LeadServiceProxy, CustomerListInput, ImportLeadsInputImportType
-} from '@shared/service-proxies/service-proxies';
-
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
@@ -24,15 +16,21 @@ import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/us
 import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-
-import * as addressParser from 'parse-address';
-
-import * as _ from 'underscore';
+import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
+import { AppConsts } from '@shared/AppConsts';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
+import {
+    ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
+    LeadServiceProxy, ImportLeadsInputImportType
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    providers: [ ZipCodeFormatterPipe ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -192,7 +190,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _leadService: LeadServiceProxy,
         private _router: Router,
         private _pipelineService: PipelineService,
-        private _nameParser: NameParserService
+        private _nameParser: NameParserService,
+        private zipFormatterPipe: ZipCodeFormatterPipe
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportLeadInput.fromJS({}));
@@ -268,8 +267,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let parsed = addressParser.parseLocation(fullAddress);
 
         if (parsed) {
-            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);            
-            this.setFieldIfDefined(parsed.state, field.mappedField + 
+            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);
+            this.setFieldIfDefined(parsed.state, field.mappedField +
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateCode'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
             this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
@@ -278,6 +277,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     field.mappedField + '_street', dataSource);
         }
 
+        return true;
+    }
+
+    private parseZipCode(field, zipCode, dataSource) {
+        const parsed = this.zipFormatterPipe.transform(zipCode);
+        if (parsed) {
+            this.setFieldIfDefined(parsed, field.mappedField + '_zipCode', dataSource);
+        }
         return true;
     }
 
@@ -317,7 +324,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             } else
                                 this.message.error(res[0].errorMessage);
                         });
-                }                    
+                }
             }
         );
     }
@@ -366,18 +373,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             let combinedName = parent ? `${parent}${ImportWizardComponent.FieldSeparator}${v}` : v;
             if (this.mappingObjectNames[v]) {
                 this.mappingFields.push({
-                    id: combinedName, 
+                    id: combinedName,
                     name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),
-                    parent: parent, 
+                    parent: parent,
                     expanded: true
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
             }
             else {
-                this.mappingFields.push({ 
-                    id: combinedName, 
-                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)), 
-                    parent: parent || 'Other' 
+                this.mappingFields.push({
+                    id: combinedName,
+                    name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),
+                    parent: parent || 'Other'
                 });
             }
         });
@@ -436,13 +443,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
-        if (field.mappedField == this.FULL_NAME_FIELD)
+        if (field.mappedField == this.FULL_NAME_FIELD) {
             return this.parseFullNameIntoDataSource(sourceValue, reviewDataSource);
-        else if (field.mappedField == this.PERSONAL_FULL_ADDRESS
+        } else if (field.mappedField == this.PERSONAL_FULL_ADDRESS
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS
-            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS
-        )
+            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS) {
             return this.parseFullAddressIntoDataSource(field, sourceValue, reviewDataSource);
+        } else if (field.mappedField === this.PERSONAL_FULL_ADDRESS_ZIP_CODE
+            || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE
+            || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE) {
+            return this.parseZipCode(field, sourceValue, reviewDataSource);
+        }
         return false;
     }
 

@@ -4,16 +4,16 @@
         <mat-step>
             <div class="first-step step-item">
                 <div class="header">
-                    <span>Introduction Tour</span>
+                    <span>{{l('Introduction_Tour')}}</span>
                 </div>
                 <div class="main">
-                    <h2>CRM</h2>
-                    <p>Customer Relationship Managment</p>
+                    <h2>{{l('CRM')}}</h2>
+                    <p>{{l('CRM_description')}}</p>
                     <div class="play" (click)="goToStep(8)">
                         <img src="assets/common/images/crm-intro/play-btn.png">
                         <div class="bottomp">
                             <p>
-                                Know Your <span class="color-blue">Customers</span>
+                                {{l('Know_Your')}} <span class="color-blue">{{l('Customers')}}</span>
                             </p>
                             <img src="assets/common/images/crm-intro/frb.png">
                         </div>
@@ -21,180 +21,180 @@
                 </div>
                 <div class="footer">
                     <a (click)="goToStep(8)">
-                        <img src="assets/common/images/crm-intro/button-play.svg" alt="play"> Play video
+                        <img src="assets/common/images/crm-intro/button-play.svg" alt="play"> {{l('Play_Video')}}
                     </a>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="second-step step-item">
                 <div class="header">
-                    <span>Key features</span>
+                    <span>{{l('Key_Features')}}</span>
                 </div>
                 <div class="main">
-                    <h2>Key Features</h2>
+                    <h2>{{l('Key_Features')}}</h2>
                     <ul class="treka">
                         <li>
-                            <img src="assets/common/images/crm-intro/sijalica.png">Drag & Drop Sales Pipeline Manager for Leads > Clients
+                            <img src="assets/common/images/crm-intro/sijalica.png">{{l('Key_Features_1')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/drugi.png">Document Manager: Upload, Store, Share, View, Edit
+                            <img src="assets/common/images/crm-intro/drugi.png">{{l('Key_Features_2')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/treci.png">Team Assigment, Task Collaborations & Notifications
+                            <img src="assets/common/images/crm-intro/treci.png">{{l('Key_Features_3')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/catvrti.png">Powerful Dashboards, Reports with Search Filters
+                            <img src="assets/common/images/crm-intro/catvrti.png">{{l('Key_Features_4')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/pati.png">Import Wizard and Export Data to Sync Your Contacts
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_5')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/pati.png">Capture and Manage Leads with Browser Extention
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_6')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/pati.png">Zapier Integration & Custom API Integrations
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_7')}}
                         </li>
                     </ul>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="second-step pro step-item">
                 <div class="header">
-                    <span>Key features: Pro Edition</span>
+                    <span>{{l('Key_Features')}}: {{l('Pro_Edition')}}</span>
                 </div>
                 <div class="main">
-                    <h2>Key features: Pro Edition</h2>
+                    <h2>{{l('Key_Features')}}: {{l('Pro_Edition')}}</h2>
                     <ul class="treka">
                         <li>
-                            <img src="assets/common/images/crm-intro/sijalica.png">SCAN Data Quality, Data Enrichment and Insights
+                            <img src="assets/common/images/crm-intro/sijalica.png">{{l('Key_Features_Pro_1')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/drugi.png">Integrated Sales Orders, Invoices & Payments
+                            <img src="assets/common/images/crm-intro/drugi.png">{{l('Key_Features_Pro_2')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/treci.png">Affiliate Partner Sales & Commissions Tracker & Reports
+                            <img src="assets/common/images/crm-intro/treci.png">{{l('Key_Features_Pro_3')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/catvrti.png">Deal Management and Streamlined Sales Automation
+                            <img src="assets/common/images/crm-intro/catvrti.png">{{l('Key_Features_Pro_4')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/pati.png">Send and Track Emails, Bulk Emails & Email Templates
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_5')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/pati.png">Built-in Phone Call Dialer and Call Tracker
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_6')}}
                         </li>
                         <li>
-                            <img src="assets/common/images/crm-intro/pati.png">Native Mobile App: Contact Lookup, Import & Call Dialer
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_7')}}
                         </li>
                     </ul>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="third-step step-item">
                 <div class="header">
-                    <span>Drag & Drop Sales Pipeline Manager</span>
+                    <span>{{l('Drag_Drop_Step_Title')}}</span>
                 </div>
                 <div class="main top-fromRight-bg">
-                    <img src="/assets/common/images/crm-intro/pipeline-manager.png" alt="Pipeline Manager" class="pipeline-img">
+                    <img src="/assets/common/images/crm-intro/pipeline-manager.png" alt="{{l('Pipeline_Manager')}}" class="pipeline-img">
                     <div class="content">
                         <p class="color-blue">
-                            Maximize your sales potential and customer relationships with a Smarter, Simpler and Streamlined CRM to convert your prospects and leads into sales!
+                            {{l('Drag_Drop_Step_Description')}}
                         </p>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="forth-step step-item">
                 <div class="header">
-                    <span>Transactions &gt; Search, Filter and Organize</span>
+                    <span>{{l('Transactions_Search_Filter_Organize')}}</span>
                 </div>
                 <div class="main top-fromLeft-bg">
                     <div class="content">
                         <p class="color-blue">
-                            Upload Customer Files Secure Cloud Storage Fast & Feature Rich Viewer Permission Based Sharing Collaborative Editing
+                            {{l('Transactions_Search_Filter_Organize_Description')}}
                         </p>
-                        <img src="/assets/common/images/crm-intro/documents-types.png" alt="Documents types" class="documents-types img-responsive">
+                        <img src="/assets/common/images/crm-intro/documents-types.png" alt="{{l('Documents_Types')}}" class="documents-types img-responsive">
                     </div>
-                    <img src="/assets/common/images/crm-intro/document-management.png" alt="Documents page" class="documents-page img-responsive">
+                    <img src="/assets/common/images/crm-intro/document-management.png" alt="{{l('Documents_Page')}}" class="documents-page img-responsive">
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="fifth-step step-item">
                 <div class="header">
-                    <span>Dashboard &gt; Your Financial Snapshot</span>
+                    <span>{{l('Your_Financial_Snapshot')}}</span>
                 </div>
                 <div class="main">
                     <div class="main-content">
-                        <h5>Import Wizard</h5>
-                        <p>Quickly import all your customer contacts and leads with the Intelligent Data Import Wizard</p>
-                        <h5>Export Tools</h5>
-                        <p>Use the export tools to download your contacts into other application</p>
+                        <h5>{{l('Import_Wizard')}}</h5>
+                        <p>{{l('Import_Wizard_Description')}}</p>
+                        <h5>{{l('Export_Tools')}}</h5>
+                        <p>{{l('Export_Tools_Description')}}</p>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="sixth-step step-item">
                 <div class="header">
-                    <span>Capture and Manage Leads with Browser Extension</span>
+                    <span>{{l('Browser_Extension')}}</span>
                 </div>
                 <div class="main top-fromLeft-bg">
                     <div class="content">
                         <p class="color-blue">
-                            Easily capture contact information and add to your sales leads with a click of a button when browsing any popular sites with the browser extension plugin
+                            {{l('Browser_Extension_Description')}}
                         </p>
-                        <img src="/assets/common/images/crm-intro/extension.png" alt="extension" class="extension img-responsive">
+                        <img src="/assets/common/images/crm-intro/extension.png" alt="{{l('Plugin_Extension')}}" class="extension img-responsive">
                     </div>
-                    <img src="/assets/common/images/crm-intro/plugin.png" alt="Plugin page" class="plugin-page img-responsive">
+                    <img src="/assets/common/images/crm-intro/plugin.png" alt="{{l('Plugin_Page')}}" class="plugin-page img-responsive">
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
-                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step>
             <div class="zapier step-item">
                 <div class="header">
-                    <span>Zapier App & Custom API Integrations</span>
+                    <span>{{l('Zap_Custom_Integration')}}</span>
                 </div>
                 <div class="main top-fromRight-bg">
                     <img src="/assets/common/images/crm-intro/zapier-integration.png" alt="Pipeline Manager" class="zapier-img">
                     <div class="main-content">
-                        <h5>Zapier App</h5>
-                        <p>Easily connect the Sperse CRM with over 1000 web applications via the Zapier API</p>
-                        <h5>Custom Integrations</h5>
-                        <p>Need a custom app integrated? Our team can help you explore the best options.</p>
+                        <h5>{{l('Zapier_Integration')}}</h5>
+                        <p>{{l('Zapier_Integration_Description')}}</p>
+                        <h5>{{l('Custom_Integration')}}</h5>
+                        <p>{{l('Custom_Integration_Description')}}</p>
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -275,7 +275,7 @@
         <mat-step>
             <div class="video step-item">
                 <div class="header">
-                    <span>CRM - Product Video Introduction</span>
+                    <span>{{l('CRM')}} - {{l('Product_Video_Introduction')}}</span>
                 </div>
                 <div class="main">
                     <div class="video-wrapper">
@@ -287,7 +287,7 @@
                     </div>
                 </div>
                 <div class="footer">
-                    <button mat-button (click)="goToStep(0)" class="btn btn-layout">Back</button>
+                    <button mat-button (click)="goToStep(0)" class="btn btn-layout">{{l('Back')}}</button>
                 </div>
             </div>
         </mat-step>

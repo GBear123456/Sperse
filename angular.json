@@ -300,6 +300,7 @@
             "main": "src/test.ts",
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.json",
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-validation/dist/jquery.validate.js",
