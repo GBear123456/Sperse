@@ -6,13 +6,15 @@ import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
-import { CustomerInfoDto, LeadInfoDto } from '@shared/service-proxies/service-proxies';
+import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 import { ClientDetailsService } from './client-details.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less']
+    styleUrls: ['./operations-widget.component.less'],
+    providers: [ AppLocalizationService ]
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -20,7 +22,10 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+
+    /*** @todo add localization service */
 
     @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
@@ -42,7 +47,8 @@ export class OperationsWidgetComponent implements OnInit {
     toolbarConfig = [];
 
     constructor(
-        private _clientService: ClientDetailsService
+        private _clientService: ClientDetailsService,
+        public localizationService: AppLocalizationService
     ) {
         _clientService.toolbarSubscribe((config) => {
             this.initToolbarConfig(config);
@@ -71,19 +77,7 @@ export class OperationsWidgetComponent implements OnInit {
                 } :
                 {
                     name: 'status',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: 'Status',
-                        items: [
-                            {
-                                action: this.updateStatus.bind(this, 'A'),
-                                text: 'Active',
-                            }, {
-                                action: this.updateStatus.bind(this, 'I'),
-                                text: 'Inactive',
-                            }
-                        ]
-                    }
+                    action: this.toggleStatus.bind(this)
                 },
                 {
                     name: 'lists',
@@ -121,6 +115,10 @@ export class OperationsWidgetComponent implements OnInit {
         this.stagesComponent.toggle();
     }
 
+    toggleStatus() {
+        this.statusComponent.toggle();
+    }
+
     toggleDataLayout(dataLayoutType) {
         this.dataLayoutType = dataLayoutType;
     }
@@ -149,8 +147,8 @@ export class OperationsWidgetComponent implements OnInit {
         this.onDelete.emit();
     }
 
-    updateStatus(statusId: string) {
-        this.onUpdateStatus.emit(statusId);
+    updateStatus(event) {
+        this.onUpdateStatus.emit(event);
     }
 
     updateStage(event) {

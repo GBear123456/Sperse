@@ -1,9 +1,9 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-
     <crm-static-list
+        #stagesList
         [width]="'210px'"
-        [title]="'Stages'"
+        [title]="localizationService.l('Stages')"
         [selectedKeys]="[selectedStageId]"
         [selectedItems]=""
         [hideButtons]="true"
@@ -12,6 +12,18 @@
         [targetSelector]="'[aria-label=Stage]'"
         [showTitle]="false"
         [list]="stages">
+    </crm-static-list>
+    <crm-static-list
+        #statusesList
+        [width]="'180px'"
+        [title]="localizationService.l('Status')"
+        [showConfirmation]="false"
+        [hideButtons]="true"
+        [highlightSelected]="true"
+        [selectedKeys]="[customerInfo?.statusId]"
+        [targetSelector]="'[aria-label=Status]'"
+        [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
+        (onItemSelected)="updateStatus($event)">
     </crm-static-list>
     <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.tags"></crm-tags-list>
     <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.lists"></crm-lists-list>

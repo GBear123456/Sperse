@@ -110,6 +110,8 @@ export class StaticListComponent extends AppComponentBase {
     onItemClick(event) {
         if (event.itemData.action) {
             event.itemData['action'](event);
+        } else if (event.itemData.id) {
+            this.onItemSelected.emit(event.itemData.id);
         }
     }
 

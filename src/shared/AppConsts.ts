@@ -31,6 +31,12 @@ export class AppConsts {
         CFOLocalizationSourceName: 'CFO'
     };
 
+    static readonly modules = {
+        platformModule: 'Platform',
+        CRMModule: 'CRM',
+        CFOModule: 'CFO'
+    };
+
     static readonly authorization = {
         encrptedAuthTokenName: 'enc_auth_token'
     };

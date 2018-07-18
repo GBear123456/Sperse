@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { DocumentTypesListComponent } from '../document-types-list/document-types-list.component';
 import { DocumentTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -13,8 +14,9 @@ import { DocumentTypeServiceProxy } from '@shared/service-proxies/service-proxie
   providers: [DocumentTypeServiceProxy]
 })
 export class UploadDocumentDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
+    @ViewChild(DocumentTypesListComponent) documentTypesListComponent: DocumentTypesListComponent;
+
     public documentTypes = [];
-    public documentTypeId: number;
     public file: File;
 
     constructor(
@@ -31,13 +33,15 @@ export class UploadDocumentDialogComponent extends AppComponentBase implements O
     }
 
     onSave(event) {
-        if (!this.file || !this.documentTypeId)
+        let documentTypeId = this.documentTypesListComponent.selectedDocumentTypeId;
+
+        if (!this.file || !documentTypeId)
             return;
 
         let fileReader: FileReader = new FileReader();
         fileReader.onloadend = (loadEvent: any) => {
             this.dialogRef.close({
-                typeId: this.documentTypeId,
+                typeId: documentTypeId,
                 name: this.file.name,
                 size: this.file.size,
                 fileBase64: StringHelper.getBase64(loadEvent.target.result)

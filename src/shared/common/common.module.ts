@@ -25,7 +25,7 @@ import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/ban
 import { SelectionFilterComponent } from '@shared/common/widgets/selection-filter/selection-filter.component';
 import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
-import { PhoneFormatPipe } from './pipes/phone-format.pipe';
+import { PhoneFormatPipe } from './pipes/phone-format/phone-format.pipe';
 import { AddressFormatPipe } from './pipes/address-format.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 

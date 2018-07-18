@@ -1,7 +1,7 @@
 /** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 /** Third party imports */
 import { MatHorizontalStepper } from '@angular/material';
@@ -32,7 +32,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @Input() checkSimilarRecord: Function;
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
-    @Input() lookupFields: any;    
+    @Input() lookupFields: any;
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
     @Input() set fields(list: string[]) {
@@ -166,7 +166,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                                 return row;
                             }));
                         else
-                            this.complete(records.filter((row) => 
+                            this.complete(records.filter((row) =>
                                 Boolean(this.invalidRowKeys[row.uniqueIdent])));
                     }
                 });
@@ -176,7 +176,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     getMappedFields() {
-        let mappedFields = this.mapGrid && 
+        let mappedFields = this.mapGrid &&
             this.mapGrid.instance.getSelectedRowsData() || [];
         if (!mappedFields.length) {
             mappedFields = this.mapDataSource && this.mapDataSource.store &&

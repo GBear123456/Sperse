@@ -10,6 +10,7 @@ import {
 import { ImportUserData } from './cfo-intro.model'
 import * as nameParser from 'parse-full-name';
 import { finalize } from 'rxjs/operators';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-cfo-intro',
@@ -51,7 +52,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._questionnaireService.getInternal(this.identifier)
+        this._questionnaireService.getInternal(AppConsts.modules.CFOModule, this.identifier)
             .subscribe(result => {
                 this.question = result.questions[0];
             });
@@ -100,7 +101,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponseInternal(response)
+            this._questionnaireService.submitResponseInternal(AppConsts.modules.CFOModule, response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });
