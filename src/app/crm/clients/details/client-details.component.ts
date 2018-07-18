@@ -186,20 +186,25 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this.l('ClientUpdateStatusWarningMessage'),
             this.l('ClientStatusUpdateConfirmationTitle'),
             isConfirmed => {
-                if (isConfirmed)
-                    this.updateStatusInternal(statusId);
+                if (isConfirmed) {
+                    this.updateStatusInternal(statusId)
+                        .subscribe(() => {
+                            this.customerInfo.statusId = statusId;
+                            this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [statusId]);
+                            this.notify.success(this.l('StatusSuccessfullyUpdated'));
+                        });
+                } else {
+                    this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.customerInfo.statusId]);
+                }
             }
         );
     }
 
     private updateStatusInternal(statusId: string) {
-        this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
+        return this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
             customerId: this.customerId,
             statusId: statusId
-        })).subscribe(() => {
-            this.customerInfo.statusId = statusId;
-            this.notify.success(this.l('StatusSuccessfullyUpdated'));
-        });
+        }));
     }
 
     private getVerificationChecklistItem(type: VerificationChecklistItemType,

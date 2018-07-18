@@ -25,13 +25,17 @@
         &.disabled {
             color: #999;
             cursor: unset;
-            pointer-events: none; 
+            pointer-events: none;
         }
-    }        
+    }
 
     /deep/ dx-list {
         &.highlightSelected .dx-item.dx-list-item-selected {
             background-color: #effafe;
+        }
+
+        .dx-list-item.dx-state-hover {
+            background-color: #f5f5f5;
         }
 
         .dx-list-item-before-bag.dx-list-select-radiobutton-container {
