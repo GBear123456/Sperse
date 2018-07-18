@@ -1,7 +1,13 @@
-import { Component, Injector, Input } from '@angular/core';
+/** Core imports */
+import { Component, Injector, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Router } from '@angular/router';
+
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -9,7 +15,7 @@ import { Router } from '@angular/router';
     selector: 'left-menu',
 })
 export class DashboardMenuComponent extends AppComponentBase {
-
+    @Output() openIntro: EventEmitter<any> = new EventEmitter();
     items = [
         { caption: 'ManageClients', component: '/clients', showPlus: true },
         { caption: 'ManageLeads', component: '/leads', showPlus: true },
@@ -31,7 +37,11 @@ export class DashboardMenuComponent extends AppComponentBase {
             elem.component && this._router.navigate(
                 ['/app/crm' + elem.component]);
         else if (event.target.classList.contains('add-button'))
-            this._router.navigate(['/app/crm' + elem.component], 
+            this._router.navigate(['/app/crm' + elem.component],
                 { queryParams: { action: 'addNew' } });
+    }
+
+    showDialog() {
+        this.openIntro.emit(event);
     }
 }

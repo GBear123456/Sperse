@@ -143,8 +143,16 @@
                                mode="multiple">
                 </dxo-selection>
 
-                <div *dxTemplate="let cellData of 'phoneCell'">
+                <div *dxTemplate="let cellData of 'phoneCell'" [ngClass]="{invalid: !checkFieldValid('phone', cellData)}">
                     {{cellData.value | phone}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'emailCell'" [ngClass]="{invalid: !checkFieldValid('email', cellData)}">
+                    {{cellData.value}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'urlCell'" [ngClass]="{invalid: !checkFieldValid('url', cellData)}">
+                    {{cellData.value}}
                 </div>
             </dx-data-grid>
         </mat-step>

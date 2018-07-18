@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 
 /** Third party imports */
 import { MatHorizontalStepper } from '@angular/material';
@@ -12,6 +13,8 @@ import * as _s from 'underscore.string';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'import-wizard',
@@ -29,7 +32,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @Input() checkSimilarRecord: Function;
     @Input() columnsConfig: any = {};
     @Input() localizationSource: string;
-    @Input() lookupFields: any;
+    @Input() lookupFields: any;    
     @Input() preProcessFieldBeforeReview: Function;
     @Input() validateFieldsMapping: Function;
     @Input() set fields(list: string[]) {
@@ -54,6 +57,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];
+    private validateFieldList: string[] = ['email', 'phone', 'url'];
+    private invalidRowKeys: any = {};
 
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
@@ -83,6 +88,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _parser: Papa,
+        private _dialog: MatDialog,
         private _formBuilder: FormBuilder
     ) {
         super(injector);
@@ -141,8 +147,31 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 this.message.error(this.dataMapping.controls.valid.errors.error || this.l('MapAllRecords'));
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
-            let data = this.reviewGrid.instance.getSelectedRowsData();
-            this.complete(data.length && data || this.reviewDataSource);
+            let gridElm = this.reviewGrid.instance.element();
+            if (gridElm.getElementsByClassName('invalid').length) {
+                let dialogData = {option: 'ignore'};
+                this._dialog.open(ConfirmImportDialog, {
+                    data: dialogData
+                }).afterClosed().subscribe(result => {
+                    if (result) {
+                        let records = this.reviewGrid.instance.getSelectedRowsData();
+                        records = records.length && records || this.reviewDataSource;
+                        if (dialogData.option == 'ignore')
+                            this.complete(records.map((row) => {
+                                if (this.invalidRowKeys[row.uniqueIdent]) {
+                                    this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
+                                        row[field] = '';
+                                    });
+                                }
+                                return row;
+                            }));
+                        else
+                            this.complete(records.filter((row) => 
+                                Boolean(this.invalidRowKeys[row.uniqueIdent])));
+                    }
+                });
+            } else
+                this.complete();
         }
     }
 
@@ -164,8 +193,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    complete(data) {
-        this.onComplete.emit(data);
+    complete(rows = null) {
+        let data = rows || this.reviewGrid.instance.getSelectedRowsData();
+        this.onComplete.emit(data.length && data || this.reviewDataSource);
     }
 
     showFinishStep() {
@@ -177,6 +207,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.selectedPreviewRows = [];
         this.duplicateCounts = {};
         this.reviewGroups = [];
+        this.invalidRowKeys = {};
     }
 
     initReviewDataSource(mappedFields) {
@@ -531,10 +562,38 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             } else {
                 if (columnConfig)
                     _.extend(column, columnConfig);
+                this.initColumnTemplate(column);
             }
 
             if (!columnConfig || !columnConfig['caption'])
                 column.caption = this.l(ImportWizardComponent.getFieldLocalizationName(column.dataField));
         });
+    }
+
+    initColumnTemplate(column) {
+        let field;
+        this.validateFieldList.some((fld) => {
+            if (column.dataField.toLowerCase().includes(fld))
+                return Boolean(field = fld);
+        });
+
+        if (field)
+            column.cellTemplate = field + 'Cell';
+    }
+
+    checkFieldValid(field, dataCell) {
+        let value = dataCell.value;
+        if (field == 'phone')
+            value = dataCell.value.replace(/[\(\)-\s]/g, '');
+
+        let isValid = AppConsts.regexPatterns[field].test(value);
+        if (!isValid) {
+            if (this.invalidRowKeys[dataCell.key])
+                this.invalidRowKeys[dataCell.key].push(dataCell.column.dataField);
+            else
+                this.invalidRowKeys[dataCell.key] = [dataCell.column.dataField];
+        }
+
+        return isValid;
     }
 }

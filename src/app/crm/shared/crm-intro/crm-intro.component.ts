@@ -1,29 +1,34 @@
+/** Core imports */
 import { Component, Injector, Inject, OnInit, ViewChild } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FormGroup } from '@angular/forms';
+
+/** Third party imports */
 import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import {
-    QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto, RoleServiceProxy, RoleListDto, UserServiceProxy,
-    InviteUserInput, TenantHostType, InstanceType
-} from 'shared/service-proxies/service-proxies';
-import { ImportUserData } from './cfo-intro.model'
 import * as nameParser from 'parse-full-name';
 import { finalize } from 'rxjs/operators';
 
+/** Application imports */
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import {
+    QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto, RoleServiceProxy, RoleListDto, UserServiceProxy,
+    InviteUserInput, TenantHostType
+} from 'shared/service-proxies/service-proxies';
+import { ImportUserData } from './crm-intro.model';
+
+
 @Component({
-    selector: 'app-cfo-intro',
-    templateUrl: './cfo-intro.component.html',
-    styleUrls: ['./cfo-intro.component.less'],
+    selector: 'app-crm-intro',
+    templateUrl: './crm-intro.component.html',
+    styleUrls: ['./crm-intro.component.less'],
     animations: [appModuleAnimation()],
     providers: [QuestionnaireServiceProxy, RoleServiceProxy, UserServiceProxy]
 })
-export class CfoIntroComponent extends CFOComponentBase implements OnInit {
+export class CrmIntroComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
-    dialogRef: MatDialogRef<CfoIntroComponent, any>;
+    dialogRef: MatDialogRef<CrmIntroComponent, any>;
     isLinear = false;
-    videoIndex = 7;
-    readonly identifier = 'CFO-Instance-Setup';
+    readonly identifier = 'CRM-Instance-Setup';
 
     question: QuestionDto;
     roles: RoleListDto[] = [];
@@ -40,31 +45,20 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
         private _userService: UserServiceProxy
     ) {
         super(injector);
-
         this.dialogRef = <any>injector.get(MatDialogRef);
-
-        this.showImportUsersStep = this.instanceType == InstanceType.Main &&
-            (!abp.session.tenantId || this.feature.isEnabled('Admin'))
-            && this.permission.isGranted('Pages.Administration.Users')
-            && this.permission.isGranted('Pages.Administration.Users.Create')
-            && this.permission.isGranted('Pages.Administration.Roles');
     }
 
     ngOnInit() {
-        this._questionnaireService.getInternal(this.identifier)
-            .subscribe(result => {
-                this.question = result.questions[0];
-            });
+        // this._questionnaireService.get(this.identifier)
+        //     .subscribe(result => {
+        //         this.question = result.questions[0];
+        //     });
 
-        if (this.showImportUsersStep) {
-            this._roleService.getRoles(undefined).subscribe(result => {
-                this.roles = result.items;
-            });
-        }
-    }
-
-    showVideo() {
-        this.stepper.selectedIndex = this.videoIndex;
+        // if (this.showImportUsersStep) {
+        //     this._roleService.getRoles(undefined).subscribe(result => {
+        //         this.roles = result.items;
+        //     });
+        // }
     }
 
     onSubmit() {
@@ -75,8 +69,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
             this.startLoading(true);
             this.submitInviteUsers()
                 .subscribe(() => this.submitQuestionnaire(), () => this.finishLoading(true));
-        }
-        else {
+        } else {
             this.startLoading(true);
             this.submitQuestionnaire();
         }
@@ -100,13 +93,12 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponseInternal(response)
+            this._questionnaireService.submitResponse(response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });
                 });
-        }
-        else {
+        } else {
             this.dialogRef.close({ isGetStartedButtonClicked: true });
             this.finishLoading(true);
         }
