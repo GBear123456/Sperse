@@ -20,6 +20,8 @@ import { DocumentType } from './document-type.enum';
 import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 
+import { StringHelper } from '@shared/helpers/StringHelper';
+
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
@@ -131,12 +133,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     {
                         name: 'rotateLeft',
                         action: this.rotateImageLeft.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER
+                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        disabled: conf.rotateDisabled
                     },
                     {
                         name: 'rotateRight',
                         action: this.rotateImageRight.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER
+                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        disabled: conf.rotateDisabled
                     }
                 ]
             },
@@ -330,6 +334,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
         this.startLoading(true);
         this.initViewerToolbar({
+            rotateDisabled: ext == 'pdf'
             editDisabled: !this.currentDocumentInfo.isSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
@@ -342,13 +347,45 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             })).subscribe((response) => {
                 this.showOfficeOnline(response);
             });
-        else
-            this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
-                this.finishLoading(true);
-            })).subscribe((response) => {
-                this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response) : response;
-                this.openDocumentMode = true;
-            });
+        else {
+            if (this.showViewerType == this.TEXT_VIEWER)
+                this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
+                    this.finishLoading(true);
+                })).subscribe((response) => {
+                    this.previewContent = atob(response);
+                    this.openDocumentMode = true;
+                });
+            else {  
+                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((response) => {
+                    this.downloadFileBlob(response, (blob) => {
+                        let reader = new FileReader();
+                        reader.addEventListener("loadend", () => {
+                            this.previewContent = StringHelper.getBase64(reader.result);
+                            this.openDocumentMode = true;
+                        });
+                        reader.readAsDataURL(blob);
+                        this.finishLoading(true);
+                    });
+                });              
+
+            }  
+        }
+    }
+
+    downloadFileBlob(url, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200)
+                callback(this.response);
+        }
+
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+
+        xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+
+        xhr.send();  
     }
 
     editDocument() {
