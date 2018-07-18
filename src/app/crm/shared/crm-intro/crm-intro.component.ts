@@ -29,7 +29,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     isLinear = false;
-    readonly identifier = 'CRM-Instance-Setup';
+    readonly identifier = 'CRM-Setup';
 
     question: QuestionDto;
     roles: RoleListDto[] = [];
@@ -51,10 +51,10 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        // this._questionnaireService.get(this.identifier)
-        //     .subscribe(result => {
-        //         this.question = result.questions[0];
-        //     });
+        this._questionnaireService.get(AppConsts.modules.CRMModule, this.identifier)
+             .subscribe(result => {
+                 this.question = result.questions[0];
+             });
 
         // if (this.showImportUsersStep) {
         //     this._roleService.getRoles(undefined).subscribe(result => {
