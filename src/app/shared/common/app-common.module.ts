@@ -8,12 +8,17 @@ import { AbpModule } from '@abp/abp.module';
 import { CommonModule } from '@shared/common/common.module';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatProgressBarModule, MatStepperModule, MatInputModule, 
-    MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
+import {
+    MatProgressBarModule, MatStepperModule, MatInputModule,
+    MatDialogModule, MatTabsModule, MatSidenavModule,
+} from '@angular/material';
 
-import { DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
+import {
+    DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
-    DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule } from 'devextreme-angular';
+    DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
+    DxTreeViewModule
+} from 'devextreme-angular';
 
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
@@ -75,7 +80,8 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         DxSelectBoxModule,
         DxTextAreaModule,
         DxDataGridModule,
-        DxContextMenuModule
+        DxContextMenuModule,
+        DxTreeViewModule
     ],
     declarations: [
         TimeZoneComboComponent,

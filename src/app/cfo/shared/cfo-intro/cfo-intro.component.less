@@ -1,0 +1,803 @@
+:host {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+
+    .close-dialog {
+        position: absolute;
+        background: transparent;
+        border: 0;
+        right: 15px;
+        // top: 15px;
+        top: 4%;
+        padding: 0;
+        outline: none;
+        cursor: pointer;
+
+        i {
+            font-size: 25px;
+            margin: 0;
+        }
+        &:hover {
+            opacity: .8;
+        }
+    }
+
+    // section
+    .step-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .header {
+            height: 12%;
+            padding: 11px 52px 11px 24px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 21px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .main {
+            height: auto;
+            text-align: center;
+            flex-grow: 2;
+            h2 {
+                font-family: Montserrat;
+                font-size: 32px;
+                font-weight: bold;
+                color: #ffffff;
+            }
+            p {
+                font-family: Montserrat;
+                font-size: 24px;
+                font-weight: 600;
+                letter-spacing: 0.7px;
+                text-align: center;
+                color: #ffffff;
+                margin-top: -12px;
+            }
+        }
+        .footer {
+            height: 15%;
+            align-items: center;
+        }
+    }
+
+    // first step
+    .first-step {
+        background-image: url(../../../../assets/common/images/cfo-intro/prvapoza.jpg);
+        background-repeat: no-repeat;
+        .main {
+            h2 {
+                margin-bottom: 0;
+                letter-spacing: 7px;
+                font-size: 90px;
+                margin-top: -30px;
+            }
+        }
+    }
+    .play {
+        text-align: center;
+        margin-top: 70px;
+        cursor: pointer;
+
+        .bottomp {
+            margin-top: 89px;
+            img {
+                height: 38px;
+            }
+            p {
+                font-family: Merriweather;
+                font-size: 32px;
+                font-weight: bold;
+                font-style: italic;
+                letter-spacing: 0.5px;
+                color: #222c36;
+            }
+        }
+    }
+
+    // second step
+    .second-step {
+        background-image: url(../../../../assets/common/images/cfo-intro/prvapoza.jpg);
+        background-repeat: no-repeat;
+
+        .main {
+            h2 {
+                height: 42px;
+                color: #ffffff;
+                margin-bottom: 24px;
+            }
+        }
+
+        .treka {
+            width: 539px;
+            height: 248px;
+            border-radius: 6px;
+            background-color: #ffffff;
+            box-shadow: 7px 11px 27px 0 rgba(0, 0, 0, 0.05);
+            margin: 0 auto;
+            padding: 52px;
+            box-sizing: content-box;
+        }
+
+        li {
+            list-style: none;
+            font-family: Montserrat;
+            font-size: 17px;
+            font-weight: normal;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 1.42;
+            letter-spacing: 0.4px;
+            text-align: left;
+            color: #424c56;
+            margin-bottom: 25px;
+        }
+        img {
+            margin-right: 22px;
+            margin-bottom: -13px;
+        }
+    }
+
+    // third step
+    .third-step {
+        .header {
+            background-color: #00aeef;
+            span {
+                font-size: 21px;
+                color: #ffffff;
+            }
+        }
+        .conta {
+            width: 100%;
+            background-image: url(../../../../assets/common/images/cfo-intro/poza2.png);
+            background-repeat: no-repeat;
+            margin-top: 0px;
+            padding-top: 69px;
+            padding-left: 43px;
+        }
+        .vrh {
+            text-align: left;
+            h2 {
+                width: 484px;
+                height: 70px;
+                font-family: Montserrat;
+                font-size: 26px;
+                font-weight: 500;
+                margin-bottom: 52px;
+                color: #202b35;
+            }
+            span {
+                width: 395px;
+                height: 31px;
+                font-family: Montserrat;
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 1.69;
+                letter-spacing: 0.3px;
+                color: #00aeef;
+            }
+            p {
+                font-weight: normal;
+                color: rgba(34, 44, 54, 0.6);
+                font-size: 18px;
+                font-weight: 600;
+                font-family: Montserrat;
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 1.69;
+                letter-spacing: 0.3px;
+                text-align: left;
+            }
+        }
+        .bra img {
+            width: 471px;
+        }
+        section.dole {
+            display: flex;
+        }
+        .str {
+            align-self: flex-end;
+            margin-left: 30px;
+            margin-bottom: -44px;
+            span {
+                width: 188.6px;
+                height: 92px;
+                font-family: Montserrat;
+                font-size: 17px;
+                font-weight: 600;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: 0.2px;
+                text-align: left;
+                color: #00aeef;
+            }
+            p {
+                width: 188.6px;
+                height: 92px;
+                font-family: Montserrat;
+                font-size: 17px;
+                font-weight: 600;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: 0.2px;
+                text-align: left;
+                color: #7a7d81;
+            }
+        }
+    }
+
+    // forth-step
+    .forth-step {
+        .header {
+            background-color: #00aeef;
+            justify-content: flex-start;
+            span {
+                font-size: 21px;
+                color: #ffffff;
+            }
+        }
+        .conta {
+            background-image: url(../../../../assets/common/images/cfo-intro/poza3.png);
+            background-repeat: no-repeat;
+            padding-top: 161px;
+            padding-left: 43px;
+        }
+        .topa {
+            height: 50px;
+            background-color: #00aeef;
+            p {
+                height: 28px;
+                font-family: Montserrat;
+                font-size: 21px;
+                font-weight: normal;
+                text-align: left;
+                color: #ffffff;
+                padding-top: 11px;
+                margin-left: 27px;
+                margin-top: 0;
+            }
+        }
+        .mainda {
+            h3 {
+                width: 266px;
+                height: 38px;
+                font-family: Montserrat;
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 0.9px;
+                text-align: left;
+                color: #00aeef;
+            }
+            h2 {
+                width: 334px;
+                height: 52px;
+                font-family: Montserrat;
+                font-size: 24px;
+                font-weight: 600;
+                line-height: 1.08;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: #222c36;
+            }
+            p {
+                width: 334px;
+                height: 105px;
+                font-family: Montserrat;
+                font-size: 16px;
+                font-weight: 300;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: #5d6369;
+                margin-top: 0;
+            }
+        }
+    }
+    // fifth-step
+    .fifth-step {
+        .header {
+            background-color: #00aeef;
+            justify-content: flex-start;
+            span {
+                font-size: 21px;
+                color: #ffffff;
+            }
+        }
+        .conta {
+            background-image: url(../../../../assets/common/images/cfo-intro/poza4.png);
+            background-repeat: no-repeat;
+            height: 460px;
+        }
+        .mainda {
+            float: right;
+            max-width: 367px;
+            margin-top: 125px;
+
+            h3 {
+                width: 102px;
+                height: 19px;
+                font-family: Montserrat;
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 0.9px;
+                text-align: left;
+                color: #00aeef;
+            }
+            h2 {
+                height: 52px;
+                font-family: Montserrat;
+                font-size: 24px;
+                font-weight: 600;
+                line-height: 1.08;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: #222c36;
+            }
+            p {
+                height: 105px;
+                font-family: Montserrat;
+                font-size: 16px;
+                font-weight: 300;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: #5d6369;
+                margin-top: 0;
+            }
+        }
+    }
+    // sixth-step
+    .sixth-step {
+        .header {
+            justify-content: flex-start;
+        }
+        img {
+            max-height: 42px;
+        }
+        h3 {
+            text-align: center;
+            height: 34px;
+            font-family: Montserrat;
+            font-size: 25px;
+            font-weight: 600;
+            letter-spacing: normal;
+            text-align: center;
+            color: #202b35;
+        }
+    }
+    // seventh-step
+    .seventh-step {
+        .header {
+            justify-content: flex-start;
+        }
+        .imputara {
+            li {
+                border: 1px solid #dee3e5;
+                padding-bottom: 21px;
+                padding-top: 18px;
+                padding-left: 14px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+            }
+        }
+        input {
+            width: 116px;
+            height: 21px;
+            font-family: Montserrat;
+            font-size: 16px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: 0.4px;
+            text-align: left;
+            color: #888d92;
+            border: 0;
+        }
+        span {
+            height: 21px;
+            font-family: Montserrat;
+            font-size: 16px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: 0.4px;
+            text-align: left;
+            color: #888d92;
+        }
+        img {
+            max-height: 42px;
+        }
+        h3 {
+            text-align: center;
+            /* width: 513px; */
+            height: 34px;
+            font-family: Montserrat;
+            font-size: 25px;
+            font-weight: 600;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            text-align: center;
+            color: #202b35;
+        }
+    }
+
+    // video
+    .video {
+        .header {
+            background-color: #00aeef;
+            align-items: center;
+            // align-items: flex-end;
+            justify-content: flex-start;
+            span {
+                font-size: 21px;
+                color: #ffffff;
+            }
+        }
+    }
+    // footer
+    .footer {
+        max-width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 24px;
+
+        a {
+            width: 151px;
+            height: 41px;
+            border-radius: 20.5px;
+            border: solid 1px #e5e9ec;
+            text-align: center;
+            padding-top: 0;
+            line-height: 37px;
+            font-family: Montserrat;
+            font-size: 15px;
+            font-weight: normal;
+            color: #00aeef;
+            text-decoration: none;
+            transition: .3s;
+
+            img {
+                margin: -3px 5px 0 0;
+            }
+        }
+
+        ul {
+            display: flex;
+            align-self: center;
+            align-items: center;
+            padding-left: 0;
+            margin-bottom: 0;
+
+            li {
+                margin-left: 29px;
+                width: 7px;
+                height: 7px;
+                border-radius: 19px;
+                background-color: rgba(66, 76, 86, 0.2);
+                list-style: none;
+                margin-bottom: 0;
+
+                &.akk {
+                    width: 17px;
+                    height: 17px;
+                }
+
+                &.q {
+                    background-color: #00aeef;
+                    border: 4px solid #b8e0ef;
+                }
+                &.e {
+                    background-color: #f59323;
+                    border: 4px solid #f9dab7;
+                }
+                &.r {
+                    background-color: #3dc14c;
+                    border: 4px solid #bdeac2;
+                }
+                &.t {
+                    background-color: #c65cc1;
+                    border: 4px solid #f1d5ef;
+                }
+                &.z {
+                    background-color: #e13571 ;
+                    border: 4px solid #ecd9e0;
+                }
+                &.u {
+                    background-color: #003174;
+                    border: 4px solid #d1dae6;
+                }
+                &.i {
+                    background-color: magenta;
+                    border: 4px solid #ffbdff;
+                }
+
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+        }
+
+        .btn-layout {
+            width: 151px;
+            height: 41px;
+            border-radius: 20.5px;
+            margin: 0;
+
+            &.get-started {
+                background-color: rgb(61, 193, 76);
+            }
+        }
+    }
+    /deep/ mat-horizontal-stepper {
+        .mat-horizontal-stepper-header-container {
+            position: absolute;
+            width: 400px;
+            bottom: 28px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            justify-content: space-around;
+            border-bottom: 0;
+            padding: 0;
+
+            .mat-step-label-active {
+                .mat-step-text-label {
+                    font-weight: 500 !important;
+                }
+            }
+
+            .mat-step-text-label,
+            .mat-step-label,
+            .mat-step-header-ripple {
+                display: none !important;
+            }
+
+            .mat-step-icon,
+            .mat-step-icon-not-touched {
+                margin-right: 0;
+                width: 7px;
+                height: 7px;
+                border-radius: 19px;
+                background-color: rgba(66, 76, 86, 0.2);
+                margin-bottom: 0;
+
+                .mat-icon {
+                    display: none;
+                }
+
+                span {
+                    display: none;
+                }
+            }
+
+            mat-step-header.mat-horizontal-stepper-header {
+                padding: 10px;
+                height: 100%;
+
+                &:hover {
+                    background: transparent !important;
+                }
+
+                &[aria-selected="true"] {
+                    .mat-step-icon {
+                        margin-right: 0;
+                        width: 9px;
+                        height: 9px;
+                        background-color: #00aeef;
+                        border: 4px solid #b8e0ef;
+                    }
+                }
+                &[ng-reflect-index="1"][aria-selected="true"] .mat-step-icon {
+                    background-color: #f59323;
+                    border: 4px solid #f9dab7;
+                }
+                &[ng-reflect-index="2"][aria-selected="true"] .mat-step-icon {
+                    background-color: #3dc14c;
+                    border: 4px solid #bdeac2;
+                }
+                &[ng-reflect-index="3"][aria-selected="true"] .mat-step-icon {
+                    background-color: #c65cc1;
+                    border: 4px solid #f1d5ef;
+                }
+                &[ng-reflect-index="4"][aria-selected="true"] .mat-step-icon {
+                    background-color: #e13571;
+                    border: 4px solid #ecd9e0;
+                }
+                &[ng-reflect-index="5"][aria-selected="true"] .mat-step-icon {
+                    background-color: #003174;
+                    border: 4px solid #d1dae6;
+                }
+                &[ng-reflect-index="6"][aria-selected="true"] .mat-step-icon {
+                    background-color: magenta;
+                    border: 4px solid #ffbdff;
+                }
+            }
+        }
+        .mat-stepper-horizontal-line,
+        .mat-horizontal-stepper-header:last-child {
+            display: none !important;
+        }
+
+        .mat-horizontal-content-container {
+            padding: 0;
+            height: 100%;
+        }
+        .mat-horizontal-stepper-content[aria-expanded="true"] {
+            height: 100%;
+        }
+    }
+}
+
+.mat-dialog-content {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    max-height: 100%;
+}
+.mat-stepper-horizontal {
+    height: 100%;
+}
+
+.imputara {
+    max-width: 642px;
+    margin: 0 auto;
+    text-align: left;
+}
+.imputara li {
+    list-style: none;
+    width: 135px; 
+    height: 21px;
+    font-family: Montserrat;
+    font-size: 16px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #202b35;
+}
+.imputara li {
+    border: 1px solid #dee3e5;
+    padding-bottom: 21px;
+    padding-top: 18px;
+    padding-left: 14px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+}
+
+/* The container */
+.container1 {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container1 input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: unset;
+    left: 20px;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 12px;
+}
+
+/* On mouse-over, add a grey background color */
+.container1:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container1 input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container1 input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container1 .checkmark:after {
+    left: 9px;
+    top: 6px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+label.container1 {
+    border: 1px solid #dee3e5;
+    margin-bottom: 12px;
+    padding-top: 18px;
+    padding-bottom: 20px;
+    padding-left: 67px;
+    border-radius: 11px;
+}
+.imputara {
+    margin-bottom: 0;
+}
+.secons .footer {
+    margin-top: 46px;
+}
+.thirds .footer {
+    margin-top: 105px;
+}
+
+li.akk {
+    width: 9px;
+    height: 9px;
+    background-color: #00aeef;
+}
+.footer li {
+    cursor: pointer;
+}
+
+
+
+.imputara label {
+    list-style: none;
+    font-family: Montserrat;
+    font-size: 17px;
+    line-height: 1.42;
+    letter-spacing: 0.4px;
+    text-align: left;
+    color: #424c56;
+    margin-bottom: 25px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+@media only screen and (max-width : 920px) {
+    .footer ul li:first-child {
+        margin-left: -26px;
+    }
+    .fourth .conta {
+        padding-left: 1px !important;
+        overflow: hidden;
+    }
+    .footer ul {
+        display: flex;
+        margin-left: -50px;
+    }
+    .sixth .conta {
+        background-position: right;
+    }
+}

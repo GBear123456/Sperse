@@ -1,8 +1,9 @@
 import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, RateCustomersInput, CustomerRatingInfoDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { FiltersService } from '@shared/filters/filters.service';
+import { CustomerRatingsServiceProxy, RateCustomerInput, RateCustomersInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-rating',
@@ -13,18 +14,20 @@ import { AppConsts } from '@shared/AppConsts';
 export class RatingComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
+    @Input() ratingValue: number;
     @Input() targetSelector = "[aria-label='Rating']";
     @Input() bulkUpdateMode = false;
+    @Input() hideButtons = false;
     @Input() set selectedItemKey(value) {
         this.ratingValue = value;
     }
     get selectedItemKey() {
         return this.ratingValue;
     }
+    @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
 
     ratingMin: number;
     ratingMax: number;
-    ratingValue: number;
     ratingStep = 1;
 
     sliderComponent: any;
@@ -64,23 +67,30 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     process() {
-        this._ratingService.rateCustomers(RateCustomersInput.fromJS({
-            customerIds: this.selectedKeys,
-            ratingId: this.ratingValue
-        })).finally(() => {
-            if (this.bulkUpdateMode)
+        if (this.bulkUpdateMode)
+            this._ratingService.rateCustomers(RateCustomersInput.fromJS({
+                customerIds: this.selectedKeys,
+                ratingId: this.ratingValue
+            })).finally(() => {
                 this.ratingValue = this.ratingMin;
-        }).subscribe((result) => {
-            this.notify.success(this.l('CustomersRated'));
-        }, (error) => {
-            this.notify.error(this.l('BulkActionErrorOccured'));
-        });
+            }).subscribe((result) => {
+                this.notify.success(this.l('CustomersRated'));
+            });
+        else
+            this._ratingService.rateCustomer(RateCustomerInput.fromJS({
+                customerId: this.selectedKeys[0],
+                ratingId: this.ratingValue
+            })).finally(() => {
+                if (!this.ratingValue)
+                    this.ratingValue = this.ratingMin;
+            }).subscribe((result) => {
+                this.notify.success(this.l('CustomersRated'));
+            });
     }
 
     clear() {
         this.ratingValue = undefined;
         this.apply();
-        this.ratingValue = this.ratingMin;
     }
 
     clearFilterHighlight() {
@@ -129,5 +139,14 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                     this.ratingValue = this.ratingMin;
             }
         });
+    }
+    
+    onValueChange(event) {
+        this.onValueChanged.emit(event);
+    }
+
+    checkPermissions() {
+        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') && 
+            (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

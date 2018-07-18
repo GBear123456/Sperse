@@ -5,12 +5,16 @@
         <div class="tags-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Tags')}}</span>
-                <div [hidden]="bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
-                    <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                <div [hidden]="hideButtons || bulkUpdateMode">
+                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!checkPermissions()" (click)="apply()">{{l('Apply')}}</span>
+                </div>
+                <div [hidden]="hideButtons || !bulkUpdateMode || !selectedKeys?.length">
+                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="apply(true)">{{l('Remove')}}</span>
+                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !tagslist.selectedRowKeys?.length" (click)="apply()">{{l('Add')}}</span>
                 </div>
             </div>
-            <dx-tree-list 
+            <dx-tree-list #tagslist
                 width="300px"
                 height="350px"
                 keyExpr="id"

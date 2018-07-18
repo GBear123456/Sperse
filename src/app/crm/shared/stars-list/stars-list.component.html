@@ -5,12 +5,12 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{l('Stars')}}</span>
-                <div [hidden]="bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" (click)="clear()">{{l('Clear')}}</span>
-                    <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+                <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
+                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !starslist.selectedItemKeys?.length" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>
-            <dx-list
+            <dx-list #starslist
                 height="230px"
                 [selectionMode]="bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
                 [showSelectionControls]="true"
@@ -18,7 +18,8 @@
                 [keyExpr]="'id'"
                 [selectedItemKeys]="selectedItemKeys"
                 (onContentReady)="onContentReady($event)"
-                (onInitialized)="onInitialized($event)">
+                (onInitialized)="onInitialized($event)"
+                (onSelectionChanged)="onSelectionChange($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row" data-id="{{data.id}}"><div [class]="'star star-' + data.name | lowercase"></div><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
                 </div>

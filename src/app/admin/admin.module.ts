@@ -70,6 +70,8 @@ import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component'
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 
+import { UserDetailsModule } from './users/details/user-details.module'
+
 @NgModule({
     imports: [
         FormsModule,
@@ -111,7 +113,8 @@ import { CreateUserDialogComponent } from './users/create-user-dialog/create-use
         PrimeNgFileUploadModule,
         AutoCompleteModule,
         EditorModule,
-        InputMaskModule
+        InputMaskModule,
+        UserDetailsModule
     ],
     declarations: [
         UsersComponent,

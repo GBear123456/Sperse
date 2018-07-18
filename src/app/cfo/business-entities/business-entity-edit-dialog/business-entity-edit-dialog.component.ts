@@ -35,7 +35,13 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     emailRegEx = AppConsts.regexPatterns.email;
     dateFormat = AppConsts.formatting.date;
 
-    googleAutoComplete = false;
+    googleAutoComplete = Boolean(window['google']);
+    address = {
+        state: null,
+        country: null,
+        address: null
+    };
+
     saving = false;
     isNew = false;
 
@@ -59,12 +65,28 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
             this._businessEntityService.get(InstanceType[this.instanceType], this.instanceId, this.data.id)
                 .subscribe(result => {
                     this.businessEntity = result;
+
                     Object.keys(this.businessEntity).forEach(key => {
                         let component = this[key + 'Component'];
                         if (component) {
                             component.option('value', this.businessEntity[key]);
                         }
                     });
+
+                    if (this.businessEntity) {
+                        let country = _.findWhere(this.countries, { code: this.businessEntity.countryId });
+                        this.address['country'] = country && country.name;
+                        this.onCountryChange({ value: this.address['country'] });
+
+                        if (this.googleAutoComplete) {
+                            this.address['address'] = [
+                                this.businessEntity.address,
+                                this.businessEntity.city,
+                                this.businessEntity.stateId,
+                                this.businessEntity.countryId
+                            ].filter(val => val).join(', ');
+                        }
+                    }
                 });
         }
     }
@@ -106,23 +128,41 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
         this._countryService.getCountries()
             .subscribe(result => {
                 this.countries = result;
+                if (this.address['country']) {
+                    this.onCountryChange({ value: this.address['country'] });
+                }
             });
     }
 
     onCountryChange(event) {
-        let countryCode = event.value;
+        let countryCode = this.getCountryCode(event.value);
         if (countryCode) {
             this._countryService
                 .getCountryStates(countryCode)
                 .subscribe(result => {
                     this.states = result;
+                    if (this.businessEntity.stateId && !this.address['state']) {
+                        let state = _.findWhere(this.states, { code: this.businessEntity.stateId });
+                        this.address['state'] = state && state.name;
+                    }
                 });
         }
     }
 
+    getCountryCode(name) {
+        let country = _.findWhere(this.countries, { name: name });
+        if (country) {
+            return country && country.code;
+        }
+    }
+
+    getStateCode(name) {
+        let state = _.findWhere(this.states, { name: name });
+        return state && state.code;
+    }
+
     onKeyUp($event, propName) {
         let value = $event.element.getElementsByTagName('input')[0].value;
-        console.log('keyUp', this.businessEntity[propName]);
         this.businessEntity[propName] = value;
     }
 
@@ -137,6 +177,17 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     save() {
         if (this.validate()) {
             this.saving = true;
+
+            this.businessEntity.countryId = this.getCountryCode(this.address.country);
+            this.businessEntity.stateId = this.getStateCode(this.address.state);
+
+            if (this.googleAutoComplete) {
+                this.businessEntity.address = [
+                    this.address['streetNumber'],
+                    this.address['street']
+                ].filter(val => val).join(' ');
+            }
+
             if (this.isNew) {
                 this._businessEntityService.createBusinessEntity(InstanceType[this.instanceType], this.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
                     .finally(() => {
@@ -180,5 +231,17 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
             component.option('value', '');
         }
         this.businessEntity[propName] = null;
+    }
+
+    emptyAddress() {
+        this.address['address'] = null;
+        this.emptyValue('city');
+        this.emptyValue('zip');
+        this.emptyAddressValue('country');
+        this.emptyAddressValue('state');
+    }
+
+    emptyAddressValue(propName) {
+        this.address[propName] = null;
     }
 }

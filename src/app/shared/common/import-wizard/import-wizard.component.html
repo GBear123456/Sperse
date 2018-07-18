@@ -1,99 +1,149 @@
 <div *ngIf="showSteper">
-    <h1>{{title}}</h1>
+    <h1><i class="{{icon}}"></i>{{title}}</h1>
     <div class="actions" [hidden]="stepper?.selectedIndex == FINISH_STEP_INDEX">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
         <button class="button-layout button-primary" (click)="next()">{{stepper?.selectedIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
+        <div class="separator"></div>
+        <button class="refresh-button"></button>
     </div>
-    <dx-context-menu
-        [items]="selectModeItems"
-        (onItemClick)="selectionModeChanged($event)"
-        target=".dx-header-row">
+    <dx-context-menu [items]="selectModeItems"
+                     (onItemClick)="selectionModeChanged($event)"
+                     target=".dx-header-row">
     </dx-context-menu>
     <mat-horizontal-stepper [linear]="true">
-      <mat-step [stepControl]="uploadFile" [label]="l('Upload file')" 
-          [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-          <form [formGroup]="uploadFile">
-            <div class="block left">
-                <h3>Upload from computer</h3>
-                <file-drop 
-                    [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (dropZoneProgress > 100 ? 100: (100 - dropZoneProgress)) + '%, #00aeef 0%)'}"
-                    (onFileDrop)="fileDropped($event)">
-                    <p>Drag and Drop files from your computer here<br>or<br><a href="javascript:void(0);"><input name="importFile" type="file" (change)="fileSelected($event)" accept=".csv">browse</a></p>
-                </file-drop>
-                <div class="file-info" [hidden]="!dropZoneProgress">
-                    <p>{{l('File')}}: {{fileName}}</p>
-                    <p>{{l('FileSize')}}: {{fileSize}}</p>
-                    <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
+        <mat-step [stepControl]="uploadFile" [label]="l('Upload file')"
+                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <form [formGroup]="uploadFile">
+                <div class="block left">
+                    <h3 [hidden]="dropZoneProgress || loadProgress" class="title">{{l('Upload from computer')}}</h3>
+                    <file-drop [hidden]="dropZoneProgress || loadProgress" (onFileDrop)="fileDropped($event)">
+                        <p>Drag and Drop files from your computer here
+                            <br> or
+                            <br>
+                            <a href="javascript:void(0);">
+                                <input name="importFile" type="file" #importFileInput (change)="fileSelected($event)" accept=".csv">browse
+                            </a>
+                        </p>
+                    </file-drop>
+                    <!-- uploaded template -->
+                    <h3 class="title" [hidden]="!dropZoneProgress && !loadProgress">{{l('File uploaded successfully')}}
+                        <b>{{l('Total')}} {{fileData?.data ? fileData?.data?.length - 1: ''}} {{l('records')}}</b>
+                    </h3>
+                    <div class="file-info" [hidden]="!dropZoneProgress && !loadProgress">
+                        <div class="file-load-progress" [ngStyle]="{background:'linear-gradient(to right, #e9f7fb ' + (dropZoneProgress > 100 || loadProgress > 100 ? 100: dropZoneProgress || loadProgress) + '%, #fff 0%)'}">
+                            <p>{{l('File')}}: {{fileName}}</p>
+                            <p class="file-size">{{l('FileSize')}}: {{fileSize}}</p>
+                            <button class="remove-file" (click)="reset()">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                        <p>
+                            <label>
+                                <input type="checkbox" name="hasHeadersCheckBox" [(ngModel)]="fileHasHeader" [ngModelOptions]="{standalone: true}"
+                                /> {{l('My file has headers')}}</label>
+                        </p>
+                    </div>
+                    <!-- end uploaded template -->
                 </div>
-            </div>
-            <div class="center">OR</div>
-            <div class="block right"> 
-                <h3>Load from URL</h3>
-                <mat-form-field class="full-width">
-                  <input matInput type="url" formControlName="url" [ngStyle]="{background:'linear-gradient(to left, #ffffff ' + (loadProgress > 100 ? 100: (100 - loadProgress)) + '%, #00aeef 0%)'}">
-                </mat-form-field>
-                <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}}</button>
-                <div class="file-info" [hidden]="!loadProgress">
-                    <p>{{l('File')}}: {{fileName}}</p>
-                    <p>{{l('FileSize')}}: {{fileSize}}</p>
-                    <p>{{l('Records')}}: {{fileData?.data ? fileData?.data?.length - 1: ''}}</p>
+                <div class="v-center" [hidden]="!dropZoneProgress || !loadProgress">OR</div>
+                <div class="block right">
+                    <div *ngIf="loadProgress < 101 && !dropZoneProgress">
+                        <h3 class="title">{{l('Load from URL')}}</h3>
+                        <mat-form-field class="full-width">
+                            <input matInput type="url" formControlName="url" #importFileInput>
+                        </mat-form-field>
+                        <button class="button-layout button-primary" (click)="downloadFromURL()">{{l('Download')}}
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                    </div>
+                    <!-- div [hidden]="!dropZoneProgress && !loadProgress">
+                        <h3 class="title settings">{{l('Default settings')}}&nbsp;
+                            <span>({{l('if no values are selected in uploaded file')}})</span>
+                        </h3>
+                        <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == UPLOAD_STEP_INDEX"></app-toolbar>
+                    </div -->
                 </div>
-            </div>
-          </form>
-      </mat-step>
-      <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')" 
-          [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-          <dx-data-grid id="gridContainer" #mapGrid
-                      [dataSource]="mapDataSource"
-                      [allowColumnReordering]="false"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="false"
-                      [hoverStateEnabled]="true"
-                      (onRowValidating)="onRowValidating($event)">
-              <dxo-selection
-                  selectAllMode="page"
-                  showCheckBoxesMode="always"
-                  mode="multiple">
-              </dxo-selection>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
+                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
+            <dx-data-grid id="gridContainer" #mapGrid
+                          [dataSource]="mapDataSource"
+                          [allowColumnReordering]="false"
+                          [columnAutoWidth]="true"
+                          [allowColumnResizing]="false"
+                          [hoverStateEnabled]="true"
+                          [paging]="{pageSize: 1000}"
+                          (onRowValidating)="onRowValidating($event)"
+                          (onContentReady)="onContentReady($event)">
+                <dxo-selection selectAllMode="page"
+                               showCheckBoxesMode="always"
+                               mode="multiple">
+                </dxo-selection>
+                <dxo-editing mode="cell"
+                             [allowUpdating]="true"
+                             [allowDeleting]="false"
+                             [allowAdding]="false">
+                </dxo-editing>
+                <dxi-column dataField="sourceField" caption="{{l('SourceField')}}" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="sampleValue" caption="{{l('SampleValue')}}" [allowEditing]="false"></dxi-column>
+                <dxi-column dataField="mappedField"
+                            [showEditorAlways]="true"
+                            [editCellTemplate]="'mappedFieldTemplate'"
+                            [caption]="l('MappedField')">
+                </dxi-column>
 
-               <dxo-editing
-                   mode="cell"
-                   [allowUpdating]="true"
-                   [allowDeleting]="false"
-                   [allowAdding]="false">
-              </dxo-editing>
+                <div *dxTemplate="let cell of 'mappedFieldTemplate'" class="mapped-field-edit">
+                    <dx-drop-down-box [dataSource]="lookupFields"
+                                      valueExpr="id"
+                                      displayExpr="name"
+                                      [placeholder]="l('MapFieldPlaceholder')"
+                                      [showClearButton]="true"
+                                      [value]="cell.value"
+                                      (onValueChanged)="cell.setValue($event.value)">
+                        <div *dxTemplate="let data of 'content'" style="padding-bottom: 15px;">
+                            <dx-tree-view id="mappedFieldsTreeView"
+                                          [dataSource]="lookupFields"
+                                          dataStructure="plain"
+                                          keyExpr="id"
+                                          parentIdExpr="parent"
+                                          displayExpr="name"
+                                          [searchEnabled]="true"
+                                          [selectNodesRecursive]="false"
+                                          (onContentReady)="onLookupFieldsContentReady($event, cell)"
+                                          (onItemClick)="cell.setValue($event.node.key)">
+                            </dx-tree-view>
+                        </div>
+                    </dx-drop-down-box>
+                </div>
+            </dx-data-grid>
+        </mat-step>
+        <mat-step [label]="l('Review')"
+                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
+            <dx-data-grid id="gridContainer" #reviewGrid
+                          [keyExpr]="'uniqueIdent'"
+                          [pager]="defaultGridPagerConfig"
+                          [dataSource]="reviewDataSource"
+                          [selectedRowKeys]="selectedPreviewRows"
+                          [allowColumnReordering]="false"
+                          [columnAutoWidth]="true"
+                          [allowColumnResizing]="false"
+                          [hoverStateEnabled]="true"
+                          [customizeColumns]="customizePreviewColumns">
+                <dxo-selection selectAllMode="page"
+                               showCheckBoxesMode="always"
+                               mode="multiple">
+                </dxo-selection>
 
-              <dxi-column dataField="sourceField" caption="{{l('SourceField')}}" [allowEditing]="false"></dxi-column>
-              <dxi-column dataField="sampleValue" caption="{{l('SampleValue')}}" [allowEditing]="false"></dxi-column>
-              <dxi-column dataField="mappedField" 
-                      [showEditorAlways]="true"
-                      [caption]="l('MappedField')">
-                  <dxo-lookup
-                      [dataSource]="lookupFields"
-                      displayExpr="name"
-                      valueExpr="id">
-                  </dxo-lookup>
-              </dxi-column>
-          </dx-data-grid>
-      </mat-step>
-      <mat-step [label]="l('Review')"
-          [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-          <dx-data-grid id="gridContainer" #reviewGrid
-                      [pager]="defaultGridPagerConfig"
-                      [dataSource]="reviewDataSource"
-                      [allowColumnReordering]="false"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="false"
-                      [hoverStateEnabled]="true">
-              <dxo-selection
-                  selectAllMode="page"
-                  showCheckBoxesMode="always"
-                  mode="multiple">
-              </dxo-selection>
-          </dx-data-grid>
-      </mat-step>
-      <mat-step [optional]="true">
-          <ng-content></ng-content>
-      </mat-step>
+                <div *dxTemplate="let cellData of 'phoneCell'">
+                    {{cellData.value | phone}}
+                </div>
+            </dx-data-grid>
+        </mat-step>
+        <mat-step [optional]="true">
+            <ng-content></ng-content>
+        </mat-step>
     </mat-horizontal-stepper>
 </div>

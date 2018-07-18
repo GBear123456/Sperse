@@ -6896,26 +6896,26 @@ export class CustomerListsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignListsToCustomer(input: AssignListsToCustomerInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AssignListsToCustomer";
+    updateCustomerLists(input: UpdateCustomerListsInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/UpdateCustomerLists";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
 
         let options_ : any = {
             body: content_,
-            method: "post",
+            method: "put",
             headers: new Headers({
                 "Content-Type": "application/json", 
             })
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignListsToCustomer(response_);
+            return this.processUpdateCustomerLists(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignListsToCustomer(response_);
+                    return this.processUpdateCustomerLists(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -6924,7 +6924,7 @@ export class CustomerListsServiceProxy {
         });
     }
 
-    protected processAssignListsToCustomer(response: Response): Observable<void> {
+    protected processUpdateCustomerLists(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -6942,8 +6942,8 @@ export class CustomerListsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToMultipleCustomers(input: AssignListsToCustomersInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AssignToMultipleCustomers";
+    addCustomersToLists(input: AddCustomersToListsInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AddCustomersToLists";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -6957,11 +6957,11 @@ export class CustomerListsServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignToMultipleCustomers(response_);
+            return this.processAddCustomersToLists(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignToMultipleCustomers(response_);
+                    return this.processAddCustomersToLists(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -6970,7 +6970,55 @@ export class CustomerListsServiceProxy {
         });
     }
 
-    protected processAssignToMultipleCustomers(response: Response): Observable<void> {
+    protected processAddCustomersToLists(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @customerIds (optional) 
+     * @listIds (optional) 
+     * @return Success
+     */
+    removeCustomersFromLists(customerIds: number[], listIds: number[]): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/RemoveCustomersFromLists?";
+        if (customerIds !== undefined)
+            customerIds && customerIds.forEach(item => { url_ += "CustomerIds=" + encodeURIComponent("" + item) + "&"; });
+        if (listIds !== undefined)
+            listIds && listIds.forEach(item => { url_ += "ListIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "delete",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processRemoveCustomersFromLists(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processRemoveCustomersFromLists(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processRemoveCustomersFromLists(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -7887,26 +7935,26 @@ export class CustomerTagsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToCustomer(input: AssignToCustomerInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToCustomer";
+    updateCustomerTags(input: UpdateCustomerTagsInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/UpdateCustomerTags";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
 
         let options_ : any = {
             body: content_,
-            method: "post",
+            method: "put",
             headers: new Headers({
                 "Content-Type": "application/json", 
             })
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignToCustomer(response_);
+            return this.processUpdateCustomerTags(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignToCustomer(response_);
+                    return this.processUpdateCustomerTags(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -7915,7 +7963,7 @@ export class CustomerTagsServiceProxy {
         });
     }
 
-    protected processAssignToCustomer(response: Response): Observable<void> {
+    protected processUpdateCustomerTags(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -7933,8 +7981,8 @@ export class CustomerTagsServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignToMultipleCustomers(input: AssignToCustomersInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/AssignToMultipleCustomers";
+    tagCustomers(input: TagCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/TagCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -7948,11 +7996,11 @@ export class CustomerTagsServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignToMultipleCustomers(response_);
+            return this.processTagCustomers(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignToMultipleCustomers(response_);
+                    return this.processTagCustomers(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -7961,7 +8009,53 @@ export class CustomerTagsServiceProxy {
         });
     }
 
-    protected processAssignToMultipleCustomers(response: Response): Observable<void> {
+    protected processTagCustomers(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    untagCustomers(input: UntagCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/UntagCustomers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "post",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUntagCustomers(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUntagCustomers(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUntagCustomers(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -10524,8 +10618,8 @@ export class LeadServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    importLeadBusinesses(input: ImportLeadBusinessesInput): Observable<LeadBusinessInfoOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/ImportLeadBusinesses";
+    importLeads(input: ImportLeadsInput): Observable<LeadBusinessInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ImportLeads";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -10540,11 +10634,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processImportLeadBusinesses(response_);
+            return this.processImportLeads(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processImportLeadBusinesses(response_);
+                    return this.processImportLeads(response_);
                 } catch (e) {
                     return <Observable<LeadBusinessInfoOutput[]>><any>Observable.throw(e);
                 }
@@ -10553,7 +10647,7 @@ export class LeadServiceProxy {
         });
     }
 
-    protected processImportLeadBusinesses(response: Response): Observable<LeadBusinessInfoOutput[]> {
+    protected processImportLeads(response: Response): Observable<LeadBusinessInfoOutput[]> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -10653,6 +10747,52 @@ export class LeadServiceProxy {
     }
 
     protected processUpdateLeadStage(response: Response): Observable<void> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            return Observable.of<void>(<any>null);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateLeadsStage(input: UpdateLeadStagesInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadsStage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            method: "put",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processUpdateLeadsStage(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processUpdateLeadsStage(response_);
+                } catch (e) {
+                    return <Observable<void>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<void>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateLeadsStage(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -13809,6 +13949,67 @@ export class ProfileServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Observable.of<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class QuestionnaireServiceProxy {
+    private http: Http;
+    private baseUrl: string;
+    protected jsonParseReviver: (key: string, value: any) => any = undefined;
+
+    constructor(@Inject(Http) http: Http, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @identifier (optional) 
+     * @return Success
+     */
+    getQuestionnaire(identifier: string): Observable<QuestionnaireDto> {
+        let url_ = this.baseUrl + "/api/services/CFO/Questionnaire/GetQuestionnaire?";
+        if (identifier !== undefined)
+            url_ += "identifier=" + encodeURIComponent("" + identifier) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            method: "get",
+            headers: new Headers({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request(url_, options_).flatMap((response_ : any) => {
+            return this.processGetQuestionnaire(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof Response) {
+                try {
+                    return this.processGetQuestionnaire(response_);
+                } catch (e) {
+                    return <Observable<QuestionnaireDto>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<QuestionnaireDto>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetQuestionnaire(response: Response): Observable<QuestionnaireDto> {
+        const status = response.status; 
+
+        let _headers: any = response.headers ? response.headers.toJSON() : {};
+        if (status === 200) {
+            const _responseText = response.text();
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? QuestionnaireDto.fromJS(resultData200) : new QuestionnaireDto();
+            return Observable.of(result200);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.text();
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Observable.of<QuestionnaireDto>(<any>null);
     }
 }
 
@@ -18627,8 +18828,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignUserToCustomer(input: AssignUserToCustomerInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignUserToCustomer";
+    assignCustomer(input: AssignCustomerInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignCustomer";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -18642,11 +18843,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignUserToCustomer(response_);
+            return this.processAssignCustomer(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignUserToCustomer(response_);
+                    return this.processAssignCustomer(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -18655,7 +18856,7 @@ export class UserAssignmentServiceProxy {
         });
     }
 
-    protected processAssignUserToCustomer(response: Response): Observable<void> {
+    protected processAssignCustomer(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -18673,8 +18874,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignUserToCustomers(input: AssignUserToCustomersInput): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignUserToCustomers";
+    assignCustomers(input: AssignCustomersInput): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignCustomers";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -18688,11 +18889,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request(url_, options_).flatMap((response_ : any) => {
-            return this.processAssignUserToCustomers(response_);
+            return this.processAssignCustomers(response_);
         }).catch((response_: any) => {
             if (response_ instanceof Response) {
                 try {
-                    return this.processAssignUserToCustomers(response_);
+                    return this.processAssignCustomers(response_);
                 } catch (e) {
                     return <Observable<void>><any>Observable.throw(e);
                 }
@@ -18701,7 +18902,7 @@ export class UserAssignmentServiceProxy {
         });
     }
 
-    protected processAssignUserToCustomers(response: Response): Observable<void> {
+    protected processAssignCustomers(response: Response): Observable<void> {
         const status = response.status; 
 
         let _headers: any = response.headers ? response.headers.toJSON() : {};
@@ -25605,6 +25806,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     phoneNumber: string;
     phoneExtension: string;
     address: AddressInfo;
+    workAddress: AddressInfo;
     userId: number;
     photo: ContactPhotoInfo;
     contactEmails: ContactEmailInfo[];
@@ -25667,6 +25869,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
+            this.workAddress = data["workAddress"] ? AddressInfo.fromJS(data["workAddress"]) : <any>undefined;
             this.userId = data["userId"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
@@ -25740,6 +25943,7 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["workAddress"] = this.workAddress ? this.workAddress.toJSON() : <any>undefined;
         data["userId"] = this.userId;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
@@ -25799,6 +26003,7 @@ export interface IOrganizationBusinessInfo {
     phoneNumber: string;
     phoneExtension: string;
     address: AddressInfo;
+    workAddress: AddressInfo;
     userId: number;
     photo: ContactPhotoInfo;
     contactEmails: ContactEmailInfo[];
@@ -26089,7 +26294,7 @@ export interface IContactPhoneInfo {
 }
 
 export class ContactLinkInfo implements IContactLinkInfo {
-    linkType: string;
+    linkTypeId: string;
     link: string;
 
     constructor(data?: IContactLinkInfo) {
@@ -26103,7 +26308,7 @@ export class ContactLinkInfo implements IContactLinkInfo {
 
     init(data?: any) {
         if (data) {
-            this.linkType = data["linkType"];
+            this.linkTypeId = data["linkTypeId"];
             this.link = data["link"];
         }
     }
@@ -26116,14 +26321,14 @@ export class ContactLinkInfo implements IContactLinkInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["linkType"] = this.linkType;
+        data["linkTypeId"] = this.linkTypeId;
         data["link"] = this.link;
         return data; 
     }
 }
 
 export interface IContactLinkInfo {
-    linkType: string;
+    linkTypeId: string;
     link: string;
 }
 
@@ -29331,11 +29536,11 @@ export interface ICustomerListInfoDto {
     name: string;
 }
 
-export class AssignListsToCustomerInput implements IAssignListsToCustomerInput {
+export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
     customerId: number;
     lists: CustomerListInput[];
 
-    constructor(data?: IAssignListsToCustomerInput) {
+    constructor(data?: IUpdateCustomerListsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -29355,8 +29560,8 @@ export class AssignListsToCustomerInput implements IAssignListsToCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignListsToCustomerInput {
-        let result = new AssignListsToCustomerInput();
+    static fromJS(data: any): UpdateCustomerListsInput {
+        let result = new UpdateCustomerListsInput();
         result.init(data);
         return result;
     }
@@ -29373,7 +29578,7 @@ export class AssignListsToCustomerInput implements IAssignListsToCustomerInput {
     }
 }
 
-export interface IAssignListsToCustomerInput {
+export interface IUpdateCustomerListsInput {
     customerId: number;
     lists: CustomerListInput[];
 }
@@ -29413,11 +29618,11 @@ export interface ICustomerListInput {
     name: string;
 }
 
-export class AssignListsToCustomersInput implements IAssignListsToCustomersInput {
+export class AddCustomersToListsInput implements IAddCustomersToListsInput {
     customerIds: number[];
     lists: CustomerListInput[];
 
-    constructor(data?: IAssignListsToCustomersInput) {
+    constructor(data?: IAddCustomersToListsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -29441,8 +29646,8 @@ export class AssignListsToCustomersInput implements IAssignListsToCustomersInput
         }
     }
 
-    static fromJS(data: any): AssignListsToCustomersInput {
-        let result = new AssignListsToCustomersInput();
+    static fromJS(data: any): AddCustomersToListsInput {
+        let result = new AddCustomersToListsInput();
         result.init(data);
         return result;
     }
@@ -29463,7 +29668,7 @@ export class AssignListsToCustomersInput implements IAssignListsToCustomersInput
     }
 }
 
-export interface IAssignListsToCustomersInput {
+export interface IAddCustomersToListsInput {
     customerIds: number[];
     lists: CustomerListInput[];
 }
@@ -31374,11 +31579,11 @@ export interface IMarkCustomersInput {
     starId: number;
 }
 
-export class AssignToCustomerInput implements IAssignToCustomerInput {
+export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
     customerId: number;
     tags: CustomerTagInput[];
 
-    constructor(data?: IAssignToCustomerInput) {
+    constructor(data?: IUpdateCustomerTagsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -31398,8 +31603,8 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignToCustomerInput {
-        let result = new AssignToCustomerInput();
+    static fromJS(data: any): UpdateCustomerTagsInput {
+        let result = new UpdateCustomerTagsInput();
         result.init(data);
         return result;
     }
@@ -31416,16 +31621,16 @@ export class AssignToCustomerInput implements IAssignToCustomerInput {
     }
 }
 
-export interface IAssignToCustomerInput {
+export interface IUpdateCustomerTagsInput {
     customerId: number;
     tags: CustomerTagInput[];
 }
 
-export class AssignToCustomersInput implements IAssignToCustomersInput {
+export class TagCustomersInput implements ITagCustomersInput {
     customerIds: number[];
     tags: CustomerTagInput[];
 
-    constructor(data?: IAssignToCustomersInput) {
+    constructor(data?: ITagCustomersInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -31449,8 +31654,8 @@ export class AssignToCustomersInput implements IAssignToCustomersInput {
         }
     }
 
-    static fromJS(data: any): AssignToCustomersInput {
-        let result = new AssignToCustomersInput();
+    static fromJS(data: any): TagCustomersInput {
+        let result = new TagCustomersInput();
         result.init(data);
         return result;
     }
@@ -31471,9 +31676,64 @@ export class AssignToCustomersInput implements IAssignToCustomersInput {
     }
 }
 
-export interface IAssignToCustomersInput {
+export interface ITagCustomersInput {
     customerIds: number[];
     tags: CustomerTagInput[];
+}
+
+export class UntagCustomersInput implements IUntagCustomersInput {
+    customerIds: number[];
+    tagIds: number[];
+
+    constructor(data?: IUntagCustomersInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["customerIds"] && data["customerIds"].constructor === Array) {
+                this.customerIds = [];
+                for (let item of data["customerIds"])
+                    this.customerIds.push(item);
+            }
+            if (data["tagIds"] && data["tagIds"].constructor === Array) {
+                this.tagIds = [];
+                for (let item of data["tagIds"])
+                    this.tagIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UntagCustomersInput {
+        let result = new UntagCustomersInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.customerIds && this.customerIds.constructor === Array) {
+            data["customerIds"] = [];
+            for (let item of this.customerIds)
+                data["customerIds"].push(item);
+        }
+        if (this.tagIds && this.tagIds.constructor === Array) {
+            data["tagIds"] = [];
+            for (let item of this.tagIds)
+                data["tagIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUntagCustomersInput {
+    customerIds: number[];
+    tagIds: number[];
 }
 
 export class UpdateCustomerTagInput implements IUpdateCustomerTagInput {
@@ -35563,8 +35823,7 @@ export interface ILeadBusinessTeamContactInput {
 }
 
 export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
-    leadRequestXref: string;
-    companyName: string;
+    leadName: string;
     errorMessage: string;
 
     constructor(data?: ILeadBusinessInfoOutput) {
@@ -35578,8 +35837,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
     init(data?: any) {
         if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
-            this.companyName = data["companyName"];
+            this.leadName = data["leadName"];
             this.errorMessage = data["errorMessage"];
         }
     }
@@ -35592,27 +35850,28 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
-        data["companyName"] = this.companyName;
+        data["leadName"] = this.leadName;
         data["errorMessage"] = this.errorMessage;
         return data; 
     }
 }
 
 export interface ILeadBusinessInfoOutput {
-    leadRequestXref: string;
-    companyName: string;
+    leadName: string;
     errorMessage: string;
 }
 
-export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
-    leads: ImportLeadBusinessInput[];
+export class ImportLeadsInput implements IImportLeadsInput {
+    leads: ImportLeadInput[];
     lists: CustomerListInput[];
+    tags: CustomerTagInput[];
     assignedUserId: number;
     ratingId: number;
-    groupByCompany: boolean;
+    starId: number;
+    leadStageId: number;
+    importType: ImportLeadsInputImportType;
 
-    constructor(data?: IImportLeadBusinessesInput) {
+    constructor(data?: IImportLeadsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -35626,21 +35885,28 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
             if (data["leads"] && data["leads"].constructor === Array) {
                 this.leads = [];
                 for (let item of data["leads"])
-                    this.leads.push(ImportLeadBusinessInput.fromJS(item));
+                    this.leads.push(ImportLeadInput.fromJS(item));
             }
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
                     this.lists.push(CustomerListInput.fromJS(item));
             }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInput.fromJS(item));
+            }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
-            this.groupByCompany = data["groupByCompany"];
+            this.starId = data["starId"];
+            this.leadStageId = data["leadStageId"];
+            this.importType = data["importType"];
         }
     }
 
-    static fromJS(data: any): ImportLeadBusinessesInput {
-        let result = new ImportLeadBusinessesInput();
+    static fromJS(data: any): ImportLeadsInput {
+        let result = new ImportLeadsInput();
         result.init(data);
         return result;
     }
@@ -35657,42 +35923,240 @@ export class ImportLeadBusinessesInput implements IImportLeadBusinessesInput {
             for (let item of this.lists)
                 data["lists"].push(item.toJSON());
         }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
-        data["groupByCompany"] = this.groupByCompany;
+        data["starId"] = this.starId;
+        data["leadStageId"] = this.leadStageId;
+        data["importType"] = this.importType;
         return data; 
     }
 }
 
-export interface IImportLeadBusinessesInput {
-    leads: ImportLeadBusinessInput[];
+export interface IImportLeadsInput {
+    leads: ImportLeadInput[];
     lists: CustomerListInput[];
+    tags: CustomerTagInput[];
     assignedUserId: number;
     ratingId: number;
-    groupByCompany: boolean;
+    starId: number;
+    leadStageId: number;
+    importType: ImportLeadsInputImportType;
 }
 
-export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
-    prefix: string;
-    first: string;
-    middle: string;
-    last: string;
-    suffix: string;
-    nick: string;
-    title: string;
+export class ImportLeadInput implements IImportLeadInput {
+    personalInfo: ImportLeadPersonalInput;
+    businessInfo: ImportLeadBusinessInput;
+    notes: string;
+    dateCreated: moment.Moment;
+    leadSource: string;
+    affiliateId: string;
+    campaignId: string;
+    channelId: string;
+    utmSource: string;
+    utmMedium: string;
+    utmCampaign: string;
+    utmTerm: string;
+    utmContent: string;
+
+    constructor(data?: IImportLeadInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.personalInfo = data["personalInfo"] ? ImportLeadPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
+            this.businessInfo = data["businessInfo"] ? ImportLeadBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.notes = data["notes"];
+            this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
+            this.leadSource = data["leadSource"];
+            this.affiliateId = data["affiliateId"];
+            this.campaignId = data["campaignId"];
+            this.channelId = data["channelId"];
+            this.utmSource = data["utmSource"];
+            this.utmMedium = data["utmMedium"];
+            this.utmCampaign = data["utmCampaign"];
+            this.utmTerm = data["utmTerm"];
+            this.utmContent = data["utmContent"];
+        }
+    }
+
+    static fromJS(data: any): ImportLeadInput {
+        let result = new ImportLeadInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
+        data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["notes"] = this.notes;
+        data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
+        data["leadSource"] = this.leadSource;
+        data["affiliateId"] = this.affiliateId;
+        data["campaignId"] = this.campaignId;
+        data["channelId"] = this.channelId;
+        data["utmSource"] = this.utmSource;
+        data["utmMedium"] = this.utmMedium;
+        data["utmCampaign"] = this.utmCampaign;
+        data["utmTerm"] = this.utmTerm;
+        data["utmContent"] = this.utmContent;
+        return data; 
+    }
+}
+
+export interface IImportLeadInput {
+    personalInfo: ImportLeadPersonalInput;
+    businessInfo: ImportLeadBusinessInput;
+    notes: string;
+    dateCreated: moment.Moment;
+    leadSource: string;
+    affiliateId: string;
+    campaignId: string;
+    channelId: string;
+    utmSource: string;
+    utmMedium: string;
+    utmCampaign: string;
+    utmTerm: string;
+    utmContent: string;
+}
+
+export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
+    fullName: ImportLeadFullName;
+    mobilePhone: string;
+    mobilePhoneExt: string;
+    homePhone: string;
+    homePhoneExt: string;
     email1: string;
     email2: string;
     email3: string;
+    fullAddress: ImportLeadAddressInput;
+    webSiteUrl: string;
+    facebookUrl: string;
+    linkedInUrl: string;
+    instagramUrl: string;
+    twitterUrl: string;
+    googlePlusUrl: string;
+    angelListUrl: string;
+    photoUrl: string;
+
+    constructor(data?: IImportLeadPersonalInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"] ? ImportLeadFullName.fromJS(data["fullName"]) : <any>undefined;
+            this.mobilePhone = data["mobilePhone"];
+            this.mobilePhoneExt = data["mobilePhoneExt"];
+            this.homePhone = data["homePhone"];
+            this.homePhoneExt = data["homePhoneExt"];
+            this.email1 = data["email1"];
+            this.email2 = data["email2"];
+            this.email3 = data["email3"];
+            this.fullAddress = data["fullAddress"] ? ImportLeadAddressInput.fromJS(data["fullAddress"]) : <any>undefined;
+            this.webSiteUrl = data["webSiteUrl"];
+            this.facebookUrl = data["facebookUrl"];
+            this.linkedInUrl = data["linkedInUrl"];
+            this.instagramUrl = data["instagramUrl"];
+            this.twitterUrl = data["twitterUrl"];
+            this.googlePlusUrl = data["googlePlusUrl"];
+            this.angelListUrl = data["angelListUrl"];
+            this.photoUrl = data["photoUrl"];
+        }
+    }
+
+    static fromJS(data: any): ImportLeadPersonalInput {
+        let result = new ImportLeadPersonalInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName ? this.fullName.toJSON() : <any>undefined;
+        data["mobilePhone"] = this.mobilePhone;
+        data["mobilePhoneExt"] = this.mobilePhoneExt;
+        data["homePhone"] = this.homePhone;
+        data["homePhoneExt"] = this.homePhoneExt;
+        data["email1"] = this.email1;
+        data["email2"] = this.email2;
+        data["email3"] = this.email3;
+        data["fullAddress"] = this.fullAddress ? this.fullAddress.toJSON() : <any>undefined;
+        data["webSiteUrl"] = this.webSiteUrl;
+        data["facebookUrl"] = this.facebookUrl;
+        data["linkedInUrl"] = this.linkedInUrl;
+        data["instagramUrl"] = this.instagramUrl;
+        data["twitterUrl"] = this.twitterUrl;
+        data["googlePlusUrl"] = this.googlePlusUrl;
+        data["angelListUrl"] = this.angelListUrl;
+        data["photoUrl"] = this.photoUrl;
+        return data; 
+    }
+}
+
+export interface IImportLeadPersonalInput {
+    fullName: ImportLeadFullName;
+    mobilePhone: string;
+    mobilePhoneExt: string;
+    homePhone: string;
+    homePhoneExt: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    fullAddress: ImportLeadAddressInput;
+    webSiteUrl: string;
+    facebookUrl: string;
+    linkedInUrl: string;
+    instagramUrl: string;
+    twitterUrl: string;
+    googlePlusUrl: string;
+    angelListUrl: string;
+    photoUrl: string;
+}
+
+export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
     companyName: string;
-    webSite1: string;
-    webSite2: string;
-    companyAddress: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    countryID: string;
-    phoneNumber: string;
-    faxNumber: string;
+    jobTitle: string;
+    employeeCount: number;
+    yearFounded: number;
+    companyPhone: string;
+    companyPhoneExt: string;
+    companyFaxNumber: string;
+    companyEmail: string;
+    companyFullAddress: ImportLeadAddressInput;
+    companyWebSiteUrl: string;
+    companyFacebookUrl: string;
+    companyLinkedInUrl: string;
+    companyInstagramUrl: string;
+    companyTwitterUrl: string;
+    companyGooglePlusUrl: string;
+    companyCrunchbaseUrl: string;
+    companyBBBUrl: string;
+    companyLogoUrl: string;
+    workPhone1: string;
+    workPhone1Ext: string;
+    workPhone2: string;
+    workPhone2Ext: string;
+    workEmail1: string;
+    workEmail2: string;
+    workEmail3: string;
+    workFullAddress: ImportLeadAddressInput;
 
     constructor(data?: IImportLeadBusinessInput) {
         if (data) {
@@ -35705,26 +36169,32 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
 
     init(data?: any) {
         if (data) {
-            this.prefix = data["prefix"];
-            this.first = data["first"];
-            this.middle = data["middle"];
-            this.last = data["last"];
-            this.suffix = data["suffix"];
-            this.nick = data["nick"];
-            this.title = data["title"];
-            this.email1 = data["email1"];
-            this.email2 = data["email2"];
-            this.email3 = data["email3"];
             this.companyName = data["companyName"];
-            this.webSite1 = data["webSite1"];
-            this.webSite2 = data["webSite2"];
-            this.companyAddress = data["companyAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zipCode = data["zipCode"];
-            this.countryID = data["countryID"];
-            this.phoneNumber = data["phoneNumber"];
-            this.faxNumber = data["faxNumber"];
+            this.jobTitle = data["jobTitle"];
+            this.employeeCount = data["employeeCount"];
+            this.yearFounded = data["yearFounded"];
+            this.companyPhone = data["companyPhone"];
+            this.companyPhoneExt = data["companyPhoneExt"];
+            this.companyFaxNumber = data["companyFaxNumber"];
+            this.companyEmail = data["companyEmail"];
+            this.companyFullAddress = data["companyFullAddress"] ? ImportLeadAddressInput.fromJS(data["companyFullAddress"]) : <any>undefined;
+            this.companyWebSiteUrl = data["companyWebSiteUrl"];
+            this.companyFacebookUrl = data["companyFacebookUrl"];
+            this.companyLinkedInUrl = data["companyLinkedInUrl"];
+            this.companyInstagramUrl = data["companyInstagramUrl"];
+            this.companyTwitterUrl = data["companyTwitterUrl"];
+            this.companyGooglePlusUrl = data["companyGooglePlusUrl"];
+            this.companyCrunchbaseUrl = data["companyCrunchbaseUrl"];
+            this.companyBBBUrl = data["companyBBBUrl"];
+            this.companyLogoUrl = data["companyLogoUrl"];
+            this.workPhone1 = data["workPhone1"];
+            this.workPhone1Ext = data["workPhone1Ext"];
+            this.workPhone2 = data["workPhone2"];
+            this.workPhone2Ext = data["workPhone2Ext"];
+            this.workEmail1 = data["workEmail1"];
+            this.workEmail2 = data["workEmail2"];
+            this.workEmail3 = data["workEmail3"];
+            this.workFullAddress = data["workFullAddress"] ? ImportLeadAddressInput.fromJS(data["workFullAddress"]) : <any>undefined;
         }
     }
 
@@ -35736,51 +36206,177 @@ export class ImportLeadBusinessInput implements IImportLeadBusinessInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["prefix"] = this.prefix;
-        data["first"] = this.first;
-        data["middle"] = this.middle;
-        data["last"] = this.last;
-        data["suffix"] = this.suffix;
-        data["nick"] = this.nick;
-        data["title"] = this.title;
-        data["email1"] = this.email1;
-        data["email2"] = this.email2;
-        data["email3"] = this.email3;
         data["companyName"] = this.companyName;
-        data["webSite1"] = this.webSite1;
-        data["webSite2"] = this.webSite2;
-        data["companyAddress"] = this.companyAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zipCode"] = this.zipCode;
-        data["countryID"] = this.countryID;
-        data["phoneNumber"] = this.phoneNumber;
-        data["faxNumber"] = this.faxNumber;
+        data["jobTitle"] = this.jobTitle;
+        data["employeeCount"] = this.employeeCount;
+        data["yearFounded"] = this.yearFounded;
+        data["companyPhone"] = this.companyPhone;
+        data["companyPhoneExt"] = this.companyPhoneExt;
+        data["companyFaxNumber"] = this.companyFaxNumber;
+        data["companyEmail"] = this.companyEmail;
+        data["companyFullAddress"] = this.companyFullAddress ? this.companyFullAddress.toJSON() : <any>undefined;
+        data["companyWebSiteUrl"] = this.companyWebSiteUrl;
+        data["companyFacebookUrl"] = this.companyFacebookUrl;
+        data["companyLinkedInUrl"] = this.companyLinkedInUrl;
+        data["companyInstagramUrl"] = this.companyInstagramUrl;
+        data["companyTwitterUrl"] = this.companyTwitterUrl;
+        data["companyGooglePlusUrl"] = this.companyGooglePlusUrl;
+        data["companyCrunchbaseUrl"] = this.companyCrunchbaseUrl;
+        data["companyBBBUrl"] = this.companyBBBUrl;
+        data["companyLogoUrl"] = this.companyLogoUrl;
+        data["workPhone1"] = this.workPhone1;
+        data["workPhone1Ext"] = this.workPhone1Ext;
+        data["workPhone2"] = this.workPhone2;
+        data["workPhone2Ext"] = this.workPhone2Ext;
+        data["workEmail1"] = this.workEmail1;
+        data["workEmail2"] = this.workEmail2;
+        data["workEmail3"] = this.workEmail3;
+        data["workFullAddress"] = this.workFullAddress ? this.workFullAddress.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IImportLeadBusinessInput {
-    prefix: string;
-    first: string;
-    middle: string;
-    last: string;
-    suffix: string;
-    nick: string;
-    title: string;
-    email1: string;
-    email2: string;
-    email3: string;
     companyName: string;
-    webSite1: string;
-    webSite2: string;
-    companyAddress: string;
+    jobTitle: string;
+    employeeCount: number;
+    yearFounded: number;
+    companyPhone: string;
+    companyPhoneExt: string;
+    companyFaxNumber: string;
+    companyEmail: string;
+    companyFullAddress: ImportLeadAddressInput;
+    companyWebSiteUrl: string;
+    companyFacebookUrl: string;
+    companyLinkedInUrl: string;
+    companyInstagramUrl: string;
+    companyTwitterUrl: string;
+    companyGooglePlusUrl: string;
+    companyCrunchbaseUrl: string;
+    companyBBBUrl: string;
+    companyLogoUrl: string;
+    workPhone1: string;
+    workPhone1Ext: string;
+    workPhone2: string;
+    workPhone2Ext: string;
+    workEmail1: string;
+    workEmail2: string;
+    workEmail3: string;
+    workFullAddress: ImportLeadAddressInput;
+}
+
+export class ImportLeadFullName implements IImportLeadFullName {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    nickName: string;
+    suffix: string;
+
+    constructor(data?: IImportLeadFullName) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.prefix = data["prefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nickName = data["nickName"];
+            this.suffix = data["suffix"];
+        }
+    }
+
+    static fromJS(data: any): ImportLeadFullName {
+        let result = new ImportLeadFullName();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["prefix"] = this.prefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nickName"] = this.nickName;
+        data["suffix"] = this.suffix;
+        return data; 
+    }
+}
+
+export interface IImportLeadFullName {
+    prefix: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    nickName: string;
+    suffix: string;
+}
+
+export class ImportLeadAddressInput implements IImportLeadAddressInput {
+    street: string;
     city: string;
-    state: string;
+    stateName: string;
+    stateCode: string;
     zipCode: string;
-    countryID: string;
-    phoneNumber: string;
-    faxNumber: string;
+    countryName: string;
+    countryCode: string;
+
+    constructor(data?: IImportLeadAddressInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.street = data["street"];
+            this.city = data["city"];
+            this.stateName = data["stateName"];
+            this.stateCode = data["stateCode"];
+            this.zipCode = data["zipCode"];
+            this.countryName = data["countryName"];
+            this.countryCode = data["countryCode"];
+        }
+    }
+
+    static fromJS(data: any): ImportLeadAddressInput {
+        let result = new ImportLeadAddressInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["street"] = this.street;
+        data["city"] = this.city;
+        data["stateName"] = this.stateName;
+        data["stateCode"] = this.stateCode;
+        data["zipCode"] = this.zipCode;
+        data["countryName"] = this.countryName;
+        data["countryCode"] = this.countryCode;
+        return data; 
+    }
+}
+
+export interface IImportLeadAddressInput {
+    street: string;
+    city: string;
+    stateName: string;
+    stateCode: string;
+    zipCode: string;
+    countryName: string;
+    countryCode: string;
 }
 
 export class LeadFiltersInitialData implements ILeadFiltersInitialData {
@@ -36134,6 +36730,53 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
 
 export interface IUpdateLeadStageInfo {
     leadId: number;
+    stageId: number;
+}
+
+export class UpdateLeadStagesInput implements IUpdateLeadStagesInput {
+    leadIds: number[];
+    stageId: number;
+
+    constructor(data?: IUpdateLeadStagesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["leadIds"] && data["leadIds"].constructor === Array) {
+                this.leadIds = [];
+                for (let item of data["leadIds"])
+                    this.leadIds.push(item);
+            }
+            this.stageId = data["stageId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadStagesInput {
+        let result = new UpdateLeadStagesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.leadIds && this.leadIds.constructor === Array) {
+            data["leadIds"] = [];
+            for (let item of this.leadIds)
+                data["leadIds"].push(item);
+        }
+        data["stageId"] = this.stageId;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadStagesInput {
+    leadIds: number[];
     stageId: number;
 }
 
@@ -39428,6 +40071,167 @@ export class ChangeUserLanguageDto implements IChangeUserLanguageDto {
 
 export interface IChangeUserLanguageDto {
     languageName: string;
+}
+
+export class QuestionnaireDto implements IQuestionnaireDto {
+    id: number;
+    identifier: string;
+    questions: QuestionDto[];
+
+    constructor(data?: IQuestionnaireDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.identifier = data["identifier"];
+            if (data["questions"] && data["questions"].constructor === Array) {
+                this.questions = [];
+                for (let item of data["questions"])
+                    this.questions.push(QuestionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): QuestionnaireDto {
+        let result = new QuestionnaireDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["identifier"] = this.identifier;
+        if (this.questions && this.questions.constructor === Array) {
+            data["questions"] = [];
+            for (let item of this.questions)
+                data["questions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IQuestionnaireDto {
+    id: number;
+    identifier: string;
+    questions: QuestionDto[];
+}
+
+export class QuestionDto implements IQuestionDto {
+    id: number;
+    questionnaireId: number;
+    type: QuestionDtoType;
+    text: string;
+    sortOrder: number;
+    options: OptionDto[];
+
+    constructor(data?: IQuestionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.questionnaireId = data["questionnaireId"];
+            this.type = data["type"];
+            this.text = data["text"];
+            this.sortOrder = data["sortOrder"];
+            if (data["options"] && data["options"].constructor === Array) {
+                this.options = [];
+                for (let item of data["options"])
+                    this.options.push(OptionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): QuestionDto {
+        let result = new QuestionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["questionnaireId"] = this.questionnaireId;
+        data["type"] = this.type;
+        data["text"] = this.text;
+        data["sortOrder"] = this.sortOrder;
+        if (this.options && this.options.constructor === Array) {
+            data["options"] = [];
+            for (let item of this.options)
+                data["options"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IQuestionDto {
+    id: number;
+    questionnaireId: number;
+    type: QuestionDtoType;
+    text: string;
+    sortOrder: number;
+    options: OptionDto[];
+}
+
+export class OptionDto implements IOptionDto {
+    id: number;
+    questionId: number;
+    sortOrder: number;
+    text: string;
+
+    constructor(data?: IOptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.questionId = data["questionId"];
+            this.sortOrder = data["sortOrder"];
+            this.text = data["text"];
+        }
+    }
+
+    static fromJS(data: any): OptionDto {
+        let result = new OptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["questionId"] = this.questionId;
+        data["sortOrder"] = this.sortOrder;
+        data["text"] = this.text;
+        return data; 
+    }
+}
+
+export interface IOptionDto {
+    id: number;
+    questionId: number;
+    sortOrder: number;
+    text: string;
 }
 
 export class QuickBookConnectionLinkResult implements IQuickBookConnectionLinkResult {
@@ -44437,11 +45241,11 @@ export interface ICreateOrUpdateUserInput {
     tenantHostType: CreateOrUpdateUserInputTenantHostType;
 }
 
-export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
+export class AssignCustomerInput implements IAssignCustomerInput {
     customerId: number;
     userId: number;
 
-    constructor(data?: IAssignUserToCustomerInput) {
+    constructor(data?: IAssignCustomerInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -44457,8 +45261,8 @@ export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignUserToCustomerInput {
-        let result = new AssignUserToCustomerInput();
+    static fromJS(data: any): AssignCustomerInput {
+        let result = new AssignCustomerInput();
         result.init(data);
         return result;
     }
@@ -44471,16 +45275,16 @@ export class AssignUserToCustomerInput implements IAssignUserToCustomerInput {
     }
 }
 
-export interface IAssignUserToCustomerInput {
+export interface IAssignCustomerInput {
     customerId: number;
     userId: number;
 }
 
-export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
+export class AssignCustomersInput implements IAssignCustomersInput {
     customerIds: number[];
     userId: number;
 
-    constructor(data?: IAssignUserToCustomersInput) {
+    constructor(data?: IAssignCustomersInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -44500,8 +45304,8 @@ export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
         }
     }
 
-    static fromJS(data: any): AssignUserToCustomersInput {
-        let result = new AssignUserToCustomersInput();
+    static fromJS(data: any): AssignCustomersInput {
+        let result = new AssignCustomersInput();
         result.init(data);
         return result;
     }
@@ -44518,7 +45322,7 @@ export class AssignUserToCustomersInput implements IAssignUserToCustomersInput {
     }
 }
 
-export interface IAssignUserToCustomersInput {
+export interface IAssignCustomersInput {
     customerIds: number[];
     userId: number;
 }
@@ -45608,6 +46412,13 @@ export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
     _365 = 365, 
 }
 
+export enum ImportLeadsInputImportType {
+    Lead = <any>"Lead", 
+    Client = <any>"Client", 
+    Partner = <any>"Partner", 
+    Order = <any>"Order", 
+}
+
 export enum MemberInfoDtoGender {
     _0 = 0, 
     _1 = 1, 
@@ -45714,6 +46525,10 @@ export enum ExecutePaymentDtoEditionPaymentType {
 export enum ExecutePaymentDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum QuestionDtoType {
+    _0 = 0, 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {

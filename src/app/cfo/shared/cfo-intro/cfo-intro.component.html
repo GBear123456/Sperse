@@ -1,0 +1,319 @@
+<button mat-dialog-close class="close-dialog"><i class="la la-times"></i></button>
+<mat-dialog-content>
+    <mat-horizontal-stepper [linear]="false" #stepper>
+        <mat-step>
+            <div class="first-step step-item">
+                <div class="header">
+                    <span>Introduction Tour</span>
+                </div>
+                <div class="main">
+                    <h2>CFO</h2>
+                    <p>Cash Flow Outlook</p>
+                    <div class="play" (click)="showVideo()">
+                        <img src="assets/common/images/cfo-intro/play-btn.png">
+                        <div class="bottomp">
+                            <p>
+                                Know Your Cash Flow
+                            </p>
+                            <img src="assets/common/images/cfo-intro/frb.png">
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <a (click)="showVideo()">
+                        <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a>
+                    <!-- <ul>
+                        <li class="akk 0 q"></li>
+                        <li class="next 2"></li>
+                        <li class="next 3"></li>
+                        <li class="next 4"></li>
+                        <li class="next 5"></li>
+                        <li class="next 6"></li>
+                        <li class="next 7"></li>
+                    </ul> -->
+                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="second-step step-item">
+                <div class="header">
+                    <span>Key features</span>
+                </div>
+                <div class="main">
+                    <h2>Key Features</h2>
+                    <ul class="treka">
+                        <li>
+                            <img src="assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation</li>
+                        <li>
+                            <img src="assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization</li>
+                        <li>
+                            <img src="assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts</li>
+                        <li>
+                            <img src="assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day</li>
+                        <li>
+                            <img src="assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification</li>
+                    </ul>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <!-- <ul>
+                        <li class="0"></li>
+                        <li class="akk next 2 e"></li>
+                        <li class="next 3"></li>
+                        <li class="next 4"></li>
+                        <li class="next 5"></li>
+                        <li class="next 6"></li>
+                        <li class="next 7"></li>
+                    </ul> -->
+                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="third-step step-item">
+                <div class="header">
+                    <span>Connect your bank accounts</span>
+                </div>
+                <div class="main">
+                    <div class="conta">
+                        <div class="vrh">
+                            <h2>
+                                Daily Bank Synchronization and Financial Account Aggregation
+                            </h2>
+                            <p>
+                                Connect from
+                                <span>15,000 Financial Institutions</span>
+                            </p>
+                        </div>
+                        <section class="dole">
+                            <div class="bra">
+                                <img src="assets/common/images/cfo-intro/brands.png">
+                            </div>
+                            <div class="str">
+                                <img src="assets/common/images/cfo-intro/arrow.png">
+                                <p>
+                                    <span>Daily</span>
+                                    <br> updates from your bank accounts
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <!-- <ul>
+                        <li class="0"></li>
+                        <li class="next 2"></li>
+                        <li class="akk next 3 r"></li>
+                        <li class="next 4"></li>
+                        <li class="next 5"></li>
+                        <li class="next 6"></li>
+                        <li class="next 7"></li>
+                    </ul> -->
+                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="forth-step step-item">
+                <div class="header">
+                    <span>Transactions &gt; Search, Filter and Organize</span>
+                </div>
+                <div class="main">
+                    <div class="conta">
+                        <div class="mainda">
+                            <h3>TRANSACTION CATEGORIZATION RULES</h3>
+                            <h2>Automate Transaction Classification</h2>
+                            <p>Define rules to automate the classification of your transactions into the categorization or grouping you want your cash flow
+                                reports to be organized by.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <!-- <ul>
+                        <li class="0"></li>
+                        <li class="next 2"></li>
+                        <li class="next 3"></li>
+                        <li class="akk next 4 t"></li>
+                        <li class="next 5"></li>
+                        <li class="next 6"></li>
+                        <li class="next 7"></li>
+                    </ul> -->
+                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="fifth-step step-item">
+                <div class="header">
+                    <span>Dashboard &gt; Your Financial Snapshot</span>
+                </div>
+                <div class="main">
+                    <div class="conta">
+                        <div class="mainda">
+                            <h3>
+                                DASHBOARD
+                            </h3>
+                            <h2>
+                                See an overview of all your cash activity
+                            </h2>
+                            <p>
+                                The dashboard summarizes all your cash activity by the selected period.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <!-- <ul>
+                        <li class="0"></li>
+                        <li class="next 2"></li>
+                        <li class="next 3"></li>
+                        <li class="next 4"></li>
+                        <li class="akk next 5 z"></li>
+                        <li class="next 6"></li>
+                        <li class="next 7"></li>
+                    </ul> -->
+                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="sixth-step step-item">
+                <div class="header">
+                    <img src="/assets/common/images/sperse-logo.png">
+                </div>
+                <div class="main">
+                    <div class="conta">
+                        <div class="mainda">
+                            <h3>
+                                What would you like to gain most from CFO?
+                            </h3>
+                            <div class="imputara">
+                                <label class="container1">View all my financial accounts in one place
+                                    <input type="checkbox" checked="checked">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container1">Get a better idea of my cash flow history
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container1">Forecast and plan my future cash flow needs
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container1">Share financial data with my team or accountant
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="container1">Improve business management with all of the above
+                                    <input type="checkbox">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <!-- <ul>
+                        <li class="0"></li>
+                        <li class="next 2"></li>
+                        <li class="next 3"></li>
+                        <li class="next 4"></li>
+                        <li class="next 5"></li>
+                        <li class="akk next 6 u"></li>
+                        <li class="next 7"></li>
+                    </ul> -->
+                    <button class="btn btn-layout get-started" [mat-dialog-close]="{isGetStartedButtonClicked: true}" mat-button>Get started</button>
+                </div>
+            </div>
+        </mat-step>
+        <!-- <mat-step>
+            <div class="seventh-step step-item">
+                <div class="header">
+                    <img src="/assets/common/images/sperse-logo.png">
+                </div>
+                <div class="main">
+                    <div class="conta">
+                        <div class="mainda">
+                            <h3>
+                                Invite Your Team Members With Assigned Roles
+                            </h3>
+                            <div class="imputara">
+                                <ul>
+                                    <li>
+                                        <input type="email" placeholder="Email Adress">
+                                        <input type="text" placeholder="Full Name">
+                                        <span>CFO</span>
+                                        <span>CRM</span>
+                                    </li>
+                                    <li>
+                                        <input type="email" placeholder="Email Adress">
+                                        <input type="text" placeholder="Full Name">
+                                        <span>CFO</span>
+                                        <span>CRM</span>
+                                    </li>
+                                    <li>
+                                        <input type="email" placeholder="Email Adress">
+                                        <input type="text" placeholder="Full Name">
+                                        <span>CFO</span>
+                                        <span>CRM</span>
+                                    </li>
+                                    <li>
+                                        <input type="email" placeholder="Email Adress">
+                                        <input type="text" placeholder="Full Name">
+                                        <span>CFO</span>
+                                        <span>CRM</span>
+                                    </li>
+                                    <li>
+                                        <input type="email" placeholder="Email Adress">
+                                        <input type="text" placeholder="Full Name">
+                                        <span>CFO</span>
+                                        <span>CRM</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <a href="#">
+                            <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a>
+                    <ul>
+                        <li class="0"></li>
+                        <li class="next 2"></li>
+                        <li class="next 3"></li>
+                        <li class="next 4"></li>
+                        <li class="next 5"></li>
+                        <li class="next 6"></li>
+                        <li class="next 7 akk i"></li>
+                    </ul>
+                    <button mat-button matStepperNext class="btn btn-layout">Next</button>
+                </div>
+            </div>
+        </mat-step> -->
+        <mat-step>
+            <div class="video step-item">
+                <div class="header">
+                    <span>CFO - Product Video Introduction</span>
+                </div>
+                <div class="main">
+                    <div class="video-wrapper">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <div class="wistia_embed wistia_async_kqjpmot28u videoFoam=true" style="height:100%;width:100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <!-- <a href="javascript:;">
+                            <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video</a> -->
+                </div>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-dialog-content>

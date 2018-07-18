@@ -6,23 +6,27 @@
         <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.name}}" (click)="hideStageHighlighting()">
             <ng-container *ngFor="let lead of stage.leads">
                   <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id" (click)="onCardClick(lead, $event)" [attr.stage]="lead?.Stage" count="">
-                      <div class="container-fluid">                                        
-                          <div class="row">
-                              <div class="text-right pipeline-photo-wrap">
-                                  <img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.Name}}" class="img-responsive img-circle" width="40">
-                              </div>
-                              <div class="full-name">
-                                  <span>{{lead?.Name}}</span>
-                                  <div class="company-name">
-                                      <span>{{ lead?.CompanyName }}</span>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="row">
-                              <div class="days-ago">
-                                  <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ removeTimezoneOffset(lead?.CreationTime) | timeAgo }}</span>
-                              </div>
-                          </div>
+                        <div class="container-fluid">                                        
+                            <div class="row">
+                                <div class="full-name">
+                                    <span *ngIf="lead?.Name">{{ lead?.Name }}</span>
+                                    <span *ngIf="!lead?.Name" class="no-name">{{ l('ClientNoName') }}</span>
+                                    <div class="company-name">
+                                        <span>{{ lead?.CompanyName }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="check-box">
+                                    <dx-check-box text=""></dx-check-box>
+                                </div>
+                                <div class="days-ago">
+                                    <img src="/assets/common/icons/clock-circle.svg" class="img-responsive"><span>{{ removeTimezoneOffset(lead?.CreationTime) | timeAgo }}</span>
+                                </div>
+                                <div class="text-right pipeline-photo-wrap">
+                                    <img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.Name}}" class="img-responsive img-circle" width="34">
+                                </div>
+                            </div>
                           <!-- div class="row item-data">
                               <div class="text-right">
                                   <span class="related-contact">{{l('PipeLine_RelatedContacts', [1])}}</span>

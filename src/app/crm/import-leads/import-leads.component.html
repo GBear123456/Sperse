@@ -1,14 +1,40 @@
-<import-wizard
-    [title]="l('Import leads')"
-    [fields]="mappingFileds"
-    [localizationSource]="localizationSourceName"
-    (onComplete)="complete($event)"
-    (onCancel)="cancel()">
+<div [@routerTransition] class="import-wrapper">
+    <left-menu></left-menu>
+    <import-wizard
+        [title]="l('Import leads')"
+        icon="icon-globe"
+        [lookupFields]="mappingFields"
+        [columnsConfig]="fieldsConfig"
+        [localizationSource]="localizationSourceName"
+        [checkSimilarRecord]="checkSimilarRecord"
+        [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
+        [validateFieldsMapping]="validateFieldsMapping"
+        [toolbarConfig]="toolbarConfig"
+        (onComplete)="complete($event)"
+        (onCancel)="cancel()">
 
-    <div class="success">
-        <h1>{{l('ImportedLeadsHeader', totalCount, importedCount)}}</h1>
-        <h3>{{l('ImportedLeadsMessage')}}</h3>
-        <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
-        <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
-    </div>
-</import-wizard>
+        <div class="success">
+            <h1>{{l('ImportedLeadsHeader', importedCount, totalCount, l(this.importType.toString() + 's').toLowerCase())}}</h1>
+            <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
+            <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
+            <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
+        </div>
+    </import-wizard>
+</div>
+
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [selectedItemKey]="userId" [bulkUpdateMode]="true"
+                          [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
+<crm-static-list
+    [width]="'210px'"
+    [title]="l('Stages')"
+    [selectedKeys]="selectedClientKeys"
+    [targetSelector]="'[aria-label=Stage]'"
+    [hideButtons]="true"
+    (onSelectionChanged)="onStagesChanged($event)"
+    [list]="leadStages">
+</crm-static-list>
+<crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
+<crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></crm-tags-list>
+<crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></crm-rating>
+<crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
+

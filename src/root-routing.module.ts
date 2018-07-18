@@ -16,6 +16,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     private checkSameRoute(route, handle) {
         return handle && (handle.route.value.snapshot.routeConfig == route.routeConfig);
     }
+
+    invalidate(key: string) {
+        if (this.handlers[key])
+            (<any>this.handlers[key]).componentRef.instance.invalidate();
+    }
     
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         if (!route.routeConfig || route.routeConfig.loadChildren)

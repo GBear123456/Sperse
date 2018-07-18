@@ -8,7 +8,8 @@
             </div>
             <div class="personal-info">
                 <div class="full-name">
-                    <h1 *ngIf="similarCustomer?.name; else loading">{{similarCustomer?.name}}</h1>
+                    <h1 *ngIf="similarCustomer?.name">{{ similarCustomer?.name }}</h1>
+                    <h1 *ngIf="!similarCustomer?.name" class="no-name">{{ l('ClientNoName') }}</h1>
                 </div>
                 <div class="person-title">
                     <h6>{{similarCustomer?.jobTitle}} <span *ngIf="similarCustomer?.companyName">{{similarCustomer?.companyName}}</span></h6>

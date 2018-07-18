@@ -7,7 +7,8 @@
             </div>
             <div class="personal-info">
                 <div class="full-name">
-                    <h1 *ngIf="contactPerson?.fullName; else loading">{{contactPerson?.fullName}}</h1>
+                    <h1 *ngIf="contactPerson?.fullName">{{ contactPerson?.fullName }}</h1>
+                    <h1 *ngIf="!contactPerson?.fullName" class="no-name">{{ l('ClientNoName') }}</h1>
                     <div class="person-info-actions">
                         <a class="action-link action-link-favorite"></a>
                         <a class="action-link action-link-edit"></a>
