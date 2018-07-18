@@ -20,6 +20,8 @@ import { DocumentType } from './document-type.enum';
 import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 
+import { StringHelper } from '@shared/helpers/StringHelper';
+
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
@@ -31,6 +33,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     private visibleDocuments: DocumentInfo[];
+    private currentDocumentURL: string;
+
     public data: {
         customerInfo: CustomerInfoDto
     };
@@ -108,7 +112,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 location: 'after', items: [
                     {
                         name: 'download',
-                        action: Function()
+                        action: this.downloadDocument.bind(this)
                     },
                     {
                         name: 'print',
@@ -131,12 +135,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     {
                         name: 'rotateLeft',
                         action: this.rotateImageLeft.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER
+                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        disabled: conf.rotateDisabled
                     },
                     {
                         name: 'rotateRight',
                         action: this.rotateImageRight.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER
+                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        disabled: conf.rotateDisabled
                     }
                 ]
             },
@@ -174,6 +180,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 ]
             }
         ];
+        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
     }
 
     getViewedDocumentElement() {
@@ -312,7 +319,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     viewDocument(type: DocumentType = DocumentType.Current) {
-
         let currentDocumentIndex = this.visibleDocuments.indexOf(this.currentDocumentInfo);
         if (type !== DocumentType.Current) {
             currentDocumentIndex = currentDocumentIndex + type;
@@ -324,31 +330,65 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             this.currentDocumentInfo = prevOrNextDocument;
         }
 
+        this.currentDocumentURL = '';
         let ext = this.currentDocumentInfo.fileName.split('.').pop();
         this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER :
             (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
 
         this.startLoading(true);
         this.initViewerToolbar({
+            rotateDisabled: ext == 'pdf',
             editDisabled: !this.currentDocumentInfo.isSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
             printHidden: this.showViewerType === this.WOPI_VIEWER
-        });
-        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
+        });        
         if (this.showViewerType == this.WOPI_VIEWER)
             this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe((response) => {
                 this.showOfficeOnline(response);
             });
-        else
-            this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
-                this.finishLoading(true);
-            })).subscribe((response) => {
-                this.previewContent = this.showViewerType == this.TEXT_VIEWER ? atob(response) : response;
-                this.openDocumentMode = true;
-            });
+        else {
+            if (this.showViewerType == this.TEXT_VIEWER)
+                this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
+                    this.finishLoading(true);
+                })).subscribe((response) => {
+                    this.previewContent = atob(response);
+                    this.openDocumentMode = true;
+                });
+            else {  
+                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
+                    this.currentDocumentURL = url;
+                    this.downloadFileBlob(url, (blob) => {
+                        let reader = new FileReader();
+                        reader.addEventListener("loadend", () => {
+                            this.previewContent = StringHelper.getBase64(reader.result);
+                            this.openDocumentMode = true;
+                        });
+                        reader.readAsDataURL(blob);
+                        this.finishLoading(true);
+                    });
+                });              
+
+            }  
+        }
+    }
+
+    downloadFileBlob(url, callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200)
+                callback(this.response);
+        }
+
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+
+        xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+
+        xhr.send();  
     }
 
     editDocument() {
@@ -356,7 +396,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             editDisabled: true
         });
         this.startLoading(true);
-        this._clientService.toolbarUpdate(this.viewerToolbarConfig);
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
             this.finishLoading(true);
         })).subscribe((response) => {
@@ -404,6 +443,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 this.finishLoading(true);
             });
         });
+    }
+
+    downloadDocument() {
+        if (this.currentDocumentURL)
+            window.open(this.currentDocumentURL, '_self');
+        else 
+            this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
+                if (this.currentDocumentURL = url)
+                    this.downloadDocument();
+            });
     }
 
     rotateImageRight() {
