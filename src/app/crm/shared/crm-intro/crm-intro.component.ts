@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto, RoleServiceProxy, RoleListDto, UserServiceProxy,
@@ -45,6 +46,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         private _userService: UserServiceProxy
     ) {
         super(injector);
+        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this.dialogRef = <any>injector.get(MatDialogRef);
     }
 

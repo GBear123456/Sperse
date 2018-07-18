@@ -71,9 +71,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-        setTimeout(() => {
-            this.openDialog();
-        }, 300);
     }
 
     ngOnDestroy() {
