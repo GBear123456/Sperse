@@ -51,16 +51,16 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._questionnaireService.get(AppConsts.modules.CRMModule, this.identifier)
+        this._questionnaireService.getInternal(AppConsts.modules.CRMModule, this.identifier)
              .subscribe(result => {
                  this.question = result.questions[0];
              });
 
-        // if (this.showImportUsersStep) {
-        //     this._roleService.getRoles(undefined).subscribe(result => {
-        //         this.roles = result.items;
-        //     });
-        // }
+         if (this.showImportUsersStep) {
+             this._roleService.getRoles(undefined).subscribe(result => {
+                 this.roles = result.items;
+             });
+         }
     }
 
     onSubmit() {
@@ -95,7 +95,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponse(AppConsts.modules.CRMModule, response)
+            this._questionnaireService.submitResponseInternal(AppConsts.modules.CRMModule, response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });

@@ -331,9 +331,10 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         }
 
         this.currentDocumentURL = '';
-        let ext = this.currentDocumentInfo.fileName.split('.').pop();
-        this.showViewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER :
-            (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
+        this.showViewerType = undefined;
+        let ext = this.currentDocumentInfo.fileName.split('.').pop(),
+            viewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER :
+                (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
 
         this.startLoading(true);
         this.initViewerToolbar({
@@ -341,20 +342,21 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             editDisabled: !this.currentDocumentInfo.isSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
-            printHidden: this.showViewerType === this.WOPI_VIEWER
+            printHidden: viewerType === this.WOPI_VIEWER
         });        
-        if (this.showViewerType == this.WOPI_VIEWER)
+        if (viewerType == this.WOPI_VIEWER)
             this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe((response) => {
                 this.showOfficeOnline(response);
             });
         else {
-            if (this.showViewerType == this.TEXT_VIEWER)
+            if (viewerType == this.TEXT_VIEWER)
                 this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
                     this.finishLoading(true);
                 })).subscribe((response) => {
                     this.previewContent = atob(response);
+                    this.showViewerType = viewerType;
                     this.openDocumentMode = true;
                 });
             else {  
@@ -364,6 +366,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                         let reader = new FileReader();
                         reader.addEventListener("loadend", () => {
                             this.previewContent = StringHelper.getBase64(reader.result);
+                            this.showViewerType = viewerType;
                             this.openDocumentMode = true;
                         });
                         reader.readAsDataURL(blob);
