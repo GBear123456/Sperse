@@ -8,7 +8,8 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule } from 'devextreme-angular';
+    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, 
+    DxRadioGroupModule, DxDropDownBoxModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { ClientDetailsService } from './client-details.service';
@@ -49,6 +50,8 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
+import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
+
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
@@ -101,7 +104,8 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     StarsListComponent,
     StaticListComponent,
     DocumentsComponent,
-    UploadDocumentDialogComponent
+    UploadDocumentDialogComponent,
+    DocumentTypesListComponent
   ],
   imports: [
     FormsModule,
@@ -136,7 +140,8 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     PipelineModule,
     DxRadioGroupModule,
     FileDropModule,
-    ImageViewerModule
+    ImageViewerModule,
+    DxDropDownBoxModule
   ],
   exports: [
     ClientDetailsComponent,
@@ -147,7 +152,8 @@ import { ImageViewerModule } from 'ng2-image-viewer';
     UserAssignmentComponent,
     RatingComponent,
     StarsListComponent,
-    StaticListComponent
+    StaticListComponent,
+    DocumentTypesListComponent
   ],
   entryComponents: [
     EditContactDialog,

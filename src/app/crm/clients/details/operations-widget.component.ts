@@ -101,24 +101,20 @@ export class OperationsWidgetComponent implements OnInit {
                     name: 'star',
                     action: this.toggleStars.bind(this),
                 }
-            ]
-            },
-            {
+            ]}, {
                 location: 'before', items: [
                     {
                         name: 'print',
                         action: this.print.emit.bind(this.print)
+                    },
+                    {
+                        name: 'delete',
+                        action: this.delete.bind(this),
+                        visible: Boolean(this.leadId)
                     }
                 ]
             }
         ];
-
-        if (this.leadId) {
-            this.toolbarConfig[1]['items'].push({
-                name: 'delete',
-                action: this.delete.bind(this)
-            });
-        }
     }
 
     toggleStages() {
