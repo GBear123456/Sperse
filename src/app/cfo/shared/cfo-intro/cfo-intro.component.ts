@@ -26,6 +26,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     videoIndex = 7;
     readonly identifier = 'CFO-Instance-Setup';
 
+    questionnaireId: number;
     question: QuestionDto;
     roles: RoleListDto[] = [];
     importUsers: ImportUserData[] = [new ImportUserData(), new ImportUserData(), new ImportUserData()];
@@ -54,6 +55,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     ngOnInit() {
         this._questionnaireService.getInternal(AppConsts.modules.CFOModule, this.identifier)
             .subscribe(result => {
+                this.questionnaireId = result.id;
                 this.question = result.questions[0];
             });
 
@@ -85,7 +87,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     submitQuestionnaire() {
         let response = new QuestionnaireResponseDto();
-        response.identifier = this.identifier;
+        response.questionnaireId = this.questionnaireId;
         response.answers = [];
 
         let selectedAnswerIds: number[] = [];
@@ -101,7 +103,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponseInternal(AppConsts.modules.CFOModule, response)
+            this._questionnaireService.submitResponseInternal(response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });
