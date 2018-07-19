@@ -35,7 +35,7 @@ export class UploadDocumentDialogComponent extends AppComponentBase implements O
     onSave(event) {
         let documentTypeId = this.documentTypesListComponent.selectedDocumentTypeId;
 
-        if (!this.file || !documentTypeId)
+        if (!this.file)
             return;
 
         let fileReader: FileReader = new FileReader();

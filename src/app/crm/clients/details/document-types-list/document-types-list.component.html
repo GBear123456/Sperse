@@ -12,7 +12,7 @@
     <div class="document-types" *dxTemplate="let data of 'content'">
         <div class="actions clearfix">
             <span class="title">{{l('Document Types')}}</span>
-            <span class="filter-apply" [class.disabled]="!documentTypeslist.selectedRowKeys?.length" (click)="apply()">{{l('Apply')}}</span>
+            <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
         </div>
         <dx-tree-list  #documentTypeslist
             width="300px"

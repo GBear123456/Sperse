@@ -527,7 +527,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             if (!response) {
                 this.clickedCellKey = undefined;
                 data.typeId = documentTypeId;
-                data.typeName = this.documentTypes.find(item => item.id == documentTypeId).name;
+                data.typeName = documentTypeId ?
+                    this.documentTypes.find(item => item.id == documentTypeId).name :
+                    undefined;
             }
         });
     }

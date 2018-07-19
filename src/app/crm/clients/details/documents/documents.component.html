@@ -46,7 +46,8 @@
                 <h2 class="title">{{l('Documents')}}</h2>
             </div>
             <div class="document-type" *dxTemplate="let data of 'typeCell'">
-                <p *ngIf="data.data.id != clickedCellKey">{{ data.value }}</p>
+                <p *ngIf="data.data.id != clickedCellKey && data.value">{{ data.value }}</p>
+                <p class="choose-document-type" *ngIf="data.data.id != clickedCellKey && !data.value">{{ l('ChooseDocumentType') }}</p>
                 <span *ngIf="data.data.id == clickedCellKey">
                     <crm-document-types-list  #documentTypeslist
                         [selectedItem]="data.data.typeId" 
