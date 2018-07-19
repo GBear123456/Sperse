@@ -12,7 +12,7 @@ import { finalize } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
-    DocumentInfo, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+    DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
 import { MatDialog } from '@angular/material';
@@ -25,7 +25,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentServiceProxy, FileSizePipe, PrinterService ]
+    providers: [ DocumentServiceProxy, DocumentTypeServiceProxy, FileSizePipe, PrinterService ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -45,10 +45,12 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     public actionRecordData: any;
     public openDocumentMode = false;
     public currentDocumentInfo: DocumentInfo;
+    public documentTypes: DocumentTypeInfo[];
     public wopiUrlsrc: string;
     public wopiAccessToken: string;
     public wopiAccessTokenTtl: string;
     public showViewerType: number;
+    public clickedCellKey: string;
 
     public readonly WOPI_VIEWER  = 0;
     public readonly IMAGE_VIEWER = 1;
@@ -64,6 +66,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         public dialog: MatDialog,
         private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
+        private _documentTypeService: DocumentTypeServiceProxy,
         private _customerService: CustomersServiceProxy,
         private _clientService: ClientDetailsService,
         private printerService: PrinterService
@@ -203,7 +206,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
     ngOnInit() {
         this.data = this._customerService['data'];
+        this.loadDocumentTypes();
         this.loadDocuments();
+    }
+
+    loadDocumentTypes() {
+        this._documentTypeService.getAll().subscribe((result) => {
+            this.documentTypes = result;
+        });
     }
 
     loadDocuments(callback = null) {
@@ -290,6 +300,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         }).afterClosed().subscribe((result) => {
             if (result)
                 this.uploadFile(result);
+
+            this.loadDocumentTypes();
         });
     }
 
@@ -300,11 +312,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     onCellClick($event) {
+        this.clickedCellKey = undefined;
         const target = $event.event.target;
         if ($event.rowType === 'data') {
             /** If user click on actions icon */
             if (target.closest('.dx-link.dx-link-edit')) {
                 this.showActionsMenu($event.data, target);
+            } else if (target.closest('.document-type')) {
+                /** If user click on document type */
+                this.clickedCellKey = $event.data.id;
             } else {
                 this.currentDocumentInfo = $event.data;
                 /** Save sorted visible rows to get next and prev properly */
@@ -501,5 +517,18 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 this.viewDocument(DocumentType.Next);
             }
         }
+    }
+
+    onDocumentTypeSelected(documentTypeId, data) {
+        this._documentService.updateType(UpdateTypeInput.fromJS({
+            documentId: data.id,
+            typeId: documentTypeId
+        })).subscribe((response) => {
+            if (!response) {
+                this.clickedCellKey = undefined;
+                data.typeId = documentTypeId;
+                data.typeName = this.documentTypes.find(item => item.id == documentTypeId).name;
+            }
+        });
     }
 }

@@ -10202,6 +10202,58 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateType(input: UpdateTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/UpdateType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateType(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateType(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateType(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @documentId (optional) 
      * @return Success
      */
@@ -36444,6 +36496,8 @@ export interface IGetCustomersByRegionOutput {
 
 export class DocumentInfo implements IDocumentInfo {
     id!: string | undefined;
+    typeId!: number | undefined;
+    typeName!: string | undefined;
     fileName!: string | undefined;
     size!: string | undefined;
     creationTime!: moment.Moment | undefined;
@@ -36461,6 +36515,8 @@ export class DocumentInfo implements IDocumentInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.typeId = data["typeId"];
+            this.typeName = data["typeName"];
             this.fileName = data["fileName"];
             this.size = data["size"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
@@ -36478,6 +36534,8 @@ export class DocumentInfo implements IDocumentInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["typeId"] = this.typeId;
+        data["typeName"] = this.typeName;
         data["fileName"] = this.fileName;
         data["size"] = this.size;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
@@ -36488,6 +36546,8 @@ export class DocumentInfo implements IDocumentInfo {
 
 export interface IDocumentInfo {
     id: string | undefined;
+    typeId: number | undefined;
+    typeName: string | undefined;
     fileName: string | undefined;
     size: string | undefined;
     creationTime: moment.Moment | undefined;
@@ -36544,6 +36604,46 @@ export interface IUploadDocumentInput {
     fileName: string;
     size: number | undefined;
     fileBase64: string;
+}
+
+export class UpdateTypeInput implements IUpdateTypeInput {
+    documentId!: string | undefined;
+    typeId!: number | undefined;
+
+    constructor(data?: IUpdateTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.documentId = data["documentId"];
+            this.typeId = data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTypeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["documentId"] = this.documentId;
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface IUpdateTypeInput {
+    documentId: string | undefined;
+    typeId: number | undefined;
 }
 
 export class WopiRequestOutcoming implements IWopiRequestOutcoming {
@@ -44760,7 +44860,6 @@ export interface IChangeUserLanguageDto {
 
 export class QuestionnaireDto implements IQuestionnaireDto {
     id!: number | undefined;
-    identifier!: string | undefined;
     questions!: QuestionDto[] | undefined;
 
     constructor(data?: IQuestionnaireDto) {
@@ -44775,7 +44874,6 @@ export class QuestionnaireDto implements IQuestionnaireDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.identifier = data["identifier"];
             if (data["questions"] && data["questions"].constructor === Array) {
                 this.questions = [];
                 for (let item of data["questions"])
@@ -44794,7 +44892,6 @@ export class QuestionnaireDto implements IQuestionnaireDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["identifier"] = this.identifier;
         if (this.questions && this.questions.constructor === Array) {
             data["questions"] = [];
             for (let item of this.questions)
@@ -44806,7 +44903,6 @@ export class QuestionnaireDto implements IQuestionnaireDto {
 
 export interface IQuestionnaireDto {
     id: number | undefined;
-    identifier: string | undefined;
     questions: QuestionDto[] | undefined;
 }
 

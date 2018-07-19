@@ -28,10 +28,11 @@
             <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
             <dxi-column dataField="fileName" caption="{{l('DocumentReceived')}}"></dxi-column>
+            <dxi-column dataField="typeName" caption="{{l('DocumentType')}}" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
 
             <dxi-column
                 alignment="center"
-                width="133px"
+                width="90px"
                 cellTemplate="actionsCellTemplate"
                 headerCellTemplate="actionsCellTemplate">
             </dxi-column>
@@ -43,6 +44,16 @@
             </div>
             <div *dxTemplate="let data of 'title'">
                 <h2 class="title">{{l('Documents')}}</h2>
+            </div>
+            <div class="document-type" *dxTemplate="let data of 'typeCell'">
+                <p *ngIf="data.data.id != clickedCellKey">{{ data.value }}</p>
+                <span *ngIf="data.data.id == clickedCellKey">
+                    <crm-document-types-list  #documentTypeslist
+                        [selectedItem]="data.data.typeId" 
+                        [documentTypes]="documentTypes" 
+                        (onItemSelected)="onDocumentTypeSelected(documentTypeslist.selectedDocumentTypeId, data.data)">
+                    </crm-document-types-list>
+                </span>
             </div>
 
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
