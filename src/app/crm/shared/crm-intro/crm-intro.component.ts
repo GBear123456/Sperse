@@ -30,7 +30,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     isLinear = false;
     readonly identifier = 'CRM-Setup';
-
+    questionnaireId: number;
     question: QuestionDto;
     roles: RoleListDto[] = [];
     importUsers: ImportUserData[] = [new ImportUserData(), new ImportUserData(), new ImportUserData()];
@@ -52,15 +52,16 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this._questionnaireService.getInternal(AppConsts.modules.CRMModule, this.identifier)
-             .subscribe(result => {
-                 this.question = result.questions[0];
-             });
+            .subscribe(result => {
+                this.questionnaireId = result.id;
+                this.question = result.questions[0];
+            });
 
-         if (this.showImportUsersStep) {
-             this._roleService.getRoles(undefined).subscribe(result => {
-                 this.roles = result.items;
-             });
-         }
+        if (this.showImportUsersStep) {
+            this._roleService.getRoles(undefined).subscribe(result => {
+                this.roles = result.items;
+            });
+        }
     }
 
     onSubmit() {
@@ -79,7 +80,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     submitQuestionnaire() {
         let response = new QuestionnaireResponseDto();
-        response.identifier = this.identifier;
+        response.questionnaireId = this.questionnaireId;
         response.answers = [];
 
         let selectedAnswerIds: number[] = [];
@@ -95,7 +96,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
                 options: selectedAnswerIds
             }));
 
-            this._questionnaireService.submitResponseInternal(AppConsts.modules.CRMModule, response)
+            this._questionnaireService.submitResponseInternal(response)
                 .pipe(finalize(() => this.finishLoading(true)))
                 .subscribe((result) => {
                     this.dialogRef.close({ isGetStartedButtonClicked: true });

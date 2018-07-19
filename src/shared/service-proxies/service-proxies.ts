@@ -16517,14 +16517,11 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
-     * @moduleName (optional) 
      * @input (optional) 
      * @return Success
      */
-    submitResponse(moduleName: string | null | undefined, input: QuestionnaireResponseDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitResponse?";
-        if (moduleName !== undefined)
-            url_ += "moduleName=" + encodeURIComponent("" + moduleName) + "&"; 
+    submitResponse(input: QuestionnaireResponseDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitResponse";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -16572,14 +16569,11 @@ export class QuestionnaireServiceProxy {
     }
 
     /**
-     * @moduleName (optional) 
      * @input (optional) 
      * @return Success
      */
-    submitResponseInternal(moduleName: string | null | undefined, input: QuestionnaireResponseDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitResponseInternal?";
-        if (moduleName !== undefined)
-            url_ += "moduleName=" + encodeURIComponent("" + moduleName) + "&"; 
+    submitResponseInternal(input: QuestionnaireResponseDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Questionnaire/SubmitResponseInternal";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -44929,7 +44923,7 @@ export interface IOptionDto {
 }
 
 export class QuestionnaireResponseDto implements IQuestionnaireResponseDto {
-    identifier!: string | undefined;
+    questionnaireId!: number | undefined;
     answers!: AnswerDto[] | undefined;
 
     constructor(data?: IQuestionnaireResponseDto) {
@@ -44943,7 +44937,7 @@ export class QuestionnaireResponseDto implements IQuestionnaireResponseDto {
 
     init(data?: any) {
         if (data) {
-            this.identifier = data["identifier"];
+            this.questionnaireId = data["questionnaireId"];
             if (data["answers"] && data["answers"].constructor === Array) {
                 this.answers = [];
                 for (let item of data["answers"])
@@ -44961,7 +44955,7 @@ export class QuestionnaireResponseDto implements IQuestionnaireResponseDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["identifier"] = this.identifier;
+        data["questionnaireId"] = this.questionnaireId;
         if (this.answers && this.answers.constructor === Array) {
             data["answers"] = [];
             for (let item of this.answers)
@@ -44972,7 +44966,7 @@ export class QuestionnaireResponseDto implements IQuestionnaireResponseDto {
 }
 
 export interface IQuestionnaireResponseDto {
-    identifier: string | undefined;
+    questionnaireId: number | undefined;
     answers: AnswerDto[] | undefined;
 }
 
