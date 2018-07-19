@@ -36501,7 +36501,8 @@ export class DocumentInfo implements IDocumentInfo {
     fileName!: string | undefined;
     size!: string | undefined;
     creationTime!: moment.Moment | undefined;
-    isSupportedByWopi!: boolean | undefined;
+    isViewSupportedByWopi!: boolean | undefined;
+    isEditSupportedByWopi!: boolean | undefined;
 
     constructor(data?: IDocumentInfo) {
         if (data) {
@@ -36520,7 +36521,8 @@ export class DocumentInfo implements IDocumentInfo {
             this.fileName = data["fileName"];
             this.size = data["size"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.isSupportedByWopi = data["isSupportedByWopi"];
+            this.isViewSupportedByWopi = data["isViewSupportedByWopi"];
+            this.isEditSupportedByWopi = data["isEditSupportedByWopi"];
         }
     }
 
@@ -36539,7 +36541,8 @@ export class DocumentInfo implements IDocumentInfo {
         data["fileName"] = this.fileName;
         data["size"] = this.size;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["isSupportedByWopi"] = this.isSupportedByWopi;
+        data["isViewSupportedByWopi"] = this.isViewSupportedByWopi;
+        data["isEditSupportedByWopi"] = this.isEditSupportedByWopi;
         return data; 
     }
 }
@@ -36551,7 +36554,8 @@ export interface IDocumentInfo {
     fileName: string | undefined;
     size: string | undefined;
     creationTime: moment.Moment | undefined;
-    isSupportedByWopi: boolean | undefined;
+    isViewSupportedByWopi: boolean | undefined;
+    isEditSupportedByWopi: boolean | undefined;
 }
 
 export class UploadDocumentInput implements IUploadDocumentInput {

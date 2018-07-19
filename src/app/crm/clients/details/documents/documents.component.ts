@@ -307,7 +307,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
     showActionsMenu(data, target) {
         this.actionRecordData = data;
-        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isSupportedByWopi;
+        this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isEditSupportedByWopi;
         this.actionsTooltip.instance.show(target);
     }
 
@@ -357,14 +357,14 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         if (this.validVideoExtensions.indexOf(ext) >= 0) {
             viewerType = this.VIDEO_VIEWER;
         } else {
-            viewerType = this.currentDocumentInfo.isSupportedByWopi ? this.WOPI_VIEWER :
+            viewerType = this.currentDocumentInfo.isViewSupportedByWopi ? this.WOPI_VIEWER :
                 (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
         }
 
         this.startLoading(true);
         this.initViewerToolbar({
             rotateDisabled: ext == 'pdf',
-            editDisabled: !this.currentDocumentInfo.isSupportedByWopi,
+            editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
             printHidden: viewerType === this.WOPI_VIEWER
