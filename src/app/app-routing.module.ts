@@ -3,6 +3,7 @@ import { NavigationEnd, RouteConfigLoadEnd, RouteConfigLoadStart, Router, Router
 import { AppComponent } from './app.component';
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
+import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';
 
 @NgModule({
     imports: [
@@ -17,7 +18,8 @@ import { NotificationsComponent } from './shared/layout/notifications/notificati
                         path: '',
                         children: [
                             { path: '', redirectTo: '/app/crm/start', pathMatch: 'full' },
-                            { path: 'notifications', component: NotificationsComponent }
+                            { path: 'notifications', component: NotificationsComponent },
+                            { path: 'access-denied', component: AccessDeniedComponent }
                         ]
                     },
                     {

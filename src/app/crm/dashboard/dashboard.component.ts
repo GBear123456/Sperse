@@ -92,4 +92,5 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             // if (result && result.isGetStartedButtonClicked) this.onStart();
         });
     }
+
 }

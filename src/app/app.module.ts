@@ -15,6 +15,7 @@ import {AppService} from './app.service';
 import {LayoutModule} from './shared/layout/layout.module';
 import {AppCommonModule} from './shared/common/app-common.module';
 import {AppRoutingModule} from './app-routing.module';
+import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -26,7 +27,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        AccessDeniedComponent
     ],
     imports: [
         LayoutModule,
