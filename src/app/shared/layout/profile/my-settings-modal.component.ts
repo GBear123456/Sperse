@@ -85,6 +85,7 @@ export class MySettingsModalComponent extends AppComponentBase implements AfterV
     close(): void {
         this.active = false;
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     save(): void {
