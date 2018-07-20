@@ -77,6 +77,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         const reader: FileReader = new FileReader();
 
         reader.onload = (e: any) => {
+            target['value'] = '';
             /* read workbook */
             const bstr: string = e.target.result;
             const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
