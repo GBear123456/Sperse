@@ -184,6 +184,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+        this.dataGrid.instance.updateDimensions();
     }
 
     createClient() {

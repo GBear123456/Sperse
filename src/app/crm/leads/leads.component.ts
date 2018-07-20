@@ -557,6 +557,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+        this.dataGrid.instance.updateDimensions();
     }
 
     filterByName(filter: FilterModel) {
