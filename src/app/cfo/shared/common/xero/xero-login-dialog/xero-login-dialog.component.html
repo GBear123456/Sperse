@@ -1,6 +1,6 @@
-<dx-popup class="popup"
-          [width]="600"
-          [height]="350"
+<dx-popup class="popup xeroLoginDialog"
+          [width]="880"
+          [height]="655"
           [showTitle]="true"
           title="Xero"
           [dragEnabled]="false"
@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="button-container">
-            <dx-button width="80" text="Add" (onClick)="connectToXero($event)" class="add-button"></dx-button>
+            <dx-button text="Add" (onClick)="connectToXero($event)" class="add-button"></dx-button>
             <a href="https://developer.xero.com/documentation/auth-and-limits/private-applications" target="_blank" class="link info">{{l('Info')}}</a>
             <a href="{{getXeroCertificateUrl}}" target="_blank" class="link get-cert">{{l('DownloadCertificate')}}</a>
         </div>

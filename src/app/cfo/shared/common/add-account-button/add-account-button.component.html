@@ -1,10 +1,7 @@
-<a id="add-account" (click)="addAccount()" class="add-link">+ {{l('Add_account')}}</a>
+<a id="add-account" (click)="openAddAccountDialog()" class="add-link">+ {{l('Add_account')}}</a>
 
-<dx-tooltip target="#add-account"
-            [(visible)]="tooltipVisible">
+<dx-tooltip class="addXeroAccount" target="#add-account" [(visible)]="tooltipVisible">
     <div *dxTemplate="let data = data of 'content'">
-        <add-quovo-account-button (onClose)="onQuovoHanderClose($event)"></add-quovo-account-button>
-        <br />
-        <xero-login></xero-login>
+        <xero-login (click)="xeroButtonClick()"></xero-login>
     </div>
 </dx-tooltip>
