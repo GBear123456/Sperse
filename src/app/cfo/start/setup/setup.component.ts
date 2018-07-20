@@ -14,8 +14,7 @@ import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
     selector: 'setup',
     templateUrl: './setup.component.html',
     styleUrls: ['./setup.component.less'],
-    animations: [appModuleAnimation()],
-    providers: [InstanceServiceProxy]
+    animations: [appModuleAnimation()]
 })
 export class SetupComponent extends CFOComponentBase implements OnInit, OnDestroy {
     private rootComponent: any;

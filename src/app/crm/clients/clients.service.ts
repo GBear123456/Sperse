@@ -1,9 +1,9 @@
 import { Injectable, Injector  } from '@angular/core';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { InstanceServiceProxy, UserServiceProxy, ActivateUserForContactInput, 
+import { InstanceServiceProxy, UserServiceProxy, ActivateUserForContactInput,
     SetupInput, TenantHostType } from '@shared/service-proxies/service-proxies';
-    
+
 @Injectable()
 export class ClientService {
     private permission: PermissionCheckerService;
@@ -17,13 +17,13 @@ export class ClientService {
         this.instanceServiceProxy = injector.get(InstanceServiceProxy);
         this.userServiceProxy = injector.get(UserServiceProxy);
     }
-    
+
     canSendVerificationRequest() {
-        return this.feature.isEnabled('CFO.Partner') && 
-            this.permission.isGranted('Pages.CRM.ActivateUserForContact') && 
+        return this.feature.isEnabled('CFO.Partner') &&
+            this.permission.isGranted('Pages.CRM.ActivateUserForContact') &&
             this.permission.isGranted('Pages.CFO.ClientActivation');
     }
-    
+
     requestVerification(contactId: number) {
         abp.message.confirm(
             'Please confirm user activation',
