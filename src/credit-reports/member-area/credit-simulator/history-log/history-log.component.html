@@ -1,0 +1,42 @@
+<ng-container *ngIf="historyItems.length">
+    <div class="sub-title">
+        <h2>{{l("simulationHistory")}}</h2>
+    </div>
+    <div class="history-log">
+        <ol>
+            <li *ngFor="let item of historyItems" [@routerTransition]>
+                <span class="request-description">
+                    <span class="request" *ngFor="let request of item.request">
+                        {{request.key}} = {{request.val}}
+                    </span>
+                </span>
+                <span class="new-score-detail">
+                    <span class="score-group">
+                        <span>{{item.currentScore}}</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        <span>{{item.simulatedScore}}</span>
+                    </span>
+                    <ng-container *ngIf="item.progress > 0">
+                            <span class="changes positive">
+                                {{item.progress}}%
+                            </span>
+                    </ng-container>
+                    <ng-container *ngIf="item.progress < 0">
+                            <span class="changes negative">
+                                {{item.progress}}%
+                            </span>
+                    </ng-container>
+                    <ng-container *ngIf="item.progress == 0">
+                        <span class="changes">0.0%</span>
+                    </ng-container>
+                </span>
+            </li>
+        </ol>
+    </div>
+</ng-container>
+<div class="welcome">
+    <h2 class="welcome-title">{{l("historyWelcomeTitle")}}</h2>
+    <p class="welcome-text">{{l("historyWelcomeText")}}</p>
+</div>
+
+

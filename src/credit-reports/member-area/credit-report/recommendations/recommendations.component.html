@@ -1,0 +1,23 @@
+<div class="report-item">
+    <div class="report-item-title" id="recommendations">{{l("recommendations")}}</div>
+    <div class="report-item-content">
+        <div class="recomendation-list" role="tablist" aria-multiselectable="true">
+            <div class="card recomendation-item {{item.isPositive ? 'positive' : 'negative'}}" *ngFor="let item of creditReport?.recommendations; let i = index;">
+                <div class="card-header" role="tab" [id]="'heading'+i">
+                    <h4 class="card-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" [href]="'#id'+i" [attr.aria-expanded]="false" [attr.aria-controls]="'heading'+i">
+                            {{item.header}}
+                            <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
+                        </a>
+                    </h4>
+                </div>
+                <div [id]="'id'+i" class="collapse" role="tabpanel" [attr.aria-labelledby]="'heading'+i">
+                    <div class="card-body">
+                        <p>{{item.text}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

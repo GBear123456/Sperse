@@ -1,0 +1,11 @@
+<div class="partners-block">
+  <div class="partners-wrap">
+    <h2 class="partners-title">{{l("PartnersTitle")}}</h2>
+    <p class="partners-description">{{l("PartnersDescription")}}</p>
+    <mat-grid-list cols="5" rowHeight="100px" class="partners-logo-row">
+      <mat-grid-tile *ngFor="let image of images" class="partners-item">
+          <img src="{{image.src}}" alt="{{image.title}}" class="partners-image">
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>

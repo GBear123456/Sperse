@@ -90,6 +90,10 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return '/app/admin/users';
         }
 
+        if (this._feature.isEnabled('CreditReportFeature')) {
+            return '/credit-reports';
+        }
+
         if (this._feature.isEnabled('Notification')) {
             return '/app/notifications';
         }

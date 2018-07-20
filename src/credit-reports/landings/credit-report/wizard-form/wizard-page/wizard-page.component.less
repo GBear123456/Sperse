@@ -1,0 +1,546 @@
+.wizard-wrap {
+    position: relative;
+    min-height: 100vh;
+    height: 100%;
+    background: #97f6f7 linear-gradient(77deg, #0dc1c3, #97f6f7);
+    overflow: hidden;
+    &::before {
+        content: '';
+        background: #fff;
+        width: 300%;
+        min-height: 100vh;
+        display: block;
+        position: absolute;
+        top: -550px;
+        left: 50%;
+        transform: translate(-50%, 0) rotate(-15deg);
+    }
+    .content-wrap {
+        display: inline-block;
+        width: 100%;
+        padding: 0 32px;
+    }
+    .top-bar {
+        padding: 20px 0;
+        position: relative;
+        z-index: 2;
+        .logo {
+            float: left;
+        }
+        p {
+            float: right;
+            font-family: "lato", sans-serif;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 44px;
+            margin: 0;
+            font-weight: 500;
+            color: rgb(23, 28, 29);
+            a {
+                color: rgb(50, 158, 207);
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.step-icon {
+    margin: 0 auto;
+    display: block;
+}
+
+.label {
+    color: #000;
+}
+
+.step-title {
+    font-family: "roboto-slab", serif;
+    font-size: 34px;
+    letter-spacing: 0.3px;
+    text-align: center;
+    color: rgb(2, 31, 68);
+    margin-bottom: 50px;
+}
+
+form {
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+#addressInfo {
+    width: 60%;
+}
+
+/deep/ .email .dx-texteditor.dx-state-readonly .dx-texteditor-input {
+    color: #dfdfdf;
+}
+
+.button {
+    position: absolute !important;
+    bottom: 20px;
+    right: 63.5px;
+    background-color: rgb(245, 128, 35);
+    box-shadow: 0 3px 10px 0 rgba(245, 128, 35, 0.35);
+    font-family: "lato", sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    text-align: center;
+    color: #ffffff;
+    z-index: 5;
+    &:hover {
+        background: lighten(rgb(245, 128, 35), 10%);
+    }
+    img {
+        float: right;
+        position: relative;
+    }
+    &.btn-back {
+        left: 63.5px;
+        right: auto;
+        color: #8a969b;
+        box-shadow: none;
+        opacity: .5;
+        transition: .2s;
+        background-color: transparent;
+        img {
+            float: left;
+            margin-left: 0;
+            margin-right: 15px;
+            top: 7px;
+        }
+        &:hover {
+            opacity: 1;
+        }
+    }
+    &:disabled,
+    &[disabled] {
+        opacity: .7;
+        cursor: not-allowed;
+    }
+}
+
+input[type="radio"] {
+    // display: none;
+    + label {
+        position: relative;
+        padding-left: 36px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.1px;
+        color: rgba(23, 28, 29, 0.5);
+        img {
+            position: absolute;
+            left: 7px;
+            top: 2px;
+            opacity: 0;
+            transition: .2s;
+        }
+        //color: #171c1d;
+        &::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: solid 1px #dfdfdf;
+            background-color: #fff;
+            position: absolute;
+            left: 5px;
+            transition: .2s;
+        }
+    }
+    &:checked {
+        + label {
+            color: #171c1d;
+            img {
+                opacity: 1;
+            }
+            &::before {
+                background-color: rgb(245, 128, 35);
+                border-color: rgb(245, 128, 35);
+            }
+        }
+    }
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    border: 0;
+    border-bottom: solid 1px rgb(223, 223, 223);
+    // padding: 12.5px 0;
+    //min-width: 150px;
+    outline: none;
+    border-radius: 0;
+}
+
+p {
+    font-family: "lato", sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: rgb(138, 150, 155);
+}
+
+.info-card {
+    background-color: #f8f8f8;
+    padding: 19px 16px;
+    position: relative;
+    border-radius: 4px;
+    p {
+        margin: 0;
+        font-size: 14px;
+        font-family: "lato", sans-serif;
+    }
+    &::before {
+        content: '';
+        width: 0;
+        height: 0;
+        border: 0 solid transparent;
+        border-top-width: 8px;
+        border-bottom-width: 8px;
+        border-right: 8px solid #f8f8f8;
+        position: absolute;
+        left: -8px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.dx-field-value {
+    float: left;
+}
+
+.dx-fieldset {
+    margin: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.summary {
+    padding: 15px 0;
+}
+
+.form-actions {
+    background-color: transparent;
+}
+
+// payment
+input[type="radio"] {
+    display: none;
+}
+
+.paymentType {
+    display: inline-block;
+    width: 100%;
+    .paypalLogo {
+        display: inline-block;
+        opacity: 1;
+    }
+    .card-icons {
+        position: static !important;
+        margin-left: 5px;
+        height: 18px;
+    }
+}
+
+.with-bg {
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    padding: 24px;
+    margin: 15px 0;
+    display: inline-block;
+    width: 100%;
+
+    .full-width {
+        width: 100%;
+    }
+}
+
+// this must be changed
+.dx-field.row {
+    margin-right: -15px;
+    margin-left: -15px;
+    .dx-field-value {
+        width: auto;
+    }
+}
+
+.dx-texteditor-input {
+    padding: 12px 32px 12px 8px;
+    &:disabled {
+        opacity: .5;
+    }
+}
+
+.dx-placeholder::before {
+    font-family: "lato", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #171c1d;
+}
+
+.firstName {
+    width: 25%;
+}
+
+.lastName {
+    width: 35%;
+}
+
+.lastName, .firstName {
+    float: left;
+    
+    /deep/ input {
+        text-transform: capitalize !important;
+    }
+}
+
+.dx-field-label,
+label {
+    font-family: "lato", sans-serif;
+    padding: 12px 15px 12px 0;
+    font-size: 17px;
+    font-weight: 500;
+    text-align: right;
+    color: #8a969b;
+    overflow: initial;
+}
+
+.paymentType label {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.last-step label {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.dx-radiogroup-horizontal {
+    margin: 11px 0 !important;
+}
+
+.dx-texteditor {
+    border: 0;
+}
+
+.summary,
+.base-commerce-validation {
+    position: relative;
+    z-index: 10;
+}
+
+.header-section {
+    width: 100%;
+    min-height: 150px;
+    clear: both;
+    position: relative;
+    .buyer-protection {
+        float: left;
+        font-family: "lato", sans-serif;
+        font-size: 17px;
+        font-weight: bold;
+        color: #4b5457;
+        text-transform: uppercase;
+        &-text {
+        
+        }
+        img {
+            position: relative;
+            top: -3px;
+        }
+    }
+    .step-icon {
+        position: absolute;
+        left: 50%;
+        margin-left: -58px;
+        top: 20px;
+    }
+    .contact-info {
+        float: right;
+        text-align: right;
+        p {
+            font-family: "lato", sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4b5457;
+            margin: 0;
+            a {
+                font-size: 18px;
+                font-weight: bold;
+                color: #1bb6b6;
+            }
+        }
+        .work-time {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.67;
+            letter-spacing: 0.2px;
+            text-align: right;
+            color: #8a969b;
+            display: inline-block;
+            padding-left: 38px;
+            background: transparent url('/assets/images/credit-report/phone-icon.svg') 8px 10px no-repeat;
+            b {
+                text-transform: uppercase;
+                font-size: 13px;
+                font-weight: bold;
+                color: #4b5457;
+            }
+        }
+    }
+}
+
+/deep/ .dx-texteditor-buttons-container {
+    display: none;
+}
+
+/deep/ .form {
+    .row {
+        .col-md-6 {
+            padding-right: 50px;
+            min-height: 235px;
+            + .col-md-6 {
+                border-left: 2px solid #dfdfdf;
+                padding-left: 50px;
+                padding-right: 15px;
+            }
+        }
+        .form-control {
+            height: auto;
+        }
+    }
+}
+/deep/ .dx-widget {
+    font-family: "lato", sans-serif;
+}
+.base-commerce-validation + .summary {
+    padding-top: 0;
+}
+
+.toggle-password {
+    display: inline-block;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 11px;
+    color: #3baed8;
+    margin-top: 14px;
+    cursor: pointer;
+}
+
+.password-strength {
+    font-size: 15px;
+    font-weight: 500;
+    color: #8a969b;
+    margin-top: 10px;
+}
+
+.empty, .tooshort, .weak {
+    color: #d53d2e;
+}
+
+.fair {
+    color: orange;
+}
+
+.strong {
+    color: #2fb462;
+}
+
+.password-Complexity-Block {
+    li {
+        line-height: 20px;
+        font-size: 13px;
+
+        &:before {
+            left: -28px;
+            position: absolute;
+            font: normal normal normal 13px/20px FontAwesome;
+        }
+    }
+
+    .invalid {
+        color: #d53d2e;
+
+        &:before {
+            content: "\F00D";
+        }
+    }
+
+    .valid {
+        color: #2fb462;
+
+        &:before {
+            content: "\F00C";
+        }
+    }
+}
+
+.layout-checkbox {
+    margin-top: 8px;
+
+    .t-checkbox span {
+        height: 16px;
+        width: 16px;
+        top: 2px;
+        font-size: 15px;
+
+        &::after {
+            left: 5px;
+            top: 0px;
+            height: 11px;
+            width: 5px;
+        }
+    }
+}
+
+/deep/ #discloseMyEmail {
+    .dx-checkbox-container {
+        .dx-checkbox-icon {
+            vertical-align: top;
+            position: relative;
+            top: 2px;
+        }
+    }
+}
+
+/deep/ .with-icon {
+    position: relative;
+    &::before {
+        content: '';
+        width: 16px;
+        height: 18px;
+        display: block;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 8px;
+        z-index: 1;
+    }
+    &.creditCardNumber::before {
+        background: url('/assets/images/credit-report/credit-card-icon.svg') center center no-repeat;
+    }
+    &.cvvCode::before {
+        background: url('/assets/images/credit-report/block-icon.svg') center center no-repeat;
+    }
+    &.expDate::before {
+        background: url('/assets/images/credit-report/exp-date-icon.svg') center center no-repeat;
+    }
+    &.fullAddress::before {
+        background: url('/assets/images/credit-report/home-icon.svg') center center no-repeat;
+        left: 23px;
+    }
+    &.zipCode::before {
+        background: url('/assets/images/credit-report/location-icon.svg') center center no-repeat;
+    }
+    input {
+        padding-left: 37px !important;
+    }
+    .dx-placeholder {
+        left: 28px;
+    }
+}

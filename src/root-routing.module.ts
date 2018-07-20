@@ -66,6 +66,11 @@ const routes: Routes = [{
             data: {preload: true}
         },
         {
+            path: 'credit-reports',
+            loadChildren: 'credit-reports/credit-reports.module#CreditReportsModule', //Lazy load account module
+            data: { preload: true }
+        },
+        {
             path: 'mobile',
             loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
             data: {preload: true}
