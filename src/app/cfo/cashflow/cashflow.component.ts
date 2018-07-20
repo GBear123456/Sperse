@@ -28,7 +28,7 @@ import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-deta
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';

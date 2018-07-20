@@ -5,9 +5,9 @@ import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEnt
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
-import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
+import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts-widgets/bank-accounts-widget.component';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widget/bank-accounts-data.model';
+import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widgets/bank-accounts-data.model';
 
 @Component({
     selector: 'bank-accounts-select',

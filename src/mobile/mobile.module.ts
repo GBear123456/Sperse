@@ -7,6 +7,7 @@ import { MobileRoutingModule } from './mobile-routing.module';
 
 import { AppComponent } from './mobile.component';
 import { AppService } from './mobile.service';
+import { CommonModule } from '@shared/common/common.module';
 
 @NgModule({
     declarations: [
@@ -16,7 +17,8 @@ import { AppService } from './mobile.service';
         LayoutModule,
         AppCommonModule.forRoot(),
         ngCommon.CommonModule,
-        MobileRoutingModule
+        MobileRoutingModule,
+        CommonModule
     ],
     providers: [
         AppService

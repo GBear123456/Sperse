@@ -1,4 +1,4 @@
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 

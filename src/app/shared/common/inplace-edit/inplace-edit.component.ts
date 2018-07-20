@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
 
 import { DxTextBoxComponent } from 'devextreme-angular';

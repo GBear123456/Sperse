@@ -10,7 +10,7 @@ import { DxContextMenuComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material';
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { RatingComponent } from '../rating/rating.component';

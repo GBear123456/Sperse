@@ -20,7 +20,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         if (this.handlers[key])
             (<any>this.handlers[key]).componentRef.instance.invalidate();
     }
-    
+
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         if (!route.routeConfig || route.routeConfig.loadChildren)
             return false;

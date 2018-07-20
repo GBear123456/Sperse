@@ -16,6 +16,7 @@ import {LayoutModule} from './shared/layout/layout.module';
 import {AppCommonModule} from './shared/common/app-common.module';
 import {AppRoutingModule} from './app-routing.module';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
+import { FiltersModule } from '@shared/filters/filters.module';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -35,7 +36,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         AppCommonModule.forRoot(),
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,
-        AppRoutingModule
+        AppRoutingModule,
+        FiltersModule.forRoot()
     ],
     providers: [
         AppService,
