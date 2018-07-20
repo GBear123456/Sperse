@@ -69,7 +69,7 @@
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
-                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">  
             <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
@@ -137,7 +137,8 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
-                          [customizeColumns]="customizePreviewColumns">
+                          [customizeColumns]="customizePreviewColumns"
+                          (onCellPrepared)="onReviewCellPrepared($event)">
                 <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">
