@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 
@@ -8,6 +8,7 @@ import { MatHorizontalStepper } from '@angular/material';
 import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
 import { DxDataGridComponent } from 'devextreme-angular';
+
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
 
@@ -60,6 +61,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private validateFieldList: string[] = ['email', 'phone', 'url'];
     private invalidRowKeys: any = {};
     private similarFieldsIndex: any = {};
+    private reviewProgress: any;
 
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
@@ -77,7 +79,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     fileHeaderWasGenerated = false;
 
     selectedPreviewRows: any = [];
-
+    reviewToolbarConfig: any = [];
     reviewDataSource: any;
     mapDataSource: any;
 
@@ -113,6 +115,27 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.localizationSourceName = this.localizationSource;
     }
 
+    initReviewToolbarConfig() {
+        this.reviewToolbarConfig = 
+            this.toolbarConfig.concat({
+                location: 'before', 
+                items: [{
+                    text: '',
+                    widget: 'dxProgressBar',
+                    options: {
+                        min: 0,
+                        max: 100,
+                        width: 200,
+                        value: 0,
+                        visible: false,
+                        onInitialized: (event) => {
+                            this.reviewProgress = event.component;
+                        }
+                    }
+                }]
+            });
+    }
+
     reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
@@ -141,6 +164,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             this.dataMapping.controls.valid.updateValueAndValidity();
             if (this.dataMapping.valid) {
+                this.initReviewToolbarConfig();
                 this.initReviewDataSource(this.getMappedFields());
                 this.stepper.next();
             } else {
@@ -217,32 +241,52 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.emptyReviewData();        
     
         setTimeout(() => {
-            let columnsIndex = {}, columnCount = 0;
-            this.fileData.data.forEach((row, index) => {
-                if (index) {
-                    if (row.length == columnCount) {
-                        let data = {};
-                        mappedFields.forEach((field) => {
-                            let value = row[columnsIndex[field.sourceField]];
-                            if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data)) 
-                                && !data[field.mappedField]) data[field.mappedField] = value;
-                        });
-                    
-                        if (!this.checkDuplicate(row, data)) {
-                            this.reviewDataSource.push(data);
-                            this.checkSimilarGroups(data);
-                        }
-                    }
-                } else {
-                    columnCount = row.length;
-                    row.forEach((item, index) => {
-                        columnsIndex[item] = index;
-                    });
-                }
-            }); 
+            let dataSource = [], progress = 0, totalCount = this.fileData.data.length - 1,
+                onePercentCount = totalCount < 100 ? totalCount: Math.ceil(totalCount / 100),
+                columnsIndex = {}, columnCount = 0;
 
-            this.updateGroupNames();
-            this.finishLoading(true);
+            let processPartially = () => {
+                for (var index = onePercentCount * progress; index < Math.min(onePercentCount * (progress + 1), totalCount); index++) {
+                    let row = this.fileData.data[index];
+                    if (index) {
+                        if (row.length == columnCount) {
+                            let data = {};
+                            mappedFields.forEach((field) => {
+                                let value = row[columnsIndex[field.sourceField]];
+                                if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data)) 
+                                    && !data[field.mappedField]) data[field.mappedField] = value;
+                            });
+                        
+                            if (!this.checkDuplicate(row, data)) {
+                                this.checkSimilarGroups(data);
+                                dataSource.push(data);
+                            }
+                        }
+                    } else {
+                        columnCount = row.length;
+                        row.forEach((item, index) => {
+                            columnsIndex[item] = index;
+                        });
+                    }
+                }
+
+                if (index < totalCount) {
+                    this.reviewProgress.option('value', ++progress);
+                    setTimeout(() => processPartially(), 100);
+                } else {
+                    this.updateGroupNames();
+                    this.reviewProgress.option('value', 100);
+                    this.reviewDataSource = dataSource;
+
+                    setTimeout(() => {
+                        this.reviewProgress.option('visible', false);
+                        this.finishLoading(true);
+                    }, 1000);
+                }
+            };                        
+
+            this.reviewProgress.option('visible', true);
+            setTimeout(() => processPartially(), 100);
         });
     }
 
@@ -589,12 +633,27 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 if (columnConfig)
                     _.extend(column, columnConfig);
                 this.initColumnTemplate(column);
+//                this.updateColumnOrder(column);
             }
 
             if (!columnConfig || !columnConfig['caption'])
                 column.caption = this.l(ImportWizardComponent.getFieldLocalizationName(column.dataField));
         });
     }
+
+/*
+    !!VP will be enabled later
+    updateColumnOrder(column) {
+        column.visibleIndex = undefined;
+        this.checkSimilarFields.forEach((list, index) => {    
+            let parts = list.split(':'),
+                insideIndex = parts.indexOf(column.dataField);
+                            
+            if (insideIndex >= 0)
+                column.visibleIndex = index + insideIndex;
+        });
+    }
+*/
 
     initColumnTemplate(column) {
         let field;
