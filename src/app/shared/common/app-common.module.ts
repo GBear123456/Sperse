@@ -12,8 +12,10 @@ import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule, DxRadioGroupModule
+    DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
+    DxScrollViewModule, DxTabsModule, DxTagBoxModule
 } from 'devextreme-angular';
+
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -21,6 +23,10 @@ import { ModalModule } from 'ngx-bootstrap';
 import { FileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
+import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
+import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
+import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
+import { BankAccountsWidgetsModule } from '@shared/cfo/bank-accounts-widgets/bank-accounts-widgets.module';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';
@@ -54,6 +60,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         CommonModule,
         TableModule,
         PaginatorModule,
+        BankAccountsWidgetsModule,
 
         MatTabsModule,
         MatInputModule,
@@ -82,7 +89,17 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DxDataGridModule,
         DxContextMenuModule,
         DxTreeViewModule,
-        DxRadioGroupModule
+        DxRadioGroupModule,
+        DxCheckBoxModule,
+        DxTextBoxModule,
+        DxScrollViewModule,
+        DxDataGridModule,
+        DxSelectBoxModule,
+        MatDialogModule,
+        DxContextMenuModule,
+        DxTabsModule,
+        DxTagBoxModule,
+        DxPopupModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -98,7 +115,10 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         PeriodComponent,
         ImportWizardComponent,
         ConfirmImportDialog,
-        UploadPhotoDialogComponent
+        UploadPhotoDialogComponent,
+        ConfirmDialogComponent,
+        ModalDialogComponent,
+        SelectionFilterComponent,
     ],
     exports: [
         TimeZoneComboComponent,
@@ -114,7 +134,10 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         PeriodComponent,
         ImportWizardComponent,
         ConfirmImportDialog,
-        UploadPhotoDialogComponent
+        UploadPhotoDialogComponent,
+        ConfirmDialogComponent,
+        ModalDialogComponent,
+        SelectionFilterComponent,
     ],
     providers: [
         DateTimeService,
@@ -123,7 +146,9 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
     ],
     entryComponents: [
         ConfirmImportDialog,
-        UploadPhotoDialogComponent
+        UploadPhotoDialogComponent,
+        ConfirmDialogComponent,
+        ModalDialogComponent
     ]
 })
 export class AppCommonModule {

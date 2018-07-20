@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 
 @Component({
   selector: 'rule-delete-dialog',

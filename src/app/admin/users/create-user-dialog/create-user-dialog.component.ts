@@ -1,16 +1,12 @@
-import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef, OnDestroy } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
+import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
-    OrganizationUnitDto, UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
+    UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes } from '@shared/AppEnums';
-import { DxTextBoxComponent, DxContextMenuComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { DxContextMenuComponent } from 'devextreme-angular';
 
 import { MatDialog } from '@angular/material';
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 
 import { CacheService } from 'ng2-cache-service';

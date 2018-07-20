@@ -4,7 +4,7 @@
 
     <div class="assignment-list" *ngIf="!data.deleteAllReferences">
         <h3>{{l(data.entityPrefix + '_DeleteDialog_ReassignToFollowing')}}</h3>
-        <dx-radio-group 
+        <dx-radio-group
             width="420px"
             height="100%"
             [dataSource]="data.items"
@@ -16,5 +16,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button (click)="confirm($event)" class="button-layout button-primary">{{l('Confirm')}}</button>
+  <button md-button (click)="confirm()" class="button-layout button-primary">{{l('Confirm')}}</button>
 </mat-dialog-actions>

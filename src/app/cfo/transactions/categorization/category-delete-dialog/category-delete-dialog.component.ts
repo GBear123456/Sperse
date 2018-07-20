@@ -1,10 +1,8 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
 import { DxTreeListComponent } from 'devextreme-angular';
 
-import * as _ from 'underscore';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 
 @Component({
   selector: 'category-delete-dialog',
@@ -23,12 +21,12 @@ export class CategoryDeleteDialogComponent extends ConfirmDialogComponent implem
     ngOnInit() {
         this.data.deleteAllReferences = false;
     }
-        
-    confirm($event) {
+
+    confirm() {
         if (!this.data.deleteAllReferences) {
             let selected = this.categoryList.instance.getSelectedRowsData(),
                 key = selected.length && parseInt(selected[0].key);
-            this.data.categoryId = this.data.categorizations[key] && key || undefined;                
+            this.data.categoryId = this.data.categorizations[key] && key || undefined;
             if (!this.data.categoryId)
                 return this.notify.error(this.l('Category should be selected'));
         }

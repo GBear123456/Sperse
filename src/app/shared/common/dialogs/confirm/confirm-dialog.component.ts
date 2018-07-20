@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { AppComponentBase } from '../../app-component-base';
+import { AppComponentBase } from '../../../../../shared/common/app-component-base';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({

@@ -45,7 +45,6 @@ import {
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
-import { FileDropModule } from 'ngx-file-drop';
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
@@ -68,7 +67,6 @@ import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 
 @NgModule({
     imports: [
-      FileDropModule,
       FormsModule,
       ngCommon.CommonModule,
       CommonModule,

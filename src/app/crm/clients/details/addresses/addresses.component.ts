@@ -2,7 +2,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { MatDialog } from '@angular/material';
 import { ClientDetailsService } from '../client-details.service';
 import {
