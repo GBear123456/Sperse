@@ -28,13 +28,15 @@ export class AppService extends AppServiceBase {
                 'HR',
                 'HUB',
                 'Slice',
-                'Store'
+                'Store',
+                'CreditReports'
             ],
             {
                 admin: require('./admin/module.config.json'),
                 api: require('./api/module.config.json'),
                 crm: require('./crm/module.config.json'),
-                cfo: require('./cfo/module.config.json')
+                cfo: require('./cfo/module.config.json'),
+                creditreports: require('../credit-reports/module.config.json')
             },
         );
     }

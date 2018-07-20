@@ -1,0 +1,8 @@
+{
+  "name": "CR",
+  "search": false,
+  "requiredFeature": "CreditReportFeature",
+  "defaultPath": "/credit-reports/member-area",
+  "navigation": [
+  ]
+}
