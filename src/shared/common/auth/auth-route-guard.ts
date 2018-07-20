@@ -42,7 +42,11 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return true;
         }
 
-        this._router.navigate([this.selectBestRoute()]);
+        if (route.data && route.data['permission'] && route.data['permission'] === 'Pages.Detect.Route')
+            this._router.navigate([this.selectBestRoute()]);
+        else
+            this._router.navigate(['/app/access-denied']);
+
         return false;
     }
 
@@ -51,10 +55,6 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        if (!this._sessionService.user) {
-            return '/account/login';
-        }
-
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT && this._feature.isEnabled('CFO')) {
             if (AppConsts.isMobile) {
                 return 'app/cfo';
@@ -93,5 +93,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
         if (this._feature.isEnabled('Notification')) {
             return '/app/notifications';
         }
+
+        return '/app/access-denied';
     }
 }

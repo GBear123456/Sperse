@@ -1,15 +1,15 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
-import { DxRadioGroupComponent, DxTextAreaComponent } from 'devextreme-angular';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
+import { DxRadioGroupComponent, DxTextAreaComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
+
+import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 
 @Component({
     selector: 'confirm-cancellation-dialog',
     templateUrl: 'confirm-cancellation-dialog.component.html',
-    styleUrls: ['confirm-cancellation-dialog.component.less']  
+    styleUrls: ['confirm-cancellation-dialog.component.less']
 })
 export class LeadCancelDialogComponent extends ConfirmDialogComponent implements OnInit {
     @ViewChild(DxRadioGroupComponent) radioComponent: DxRadioGroupComponent;
@@ -29,11 +29,9 @@ export class LeadCancelDialogComponent extends ConfirmDialogComponent implements
         });
     }
 
-    ngOnInit() {
+    ngOnInit() {}
 
-    }
-        
-    confirm($event) {
+    confirm() {
         if (!this.validateReason(this.comment))
             return;
 

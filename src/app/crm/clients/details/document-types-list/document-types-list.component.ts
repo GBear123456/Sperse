@@ -5,7 +5,7 @@ import { finalize } from 'rxjs/operators';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { DocumentTypeServiceProxy, UpdateDocumentTypeInput, CreateDocumentTypeInput } from '@shared/service-proxies/service-proxies';
+import { DocumentTypeServiceProxy, UpdateDocumentTypeInput, CreateDocumentTypeInput, DocumentTypeInfo } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-document-types-list',
@@ -18,6 +18,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
         this.selectedDocumentTypeId = value;
         this.selectedDocumentTypes = [value];
     }
+    @Input() documentTypes: DocumentTypeInfo[];
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
@@ -66,15 +67,23 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
     }
 
     ngOnInit() {
-        this.refresh();
+        if (this.documentTypes) {
+            this.list = this.prepareDataSource(this.documentTypes);
+        } else {
+            this.refresh();
+        }
     }
 
     refresh() {
         this._documentTypeService.getAll().subscribe((result) => {
-            this.list = result.map((obj) => {
-                obj['parent'] = 0;
-                return obj;
-            });
+            this.list = this.prepareDataSource(result);
+        });
+    }
+
+    prepareDataSource(list) {
+        return list.map((obj) => {
+            obj['parent'] = 0;
+            return obj;
         });
     }
 
@@ -169,13 +178,21 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
     }
 
     editorPrepared($event) {
+        // to prevent raising onEditorPrepared event from grid when dropdown is opening
+        if (this.documentTypes) {
+            $event.cancel = true;
+            return;
+        }
+
         if (!$event.value && $event.editorName == 'dxTextBox') {
             if ($event.editorElement.closest('tr')) {
                 if (this.addNewTimeout)
                     this.addNewTimeout = null;
                 else {
                     $event.component.cancelEditData();
-                    $event.component.getScrollable().scrollTo(0);
+                    let scrollable = $event.component.getScrollable();
+                    if (scrollable)
+                        scrollable.scrollTo(0);
                     this.addNewTimeout = setTimeout(() => {
                         $event.component.addRow();
                     });

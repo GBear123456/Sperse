@@ -167,6 +167,7 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
     close(): void {
         this.active = false;
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     getAssignedRoleCount(): number {

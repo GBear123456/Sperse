@@ -28,7 +28,7 @@ export class NoteAddComponent extends AppComponentBase  {
         if (customerInfo.contactPersons) {
             this._customerInfo = customerInfo;
             let orgContact = <any>customerInfo.organizationContactInfo,
-                contacts = customerInfo.contactPersons;
+                contacts = customerInfo.contactPersons.length ? customerInfo.contactPersons : [customerInfo.primaryContactInfo];
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
         }

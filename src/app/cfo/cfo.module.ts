@@ -35,7 +35,8 @@ import {
     DxResizableModule,
     DxRangeSliderModule,
     DxSwitchModule,
-    DxPopupModule
+    DxPopupModule,
+    DxSelectBoxModule
 } from 'devextreme-angular';
 import { ModalModule } from 'ngx-bootstrap';
 
@@ -51,6 +52,7 @@ import { CfoIntroComponent } from './shared/cfo-intro/cfo-intro.component';
 import { DashboardComponent } from './start/dashboard/dashboard.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsComponent } from './bank-accounts-general/bank-accounts/bank-accounts.component';
+import { BankAccountsWidgetsModule } from '@shared/cfo/bank-accounts-widgets/bank-accounts-widgets.module';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
 import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
@@ -74,8 +76,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
-import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
@@ -101,6 +102,7 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         DxDropDownBoxModule,
         DxFileUploaderModule,
         DxPivotGridModule,
+        DxSelectBoxModule,
         DxTemplateModule,
         DxTextBoxModule,
         DxNumberBoxModule,
@@ -127,7 +129,8 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         DxRangeSliderModule,
         DxSwitchModule,
         AngularGooglePlaceModule,
-        DxPopupModule
+        DxPopupModule,
+        BankAccountsWidgetsModule
     ],
     declarations: [
         StartComponent,
@@ -181,10 +184,7 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
-        InstanceServiceProxy,
-        CFOService,
         CustomersServiceProxy,
-        ContactServiceProxy,
         QuovoService,
         SyncServiceProxy,
         CalculatorService,

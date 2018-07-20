@@ -6,7 +6,6 @@ import * as _ from 'underscore';
 import Form from 'devextreme/ui/form';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { forkJoin } from 'rxjs';
-import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'bank-accounts-widget',

@@ -38,13 +38,23 @@ export abstract class AppServiceBase {
     getModule() {
         let module = (/\/app\/(\w+)\//.exec(location.pathname)
             || [this.MODULE_DEFAULT]).pop().toLowerCase();
-        return this.isModuleActive(module) ? module : this.MODULE_DEFAULT;
+        return this.isModuleActive(module) ? module : this.getDefaultModule();
     }
 
     getModuleParams() {
         return {
             instance: (/\/app\/\w+\/(\w+)\//.exec(location.pathname) || ['']).pop().toLowerCase()
         };
+    }
+
+    getDefaultModule() {
+        let defaultModule = '';
+        this._modules.forEach((module, i) => {
+            if (!defaultModule && this.isModuleActive(module)) {
+                defaultModule = module;
+            }
+        });
+        return defaultModule;
     }
 
     getModuleConfig(name: string) {

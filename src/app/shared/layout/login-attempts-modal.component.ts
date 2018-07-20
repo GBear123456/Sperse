@@ -39,6 +39,7 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
 
     close(): void {
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     setProfilePictureClass(userLoginAttemptResult: string): any {

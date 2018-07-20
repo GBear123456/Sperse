@@ -52,11 +52,9 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private _roleService: RoleServiceProxy,
-        private _notifyService: NotifyService,
         private _appService: AppService,
         private _filtersService: FiltersService,
-        private _permissionService: PermissionServiceProxy,
-        private _fileDownloadService: FileDownloadService
+        private _permissionService: PermissionServiceProxy
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

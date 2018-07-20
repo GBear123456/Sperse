@@ -1,10 +1,8 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
-import { DxTreeListComponent, DxRadioGroupComponent } from 'devextreme-angular';
+import { DxRadioGroupComponent } from 'devextreme-angular';
 
-import * as _ from 'underscore';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 
 @Component({
   selector: 'delete-and-reassign-dialog',
@@ -23,8 +21,8 @@ export class DeleteAndReassignDialogComponent extends ConfirmDialogComponent imp
     ngOnInit() {
         this.data.deleteAllReferences = false;
     }
-        
-    confirm($event) {
+
+    confirm() {
         if (!this.data.deleteAllReferences && !this.data.reassignToItemId) {
             return this.notify.error(this.l(this.data.entityPrefix + '_DeleteDialog_ShouldBeSelected'));
         }

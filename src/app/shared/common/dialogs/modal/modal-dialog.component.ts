@@ -1,7 +1,6 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
-import { AppComponentBase } from '../../app-component-base';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Injector, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'modal-dialog',
