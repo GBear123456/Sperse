@@ -127,7 +127,7 @@
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
+            <app-toolbar [config]="reviewToolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
                           [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"
@@ -137,6 +137,7 @@
                           [columnAutoWidth]="true"
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
+                          [loadPanel]="{enabled: false}"
                           [customizeColumns]="customizePreviewColumns"
                           (onCellPrepared)="onReviewCellPrepared($event)">
                 <dxo-selection selectAllMode="allPages"
