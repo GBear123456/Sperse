@@ -5185,7 +5185,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellClick(e) {
-        if (!e.cellElement.classList.contains('dx-focused'))
+        if (!e.cellElement.classList.contains('dx-focused') && !e.event.target.closest('.function-button'))
             this.hideModifyingNumberBox();
 
         this.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this), this.onDetailsCellDoubleClick.bind(this));
