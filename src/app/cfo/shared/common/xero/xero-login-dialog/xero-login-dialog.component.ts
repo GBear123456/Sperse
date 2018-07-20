@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
