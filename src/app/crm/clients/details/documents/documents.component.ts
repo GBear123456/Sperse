@@ -2,6 +2,7 @@
 import { Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
@@ -9,18 +10,17 @@ import { FileSystemFileEntry } from 'ngx-file-drop';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
+import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
-    DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
-import { MatDialog } from '@angular/material';
+import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
-import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 
-import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -79,6 +79,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             {
                 text: this.l('Edit'),
                 action: this.editDocument.bind(this)
+            },
+            {
+                text: this.l('Download'),
+                action: () => {
+                    this._documentService.getUrl(this.currentDocumentInfo.id).subscribe(url => {
+                        this.currentDocumentURL = url;
+                        this.downloadDocument();
+                        this.hideActionsMenu();
+                    })
+                }
             },
             {
                 text: this.l('Delete'),
@@ -474,7 +484,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
             this.loadDocuments(() => {
                 if (this.actionsTooltip && this.actionsTooltip.visible) {
-                    this.actionsTooltip.instance.hide();
+                    this.hideActionsMenu();
                 }
                 this.closeDocument();
                 this.finishLoading(true);
@@ -532,5 +542,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     undefined;
             }
         });
+    }
+
+    hideActionsMenu() {
+        if (this.actionsTooltip && this.actionsTooltip.instance) {
+            this.actionsTooltip.instance.hide();
+        }
     }
 }
