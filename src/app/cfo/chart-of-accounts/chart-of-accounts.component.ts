@@ -19,6 +19,7 @@ class UploadCategoryModel{
     'Sub Category': string;
     'Sub Category Id': number;
     'Transaction Count': number;
+    'COAID': number;
 };
 
 @Component({
@@ -85,7 +86,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             /* grab first sheet */
             const wsname: string = wb.SheetNames[0];
             const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-            ws['!ref'] = "A1:G1000";
+            ws['!ref'] = "A1:H1000";
 
             /* save data */
             let data = XLSX.utils.sheet_to_json<UploadCategoryModel>(ws);
@@ -97,7 +98,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                     cashType: val['Cashflow Type'],
                     category: val['Category'],
                     subCategory: val['Sub Category'],
-                    coAID: null,
+                    coAID: val['COAID'],
                     sortId: null
                 }));
             });

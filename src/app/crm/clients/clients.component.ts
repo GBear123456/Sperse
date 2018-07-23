@@ -1,11 +1,8 @@
 import {
     Component,
     OnInit,
-    AfterViewInit,
     OnDestroy,
     Injector,
-    Inject,
-    ViewEncapsulation,
     ViewChild
 } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
@@ -38,7 +35,7 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { CommonLookupServiceProxy, InstanceServiceProxy, GetUserInstanceInfoOutputStatus,
+import { InstanceServiceProxy, GetUserInstanceInfoOutputStatus,
     CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -46,17 +43,15 @@ import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 import { DxDataGridComponent } from 'devextreme-angular';
-import query from 'devextreme/data/query';
 
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ InstanceServiceProxy, ClientService ]
+    providers: [ ClientService ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -73,8 +68,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
-    private canSendVerificationRequest: boolean = false;
-    private dependencyChanged: boolean = false;
+    private canSendVerificationRequest = false;
+    private dependencyChanged = false;
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
@@ -104,7 +99,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _commonLookupService: CommonLookupServiceProxy,
         private _cfoInstanceServiceProxy: InstanceServiceProxy,
         private _customersServiceProxy: CustomersServiceProxy,
         private _clientService: ClientService
@@ -585,11 +579,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        if (selectedIds && selectedIds.length) {
-            this.showConfirmationDialog(selectedIds, status.id);
-        } else {
-            this.message.warn(this.l('NoRecordsToUpdate'));
+        if (this.isGranted('Pages.CRM.BulkUpdates')) {
+            let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+            if (selectedIds && selectedIds.length) {
+                this.showConfirmationDialog(selectedIds, status.id);
+            } else {
+                this.message.warn(this.l('NoRecordsToUpdate'));
+            }
         }
     }
 

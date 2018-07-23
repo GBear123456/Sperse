@@ -13,7 +13,7 @@ import {
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
     DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
-    DxScrollViewModule, DxTabsModule, DxTagBoxModule
+    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule
 } from 'devextreme-angular';
 
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
@@ -99,7 +99,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DxContextMenuModule,
         DxTabsModule,
         DxTagBoxModule,
-        DxPopupModule
+        DxPopupModule,
+        DxProgressBarModule
     ],
     declarations: [
         TimeZoneComboComponent,

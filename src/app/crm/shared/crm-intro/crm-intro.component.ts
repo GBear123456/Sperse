@@ -1,21 +1,21 @@
 /** Core imports */
 import { Component, Injector, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 
 /** Third party imports */
 import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import * as nameParser from 'parse-full-name';
-import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
-    QuestionnaireServiceProxy, QuestionDto, QuestionnaireResponseDto, AnswerDto, RoleServiceProxy, RoleListDto, UserServiceProxy,
+    RoleServiceProxy, RoleListDto, UserServiceProxy,
     InviteUserInput, TenantHostType
 } from 'shared/service-proxies/service-proxies';
 import { ImportUserData } from './crm-intro.model';
+import { QuestionnaireComponent } from '@shared/shared-intro-speps/questionnaire/questionnaire.component';
+import { ImportUsersStepComponent } from '@shared/shared-intro-speps/import-users-step/import-users-step.component';
 
 
 @Component({
@@ -23,158 +23,47 @@ import { ImportUserData } from './crm-intro.model';
     templateUrl: './crm-intro.component.html',
     styleUrls: ['./crm-intro.component.less'],
     animations: [appModuleAnimation()],
-    providers: [QuestionnaireServiceProxy, RoleServiceProxy, UserServiceProxy]
+    providers: [RoleServiceProxy, UserServiceProxy]
 })
 export class CrmIntroComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
+    @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
+    @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     isLinear = false;
     readonly identifier = 'CRM-Setup';
-    questionnaireId: number;
-    question: QuestionDto;
-    roles: RoleListDto[] = [];
-    importUsers: ImportUserData[] = [new ImportUserData(), new ImportUserData(), new ImportUserData()];
-    importValidators: any[] = [];
-
+    moduleName: string;
     showImportUsersStep: boolean;
 
     constructor(
         injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        private _questionnaireService: QuestionnaireServiceProxy,
-        private _roleService: RoleServiceProxy,
-        private _userService: UserServiceProxy
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
     }
 
-    ngOnInit() {
-        this._questionnaireService.getInternal(AppConsts.modules.CRMModule, this.identifier)
-            .subscribe(result => {
-                this.questionnaireId = result.id;
-                this.question = result.questions[0];
-            });
-
-        if (this.showImportUsersStep) {
-            this._roleService.getRoles(undefined).subscribe(result => {
-                this.roles = result.items;
-            });
-        }
-    }
+    ngOnInit() {}
 
     onSubmit() {
         if (this.showImportUsersStep) {
-            if (!this.validateUsers())
+            this.importUsersStepComponent.validateUsers();
+            if (!this.importUsersStepComponent.validationResult)
                 return;
 
             this.startLoading(true);
-            this.submitInviteUsers()
-                .subscribe(() => this.submitQuestionnaire(), () => this.finishLoading(true));
+            this.importUsersStepComponent.submitInviteUsers()
+                .subscribe(() => this.questionnaire.submitQuestionnaire(), () => this.finishLoading(true));
         } else {
             this.startLoading(true);
-            this.submitQuestionnaire();
+            this.questionnaire.submitQuestionnaire();
         }
     }
 
-    submitQuestionnaire() {
-        let response = new QuestionnaireResponseDto();
-        response.questionnaireId = this.questionnaireId;
-        response.answers = [];
-
-        let selectedAnswerIds: number[] = [];
-        this.question.options.forEach(v => {
-            if (v['selected']) {
-                selectedAnswerIds.push(v.id);
-            }
-        });
-
-        if (selectedAnswerIds.length) {
-            response.answers.push(new AnswerDto({
-                questionId: this.question.id,
-                options: selectedAnswerIds
-            }));
-
-            this._questionnaireService.submitResponseInternal(response)
-                .pipe(finalize(() => this.finishLoading(true)))
-                .subscribe((result) => {
-                    this.dialogRef.close({ isGetStartedButtonClicked: true });
-                });
-        } else {
-            this.dialogRef.close({ isGetStartedButtonClicked: true });
-            this.finishLoading(true);
-        }
-    }
-
-    validateUsers() {
-        let result = true;
-        this.importValidators.forEach((v) => { result = result && v.validate().isValid; });
-        return result;
-    }
-
-    submitInviteUsers() {
-        let users: InviteUserInput[] = [];
-        this.importUsers.forEach(v => {
-            if (v.email) {
-                let parsedName = nameParser.parseFullName(v.fullName.trim());
-                users.push(InviteUserInput.fromJS({
-                    emailAddress: v.email,
-                    name: parsedName.first,
-                    surname: parsedName.last,
-                    assignedRoleNames: v.roleNames,
-                    tenantHostType: TenantHostType.PlatformUi
-                }));
-            }
-        });
-
-        return this._userService.inviteUsers(users);
-    }
-
-    addImportUser() {
-        this.importUsers.push(new ImportUserData());
-    }
-
-    removeImportUser(index: number) {
-        this.importUsers.splice(index, 1);
-        this.importValidators.splice(index, 1);
-    }
-
-    validateInviteUserRow = (e) => {
-        let rowIndex = e.validator.element().parentElement.getAttribute('index');
-        let user = this.importUsers[rowIndex];
-
-        let validFields = 0;
-        if (user.email) validFields++;
-        if (user.fullName) validFields++;
-        if (user.roleNames && user.roleNames.length) validFields++;
-
-        if (validFields % 3 == 0 || (e.value && e.value.length)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    validateFullName = (e) => {
-        if (e.value) {
-            let fullName = nameParser.parseFullName(e.value.trim());
-            if (!fullName.first || !fullName.last)
-                return false;
-        }
-        return true;
-    }
-
-    validateInviteUserGroup(index) {
-        this.importValidators[index].validate();
-    }
-
-    onMultiTagPreparing(args) {
-        args.text = args.selectedItems.map(x => x.displayName).join(', ');
-    }
-
-    onInviteUserValidationGroupInitialized(e) {
-        this.importValidators.push(e.component);
+    closeDialog() {
+        this.dialogRef.close();
     }
 
     goToStep(index) {

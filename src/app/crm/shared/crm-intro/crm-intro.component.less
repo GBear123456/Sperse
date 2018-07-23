@@ -26,6 +26,7 @@
         padding: 0;
         outline: none;
         cursor: pointer;
+        z-index: 9999;
 
         i {
             font-size: 25px;
@@ -36,8 +37,9 @@
             opacity: .8;
         }
     }
+
     // section
-    .step-item {
+    /deep/ .step-item {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -55,7 +57,7 @@
         }
 
         .main {
-            height: auto;
+            height: 73%;
             text-align: center;
             flex-grow: 2;
 
@@ -81,6 +83,7 @@
             height: 15%;
             align-items: center;
         }
+
     }
 
     // first step
@@ -120,8 +123,8 @@
             }
         }
     }
-    // second step
-    .second-step {
+    // keys step
+    .keys-step {
         background-image: url(../../../../assets/common/images/crm-intro/prvapoza.jpg);
         background-repeat: no-repeat;
 
@@ -242,7 +245,7 @@
                 color: #ffffff;
             }
         }
-        
+
         .main {
             background: #fff url(../../../../assets/common/images/crm-intro/import-export-bg.png) top left no-repeat;
             display: flex;
@@ -261,7 +264,7 @@
                 color: @blue;
                 text-align: left;
             }
-            
+
             .main-content {
                 max-width: 300px;
                 padding: 0 30px;
@@ -302,90 +305,21 @@
             }
         }
     }
-    // seventh-step
-    .seventh-step {
-        .header {
-            justify-content: flex-start;
-        }
 
-        img {
-            max-height: 42px;
-        }
-
-        h3 {
-            font-size: 30px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        .imputara {
-            max-width: 90%;
-
-            .add-import-user {
-                display: inline-block;
-                position: absolute;
-                right: 0;
-                color: #00aeef;
-                font-weight: bold;
-                cursor: pointer;
-                bottom: 10px;
-            }
-
-            .import-user-row {
-                position: relative;
-                padding: 5px 40px;
-
-                .remove-import-user {
-                    display: none;
-                    position: absolute;
-                    left: 40px;
-                    top: 20px;
-                    color: red;
-                    cursor: pointer;
-                }
-
-                &:hover {
-                    .remove-import-user {
-                        display: block;
-                    }
-                }
-            }
-
-            /deep/ .dx-tagbox {
-                .dx-texteditor-container {
-                    display: flex;
-                    align-items: center;
-                    border-bottom: 1px solid #dfdfdf;
-
-                    .tag-value {
-                        display: inline-block;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        width: 100%;
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: #171c1d;
-                        padding-left: 9px;
-                    }
-                }
-            }
-        }
-    }
     // questionnaire-step
     .questionnaire-step {
         .header {
             justify-content: flex-start;
         }
-        .main {
-            .imputara {
-                label.container1 {
-                    padding: 14px 0 16px 67px;
-                    margin-bottom: 15px;
-                }
-            }
+    }
+
+    // import-users-step
+    .import-users-step {
+        .header {
+            justify-content: flex-start;
         }
     }
+    
     // zapier
     .zapier {
         .header {
@@ -417,7 +351,7 @@
                 color: @blue;
                 text-align: left;
             }
-            
+
             .main-content {
                 max-width: 300px;
                 padding: 0 30px;
@@ -441,7 +375,7 @@
         }
     }
     // footer
-    .footer {
+    /deep/ .footer {
         max-width: 100%;
         display: flex;
         justify-content: space-between;
@@ -490,6 +424,7 @@
             justify-content: space-around;
             border-bottom: 0;
             padding: 0;
+            z-index: 9999;
 
             .mat-step-label-active {
                 .mat-step-text-label {

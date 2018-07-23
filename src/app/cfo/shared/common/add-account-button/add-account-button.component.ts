@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService, QuovoHandler } from '@app/cfo/shared/common/quovo/QuovoService';
+import { QuovoHandler, QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     selector: 'add-account-button',
@@ -10,22 +11,42 @@ import { QuovoService, QuovoHandler } from '@app/cfo/shared/common/quovo/QuovoSe
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     tooltipVisible = false;
+    quovoHandler: QuovoHandler;
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private quovoService: QuovoService,
+        private cfoService: CFOService
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
         super.ngOnInit();
+        if (!this.quovoHandler) {
+            this.quovoHandler = this.quovoService.getQuovoHandler(this.cfoService.instanceType, this.cfoService.instanceId);
+        }
     }
 
-    addAccount(): void {
-        this.tooltipVisible = !this.tooltipVisible;
+    openAddAccountDialog() {
+        if (this.quovoHandler.isLoaded) {
+            if (this.loading) {
+                this.finishLoading(true);
+            }
+            this.quovoHandler.open((e) => {
+                this.tooltipVisible = false;
+                this.onClose.emit(e);
+            });
+            this.tooltipVisible = true;
+        } else {
+            if (!this.loading) {
+                this.startLoading(true);
+            }
+            setTimeout(() => this.openAddAccountDialog(), 100);
+        }
     }
 
-    onQuovoHanderClose(e) {
-        this.onClose.emit(e);
+    xeroButtonClick() {
+        this.quovoHandler.close();
     }
 }

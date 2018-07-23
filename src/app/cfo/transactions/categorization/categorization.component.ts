@@ -681,16 +681,18 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             let categories = [];
             _.mapObject(data.categories, (item, key) => {
                 let accType = data.accountingTypes[item.accountingTypeId];
-                let subCategory = data.categories[item.parentId];
+                let category = data.categories[item.parentId];
                 let cashflowType = data.types[accType.typeId];
+                let hasParent = category ? true : false;
                 categories.push({
                     CashflowType: cashflowType ? cashflowType.name : null,
                     AccountingType: accType.name,
-                    Category: item.name,
-                    CategoryId: key,
-                    SubCategory: subCategory ? subCategory.name : '',
-                    SubCategoryId: item.parentId || null,
-                    TransactionCount: transactionCount[parseInt(key)] || null
+                    Category: hasParent ? category.name : item.name,
+                    CategoryId: hasParent ? item.parentId : key,
+                    SubCategory: hasParent ? item.name : '',
+                    SubCategoryId: hasParent ? key : null,
+                    TransactionCount: transactionCount[parseInt(key)] || null,
+                    COAID: item.coAID
                 });
             });
             this.excelData = categories;

@@ -5,7 +5,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 /** Third party imports */
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
-import { MatTabsModule, MatDialogModule, MatStepperModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule, MatStepperModule, MatTooltipModule } from '@angular/material';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import {
@@ -76,8 +76,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
-import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, CustomersServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
@@ -89,6 +88,7 @@ import { ImportXeroChartOfAccountsButtonComponent } from 'app/cfo/shared/common/
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
+import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
 
 @NgModule({
     imports: [
@@ -125,13 +125,15 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         MatTabsModule,
         MatDialogModule,
         MatStepperModule,
+        MatTooltipModule,
         RoundProgressModule,
         DashboardWidgetsModule,
         DxRangeSliderModule,
         DxSwitchModule,
         AngularGooglePlaceModule,
         DxPopupModule,
-        BankAccountsWidgetsModule
+        BankAccountsWidgetsModule,
+        SharedIntroStepsModule
     ],
     declarations: [
         StartComponent,
@@ -185,10 +187,7 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
-        InstanceServiceProxy,
-        CFOService,
         CustomersServiceProxy,
-        ContactServiceProxy,
         QuovoService,
         SyncServiceProxy,
         CalculatorService,

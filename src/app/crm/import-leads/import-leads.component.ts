@@ -173,7 +173,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         workFullAddress: ImportLeadAddressInput.fromJS({})
     };
 
-    private readonly compareFields: any = [
+    public readonly compareFields: any = [
         [this.FIRST_NAME_FIELD + ':' + this.LAST_NAME_FIELD],
         [this.PERSONAL_EMAIL1, this.PERSONAL_EMAIL2, this.PERSONAL_EMAIL3, this.BUSINESS_COMPANY_EMAIL, this.BUSINESS_WORK_EMAIL1, this.BUSINESS_WORK_EMAIL2, this.BUSINESS_WORK_EMAIL3],
         [this.PERSONAL_MOBILE_PHONE, this.PERSONAL_HOME_PHONE, this.BUSINESS_COMPANY_PHONE, this.BUSINESS_WORK_PHONE_1, this.BUSINESS_WORK_PHONE_2],
@@ -283,7 +283,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private parseZipCode(field, zipCode, dataSource) {
         const parsed = this.zipFormatterPipe.transform(zipCode);
         if (parsed) {
-            this.setFieldIfDefined(parsed, field.mappedField + '_zipCode', dataSource);
+            this.setFieldIfDefined(parsed, field.mappedField, dataSource);
         }
         return true;
     }
@@ -420,26 +420,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     deactivate() {
         this.rootComponent.overflowHidden();
-    }
-
-    checkSimilarRecord = (record1, record2) => {
-        record2.compared = (record2[this.FIRST_NAME_FIELD] || ''
-            + ' ' + record2[this.LAST_NAME_FIELD] || '').trim();
-
-        return !this.compareFields.every((fields) => {
-            return fields.every((field1) => {
-                return !fields.some((field2) => {
-                    let complexField1 = field1.split(':'),
-                        complexField2 = field2.split(':');
-                    if (complexField1.length > 1)
-                        return complexField1.map((fld) => record1[fld] || 1).join('_')
-                            == complexField2.map((fld) => record2[fld] || 2).join('_');
-                    else
-                        return record1[field1] && record2[field2] &&
-                            (record1[field1].toLowerCase() == record2[field2].toLowerCase());
-                });
-            });
-        });
     }
 
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {
