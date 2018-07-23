@@ -24,8 +24,9 @@
             opacity: .8;
         }
     }
+    
     // section
-    .step-item {
+    /deep/ .step-item {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -43,7 +44,7 @@
         }
 
         .main {
-            height: auto;
+            height: 73%;
             text-align: center;
             flex-grow: 2;
 
@@ -381,97 +382,21 @@
             }
         }
     }
-    // sixth-step
-    .sixth-step {
+
+    // questionnaire-step
+    .questionnaire-step {
         .header {
             justify-content: flex-start;
         }
-
-        img {
-            max-height: 42px;
-        }
-
-        h3 {
-            text-align: center;
-            height: 34px;
-            font-family: Montserrat;
-            font-size: 25px;
-            font-weight: 600;
-            letter-spacing: normal;
-            text-align: center;
-            color: #202b35;
-        }
     }
-    // seventh-step
-    .seventh-step {
+
+    // import-users-step
+    .import-users-step {
         .header {
             justify-content: flex-start;
         }
-
-        img {
-            max-height: 42px;
-        }
-
-        h3 {
-            font-size: 30px;
-            font-weight: 600;
-            margin-bottom: 40px;
-        }
-
-        .imputara {
-            max-width: 90%;
-
-            .add-import-user {
-                display: inline-block;
-                position: absolute;
-                right: 0;
-                color: #00aeef;
-                font-weight: bold;
-                cursor: pointer;
-                bottom: 10px;
-            }
-
-            .import-user-row {
-                position: relative;
-                padding: 5px 40px;
-
-                .remove-import-user {
-                    display: none;
-                    position: absolute;
-                    left: 40px;
-                    top: 20px;
-                    color: red;
-                    cursor: pointer;
-                }
-
-                &:hover {
-                    .remove-import-user {
-                        display: block;
-                    }
-                }
-            }
-
-            /deep/ .dx-tagbox {
-                .dx-texteditor-container {
-                    display: flex;
-                    align-items: center;
-                    border-bottom: 1px solid #dfdfdf;
-
-                    .tag-value {
-                        display: inline-block;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        width: 100%;
-                        font-size: 18px;
-                        font-weight: 600;
-                        color: #171c1d;
-                        padding-left: 9px;
-                    }
-                }
-            }
-        }
     }
+
     // video
     .video {
         .header {
@@ -486,6 +411,7 @@
             }
         }
     }
+
     // footer
     .footer {
         max-width: 100%;
