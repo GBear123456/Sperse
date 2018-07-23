@@ -3,6 +3,7 @@
   "search": false,
   "requiredFeature": "CreditReportFeature",
   "defaultPath": "/credit-reports/member-area",
+  "hostDisabled":  true,
   "navigation": [
   ]
 }
