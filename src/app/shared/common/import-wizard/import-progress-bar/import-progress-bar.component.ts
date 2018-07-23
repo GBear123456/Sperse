@@ -29,7 +29,7 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnIn
          //!! check import progress
     }
 
-    showStatus = () => () {
+    showStatus = () => {
         return this.progress + '% ' + this.l('Import Progress');
     }
 
