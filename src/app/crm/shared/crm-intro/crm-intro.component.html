@@ -9,7 +9,7 @@
                 <div class="main">
                     <h2>{{l('CRM')}}</h2>
                     <p>{{l('CRM_description')}}</p>
-                    <div class="play" (click)="goToStep(8)">
+                    <div class="play" (click)="goToStep(9)">
                         <img src="assets/common/images/crm-intro/play-btn.png">
                         <div class="bottomp">
                             <p>
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="footer">
-                    <a (click)="goToStep(8)">
+                    <a (click)="goToStep(9)">
                         <img src="assets/common/images/crm-intro/button-play.svg" alt="play"> {{l('Play_Video')}}
                     </a>
                     <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
@@ -28,7 +28,7 @@
             </div>
         </mat-step>
         <mat-step>
-            <div class="second-step step-item">
+            <div class="keys-step step-item">
                 <div class="header">
                     <span>{{l('Key_Features')}}</span>
                 </div>
@@ -65,7 +65,7 @@
             </div>
         </mat-step>
         <mat-step>
-            <div class="second-step pro step-item">
+            <div class="keys-step pro step-item">
                 <div class="header">
                     <span>{{l('Key_Features')}}: {{l('Pro_Edition')}}</span>
                 </div>
@@ -195,6 +195,7 @@
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
@@ -204,96 +205,29 @@
                     <img src="/assets/common/images/sperse-logo.png">
                 </div>
                 <div class="main">
-                    <div class="conta">
-                        <div class="mainda" *ngIf="question">
-                            <h3>
-                                {{question.text}}
-                            </h3>
-                            <div class="imputara">
-                                <label *ngFor="let option of question.options" class="container1">
-                                    {{option.text}}
-                                    <input type="checkbox" [value]="option['selected'] === true" (change)="option['selected'] = $event.target.checked;">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <app-questionnaire [identifier]="identifier"
+                                        [moduleName]="moduleName"
+                                        (closeDialog)="closeDialog()">
+                    </app-questionnaire>
                 </div>
                 <div class="footer">
-                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
 
                     <button *ngIf="!showImportUsersStep" class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
                         {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
                     </button>
-                    <button *ngIf="showImportUsersStep" mat-button matStepperNext class="btn btn-layout">Next</button>
+
+                    <button *ngIf="showImportUsersStep" mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
         <mat-step *ngIf="showImportUsersStep">
-            <div class="seventh-step step-item">
+            <div class="import-users-step step-item">
                 <div class="header">
                     <img src="/assets/common/images/sperse-logo.png">
                 </div>
                 <div class="main">
-                    <div class="conta">
-                        <div class="mainda">
-                            <h3>
-                                Invite Your Team Members <br />
-                                With Assigned Roles
-                            </h3>
-                            <div class="imputara">
-                                <dx-scroll-view height="350" showScrollbar="onHover">
-                                    <div style="position:relative">
-                                        <dx-validation-group *ngFor="let user of importUsers; let i = index" (onInitialized)="onInviteUserValidationGroupInitialized($event)">
-                                            <div class="row import-user-row" [attr.index]="i">
-                                                <dx-text-box [(value)]="user.email"
-                                                             placeholder="Email"
-                                                             (onValueChanged)="validateInviteUserGroup(i)"
-                                                             class="col-4">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-                                                        <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
-                                                        <dxi-validation-rule type="stringLength" [max]="64"></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-text-box>
-                                                <dx-text-box [(value)]="user.fullName"
-                                                             placeholder="Full name"
-                                                             (onValueChanged)="validateInviteUserGroup(i)"
-                                                             class="col-4">
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateFullName" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
-                                                        <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-text-box>
-                                                <dx-tag-box [dataSource]="roles"
-                                                            valueExpr="name"
-                                                            displayExpr="displayName"
-                                                            placeholder="Role"
-                                                            [(value)]="user.roleNames"
-                                                            tagTemplate="customTagTemplate"
-                                                            [showSelectionControls]="true"
-                                                            [maxDisplayedTags]="0"
-                                                            [showMultiTagOnly]="true"
-                                                            (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                                                            (onValueChanged)="validateInviteUserGroup(i)"
-                                                            class="col-4">
-                                                    <div *dxTemplate="let tag of 'customTagTemplate'">
-                                                        <span class="tag-value">{{tag}}</span>
-                                                    </div>
-                                                    <dx-validator>
-                                                        <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('RequiredField', l('Role'))}}"></dxi-validation-rule>
-                                                    </dx-validator>
-                                                </dx-tag-box>
-                                                <div class="remove-import-user" (click)="removeImportUser(i)"><i class="fa fa-minus"></i></div>
-                                            </div>
-                                        </dx-validation-group>
-                                        <div><span class="add-import-user" (click)="addImportUser()">+ADD</span></div>
-                                    </div>
-                                </dx-scroll-view>
-                            </div>
-                        </div>
-                    </div>
+                    <app-import-users-step ></app-import-users-step>
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>

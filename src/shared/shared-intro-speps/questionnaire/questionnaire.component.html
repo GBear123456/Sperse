@@ -1,0 +1,13 @@
+<div class="wrapper" *ngIf="question; else loader">
+    <h3>{{question.text}}</h3>
+    <div class="questions">
+        <label *ngFor="let option of question.options" class="question-item">
+            {{option.text}}
+            <input type="checkbox" [value]="option['selected'] === true" (change)="option['selected'] = $event.target.checked;">
+            <span class="checkmark"></span>
+        </label>
+    </div>
+</div>
+<ng-template #loader>
+    <div class="m-loader m-loader--skin-light"></div>
+</ng-template>

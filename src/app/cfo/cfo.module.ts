@@ -5,7 +5,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 /** Third party imports */
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
-import { MatTabsModule, MatDialogModule, MatStepperModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule, MatStepperModule, MatTooltipModule } from '@angular/material';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import {
@@ -88,6 +88,7 @@ import { ImportXeroChartOfAccountsButtonComponent } from 'app/cfo/shared/common/
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
+import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
 
 @NgModule({
     imports: [
@@ -124,13 +125,15 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         MatTabsModule,
         MatDialogModule,
         MatStepperModule,
+        MatTooltipModule,
         RoundProgressModule,
         DashboardWidgetsModule,
         DxRangeSliderModule,
         DxSwitchModule,
         AngularGooglePlaceModule,
         DxPopupModule,
-        BankAccountsWidgetsModule
+        BankAccountsWidgetsModule,
+        SharedIntroStepsModule
     ],
     declarations: [
         StartComponent,
