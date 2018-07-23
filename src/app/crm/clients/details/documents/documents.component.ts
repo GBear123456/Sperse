@@ -151,13 +151,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     {
                         name: 'rotateLeft',
                         action: this.rotateImageLeft.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == this.IMAGE_VIEWER,
                         disabled: conf.rotateDisabled
                     },
                     {
                         name: 'rotateRight',
                         action: this.rotateImageRight.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == this.IMAGE_VIEWER,
                         disabled: conf.rotateDisabled
                     }
                 ]
@@ -373,6 +373,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
         this.startLoading(true);
         this.initViewerToolbar({
+            viewerType: viewerType,
             rotateDisabled: ext == 'pdf',
             editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
