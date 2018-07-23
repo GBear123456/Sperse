@@ -1,0 +1,25 @@
+<div *ngIf="progress > 0" id="progressContainer" (mouseleave)="tooltipVisible = false">
+    <div class="loadindicator"></div>
+    <dx-progress-bar
+        [min]="0"
+        [max]="100"
+        [width]="300"
+        [height]="75"
+        [statusFormat]="showStatus"
+        [value]="progress">
+    </dx-progress-bar>
+</div>
+
+<dx-tooltip target="#progressContainer"
+            [width]="400"
+            [showEvent]="'mouseenter'"
+            [(visible)]="tooltipVisible">
+    <div *dxTemplate="let data = data of 'content'">
+        <div class="tooltip-container">
+            <div class="header">
+                <h3>{{l('Import_Summary')}}:</h3>
+            </div>
+            <button class="btn btn-layout button-primary" (click)="cancelImport()">{{l('CancelImport')}}</button>
+        </div>
+    </div>
+</dx-tooltip>

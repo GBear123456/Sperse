@@ -13,7 +13,7 @@ import {
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
     DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
-    DxScrollViewModule, DxTabsModule, DxTagBoxModule
+    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule
 } from 'devextreme-angular';
 
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
@@ -35,6 +35,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
+import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
@@ -99,7 +100,9 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         DxContextMenuModule,
         DxTabsModule,
         DxTagBoxModule,
-        DxPopupModule
+        DxPopupModule,
+        DxProgressBarModule,
+        DxTooltipModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -114,6 +117,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
+        ImportProgressBarComponent,
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
@@ -133,6 +137,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
+        ImportProgressBarComponent,
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
