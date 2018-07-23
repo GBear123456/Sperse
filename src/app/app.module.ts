@@ -18,6 +18,8 @@ import {AppCommonModule} from './shared/common/app-common.module';
 import {AppRoutingModule} from './app-routing.module';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { FiltersModule } from '@shared/filters/filters.module';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { InstanceServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -49,7 +51,10 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
             useClass: CacheMemoryStorage
         },
         ImpersonationService,
-        ngxZendeskWebwidgetService
+        ngxZendeskWebwidgetService,
+        InstanceServiceProxy,
+        CFOService,
+        ContactServiceProxy,
     ]
 })
 export class AppModule {}

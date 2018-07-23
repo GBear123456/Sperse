@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -14,8 +14,7 @@ import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
     selector: 'setup',
     templateUrl: './setup.component.html',
     styleUrls: ['./setup.component.less'],
-    animations: [appModuleAnimation()],
-    providers: [InstanceServiceProxy]
+    animations: [appModuleAnimation()]
 })
 export class SetupComponent extends CFOComponentBase implements OnInit, OnDestroy {
     private rootComponent: any;

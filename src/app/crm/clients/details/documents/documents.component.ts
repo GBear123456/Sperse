@@ -2,6 +2,7 @@
 import { Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
@@ -9,18 +10,17 @@ import { FileSystemFileEntry } from 'ngx-file-drop';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
+import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
-    DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
-import { MatDialog } from '@angular/material';
+import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
-import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 
-import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -79,6 +79,16 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             {
                 text: this.l('Edit'),
                 action: this.editDocument.bind(this)
+            },
+            {
+                text: this.l('Download'),
+                action: () => {
+                    this._documentService.getUrl(this.currentDocumentInfo.id).subscribe(url => {
+                        this.currentDocumentURL = url;
+                        this.downloadDocument();
+                        this.hideActionsMenu();
+                    })
+                }
             },
             {
                 text: this.l('Delete'),
@@ -141,13 +151,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     {
                         name: 'rotateLeft',
                         action: this.rotateImageLeft.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == this.IMAGE_VIEWER,
                         disabled: conf.rotateDisabled
                     },
                     {
                         name: 'rotateRight',
                         action: this.rotateImageRight.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == this.IMAGE_VIEWER,
                         disabled: conf.rotateDisabled
                     }
                 ]
@@ -274,15 +284,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             size: input.size,
             fileBase64: input.fileBase64
         })).pipe(finalize(() => {
+            clearInterval(progressInterval);
+            this.updateUploadProgress({progress: 100});
             setTimeout(() => {
                 this.updateUploadProgress({progress: 0});
             }, 5000);
-        })).subscribe(() => {
-            data.progress = 100;
-            this.updateUploadProgress(data);
-            clearInterval(progressInterval);
-
+        })).subscribe(() => {    
             this.loadDocuments();
+        }, (e) => {
+            this.message.error(this.l('AnErrorOccurred'));
         });
     }
 
@@ -363,6 +373,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
         this.startLoading(true);
         this.initViewerToolbar({
+            viewerType: viewerType,
             rotateDisabled: ext == 'pdf',
             editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
@@ -375,15 +386,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     this.finishLoading(true);
                 })).subscribe((response) => {
                     this.showOfficeOnline(response);
-                });
-                break;
-            case this.TEXT_VIEWER:
-                this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
-                    this.finishLoading(true);
-                })).subscribe((response) => {
-                    this.previewContent = atob(response);
-                    this.showViewerType = viewerType;
-                    this.openDocumentMode = true;
                 });
                 break;
             case this.VIDEO_VIEWER:
@@ -400,7 +402,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     this.downloadFileBlob(url, (blob) => {
                         let reader = new FileReader();
                         reader.addEventListener('loadend', () => {
-                            this.previewContent = StringHelper.getBase64(reader.result);
+                            let content = StringHelper.getBase64(reader.result);
+                            this.previewContent = viewerType == this.TEXT_VIEWER ? atob(content): content;
                             this.showViewerType = viewerType;
                             this.openDocumentMode = true;
                         });
@@ -474,7 +477,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
             this.loadDocuments(() => {
                 if (this.actionsTooltip && this.actionsTooltip.visible) {
-                    this.actionsTooltip.instance.hide();
+                    this.hideActionsMenu();
                 }
                 this.closeDocument();
                 this.finishLoading(true);
@@ -532,5 +535,11 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     undefined;
             }
         });
+    }
+
+    hideActionsMenu() {
+        if (this.actionsTooltip && this.actionsTooltip.instance) {
+            this.actionsTooltip.instance.hide();
+        }
     }
 }

@@ -15,7 +15,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         { caption: 'BusinessEntity', component: '/business-entities' },
         { caption: 'Chart', component: '/chart-of-accounts' },
         { caption: 'Rules', component: '/rules' },
-        { caption: 'Permissions', component: '/permissions' }
+        { caption: 'Permissions', component: '/permissions', visible: this.permission.isGranted('Pages.CFO.MainInstanceAdmin') }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';

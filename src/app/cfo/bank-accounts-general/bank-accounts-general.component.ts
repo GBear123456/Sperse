@@ -3,8 +3,8 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
-import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 
 @Component({
     selector: 'bank-accounts',

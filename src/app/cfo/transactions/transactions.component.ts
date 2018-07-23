@@ -15,7 +15,7 @@ import { TransactionsServiceProxy,
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';

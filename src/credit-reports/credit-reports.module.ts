@@ -15,6 +15,8 @@ import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { KbaResultModule } from './member-area/kba-result/kba-result.module';
 
+import { CacheService } from 'ng2-cache-service';
+
 @NgModule({
     declarations: [
         CreditReportsComponent,
@@ -37,7 +39,8 @@ import { KbaResultModule } from './member-area/kba-result/kba-result.module';
     ],
     providers: [
         PackageIdService,
-        CreditReportServiceProxy
+        CreditReportServiceProxy,
+        CacheService
     ]
 })
 export class CreditReportsModule { }
