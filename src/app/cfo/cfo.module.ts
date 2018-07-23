@@ -5,7 +5,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 /** Third party imports */
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
-import { MatTabsModule, MatDialogModule, MatStepperModule } from '@angular/material';
+import { MatTabsModule, MatDialogModule, MatStepperModule, MatTooltipModule } from '@angular/material';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import {
@@ -124,6 +124,7 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         MatTabsModule,
         MatDialogModule,
         MatStepperModule,
+        MatTooltipModule,
         RoundProgressModule,
         DashboardWidgetsModule,
         DxRangeSliderModule,

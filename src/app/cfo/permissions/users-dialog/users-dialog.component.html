@@ -1,7 +1,12 @@
 <dx-scroll-view [height]="'183px'">
     <ul class="usersPermissionsPanel">
         <li *ngFor="let user of data.users">
-            <span (click)="userChosen(user.id)">{{user.userName + user.surname}}</span>
+            <span
+                [matTooltip]="user.emailAddress"
+                matTooltipClass="email-tooltip-white"
+                matTooltipPosition="right"
+                (click)="userChosen(user.id)">{{user.name + ' ' +  user.surname}}
+            </span>
         </li>
     </ul>
 </dx-scroll-view>
