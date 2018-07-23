@@ -579,11 +579,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        if (selectedIds && selectedIds.length) {
-            this.showConfirmationDialog(selectedIds, status.id);
-        } else {
-            this.message.warn(this.l('NoRecordsToUpdate'));
+        if (this.isGranted('Pages.CRM.BulkUpdates')) {
+            let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+            if (selectedIds && selectedIds.length) {
+                this.showConfirmationDialog(selectedIds, status.id);
+            } else {
+                this.message.warn(this.l('NoRecordsToUpdate'));
+            }
         }
     }
 

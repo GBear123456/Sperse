@@ -88,6 +88,7 @@ import { ImportXeroChartOfAccountsButtonComponent } from 'app/cfo/shared/common/
 import { AddAccountButtonComponent } from 'app/cfo/shared/common/add-account-button/add-account-button.component';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
+import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
 
 @NgModule({
     imports: [
@@ -130,7 +131,8 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
         DxSwitchModule,
         AngularGooglePlaceModule,
         DxPopupModule,
-        BankAccountsWidgetsModule
+        BankAccountsWidgetsModule,
+        SharedIntroStepsModule
     ],
     declarations: [
         StartComponent,

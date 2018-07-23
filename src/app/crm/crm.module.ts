@@ -64,6 +64,7 @@ import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
+import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
 
 @NgModule({
     imports: [
@@ -115,7 +116,8 @@ import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
       FiltersModule,
       PipelineModule,
       TableModule,
-      PaginatorModule
+      PaginatorModule,
+      SharedIntroStepsModule
     ],
     declarations: [
       ClientsComponent,

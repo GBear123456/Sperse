@@ -5,12 +5,12 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title" [hidden]="!showTitle">{{title}}</span>
-                <div *ngIf="selectedKeys.length" [hidden]="hideButtons">
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !staticList.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
-                </div>
+                <!--<div *ngIf="selectedKeys.length" [hidden]="hideButtons">-->
+                    <!--<span class="filter-apply" [class.disabled]="!checkPermissions() || !staticList.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
+                </div>-->
             </div>
             <dx-list #staticList
-                [class.highlightSelected]="highlightSelected"
+                [ngClass]="{'highlightSelected': highlightSelected, 'unclicked': !highlightSelected && !checkPermissions()}"
                 [searchEnabled]="false"
                 [selectionMode]="selectedKeys.length ? 'single': 'none'"
                 [showSelectionControls]="true"
