@@ -181,16 +181,16 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         return this.customerInfo.primaryContactInfo.fullName;
     }
 
-    private showConfirmationDialog(statusId: string) {
+    private showConfirmationDialog(status) {
         this.message.confirm(
             this.l('ClientUpdateStatusWarningMessage'),
             this.l('ClientStatusUpdateConfirmationTitle'),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.updateStatusInternal(statusId)
+                    this.updateStatusInternal(status.id)
                         .subscribe(() => {
-                            this.customerInfo.statusId = statusId;
-                            this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [statusId]);
+                            this.customerInfo.statusId = status.id;
+                            this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                             this.notify.success(this.l('StatusSuccessfullyUpdated'));
                         });
                 } else {
