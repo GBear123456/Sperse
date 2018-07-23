@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoHandler, QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { QuovoService, QuovoHandler } from '../quovo/QuovoService';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({

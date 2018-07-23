@@ -25,8 +25,6 @@ import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
-import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
-import { BankAccountsWidgetsModule } from '@shared/cfo/bank-accounts-widgets/bank-accounts-widgets.module';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';
@@ -60,7 +58,6 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         CommonModule,
         TableModule,
         PaginatorModule,
-        BankAccountsWidgetsModule,
 
         MatTabsModule,
         MatInputModule,
@@ -118,8 +115,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
-        SelectionFilterComponent,
+        ModalDialogComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -137,8 +133,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
-        SelectionFilterComponent,
+        ModalDialogComponent
     ],
     providers: [
         DateTimeService,

@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService, QuovoHandler } from '@app/cfo/shared/common/quovo/QuovoService';
+import { QuovoService, QuovoHandler } from '../QuovoService';
 
 @Component({
     selector: 'add-quovo-account-button',

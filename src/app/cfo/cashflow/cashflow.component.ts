@@ -22,7 +22,7 @@ import * as _ from 'underscore.string';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';

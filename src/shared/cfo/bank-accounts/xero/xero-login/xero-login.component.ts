@@ -1,7 +1,7 @@
 import { Component, Injector, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountServiceProxy } from 'shared/service-proxies/service-proxies';
-import { XeroLoginDialogComponent } from '@app/cfo/shared/common/xero/xero-login-dialog/xero-login-dialog.component';
+import { XeroLoginDialogComponent } from '../xero-login-dialog/xero-login-dialog.component';
 
 @Component({
     selector: 'xero-login',

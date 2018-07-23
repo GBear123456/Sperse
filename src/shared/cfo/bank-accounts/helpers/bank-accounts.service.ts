@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { SyncAccountBankDto, BankAccountDto } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
-import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widgets/bank-accounts-data.model';
+import { BankAccountsDataModel } from '../bank-accounts-widgets/bank-accounts-data.model';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 

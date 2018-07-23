@@ -1,21 +1,21 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { CFOComponentBase } from '../cfo-component-base';
+import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { Subscription, of, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
-import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
-import { CacheService } from '../../../../../node_modules/ng2-cache-service';
+import { CacheService } from '../../../../node_modules/ng2-cache-service';
 import * as _ from 'underscore';
 
 @Component({
     selector: 'bank-accounts-component',
     templateUrl: './bank-accounts.component.html',
     styleUrls: ['./bank-accounts.component.less'],
-    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService ]
+    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     initialSyncAccounts;
@@ -55,7 +55,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this.syncCompletedSubscription = this._synchProgress.syncCompleted$.subscribe(() => {
             this.loadBankAccounts();
         });
-        this.refreshSubscription = this._bankAccountsGeneralService.refresh$.subscribe( () => {
+        this.refreshSubscription = this._bankAccountsGeneralService.refresh$.subscribe(() => {
             this.loadBankAccounts();
         });
     }
@@ -221,7 +221,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         });
     }
 
-    activate() {}
+    activate() { }
 
     deactivate() {
         this.unsubscribeSubscriptions();

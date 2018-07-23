@@ -9,7 +9,7 @@ import { CFOService } from '@shared/cfo/cfo.service.ts';
     templateUrl: './bank-accounts-quovo.component.html',
     styleUrls: ['./bank-accounts-quovo.component.less']
 })
-export class BankAccountsQuovoComponent implements OnInit  {
+export class BankAccountsQuovoComponent implements OnInit {
 
     /** Quovo source url */
     sourceUrl: any;
