@@ -1,0 +1,95 @@
+:host {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+
+    .wrapper {
+        height: 100%;
+
+        h3 {
+            font-family: Montserrat;
+            font-size: 25px;
+            font-weight: 600;
+            letter-spacing: normal;
+            text-align: center;
+            color: #202b35;
+        }
+
+        .questions {
+            max-width: 85%;
+            margin: 0 auto;
+
+            .question-item {
+                font-family: Montserrat;
+                font-size: 17px;
+                line-height: 1.42;
+                letter-spacing: 0.4px;
+                text-align: left;
+                color: #424c56;
+                border: 1px solid #dee3e5;
+                display: block;
+                position: relative;
+                border-radius: 11px;
+
+                padding: 14px 0 16px 67px;
+                margin-bottom: 15px;
+
+                input {
+                    position: absolute;
+                    opacity: 0;
+                    cursor: pointer;
+                }
+
+                .checkmark {
+                    position: absolute;
+                    top: unset;
+                    left: 20px;
+                    height: 25px;
+                    width: 25px;
+                    background-color: #eee;
+                    border-radius: 12px;
+
+                    &::after {
+                        content: "";
+                        display: none;
+                        left: 9px;
+                        top: 6px;
+                        width: 6px;
+                        height: 11px;
+                        border: solid white;
+                        border-width: 0 2px 2px 0;
+                        transform: rotate(45deg);
+                        position: absolute;
+                    }
+                }
+
+                &:hover {
+                    input ~ .checkmark {
+                        background-color: #ccc;
+                    }
+                }
+
+                input:checked ~ .checkmark:after {
+                    display: block;
+                }
+
+                input:checked ~ .checkmark {
+                    background-color: #2196F3;
+                }
+            }
+        }
+    }
+
+    .m-loader {
+        height: 100%;
+
+        &::before {
+            width: 2.4rem;
+            height: 2.4rem;
+            margin-top: -1.2rem;
+            margin-left: -1.2rem;
+        }
+    }
+}
+
