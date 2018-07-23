@@ -67,6 +67,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     memberAreaLinks = [
         {
+            name: 'accountsLink',
+            imgUrl: 'assets/images/icons/credit-report-icon.svg',
+            activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
+            routerUrl: '/credit-reports/member-area/accounts'
+        },
+        {
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
