@@ -34,12 +34,28 @@
             background-color: #effafe;
         }
 
-        .dx-list-item.dx-state-hover {
-            background-color: #f5f5f5;
+        .dx-list-item {
+            &.dx-state-hover {
+                background-color: #f5f5f5;
+            }
+
+            &.filtered {
+                background-color: #effafe!important;
+            }
+
+            .dx-list-item-before-bag.dx-list-select-radiobutton-container {
+                display: none;
+            }
+
+            .dx-state-focused {
+                background-color: #FFF;
+                color: #333;
+            }
         }
 
-        .dx-list-item-before-bag.dx-list-select-radiobutton-container {
-            display: none;
+        &.unclicked .dx-list-item {
+            background-color: transparent;
+            cursor: default;
         }
 
         .dx-placeholder {
@@ -52,15 +68,6 @@
             right: 0px;
         }
 
-        .dx-list-item.filtered {
-            background-color: #effafe!important;
-        }
-
-        .dx-list-item.dx-state-focused {
-            background-color: #FFF;
-            color: #333;
-        }
-
         .item-row {
             display: flex;
             justify-content: space-between;
@@ -68,6 +75,7 @@
             a.dx-link-filter {
                 width: 30px;
                 background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+                cursor: pointer;
             }
 
             &.new,
