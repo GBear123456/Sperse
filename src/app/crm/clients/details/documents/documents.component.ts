@@ -151,13 +151,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     {
                         name: 'rotateLeft',
                         action: this.rotateImageLeft.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == this.IMAGE_VIEWER,
                         disabled: conf.rotateDisabled
                     },
                     {
                         name: 'rotateRight',
                         action: this.rotateImageRight.bind(this),
-                        visible: this.showViewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == this.IMAGE_VIEWER,
                         disabled: conf.rotateDisabled
                     }
                 ]
@@ -284,15 +284,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             size: input.size,
             fileBase64: input.fileBase64
         })).pipe(finalize(() => {
+            clearInterval(progressInterval);
+            this.updateUploadProgress({progress: 100});
             setTimeout(() => {
                 this.updateUploadProgress({progress: 0});
             }, 5000);
-        })).subscribe(() => {
-            data.progress = 100;
-            this.updateUploadProgress(data);
-            clearInterval(progressInterval);
-
+        })).subscribe(() => {    
             this.loadDocuments();
+        }, (e) => {
+            this.message.error(this.l('AnErrorOccurred'));
         });
     }
 
@@ -373,6 +373,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
         this.startLoading(true);
         this.initViewerToolbar({
+            viewerType: viewerType,
             rotateDisabled: ext == 'pdf',
             editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
@@ -385,15 +386,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     this.finishLoading(true);
                 })).subscribe((response) => {
                     this.showOfficeOnline(response);
-                });
-                break;
-            case this.TEXT_VIEWER:
-                this._documentService.getContent(this.currentDocumentInfo.id).pipe(finalize(() => {
-                    this.finishLoading(true);
-                })).subscribe((response) => {
-                    this.previewContent = atob(response);
-                    this.showViewerType = viewerType;
-                    this.openDocumentMode = true;
                 });
                 break;
             case this.VIDEO_VIEWER:
@@ -410,7 +402,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                     this.downloadFileBlob(url, (blob) => {
                         let reader = new FileReader();
                         reader.addEventListener('loadend', () => {
-                            this.previewContent = StringHelper.getBase64(reader.result);
+                            let content = StringHelper.getBase64(reader.result);
+                            this.previewContent = viewerType == this.TEXT_VIEWER ? atob(content): content;
                             this.showViewerType = viewerType;
                             this.openDocumentMode = true;
                         });
