@@ -4,6 +4,8 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
+import ArrayStore from 'devextreme/data/array_store';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */
@@ -36,7 +38,8 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     syncAccounts: SyncAccountBankDto[];
     showAddUserButton = false;
     isDataLoaded = false;
-    dataSource = [];
+    dataSource: DataSource;
+    addedUsersIds: number[];
     columnsConfiguration = {
         'accountId': {
             'visible': false,
@@ -80,7 +83,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     public headlineConfig = {
         names: [this.l('SetupStep_Permissions')],
         iconSrc: 'assets/common/icons/user-permissions.svg',
-        //onRefresh: this.onRefresh.bind(this),
+        onRefresh: this.onRefresh.bind(this),
     };
     constructor(injector: Injector,
                 private userServiceProxy: UserServiceProxy,
@@ -91,6 +94,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     ngOnInit() {
+        this.addedUsersIds = [];
         this.loadData();
     }
 
@@ -121,7 +125,16 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             },
             e => {},
             () => {
-                this.dataSource = this.createPermissionsDataSource(this.bankAccountsUsers, this.syncAccounts);
+                this.dataSource = new DataSource(
+                    new ArrayStore({
+                        data: this.createPermissionsDataSource(this.bankAccountsUsers, this.syncAccounts),
+                        onLoaded: () => {
+                            if (!this.dataGrid.instance.option('visible')) {
+                                this.dataGrid.instance.option('visible', true);
+                            }
+                        }
+                    })
+                );
                 this.isDataLoaded = true;
                 this.finishLoading(true);
             }
@@ -242,10 +255,20 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     onRefresh() {
-        //this.dataGrid.instance.refresh().then(() => {
-        /** @todo fix bug when double column is created after refresh after adding a user */
+        /** Becomes visible after new data loading (dataSource onLoaded method)*/
+        this.dataGrid.instance.option('visible', false);
+        this.removeAddedUserColumns();
         this.loadData();
-        //});
+    }
+
+    /**
+     * Hack to fix error with double columns
+     */
+    removeAddedUserColumns() {
+        this.addedUsersIds.forEach(userId => {
+            this.dataGrid.instance.deleteColumn(userId.toString());
+        });
+        this.addedUsersIds = [];
     }
 
     onRowUpdating(e) {
@@ -309,6 +332,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 ...{ dataField: userId.toString() },
                 ...this.columnsConfiguration['user']
             });
+        this.addedUsersIds.push(userId);
         this.showenUsersIds.push(userId);
     }
 
@@ -327,7 +351,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 /** Remove user from datagrid */
                 this.dataGrid.instance.deleteColumn(stringUserId);
                 /** Update data source */
-                this.dataSource.forEach(account => {
+                this.dataSource.store()._array.forEach(account => {
                     if (account.hasOwnProperty(userId.toString())) {
                         account[stringUserId] = false;
                     }
