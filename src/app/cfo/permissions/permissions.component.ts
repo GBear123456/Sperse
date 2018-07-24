@@ -348,16 +348,18 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             .revokeBankAccountPermissions(instanceType, this.instanceId, userId, bankAccounts)
             .subscribe(res => {
                 const stringUserId: string = userId.toString();
-                /** Remove user from datagrid */
-                this.dataGrid.instance.deleteColumn(stringUserId);
-                /** Update data source */
-                this.dataSource.store()._array.forEach(account => {
-                    if (account.hasOwnProperty(userId.toString())) {
-                        account[stringUserId] = false;
-                    }
-                });
-                this.showenUsersIds.splice(this.showenUsersIds.indexOf(userId), 1);
-                this.notify.success(this.ls('Platform', 'SuccessfullyDeleted'));
+                if (stringUserId) {
+                    /** Remove user from datagrid */
+                    this.dataGrid.instance.deleteColumn(stringUserId);
+                    /** Update data source */
+                    this.dataSource.store()._array.forEach(account => {
+                        if (account.hasOwnProperty(userId.toString())) {
+                            account[stringUserId] = false;
+                        }
+                    });
+                    this.showenUsersIds.splice(this.showenUsersIds.indexOf(userId), 1);
+                    this.notify.success(this.ls('Platform', 'SuccessfullyDeleted'));
+                }
             });
     }
 }
