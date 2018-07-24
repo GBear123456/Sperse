@@ -14,7 +14,7 @@
                     <img src="assets/images/icons/pay-of-all-cerds-icon.svg" alt="Close card" width="20">
                     {{l("transferBalanceToNewCard")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.transferCreditBalances">
-                        <span class="value pull-right">+{{(score?.transferCreditBalances)/100 | currency:'USD':true:'1.0-0'}}</span>
+                        <span class="value pull-right">+{{(score?.transferCreditBalances)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
                 </a>
             </h4>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>
@@ -56,10 +56,10 @@
                     <img src="assets/images/icons/change-card-balance-icon.svg" alt="Close card" width="20">
                     {{l("changeCreditBalance")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.increaseCreditBalance">
-                        <span class="value pull-right">+{{(score?.increaseCreditBalance)/100 | currency:'USD':true:'1.0-0'}}</span>
+                        <span class="value pull-right">+{{(score?.increaseCreditBalance)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
                     <ng-container *ngIf="score.decreaseCreditBalance">
-                        <span class="value pull-right">-{{(score?.decreaseCreditBalance)/100 | currency:'USD':true:'1.0-0'}}</span>
+                        <span class="value pull-right">-{{(score?.decreaseCreditBalance)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
                 </a>
             </h4>
@@ -104,7 +104,7 @@
                         <button class="reset-link" type="reset" value="Reset" (click)="resetField($event)">
                             Reset
                         </button>
-                        <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                        <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                     </div>
                 </form>
             </div>
@@ -118,7 +118,7 @@
                     <img src="assets/images/icons/increase-icon.svg" alt="Close card" width="20">
                     {{l("increaseMyCreditCardLimit")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.increaseCreditCardLimit">
-                        <span class="value pull-right">+{{(score?.increaseCreditCardLimit)/100 | currency:'USD':true:'1.0-0'}}</span>
+                        <span class="value pull-right">+{{(score?.increaseCreditCardLimit)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
                 </a>
             </h4>
@@ -147,7 +147,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>
@@ -163,7 +163,7 @@
                         <span class="value pull-right">({{score?.applyForCreditCard}})</span>
                     </ng-container>
                     <ng-container *ngIf="score.obtainCreditCard">
-                        <span class="value pull-right">+{{(score?.obtainCreditCard)/100 | currency:'USD':true:'1.0-0'}}</span>
+                        <span class="value pull-right">+{{(score?.obtainCreditCard)/100 | currency:'USD':'symbol':'1.0-0'}}</span>
                     </ng-container>
                 </a>
             </h4>
@@ -208,7 +208,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>
@@ -248,7 +248,7 @@
                     </div>
                     <div class="btn-group text-right">
                         <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                        <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                        <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                     </div>
                 </form>
             </div>
@@ -262,13 +262,13 @@
                     <img src="assets/images/icons/obtain-personal-loan-icon.svg" alt="Close card" width="20">
                     {{l("getNewLoan")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
                     <ng-container *ngIf="score.obtainPersonalLoan">
-                        <span class="value pull-right">Personal (+{{(score?.obtainPersonalLoan)/100 | currency:'USD':true:'1.0-0'}})</span>
+                        <span class="value pull-right">Personal (+{{(score?.obtainPersonalLoan)/100 | currency:'USD':'symbol':'1.0-0'}})</span>
                     </ng-container>
                     <ng-container *ngIf="score.obtainAutoLoan">
-                        <span class="value pull-right">Auto (+{{(score?.obtainAutoLoan)/100 | currency:'USD':true:'1.0-0'}})</span>
+                        <span class="value pull-right">Auto (+{{(score?.obtainAutoLoan)/100 | currency:'USD':'symbol':'1.0-0'}})</span>
                     </ng-container>
                     <ng-container *ngIf="score.obtainMortgage">
-                        <span class="value pull-right">Mortage (+{{(score?.obtainMortgage)/100 | currency:'USD':true:'1.0-0'}})</span>
+                        <span class="value pull-right">Mortage (+{{(score?.obtainMortgage)/100 | currency:'USD':'symbol':'1.0-0'}})</span>
                     </ng-container>
                 </a>
             </h4>
@@ -333,7 +333,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>
@@ -374,7 +374,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>
@@ -426,7 +426,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>
@@ -439,7 +439,7 @@
                    aria-expanded="true" aria-controls="negativePublicRecords">
                     <img src="assets/images/icons/lot-icon.svg" alt="Close card" width="20">
                     {{l("negativePublicRecords")}} <i class="fa fa-angle-up pull-right" aria-hidden="true"></i>
-                    <ng-container *ngIf="score.moveOneAccountToCollection == 'true' || score.addForeClosurePublicRecord == 'true' || score.declareBankruptcy == 'true' || score.addTaxLienPublicRecord == 'true' || score.addChildSupportPublicRecord == 'true' || score.addWageGarnishmentPublicRecord == 'true'; else noBlock">
+                    <ng-container *ngIf="score.moveOneAccountToCollection == 'true' || score.addForeClosurePublicRecord == 'true' || score.declareBankruptcy == 'true' || score.addTaxLienPublicRecord == 'true' || score.addChildSupportPublicRecord == 'true' || score.addWageGarnishmentPublicRecord == 'true'">
                         <span class="value pull-right">{{l("Yes")}}</span>
                     </ng-container>
                 </a>
@@ -523,7 +523,7 @@
                 </div>
                 <div class="btn-group text-right">
                     <button class="reset-link" type="reset" (click)="resetField($event)">Reset</button>
-                    <button class="btn-update" type="submit" (click)="updateScore(score)">Update</button>
+                    <button class="btn-update" type="submit" (click)="updateScore()">Update</button>
                 </div>
             </div>
         </div>

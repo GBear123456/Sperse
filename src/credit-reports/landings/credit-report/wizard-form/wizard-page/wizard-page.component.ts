@@ -43,8 +43,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         cvvCode: "0009"
     }
 
-    private registrationInProgress: boolean = false;
-    private paymentAuthorizationRequired: boolean = true;
+    registrationInProgress: boolean = false;
+    paymentAuthorizationRequired: boolean = true;
     countryCode = 'US';
     packageId: number;
     paymentResult: any;

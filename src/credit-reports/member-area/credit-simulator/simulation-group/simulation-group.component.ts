@@ -43,7 +43,7 @@ export class SimulationGroupComponent extends AppComponentBase implements OnInit
         return value + ' month(s)';
     }
 
-    resetField() {
+    resetField(e) {
     }
 
     updateScore() {

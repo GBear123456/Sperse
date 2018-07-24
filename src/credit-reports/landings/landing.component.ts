@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+
+declare const Typekit: any;
 
 @Component({
     selector: 'app-root',
@@ -6,8 +9,14 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['landing.component.less']
 })
 
-export class LandingComponent implements OnInit {
-    constructor() { }
+export class LandingComponent extends AppComponentBase implements OnInit {
+    constructor(injector: Injector) {
+        super(injector);
+    }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.getRootComponent().addScriptLink("https://use.typekit.net/ocj2gqu.js", 'text/javascript', () => {
+            try { Typekit.load({ async: true }); } catch (e) { }
+        });
+    }
 }

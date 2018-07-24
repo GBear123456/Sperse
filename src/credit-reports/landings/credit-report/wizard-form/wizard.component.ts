@@ -51,7 +51,7 @@ export class WizardComponent implements AfterContentInit {
      * @property {number}   defaults.currentStep           - The default current step.
      * @property {number}   defaults.hiddenDisableSteps    - The default hiddenDisableSteps.
      */
-    private defaults = {
+    public defaults = {
         orientation: "landscape",
         disableTabs: false,
         hiddenTabs: false,

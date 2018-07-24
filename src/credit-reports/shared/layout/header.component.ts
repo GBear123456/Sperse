@@ -61,6 +61,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
+    helpLink: string = AppConsts.helpLink;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
     chatConnected = false;

@@ -263,7 +263,7 @@
                                               [disabled]="!paymentAuthorizationRequired"
                                               [value]="false"
                                               text="{{l('AgreeToUpdate')}}"
-                                              [validationMessageMode]="auto">
+                                              validationMessageMode="auto">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
                                                              message="{{l('AgreeToUpdateError')}}"></dxi-validation-rule>
@@ -370,7 +370,7 @@
                         </div>
                         <dx-validation-summary class="summary"></dx-validation-summary>
                         <button class="button btn-back" (click)="previousStep()" type="button">
-                            <img src="/assets/landing/left-arrow-icon.svg" alt="{{l(Back)}}">{{l("Back")}}
+                            <img src="/assets/landing/left-arrow-icon.svg" alt="{{l("Back")}}">{{l("Back")}}
                         </button>
                         <dx-button class="button"
                                    text="{{l('Next')}}"
@@ -467,7 +467,7 @@
                         </div>
                         <dx-validation-summary class="summary"></dx-validation-summary>
                         <button class="button btn-back" (click)="previousStep()" type="button">
-                            <img src="/assets/landing/left-arrow-icon.svg" alt="{{l(Back)}}">{{l("Back")}}
+                            <img src="/assets/landing/left-arrow-icon.svg" alt="{{l("Back")}}">{{l("Back")}}
                         </button>
                         <dx-button class="button"
                                    text="{{l('Next')}}"
@@ -540,7 +540,7 @@
                     </div>
                 </div>
                 <button class="button btn-back" (click)="previousStep()" type="button">
-                    <img src="/assets/landing/left-arrow-icon.svg" alt="{{l(Back)}}">{{l("Back")}}
+                    <img src="/assets/landing/left-arrow-icon.svg" alt="{{l("Back")}}">{{l("Back")}}
                 </button>
                 <button class="button" type="submit" [disabled]="!registerMember.valid || registrationInProgress">
                     {{l("Next")}} <img src="/assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon">

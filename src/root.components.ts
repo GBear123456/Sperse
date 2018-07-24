@@ -41,10 +41,12 @@ export class RootComponent implements AfterViewInit {
             value ? 'add' : 'remove']('overflow-hidden');
     }
 
-    public addScriptLink(src: String, type: String = 'text/javascript'): void {
+    public addScriptLink(src: String, type: String = 'text/javascript', callback = null): void {
         let script = this.document.createElement('script');
         script.type = type;
         script.src = src;
+        if (callback)
+            script.addEventListener('load', callback);
         this.document.head.append(script);
     }
 
