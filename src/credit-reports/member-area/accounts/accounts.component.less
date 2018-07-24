@@ -30,5 +30,39 @@
         box-shadow: 0 10px 40px 0 rgba(23, 28, 29, 0.15);
         box-sizing: border-box;
         padding: 0;
+
+        .not-initialized-content {
+            text-align: center;
+            padding-top: 200px;
+
+            .welcome-text {
+                color: #202B35;
+                font-size: 32px;
+                font-weight: 600;
+            }
+
+            .body-text {
+                color: #677380;
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 22px;
+                max-width: 650px;
+                margin: 27px auto 38px;
+            }
+
+            .btn-layout {
+                padding: 18px 68px 21px 66px !important;
+                height: 52px;
+                text-transform: none !important;
+                line-height: 0 !important;
+                border-radius: 26px !important;
+                font-size: 16px !important;
+                font-weight: 500 !important;
+
+                &:after {
+                    content: none;
+                }
+            }
+        }
     }
 }

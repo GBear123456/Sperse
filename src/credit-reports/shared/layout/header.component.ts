@@ -16,6 +16,9 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+
 import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal.component';
 import { LinkedAccountsModalComponent } from '@app/shared/layout/linked-accounts-modal.component';
 import { ChangePasswordModalComponent } from '@app/shared/layout/profile/change-password-modal.component';
@@ -67,12 +70,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     memberAreaLinks = [
         {
-            name: 'accountsLink',
-            imgUrl: 'assets/images/icons/credit-report-icon.svg',
-            activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-            routerUrl: '/credit-reports/member-area/accounts'
-        },
-        {
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
@@ -104,9 +101,21 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _linkedAccountService: LinkedAccountService,
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
-        private _appSessionService: AppSessionService
+        private _appSessionService: AppSessionService,
+        private _featureChecker: FeatureCheckerService,
+        private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
+
+        if (_featureChecker.isEnabled('CFO') && _permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
+            this.memberAreaLinks.unshift(
+                {
+                    name: 'accountsLink',
+                    imgUrl: 'assets/images/icons/credit-report-icon.svg',
+                    activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
+                    routerUrl: '/credit-reports/member-area/accounts'
+                });
+        }
     }
     get multiTenancySideIsTenant(): boolean {
         return this._abpSessionService.tenantId > 0;
@@ -210,7 +219,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     onMySettingsModalSaved(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
     }
-    
+
     backToMyAccount(): void {
         this._impersonationService.backToImpersonator();
     }

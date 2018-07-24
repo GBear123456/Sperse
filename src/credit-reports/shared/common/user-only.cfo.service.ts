@@ -11,12 +11,11 @@ export class UserOnlyCFOService extends CFOServiceBase {
         super();
 
         this.instanceType = InstanceType.User;
-        this.instanceChangeProcess();
     }
 
     instanceChangeProcess(callback: any = null) {
         this._instanceServiceProxy.getStatus(<any>InstanceType.User, this.instanceId).subscribe((data) => {
-            this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
+            this.initialized = data.status == GetStatusOutputStatus.Active && data.hasSyncAccounts;
             this.hasTransactions = this.initialized && data.hasTransactions;
             callback && callback.call(this, this.hasTransactions);
         });
