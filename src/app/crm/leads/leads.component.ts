@@ -16,12 +16,10 @@ import { AppService } from '@app/app.service';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
@@ -723,13 +721,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.l('LeadsDeleteWarningMessage'),
             isConfirmed => {
                 if (isConfirmed)
-                    this.deleteClientsInternal(selectedIds);
+                    this.deleteLeadsInternal(selectedIds);
             }
         );
     }
 
-    private deleteClientsInternal(selectedIds: number[]) {
+    private deleteLeadsInternal(selectedIds: number[]) {
         this._leadService.deleteLeads(selectedIds).subscribe(() => {
+            this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.refreshDataGrid();
         });
