@@ -10,7 +10,10 @@
                 </div>-->
             </div>
             <dx-list #staticList
-                [ngClass]="{'highlightSelected': highlightSelected, 'unclicked': !highlightSelected && !checkPermissions()}"
+                [ngClass]="{
+                    'highlightSelected': highlightSelected,
+                    'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions())
+                }"
                 [searchEnabled]="false"
                 [selectionMode]="selectedKeys.length ? 'single': 'none'"
                 [showSelectionControls]="true"
