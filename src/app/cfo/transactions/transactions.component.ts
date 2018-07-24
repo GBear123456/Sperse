@@ -40,7 +40,7 @@ import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/b
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 
 @Component({
     templateUrl: './transactions.component.html',

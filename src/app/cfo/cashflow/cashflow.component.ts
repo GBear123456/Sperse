@@ -25,7 +25,7 @@ import { AppService } from '@app/app.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';

@@ -47,6 +47,10 @@ export class AccountsComponent extends AppComponentBase {
             });
     }
 
+    onSyncComplete() {
+        this.bankAccounts.loadBankAccounts();
+    }
+
     private addAccount() {
         if (!this.quovoHandler) {
             this.quovoHandler = this._quovoService.getQuovoHandler(this._cfoService.instanceType, this._cfoService.instanceId);

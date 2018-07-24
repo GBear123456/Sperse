@@ -54,7 +54,6 @@ import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-account
 import { TransactionsComponent } from './transactions/transactions.component';
 import { CategorizationComponent } from './transactions/categorization/categorization.component';
 import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
-import { SynchProgressComponent } from './shared/common/synch-progress/synch-progress.component';
 import { RulesComponent } from './rules/rules.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
@@ -135,7 +134,6 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-
         TransactionsComponent,
         CategorizationComponent,
         SetupStepComponent,
-        SynchProgressComponent,
         CashflowComponent,
         OperationsComponent,
         PreferencesDialogComponent,

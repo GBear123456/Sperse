@@ -8,7 +8,7 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';

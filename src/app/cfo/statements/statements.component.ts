@@ -13,7 +13,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CacheService } from 'ng2-cache-service';
 import { DxDataGridComponent } from 'devextreme-angular';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 
 import {
     StatsFilter,

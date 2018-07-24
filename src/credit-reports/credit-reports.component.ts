@@ -7,6 +7,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppConsts } from '@shared/AppConsts';
 import * as moment from 'moment';
 
+declare const Typekit: any;
+
 @Component({
     templateUrl: './credit-reports.component.html',
     styleUrls: ['./credit-reports.component.less']
@@ -32,6 +34,10 @@ export class CreditReportsComponent extends AppComponentBase implements OnInit, 
         if (this.appSession.application && this.appSession.application.features['SignalR']) {
             SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
         }
+
+        this.getRootComponent().addScriptLink("https://use.typekit.net/ocj2gqu.js", 'text/javascript', () => {
+            try { Typekit.load({ async: true }); } catch (e) { }
+        });
     }
 
     subscriptionStatusBarVisible(): boolean {

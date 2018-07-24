@@ -17,7 +17,7 @@ import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 
 import {
     StatsFilter,

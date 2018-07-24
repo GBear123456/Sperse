@@ -1,7 +1,7 @@
 import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { Router } from '@angular/router';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';

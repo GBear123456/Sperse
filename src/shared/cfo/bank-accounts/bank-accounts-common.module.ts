@@ -12,10 +12,12 @@ import {
     DxTextBoxModule,
     DxButtonModule,
     DxSwitchModule,
-    DxTagBoxModule
+    DxTagBoxModule,
+    DxProgressBarModule
 } from 'devextreme-angular';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { BankAccountsService } from './helpers/bank-accounts.service';
 import { BankAccountsComponent } from './bank-accounts.component';
@@ -30,12 +32,14 @@ import { XeroLoginDialogComponent } from './xero/xero-login-dialog/xero-login-di
 import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
 
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
+import { SynchProgressComponent } from './synch-progress/synch-progress.component';
 
 @NgModule({
     imports: [
         CommonModule,
         ngCommon.CommonModule,
         AppCommonModule,
+        RoundProgressModule,
         DxTabsModule,
         DxScrollViewModule,
         DxDataGridModule,
@@ -46,7 +50,8 @@ import { SelectionFilterComponent } from './selection-filter/selection-filter.co
         DxTextBoxModule,
         DxButtonModule,
         DxSwitchModule,
-        DxTagBoxModule
+        DxTagBoxModule,
+        DxProgressBarModule
     ],
     declarations: [
         BankAccountsComponent,
@@ -59,7 +64,8 @@ import { SelectionFilterComponent } from './selection-filter/selection-filter.co
         ImportXeroChartOfAccountsButtonComponent,
         AddQuovoAccountButtonComponent,
 
-        SelectionFilterComponent
+        SelectionFilterComponent,
+        SynchProgressComponent
     ],
     exports: [
         BankAccountsComponent,
@@ -72,7 +78,8 @@ import { SelectionFilterComponent } from './selection-filter/selection-filter.co
         ImportXeroChartOfAccountsButtonComponent,
         AddQuovoAccountButtonComponent,
 
-        SelectionFilterComponent
+        SelectionFilterComponent,
+        SynchProgressComponent
     ],
     providers: [
         QuovoService,
