@@ -37,7 +37,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     selectedBusinessEntityIds: any[] = [];
     businessEntities = [];
     isActive = true;
-    selectedBankAccounts = null;
+    selectedBankAccounts: number[] = null;
     storedVisibleBankAccountIds = [];
 
     constructor(
@@ -203,7 +203,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 this.initDataSource = result;
                 this.filterDataSource(this.selectedBankAccounts);
                 let newSelected = this.getSelectedBankAccounts().bankAccountIds;
-                if (_.difference(newSelected, this.selectedBankAccounts).length) {
+                if (_.difference(newSelected, this.selectedBankAccounts).length ||
+                    _.difference(this.selectedBankAccounts, newSelected).length) {
                     this.selectedBankAccounts = newSelected;
                     needEmitSelectedAccounts = true;
                 }
