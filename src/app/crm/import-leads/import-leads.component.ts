@@ -30,7 +30,7 @@ import {
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ZipCodeFormatterPipe ]
+    providers: [ ZipCodeFormatterPipe, ImportServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -312,17 +312,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     this._importService.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
-                        ).subscribe((res) => {
-                            res.forEach((reff) => {
-                                if (!reff.errorMessage)
-                                    this.importedCount++;
-                            });
-                            if (this.importedCount > 0) {
-                                this.wizard.showFinishStep();
-                                this.clearToolbarSelectedItems();
-                                (<any>this._reuseService).invalidate('leads');
-                            } else
-                                this.message.error(res[0].errorMessage);
+                        ).subscribe((id) => {
+                            //TODO: id should be used for tracking import
+                            console.log(id);
                         });
                 }
             }
