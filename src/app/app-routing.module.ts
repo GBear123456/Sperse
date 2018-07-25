@@ -25,22 +25,22 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
                     {
                         path: 'admin',
                         loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
-                        data: { preload: true }
+                        data: { preload: false }
                     },
                     {
                         path: 'api',
                         loadChildren: 'app/api/api.module#ApiModule', //Lazy load main module
-                        data: { preload: true }
+                        data: { preload: false }
                     },
                     {
                         path: 'crm',
                         loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
-                        data: { preload: true }
+                        data: { preload: false }
                     },
                     {
                         path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
-                        data: { preload: true }
+                        data: { preload: false }
                     },
                     { path: '**', redirectTo: 'notifications' }
                 ]

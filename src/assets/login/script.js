@@ -1,0 +1,245 @@
+(function() {
+    const TwoFactorRememberClientToken = 'TwoFactorRememberClientToken';
+    const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
+    const EncryptedAuthToken = 'enc_auth_token';
+
+    var remoteServiceUrl = '', loginInformations;
+    var pathParts = location.pathname.split('/').filter(Boolean);
+    if (
+        (!pathParts.length && document.cookie.indexOf('Abp.AuthToken') < 0) || 
+        (pathParts.pop() == 'login')
+    ) {
+        window.loginPageHandler = function(appConfig) {
+            return $.ajax({
+                url: '/assets/' + appConfig,
+                method: 'GET',
+            }).done(result => {
+                remoteServiceUrl = result.remoteServiceBaseUrl;
+                var cookie = queryString(document.cookie, ';');
+                var currentUrl = window.location.protocol + '//' + window.location.host;
+                if (result.appBaseUrl !== currentUrl) {
+                    $.ajax({
+                        url: remoteServiceUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=1',
+                        method: 'GET',
+                        headers: {
+                            'Accept-Language': cookie[AbpLocalizationCultureName]
+                        }
+                    }).done((tenantApiHostOutput) => {
+                        let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
+
+                        if (tenantApiHostOutput.apiHostName !== null) {
+                            remoteServiceUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.apiHostName;
+                        } else {
+                            remoteServiceUrl = result.remoteServiceBaseUrl;
+                        }
+
+                        getCurrentLoginInformations();
+                    });
+                } else {
+                    getCurrentLoginInformations();
+                }
+            });
+        };
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('loadSpinner').style.display = 'none';
+        window.history.pushState("", "", '/account/login' + document.location.search);
+    }
+
+    function getCurrentLoginInformations() {
+        $.ajax({
+            url: remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json", 
+                "Accept": "application/json"                
+            }
+        }).done((response) => {
+            loginInformations = response && response.result;
+            $('div.logo img').attr('src', 
+                loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
+                remoteServiceUrl + '/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
+                '/assets/common/images/app-logo-on-dark.png'
+            ).show();
+        });
+    }
+
+    function queryString(value, delimiter) {
+        var result = {};
+        value.split(delimiter).forEach(function(val) {
+            var parts = val.split('=');
+            if (parts.length == 2)
+                result[parts[0].trim()] = parts[1].trim();
+        });
+        return result;
+    }
+
+    window.authenticate = function() {
+        var params = queryString(document.location.search.substr(1), '&');
+        var cookie = queryString(document.cookie, ';');
+        var authenticateModel = JSON.stringify({
+            userNameOrEmailAddress: loginForm.elements['userNameOrEmailAddress'].value,
+            password: loginForm.elements['password'].value,
+            twoFactorRememberClientToken: cookie[TwoFactorRememberClientToken],
+            singleSignIn: params.ss,
+            returnUrl: params.returnUrl,
+            autoDetectTenancy: true
+        });
+        
+        abp.ui.setBusy();
+        $.ajax({
+            url: remoteServiceUrl + '/api/TokenAuth/Authenticate',
+            data: authenticateModel,
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json", 
+                "Accept": "application/json"                
+            },
+            error: function(request) {
+                abp.ui.clearBusy();
+                var response = JSON.parse(request.responseText);
+                if (response.error)
+                    abp.message.error(response.error.details, response.error.message);
+            }
+        }).done((response) => {
+            abp.ui.clearBusy();
+            if (response.result) {
+                handleAuthResult(response.result);
+                sessionStorage.setItem('authenticateResult',  
+                    JSON.stringify(response.result));
+                sessionStorage.setItem('authenticateModel', 
+                    authenticateModel);
+            }
+        });
+
+        return false;
+    }
+
+    function navigate(path, params) {
+        location = path + (params ? $.param(params): '');
+    }
+
+    function handleAuthResult(authenticateResult) {
+        if (authenticateResult.shouldResetPassword) {
+            // Password reset
+            navigate('account/reset-password', {
+                queryParams: {
+                    userId: authenticateResult.userId,
+                    tenantId: authenticateResult.detectedTenancies[0].id,
+                    resetCode: authenticateResult.passwordResetCode
+                }
+            });
+
+        } else if (authenticateResult.requiresTwoFactorVerification) {
+            // Two factor authentication
+            navigate('account/send-code');
+        } else if (authenticateResult.accessToken) {
+            // Successfully logged in
+            login(
+                authenticateResult.accessToken,
+                authenticateResult.encryptedAccessToken,
+                authenticateResult.expireInSeconds,
+                loginForm.elements['rememberMe'].checked,
+                authenticateResult.twoFactorRememberClientToken,
+                authenticateResult.returnUrl
+            );
+        } else if (authenticateResult.detectedTenancies.length > 1) {
+            //Select tenant
+            navigate('account/select-tenant');
+        } else {
+            // Unexpected result!
+            abp.message.warn('Unexpected authenticateResult!');
+            navigate('account/login');
+        }
+    }
+
+    function login(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
+
+        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
+
+        abp.auth.setToken(
+            accessToken,
+            tokenExpireDate
+        );
+
+        abp.utils.setCookieValue(
+            EncryptedAuthToken,
+            encryptedAccessToken,
+            tokenExpireDate,
+            abp.appPath
+        );
+
+        if (twoFactorRememberClientToken) {
+            abp.utils.setCookieValue(
+                TwoFactorRememberClientToken,
+                twoFactorRememberClientToken,
+                new Date(new Date().getTime() + 365 * 86400000), // 1 year
+                abp.appPath
+            );
+        }
+
+        abp.multiTenancy.setTenantIdCookie();
+
+        redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
+        if (redirectUrl) {
+            sessionStorage.removeItem('redirectUrl');
+            location.href = redirectUrl;
+        } else {
+            location.href = location.origin;
+        }
+    }
+
+    window.inputChanged = function() {
+        var login = loginForm.elements['userNameOrEmailAddress'];
+        var password = loginForm.elements['password'];
+        var button = loginForm.elements['submit'];
+        if (login.value && password.value)
+            button.removeAttribute('disabled');
+        else
+            button.setAttribute('disabled', '');
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        let privacy = $('#privacy');
+        privacy.on('show.bs.modal', function() {
+            $(this)
+                .addClass('modal-scrollfix')
+                .find('.modal-body')
+                .html('loading...')
+                .load(remoteServiceUrl + '/docs/privacy.html', function() {
+                    privacy
+                        .removeClass('modal-scrollfix')
+                        .modal('handleUpdate');
+                });
+        });
+
+        let terms = $('#terms');
+        terms.on('show.bs.modal', function() {
+            $(this)
+                .addClass('modal-scrollfix')
+                .find('.modal-body')
+                .html('loading...')
+                .load(remoteServiceUrl + '/docs/terms.html', function() {
+                    terms
+                        .removeClass('modal-scrollfix')
+                        .modal('handleUpdate');
+                });
+        });
+
+        $('.print-this').on('click', function() {
+            printElement($('.print-this-section')[0]);
+        });
+
+        function printElement(elem) {
+            let domClone = elem.cloneNode(true);
+            let printSection = document.getElementById('printSection');
+            if (!printSection) {
+                printSection = document.createElement('div');
+                printSection.id = 'printSection';
+                document.body.appendChild(printSection);
+            }
+            printSection.innerHTML = '';
+            printSection.appendChild(domClone);
+            window.print();
+        }
+    });
+})();

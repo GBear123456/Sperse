@@ -23,217 +23,103 @@
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
 
-    <style>
+    <link rel="stylesheet" type="text/css" href="/assets/common/styles/spinner.css">
+    <link rel="stylesheet" type="text/css" href="/assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.css">
+    <link rel="stylesheet" type="text/css" href="/assets/login/style.css">
 
-        /** Spinner animation (added here instead of angular.cli to load very quickly) **/
-        @keyframes lds-spin {
-            0% {
-                opacity: 1;
-                -webkit-transform: scale(1.1, 1.1);
-                transform: scale(1.1, 1.1);
-            }
-
-            100% {
-                opacity: 0;
-                -webkit-transform: scale(1, 1);
-                transform: scale(1, 1);
-            }
-        }
-
-        .lds-spin div > div {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #333333;
-            -webkit-animation: lds-spin 0.8s linear infinite;
-            animation: lds-spin 0.8s linear infinite;
-        }
-
-        .lds-spin div:nth-child(1) > div {
-            left: 180px;
-            top: 80px;
-            -webkit-animation-delay: -0.727272727272727s;
-            animation-delay: -0.727272727272727s;
-        }
-
-        .lds-spin > div:nth-child(1) {
-            -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-            -webkit-transform-origin: 200px 100px;
-            transform-origin: 200px 100px;
-        }
-
-        .lds-spin div:nth-child(2) > div {
-            left: 164.1253533px;
-            top: 134.0640817px;
-            -webkit-animation-delay: -0.654545454545455s;
-            animation-delay: -0.654545454545455s;
-        }
-
-        .lds-spin > div:nth-child(2) {
-            -webkit-transform: rotate(32.72727272727273deg);
-            transform: rotate(32.72727272727273deg);
-            -webkit-transform-origin: 184.1253533px 154.0640817px;
-            transform-origin: 184.1253533px 154.0640817px;
-        }
-
-        .lds-spin div:nth-child(3) > div {
-            left: 121.5415013px;
-            top: 170.9631995px;
-            -webkit-animation-delay: -0.581818181818182s;
-            animation-delay: -0.581818181818182s;
-        }
-
-        .lds-spin > div:nth-child(3) {
-            -webkit-transform: rotate(65.45454545454545deg);
-            transform: rotate(65.45454545454545deg);
-            -webkit-transform-origin: 141.5415013px 190.9631995px;
-            transform-origin: 141.5415013px 190.9631995px;
-        }
-
-        .lds-spin div:nth-child(4) > div {
-            left: 65.7685162px;
-            top: 178.9821442px;
-            -webkit-animation-delay: -0.509090909090909s;
-            animation-delay: -0.509090909090909s;
-        }
-
-        .lds-spin > div:nth-child(4) {
-            -webkit-transform: rotate(98.18181818181819deg);
-            transform: rotate(98.18181818181819deg);
-            -webkit-transform-origin: 85.7685162px 198.9821442px;
-            transform-origin: 85.7685162px 198.9821442px;
-        }
-
-        .lds-spin div:nth-child(5) > div {
-            left: 14.513926600000005px;
-            top: 155.57495740000002px;
-            -webkit-animation-delay: -0.436363636363636s;
-            animation-delay: -0.436363636363636s;
-        }
-
-        .lds-spin > div:nth-child(5) {
-            -webkit-transform: rotate(130.9090909090909deg);
-            transform: rotate(130.9090909090909deg);
-            -webkit-transform-origin: 34.513926600000005px 175.57495740000002px;
-            transform-origin: 34.513926600000005px 175.57495740000002px;
-        }
-
-        .lds-spin div:nth-child(6) > div {
-            left: -15.949297400000006px;
-            top: 108.1732557px;
-            -webkit-animation-delay: -0.363636363636364s;
-            animation-delay: -0.363636363636364s;
-        }
-
-        .lds-spin > div:nth-child(6) {
-            -webkit-transform: rotate(163.63636363636363deg);
-            transform: rotate(163.63636363636363deg);
-            -webkit-transform-origin: 4.050702599999994px 128.1732557px;
-            transform-origin: 4.050702599999994px 128.1732557px;
-        }
-
-        .lds-spin div:nth-child(7) > div {
-            left: -15.949297400000006px;
-            top: 51.8267443px;
-            -webkit-animation-delay: -0.290909090909091s;
-            animation-delay: -0.290909090909091s;
-        }
-
-        .lds-spin > div:nth-child(7) {
-            -webkit-transform: rotate(196.36363636363637deg);
-            transform: rotate(196.36363636363637deg);
-            -webkit-transform-origin: 4.050702599999994px 71.8267443px;
-            transform-origin: 4.050702599999994px 71.8267443px;
-        }
-
-        .lds-spin div:nth-child(8) > div {
-            left: 14.513926600000005px;
-            top: 4.425042599999998px;
-            -webkit-animation-delay: -0.218181818181818s;
-            animation-delay: -0.218181818181818s;
-        }
-
-        .lds-spin > div:nth-child(8) {
-            -webkit-transform: rotate(229.0909090909091deg);
-            transform: rotate(229.0909090909091deg);
-            -webkit-transform-origin: 34.513926600000005px 24.425042599999998px;
-            transform-origin: 34.513926600000005px 24.425042599999998px;
-        }
-
-        .lds-spin div:nth-child(9) > div {
-            left: 65.7685162px;
-            top: -18.982144199999993px;
-            -webkit-animation-delay: -0.145454545454545s;
-            animation-delay: -0.145454545454545s;
-        }
-
-        .lds-spin > div:nth-child(9) {
-            -webkit-transform: rotate(261.8181818181818deg);
-            transform: rotate(261.8181818181818deg);
-            -webkit-transform-origin: 85.7685162px 1.017855800000007px;
-            transform-origin: 85.7685162px 1.017855800000007px;
-        }
-
-        .lds-spin div:nth-child(10) > div {
-            left: 121.5415013px;
-            top: -10.963199500000002px;
-            -webkit-animation-delay: -0.072727272727273s;
-            animation-delay: -0.072727272727273s;
-        }
-
-        .lds-spin > div:nth-child(10) {
-            -webkit-transform: rotate(294.54545454545456deg);
-            transform: rotate(294.54545454545456deg);
-            -webkit-transform-origin: 141.5415013px 9.036800499999998px;
-            transform-origin: 141.5415013px 9.036800499999998px;
-        }
-
-        .lds-spin div:nth-child(11) > div {
-            left: 164.1253533px;
-            top: 25.935918299999997px;
-            -webkit-animation-delay: 0s;
-            animation-delay: 0s;
-        }
-
-        .lds-spin > div:nth-child(11) {
-            -webkit-transform: rotate(327.27272727272725deg);
-            transform: rotate(327.27272727272725deg);
-            -webkit-transform-origin: 184.1253533px 45.9359183px;
-            transform-origin: 184.1253533px 45.9359183px;
-        }
-
-        .lds-spin div:nth-child(12) > div {
-            left: 180px;
-            top: 80px;
-            -webkit-animation-delay: 0.072727272727273s;
-            animation-delay: 0.072727272727273s;
-        }
-
-        .lds-spin > div:nth-child(12) {
-            -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-            -webkit-transform-origin: 200px 100px;
-            transform-origin: 200px 100px;
-        }
-
-        .lds-spin {
-            width: 50px !important;
-            height: 50px !important;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-            -webkit-transform: translate(-25px, -25px) scale(0.25) translate(25px, 25px);
-            transform: translate(-25px, -25px) scale(0.25) translate(25px, 25px);
-        }
-    </style>
 </head>
 <body>
+    <div id="loginPage" style="display: none;">
+        <div class="login">
+            <header>
+                <div class="logo">
+                    <a routerlink="/" ng-reflect-router-link="/" href="/">
+                        <img alt="logo" height="60" width="200" class="ng-star-inserted" style="display: none">
+                    </a>
+                </div>
+            </header>
+            <main class="main-content">
+                <div class="account-forms">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
+                            <router-outlet></router-outlet>
+                            <ng-component _nghost-c1="" class="ng-tns-c1-0 ng-star-inserted">
+                                <div _ngcontent-c1="" class="container-fluid ng-trigger ng-trigger-routerTransition" style="margin-top: 0px; opacity: 1;">
+                                    <div _ngcontent-c1="" class="row">
+                                        <div _ngcontent-c1="" class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
+                                            <h1 _ngcontent-c1="" class="d-none d-md-block">Sperse Login</h1>
+                                            <h1 _ngcontent-c1="" class="d-md-none">Login</h1>
+                                            <form id="loginForm" class="login-form ng-pristine ng-invalid ng-touched" method="post" novalidate="" onsubmit="return authenticate()" onkeypress="inputChanged()" onchange="inputChanged()">
+                                                <div _ngcontent-c1="" class="form-group clearfix">
+                                                    <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-pristine ng-invalid ng-touched" autofocus="" autocomplete="off" name="userNameOrEmailAddress" required="" tabindex="1" type="text" ng-reflect-required="" ng-reflect-name="userNameOrEmailAddress" placeholder="Email address">
+                                                    <div _ngcontent-c1="" class="form-group clearfix">
+                                                        <div _ngcontent-c1="" class="mt-checkbox-list pull-right">
+                                                            <label _ngcontent-c1="" class="mt-checkbox mt-checkbox-outline">
+                                                                <input _ngcontent-c1="" class="form-control ng-untouched ng-pristine ng-valid" name="rememberMe" type="checkbox" value="true" ng-reflect-name="rememberMe" ng-reflect-model="false">Remember me <span _ngcontent-c1="" class="ng-tns-c1-0"></span></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div _ngcontent-c1="" class="form-group clearfix">
+                                                    <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-untouched ng-pristine ng-invalid" autocomplete="off" maxlength="32" name="password" required="" tabindex="2" type="password" ng-reflect-required="" ng-reflect-maxlength="32" ng-reflect-name="password" placeholder="Password">
+                                                    <div _ngcontent-c1="" class="form-group clearfix"><a _ngcontent-c1="" class="forget-password pull-right" id="forget-password" routerlink="/account/forgot-password" ng-reflect-router-link="/account/forgot-password" href="/account/forgot-password">Forgot password?</a></div>
+                                                </div>
+                                                <div _ngcontent-c1="" class="form-actions">
+                                                    <button  _ngcontent-c1="" class="submit" name="submit" type="submit" disabled=""> Login <img _ngcontent-c1="" class="pull-right" alt="right arrow" src="/assets/common/icons/arrow-right-long-icon.svg"></button>
+                                                </div>
+                                                <p _ngcontent-c1="" class="agree-rights">By continuing I agree to <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#terms" data-toggle="modal">Terms</a> &amp; <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#privacy" data-toggle="modal">Policies</a>.</p>
+                                            </form>
+                                            <div _ngcontent-c1="" class="create-account">
+                                                <p _ngcontent-c1="" class="ng-tns-c1-0 ng-star-inserted" style=""><a _ngcontent-c1="" class="uppercase" id="register-btn" routerlink="/account/select-edition" ng-reflect-router-link="/account/select-edition" href="/account/select-edition">New tenant</a><span _ngcontent-c1="" class="pipe-divider"> | </span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="privacy" role="dialog" tabindex="-1">
+                                        <div _ngcontent-c1="" class="modal-dialog" role="document">
+                                            <div _ngcontent-c1="" class="modal-content">
+                                                <div _ngcontent-c1="" class="modal-header">
+                                                    <h4 _ngcontent-c1="" class="modal-title">SPERSE PRIVACY POLICY</h4>
+                                                    <div _ngcontent-c1="" class="control-buttons">
+                                                        <a _ngcontent-c1="" class="download" href="https://testapi.sperse.com/docs/SpersePrivacyPolicy.pdf" target="_blank"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="download" src="assets/common/icons/download-icon.svg"></a>
+                                                        <button _ngcontent-c1="" class="print-this"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="print" src="assets/common/icons/print-icon.svg"></button>
+                                                    </div>
+                                                    <button _ngcontent-c1="" class="close" aria-label="Close" data-dismiss="modal" type="button"></button>
+                                                </div>
+                                                <div _ngcontent-c1="" class="modal-body print-this-section"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="terms" role="dialog" tabindex="-1">
+                                        <div _ngcontent-c1="" class="modal-dialog" role="document">
+                                            <div _ngcontent-c1="" class="modal-content">
+                                                <div _ngcontent-c1="" class="modal-header">
+                                                    <h4 _ngcontent-c1="" class="modal-title">SPERSE TERMS OF SERVICE</h4>
+                                                    <div _ngcontent-c1="" class="control-buttons">
+                                                        <a _ngcontent-c1="" class="download" href="https://testapi.sperse.com/docs/SperseTermsOfService.pdf" target="_blank"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="download" src="assets/common/icons/download-icon.svg"></a>
+                                                        <button _ngcontent-c1="" class="print-this"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="print" src="assets/common/icons/print-icon.svg"></button>
+                                                    </div>
+                                                    <button _ngcontent-c1="" class="close" aria-label="Close" data-dismiss="modal" type="button"></button>
+                                                </div>
+                                                <div _ngcontent-c1="" class="modal-body print-this-section"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-component>
+                        </div>
+                        <div class="col-md-6 col-sm-12 d-none d-md-block text-center slogan-side"><img alt="The digital brain of your business" class="img-responsive" src="assets/common/images/brain.svg" width="488">
+                            <h2 class="slogan">The digital brain of your business</h2>
+                            <p class="slogan-description">Augumented by Artificial Intelligence</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer>
+                <div class="copyright"> 2018 © Sperse Platform. </div>
+            </footer>
+        </div>
+    </div>
     <!-- Spinner -->
-    <div class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
+    <div id="loadSpinner" class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
+    <script src="assets/login/script.js"></script>
 </body>
 </html>
