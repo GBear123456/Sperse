@@ -52,7 +52,7 @@ export class StaticListComponent extends AppComponentBase {
 
     changeItems(selectedData = this.selectedItems[0]) {
         if (this.selectedKeys && this.selectedKeys.length) {
-            if (this.showConfirmation)
+            if (this.showConfirmation && this.checkPermissions())
                 this.message.confirm(
                     this.updateConfirmationMessage || this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                     this.updateConfirmationTitle || null,
