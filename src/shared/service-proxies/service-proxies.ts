@@ -624,6 +624,129 @@ export class AccountServiceProxy {
 }
 
 @Injectable()
+export class ActivityServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    get(id: number | null | undefined): Observable<ActivityDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/Get?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(<any>response_);
+                } catch (e) {
+                    return <Observable<ActivityDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ActivityDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<ActivityDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ActivityDto.fromJS(resultData200) : new ActivityDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ActivityDto>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    create(input: CreateActivityDto | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+}
+
+@Injectable()
 export class AuditLogServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -8906,6 +9029,62 @@ export class CustomersServiceProxy {
         }
         return _observableOf<CustomerFiltersInitialData>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getCustomerTypes(): Observable<CustomerTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetCustomerTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCustomerTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCustomerTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<CustomerTypeDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CustomerTypeDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCustomerTypes(response: HttpResponseBase): Observable<CustomerTypeDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CustomerTypeDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CustomerTypeDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -12732,7 +12911,7 @@ export class LeadServiceProxy {
      * @leadBusinessRequests (optional) 
      * @return Success
      */
-    submitLeadBusinessRequests(leadBusinessRequests: LeadBusinessInfoInput[] | null | undefined): Observable<LeadBusinessInfoOutput[]> {
+    submitLeadBusinessRequests(leadBusinessRequests: LeadBusinessInfoInput[] | null | undefined): Observable<ImportLeadOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadBusinessRequests";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12755,14 +12934,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processSubmitLeadBusinessRequests(<any>response_);
                 } catch (e) {
-                    return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(e);
+                    return <Observable<ImportLeadOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(response_);
+                return <Observable<ImportLeadOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitLeadBusinessRequests(response: HttpResponseBase): Observable<LeadBusinessInfoOutput[]> {
+    protected processSubmitLeadBusinessRequests(response: HttpResponseBase): Observable<ImportLeadOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12776,7 +12955,7 @@ export class LeadServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(LeadBusinessInfoOutput.fromJS(item));
+                    result200.push(ImportLeadOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -12785,14 +12964,14 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LeadBusinessInfoOutput[]>(<any>null);
+        return _observableOf<ImportLeadOutput[]>(<any>null);
     }
 
     /**
      * @input (optional) 
      * @return Success
      */
-    importLeads(input: ImportLeadsInput | null | undefined): Observable<LeadBusinessInfoOutput[]> {
+    importLeads(input: ImportLeadsInput | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/ImportLeads";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12815,14 +12994,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processImportLeads(<any>response_);
                 } catch (e) {
-                    return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(e);
+                    return <Observable<number>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(response_);
+                return <Observable<number>><any>_observableThrow(response_);
         }));
     }
 
-    protected processImportLeads(response: HttpResponseBase): Observable<LeadBusinessInfoOutput[]> {
+    protected processImportLeads(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12833,11 +13012,7 @@ export class LeadServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(LeadBusinessInfoOutput.fromJS(item));
-            }
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -12845,7 +13020,168 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LeadBusinessInfoOutput[]>(<any>null);
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    getImportStatus(id: number | null | undefined): Observable<GetImportStatusOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetImportStatus?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetImportStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetImportStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<GetImportStatusOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetImportStatusOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetImportStatus(response: HttpResponseBase): Observable<GetImportStatusOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetImportStatusOutput.fromJS(resultData200) : new GetImportStatusOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetImportStatusOutput>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    cancelImport(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/CancelImport?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelImport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelImport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelImport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    getImportFileUrl(id: string | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetImportFileUrl?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetImportFileUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetImportFileUrl(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetImportFileUrl(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
     }
 
     /**
@@ -23782,6 +24118,160 @@ export class SwitchToLinkedAccountOutput implements ISwitchToLinkedAccountOutput
 export interface ISwitchToLinkedAccountOutput {
     switchAccountToken: string | undefined;
     tenancyName: string | undefined;
+}
+
+export class ActivityDto implements IActivityDto {
+    id!: number | undefined;
+    type!: ActivityDtoType | undefined;
+    title!: string;
+    description!: string | undefined;
+    userId!: number;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    stageId!: number | undefined;
+    leadId!: number | undefined;
+    orderId!: number | undefined;
+    customerId!: number | undefined;
+
+    constructor(data?: IActivityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.leadId = 5;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.title = data["title"];
+            this.description = data["description"];
+            this.userId = data["userId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.stageId = data["stageId"];
+            this.leadId = data["leadId"] !== undefined ? data["leadId"] : 5;
+            this.orderId = data["orderId"];
+            this.customerId = data["customerId"];
+        }
+    }
+
+    static fromJS(data: any): ActivityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActivityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["userId"] = this.userId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["stageId"] = this.stageId;
+        data["leadId"] = this.leadId;
+        data["orderId"] = this.orderId;
+        data["customerId"] = this.customerId;
+        return data; 
+    }
+}
+
+export interface IActivityDto {
+    id: number | undefined;
+    type: ActivityDtoType | undefined;
+    title: string;
+    description: string | undefined;
+    userId: number;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    stageId: number | undefined;
+    leadId: number | undefined;
+    orderId: number | undefined;
+    customerId: number | undefined;
+}
+
+export class CreateActivityDto implements ICreateActivityDto {
+    type!: CreateActivityDtoType | undefined;
+    title!: string;
+    description!: string | undefined;
+    userId!: number;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    stageId!: number | undefined;
+    leadId!: number | undefined;
+    orderId!: number | undefined;
+    customerId!: number | undefined;
+
+    constructor(data?: ICreateActivityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.leadId = 5;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.type = data["type"];
+            this.title = data["title"];
+            this.description = data["description"];
+            this.userId = data["userId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.stageId = data["stageId"];
+            this.leadId = data["leadId"] !== undefined ? data["leadId"] : 5;
+            this.orderId = data["orderId"];
+            this.customerId = data["customerId"];
+        }
+    }
+
+    static fromJS(data: any): CreateActivityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateActivityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["description"] = this.description;
+        data["userId"] = this.userId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["stageId"] = this.stageId;
+        data["leadId"] = this.leadId;
+        data["orderId"] = this.orderId;
+        data["customerId"] = this.customerId;
+        return data; 
+    }
+}
+
+export interface ICreateActivityDto {
+    type: CreateActivityDtoType | undefined;
+    title: string;
+    description: string | undefined;
+    userId: number;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    stageId: number | undefined;
+    leadId: number | undefined;
+    orderId: number | undefined;
+    customerId: number | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -35143,6 +35633,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     lists!: CustomerListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
+    customerTypeId!: string | undefined;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -35202,6 +35693,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
+            this.customerTypeId = data["customerTypeId"];
         }
     }
 
@@ -35261,6 +35753,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
+        data["customerTypeId"] = this.customerTypeId;
         return data; 
     }
 }
@@ -35289,6 +35782,7 @@ export interface ICreateCustomerInput {
     lists: CustomerListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
+    customerTypeId: string | undefined;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -35827,6 +36321,46 @@ export class CustomerStarInfoDto implements ICustomerStarInfoDto {
 
 export interface ICustomerStarInfoDto {
     id: number | undefined;
+    name: string | undefined;
+}
+
+export class CustomerTypeDto implements ICustomerTypeDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ICustomerTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CustomerTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomerTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICustomerTypeDto {
+    id: string | undefined;
     name: string | undefined;
 }
 
@@ -39373,6 +39907,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     lists!: CustomerListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
+    customerTypeId!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -39433,6 +39968,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
+            this.customerTypeId = data["customerTypeId"];
         }
     }
 
@@ -39493,6 +40029,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
+        data["customerTypeId"] = this.customerTypeId;
         return data; 
     }
 }
@@ -39522,6 +40059,7 @@ export interface ICreateLeadInput {
     lists: CustomerListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
+    customerTypeId: string | undefined;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
@@ -40575,11 +41113,11 @@ export interface ILeadBusinessTeamContactInput {
     phoneNumber: string | undefined;
 }
 
-export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
+export class ImportLeadOutput implements IImportLeadOutput {
     leadName!: string | undefined;
     errorMessage!: string | undefined;
 
-    constructor(data?: ILeadBusinessInfoOutput) {
+    constructor(data?: IImportLeadOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -40595,9 +41133,9 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
         }
     }
 
-    static fromJS(data: any): LeadBusinessInfoOutput {
+    static fromJS(data: any): ImportLeadOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessInfoOutput();
+        let result = new ImportLeadOutput();
         result.init(data);
         return result;
     }
@@ -40610,7 +41148,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     }
 }
 
-export interface ILeadBusinessInfoOutput {
+export interface IImportLeadOutput {
     leadName: string | undefined;
     errorMessage: string | undefined;
 }
@@ -40624,6 +41162,10 @@ export class ImportLeadsInput implements IImportLeadsInput {
     starId!: number | undefined;
     leadStageId!: number | undefined;
     importType!: ImportLeadsInputImportType | undefined;
+    fileName!: string | undefined;
+    fileSize!: number | undefined;
+    fileContent!: string | undefined;
+    ingoreInvalidValues!: boolean | undefined;
 
     constructor(data?: IImportLeadsInput) {
         if (data) {
@@ -40656,6 +41198,10 @@ export class ImportLeadsInput implements IImportLeadsInput {
             this.starId = data["starId"];
             this.leadStageId = data["leadStageId"];
             this.importType = data["importType"];
+            this.fileName = data["fileName"];
+            this.fileSize = data["fileSize"];
+            this.fileContent = data["fileContent"];
+            this.ingoreInvalidValues = data["ingoreInvalidValues"];
         }
     }
 
@@ -40688,6 +41234,10 @@ export class ImportLeadsInput implements IImportLeadsInput {
         data["starId"] = this.starId;
         data["leadStageId"] = this.leadStageId;
         data["importType"] = this.importType;
+        data["fileName"] = this.fileName;
+        data["fileSize"] = this.fileSize;
+        data["fileContent"] = this.fileContent;
+        data["ingoreInvalidValues"] = this.ingoreInvalidValues;
         return data; 
     }
 }
@@ -40701,6 +41251,10 @@ export interface IImportLeadsInput {
     starId: number | undefined;
     leadStageId: number | undefined;
     importType: ImportLeadsInputImportType | undefined;
+    fileName: string | undefined;
+    fileSize: number | undefined;
+    fileContent: string | undefined;
+    ingoreInvalidValues: boolean | undefined;
 }
 
 export class ImportLeadInput implements IImportLeadInput {
@@ -40717,6 +41271,7 @@ export class ImportLeadInput implements IImportLeadInput {
     utmCampaign!: string | undefined;
     utmTerm!: string | undefined;
     utmContent!: string | undefined;
+    customerTypeId!: string | undefined;
 
     constructor(data?: IImportLeadInput) {
         if (data) {
@@ -40742,6 +41297,7 @@ export class ImportLeadInput implements IImportLeadInput {
             this.utmCampaign = data["utmCampaign"];
             this.utmTerm = data["utmTerm"];
             this.utmContent = data["utmContent"];
+            this.customerTypeId = data["customerTypeId"];
         }
     }
 
@@ -40767,6 +41323,7 @@ export class ImportLeadInput implements IImportLeadInput {
         data["utmCampaign"] = this.utmCampaign;
         data["utmTerm"] = this.utmTerm;
         data["utmContent"] = this.utmContent;
+        data["customerTypeId"] = this.customerTypeId;
         return data; 
     }
 }
@@ -40785,6 +41342,7 @@ export interface IImportLeadInput {
     utmCampaign: string | undefined;
     utmTerm: string | undefined;
     utmContent: string | undefined;
+    customerTypeId: string | undefined;
 }
 
 export class ImportLeadPersonalInput implements IImportLeadPersonalInput {
@@ -41141,6 +41699,54 @@ export interface IImportLeadAddressInput {
     zipCode: string | undefined;
     countryName: string | undefined;
     countryCode: string | undefined;
+}
+
+export class GetImportStatusOutput implements IGetImportStatusOutput {
+    statusId!: string | undefined;
+    totalCount!: number | undefined;
+    importedCount!: number | undefined;
+    failedCount!: number | undefined;
+
+    constructor(data?: IGetImportStatusOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.statusId = data["statusId"];
+            this.totalCount = data["totalCount"];
+            this.importedCount = data["importedCount"];
+            this.failedCount = data["failedCount"];
+        }
+    }
+
+    static fromJS(data: any): GetImportStatusOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetImportStatusOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["statusId"] = this.statusId;
+        data["totalCount"] = this.totalCount;
+        data["importedCount"] = this.importedCount;
+        data["failedCount"] = this.failedCount;
+        return data; 
+    }
+}
+
+export interface IGetImportStatusOutput {
+    statusId: string | undefined;
+    totalCount: number | undefined;
+    importedCount: number | undefined;
+    failedCount: number | undefined;
 }
 
 export class LeadFiltersInitialData implements ILeadFiltersInitialData {
@@ -51441,6 +52047,16 @@ export enum SendEmailActivationLinkInputTenantHostType {
     PlatformApi = "PlatformApi", 
     PlatformUi = "PlatformUi", 
     FundingUi = "FundingUi", 
+}
+
+export enum ActivityDtoType {
+    Task = "Task", 
+    Event = "Event", 
+}
+
+export enum CreateActivityDtoType {
+    Task = "Task", 
+    Event = "Event", 
 }
 
 export enum EntityChangeListDtoChangeType {
