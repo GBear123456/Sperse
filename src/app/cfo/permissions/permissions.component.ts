@@ -32,7 +32,7 @@ import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 export class PermissionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
-    allUsers: UserListDto[] = [];
+    users: UserListDto[] = [];
     showenUsersIds: number[] = [];
     bankAccountsUsers: BankAccountUsers[];
     syncAccounts: SyncAccountBankDto[];
@@ -105,10 +105,10 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const usersObservable = this.userServiceProxy.getUsers(
             false,
             undefined,
+            'Pages.CFO.MainInstanceAccess',
             undefined,
             undefined,
-            undefined,
-            undefined,
+            100,
             0
         );
         const bankAccountsObservable = this.bankAccountsServiceProxy.getBankAccounts(instanceType, this.instanceId, 'USD');
@@ -119,7 +119,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             usersPermissionsObservable
         ).subscribe(
             res => {
-                this.allUsers = res[0] && res[0].items ? res[0].items : null;
+                this.users = res[0] && res[0].items ? res[0].items : null;
                 this.syncAccounts = res[1];
                 this.bankAccountsUsers = res[2];
             },
@@ -163,9 +163,11 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 const account = bankAccountsUsers.find(account => account.bankAccountId === bankAccount.id);
                 if (account && account.userIds.length) {
                     account.userIds.forEach(userId => {
-                        accountPermission[userId] = true;
-                        if (this.showenUsersIds.indexOf(userId) === -1) {
-                            this.showenUsersIds.push(userId);
+                        if (this.users.find(user => user.id === userId)) {
+                            accountPermission[userId] = true;
+                            if (this.showenUsersIds.indexOf(userId) === -1) {
+                                this.showenUsersIds.push(userId);
+                            }
                         }
                     });
                 }
@@ -187,7 +189,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         /** Add addUser column (with add user button) */
         let addUserColumn = columns.find(column => column.dataField === this.columnsConfiguration['addUser'].dataField);
         const showenUsersColumnsAmount = columns.filter(column => column.visible && !isNaN(parseInt(column.dataField))).length;
-        this.showAddUserButton = showenUsersColumnsAmount !== this.allUsers.length;
+        this.showAddUserButton = showenUsersColumnsAmount !== this.users.length;
         const addUserColumnConfig = {
             ...this.columnsConfiguration['addUser'],
             ...{ visible: this.showAddUserButton }
@@ -202,7 +204,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     customizeUserHeader(columnHeader, headerInfo) {
-        let user = this.allUsers.find(user => user.id === +headerInfo.column.dataField);
+        let user = this.users.find(user => user.id === +headerInfo.column.dataField);
         columnHeader.insertAdjacentHTML('beforeEnd',
             `<div class="userFullName dx-datagrid-text-content dx-text-content-alignment-left">${user.userName}</div>
              <div class="userEmail">${user.emailAddress}</div>
@@ -297,7 +299,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
 
     showUsersPopup(e) {
         const config: any = {
-            data: { users: this.allUsers.filter(user => this.showenUsersIds.indexOf(user.id) === -1) },
+            data: { users: this.users.filter(user => this.showenUsersIds.indexOf(user.id) === -1) },
             width: '242px',
             height: '231px',
             position: {
