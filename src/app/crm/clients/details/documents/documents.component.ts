@@ -83,8 +83,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             {
                 text: this.l('Download'),
                 action: () => {
-                    this._documentService.getUrl(this.currentDocumentInfo.id).subscribe(url => {
-                        this.currentDocumentURL = url;
+                    this._documentService.getUrl(this.currentDocumentInfo.id).subscribe(urlInfo => {
+                        this.currentDocumentURL = urlInfo.url;
                         this.downloadDocument();
                         this.hideActionsMenu();
                     })
@@ -389,17 +389,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 });
                 break;
             case this.VIDEO_VIEWER:
-                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
-                    this.currentDocumentURL = url;
+                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                    this.currentDocumentURL = urlInfo.url;
                     this.finishLoading(true);
                     this.showViewerType = viewerType;
                     this.openDocumentMode = true;
                 });
                 break;
             default:
-                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
-                    this.currentDocumentURL = url;
-                    this.downloadFileBlob(url, (blob) => {
+                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                    this.currentDocumentURL = urlInfo.url;
+                    this.downloadFileBlob(urlInfo.url, (blob) => {
                         let reader = new FileReader();
                         reader.addEventListener('loadend', () => {
                             let content = StringHelper.getBase64(reader.result);
@@ -489,8 +489,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         if (this.currentDocumentURL)
             window.open(this.currentDocumentURL, '_self');
         else
-            this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
-                if (this.currentDocumentURL = url)
+            this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                if (this.currentDocumentURL = urlInfo.url)
                     this.downloadDocument();
             });
     }
