@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { DxProgressBarComponent } from 'devextreme-angular';
@@ -8,12 +8,14 @@ import { DxProgressBarComponent } from 'devextreme-angular';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
+import { ImportWizardService } from '../import-wizard.service';
+
 @Component({
     selector: 'import-progress-bar',
     templateUrl: 'import-progress-bar.component.html',
     styleUrls: ['import-progress-bar.component.less']
 })
-export class ImportProgressBarComponent extends AppComponentBase implements OnInit {
+export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxProgressBarComponent) progressComponent: DxProgressBarComponent;
              
     progress: number = 0;
@@ -21,12 +23,13 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnIn
   
     constructor(
         injector: Injector,
+        private _importService: ImportWizardService
     ) {
         super(injector);
-    }
 
-    ngOnInit() {
-         //!! check import progress
+        _importService.progressListen((progress) => {
+            this.progress = progress;
+        });
     }
 
     showStatus = () => {
@@ -34,6 +37,10 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnIn
     }
 
     cancelImport() {
-        //!!run corresponding api method
+        this._importService.cancelImport();
+    }
+
+    ngOnDestroy() {
+        this._importService.unsubscribe();
     }
 }

@@ -26,6 +26,8 @@ import {
     LeadServiceProxy, ImportLeadsInputImportType
 } from '@shared/service-proxies/service-proxies';
 
+import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
@@ -186,6 +188,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
+        private _importService: ImportWizardService,
         private _reuseService: RouteReuseStrategy,
         private _leadService: LeadServiceProxy,
         private _router: Router,
@@ -307,22 +310,26 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.l('LeadsImportComfirmation', [this.totalCount]),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.startLoading(true);
                     let leadsInput = this.createLeadsInput(data);
                     this._leadService.importLeads(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
-                        ).subscribe((res) => {
-                            res.forEach((reff) => {
-                                if (!reff.errorMessage)
-                                    this.importedCount++;
-                            });
-                            if (this.importedCount > 0) {
-                                this.wizard.showFinishStep();
-                                this.clearToolbarSelectedItems();
-                                (<any>this._reuseService).invalidate('leads');
-                            } else
-                                this.message.error(res[0].errorMessage);
+                        ).subscribe((importId) => { 
+                            if (importId && !isNaN(importId))
+                                this._importService.setupStatusCheck((callback) => {
+                                    this._leadService.getImportStatus(importId).subscribe((res) => {
+                                        let finished = false;
+                                        this.importedCount = res.importedCount;                                        
+                                        if (['A', 'C'].indexOf(res.statusId) >= 0) {
+                                            finished = true;
+                                            this.wizard.showFinishStep();
+                                            this.clearToolbarSelectedItems();
+                                            (<any>this._reuseService).invalidate('leads');
+                                        }                    
+                                        callback({progress: finished ? 100: 
+                                            Math.round((res.importedCount + res.failedCount) / res.totalCount * 100)});
+                                    })
+                                });
                         });
                 }
             }
@@ -331,6 +338,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     createLeadsInput(data: any[]): ImportLeadsInput {
         let result = ImportLeadsInput.fromJS({
+            fileName: this.wizard.fileName, 
+            fileSize: this.wizard.files[0].size, 
+            fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,

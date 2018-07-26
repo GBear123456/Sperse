@@ -1,4 +1,4 @@
-<div *ngIf="progress > 0" id="progressContainer" (mouseleave)="tooltipVisible = false">
+<div *ngIf="progress > 0 && progress < 100" id="progressContainer" (mouseleave)="tooltipVisible = false">
     <div class="loadindicator"></div>
     <dx-progress-bar
         [min]="0"

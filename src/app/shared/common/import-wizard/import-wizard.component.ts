@@ -75,6 +75,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     fileData: any;
     fileName = '';
     fileSize = '';
+    fileContent = '';
     fileHasHeader = false;
     fileHeaderWasGenerated = false;
 
@@ -397,7 +398,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     parse(content) {
-        this._parser.parse(content.trim(), {
+        this.fileContent = content.trim();
+        this._parser.parse(this.fileContent, {
             complete: (results) => {
                 if (results.errors.length)
                     this.message.error(this.l('IncorrectFileFormatError'));
