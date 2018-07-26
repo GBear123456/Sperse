@@ -1,7 +1,7 @@
 import { AppConsts } from '@shared/AppConsts';
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
@@ -87,7 +87,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
-            if (result) {                
+            if (result) {
                 if (dialogData.contactId) {
                     this.updateDataField(field, data, dialogData);
                 } else {

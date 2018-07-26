@@ -141,7 +141,7 @@
                    (city)='businessEntity.city=$event'
                    (state)='address.state=$event'
                    (postal_code)='businessEntity.zip=$event'
-                   ng2-google-place-autocomplete />
+                   angularGooglePlace />
             <span *ngIf="!googleAutoComplete" [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="emptyValue('address')">+</span>
             <span *ngIf="googleAutoComplete" [class]="address.address && 'clear-contact' || 'hidden'" (click)="emptyAddress()">+</span>
         </div>
@@ -173,7 +173,7 @@
             <label></label>
             <dx-text-box name="zip"
                          placeholder="{{l('BusinessEntity_Zip')}}"
-                         maxLength="5"
+                         maxLength="10"
                          (onKeyUp)="onKeyUp($event, 'zip')"
                          [width]="'360px'"
                          [(value)]="businessEntity.zip">

@@ -93,19 +93,16 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     activate() {
-        this.bankAccountSelector.handleSelectedBankAccounts();
+        this.bankAccountSelector.getBankAccounts();
         this.synchProgressComponent.requestSyncAjax();
     }
 
     openDialog() {
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';
-        this.dialogConfig.id = 'cfo-intro';
+        this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';
         this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
-
-        const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
-        dialogRef.afterClosed().subscribe(result => {
-            console.log(`Dialog result: ${result}`);
-        });
+        this.dialogConfig.data = { alreadyStarted: true };
+        this.dialog.open(CfoIntroComponent, this.dialogConfig);
     }
 }

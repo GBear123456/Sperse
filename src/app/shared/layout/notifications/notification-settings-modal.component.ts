@@ -1,9 +1,9 @@
-import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { NotificationServiceProxy, GetNotificationSettingsOutput, UpdateNotificationSettingsInput, NotificationSubscriptionDto } from '@shared/service-proxies/service-proxies';
-
+import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
+import { ModalDirective } from 'ngx-bootstrap';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'notificationSettingsModal',
@@ -50,7 +50,7 @@ export class NotificationSettingsModalComponent extends AppComponentBase {
 
         this.saving = true;
         this._notificationService.updateNotificationSettings(input)
-            .finally(() => this.saving = false)
+            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.close();
@@ -59,6 +59,7 @@ export class NotificationSettingsModalComponent extends AppComponentBase {
 
     close(): void {
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     private getSettings(callback: () => void) {

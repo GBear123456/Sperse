@@ -23,7 +23,13 @@
                 (onInitialized)="onInitialized($event)"
                 (onSelectionChanged)="onSelectionChange($event)">
                 <div *dxTemplate="let data of 'item'">
-                    <div class="item-row" data-id="{{data.id}}"><span>{{data.name}}</span><a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a></div>
+                    <div class="item-row" data-id="{{data.id}}">
+                        <div class="user">
+                            <img src="{{ getPhoto(data.profilePicture) }}" alt="Person Photo">
+                            <span class="item-name">{{data.name}}<span *ngIf="!data.isActive"> (inactive)</span></span>
+                        </div>                    
+                        <a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a>
+                    </div>
                 </div>
             </dx-list>
         </div>

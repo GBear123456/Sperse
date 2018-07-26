@@ -1,27 +1,40 @@
+/** Core imports */
 import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalModule } from 'ngx-bootstrap';
 
-import { UtilsModule } from '@shared/utils/utils.module';
-import { AbpModule } from '@abp/abp.module';
-import { CommonModule } from '@shared/common/common.module';
-
-import { MatFormFieldModule } from '@angular/material/form-field';
+/** Third party imports */
 import {
     MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule,
+    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule
 } from '@angular/material';
-
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule
+    DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
+    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule
 } from 'devextreme-angular';
 
+import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+import { TableModule } from 'primeng/table';
+import { PaginatorModule } from 'primeng/primeng';
+import { ModalModule } from 'ngx-bootstrap';
+import { FileDropModule } from 'ngx-file-drop';
+import { PapaParseModule } from 'ngx-papaparse';
+import { ImageCropperModule } from 'ng2-img-cropper';
+import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
+import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
+import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
+import { BankAccountsWidgetsModule } from '@shared/cfo/bank-accounts-widgets/bank-accounts-widgets.module';
+
+/** Application imports */
+import { AbpModule } from '@abp/abp.module';
+import { UtilsModule } from '@shared/utils/utils.module';
+import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
+import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ContactInfoPanelComponent } from './contact-info-panel/contact-info-panel.component';
 import { ToolBarComponent } from './toolbar/toolbar.component';
 import { HeadLineComponent } from './headline/headline.component';
@@ -35,14 +48,7 @@ import { PeriodComponent } from './period/period.component';
 import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
-import { DataTableModule } from 'primeng/primeng';
-import { PaginatorModule } from 'primeng/primeng';
-import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
-
-import { FileDropModule } from 'ngx-file-drop';
-import { PapaParseModule } from 'ngx-papaparse';
-import { ImageCropperModule } from 'ng2-img-cropper';
 
 @NgModule({
     imports: [
@@ -52,8 +58,9 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         UtilsModule,
         AbpModule,
         CommonModule,
-        DataTableModule,
+        TableModule,
         PaginatorModule,
+        BankAccountsWidgetsModule,
 
         MatTabsModule,
         MatInputModule,
@@ -81,7 +88,19 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         DxTextAreaModule,
         DxDataGridModule,
         DxContextMenuModule,
-        DxTreeViewModule
+        DxTreeViewModule,
+        DxRadioGroupModule,
+        DxCheckBoxModule,
+        DxTextBoxModule,
+        DxScrollViewModule,
+        DxDataGridModule,
+        DxSelectBoxModule,
+        MatDialogModule,
+        DxContextMenuModule,
+        DxTabsModule,
+        DxTagBoxModule,
+        DxPopupModule,
+        DxProgressBarModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -96,7 +115,11 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
-        UploadPhotoDialogComponent
+        ConfirmImportDialog,
+        UploadPhotoDialogComponent,
+        ConfirmDialogComponent,
+        ModalDialogComponent,
+        SelectionFilterComponent,
     ],
     exports: [
         TimeZoneComboComponent,
@@ -111,7 +134,11 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         InplaceSelectBoxComponent,
         PeriodComponent,
         ImportWizardComponent,
-        UploadPhotoDialogComponent
+        ConfirmImportDialog,
+        UploadPhotoDialogComponent,
+        ConfirmDialogComponent,
+        ModalDialogComponent,
+        SelectionFilterComponent,
     ],
     providers: [
         DateTimeService,
@@ -119,7 +146,10 @@ import { ImageCropperModule } from 'ng2-img-cropper';
         AppNavigationService
     ],
     entryComponents: [
-        UploadPhotoDialogComponent
+        ConfirmImportDialog,
+        UploadPhotoDialogComponent,
+        ConfirmDialogComponent,
+        ModalDialogComponent
     ]
 })
 export class AppCommonModule {

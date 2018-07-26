@@ -13,6 +13,7 @@ export class AppConsts {
     static remoteServiceBaseUrl: string;
     static remoteServiceBaseUrlFormat: string;
     static appBaseUrl: string;
+    static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
     static appBaseUrlFormat: string;
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
@@ -28,6 +29,12 @@ export class AppConsts {
         defaultLocalizationSourceName: 'Platform',
         CRMLocalizationSourceName: 'CRM',
         CFOLocalizationSourceName: 'CFO'
+    };
+
+    static readonly modules = {
+        platformModule: 'Platform',
+        CRMModule: 'CRM',
+        CFOModule: 'CFO'
     };
 
     static readonly authorization = {
@@ -64,13 +71,13 @@ export class AppConsts {
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/,
         email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")[a-zA-Z]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        phone: /[0-9]{10}/,
+        phone: /^[0-9]{10,11}$/,
         url: /(http:\/\/|https:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?/,
         fullName: /^[^\d]+$/
     };
 
     static readonly defaultCompanyName = 'Unknown company';
-    
+
     /* System Action IDs */
     static readonly SYS_ID_CRM_CANCEL_LEAD       = 'CRM.CancelLead';
     static readonly SYS_ID_CRM_UPDATE_LEAD_STAGE = 'CRM.UpdateLeadStage';

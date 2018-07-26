@@ -199,6 +199,18 @@ export class ToolBarComponent extends AppComponentBase {
         star: {
             hint: this.l('Star'),
             icon: this.getImgURI('star-icon')
+        },
+        close: {
+            hint: this.l('Close'),
+            icon: this.getImgURI('close')
+        },
+        rotateRight: {
+            hint: this.l('Rotate right'),
+            icon: this.getImgURI('rotate-right-icon')
+        },
+        rotateLeft: {
+            hint: this.l('Rotate left'),
+            icon: this.getImgURI('rotate-left-icon')
         }
     };
 
@@ -310,6 +322,7 @@ export class ToolBarComponent extends AppComponentBase {
                     items.push({
                         location: group.location,
                         disabled: item.disabled,
+                        visible: item.visible,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
                         text: !item.widget && item.text,
                         html: !item.widget && item.html,

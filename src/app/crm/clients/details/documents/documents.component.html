@@ -1,29 +1,60 @@
-<div class="wrapper">
+<div *ngIf="!openDocumentMode" class="wrapper">
+    <dx-tooltip width="130px">
+        <div *dxTemplate="let data of 'content'">
+            <div class="lists-tooltip-container">
+                <dx-list accessKey="actionsMenu" [dataSource]="actionMenuItems"
+                    (onItemClick)="onMenuItemClick($event)">
+                </dx-list>
+            </div>
+        </div>
+    </dx-tooltip>
     <div class="grid-view">
         <dx-data-grid id="gridContainer"
-                      height="100%"
-                      [dataSource]="dataSource"
-                      [allowColumnReordering]="true"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="true"
-                      [hoverStateEnabled]="true"
-                      [pager]="defaultGridPagerConfig"
-                      (onContentReady)="onContentReady($event)"
-                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                      (onToolbarPreparing)="onToolbarPreparing($event)">
+                    height="100%"
+                    [dataSource]="dataSource"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [hoverStateEnabled]="true"
+                    [pager]="defaultGridPagerConfig"
+                    (onCellClick)="onCellClick($event)"
+                    (onContentReady)="onContentReady()"
+                    (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                    (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
-            <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
-
             <dxi-column [width]="'40px'" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
-            <dxi-column dataField="size" caption="{{l('DocumentSize')}}"></dxi-column>
-            <dxi-column dataField="dateTime" caption="{{l('Date')}}" cssClass="tabular" [calculateCellValue]="calculateDateCellValue"></dxi-column>
-            <dxi-column dataField="received" caption="{{l('DocumentReceived')}}"></dxi-column>
-            <dxi-column dataField="checkList" caption="{{l('DocumentCheckList')}}"></dxi-column>
+            <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
+            <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
+            <dxi-column dataField="fileName" caption="{{l('DocumentReceived')}}"></dxi-column>
+            <dxi-column dataField="typeName" caption="{{l('DocumentType')}}" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
 
+            <dxi-column
+                alignment="center"
+                width="90px"
+                cellTemplate="actionsCellTemplate"
+                headerCellTemplate="actionsCellTemplate">
+            </dxi-column>
+
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: formatting.dateTime}}
+            </div>
             <div *dxTemplate="let data of 'title'">
                 <h2 class="title">{{l('Documents')}}</h2>
+            </div>
+            <div class="document-type" *dxTemplate="let data of 'typeCell'">
+                <p *ngIf="data.data.id != clickedCellKey && data.value">{{ data.value }}</p>
+                <p class="choose-document-type" *ngIf="data.data.id != clickedCellKey && !data.value">{{ l('ChooseDocumentType') }}</p>
+                <span *ngIf="data.data.id == clickedCellKey">
+                    <crm-document-types-list  #documentTypeslist
+                        [selectedItem]="data.data.typeId"
+                        [documentTypes]="documentTypes"
+                        (onItemSelected)="onDocumentTypeSelected(documentTypeslist.selectedDocumentTypeId, data.data)">
+                    </crm-document-types-list>
+                </span>
             </div>
 
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
@@ -35,12 +66,32 @@
     </div>
     <div class="drop-down">
         <h1>{{l('DropYourFile')}}</h1>
-        <file-drop 
+        <file-drop
             (onFileDrop)="fileDropped($event)">
             <p>{{l('DragAndDrop')}}</p>
         </file-drop>
-        <p class="alter-text">or <a href="javascript:void(0);"><input name="browseFile" type="file" (change)="fileSelected($event)">{{l('SelectFileFrom')}}</a></p>
+        <p class="alter-text">or <a href="javascript:void(0);" (click)="showUploadDocumentDialog($event)">{{l('SelectFileFrom')}}</a></p>
         <div class="file-container">
         </div>
     </div>
+</div>
+<div *ngIf="openDocumentMode" class="documentView">
+    <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
+        <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
+        <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
+    </form>
+    <span *ngIf="showViewerType == WOPI_VIEWER" id="frameholder" class="wopi-frame-holder"></span>
+
+    <app-image-viewer *ngIf="showViewerType == IMAGE_VIEWER"
+        [images]="[previewContent]"
+        [idContainer]="'imageViewer'"
+        [loadOnInit]="true">
+    </app-image-viewer>
+    <textarea *ngIf="showViewerType == TEXT_VIEWER" readonly>{{previewContent}}</textarea>
+
+    <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
+        <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
+            <source src="{{currentDocumentURL}}">
+        </video>
+    </vg-player>
 </div>

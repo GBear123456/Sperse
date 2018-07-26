@@ -20,6 +20,7 @@ import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.comp
 
 import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxRadioGroupModule,
     DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule, DxRangeSliderModule } from 'devextreme-angular';
+import { BankAccountsWidgetsModule } from 'shared/cfo/bank-accounts-widgets/bank-accounts-widgets.module';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 
@@ -28,6 +29,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         ngCommon.CommonModule,
         CommonModule,
         FormsModule,
+        BankAccountsWidgetsModule,
 
         DxCheckBoxModule,
         DxSelectBoxModule,
@@ -78,6 +80,6 @@ export class FiltersModule {
             providers: [
                 FiltersService
             ]
-        }
+        };
     }
 }

@@ -6,6 +6,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AssignCustomerInput, AssignCustomersInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-user-assignment-list',
@@ -39,6 +40,27 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
+    private moveSelectedItemsToTop() {
+        let index = 0;
+        if (!this.listComponent || !this.selectedKeys || !this.selectedKeys.length)
+            return;
+
+        let items = this.listComponent.getDataSource().items();
+        if(items.some((el, i, a) => {
+            if (index > 0 && el.id == this.selectedItemKey)
+                return true;
+            index++;
+        }))
+            this.listComponent.reorderItem(index, 0);
+    }
+
+    private disableInactiveUsers() {
+        this.list.forEach(el => {
+            if (!el.isActive)
+                el.disabled = true;
+        });
+    }
+
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.highlightSelectedFilters();
@@ -46,6 +68,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     apply(selectedKeys = undefined) {
         if (this.listComponent) {
+            this.selectedItemKeys = this.list.map((item, index) => {
+                return this.listComponent.isItemSelected(item) && item.id;
+            }).filter(Boolean);
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
@@ -72,9 +97,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
                 customerIds: this.selectedKeys,
                 userId: this.selectedItemKey
-            })).finally(() => {
+            })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
-            }).subscribe((result) => {
+            })).subscribe((result) => {
                 this.notify.success(this.l('UserAssigned'));
             });
         else
@@ -82,6 +107,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                 customerId: this.selectedKeys[0],
                 userId: this.selectedItemKey
             })).subscribe((result) => {
+                this.moveSelectedItemsToTop();
                 this.notify.success(this.l('UserAssigned'));
             });
     }
@@ -96,7 +122,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
-        this._userAssignmentService.getUsers().subscribe((result) => {
+        this._userAssignmentService.getUsers(true).subscribe((result) => {
             this.list = result;
         });
     }
@@ -145,6 +171,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     onContentReady($event) {
         this.highlightSelectedFilters();
+        this.moveSelectedItemsToTop();
+        this.disableInactiveUsers();
     }
 
     onSelectionChange(event) {

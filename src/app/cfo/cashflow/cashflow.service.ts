@@ -4,7 +4,7 @@ import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import { BankAccountDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class CashflowService {

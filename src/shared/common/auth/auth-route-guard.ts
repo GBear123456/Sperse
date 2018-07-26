@@ -1,16 +1,15 @@
-import { Injectable } from '@angular/core';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { AppSessionService } from '../session/app-session.service';
+import { Injectable } from '@angular/core';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-
 import {
     CanActivate, Router,
     ActivatedRouteSnapshot,
     RouterStateSnapshot,
     CanActivateChild
-    } from '@angular/router';
+} from '@angular/router';
 import { AppConsts } from 'shared/AppConsts';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Injectable()
 export class AppRouteGuard implements CanActivate, CanActivateChild {
@@ -23,6 +22,11 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+
+        if (state && UrlHelper.isInstallUrl(state.url)) {
+            return true;
+        }
+
         if (!this._sessionService.user) {
             this._router.navigate(['/account/login']);
             return false;
@@ -38,7 +42,11 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return true;
         }
 
-        this._router.navigate([this.selectBestRoute()]);
+        if (route.data && route.data['permission'] && route.data['permission'] === 'Pages.Detect.Route')
+            this._router.navigate([this.selectBestRoute()]);
+        else
+            this._router.navigate(['/app/access-denied']);
+
         return false;
     }
 
@@ -47,18 +55,14 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        if (!this._sessionService.user) {
-            return '/account/login';
-        }
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT && this._feature.isEnabled('CFO')) {
+            if (AppConsts.isMobile) {
+                return 'app/cfo';
+            }
 
-        if (AppConsts.isMobile) {
-            return 'app/cfo';
-        }
+            if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
 
-        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-            if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess') && this._feature.isEnabled('CFO')) {
-
-                if (this._permissionChecker.isGranted('Pages.CFO.BusinessAccess'))
+                if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
                     return '/app/cfo/main/';
 
                 if (this._feature.isEnabled('CFO.Partner'))
@@ -66,28 +70,30 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             }
         }
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
-            return '/app/admin/hostDashboard';
-        }
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('Admin')) {
+            if (this._permissionChecker.isGranted('Pages.Tenants')) {
+                return '/app/admin/tenants';
+            }
 
-        if (this._permissionChecker.isGranted('Pages.Administration.Dashboard')) {
+            if (this._permissionChecker.isGranted('Pages.Administration.Host.Dashboard')) {
+                return '/app/admin/hostDashboard';
+            }
+        }
+        
+        if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('CRM'))
+            && this._permissionChecker.isGranted('Pages.CRM')) {
             return '/app/crm/dashboard';
         }
 
-        if (this._permissionChecker.isGranted('Pages.Tenants')) {
-            return '/app/crm/tenants';
-        }
-
-        if (this._permissionChecker.isGranted('Pages.Administration.Users')) {
+        if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST ||  this._feature.isEnabled('Admin'))
+            && this._permissionChecker.isGranted('Pages.Administration.Users')) {
             return '/app/admin/users';
-        }
-
-        if (this._permissionChecker.isGranted('Pages.CRM')) {
-            return '/app/crm/clients';
         }
 
         if (this._feature.isEnabled('Notification')) {
             return '/app/notifications';
         }
+
+        return '/app/access-denied';
     }
 }

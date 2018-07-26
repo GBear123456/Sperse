@@ -1,18 +1,19 @@
 import { Injector } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
+import { Subscription, Subject } from 'rxjs';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 import * as _ from 'underscore';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
-export abstract class AppServiceBase{
+export abstract class AppServiceBase {
     private readonly MODULE_DEFAULT: string;
 
     private _config: Subject<Object>;
     private _subscribers: Array<Subscription> = [];
     private _modules: Array<string>;
     private _configs: { [id: string]: any; };
-    feature: FeatureCheckerService;
+    _featureChecker: FeatureCheckerService;
+    _permissionChecker: PermissionCheckerService;
 
     public params: any;
 
@@ -22,7 +23,8 @@ export abstract class AppServiceBase{
         moduleNames: Array<string>,
         configs: { [id: string]: any; }
     ) {
-        this.feature = _injector.get(FeatureCheckerService);
+        this._featureChecker = _injector.get(FeatureCheckerService);
+        this._permissionChecker = _injector.get(PermissionCheckerService);
         this._config = new Subject<Object>();
         this.MODULE_DEFAULT = defaultModuleName;
         this._modules = moduleNames;
@@ -36,7 +38,7 @@ export abstract class AppServiceBase{
     getModule() {
         let module = (/\/app\/(\w+)\//.exec(location.pathname)
             || [this.MODULE_DEFAULT]).pop().toLowerCase();
-        return this.isModuleActive(module) ? module : this.MODULE_DEFAULT;
+        return this.isModuleActive(module) ? module : this.getDefaultModule();
     }
 
     getModuleParams() {
@@ -45,13 +47,26 @@ export abstract class AppServiceBase{
         };
     }
 
+    getDefaultModule() {
+        let defaultModule = '';
+        this._modules.forEach((module, i) => {
+            if (!defaultModule && this.isModuleActive(module)) {
+                defaultModule = module;
+            }
+        });
+        return defaultModule;
+    }
+
     getModuleConfig(name: string) {
         return this._configs[name.toLowerCase()];
     }
 
     isModuleActive(name: string) {
         let config = this._configs[name.toLowerCase()];
-        return (config && typeof (config.navigation) == 'object' && (!abp.session.tenantId || !config.requiredFeature || this.feature.isEnabled(config.requiredFeature)));
+        return (config && typeof (config.navigation) == 'object'
+            && (!abp.session.tenantId || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
+            && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
+            );
     }
 
     initModule() {

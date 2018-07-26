@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChatFriendDto } from './ChatFriendDto';
 import { AppConsts } from '@shared/AppConsts';
 import { UserHelper } from '../../helpers/UserHelper';

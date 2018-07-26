@@ -1,20 +1,19 @@
-import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef, OnDestroy } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput, 
-    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, CountryServiceProxy, CountryStateDto, CountryDto, SimilarCustomerOutput, ContactPhotoInput, 
+import { Component, OnInit, ViewChild, Injector, OnDestroy } from '@angular/core';
+import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
+    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
+    ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput} from '@shared/service-proxies/service-proxies';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactTypes } from '@shared/AppEnums';
-import { DxTextBoxComponent, DxContextMenuComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { DxContextMenuComponent } from 'devextreme-angular';
+import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material';
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
+import { RatingComponent } from '../rating/rating.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
@@ -23,6 +22,8 @@ import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
+import { finalize } from 'rxjs/operators';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -30,6 +31,7 @@ import { ValidationHelper } from '@shared/helpers/ValidationHelper';
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
@@ -46,7 +48,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private readonly SAVE_OPTION_DEFAULT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersTimeout: any;
-    
+
     saveButtonId: string = 'saveClientOptions';
     saveContextMenuItems = [];
 
@@ -95,21 +97,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     addButtonVisible = {
         personal: {},
-        business: {}        
+        business: {}
     };
     clearButtonVisible = {
         personal: {},
-        business: {}        
+        business: {}
     }
 
     contacts: any = {
         emails: {
             personal: [],
-            business: []  
+            business: []
         },
         phones: {
             personal: [],
-            business: []  
+            business: []
         },
         addresses: {
             personal: {},
@@ -145,7 +147,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this._cacheService = this._cacheService.useStorage(0);
 
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false}, 
+            {text: this.l('SaveAndAddNew'), selected: false},
             {text: this.l('SaveAndExtend'), selected: false},
             {text: this.l('SaveAndClose'), selected: false}
         ];
@@ -168,10 +170,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                             accessKey: 'ClientAssign'
                         }
                     },
-                    this.data.isInLeadMode ? { 
+                    this.data.isInLeadMode ? {
                         widget: 'dxDropDownMenu',
                         disabled: true,
-                        name: 'stage', 
+                        name: 'stage',
                         options: {
                             hint: this.l('Stage'),
                             items: []
@@ -206,6 +208,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         options: {
                             accessKey: 'ClientTags'
                         }
+                    },
+                    {
+                        name: 'rating',
+                        action: this.toggleRating.bind(this),
+                        options: {
+                            accessKey: 'ClientRating'
+                        }
                     }
                 ]
             },
@@ -233,7 +242,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     updateSaveOption(option) {
         this.data.buttons[0].title = option.text;
-        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY), 
+        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
@@ -266,6 +275,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         let assignedUserId = this.userAssignmentComponent.selectedItemKey;
         let lists = this.listsComponent.selectedItems;
         let tags = this.tagsComponent.selectedItems;
+        let ratingId = this.ratingComponent.ratingValue;
         let dataObj = {
             firstName: this.person.firstName,
             middleName: this.person.middleName,
@@ -283,25 +293,26 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             organizationPhoneNumbers: this.getPhoneContactInput(ContactTypes.Business),
             organizationAddress: this.getAddressContactInput(ContactTypes.Business),
             photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
-                originalImage: this.getBase64(this.photoOriginalData),
-                thumbnail: this.getBase64(this.photoThumbnailData)
+                originalImage: StringHelper.getBase64(this.photoOriginalData),
+                thumbnail: StringHelper.getBase64(this.photoThumbnailData)
             }) : null,
             note: this.notes[ContactTypes.Personal],
             organizationNote: this.notes[ContactTypes.Business],
             assignedUserId: assignedUserId,
             lists: lists,
-            tags: tags
+            tags: tags,
+            ratingId: ratingId
         };
-        
+
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
-                .finally(() => { saveButton.disabled = false; })
+                .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.customerId, result.id));
         else
             this._customersService.createCustomer(CreateCustomerInput.fromJS(dataObj))
-                .finally(() => { saveButton.disabled = false; })
+                .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
@@ -313,12 +324,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(customerId, leadId);
             return this.data.refreshParent(true);
-        } else 
+        } else
             this.close();
         this.data.refreshParent();
     }
 
-    save(event?): void {     
+    save(event?): void {
         if (event && event.offsetX > 195)
             return this.saveContextComponent
                 .instance.option('visible', true);
@@ -343,7 +354,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
         if (!this.validateBusinessTab())
             return ;
-    
+
         this.createEntity();
     }
 
@@ -354,9 +365,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     validateBusinessTab() {
-        if ((this.contacts.emails.business.length 
-            || this.contacts.phones.business.length 
-            || this.contacts.addresses.business.streetAddress 
+        if ((this.contacts.emails.business.length
+            || this.contacts.phones.business.length
+            || this.contacts.addresses.business.streetAddress
             || this.contacts.addresses.business.streetNumber
           ) && !this.company
         )
@@ -366,16 +377,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     checkAddContactByField(field) {
-        _.mapObject(this.addButtonVisible, 
+        _.mapObject(this.addButtonVisible,
             (obj, type) => {
               obj[field] && this.addContact(field, type);
             }
         );
-    }
-
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
     }
 
     getEmailContactInput(type) {
@@ -394,7 +400,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 phoneNumber: val.number,
                 phoneExtension: val.ext,
                 isActive: true,
-                usageTypeId: val.type      
+                usageTypeId: val.type
             } as CreateContactPhoneInput;
         });
     }
@@ -462,6 +468,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.listsComponent.toggle();
     }
 
+    toggleRating() {
+        this.ratingComponent.toggle();
+    }
+
     toggleUserAssignmen() {
         this.userAssignmentComponent.toggle();
     }
@@ -495,7 +505,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         _.mapObject(this.emails, (value, type) => {
             value && emails.push(value);
         });
-        
+
         return emails;
     }
 
@@ -508,7 +518,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         _.mapObject(this.phones, (value, type) => {
             value && phones.push(value);
         });
-        
+
         return phones;
     }
 
@@ -614,7 +624,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 email: this.emails[type]
             };
         else if (field == 'phones') {
-            value = { 
+            value = {
                 type: this.phoneType[type],
                 number: this.phones[type],
                 ext: this.phoneExtension[type]
@@ -622,7 +632,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.phoneExtension[type] = undefined;
         }
 
-        this.resetComponent(this[field + this.capitalize(type)]);        
+        this.resetComponent(this[field + this.capitalize(type)]);
         this.addButtonVisible[type][field] = false;
 
         return value;
@@ -659,9 +669,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.validateEmailAddress(value): this.validatePhoneNumber(value);
 
         data[type] = value;
-        
+
         this.checkSimilarCustomers();
-        this.clearButtonVisible[type][field] = value 
+        this.clearButtonVisible[type][field] = value
             && !this.addButtonVisible[type][field];
     }
 

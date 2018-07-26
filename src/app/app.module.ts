@@ -1,19 +1,24 @@
+/** Core imports */
 import * as ngCommon from '@angular/common';
 import {NgModule} from '@angular/core';
 
-import {LayoutModule} from './shared/layout/layout.module';
-import {AppCommonModule} from './shared/common/app-common.module';
-import {AppRoutingModule} from './app-routing.module';
-
-import {AppComponent} from './app.component';
-import {AppService} from './app.service';
-
-import {ImpersonationService} from '@admin/users/impersonation.service';
-
+/** Third party imports */
 import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';
 import {CacheService} from 'ng2-cache-service';
 import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
+
+/** Application imports */
+import {ImpersonationService} from '@admin/users/impersonation.service';
+import {AppComponent} from './app.component';
+import {AppService} from './app.service';
+import {LayoutModule} from './shared/layout/layout.module';
+import {AppCommonModule} from './shared/common/app-common.module';
+import {AppRoutingModule} from './app-routing.module';
+import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
+import { FiltersModule } from '@shared/filters/filters.module';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { InstanceServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -25,14 +30,16 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        AccessDeniedComponent
     ],
     imports: [
         LayoutModule,
         AppCommonModule.forRoot(),
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,
-        AppRoutingModule
+        AppRoutingModule,
+        FiltersModule.forRoot()
     ],
     providers: [
         AppService,
@@ -42,7 +49,10 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
             useClass: CacheMemoryStorage
         },
         ImpersonationService,
-        ngxZendeskWebwidgetService
+        ngxZendeskWebwidgetService,
+        InstanceServiceProxy,
+        CFOService,
+        ContactServiceProxy,
     ]
 })
 export class AppModule {}

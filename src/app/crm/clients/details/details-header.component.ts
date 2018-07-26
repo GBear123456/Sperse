@@ -7,24 +7,25 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { CustomerInfoDto, UserServiceProxy, ActivateUserForContactInput, InstanceServiceProxy, CreateContactPhotoInput, 
-    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, SetupInput, TenantHostType, 
+import { CustomerInfoDto, UserServiceProxy, InstanceServiceProxy, CreateContactPhotoInput,
+    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { ClientService } from '@app/crm/clients/clients.service';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [UserServiceProxy, InstanceServiceProxy, ClientService, ContactPhotoServiceProxy]
+    providers: [UserServiceProxy, ClientService, ContactPhotoServiceProxy]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input()
     data: CustomerInfoDto;
-    canSendVerificationRequest: boolean = false;
+    canSendVerificationRequest = false;
 
     person = {
         id: 1,
@@ -43,8 +44,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private userServiceProxy: UserServiceProxy,
-        private instanceServiceProxy: InstanceServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
@@ -99,9 +98,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
-                let base64OrigImage = this.getBase64(result.origImage),
-                    base64ThumbImage = this.getBase64(result.thumImage),
-                    dataField = (isCompany ? 'organization': 'primary') + 'ContactInfo';
+                let base64OrigImage = StringHelper.getBase64(result.origImage),
+                    base64ThumbImage = StringHelper.getBase64(result.thumImage),
+                    dataField = (isCompany ? 'organization' : 'primary') + 'ContactInfo';
                 this.data[dataField].primaryPhoto = ContactPhotoDto.fromJS({
                     original: base64OrigImage,
                     thumbnail: base64ThumbImage
@@ -118,11 +117,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
-    }
-
     getNameInplaceEditData(field = 'primaryContactInfo') {
         let contactInfo = this.data && this.data[field];
         if (contactInfo)
@@ -134,7 +128,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
                 ],
                 isEditDialogEnabled: true,
-                lEntityName: "Name",
+                lEntityName: 'Name',
                 lEditPlaceholder: this.l('ClientNamePlaceholder')
             };
     }
@@ -145,8 +139,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             data: this.data.primaryContactInfo,
             hasBackdrop: false,
             position: this.getDialogPossition(event, 200)
-        })
-        event.stopPropagation();        
+        });
+        event.stopPropagation();
     }
 
     updateCompanyName(value) {
@@ -166,10 +160,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             return;
 
         this.data.primaryContactInfo.fullName = value;
-        
-        var person = this.data.primaryContactInfo.person;
+
+        let person = this.data.primaryContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
-        
+
         this.personContactServiceProxy.updatePersonInfo(
             UpdatePersonInfoInput.fromJS(
                 _.extend({id:  person.contactId},  person))

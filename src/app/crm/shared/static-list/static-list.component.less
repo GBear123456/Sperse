@@ -1,14 +1,14 @@
 .lists-tooltip-container {
     font-size: 15px;
     overflow: hidden;
-    
+
     .title {
         float: left;
-        font-size: 18px;        
+        font-size: 18px;
         font-weight: 500;
         padding-top: 5px;
     }
-   
+
     .filter-apply, .filter-clear {
         cursor: pointer;
         font-size: 14px;
@@ -17,7 +17,7 @@
         color: #00AEEF;
         padding: 10px 5px;
         float: right;
-        
+
         &:hover {
             color: lighten(#00AEEF, 20%);
         }
@@ -25,37 +25,58 @@
         &.disabled {
             color: #999;
             cursor: unset;
-            pointer-events: none; 
+            pointer-events: none;
         }
-    }        
+    }
 
-    /deep/ .dx-widget {
-       .dx-placeholder {
+    /deep/ dx-list {
+        &.highlightSelected .dx-item.dx-list-item-selected {
+            background-color: #effafe;
+        }
+
+        .dx-list-item {
+            &.dx-state-hover {
+                background-color: #f5f5f5;
+            }
+
+            &.filtered {
+                background-color: #effafe!important;
+            }
+
+            .dx-list-item-before-bag.dx-list-select-radiobutton-container {
+                display: none;
+            }
+
+            .dx-state-focused {
+                background-color: #FFF;
+                color: #333;
+            }
+        }
+
+        &.unclicked .dx-list-item {
+            background-color: transparent;
+            cursor: default;
+            colort: #333
+        }
+
+        .dx-placeholder {
             font-weight: 400;
         }
-        .dx-item-content {  
+        .dx-item-content {
             text-align: left;
         }
         .dx-icon-clear {
             right: 0px;
         }
 
-        .dx-list-item.filtered {
-            background-color: #effafe!important;
-        }
-
-        .dx-list-item.dx-state-focused {
-            background-color: #FFF;
-            color: #333;
-        }
-
         .item-row {
             display: flex;
-            justify-content: space-between;            
+            justify-content: space-between;
 
             a.dx-link-filter {
                 width: 30px;
                 background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+                cursor: pointer;
             }
 
             &.new,
@@ -112,4 +133,5 @@
             }
         }
     }
+
 }

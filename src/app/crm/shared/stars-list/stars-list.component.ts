@@ -1,5 +1,7 @@
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 
+import { finalize } from 'rxjs/operators';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -72,9 +74,9 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             this._starsService.markCustomers(MarkCustomersInput.fromJS({
                 customerIds: this.selectedKeys,
                 starId: this.selectedItemKey
-            })).finally(() => {
+            })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
-            }).subscribe((result) => {
+            })).subscribe((result) => {
                 this.notify.success(this.l('CustomersMarked'));
             });
         else

@@ -1,7 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
-
+import { Subscription, Subject } from 'rxjs';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 
 @Injectable()
@@ -12,22 +10,22 @@ export class DashboardWidgetsService  {
 
     totalsDataFields = [
         {
-            title: 'Sales', 
-            color: '#8484ea', 
-            name: 'totalOrderAmount', 
-            type: 'currency', 
+            title: 'Sales',
+            color: '#8484ea',
+            name: 'totalOrderAmount',
+            type: 'currency',
             percent:  '0%'
         }, {
-            title: 'Leads', 
-            color: '#54e4c9', 
-            name: 'totalLeadCount', 
-            type: 'number', 
+            title: 'Leads',
+            color: '#54e4c9',
+            name: 'totalLeadCount',
+            type: 'number',
             percent: '0%'
        }, {
-           title: 'Clients', 
-           color: '#5baae0', 
-           name: 'totalClientCount', 
-           type: 'number', 
+           title: 'Clients',
+           color: '#5baae0',
+           name: 'totalClientCount',
+           type: 'number',
            percent: '0%'
        }];
 
@@ -50,8 +48,8 @@ export class DashboardWidgetsService  {
             period && period.from, period && period.to)
                 .subscribe(result => {
                     this._totalsData.next(result);
-                }       
-       );         
+                }
+       );
     }
 
     subscribeTotalsData(callback: (period: Object) => any) {
@@ -61,7 +59,7 @@ export class DashboardWidgetsService  {
     }
 
     getPercentage(value, total) {
-        return (total ? Math.round(value / total * 100): 0)  + '%';
+        return (total ? Math.round(value / total * 100) : 0)  + '%';
     }
 
     unsubscribe() {
@@ -69,5 +67,5 @@ export class DashboardWidgetsService  {
             return void (sub.unsubscribe());
         });
         this._subscribers.length = 0;
-    }    
+    }
 }

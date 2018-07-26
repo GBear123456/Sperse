@@ -9,7 +9,7 @@
         target="#{{saveButtonId}}">
     </dx-context-menu>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <mat-sidenav class="main_sidenav" mode="side" align="end" opened="true">
+    <mat-sidenav class="main_sidenav" mode="side" position="end" opened="true">
       <mat-tab-group>
         <mat-tab label="{{l('UserInformations') | uppercase}}">
           <div class="tab-content">
@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="user-options-delimiter"></div>
-                    
+
                 <div class="m-checkbox-list">
                     <label for="EditUser_SetRandomPassword" class="m-checkbox">
                         <input id="EditUser_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">
@@ -106,7 +106,7 @@
                         <span></span>
                     </label>
                 </div>
-              </form>                           
+              </form>
           </div>
         </mat-tab>
         <mat-tab label="{{l('Roles') | uppercase}} {{'(' + getAssignedRoleCount() + ')'}}">
@@ -122,7 +122,7 @@
             <div class="tab-content">
                 <organization-unit-tree #organizationUnitTree></organization-unit-tree>
             </div>
-        </mat-tab>        
+        </mat-tab>
       </mat-tab-group>
     </mat-sidenav>
 </modal-dialog>

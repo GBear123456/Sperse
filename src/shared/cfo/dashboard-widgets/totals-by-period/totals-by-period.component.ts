@@ -6,9 +6,7 @@ import {
     GroupBy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
-import * as moment from 'moment';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/scan';
+import { mergeMap, scan } from 'rxjs/operators';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -55,23 +53,34 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 this.endDate,
                 this.selectedPeriod
             )
-                .mergeMap(x => x)
-                .scan((prevStatsItem, currentStatsItem) => {
-                    let credit = currentStatsItem.credit + prevStatsItem.credit;
-                    let debit = currentStatsItem.debit + prevStatsItem.debit;
-                    let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
-                    let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
-                    return {
-                        'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
-                        'endingBalance': currentStatsItem.endingBalance,
-                        'credit': credit,
-                        'debit': debit,
-                        'adjustments': adjustments,
-                        'startingBalanceAdjustments': startingBalanceAdjustments,
-                        'netChange': credit - Math.abs(debit),
-                        'date': currentStatsItem.date
-                    };
-                }, { 'credit': 0, 'debit': 0, 'netChange': 0, 'adjustments': 0, 'startingBalanceAdjustments': 0 })
+                .pipe(
+                    mergeMap(x => x),
+                    scan((prevStatsItem, currentStatsItem: any) => {
+                        let credit = currentStatsItem.credit + prevStatsItem.credit;
+                        let debit = currentStatsItem.debit + prevStatsItem.debit;
+                        let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                        let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
+                        return {
+                            'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                            'endingBalance': currentStatsItem.endingBalance,
+                            'credit': credit,
+                            'debit': debit,
+                            'adjustments': adjustments,
+                            'startingBalanceAdjustments': startingBalanceAdjustments,
+                            'netChange': credit - Math.abs(debit),
+                            'date': currentStatsItem.date
+                        };
+                    }, {
+                        'credit': 0,
+                        'debit': 0,
+                        'netChange': 0,
+                        'adjustments': 0,
+                        'startingBalance': 0,
+                        'endingBalance': 0,
+                        'startingBalanceAdjustments': 0,
+                        'date': 'date'
+                    })
+                )
                 .subscribe(
                 result => {
                     this.totalData = result;

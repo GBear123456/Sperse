@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import {Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -9,6 +9,7 @@ import { CustomerListsServiceProxy, AddCustomersToListsInput, CustomerListInput,
 import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { MatDialog } from '@angular/material';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-lists-list',
@@ -85,18 +86,18 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         if (this.bulkUpdateMode) {
             if (isRemove)
                 this._listsService.removeCustomersFromLists(customerIds, this.selectedLists
-                ).finally(() => {
+                ).pipe(finalize(() => {
                     this.listComponent.deselectAll();
-                }).subscribe((result) => {
+                })).subscribe((result) => {
                     this.notify.success(this.l('ListsUnassigned'));
                 });
             else
                 this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
                     customerIds: customerIds,
                     lists: lists 
-                })).finally(() => {
+                })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
-                }).subscribe((result) => {
+                })).subscribe((result) => {
                     this.notify.success(this.l('ListsAssigned'));
                 });
         }

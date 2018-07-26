@@ -4,8 +4,6 @@ import {
     AfterViewInit,
     OnDestroy,
     Injector,
-    Inject,
-    ViewEncapsulation,
     ViewChild
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
@@ -18,12 +16,10 @@ import { AppService } from '@app/app.service';
 
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
+import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
@@ -45,13 +41,7 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
-
-import query from 'devextreme/data/query';
-
-import DataSource from 'devextreme/data/data_source';
-
 import * as _ from 'underscore';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -88,7 +78,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelineDataSource: any;
     collection: any;
     showPipeline = true;
-    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;   
+    pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
 
     filterModelLists: FilterModel;
@@ -551,8 +541,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             {
                 location: 'after',
                 items: [
-                    { 
-                        name: 'fullscreen', 
+                    {
+                        name: 'fullscreen',
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -565,6 +555,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+        this.dataGrid.instance.updateDimensions();
     }
 
     filterByName(filter: FilterModel) {
@@ -669,19 +660,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     updateLeadsStage($event) {
-        let targetStage = $event.name,
-            ignoredStages = [];
-        this.selectedLeads.forEach((lead) => {
-            if (!this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage)
-                && ignoredStages.indexOf(lead.Stage) < 0)
-                    ignoredStages.push(lead.Stage);
-        });
-        if (ignoredStages.length)
-            this.message.warn(this.l('LeadStageChangeWarning', [ignoredStages.join(', ')]));
-        if (this.selectedLeads.length)
-            setTimeout(() => { //!!VP temporary solution for grid refresh
-                this.refreshDataGrid();
-            }, 1000);
+        if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
+            this.stagesComponent.tooltipVisible = false;
+            let targetStage = $event.name;
+            this.selectedLeads.forEach((lead) => {
+                this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage);
+            });
+            if (this.selectedLeads.length)
+                setTimeout(() => { //!!VP temporary solution for grid refresh
+                    this.refreshDataGrid();
+                    if (this.dataGrid && this.dataGrid.instance) {
+                        this.dataGrid.instance.clearSelection();
+                    }
+                }, 1000);
+        }
     }
 
     showLeadDetails(event) {
@@ -727,18 +719,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     deleteLeads() {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        let selectedIds: number[] = this.selectedLeads.map(lead => lead.Id);
         this.message.confirm(
             this.l('LeadsDeleteWarningMessage'),
             isConfirmed => {
                 if (isConfirmed)
-                    this.deleteClientsInternal(selectedIds);
+                    this.deleteLeadsInternal(selectedIds);
             }
         );
     }
 
-    private deleteClientsInternal(selectedIds: number[]) {
+    private deleteLeadsInternal(selectedIds: number[]) {
         this._leadService.deleteLeads(selectedIds).subscribe(() => {
+            this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.refreshDataGrid();
         });

@@ -4,7 +4,7 @@
 
     <div *ngIf="!data.deleteAllReferences">
         <h3>{{l('Move transaction(s) to the following account')}}</h3>
-        <dx-tree-list 
+        <dx-tree-list
             width="420px"
             height="100%"
             keyExpr="key"
@@ -18,6 +18,6 @@
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button (click)="confirm($event)" class="button-layout button-primary">{{l('Confirm')}}</button>
+    <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+    <button md-button (click)="confirm()" class="button-layout button-primary">{{l('Confirm')}}</button>
 </mat-dialog-actions>

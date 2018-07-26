@@ -1,16 +1,12 @@
-import { Component, OnInit, ViewChild, Injector, Output, EventEmitter, ElementRef, OnDestroy } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput, 
-    OrganizationUnitDto, UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
+import { Component, OnInit, ViewChild, Injector } from '@angular/core';
+import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
+    UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes } from '@shared/AppEnums';
-import { DxTextBoxComponent, DxContextMenuComponent, DxValidatorComponent, DxValidationSummaryComponent, DxButtonComponent } from 'devextreme-angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { DxContextMenuComponent } from 'devextreme-angular';
 
 import { MatDialog } from '@angular/material';
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 
 import { CacheService } from 'ng2-cache-service';
@@ -18,6 +14,7 @@ import * as _ from 'underscore';
 import * as nameParser from 'parse-full-name';
 
 import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } from '../../shared/organization-unit-tree.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
@@ -41,8 +38,8 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     private readonly SAVE_OPTION_DEFAULT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
-    
-    saveButtonId: string = 'saveUserOptions';
+
+    saveButtonId = 'saveUserOptions';
     saveContextMenuItems = [];
 
     masks = AppConsts.masks;
@@ -67,7 +64,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this._cacheService = this._cacheService.useStorage(0);
 
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false}, 
+            {text: this.l('SaveAndAddNew'), selected: false},
             {text: this.l('SaveAndClose'), selected: false}
         ];
 
@@ -144,7 +141,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     updateSaveOption(option) {
         this.data.buttons[0].title = option.text;
-        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY), 
+        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
@@ -169,8 +166,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         if (this.saveContextMenuItems[0].selected)
             this.resetFullDialog();
         else if (this.saveContextMenuItems[1].selected)
-            this.close();            
-        
+            this.close();
         this.data.refreshParent();
     }
 
@@ -214,18 +210,12 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
         input.tenantHostType = <any>TenantHostType.PlatformUi;
         this._userService.createOrUpdateUser(input)
-            .finally(() => {  saveButton.disabled = false; })
+            .pipe(finalize(() => {  saveButton.disabled = false; }))
             .subscribe(() => this.afterSave() );
     }
 
-    getBase64(data) {
-        let prefix = ';base64,';
-        return data && data.slice(data.indexOf(prefix) + prefix.length);
-    }
-
     getDialogPossition(event, shiftX) {
-        return this.calculateDialogPosition(event, 
-            event.target.closest('div'), shiftX, -12);
+        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     getInputElementValue(event) {
@@ -259,7 +249,6 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.data.title = '';
         this.setRandomPassword = false;
         this.sendActivationEmail = true;
-
         this.user = new UserEditDto();
     }
 

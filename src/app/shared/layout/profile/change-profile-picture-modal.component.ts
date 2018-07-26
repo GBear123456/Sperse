@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Injector, Inject } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
-import { FileUploader, FileUploaderOptions, Headers } from '@node_modules/ng2-file-upload';
-import { ProfileServiceProxy, UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
-import { IAjaxResponse } from '@abp/abpHttp';
+import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { TokenService } from '@abp/auth/token.service';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { ProfileServiceProxy, UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
+import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
+import { ModalDirective } from 'ngx-bootstrap';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'changeProfilePictureModal',
@@ -99,6 +100,7 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
     close(): void {
         this.active = false;
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     save(): void {
@@ -112,8 +114,8 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
             resizeParams = self._$jcropApi.getSelection();
         }
 
-        const containerWidth = parseInt(self._$jcropApi.getContainerSize()[0]);
-        const containerHeight = self._$jcropApi.getContainerSize()[1];
+        const containerWidth = Math.ceil(self._$jcropApi.getContainerSize()[0]);
+        const containerHeight = Math.ceil(self._$jcropApi.getContainerSize()[1]);
 
         let originalWidth = containerWidth;
         let originalHeight = containerHeight;
@@ -135,7 +137,7 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
 
         this.saving = true;
         self._profileService.updateProfilePicture(input)
-            .finally(() => { this.saving = false; })
+            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
                 const self = this;
                 self._$jcropApi.destroy();

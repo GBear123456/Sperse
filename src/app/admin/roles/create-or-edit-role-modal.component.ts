@@ -1,10 +1,9 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef, AfterViewChecked } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { RoleServiceProxy, RoleEditDto, CreateOrUpdateRoleInput } from '@shared/service-proxies/service-proxies';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CreateOrUpdateRoleInput, RoleEditDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModalDirective } from 'ngx-bootstrap';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
-
-import * as _ from 'lodash';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'createOrEditRoleModal',
@@ -60,7 +59,7 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase implements 
 
         this.saving = true;
         this._roleService.createOrUpdateRole(input)
-            .finally(() => this.saving = false)
+            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.close();
@@ -71,5 +70,6 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase implements 
     close(): void {
         this.active = false;
         this.modal.hide();
+        setTimeout(window.scrollTo(0, 0));
     }
 }

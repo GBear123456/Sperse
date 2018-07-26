@@ -8,6 +8,7 @@ import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCu
 import * as _ from 'underscore';
 import { MatDialog } from '@angular/material';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-tags-list',
@@ -86,18 +87,18 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 this._tagsService.untagCustomers(UntagCustomersInput.fromJS({
                     customerIds: customerIds,
                     tagIds: this.selectedTags
-                })).finally(() => {
+                })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
-                }).subscribe((result) => {
+                })).subscribe((result) => {
                     this.notify.success(this.l('TagsUnassigned'));
                 });
             else
                 this._tagsService.tagCustomers(TagCustomersInput.fromJS({
                     customerIds: customerIds,
                     tags: tags 
-                })).finally(() => {
+                })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
-                }).subscribe((result) => {
+                })).subscribe((result) => {
                     this.notify.success(this.l('TagsAssigned'));
                 });
         }

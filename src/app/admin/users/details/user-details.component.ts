@@ -1,16 +1,20 @@
-import { Component, Input, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
+/** Core imports */
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
+
+/** Third party libraries **/
 import { MatDialog } from '@angular/material';
-import { OperationsWidgetComponent } from './operations-widget.component';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
-import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
-
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
-
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { OperationsWidgetComponent } from './operations-widget.component';
+import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
+import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component'
 
 @Component({
     selector: 'user-details',
@@ -20,6 +24,7 @@ import * as _ from 'underscore';
 export class UserDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
+    @ViewChild('organizationTree') organizationTree: OrganizationUnitsTreeComponent;
 
     userId: number;
     userData: GetUserForEditOutput = new GetUserForEditOutput();
@@ -49,10 +54,10 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             .subscribe(params => {
                 this.userId = params['userId'];
                 this.startLoading(true);
-                Observable.forkJoin(
+                forkJoin(
                     this._userService.getUserForEdit(this.userId),
                     this._userService.getUserPermissionsForEdit(this.userId)
-                ).finally(() => this.finishLoading(true))
+                ).pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(([userEditOutput, permissionsOutput]) => {
                         //user
                         this._userService['data'].user = userEditOutput.user;
@@ -60,6 +65,8 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
                         userEditOutput.user['sendActivationEmail'] = false;
                         this._userService['data'].roles = userEditOutput.roles;
                         this.userData = userEditOutput;
+
+                        this.organizationTree.setOrganizationUnitsData(userEditOutput.allOrganizationUnits, userEditOutput.memberedOrganizationUnits);
 
                         this.setProfilePicture(userEditOutput.profilePictureId);
 
@@ -120,7 +127,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
                 if (isConfirmed) {
                     this.startLoading(true);
                     this._userService.deleteUser(this.userData.user.id)
-                        .finally(() => this.finishLoading(true))
+                        .pipe(finalize(() => this.finishLoading(true)))
                         .subscribe(() => {
                             this.close();
                             this.notify.success(this.l('SuccessfullyDeleted'));
@@ -141,7 +148,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             );
         userInput.tenantHostType = <any>TenantHostType.PlatformUi;
 
-        //input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
+        userInput.organizationUnits = this.organizationTree.getSelectedOrganizationUnits();
         let permissionsInput = new UpdateUserPermissionsInput();
         permissionsInput.id = this.userId;
         permissionsInput.grantedPermissionNames = this.permissionTree.getGrantedPermissionNames();
@@ -152,7 +159,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             .subscribe(() => {
                 this.startLoading(true);
                 this._userService.updateUserPermissions(permissionsInput)
-                    .finally(() => this.finishLoading(true))
+                    .pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(() => {
                         this.close();
                         this.notify.info(this.l('SavedSuccessfully'));

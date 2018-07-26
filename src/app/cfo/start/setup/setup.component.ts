@@ -1,22 +1,20 @@
-import { Component, OnInit, Injector, OnDestroy, ViewChild } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
+import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { finalize } from 'rxjs/operators';
+
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
-import { AppService } from 'app/app.service';
-import { setTimeout } from 'timers';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
     selector: 'setup',
     templateUrl: './setup.component.html',
     styleUrls: ['./setup.component.less'],
-    animations: [appModuleAnimation()],
-    providers: [InstanceServiceProxy]
+    animations: [appModuleAnimation()]
 })
 export class SetupComponent extends CFOComponentBase implements OnInit, OnDestroy {
     private rootComponent: any;
@@ -27,7 +25,6 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     quovoHandler: any;
 
     constructor(injector: Injector,
-        private _appService: AppService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _router: Router,
         private _quovoService: QuovoService,
@@ -43,6 +40,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     }
 
     private addAccount() {
+        if (!this.isInstanceAdmin)
+            return;
+
         if (!this.quovoHandler) {
             this.initQuovoHandler();
         }
@@ -97,9 +97,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         if (e.addedIds.length) {
             this.startLoading(true);
             this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
-                .finally(() => {
+                .pipe(finalize(() => {
                     this.isDisabled = false;
-                })
+                }))
                 .subscribe(() => {
                     this.finishLoading(true);
                     this._cfoService.instanceChangeProcess(() => this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']));
@@ -120,10 +120,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.dialogConfig.width = '880px';
         this.dialogConfig.id = 'cfo-intro';
         this.dialogConfig.panelClass = ['cfo-intro', 'setup'];
+        this.dialogConfig.data = { alreadyStarted: false };
 
         const dialogRef = this.dialog.open(CfoIntroComponent, this.dialogConfig);
         dialogRef.afterClosed().subscribe(result => {
-            if (result.isGetStartedButtonClicked) this.onStart();
+            if (result && result.isGetStartedButtonClicked) this.onStart();
         });
     }
 }

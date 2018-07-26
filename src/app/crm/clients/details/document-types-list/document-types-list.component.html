@@ -1,0 +1,48 @@
+<dx-drop-down-box
+    width="325px"
+    height="30px"
+    valueExpr="id"
+    displayExpr="name"
+    [(value)]="selectedDocumentTypeId"
+    [showClearButton]="true"
+    [dataSource]="list"
+    placeholder="{{l('ChooseDocumentType')}}"
+    (onInitialized)="onDropDownInitialized($event)"
+    (onValueChanged)=onValueChanged($event)>
+    <div class="document-types" *dxTemplate="let data of 'content'">
+        <div class="actions clearfix">
+            <span class="title">{{l('Document Types')}}</span>
+            <span class="filter-apply" (click)="apply()">{{l('Apply')}}</span>
+        </div>
+        <dx-tree-list  #documentTypeslist
+            width="300px"
+            height="360px"
+            keyExpr="id"
+            parentIdExpr="parent"
+            [rootValue]="0"
+            [noDataText]="l('AddNewDocumentType')"
+            [showColumnLines]="false"
+            [showColumnHeaders]="false"
+            [searchPanel]="{visible: true, placeholder: l('Search'), width: 260}"
+            [selection]="{allowSelectAll: false, mode: 'single' }"
+            [selectedRowKeys]="selectedDocumentTypes"
+            [(dataSource)]="list"
+            (onRowClick)="onRowClick($event)"
+            (onInitialized)="onListInitialized($event)"
+            (onInitNewRow)="onInitNewRow($event)"
+            (onRowRemoving)="onRowRemoving($event)"
+            (onRowUpdating)="onRowUpdating($event)"
+            (onRowInserting)="onRowInserting($event)"
+            (onSelectionChanged)="onSelectionChanged($event)"
+            (onCellPrepared)="onCellPrepared($event)"
+            (onRowInserted)="onRowInserted($event)"
+            (onEditorPrepared)="editorPrepared($event)">
+            <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
+            <dxo-editing mode="row"
+                [texts]="{confirmDeleteMessage: ''}"
+                [allowUpdating]="true"
+                [allowAdding]="true">
+            </dxo-editing>
+        </dx-tree-list>
+    </div>
+</dx-drop-down-box>

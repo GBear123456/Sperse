@@ -1,13 +1,14 @@
 import { Injectable, Injector  } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
-    
+import { Subject } from 'rxjs';
+
 @Injectable()
 export class ClientDetailsService {
     private verificationSubject: Subject<any>;
+    private toolbarSubject: Subject<any>;
 
     constructor(injector: Injector) {
         this.verificationSubject = new Subject<any>();
+        this.toolbarSubject = new Subject<any>();
     }
 
     verificationSubscribe(callback) {
@@ -16,5 +17,13 @@ export class ClientDetailsService {
 
     verificationUpdate() {
         this.verificationSubject.next();
-    }    
+    }
+
+    toolbarSubscribe(callback) {
+        this.toolbarSubject.asObservable().subscribe(callback);
+    }
+
+    toolbarUpdate(config = null) {
+        this.toolbarSubject.next(config);
+    }
 }

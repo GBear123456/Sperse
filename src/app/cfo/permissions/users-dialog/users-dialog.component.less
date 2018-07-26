@@ -1,0 +1,50 @@
+ul.usersPermissionsPanel {
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    text-align: left;
+    color: #424c56;
+    position: relative;
+    padding: 0;
+    li {
+        list-style: none;
+        line-height: 34px;
+        span {
+            cursor: pointer;
+        }
+    }
+}
+
+.usersPanel.cdk-overlay-pane .mat-dialog-container {
+    border: 1px solid #dfdfdf;
+    position: relative !important;
+    overflow: visible;
+    padding-right: 9px;
+    &::after,
+    &:before {
+        content: '';
+        position: absolute;
+        width: 11px;
+        height: 10px;
+        border-left: solid 11px transparent;
+        border-right: solid 11px transparent;
+    }
+    &::before {
+        right: 52px;
+        top: -12px;
+        border-bottom: solid 11px #dfdfdf;
+    }
+    &::after {
+        right: 52px;
+        top: -10px;
+        border-bottom: solid 11px #fff;
+    }
+}
+
+.email-tooltip-white {
+    background: #fff;
+    color: #000 !important;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    border-radius: 4px !important;
+    font-family: Montserrat;
+}

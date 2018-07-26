@@ -5,9 +5,9 @@ import { BankAccountsServiceProxy, InstanceType, SyncAccountBankDto, BusinessEnt
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
-import { BankAccountsWidgetComponent } from 'shared/cfo/bank-accounts-widget/bank-accounts-widget.component';
+import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts-widgets/bank-accounts-widget.component';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widget/bank-accounts-data.model';
+import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widgets/bank-accounts-data.model';
 
 @Component({
     selector: 'bank-accounts-select',
@@ -37,7 +37,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     selectedBusinessEntityIds: any[] = [];
     businessEntities = [];
     isActive = true;
-    selectedBankAccounts = null;
+    selectedBankAccounts: number[] = null;
     storedVisibleBankAccountIds = [];
 
     constructor(
@@ -203,7 +203,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
                 this.initDataSource = result;
                 this.filterDataSource(this.selectedBankAccounts);
                 let newSelected = this.getSelectedBankAccounts().bankAccountIds;
-                if (_.difference(newSelected, this.selectedBankAccounts).length) {
+                if (_.difference(newSelected, this.selectedBankAccounts).length ||
+                    _.difference(this.selectedBankAccounts, newSelected).length) {
                     this.selectedBankAccounts = newSelected;
                     needEmitSelectedAccounts = true;
                 }

@@ -1,17 +1,17 @@
 import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { DxTreeListComponent, DxDataGridComponent, DxTreeViewComponent, DxSelectBoxComponent } from 'devextreme-angular';
+import { DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
 
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
-    CreateCategoryInput, UpdateCategoryInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
     CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto, GetKeyAttributeValuesInput } from '@shared/service-proxies/service-proxies';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import * as _ from 'underscore';
 
@@ -33,7 +33,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     banks: any;
     accounts: any;
     categories: any = [];
-    descriptor: string = '';
+    descriptor = '';
     attributes: any = [];
     keywords: any = [];
     formats: any = [];
@@ -89,7 +89,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         else if (this.data.transactionIds && this.data.transactionIds.length)
             requests.push(_classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
 
-        Observable.forkJoin(requests).subscribe(([transactionAttributeTypesResult, keyAttributeValuesResult, cashFlowInitialDataResult, data]) => {
+        forkJoin(requests).subscribe(([transactionAttributeTypesResult, keyAttributeValuesResult, cashFlowInitialDataResult, data]) => {
             // getTransactionAttributeTypes
             let types = [];
 
@@ -234,14 +234,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                         this._classificationServiceProxy.editRule(
                             InstanceType[this.instanceType], this.instanceId,
                             EditRuleDto.fromJS(this.getDataObject()))
-                        .finally(() => event.target.disabled = false)
+                        .pipe(finalize(() => event.target.disabled = false))
                         .subscribe(this.updateDataHandler.bind(this));
                     else
                         this._classificationServiceProxy.createRule(
                             InstanceType[this.instanceType],
                             this.instanceId,
                             CreateRuleDto.fromJS(this.getDataObject()))
-                        .finally(() => event.target.disabled = false)
+                        .pipe(finalize(() => event.target.disabled = false))
                         .subscribe(this.updateDataHandler.bind(this));
                 }
             }
@@ -266,7 +266,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                                         descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                                     })
-                                ).finally(() => event.target.disabled = false)
+                                ).pipe(finalize(() => event.target.disabled = false))
                                 .subscribe(this.updateDataHandler.bind(this));
                             };
 
@@ -518,7 +518,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     attributeGridDropDownValueChanged($event, cell) {
-        this.keyAttributeValuesDataSource = 
+        this.keyAttributeValuesDataSource =
             this.getKeyAttributeValues($event.value);
         cell.setValue($event.value);
     }
@@ -526,7 +526,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     attributeGridDropDownDisposing($event, cell) {
         this.attributeEditData = null;
     }
-    
+
     onEditorPreparing($event) {
         this.attributeEditData = $event.row.data;
     }
@@ -536,7 +536,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             this.descriptor = $event.text;
         });
     }
-    
+
     onCustomAttributeCreating($event, cell) {
         setTimeout(() => {
             cell.setValue($event.text);
@@ -594,15 +594,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         let attribute = _.findWhere(this.gridAttributeTypes,
                 {id: data.attributeTypeId});
 
-        return attribute ? attribute.name:
-            this.capitalize(data.attributeTypeId);
+        return attribute ? attribute.name : this.capitalize(data.attributeTypeId);
     }).bind(this);
 
     conditionDisplayValue = ((data) => {
-        return {  
+        return {
             Equal: '='
             //Exist: '\u2203'
-        }[data.conditionTypeId] || 
+        }[data.conditionTypeId] ||
             data.conditionTypeId;
     }).bind(this);
 }

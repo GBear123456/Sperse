@@ -52,25 +52,23 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private _roleService: RoleServiceProxy,
-        private _notifyService: NotifyService,
         private _appService: AppService,
         private _filtersService: FiltersService,
-        private _permissionService: PermissionServiceProxy,
-        private _fileDownloadService: FileDownloadService
+        private _permissionService: PermissionServiceProxy
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
         this.actionMenuItems = [
-            { 
+            {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Administration.Roles.Edit'),
                 action: () => {
                     this.createOrEditRoleModal.show(this.actionRecord.id);
                 }
             },
-            { 
+            {
                 text: this.l('Delete'),
                 visible: this.permission.isGranted('Pages.Administration.Roles.Delete'),
                 action: () => {
@@ -92,7 +90,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                                 data: response.items,
                                 totalCount: response.items.length
                             };
-                        });                    
+                        });
                 }
         });
     }
@@ -184,8 +182,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             {
                 location: 'after',
                 items: [
-                    { 
-                        name: 'fullscreen', 
+                    {
+                        name: 'fullscreen',
                         action: () => {
                             this.toggleFullscreen(document.documentElement);
                             setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -203,7 +201,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                     new FilterModel({
                         component: FilterRadioGroupComponent,
                         caption: 'permission',
-                        items: { 
+                        items: {
                             element: new FilterRadioGroupModel({
                                 value: this.selectedPermission,
                                 list: res.items.map((item) => {
@@ -214,7 +212,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                                         displayName: item.displayName
                                     };
                                 })
-                            })                        
+                            })
                         }
                     })
                 ]
@@ -222,7 +220,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         });
 
         this._filtersService.apply((filter) => {
-            this.selectedPermission = filter && 
+            this.selectedPermission = filter &&
                 filter.items.element.value;
 
             this.initToolbarConfig();
@@ -253,7 +251,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._filtersService.localizationSourceName = 
+        this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
@@ -296,6 +294,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         let self = this;
         self.message.confirm(
             self.l('RoleDeleteWarningMessage', role.displayName),
+            this.l('AreYouSure'),
             isConfirmed => {
                 if (isConfirmed) {
                     this._roleService.deleteRole(role.id).subscribe(() => {

@@ -1,4 +1,4 @@
-import {Component, Injector, Input, EventEmitter, Output} from '@angular/core';
+import { Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 
@@ -13,21 +13,23 @@ import * as _ from 'underscore';
 })
 export class StaticListComponent extends AppComponentBase {
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
-    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
-
     @Input() width: string;
     @Input() title: string;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector: string;
-    @Input() showConfirmation: boolean = true;
+    @Input() showConfirmation = true;
+    @Input() updateConfirmationTitle: string;
+    @Input() updateConfirmationMessage: string;
     @Input() hideButtons = false;
 
     @Input() list: any;
+    @Input() showTitle = true;
 
     listComponent: any;
     tooltipVisible: boolean;
-    selectedItems: any = [];
+    @Input() selectedItems: any = [];
+    @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
 
     constructor(
         injector: Injector,
@@ -43,19 +45,24 @@ export class StaticListComponent extends AppComponentBase {
 
     apply() {
         if (this.listComponent && this.selectedItems && this.selectedItems.length) {
-            if (this.selectedKeys && this.selectedKeys.length) {
-                if (this.showConfirmation)
-                    this.message.confirm(
-                        this.l('BulkUpdateConfirmation', this.selectedKeys.length),
-                        isConfirmed => {
-                            isConfirmed && this.onItemSelected.emit(this.selectedItems[0]);
-                        }
-                    );
-                else
-                    this.onItemSelected.emit(this.selectedItems[0]);
-            }
+            this.changeItems();
         }
         this.tooltipVisible = false;
+    }
+
+    changeItems(selectedData = this.selectedItems[0]) {
+        if (this.selectedKeys && this.selectedKeys.length) {
+            if (this.showConfirmation && this.checkPermissions())
+                this.message.confirm(
+                    this.updateConfirmationMessage || this.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                    this.updateConfirmationTitle || null,
+                    isConfirmed => {
+                        isConfirmed && this.onItemSelected.emit(selectedData);
+                    }
+                );
+            else
+                this.onItemSelected.emit(selectedData);
+        }
     }
 
     onInitialized($event) {
@@ -81,7 +88,7 @@ export class StaticListComponent extends AppComponentBase {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -99,11 +106,18 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     onContentReady($event) {
+        if (this.selectedKeys && this.selectedKeys.length) {
+            this.listComponent.option('selectedItemKeys', this.selectedKeys);
+        }
         this.highlightSelectedFilters();
     }
 
-    onSelectionChange(event) {
-        this.onSelectionChanged.emit(event);
+    onItemClick(event) {
+        if (event.itemData.action) {
+            event.itemData['action'](event);
+        } else if (event.itemData.id) {
+            this.changeItems(event.itemData);
+        }
     }
 
     checkPermissions() {

@@ -3,6 +3,7 @@ html,
 body {
     width: 100%;
     height: 100%;
+    font-family: Montserrat !important;
 }
 
 body.page-md {
@@ -170,6 +171,10 @@ button {
     }
 }
 
+.btn {
+    font-family: Montserrat !important;
+}
+
 .btn + .btn {
     margin-left: 5px;
 }
@@ -225,8 +230,8 @@ button {
     }
 
 	  &.menu {
-        padding: 0px 50px 0px 30px;  
-        &:before { 
+        padding: 0px 50px 0px 30px;
+        &:before {
         		content: '';
             border-left: 4px solid transparent;
             border-right: 4px solid transparent;
@@ -235,7 +240,7 @@ button {
             position: absolute;
             right: 12px;
             z-index: 1;
-            top: 16px;            
+            top: 16px;
         }
         &:after {
         		content: '';
@@ -632,9 +637,6 @@ button {
         padding: 15px 25px;
         background: #f3f7fa;
         border-bottom: 1px solid #eaeef0;
-        button.close {
-            // margin-top: -20px !important;
-        }
         .control-buttons {
             float: right;
             margin-top: 0;
@@ -908,10 +910,9 @@ button {
 }
 
 #cfo-intro,
-.cfo-intro .mat-dialog-container {
+#crm-intro,
+.cfo-intro .mat-dialog-container,
+.crm-intro .mat-dialog-container {
     padding: 0 !important;
     border-radius: 10px !important;
-}
-.cfo-intro.dashboard .get-started {
-    display: none !important;
 }

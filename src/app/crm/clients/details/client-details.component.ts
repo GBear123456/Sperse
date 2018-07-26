@@ -1,19 +1,16 @@
-import { Component, Input, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CustomersServiceProxy,
     CustomerInfoDto,
-    PersonContactInfoDto,
     UpdateCustomerStatusInput,
     LeadServiceProxy,
-    StageDto,
     LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
+import { forkJoin } from 'rxjs';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -37,9 +34,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     customerInfo: CustomerInfoDto;
     primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
-    leadId: number;
     leadInfo: LeadInfoDto;
+    leadId: number;
     leadStages = [];
+    clientStageId: number;
     configMode: boolean;
 
     private initialData: string;
@@ -92,24 +90,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     id: clientId
                 };
 
-                if (clientId)
-                    clientId = this.loadCustomerAndLeadDetails(clientId, leadId);
-
                 if (leadId) {
                     this.leadId = leadId;
-                    _customerService['data'].leadInfo = {
-                        id: leadId
-                    };
-                    _pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
-                        .subscribe(result => {
-                            this.leadStages = result.stages.map((stage) => {
-                                return {
-                                    text: stage.name,
-                                    action: this.updateLeadStage.bind(this)
-                                };
-                            });
-                        });                    
                 }
+                this.loadData(clientId, leadId);
             }));
 
         this.paramsSubscribe.push(this._route.queryParams
@@ -121,12 +105,12 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         );
         let optionTimeout = null;
         this._router.events.subscribe((event) => {
-            if(event instanceof ActivationEnd && !optionTimeout)
+            if (event instanceof ActivationEnd && !optionTimeout)
                 optionTimeout = setTimeout(() => {
                     optionTimeout = null;
                     let data = event.snapshot.data;
                     this.rightPanelSetting.opened = data.hasOwnProperty(
-                        'rightPanelOpened') ? data.rightPanelOpened: true;
+                        'rightPanelOpened') ? data.rightPanelOpened : true;
                 });
         });
     }
@@ -151,22 +135,45 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.leadInfo = result;
     }
 
-    private loadCustomerAndLeadDetails(customerId, leadId) {
-        this.startLoading(true);
-        this.customerId = customerId;
-        let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
-        if (leadId) {
-            let leadInfoObservable = this._leadService.getLeadInfo(leadId);
-            Observable.forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
-                this.fillCustomerDetails(result[0]);
-                this.fillLeadDetails(result[1]);
-                this.finishLoading(true);
-            });
-        } else
-            customerInfoObservable.subscribe(result => {
-                this.fillCustomerDetails(result);
-                this.fillLeadDetails(result.lastLeadInfo);
-                this.finishLoading(true);
+    loadData(customerId: number, leadId: number) {
+        if (customerId) {
+            this.startLoading(true);
+            this.customerId = customerId;
+            let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
+            if (leadId) {
+                let leadInfoObservable = this._leadService.getLeadInfo(leadId);
+                forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
+                    this.fillCustomerDetails(result[0]);
+                    this.fillLeadDetails(result[1]);
+                    this.loadLeadsStages();
+                    this.finishLoading(true);
+                });
+            } else
+                customerInfoObservable.subscribe(result => {
+                    this.fillCustomerDetails(result);
+                    this.fillLeadDetails(result.lastLeadInfo);
+                    this.finishLoading(true);
+                });
+        } else if (leadId) {
+            this._customerService['data'].leadInfo = {
+                id: leadId
+            };
+            this.loadLeadsStages();
+        }
+    }
+
+    private loadLeadsStages() {
+        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+            .subscribe(result => {
+                this.leadStages = result.stages.map((stage) => {
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        text: stage.name,
+                        action: this.updateLeadStage.bind(this)
+                    };
+                });
+                this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
             });
     }
 
@@ -174,25 +181,30 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         return this.customerInfo.primaryContactInfo.fullName;
     }
 
-    private showConfirmationDialog(statusId: string) {
+    private showConfirmationDialog(status) {
         this.message.confirm(
             this.l('ClientUpdateStatusWarningMessage'),
             this.l('ClientStatusUpdateConfirmationTitle'),
             isConfirmed => {
-                if (isConfirmed)
-                    this.updateStatusInternal(statusId);
+                if (isConfirmed) {
+                    this.updateStatusInternal(status.id)
+                        .subscribe(() => {
+                            this.customerInfo.statusId = status.id;
+                            this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
+                            this.notify.success(this.l('StatusSuccessfullyUpdated'));
+                        });
+                } else {
+                    this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.customerInfo.statusId]);
+                }
             }
         );
     }
 
     private updateStatusInternal(statusId: string) {
-        this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
+        return this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
             customerId: this.customerId,
             statusId: statusId
-        })).subscribe(() => {
-            this.customerInfo.statusId = statusId;
-            this.notify.success(this.l('StatusSuccessfullyUpdated'));
-        });
+        }));
     }
 
     private getVerificationChecklistItem(type: VerificationChecklistItemType,
@@ -215,21 +227,22 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         });
         return this.getVerificationChecklistItem(
             type,
-            confirmedCount > 0 ? VerificationChecklistItemStatus.success : VerificationChecklistItemStatus.unsuccess,
+            confirmedCount > 0 ? VerificationChecklistItemStatus.success
+                : VerificationChecklistItemStatus.unsuccess,
             confirmedCount,
             items.length
         );
     }
 
-    close() {        
+    close() {
         this._dialog.closeAll();
         let data = JSON.stringify(this._customerService['data']);
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
             { queryParams: _.extend(_.mapObject(this.referrerParams,
                 (val, key) => {
-                    return (key == 'referrer'? undefined: val)
-                }), this.initialData != data ? {refresh: true}: {})
+                    return (key == 'referrer' ? undefined : val);
+                }), this.initialData != data ? {refresh: true} : {})
             }
         );
     }
@@ -310,7 +323,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         let sourceStage = this.leadInfo.stage;
         let targetStage = $event.itemData.text;
-        if (this._pipelineService.updateLeadStage(this.leadInfo, sourceStage, targetStage))
+        let complete = () => {
+            this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
+        };
+        if (this._pipelineService.updateLeadStage(this.leadInfo, sourceStage, targetStage, complete))
             this.leadInfo.stage = targetStage;
         else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));

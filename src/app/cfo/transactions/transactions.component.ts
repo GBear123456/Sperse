@@ -29,10 +29,7 @@ import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { MatDialog } from '@angular/material';
-
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
-
+import { forkJoin } from 'rxjs';
 import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 
@@ -497,7 +494,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             onChanged: this.getTotalValues.bind(this)
         });
 
-        Observable.forkJoin(
+        forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
             this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD')
@@ -827,8 +824,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellClick($event) {
         if ($event.rowType === 'data') {
-            if (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
-                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId)) {
+            if (this.isInstanceAdmin &&
+                (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
+                ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {
                     panelClass: 'slider',
                     data: {

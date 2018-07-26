@@ -4,15 +4,13 @@ import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 
-import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
-    MatDialogRef, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
+import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
 
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
-    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule, 
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule } from 'devextreme-angular';
+    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
+    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
+    DxRadioGroupModule, DxDropDownBoxModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
-
-import { RouterModule, Routes } from '@angular/router';
 
 import { ClientDetailsService } from './client-details.service';
 import { ClientDetailsComponent } from './client-details.component';
@@ -28,7 +26,7 @@ import { StarsListComponent } from '../../shared/stars-list/stars-list.component
 
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
-import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { NoteAddComponent } from './notes/note-add/note-add.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -51,10 +49,12 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
+import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
+
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
-import { GooglePlaceModule } from 'ng2-google-place-autocomplete';
-import { FileDropModule } from 'ngx-file-drop';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
@@ -63,6 +63,13 @@ import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceP
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+
+import { FileDropModule } from 'ngx-file-drop';
+import { ImageViewerModule } from 'ng2-image-viewer';
+import { VgCoreModule } from 'videogular2/core';
+import { VgControlsModule } from 'videogular2/controls';
+import { VgOverlayPlayModule } from 'videogular2/overlay-play';
+import { VgBufferingModule } from 'videogular2/buffering';
 
 @NgModule({
   declarations: [
@@ -93,14 +100,16 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent,
+    NoteAddComponent,
     TagsListComponent,
     ListsListComponent,
     UserAssignmentComponent,
     RatingComponent,
     StarsListComponent,
     StaticListComponent,
-    DocumentsComponent
+    DocumentsComponent,
+    UploadDocumentDialogComponent,
+    DocumentTypesListComponent
   ],
   imports: [
     FormsModule,
@@ -114,7 +123,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     MatProgressSpinnerModule,
     MatSelectModule,
     ClientDetailsRoutingModule,
-    GooglePlaceModule,
+    AngularGooglePlaceModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxButtonModule,
@@ -134,7 +143,13 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     DxValidationGroupModule,
     PipelineModule,
     DxRadioGroupModule,
-    FileDropModule
+    FileDropModule,
+    ImageViewerModule,
+    DxDropDownBoxModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
   ],
   exports: [
     ClientDetailsComponent,
@@ -145,7 +160,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     UserAssignmentComponent,
     RatingComponent,
     StarsListComponent,
-    StaticListComponent
+    StaticListComponent,
+    DocumentTypesListComponent
   ],
   entryComponents: [
     EditContactDialog,
@@ -154,8 +170,9 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddDialogComponent,
-    LeadCancelDialogComponent
+    NoteAddComponent,
+    LeadCancelDialogComponent,
+    UploadDocumentDialogComponent
   ],
   bootstrap: [
     ClientDetailsComponent

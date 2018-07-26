@@ -1,7 +1,6 @@
 import { Component, Output, Injector, EventEmitter, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CacheService } from 'ng2-cache-service';
-
 import * as moment from 'moment';
 
 @Component({
@@ -98,6 +97,6 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
             period: period,
             from: period !== 'all' ? startDate.startOf(period) : undefined,
             to: period !== 'all' ? endDate.endOf(period) : undefined
-        }
+        };
     }
 }

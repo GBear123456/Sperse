@@ -1,0 +1,32 @@
+<app-headline [config]="headlineConfig">
+    <synch-progress class="synch-progress"></synch-progress>
+</app-headline>
+<div class="content-wrap">
+    <setup-steps SelectedStepIndex="4"></setup-steps>
+    <div class="frame-wrap">
+        <dx-data-grid
+            [hidden]="isDataLoaded && (!dataSource || (dataSource && !dataSource.totalCount()))"
+            [dataSource]="dataSource"
+            [columnAutoWidth]="true"
+            [customizeColumns]="customizeColumns"
+            [rowAlternationEnabled]="true"
+            [showColumnLines]="false"
+            [showRowLines]="false"
+            noDataText=""
+            [width]="calculatePermissionsTableWidth()"
+            [height]="calculatePermissionsTableHeight()"
+            (onCellHoverChanged)="onCellHoverChanged($event)"
+            (onCellClick)="onCellClick($event)"
+            (onRowUpdating)="onRowUpdating($event)">
+            <dxo-editing [allowUpdating]="true" mode="cell"></dxo-editing>
+            <dxo-grouping [allowCollapsing]="false"></dxo-grouping>
+            <div *dxTemplate="let data of 'addUserTemplate'">
+                <img class="addUserButton" (click)="showUsersPopup($event)" src="assets/common/icons/add-user-icon.svg" [alt]="l('UserPermissions_AddUser')">
+            </div>
+        </dx-data-grid>
+        <app-no-data
+            [hidden]="!isDataLoaded || (isDataLoaded && dataSource && dataSource.totalCount())"
+            [showLink]="false">
+        </app-no-data>
+    </div>
+</div>

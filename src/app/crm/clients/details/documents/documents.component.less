@@ -1,4 +1,20 @@
-﻿:host {
+﻿/deep/ .file-name {
+    padding-left: 15px;
+    font-weight: 500;
+
+    .file-size {
+        padding-left: 5px;
+        color: #677380;
+        font-size: 13px;
+    }
+}
+
+:host {
+
+    &.fullscreen .documentView {
+        width: 100%;
+    }
+
     .wrapper {
         display: flex;
         margin: 0px 23px;
@@ -7,7 +23,7 @@
         width: 97%;
 
         .grid-view {
-            width: auto;            
+            width: auto;
             max-width: calc(~"100% - 380px");
             height: 100%;
             /deep/ dx-data-grid {
@@ -17,6 +33,19 @@
                          direction: ltr;
                      }
                  }
+
+                .dx-row {
+                    .dx-link.dx-link-edit {
+                        &:before {
+                            width: 19px !important;
+                            height: 19px !important;
+                        }
+                    }
+                }
+
+                .dx-data-row {
+                    cursor: pointer;
+                }
 
                  .dx-datagrid .dx-link.dx-link-edit {
                      width: 18px!important;
@@ -49,14 +78,19 @@
                 color: #dedede;
             }
             /deep/ .drop-zone {
-                margin: auto;                
+                margin: auto;
                 height: 100px;
                 border: 1px solid #dedede;
                 border-radius: 5px;
                 background-color: #F8F7FC;
                 text-transform: uppercase;
+
                 width: 300px;
-                p { 
+                .content {
+                    height: 98px;
+                    border-radius: 5px;
+                }
+                p {
                     color: #333333;
                     padding-top: 10px;
                     font-weight: 500;
@@ -64,7 +98,7 @@
             }
             p.alter-text {
                 text-align: center;
-                padding-top: 20px;     
+                padding-top: 20px;
                 input {
                     opacity: 0;
                     width: 200px;
@@ -72,5 +106,94 @@
                 }
             }
         }
+    }
+
+    .open-document-header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: stretch;
+        align-content: flex-end;
+    }
+
+    .close {
+        top: 18px;
+        right: 18px;
+        width: 20px;
+        height: 20px;
+        float: right;
+        cursor: pointer;
+        position: relative;
+
+        &:after, &:before {
+            position: absolute;
+            top: 0px;
+            left: 8px;
+            content: ' ';
+            height: 20px;
+            width: 2px;
+            background-color: #1b1b1b;
+        }
+
+        &:before {
+            transform: rotate(45deg);
+        }
+
+        &:after {
+            transform: rotate(-45deg);
+        }
+    }
+
+    textarea {
+        width: 100%;
+        outline: 0;
+        padding: 10px;
+        height: calc(~"100vh - 220px");
+        resize: none;
+    }
+
+    /deep/ app-image-viewer {
+        #imageViewer {
+            height: calc(~"100vh - 220px");
+            margin-top: 0px;
+            .image-container {
+                bottom: 0px;
+            }
+            .inline-icon, i.material-icons, .footer-info {
+                display: none;
+            }
+        }
+    }
+
+    vg-player {
+        height: calc(~"100vh - 220px");
+        margin-top: 0px;
+
+        video {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .document-type {
+        p {
+            padding: 10px 0;
+            margin: 0;
+            font-weight: 600;
+            cursor: text !important;
+
+            &.choose-document-type {
+                color: #8a969b;
+                font-weight: 100;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+/deep/ dx-list[accesskey="actionsMenu"] {
+    .dx-state-invisible + .dx-list-item {
+        border-top: none;
     }
 }

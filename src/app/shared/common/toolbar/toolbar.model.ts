@@ -8,6 +8,7 @@ export class ToolbarGroupModelItem {
     itemTemplate?: string;
     text?: string;
     responsiveText?: string;
+    visible?: boolean;
     html?: string;
     adaptive?: boolean;
     attr?: object;

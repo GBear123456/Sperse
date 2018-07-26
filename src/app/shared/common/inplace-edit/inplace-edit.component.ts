@@ -1,7 +1,7 @@
 import { Component, Injector, Input, Output, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConfirmDialogComponent } from '@shared/common/dialogs/confirm/confirm-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
 
 import { DxTextBoxComponent } from 'devextreme-angular';
@@ -25,13 +25,13 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     openDialog: EventEmitter<any> = new EventEmitter();
 
     isEditModeEnabled = false;
-    valueOriginal: string = '';
+    valueOriginal = '';
 
     constructor(
         injector: Injector,
         public dialog: MatDialog
     ) {
-        super(injector);        
+        super(injector);
     }
 
     ngAfterViewInit() {
@@ -51,15 +51,15 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
                     this.itemDeleted.emit(this.data.id);
             }
         });
-        event.stopPropagation();      
+        event.stopPropagation();
     }
 
     updateItem(event) {
-        if(!event.validationGroup || event.validationGroup.validate().isValid) {
+        if (!event.validationGroup || event.validationGroup.validate().isValid) {
             if (this.data.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
-        }      
+        }
     }
 
     setEditModeEnabled(isEnabled: boolean) {

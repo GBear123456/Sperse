@@ -1,12 +1,19 @@
-import { Router } from '@angular/router';
+/** Core imports */
 import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+
+/** Application imports */
+import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppConsts } from '@shared/AppConsts';
-import { PeriodComponent } from '@app/shared/common/period/period.component';
-import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
+import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
+import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -27,14 +34,17 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
       icon: 'globe',
       buttons: []
     };
+    dialogConfig = new MatDialogConfig();
 
     constructor(
         injector: Injector,
         private _router: Router,
         private _dashboardWidgetsService: DashboardWidgetsService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService
+        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        public dialog: MatDialog
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        this.rootComponent = this.getRootComponent();
     }
 
     refresh() {
@@ -58,12 +68,29 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     ngAfterViewInit(): void {
         AppComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
-        this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     ngOnDestroy() {
         AppComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
         this.rootComponent.overflowHidden();
     }
+
+    openDialog() {
+        this.dialogConfig.height = '655px';
+        this.dialogConfig.width = '880px';
+        this.dialogConfig.id = 'crm-intro';
+        this.dialogConfig.panelClass = ['crm-intro', 'setup'];
+        this.dialogConfig.data = { alreadyStarted: false };
+
+        const dialogRef = this.dialog.open(CrmIntroComponent, this.dialogConfig);
+        dialogRef.afterClosed().subscribe(result => {
+            // if (result && result.isGetStartedButtonClicked) this.onStart();
+        });
+    }
+
 }

@@ -1,5 +1,7 @@
 import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
 
+import { finalize } from 'rxjs/operators';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -32,7 +34,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
 
     sliderComponent: any;
     tooltipVisible = false;
-    filtered: boolean = false;
+    filtered = false;
 
     constructor(
         injector: Injector,
@@ -71,19 +73,20 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
             this._ratingService.rateCustomers(RateCustomersInput.fromJS({
                 customerIds: this.selectedKeys,
                 ratingId: this.ratingValue
-            })).finally(() => {
-                this.ratingValue = this.ratingMin;
-            }).subscribe((result) => {
+            })).pipe(finalize(() => {
+                if (this.bulkUpdateMode)
+                    this.ratingValue = this.ratingMin;
+            })).subscribe((result) => {
                 this.notify.success(this.l('CustomersRated'));
             });
         else
             this._ratingService.rateCustomer(RateCustomerInput.fromJS({
                 customerId: this.selectedKeys[0],
                 ratingId: this.ratingValue
-            })).finally(() => {
+            })).pipe(finalize(() => {
                 if (!this.ratingValue)
                     this.ratingValue = this.ratingMin;
-            }).subscribe((result) => {
+            })).subscribe((result) => {
                 this.notify.success(this.l('CustomersRated'));
             });
     }

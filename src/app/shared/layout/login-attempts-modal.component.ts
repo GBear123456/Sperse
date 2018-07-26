@@ -1,10 +1,9 @@
-import { Component, ViewChild, Injector } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
-import { UserLoginServiceProxy, ProfileServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
-
+import { ProfileServiceProxy, UserLoginAttemptDto, UserLoginServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
+import { ModalDirective } from 'ngx-bootstrap';
 
 @Component({
     selector: 'loginAttemptsModal',
@@ -15,7 +14,8 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     @ViewChild('loginAttemptsModal') modal: ModalDirective;
 
     userLoginAttempts: UserLoginAttemptDto[];
-    profilePicture = '/assets/common/images/default-profile-picture.png';
+    profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    defaultProfilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
 
     constructor(
         injector: Injector,
@@ -39,6 +39,7 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
 
     close(): void {
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     setProfilePictureClass(userLoginAttemptResult: string): any {

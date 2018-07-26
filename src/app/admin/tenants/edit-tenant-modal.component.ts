@@ -1,10 +1,10 @@
-import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
-import { ModalDirective } from 'ngx-bootstrap';
-import { TenantServiceProxy, CommonLookupServiceProxy, TenantEditDto, SubscribableEditionComboboxItemDto } from '@shared/service-proxies/service-proxies';
+import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
-import * as moment from 'moment';
+import { CommonLookupServiceProxy, SubscribableEditionComboboxItemDto, TenantEditDto, TenantServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
+import * as moment from 'moment';
+import { ModalDirective } from 'ngx-bootstrap';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'editTenantModal',
@@ -67,7 +67,7 @@ export class EditTenantModalComponent extends AppComponentBase {
             format: 'L',
             defaultDate: this.tenant.subscriptionEndDateUtc,
         }).on('dp.change', (e) => {
-            this.subscriptionEndDateUtcIsValid = e.date !== '';
+            this.subscriptionEndDateUtcIsValid = e.date !== false;
         });
     }
 
@@ -120,7 +120,7 @@ export class EditTenantModalComponent extends AppComponentBase {
         }
 
         this._tenantService.updateTenant(this.tenant)
-            .finally(() => this.saving = false)
+            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.close();
@@ -131,6 +131,7 @@ export class EditTenantModalComponent extends AppComponentBase {
     close(): void {
         this.active = false;
         this.modal.hide();
+        setTimeout( window.scrollTo(0, 0));
     }
 
     onEditionChange(): void {

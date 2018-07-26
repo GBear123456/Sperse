@@ -3,8 +3,6 @@ import { RouterModule, Router, NavigationEnd, RouteConfigLoadStart, RouteConfigL
 import { AppComponent } from './mobile.component';
 import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 
-import { AppConsts } from '@shared/AppConsts';
-
 @NgModule({
     imports: [
         RouterModule.forChild([
@@ -14,11 +12,11 @@ import { AppConsts } from '@shared/AppConsts';
                 canActivate: [AppRouteGuard],
                 canActivateChild: [AppRouteGuard],
                 children: [
-                    {
+                    /*{
                         path: 'cfo/:instance',
                         loadChildren: 'mobile/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { preload: true }
-                    }
+                    }*/
                 ]
             }
         ])
@@ -43,7 +41,7 @@ export class MobileRoutingModule {
             if (event instanceof NavigationEnd) {
                 $('meta[property=og\\:url]').attr('content', window.location.href);
             }
-            
+
         });
     }
 }

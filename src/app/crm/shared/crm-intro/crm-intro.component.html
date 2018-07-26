@@ -1,0 +1,260 @@
+<button mat-dialog-close class="close-dialog"><i class="la la-times"></i></button>
+<mat-dialog-content>
+    <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
+        <mat-step>
+            <div class="first-step step-item">
+                <div class="header">
+                    <span>{{l('Introduction_Tour')}}</span>
+                </div>
+                <div class="main">
+                    <h2>{{l('CRM')}}</h2>
+                    <p>{{l('CRM_description')}}</p>
+                    <div class="play" (click)="goToStep(9)">
+                        <img src="assets/common/images/crm-intro/play-btn.png">
+                        <div class="bottomp">
+                            <p>
+                                {{l('Know_Your')}} <span class="color-blue">{{l('Customers')}}</span>
+                            </p>
+                            <img src="assets/common/images/crm-intro/frb.png">
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <a (click)="goToStep(9)">
+                        <img src="assets/common/images/crm-intro/button-play.svg" alt="play"> {{l('Play_Video')}}
+                    </a>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="keys-step step-item">
+                <div class="header">
+                    <span>{{l('Key_Features')}}</span>
+                </div>
+                <div class="main">
+                    <h2>{{l('Key_Features')}}</h2>
+                    <ul class="treka">
+                        <li>
+                            <img src="assets/common/images/crm-intro/sijalica.png">{{l('Key_Features_1')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/drugi.png">{{l('Key_Features_2')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/treci.png">{{l('Key_Features_3')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/catvrti.png">{{l('Key_Features_4')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_5')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_6')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_7')}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="keys-step pro step-item">
+                <div class="header">
+                    <span>{{l('Key_Features')}}: {{l('Pro_Edition')}}</span>
+                </div>
+                <div class="main">
+                    <h2>{{l('Key_Features')}}: {{l('Pro_Edition')}}</h2>
+                    <ul class="treka">
+                        <li>
+                            <img src="assets/common/images/crm-intro/sijalica.png">{{l('Key_Features_Pro_1')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/drugi.png">{{l('Key_Features_Pro_2')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/treci.png">{{l('Key_Features_Pro_3')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/catvrti.png">{{l('Key_Features_Pro_4')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_5')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_6')}}
+                        </li>
+                        <li>
+                            <img src="assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_7')}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="third-step step-item">
+                <div class="header">
+                    <span>{{l('Drag_Drop_Step_Title')}}</span>
+                </div>
+                <div class="main top-fromRight-bg">
+                    <img src="/assets/common/images/crm-intro/pipeline-manager.png" alt="{{l('Pipeline_Manager')}}" class="pipeline-img">
+                    <div class="content">
+                        <p class="color-blue">
+                            {{l('Drag_Drop_Step_Description')}}
+                        </p>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="forth-step step-item">
+                <div class="header">
+                    <span>{{l('Transactions_Search_Filter_Organize')}}</span>
+                </div>
+                <div class="main top-fromLeft-bg">
+                    <div class="content">
+                        <p class="color-blue">
+                            {{l('Transactions_Search_Filter_Organize_Description')}}
+                        </p>
+                        <img src="/assets/common/images/crm-intro/documents-types.png" alt="{{l('Documents_Types')}}" class="documents-types img-responsive">
+                    </div>
+                    <img src="/assets/common/images/crm-intro/document-management.png" alt="{{l('Documents_Page')}}" class="documents-page img-responsive">
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="fifth-step step-item">
+                <div class="header">
+                    <span>{{l('Your_Financial_Snapshot')}}</span>
+                </div>
+                <div class="main">
+                    <div class="main-content">
+                        <h5>{{l('Import_Wizard')}}</h5>
+                        <p>{{l('Import_Wizard_Description')}}</p>
+                        <h5>{{l('Export_Tools')}}</h5>
+                        <p>{{l('Export_Tools_Description')}}</p>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="sixth-step step-item">
+                <div class="header">
+                    <span>{{l('Browser_Extension')}}</span>
+                </div>
+                <div class="main top-fromLeft-bg">
+                    <div class="content">
+                        <p class="color-blue">
+                            {{l('Browser_Extension_Description')}}
+                        </p>
+                        <img src="/assets/common/images/crm-intro/extension.png" alt="{{l('Plugin_Extension')}}" class="extension img-responsive">
+                    </div>
+                    <img src="/assets/common/images/crm-intro/plugin.png" alt="{{l('Plugin_Page')}}" class="plugin-page img-responsive">
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="zapier step-item">
+                <div class="header">
+                    <span>{{l('Zap_Custom_Integration')}}</span>
+                </div>
+                <div class="main top-fromRight-bg">
+                    <img src="/assets/common/images/crm-intro/zapier-integration.png" alt="Pipeline Manager" class="zapier-img">
+                    <div class="main-content">
+                        <h5>{{l('Zapier_Integration')}}</h5>
+                        <p>{{l('Zapier_Integration_Description')}}</p>
+                        <h5>{{l('Custom_Integration')}}</h5>
+                        <p>{{l('Custom_Integration_Description')}}</p>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+                    <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="questionnaire-step step-item">
+                <div class="header">
+                    <img src="/assets/common/images/sperse-logo.png">
+                </div>
+                <div class="main">
+                    <app-questionnaire [identifier]="identifier"
+                                        [moduleName]="moduleName"
+                                        (closeDialog)="closeDialog()">
+                    </app-questionnaire>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
+
+                    <button *ngIf="!showImportUsersStep" class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
+                        {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
+                    </button>
+
+                    <button *ngIf="showImportUsersStep" mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step *ngIf="showImportUsersStep">
+            <div class="import-users-step step-item">
+                <div class="header">
+                    <img src="/assets/common/images/sperse-logo.png">
+                </div>
+                <div class="main">
+                    <app-import-users-step ></app-import-users-step>
+                </div>
+                <div class="footer">
+                    <button mat-button matStepperPrevious class="btn btn-layout">Back</button>
+                    <button class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
+                        {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
+                    </button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
+            <div class="video step-item">
+                <div class="header">
+                    <span>{{l('CRM')}} - {{l('Product_Video_Introduction')}}</span>
+                </div>
+                <div class="main">
+                    <div class="video-wrapper">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <div class="wistia_embed wistia_async_kqjpmot28u videoFoam=true" style="height:100%;width:100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button (click)="goToStep(0)" class="btn btn-layout">{{l('Back')}}</button>
+                </div>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-dialog-content>

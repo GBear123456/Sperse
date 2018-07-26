@@ -19,13 +19,14 @@
             font-size: 25px;
             margin: 0;
         }
+
         &:hover {
             opacity: .8;
         }
     }
-
+    
     // section
-    .step-item {
+    /deep/ .step-item {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -43,15 +44,17 @@
         }
 
         .main {
-            height: auto;
+            height: 73%;
             text-align: center;
             flex-grow: 2;
+
             h2 {
                 font-family: Montserrat;
                 font-size: 32px;
                 font-weight: bold;
                 color: #ffffff;
             }
+
             p {
                 font-family: Montserrat;
                 font-size: 24px;
@@ -62,6 +65,7 @@
                 margin-top: -12px;
             }
         }
+
         .footer {
             height: 15%;
             align-items: center;
@@ -72,6 +76,7 @@
     .first-step {
         background-image: url(../../../../assets/common/images/cfo-intro/prvapoza.jpg);
         background-repeat: no-repeat;
+
         .main {
             h2 {
                 margin-bottom: 0;
@@ -81,6 +86,7 @@
             }
         }
     }
+
     .play {
         text-align: center;
         margin-top: 70px;
@@ -88,9 +94,11 @@
 
         .bottomp {
             margin-top: 89px;
+
             img {
                 height: 38px;
             }
+
             p {
                 font-family: Merriweather;
                 font-size: 32px;
@@ -101,7 +109,6 @@
             }
         }
     }
-
     // second step
     .second-step {
         background-image: url(../../../../assets/common/images/cfo-intro/prvapoza.jpg);
@@ -139,21 +146,23 @@
             color: #424c56;
             margin-bottom: 25px;
         }
+
         img {
             margin-right: 22px;
             margin-bottom: -13px;
         }
     }
-
     // third step
     .third-step {
         .header {
             background-color: #00aeef;
+
             span {
                 font-size: 21px;
                 color: #ffffff;
             }
         }
+
         .conta {
             width: 100%;
             background-image: url(../../../../assets/common/images/cfo-intro/poza2.png);
@@ -162,8 +171,10 @@
             padding-top: 69px;
             padding-left: 43px;
         }
+
         .vrh {
             text-align: left;
+
             h2 {
                 width: 484px;
                 height: 70px;
@@ -173,6 +184,7 @@
                 margin-bottom: 52px;
                 color: #202b35;
             }
+
             span {
                 width: 395px;
                 height: 31px;
@@ -183,6 +195,7 @@
                 letter-spacing: 0.3px;
                 color: #00aeef;
             }
+
             p {
                 font-weight: normal;
                 color: rgba(34, 44, 54, 0.6);
@@ -196,16 +209,20 @@
                 text-align: left;
             }
         }
+
         .bra img {
             width: 471px;
         }
+
         section.dole {
             display: flex;
         }
+
         .str {
             align-self: flex-end;
             margin-left: 30px;
             margin-bottom: -44px;
+
             span {
                 width: 188.6px;
                 height: 92px;
@@ -219,6 +236,7 @@
                 text-align: left;
                 color: #00aeef;
             }
+
             p {
                 width: 188.6px;
                 height: 92px;
@@ -234,26 +252,29 @@
             }
         }
     }
-
     // forth-step
     .forth-step {
         .header {
             background-color: #00aeef;
             justify-content: flex-start;
+
             span {
                 font-size: 21px;
                 color: #ffffff;
             }
         }
+
         .conta {
             background-image: url(../../../../assets/common/images/cfo-intro/poza3.png);
             background-repeat: no-repeat;
             padding-top: 161px;
             padding-left: 43px;
         }
+
         .topa {
             height: 50px;
             background-color: #00aeef;
+
             p {
                 height: 28px;
                 font-family: Montserrat;
@@ -266,6 +287,7 @@
                 margin-top: 0;
             }
         }
+
         .mainda {
             h3 {
                 width: 266px;
@@ -277,6 +299,7 @@
                 text-align: left;
                 color: #00aeef;
             }
+
             h2 {
                 width: 334px;
                 height: 52px;
@@ -288,6 +311,7 @@
                 text-align: left;
                 color: #222c36;
             }
+
             p {
                 width: 334px;
                 height: 105px;
@@ -306,16 +330,19 @@
         .header {
             background-color: #00aeef;
             justify-content: flex-start;
+
             span {
                 font-size: 21px;
                 color: #ffffff;
             }
         }
+
         .conta {
             background-image: url(../../../../assets/common/images/cfo-intro/poza4.png);
             background-repeat: no-repeat;
             height: 460px;
         }
+
         .mainda {
             float: right;
             max-width: 367px;
@@ -331,6 +358,7 @@
                 text-align: left;
                 color: #00aeef;
             }
+
             h2 {
                 height: 52px;
                 font-family: Montserrat;
@@ -341,6 +369,7 @@
                 text-align: left;
                 color: #222c36;
             }
+
             p {
                 height: 105px;
                 font-family: Montserrat;
@@ -353,85 +382,18 @@
             }
         }
     }
-    // sixth-step
-    .sixth-step {
+
+    // questionnaire-step
+    .questionnaire-step {
         .header {
             justify-content: flex-start;
-        }
-        img {
-            max-height: 42px;
-        }
-        h3 {
-            text-align: center;
-            height: 34px;
-            font-family: Montserrat;
-            font-size: 25px;
-            font-weight: 600;
-            letter-spacing: normal;
-            text-align: center;
-            color: #202b35;
         }
     }
-    // seventh-step
-    .seventh-step {
+
+    // import-users-step
+    .import-users-step {
         .header {
             justify-content: flex-start;
-        }
-        .imputara {
-            li {
-                border: 1px solid #dee3e5;
-                padding-bottom: 21px;
-                padding-top: 18px;
-                padding-left: 14px;
-                margin-bottom: 12px;
-                border-radius: 8px;
-                width: 100%;
-                display: flex;
-                justify-content: space-around;
-            }
-        }
-        input {
-            width: 116px;
-            height: 21px;
-            font-family: Montserrat;
-            font-size: 16px;
-            font-weight: 300;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: normal;
-            letter-spacing: 0.4px;
-            text-align: left;
-            color: #888d92;
-            border: 0;
-        }
-        span {
-            height: 21px;
-            font-family: Montserrat;
-            font-size: 16px;
-            font-weight: 300;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: normal;
-            letter-spacing: 0.4px;
-            text-align: left;
-            color: #888d92;
-        }
-        img {
-            max-height: 42px;
-        }
-        h3 {
-            text-align: center;
-            /* width: 513px; */
-            height: 34px;
-            font-family: Montserrat;
-            font-size: 25px;
-            font-weight: 600;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: normal;
-            letter-spacing: normal;
-            text-align: center;
-            color: #202b35;
         }
     }
 
@@ -442,12 +404,14 @@
             align-items: center;
             // align-items: flex-end;
             justify-content: flex-start;
+
             span {
                 font-size: 21px;
                 color: #ffffff;
             }
         }
     }
+
     // footer
     .footer {
         max-width: 100%;
@@ -469,65 +433,10 @@
             color: #00aeef;
             text-decoration: none;
             transition: .3s;
+            cursor: pointer;
 
             img {
                 margin: -3px 5px 0 0;
-            }
-        }
-
-        ul {
-            display: flex;
-            align-self: center;
-            align-items: center;
-            padding-left: 0;
-            margin-bottom: 0;
-
-            li {
-                margin-left: 29px;
-                width: 7px;
-                height: 7px;
-                border-radius: 19px;
-                background-color: rgba(66, 76, 86, 0.2);
-                list-style: none;
-                margin-bottom: 0;
-
-                &.akk {
-                    width: 17px;
-                    height: 17px;
-                }
-
-                &.q {
-                    background-color: #00aeef;
-                    border: 4px solid #b8e0ef;
-                }
-                &.e {
-                    background-color: #f59323;
-                    border: 4px solid #f9dab7;
-                }
-                &.r {
-                    background-color: #3dc14c;
-                    border: 4px solid #bdeac2;
-                }
-                &.t {
-                    background-color: #c65cc1;
-                    border: 4px solid #f1d5ef;
-                }
-                &.z {
-                    background-color: #e13571 ;
-                    border: 4px solid #ecd9e0;
-                }
-                &.u {
-                    background-color: #003174;
-                    border: 4px solid #d1dae6;
-                }
-                &.i {
-                    background-color: magenta;
-                    border: 4px solid #ffbdff;
-                }
-
-                &:first-child {
-                    margin-left: 0;
-                }
             }
         }
 
@@ -542,6 +451,7 @@
             }
         }
     }
+
     /deep/ mat-horizontal-stepper {
         .mat-horizontal-stepper-header-container {
             position: absolute;
@@ -568,8 +478,8 @@
             .mat-step-icon,
             .mat-step-icon-not-touched {
                 margin-right: 0;
-                width: 7px;
-                height: 7px;
+                width: 8px;
+                height: 8px;
                 border-radius: 19px;
                 background-color: rgba(66, 76, 86, 0.2);
                 margin-bottom: 0;
@@ -591,41 +501,45 @@
                     background: transparent !important;
                 }
 
-                &[aria-selected="true"] {
-                    .mat-step-icon {
-                        margin-right: 0;
-                        width: 9px;
-                        height: 9px;
-                        background-color: #00aeef;
-                        border: 4px solid #b8e0ef;
-                    }
+                &[aria-selected="true"] .mat-step-icon {
+                    width: 15px;
+                    height: 15px;
+                    background-color: #00aeef;
+                    border: 4px solid #b8e0ef;
                 }
+
                 &[ng-reflect-index="1"][aria-selected="true"] .mat-step-icon {
                     background-color: #f59323;
                     border: 4px solid #f9dab7;
                 }
+
                 &[ng-reflect-index="2"][aria-selected="true"] .mat-step-icon {
                     background-color: #3dc14c;
                     border: 4px solid #bdeac2;
                 }
+
                 &[ng-reflect-index="3"][aria-selected="true"] .mat-step-icon {
                     background-color: #c65cc1;
                     border: 4px solid #f1d5ef;
                 }
+
                 &[ng-reflect-index="4"][aria-selected="true"] .mat-step-icon {
                     background-color: #e13571;
-                    border: 4px solid #ecd9e0;
+                    border: 4px solid #ffc8dc;
                 }
+
                 &[ng-reflect-index="5"][aria-selected="true"] .mat-step-icon {
                     background-color: #003174;
-                    border: 4px solid #d1dae6;
+                    border: 4px solid #bbd8ff;
                 }
+
                 &[ng-reflect-index="6"][aria-selected="true"] .mat-step-icon {
                     background-color: magenta;
                     border: 4px solid #ffbdff;
                 }
             }
         }
+
         .mat-stepper-horizontal-line,
         .mat-horizontal-stepper-header:last-child {
             display: none !important;
@@ -634,7 +548,15 @@
         .mat-horizontal-content-container {
             padding: 0;
             height: 100%;
+            .mat-horizontal-stepper-content {
+                opacity: 0;
+                &[aria-expanded="true"] {
+                    opacity: 1;
+                    transition: opacity 1.2s !important;
+                }
+            }
         }
+
         .mat-horizontal-stepper-content[aria-expanded="true"] {
             height: 100%;
         }
@@ -646,6 +568,7 @@
     margin: 0;
     height: 100%;
     max-height: 100%;
+    z-index: 9999999;
 }
 .mat-stepper-horizontal {
     height: 100%;
@@ -658,7 +581,7 @@
 }
 .imputara li {
     list-style: none;
-    width: 135px; 
+    width: 135px;
     height: 21px;
     font-family: Montserrat;
     font-size: 16px;
@@ -800,4 +723,8 @@ li.akk {
     .sixth .conta {
         background-position: right;
     }
+}
+
+/deep/ .cdk-overlay-backdrop.cfo-intro + .cdk-global-overlay-wrapper {
+    background: rgba(0, 0, 0, .7);
 }

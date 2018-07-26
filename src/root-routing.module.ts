@@ -1,6 +1,5 @@
 import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
-import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppRootComponent } from 'root.components';
 
@@ -21,7 +20,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         if (this.handlers[key])
             (<any>this.handlers[key]).componentRef.instance.invalidate();
     }
-    
+
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
         if (!route.routeConfig || route.routeConfig.loadChildren)
             return false;
@@ -31,7 +30,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
         if (handle && (<any>handle).componentRef.instance.deactivate)
-            (<any>handle).componentRef.instance.deactivate();             
+            (<any>handle).componentRef.instance.deactivate();
         this.handlers[this.getKey(route)] = handle;
     }
 
@@ -46,10 +45,10 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         let handle = <any>this.handlers[this.getKey(route)];
         if (handle && handle.componentRef.instance.activate) {
             clearTimeout(this.activateTimeout);
-            this.activateTimeout = setTimeout(() => 
+            this.activateTimeout = setTimeout(() =>
                 handle.componentRef.instance.activate());
         }
-        return (this.checkSameRoute(route, handle) ? handle: null);
+        return (this.checkSameRoute(route, handle) ? handle : null);
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {

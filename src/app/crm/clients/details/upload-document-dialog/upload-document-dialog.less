@@ -1,0 +1,57 @@
+:host {
+    h3 {
+        font-size: 12px;
+        padding-bottom: 15px;
+        min-width: 300px;
+    }
+    .file-upload {
+        height: 25px;
+        width: 100px;
+        position: relative;
+        border-radius: 3px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        float: right;
+        
+        border: 1px solid #FFF;
+        overflow: hidden;
+        background-image: linear-gradient(to bottom, #2590EB 50%, #FFFFFF 50%);
+        background-size: 100% 200%;
+        transition: all 1s;
+        color: #FFF;
+        font-size: 10px;
+    }
+    
+    .file-upload:hover {
+        background-position: 0 -100%;
+        color: #2590Eb;
+    }
+    
+    .text {
+        font-size: 14px;
+    }
+    
+    input[type='file'] {
+        height: 25px;
+        width: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .select-file-from-title {
+        color: #8a969b;
+        font-weight: 400;
+        padding-right: 10px;
+        font-size: 14px;
+    }
+
+    .selected-file-name {
+        font-weight: 600;
+        padding-right: 10px;
+        font-size: 14px;
+    }
+}

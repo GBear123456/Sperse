@@ -5,12 +5,16 @@ import { ListsListComponent } from '../../shared/lists-list/lists-list.component
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
+import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { ClientDetailsService } from './client-details.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less']
+    styleUrls: ['./operations-widget.component.less'],
+    providers: [ AppLocalizationService ]
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -18,97 +22,101 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+
+    /*** @todo add localization service */
 
     @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
     @Input() leadId: number;
+    @Input() selectedStageId: number;
+    @Input()
+    set stages(stages: any[]) {
+        this._stages = stages;
+        this.initToolbarConfig();
+    }
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private _stages: any[] = [];
+    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+
+    toolbarConfig = [];
+
+    constructor(
+        private _clientService: ClientDetailsService,
+        public localizationService: AppLocalizationService
+    ) {
+        _clientService.toolbarSubscribe((config) => {
+            this.initToolbarConfig(config);
+        });
+    }
+
+    ngOnInit() {
+        this.initToolbarConfig();
+    }
 
     get stages(): any[] {
         return this._stages;
     }
 
-    @Input() 
-    set stages(stages: any[]) {
-        this._stages = stages;
-        this.initToolbarConfig();
-    }
-
-    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
-
-    toolbarConfig = [];
-
-    initToolbarConfig() {
-        this.toolbarConfig = [
+    initToolbarConfig(config = null) {
+        this.toolbarConfig = config || [
             {
                 location: 'before', items: [
-                    {
-                        name: 'assign',
-                        action: this.toggleUserAssignment.bind(this)
-                    },
-                    this.leadId ? { 
-                        widget: 'dxDropDownMenu',
-                        disabled: !this.stages.length,
-                        name: 'stage', 
-                        options: {
-                            hint: 'Stage',
-                            items: this.stages
-                        }
-                    } : 
-                    {
-                        name: 'status',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: 'Status',
-                            items: [
-                                {
-                                    action: this.updateStatus.bind(this, 'A'),
-                                    text: 'Active',
-                                }, {
-                                    action: this.updateStatus.bind(this, 'I'),
-                                    text: 'Inactive',
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: 'lists',
-                        action: this.toggleLists.bind(this)
-                    },
-                    {
-                        name: 'tags',
-                        action: this.toggleTags.bind(this)
-                    },
-                    {
-                        name: 'rating',
-                        action: this.toggleRating.bind(this),
-                    },
-                    {
-                        name: 'star',
-                        action: this.toggleStars.bind(this),
-                    }
-                ]
-            },
-            {
+                {
+                    name: 'assign',
+                    action: this.toggleUserAssignment.bind(this)
+                },
+                this.leadId ? {
+                    name: 'stage',
+                    action: this.toggleStages.bind(this)
+                } :
+                {
+                    name: 'status',
+                    action: this.toggleStatus.bind(this)
+                },
+                {
+                    name: 'lists',
+                    action: this.toggleLists.bind(this)
+                },
+                {
+                    name: 'tags',
+                    action: this.toggleTags.bind(this)
+                },
+                {
+                    name: 'rating',
+                    action: this.toggleRating.bind(this),
+                },
+                {
+                    name: 'star',
+                    action: this.toggleStars.bind(this),
+                }
+            ]}, {
                 location: 'before', items: [
                     {
                         name: 'print',
                         action: this.print.emit.bind(this.print)
+                    },
+                    {
+                        name: 'delete',
+                        action: this.delete.bind(this),
+                        visible: Boolean(this.leadId)
                     }
                 ]
             }
         ];
+    }
 
-        if (this.leadId) {
-            this.toolbarConfig[1]['items'].push({
-                name: 'delete',
-                action: this.delete.bind(this)
-            });
-        }
+    toggleStages() {
+        this.stagesComponent.toggle();
+    }
+
+    toggleStatus() {
+        this.statusComponent.toggle();
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -135,21 +143,20 @@ export class OperationsWidgetComponent implements OnInit {
         this.starsListComponent.toggle();
     }
 
-    constructor() { }
-
-    ngOnInit() {
-        this.initToolbarConfig();
-    }
-
     delete() {
         this.onDelete.emit();
     }
 
-    updateStatus(statusId: string) {
-        this.onUpdateStatus.emit(statusId);
+    updateStatus(event) {
+        this.onUpdateStatus.emit(event);
+    }
+
+    updateStage(event) {
+        this.onUpdateStage.emit(event);
     }
 
     refresh() {
+        this.stagesComponent.tooltipVisible = false;
         this.initToolbarConfig();
     }
 }

@@ -1,11 +1,10 @@
-import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
-import { Router, CanActivate } from '@angular/router';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { LoginService } from './login.service';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/timer';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { Subscription, Observable } from 'rxjs';
+import { timer } from 'rxjs';
+import { LoginService } from './login.service';
 
 @Component({
     templateUrl: './validate-two-factor-code.component.html',
@@ -37,8 +36,8 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
     }
 
     ngOnInit(): void {
-        const timer = Observable.timer(1000, 1000);
-        this.timerSubscription = timer.subscribe(() => {
+        const timerSource = timer(1000, 1000);
+        this.timerSubscription = timerSource.subscribe(() => {
             this.remainingSeconds = this.remainingSeconds - 1;
             if (this.remainingSeconds <= 0) {
                 this.message.warn(this.l('TimeoutPleaseTryAgain')).done(() => {

@@ -1,12 +1,13 @@
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AppConsts } from '@shared/AppConsts';
 import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { LoginService, ExternalLoginProvider } from './login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from 'shared/helpers/UrlHelper';
-import {AppConsts} from '@shared/AppConsts';
+import { ExternalLoginProvider, LoginService } from './login.service';
+import * as _ from 'underscore';
 
 @Component({
     templateUrl: './login.component.html',
@@ -17,6 +18,7 @@ import {AppConsts} from '@shared/AppConsts';
 })
 export class LoginComponent extends AppComponentBase implements OnInit {
     submitting = false;
+    isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
 
     constructor(
         injector: Injector,
@@ -30,6 +32,10 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     get multiTenancySideIsTeanant(): boolean {
         return this._sessionService.tenantId > 0;
+    }
+
+    get isTenantSelfRegistrationAllowed(): boolean {
+        return this.setting.getBoolean('App.TenantManagement.AllowSelfRegistration');
     }
 
     get isSelfRegistrationAllowed(): boolean {

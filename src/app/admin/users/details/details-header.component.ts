@@ -1,16 +1,12 @@
-import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
-import { InstanceServiceProxy, TenantHostType, UserServiceProxy, GetUserForEditOutput } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
+import { UserServiceProxy, GetUserForEditOutput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
-    styleUrls: ['./details-header.component.less'],
-    providers: [InstanceServiceProxy]
+    styleUrls: ['./details-header.component.less']
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Output() onUpdate: EventEmitter<any> = new EventEmitter();
