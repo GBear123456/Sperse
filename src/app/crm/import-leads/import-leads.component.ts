@@ -22,8 +22,8 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
-    ImportLeadInput, ImportLeadsInput, ImportLeadPersonalInput, ImportLeadBusinessInput, ImportLeadFullName, ImportLeadAddressInput,
-    LeadServiceProxy, ImportLeadsInputImportType
+    ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
+    ImportServiceProxy, ImportInputImportType
 } from '@shared/service-proxies/service-proxies';
 
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
@@ -32,7 +32,7 @@ import { ImportWizardService } from '@app/shared/common/import-wizard/import-wiz
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ZipCodeFormatterPipe ]
+    providers: [ ZipCodeFormatterPipe, ImportServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -148,10 +148,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importedCount: number = 0;
     mappingFields: any[] = [];
     importTypeIndex: number = 0;
-    importType: ImportLeadsInputImportType = ImportLeadsInputImportType.Lead;
+    importType: ImportInputImportType = ImportInputImportType.Lead;
 
-    fullName: ImportLeadFullName;
-    fullAddress: ImportLeadAddressInput;
+    fullName: ImportFullName;
+    fullAddress: ImportAddressInput;
 
     userId: any;
     isUserSelected = true;
@@ -167,12 +167,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
-        personalInfo: ImportLeadPersonalInput.fromJS({}),
-        fullName: ImportLeadFullName.fromJS({}),
-        fullAddress: ImportLeadAddressInput.fromJS({}),
-        businessInfo: ImportLeadBusinessInput.fromJS({}),
-        companyFullAddress: ImportLeadAddressInput.fromJS({}),
-        workFullAddress: ImportLeadAddressInput.fromJS({})
+        personalInfo: ImportPersonalInput.fromJS({}),
+        fullName: ImportFullName.fromJS({}),
+        fullAddress: ImportAddressInput.fromJS({}),
+        businessInfo: ImportBusinessInput.fromJS({}),
+        companyFullAddress: ImportAddressInput.fromJS({}),
+        workFullAddress: ImportAddressInput.fromJS({})
     };
 
     public readonly compareFields: any = [
@@ -190,14 +190,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         injector: Injector,
         private _importService: ImportWizardService,
         private _reuseService: RouteReuseStrategy,
-        private _leadService: LeadServiceProxy,
+        private _importProxy: ImportServiceProxy,
         private _router: Router,
         private _pipelineService: PipelineService,
         private _nameParser: NameParserService,
         private zipFormatterPipe: ZipCodeFormatterPipe
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.setMappingFields(ImportLeadInput.fromJS({}));
+        this.setMappingFields(ImportItemInput.fromJS({}));
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
@@ -311,13 +311,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             isConfirmed => {
                 if (isConfirmed) {
                     let leadsInput = this.createLeadsInput(data);
-                    this._leadService.importLeads(leadsInput)
+                    this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId) => { 
                             if (importId && !isNaN(importId))
                                 this._importService.setupStatusCheck((callback) => {
-                                    this._leadService.getImportStatus(importId).subscribe((res) => {
+                                    this._importProxy.getStatus(importId).subscribe((res) => {
                                         let finished = false;
                                         this.importedCount = res.importedCount;                                        
                                         if (['A', 'C'].indexOf(res.statusId) >= 0) {
@@ -336,10 +336,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         );
     }
 
-    createLeadsInput(data: any[]): ImportLeadsInput {
-        let result = ImportLeadsInput.fromJS({
+    createLeadsInput(data: any[]): ImportInput {
+        let result = ImportInput.fromJS({
             fileName: this.wizard.fileName, 
-            fileSize: this.wizard.files[0].size, 
+            fileSize: this.wizard.fileOrigSize, 
             fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
@@ -351,7 +351,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         result.tags = this.tagsComponent.selectedItems;
 
         data.forEach(v => {
-            let lead = new ImportLeadInput();
+            let lead = new ImportItemInput();
             let keys = Object.keys(v);
             keys.forEach(key => {
                 let path = key.split(ImportWizardComponent.FieldSeparator);
@@ -374,7 +374,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
 
         result.importType = this.importType;
-        return ImportLeadsInput.fromJS(result);
+        return ImportInput.fromJS(result);
     }
 
     setMappingFields(obj: object, parent: string = null) {
@@ -513,21 +513,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                 {
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l('Leads'),
-                                    value: ImportLeadsInputImportType.Lead
+                                    value: ImportInputImportType.Lead
                                 }, {
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l('Clients'),
-                                    value: ImportLeadsInputImportType.Client
+                                    value: ImportInputImportType.Client
                                 }, {
                                     disabled: true,
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l('Partners'),
-                                    value: ImportLeadsInputImportType.Partner
+                                    value: ImportInputImportType.Partner
                                 }, {
                                     disabled: true,
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l('Orders'),
-                                    value: ImportLeadsInputImportType.Order
+                                    value: ImportInputImportType.Order
                                 }
                             ]
                         }

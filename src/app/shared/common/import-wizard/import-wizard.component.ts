@@ -76,6 +76,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     fileName = '';
     fileSize = '';
     fileContent = '';
+    fileOrigSize = 0;
     fileHasHeader = false;
     fileHeaderWasGenerated = false;
 
@@ -419,6 +420,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
+        this.fileOrigSize = file.size;
         this.fileSize = this.getFileSize(file.size);
         let reader = new FileReader();
         reader.onload = (event) => {
