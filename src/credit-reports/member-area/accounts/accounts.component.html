@@ -1,0 +1,14 @@
+<div class="wrapper">
+    <div class="content-wrap" *ngIf="isInstanceInfoLoaded">
+        <synch-progress class="synch-progress" (onComplete)="onSyncComplete()"></synch-progress>
+        <bank-accounts-component *ngIf="_cfoService.initialized;else notInitialized"></bank-accounts-component>
+
+        <ng-template #notInitialized>
+            <div class="not-initialized-content">
+                <p class="welcome-text">{{ l('Accounts_Welcome') }}</p>
+                <p class="body-text">{{ l('Accounts_BodyText') }}</p>
+                <button (click)="onStart()" class="btn btn-layout" [disabled]="isStartDisabled">{{ l('GetStarted') }}</button>
+            </div>
+        </ng-template>
+    </div>
+</div>

@@ -1,4 +1,7 @@
-<app-headline [config]="headlineConfig"><app-period (onChange)="periodChanged($event)"></app-period></app-headline>
+<app-headline [config]="headlineConfig">
+    <import-progress-bar></import-progress-bar>
+    <app-period (onChange)="periodChanged($event)"></app-period>
+</app-headline>
 <div [@routerTransition]>
   <left-menu (openIntro)="openDialog()"></left-menu>
   <div class="lead-status">

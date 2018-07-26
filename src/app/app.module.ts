@@ -12,7 +12,8 @@ import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/me
 import {ImpersonationService} from '@admin/users/impersonation.service';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
-import {LayoutModule} from './shared/layout/layout.module';
+import { LayoutModule } from './shared/layout/layout.module';
+import { LayoutCommonModule } from './shared/layout/layout-common.module';
 import {AppCommonModule} from './shared/common/app-common.module';
 import {AppRoutingModule} from './app-routing.module';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
@@ -35,6 +36,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     ],
     imports: [
         LayoutModule,
+        LayoutCommonModule,
         AppCommonModule.forRoot(),
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,

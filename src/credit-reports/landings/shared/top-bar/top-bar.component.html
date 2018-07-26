@@ -1,0 +1,10 @@
+<div class="top-nav">
+  <ul class="top-navigation">
+    <li *ngFor="let menuItem of menuItems" class="top-navigation-item">
+      <a [routerLink]="[menuItem.url]" class="top-navigation-link" [routerLinkActive]="['active']">
+        <img src="{{menuItem.img}}" alt="{{menuItem.title}}">
+        <img src="{{menuItem.imgActive}}" alt="{{menuItem.title}}" class="active-icon"> {{l(menuItem.title)}}
+      </a>
+    </li>
+  </ul>
+</div>

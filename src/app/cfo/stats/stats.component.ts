@@ -11,13 +11,13 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CacheService } from 'ng2-cache-service';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { forkJoin } from 'rxjs';
 import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 
 import {
     StatsFilter,

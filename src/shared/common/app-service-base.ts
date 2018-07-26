@@ -66,6 +66,7 @@ export abstract class AppServiceBase {
         return (config && typeof (config.navigation) == 'object'
             && (!abp.session.tenantId || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
             && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
+            && (abp.session.tenantId || !config.hostDisabled)
             );
     }
 

@@ -1,0 +1,200 @@
+.left-side {
+  float: left;
+  width: 55%;
+  display: block;
+  padding-right: 25px;
+}
+.right-side {
+  float: right;
+  width: 45%;
+  display: block;
+  padding-left: 25px;
+}
+
+.side-form-title {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: #171c1d;
+  font-family: "roboto-slab", serif;
+  margin-top: 0;
+  position: relative;
+  text-align: left;
+  span + span {
+    display: inline-block;
+    padding: 24px 0 21px;
+  }
+  .number {
+    display: inline-block;
+    font-family: "lato", sans-serif;
+    opacity: 0.05;
+    font-size: 64px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    color: #021f44;
+    margin-right: 8px;
+  }
+  .description {
+    font-size: 16px;
+    letter-spacing: 0.2px;
+    color: #778489;
+  }
+}
+
+.client-info {
+  input {
+    height: 48px;
+    line-height: 40px;
+    padding: 4px 20px;
+    border-radius: 4px;
+    font-family: "lato", sans-serif;
+    background-color: #ffffff;
+    border: solid 1px #dfdfdf;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    color: #8a969b;
+    display: block;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  .phone {
+    width:70%;
+    float: left;
+  }
+  .zip {
+    width:28%;
+    float: right;
+  }
+  button {
+    display: block;
+    width: 100%;
+    border: 0;
+    height: 48px;
+    border-radius: 4px;
+    background-color: #f58023;
+    box-shadow: 0 3px 10px 0 rgba(245, 128, 35, 0.35);
+    font-family: "lato", sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    text-align: center;
+    color: #ffffff;
+    padding: 0 24px;
+    img {
+      float: right;
+      position: relative;
+      top:5px; // temp
+    }
+  }
+}
+
+.bordered-fieldset {
+  border-radius: 4px;
+  background-color: #ffffff;
+  border: solid 1px #dfdfdf;
+  margin-bottom: 20px;
+  padding: 20px 30px 25px;
+  position: relative;
+  .legend {
+    font-family: "lato", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: #8a969b;
+    border-bottom:0;
+    background:#fff;
+    display: inline-block;
+    padding: 0 10px;
+    width: auto;
+    position: absolute;
+    top: -12px;
+  }
+}
+
+.credit-card-type {
+  div {
+    width: 49%;
+    padding-right: 2%;
+    float:left;
+    box-sizing: border-box;
+    + div {
+      padding-right: 0;
+      float: right;
+    }
+
+  }
+}
+
+input[type="radio"] {
+  display: none;
+  + label {
+    position: relative;
+    padding-left: 36px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    color: rgba(23, 28, 29, 0.5);
+    img {
+      position: absolute;
+      left: 7px;
+      top: 2px;
+      opacity: 0;
+      transition: .2s;
+    }
+    //color: #171c1d;
+    &::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: solid 1px #dfdfdf;
+      background-color: #fff;
+      position: absolute;
+      left: 5px;
+      transition: .2s;
+    }
+  }
+  &:checked {
+    + label {
+      color: #171c1d;
+      img {
+        opacity: 1;
+      }
+      &::before {
+        background-color: #ed9d1a;
+        border-color: #ed9d1a;
+      }
+    }
+  }
+}
+
+.search-card-list {
+  text-align: center;
+  .search-card-item {
+    width: 32%;
+    padding: 0 15px;
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
+    border-left: 0;
+    + .search-card-item {
+      border-left: solid 1px rgb(223, 223, 223);
+    }
+    figure {
+      img {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+      }
+      figcaption {
+        font-family: "lato", sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        color: rgba(23, 28, 29, 0.5);
+      }
+    }
+  }
+}

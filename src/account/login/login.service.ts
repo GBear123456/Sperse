@@ -69,6 +69,14 @@ export class LoginService {
         private _authService: AppAuthService
     ) {
         this.clear();
+
+        this.authenticateModel =
+            JSON.parse(sessionStorage.getItem('authenticateModel'));
+        this.authenticateResult = 
+            JSON.parse(sessionStorage.getItem('authenticateResult'));
+
+        sessionStorage.removeItem('authenticateModel');
+        sessionStorage.removeItem('authenticateResult');
     }
 
     authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {

@@ -1,0 +1,28 @@
+<div class="report-item">
+  <div class="report-item-title" id="creditorContactList">{{l("creditorContacts")}}</div>
+  <div class="report-item-content">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>{{l("creditorName")}}</th>
+        <th>{{l("creditorAddress")}}</th>
+        <th>{{l("creditorPhoneNumber")}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of creditReport?.creditorContacts">
+        <td class="row-title">{{item.name}}</td>
+        <td class="address">
+          <address>
+            {{item.address.line1}}
+            {{item.address.line2}}
+            {{item.address.line3}}
+            {{item.address.line4}}
+          </address>
+        </td>
+        <td class="phone">{{item.phoneNumber}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

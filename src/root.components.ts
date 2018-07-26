@@ -1,11 +1,11 @@
 import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { DOCUMENT, Title } from '@angular/platform-browser';
 
-//import * as _ from 'underscore';
-
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+
+import * as _ from 'underscore';
 
 /*
 	Root Document Component (Body Selector)
@@ -41,10 +41,12 @@ export class RootComponent implements AfterViewInit {
             value ? 'add' : 'remove']('overflow-hidden');
     }
 
-    public addScriptLink(src: String, type: String = 'text/javascript'): void {
+    public addScriptLink(src: String, type: String = 'text/javascript', callback = null): void {
         let script = this.document.createElement('script');
         script.type = type;
         script.src = src;
+        if (callback)
+            script.addEventListener('load', callback);
         this.document.head.append(script);
     }
 
@@ -55,11 +57,11 @@ export class RootComponent implements AfterViewInit {
 
     public addStyleSheet(id: String, href: String, rel: String = 'stylesheet'): void {
         let link = this.document.createElement('link');
-        // _.mapObject({id: id, href: href, rel: rel},
-        //     (val, key) => {
-        //         link.setAttribute(key, val);
-        //     }
-        // );
+         _.mapObject({id: id, href: href, rel: rel},
+             (val, key) => {
+                 link.setAttribute(key, val);
+             }
+        );
         this.document.head.append(link);
     }
 

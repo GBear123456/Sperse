@@ -1,0 +1,39 @@
+<div class="report-item">
+  <div class="report-item-title" id="scoreFactors">{{l("scoreFactors")}}</div>
+  <div class="report-item-content">
+    <div class="score-factor-bureau-block">
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th width="130">{{l("bureau")}}</th>
+            <th class="center-text">{{l("positive")}}</th>
+            <th class="center-text">{{l("negative")}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of creditReport?.bureauReports">
+            <td>
+              <img src="assets/images/credit-report/{{item.bureau | lowercase}}.png" srcset="assets/images/credit-report/{{item.bureau | lowercase}}@2x.png 2x, assets/images/credit-report/{{item.bureau | lowercase}}@3x.png 3x" class="bureau-img">
+            </td>
+            <td>
+              <ng-container *ngFor="let item of item?.scoreFactors">
+                <article class="item positive-item" *ngIf="item.isPositive === true">
+                  {{item.text}}
+                </article>
+              </ng-container>
+            </td>
+            <td>
+              <ng-container *ngFor="let item of item?.scoreFactors">
+                <article class="item negative-item" *ngIf="item.isPositive === false">
+                  {{item.text}}
+                </article>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

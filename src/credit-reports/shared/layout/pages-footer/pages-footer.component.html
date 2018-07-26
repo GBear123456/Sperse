@@ -1,0 +1,23 @@
+<div class="top-footer">
+    <div class="container">
+        <div class="footer-menu">
+            <ul class="footer-menu-list">
+                <li class="footer-menu-item" *ngFor="let item of footerMenuItems">
+                    <a class="footer-menu-link" [routerLink]="[item.url]">{{l(item.name)}}</a>
+                </li>
+            </ul>
+        </div><!-- footer-menu -->
+        <div class="copyright">
+            © {{appSession?.tenant?.name}} {{currentYear}}, all rights reserved
+        </div>
+    </div>
+</div>
+<div class="bottom-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                {{l("DisclosureTitle")}}: {{appSession?.tenant?.name}} {{l("DisclosureText")}}
+            </div>
+        </div>
+    </div>
+</div>
