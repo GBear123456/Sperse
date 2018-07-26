@@ -60,7 +60,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     public validTextExtensions: String[] = ['txt', 'text'];
     public validVideoExtensions: String[] = ['mp4', 'mov'];
     public viewerToolbarConfig: any = [];
-    fileType: string;
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -361,7 +360,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
         this.currentDocumentURL = '';
         this.showViewerType = undefined;
-        let ext = this.fileType = this.currentDocumentInfo.fileName.split('.').pop(),
+        let ext = this.currentDocumentInfo.fileName.split('.').pop(),
             viewerType;
 
         if (this.validVideoExtensions.indexOf(ext) >= 0) {
