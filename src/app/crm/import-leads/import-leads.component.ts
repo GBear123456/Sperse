@@ -149,6 +149,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     mappingFields: any[] = [];
     importTypeIndex: number = 0;
     importType: ImportInputImportType = ImportInputImportType.Lead;
+    importId: number = 0;
 
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
@@ -201,6 +202,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
+
+        _importService.cancelListen(() => {
+            if (this.importId)
+                _importProxy.cancel(this.importId);
+        });
     }
 
     private importTypeChanged(event) {
@@ -315,21 +321,27 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         .pipe(
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId) => { 
-                            if (importId && !isNaN(importId))
+                            if (importId && !isNaN(importId)) {
+                                this.importId = importId;
                                 this._importService.setupStatusCheck((callback) => {
                                     this._importProxy.getStatus(importId).subscribe((res) => {
-                                        let finished = false;
                                         this.importedCount = res.importedCount;                                        
                                         if (['A', 'C'].indexOf(res.statusId) >= 0) {
-                                            finished = true;
-                                            this.wizard.showFinishStep();
-                                            this.clearToolbarSelectedItems();
+                                            this.importId = 0;
                                             (<any>this._reuseService).invalidate('leads');
                                         }                    
-                                        callback({progress: finished ? 100: 
-                                            Math.round((res.importedCount + res.failedCount) / res.totalCount * 100)});
+                                        callback({
+                                            progress: !this.importId ? 100: 
+                                                Math.round((res.importedCount + res.failedCount) / res.totalCount * 100),
+                                            totalCount: res.totalCount,
+                                            importedCount: res.importedCount,
+                                            failedCount: res.failedCount
+                                        });
                                     })
                                 });
+                            }
+                            this.wizard.showFinishStep();
+                            this.clearToolbarSelectedItems();
                         });
                 }
             }
@@ -590,5 +602,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingComponent.ratingValue = this.defaultRating;
+    }
+
+    cancelImport() {
+        this._importService.cancelImport();
     }
 }

@@ -17,8 +17,8 @@ export class ImportWizardService {
             asObservable().subscribe(callback));
     }
 
-    progressChanged(progress: any) {
-        this.subjectProgress.next(progress);
+    progressChanged(data: any) {
+        this.subjectProgress.next(data);
     }
 
     cancelListen(callback: () => any) {
@@ -32,7 +32,7 @@ export class ImportWizardService {
     setupStatusCheck(method: (callback: any) => void) {
         setTimeout(() => {
             method((data) => {
-                this.progressChanged(data.progress);
+                this.progressChanged(data);
                 if (data.progress < 100)
                     this.setupStatusCheck(method);
             });

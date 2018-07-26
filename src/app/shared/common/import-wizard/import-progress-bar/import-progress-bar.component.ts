@@ -18,8 +18,13 @@ import { ImportWizardService } from '../import-wizard.service';
 export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxProgressBarComponent) progressComponent: DxProgressBarComponent;
              
-    progress: number = 0;
+    progress: number = 3;
     tooltipVisible: boolean;
+    tooltipTimeout: any; 
+
+    totalCount: number = 0;
+    importedCount: number = 0;
+    failedCount: number = 0;
   
     constructor(
         injector: Injector,
@@ -27,8 +32,11 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     ) {
         super(injector);
 
-        _importService.progressListen((progress) => {
-            this.progress = progress;
+        _importService.progressListen((data) => {
+            this.progress = data.progress;
+            this.totalCount = data.totalCount;
+            this.importedCount = data.importedCount;
+            this.failedCount = data.failedCount;
         });
     }
 
@@ -38,6 +46,13 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
 
     cancelImport() {
         this._importService.cancelImport();
+    }
+
+    toggleTooltip(visible) {
+        clearTimeout(this.tooltipTimeout);
+        this.tooltipTimeout = setTimeout(() => {
+            this.tooltipVisible =  visible;
+        }, 1000);
     }
 
     ngOnDestroy() {

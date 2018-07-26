@@ -1,7 +1,6 @@
 <div *ngIf="showSteper">
     <h1><i class="{{icon}}"></i>{{title}}</h1>
     <div class="actions" [hidden]="stepper?.selectedIndex == FINISH_STEP_INDEX">
-        <import-progress-bar></import-progress-bar>
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
         <button class="button-layout button-primary" (click)="next()">{{stepper?.selectedIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
         <div class="separator"></div>

@@ -14,10 +14,18 @@
         (onCancel)="cancel()">
 
         <div class="success">
-            <h1>{{l('ImportedLeadsHeader', importedCount, totalCount, l(this.importType.toString() + 's').toLowerCase())}}</h1>
-            <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
-            <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
-            <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
+            <div *ngIf="importId">
+                <h1>{{l('ImportProgressHeader')}}</h1>
+                <import-progress-bar></import-progress-bar><br>
+                <button class="button-layout button-default" (click)="cancelImport()">{{l('CancelImport')}}</button>
+            </div>
+
+            <div *ngIf="!importId">
+                <h1>{{l('ImportedLeadsHeader', importedCount, totalCount, l(this.importType.toString() + 's').toLowerCase())}}</h1>
+                <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
+                <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
+                <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
+            </div>
         </div>
     </import-wizard>
 </div>
