@@ -145,7 +145,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
                     this.fillCustomerDetails(result[0]);
                     this.fillLeadDetails(result[1]);
-                    this.loadLeadsStages(leadId);
+                    this.loadLeadsStages();
                     this.finishLoading(true);
                 });
             } else
@@ -155,14 +155,14 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     this.finishLoading(true);
                 });
         } else if (leadId) {
-            this.loadLeadsStages(leadId);
+            this._customerService['data'].leadInfo = {
+                id: leadId
+            };
+            this.loadLeadsStages();
         }
     }
 
-    private loadLeadsStages(leadId) {
-        this._customerService['data'].leadInfo = {
-            id: leadId
-        };
+    private loadLeadsStages() {
         this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
             .subscribe(result => {
                 this.leadStages = result.stages.map((stage) => {
