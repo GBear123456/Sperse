@@ -3425,6 +3425,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     updateMovedHistoricals(items: TransactionStatsDtoExtended[], targetData: CellInfo) {
         items.forEach(item => {
             item.categoryId = targetData.categoryId;
+            item.accountingTypeId = targetData.accountingTypeId;
             item.subCategoryId = targetData.subCategoryId;
             item.transactionDescriptor = targetData.categoryId || targetData.subCategoryId
                 ? targetData.transactionDescriptor || item.transactionDescriptor
