@@ -3523,14 +3523,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             let date = moment(targetData.date.startDate).utc();
             let timezoneOffset = date.toDate().getTimezoneOffset();
+            let correctedDate = date.add(timezoneOffset, 'minutes');
 
             /** Change forecast locally */
-            forecastInCashflow.date = date.add(timezoneOffset, 'minutes');
-            forecastInCashflow.initialDate = targetData.date.startDate.utc();
             forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
             forecastInCashflow.subCategoryId = targetData.subCategoryId;
             forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor;
+
+            /** Update forecast, its totals and net change items with new date if date changed */
+            if (!forecastInCashflow.date.isSame(correctedDate)) {
+                this.cashflowData.forEach(item => {
+                    if (item.forecastId === forecastInCashflow.forecastId) {
+                        item.date = correctedDate;
+                        item.initialDate = targetData.date.startDate.utc();
+                    }
+                });
+            }
             forecasts[index] = this.addCategorizationLevels(forecastInCashflow);
             this.updateTreePathes(forecastInCashflow, true);
         });
