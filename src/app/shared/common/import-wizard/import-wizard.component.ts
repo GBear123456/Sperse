@@ -67,10 +67,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private invalidRowKeys: any = {};
     private similarFieldsIndex: any = {};
 
-    private readonly UPLOAD_STEP_INDEX  = 0;
-    private readonly MAPPING_STEP_INDEX = 1;
-    private readonly REVIEW_STEP_INDEX  = 2;
-    private readonly FINISH_STEP_INDEX  = 3;
+    readonly UPLOAD_STEP_INDEX  = 0;
+    readonly MAPPING_STEP_INDEX = 1;
+    readonly REVIEW_STEP_INDEX  = 2;
+    readonly FINISH_STEP_INDEX  = 3;
 
     showSteper = true;
     loadProgress = 0;
@@ -90,7 +90,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
     ];
-    selectedStepIndex = 0;
 
     constructor(
         injector: Injector,
@@ -126,8 +125,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.showSteper = false;
         this.uploadFile.reset();
         this.dataMapping.reset();
-        this.selectedStepIndex = 0;
-
         this.mapDataSource = [];
         this.emptyReviewData();
 
@@ -208,7 +205,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     showFinishStep() {
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
-        this.selectedStepIndex = 0;
     }
 
     emptyReviewData() {
@@ -664,7 +660,4 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         ) $event.cellElement.classList.add('bold');
     }
 
-    selectionChange(data) {
-        this.selectedStepIndex = data.selectedIndex;
-    }
 }

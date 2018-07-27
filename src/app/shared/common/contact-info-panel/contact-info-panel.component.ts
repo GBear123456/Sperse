@@ -8,7 +8,7 @@ import { ContactShortInfoDto } from '@shared/service-proxies/service-proxies';
   styleUrls: ['./contact-info-panel.component.less']
 })
 export class ContactInfoPanelComponent extends AppComponentBase {
-  @Input() data: ContactShortInfoDto;
+  @Input() data: any;
 
   constructor(
     injector: Injector
