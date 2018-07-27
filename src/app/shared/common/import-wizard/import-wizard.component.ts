@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit} from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 
@@ -67,10 +67,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private invalidRowKeys: any = {};
     private similarFieldsIndex: any = {};
 
-    readonly UPLOAD_STEP_INDEX  = 0;
+    readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
-    readonly REVIEW_STEP_INDEX  = 2;
-    readonly FINISH_STEP_INDEX  = 3;
+    readonly REVIEW_STEP_INDEX = 2;
+    readonly FINISH_STEP_INDEX = 3;
 
     showSteper = true;
     loadProgress = 0;
@@ -85,10 +85,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     selectedPreviewRows: any = [];
     reviewDataSource: any;
     mapDataSource: any;
+    selectedMapRows: any[] = [];
 
     selectModeItems = [
-        {text: 'Affect on page items', mode: 'page'},
-        {text: 'Affect all pages items', mode: 'allPages'}
+        { text: 'Affect on page items', mode: 'page' },
+        { text: 'Affect all pages items', mode: 'allPages' }
     ];
 
     constructor(
@@ -154,7 +155,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let gridElm = this.reviewGrid.instance.element();
             if (gridElm.getElementsByClassName('invalid').length) {
-                let dialogData = {option: 'ignore'};
+                let dialogData = { option: 'ignore' };
                 this._dialog.open(ConfirmImportDialog, {
                     data: dialogData
                 }).afterClosed().subscribe(result => {
@@ -219,7 +220,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     initReviewDataSource(mappedFields) {
         this.emptyReviewData();
         setTimeout(() => {
-            let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0: 1),
+            let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0 : 1),
                 onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100),
                 columnsIndex = {}, columnCount = 0;
 
@@ -313,9 +314,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             this.checkSimilarFields.forEach((fields) => {
                 fields.forEach((field) => {
                     let conditionValues = field.split(':').map((fld) => {
-                            return row[fld] || '';
-                        }), fieldIndex = conditionValues.every(Boolean) ?
-                            this.getUniqueIdent(conditionValues) : 0;
+                        return row[fld] || '';
+                    }), fieldIndex = conditionValues.every(Boolean) ?
+                        this.getUniqueIdent(conditionValues) : 0;
                     if (fieldIndex) {
                         fieldsIndex.push(fieldIndex);
                         let groupIndex = this.similarFieldsIndex[fieldIndex];
@@ -454,6 +455,13 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     data: data
                 }
             };
+
+            let selectedMapRowKeys = [];
+            data.forEach(v => {
+                if (v.mappedField)
+                    selectedMapRowKeys.push(v.id);
+            });
+            this.selectedMapRows = selectedMapRowKeys;
         }
     }
 
@@ -488,7 +496,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     fileSelected($event) {
         if ($event.target.files.length)
-            this.fileDropped({files: $event.target.files});
+            this.fileDropped({ files: $event.target.files });
     }
 
     downloadFromURL() {
@@ -528,18 +536,19 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     onRowValidating($event) {
-        if ($event.newData.mappedField)
-            $event.component.selectRows([$event.key]);
+        if ($event.newData.mappedField) {
+            $event.component.selectRows([$event.key], true);
+            this.mapDataSource.store.data.forEach((row) => {
+                if ($event.oldData.sourceField != row.sourceField &&
+                    $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
+                    $event.isValid = false;
+                    $event.errorText = this.l('FieldMapError', [row.sourceField]);
+                }
+            });
+        }
         else
             $event.component.deselectRows([$event.key]);
 
-        this.mapDataSource.store.data.forEach((row) => {
-            if ($event.oldData.sourceField != row.sourceField &&
-                $event.newData.mappedField && $event.newData.mappedField == row.mappedField) {
-                $event.isValid = false;
-                $event.errorText = this.l('FieldMapError', [row.sourceField]);
-            }
-        });
         if ($event.isValid)
             this.mapGrid.instance.closeEditCell();
     }
@@ -549,27 +558,21 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             'selection.selectAllMode', $event.itemData.mode);
     }
 
-    onContentReady($event) {
-        let selectedRows = [];
-        $event.component.getVisibleRows().forEach((row) => {
-            if (row.data.mappedField)
-                selectedRows.push(row.data.id);
-        });
-        $event.component.selectRows(selectedRows);
-    }
-
     onMapCellClick($event) {
-        if (typeof($event.displayValue) === 'boolean') {
+        if (typeof ($event.displayValue) === 'boolean') {
             $event.component.deselectRows([$event.data.id]);
             $event.data.mappedField = '';
         }
     }
 
     onMapSelectionChanged($event) {
+        let rowIdsToDeselect = [];
         $event.selectedRowsData.forEach((row) => {
             if (!row.mappedField)
-                $event.component.deselectRows([row.id]);
+                rowIdsToDeselect.push(row.id);
         });
+
+        $event.component.deselectRows(rowIdsToDeselect);
     }
 
     onLookupFieldsContentReady($event, cell) {
@@ -608,7 +611,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 if (columnConfig)
                     _.extend(column, columnConfig);
                 this.initColumnTemplate(column);
-//                this.updateColumnOrder(column);
+                //                this.updateColumnOrder(column);
             }
 
             if (!columnConfig || !columnConfig['caption'])
@@ -616,19 +619,19 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         });
     }
 
-/*
-    !!VP will be enabled later
-    updateColumnOrder(column) {
-        column.visibleIndex = undefined;
-        this.checkSimilarFields.forEach((list, index) => {
-            let parts = list.split(':'),
-                insideIndex = parts.indexOf(column.dataField);
-
-            if (insideIndex >= 0)
-                column.visibleIndex = index + insideIndex;
-        });
-    }
-*/
+    /*
+        !!VP will be enabled later
+        updateColumnOrder(column) {
+            column.visibleIndex = undefined;
+            this.checkSimilarFields.forEach((list, index) => {
+                let parts = list.split(':'),
+                    insideIndex = parts.indexOf(column.dataField);
+    
+                if (insideIndex >= 0)
+                    column.visibleIndex = index + insideIndex;
+            });
+        }
+    */
 
     initColumnTemplate(column) {
         let field;
