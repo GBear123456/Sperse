@@ -45,7 +45,6 @@ export class AddMemberModalComponent extends AppComponentBase {
 
     close(): void {
         this.modal.hide();
-        setTimeout( window.scrollTo(0, 0));
     }
 
     shown(): void {

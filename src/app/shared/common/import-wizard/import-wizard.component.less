@@ -16,6 +16,28 @@
         font-size: 16px;
     }
 
+    /deep/ dx-progress-bar {
+        width: 200px;
+        position: absolute;
+        top: calc(50% + 30px);
+        left: calc(50% - 150px);
+        z-index: 1;
+
+        .dx-progressbar-status {
+            width: 100%;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .dx-progressbar-container {
+            height: 15px;
+            border-radius: 5px;
+            .dx-progressbar-range {
+                border-radius: 5px;
+            }
+        }
+    }
+
     .actions {
         position: absolute;
         right: 10px;

@@ -5,8 +5,9 @@ export class StringPrinter implements Printer {
         const handle = window.open();
         handle.document.open();
         handle.document.write(src);
-        handle.document.close();
-        handle.print();
-        handle.close();
+        handle.onload = () => {
+            handle.print();
+            handle.close();
+        };
     }
 }

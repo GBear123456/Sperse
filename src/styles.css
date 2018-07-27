@@ -32,6 +32,10 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     letter-spacing: 0.5px;
 }
 
+body.overflow-hidden.modal-open {
+    overflow: hidden !important;
+}
+
 .overflow-hidden {
 	overflow: hidden;
 }
