@@ -9,8 +9,8 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceType } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { QuestionnaireComponent } from '@shared/shared-intro-speps/questionnaire/questionnaire.component';
-import { ImportUsersStepComponent } from '@shared/shared-intro-speps/import-users-step/import-users-step.component';
+import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
+import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 
 @Component({
     selector: 'app-cfo-intro',
