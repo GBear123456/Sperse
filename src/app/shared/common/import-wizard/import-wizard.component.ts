@@ -155,14 +155,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let gridElm = this.reviewGrid.instance.element();
             if (gridElm.getElementsByClassName('invalid').length) {
-                let dialogData = { option: 'ignore' };
+                let dialogData = { importAll: true };
                 this._dialog.open(ConfirmImportDialog, {
                     data: dialogData
                 }).afterClosed().subscribe(result => {
                     if (result) {
                         let records = this.reviewGrid.instance.getSelectedRowsData();
                         records = records.length && records || this.reviewDataSource;
-                        if (dialogData.option == 'ignore')
+                        if (dialogData.importAll)
                             this.complete(records.map((row) => {
                                 if (this.invalidRowKeys[row.uniqueIdent]) {
                                     this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
