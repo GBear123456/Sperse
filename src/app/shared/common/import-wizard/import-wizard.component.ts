@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material';
 import { MatHorizontalStepper } from '@angular/material';
 import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent, DxProgressBarComponent } from 'devextreme-angular';
 
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';
@@ -26,6 +26,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
+    @ViewChild(DxProgressBarComponent) reviewProgress: DxProgressBarComponent;
 
     @Input() title: string;
     @Input() icon: string;
@@ -46,7 +47,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     @Input()
     set toolbarConfig(config: any[]) {
         this._toolbarConfig = config;
-        this.initReviewToolbarConfig();
     }
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
@@ -66,7 +66,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private validateFieldList: string[] = ['email', 'phone', 'url'];
     private invalidRowKeys: any = {};
     private similarFieldsIndex: any = {};
-    private reviewProgress: any;
 
     private readonly UPLOAD_STEP_INDEX  = 0;
     private readonly MAPPING_STEP_INDEX = 1;
@@ -84,7 +83,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     fileHeaderWasGenerated = false;
 
     selectedPreviewRows: any = [];
-    reviewToolbarConfig: any = [];
     reviewDataSource: any;
     mapDataSource: any;
 
@@ -121,27 +119,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.localizationSourceName = this.localizationSource;
     }
 
-    initReviewToolbarConfig() {
-        this.reviewToolbarConfig =
-            this._toolbarConfig.concat({
-                location: 'before',
-                items: [{
-                    text: '',
-                    widget: 'dxProgressBar',
-                    options: {
-                        min: 0,
-                        max: 100,
-                        width: 200,
-                        value: 0,
-                        visible: false,
-                        onInitialized: (event) => {
-                            this.reviewProgress = event.component;
-                        }
-                    }
-                }]
-            });
-    }
-
     reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
@@ -171,7 +148,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             this.dataMapping.controls.valid.updateValueAndValidity();
             if (this.dataMapping.valid) {
-                this.initReviewToolbarConfig();
                 this.initReviewDataSource(this.getMappedFields());
                 this.stepper.next();
             } else {
@@ -245,9 +221,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     initReviewDataSource(mappedFields) {
-        this.startLoading(true);
         this.emptyReviewData();
-
         setTimeout(() => {
             let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0: 1),
                 onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100),
@@ -278,21 +252,20 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 }
 
                 if (index < totalCount) {
-                    this.reviewProgress.option('value', ++progress);
+                    this.reviewProgress.instance.option('value', ++progress);
                     setTimeout(() => processPartially(), 100);
                 } else {
                     this.updateGroupNames();
-                    this.reviewProgress.option('value', 100);
+                    this.reviewProgress.instance.option('value', 100);
                     this.reviewDataSource = dataSource;
 
                     setTimeout(() => {
-                        this.reviewProgress.option('visible', false);
-                        this.finishLoading(true);
+                        this.reviewProgress.instance.option('visible', false);
                     }, 1000);
                 }
             };
 
-            this.reviewProgress.option('visible', true);
+            this.reviewProgress.instance.option('visible', true);
             setTimeout(() => processPartially(), 100);
         });
     }
