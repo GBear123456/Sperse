@@ -43,7 +43,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             };
         });
     }
-    @Input() toolbarConfig: any[];
+    @Input()
+    set toolbarConfig(config: any[]) {
+        this._toolbarConfig = config;
+        this.initReviewToolbarConfig();
+    }
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
@@ -55,6 +59,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     dataMapping: FormGroup;
     mapAllowedNextValue: any;
 
+    _toolbarConfig: any[];
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];
@@ -87,6 +92,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
     ];
+    selectedStepIndex = 0;
 
     constructor(
         injector: Injector,
@@ -98,7 +104,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.uploadFile = _formBuilder.group({
             url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)],
             valid: ['', () => {
-                return this.checkFileDataValid() ? null: { 'required': true };
+                return this.checkFileDataValid() ? null : { 'required': true };
             }]
         });
         this.dataMapping = _formBuilder.group({
@@ -106,7 +112,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 let validationResult: any = { 'required': true };
                 if (this.validateFieldsMapping)
                     _.extend(validationResult, this.validateFieldsMapping(this.getMappedFields()));
-                return validationResult && validationResult.isMapped && !validationResult.error ? null: validationResult;
+                return validationResult && validationResult.isMapped && !validationResult.error ? null : validationResult;
             }]
         });
     }
@@ -116,9 +122,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     initReviewToolbarConfig() {
-        this.reviewToolbarConfig = 
-            this.toolbarConfig.concat({
-                location: 'before', 
+        this.reviewToolbarConfig =
+            this._toolbarConfig.concat({
+                location: 'before',
                 items: [{
                     text: '',
                     widget: 'dxProgressBar',
@@ -238,11 +244,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     initReviewDataSource(mappedFields) {
         this.startLoading(true);
-        this.emptyReviewData();        
+        this.emptyReviewData();
 
         setTimeout(() => {
             let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0: 1),
-                onePercentCount = totalCount < 100 ? totalCount: Math.ceil(totalCount / 100),
+                onePercentCount = totalCount < 100 ? totalCount : Math.ceil(totalCount / 100),
                 columnsIndex = {}, columnCount = 0;
 
             let processPartially = () => {
@@ -253,10 +259,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                             let data = {};
                             mappedFields.forEach((field) => {
                                 let value = row[columnsIndex[field.sourceField]].trim();
-                                if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data)) 
+                                if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
                             });
-                        
                             if (!this.checkDuplicate(row, data)) {
                                 this.checkSimilarGroups(data);
                                 dataSource.push(data);
@@ -283,22 +288,21 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                         this.finishLoading(true);
                     }, 1000);
                 }
-            };                        
+            };
 
             this.reviewProgress.option('visible', true);
             setTimeout(() => processPartially(), 100);
         });
     }
 
-    updateGroupNames() {  
+    updateGroupNames() {
         let reviewGroupsName = [],
             showFields = this.checkSimilarFields[0][0].split(':');
         this.reviewGroups.forEach((group, index) => {
             if (group && group.length) {
                 let item = group[group.length - 1];
                 if (group.length > 1) {
-                    let groupName = 
-                        showFields.map((fld) => item[fld]).join(' ');
+                    let groupName = showFields.map((fld) => item[fld]).join(' ');
                     reviewGroupsName.push(groupName);
                     group.forEach((item) => {
                         item.compared = groupName;
@@ -339,8 +343,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 fields.forEach((field) => {
                     let conditionValues = field.split(':').map((fld) => {
                             return row[fld] || '';
-                        }), fieldIndex = conditionValues.every(Boolean) ? 
-                            this.getUniqueIdent(conditionValues): 0;
+                        }), fieldIndex = conditionValues.every(Boolean) ?
+                            this.getUniqueIdent(conditionValues) : 0;
                     if (fieldIndex) {
                         fieldsIndex.push(fieldIndex);
                         let groupIndex = this.similarFieldsIndex[fieldIndex];
@@ -351,7 +355,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                             let group = this.reviewGroups[groupIndex];
                             if (group && group.length == 1)
                                 group[0].highliteFields = conditionValues;
-                        } else 
+                        } else
                             this.similarFieldsIndex[fieldIndex] = newGroupIndex;
                     }
                 });
@@ -359,7 +363,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
             if (mergeGroupsIndex.length) {
                 mergeGroupsIndex.forEach((index) => {
-                    if (this.reviewGroups[index])  
+                    if (this.reviewGroups[index])
                         newGroup = newGroup.concat(this.reviewGroups[index]);
                     delete this.reviewGroups[index];
                 });
@@ -586,7 +590,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     onMapCellClick($event) {
         if (typeof($event.displayValue) === 'boolean') {
             $event.component.deselectRows([$event.data.id]);
-            $event.data.mappedField = "";
+            $event.data.mappedField = '';
         }
     }
 
@@ -645,10 +649,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     !!VP will be enabled later
     updateColumnOrder(column) {
         column.visibleIndex = undefined;
-        this.checkSimilarFields.forEach((list, index) => {    
+        this.checkSimilarFields.forEach((list, index) => {
             let parts = list.split(':'),
                 insideIndex = parts.indexOf(column.dataField);
-                            
+
             if (insideIndex >= 0)
                 column.visibleIndex = index + insideIndex;
         });
@@ -683,8 +687,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     onReviewCellPrepared($event) {
-        if ($event.data && $event.data.highliteFields && 
+        if ($event.data && $event.data.highliteFields &&
             $event.data.highliteFields.indexOf($event.value) >= 0
         ) $event.cellElement.classList.add('bold');
+    }
+
+    selectionChange(data) {
+        this.selectedStepIndex = data.selectedIndex;
     }
 }

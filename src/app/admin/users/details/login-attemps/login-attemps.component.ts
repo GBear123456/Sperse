@@ -1,7 +1,7 @@
 import { Injector, Component, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import { UserLoginServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, UserLoginServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 
 @Component({
@@ -10,16 +10,18 @@ import * as moment from 'moment';
     styleUrls: ['./login-attemps.component.less']
 })
 export class LoginAttempsComponent extends AppComponentBase implements OnInit {
-
     userLoginAttempts: UserLoginAttemptDto[];
 
     constructor(injector: Injector,
+        private _userService: UserServiceProxy,
         private _userLoginService: UserLoginServiceProxy) {
         super(injector);
     }
 
     ngOnInit() {
-        this._userLoginService.getRecentUserLoginAttempts().subscribe(result => {
+        let userId = this._userService['data'].userId;
+
+        this._userLoginService.getRecentLoginAttemptsForOtherUser(userId).subscribe(result => {
             this.userLoginAttempts = result.items;
             result.items.forEach(v => {
                 v['creationTimeFormatted'] = moment(v.creationTime).fromNow() + ' (' + moment(v.creationTime).format('YYYY-MM-DD hh:mm:ss') + ')';

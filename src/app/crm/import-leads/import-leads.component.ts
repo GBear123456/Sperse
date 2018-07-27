@@ -157,9 +157,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     isListsSelected = false;
     isTagsSelected = false;
     isStarSelected = false;
-    isStageSelected = false;
     toolbarConfig = [];
     selectedClientKeys: any = [];
+    selectedStageId: number;
     defaultRating = 5;
     leadStages = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
@@ -207,8 +207,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importType = event.itemData.value;
 
 
-        if (this.importTypeIndex != IMPORT_TYPE_ITEM_INDEX)
-            this.stagesComponent.selectedItems = [];
+        if (this.importTypeIndex != IMPORT_TYPE_ITEM_INDEX) {
+            this.selectedStageId = null;
+        }
 
         this.initToolbarConfig();
     }
@@ -334,7 +335,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
-            leadStageId: this.stagesComponent.selectedItems.length ? this.stagesComponent.selectedItems[0].id : undefined
+            leadStageId: this.selectedStageId
         });
         result.leads = [];
         result.lists = this.listsComponent.selectedItems;
@@ -464,7 +465,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     onStagesChanged(event) {
-        this.isStageSelected = !!event.addedItems.length;
+        this.selectedStageId = event.id;
         this.initToolbarConfig();
     }
 
@@ -533,7 +534,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'stage',
                         action: () => this.stagesComponent.toggle(),
                         attr: {
-                            'filter-selected': this.isStageSelected
+                            'filter-selected': !!this.selectedStageId
                         },
                         disabled: Boolean(this.importTypeIndex)
                     },
@@ -574,8 +575,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     clearToolbarSelectedItems() {
-        this.stagesComponent.selectedItems = [];
+        this.selectedStageId = null;
         this.starsListComponent.selectedItemKey = undefined;
+        this.userAssignmentComponent.selectedItemKey = this.userId;
         this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();
