@@ -1,6 +1,5 @@
 import { Component, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactShortInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'contact-info-panel',

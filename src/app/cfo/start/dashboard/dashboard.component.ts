@@ -80,8 +80,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     filterByBankAccounts(data) {
         this.accountsComponent.filterByBankAccounts(data);
         this.categorizationStatusComponent.filterByBankAccounts(data);
-        this.totalsByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
-        this.trendByPeriodComponent.filterByBankAccounts(data.bankAccountIds);
+        this.totalsByPeriodComponent.filterByBankAccounts(data.selectedBankAccountIds);
+        this.trendByPeriodComponent.filterByBankAccounts(data.selectedBankAccountIds);
     }
 
     refreshWidgets() {

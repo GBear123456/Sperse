@@ -1,5 +1,8 @@
 export class BankAccountsDataModel {
-    bankAccountIds: number[];
-    isActive: boolean;
-    visibleAccountCount: number;
+    selectedBankAccountIds?: number[];
+    isActive?: boolean;
+    usedBankAccountIds?: number[];
+    visibleBankAccountIds?: number[];
+    visibleAccountCount?: number;
+    selectedBusinessEntitiesIds?: number[];
 }

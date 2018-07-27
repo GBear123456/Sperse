@@ -1,11 +1,14 @@
 import { Component, Injector, Input, Output, ViewChild, OnInit, EventEmitter, ElementRef } from '@angular/core';
+
+import { DxDataGridComponent } from 'devextreme-angular';
+import Form from 'devextreme/ui/form';
+import { forkJoin } from 'rxjs';
+import * as _ from 'underscore';
+
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy, SyncAccountBankDto, UpdateBankAccountDto, RenameSyncAccountInput } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DxDataGridComponent } from 'devextreme-angular';
-import * as _ from 'underscore';
-import Form from 'devextreme/ui/form';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -97,6 +100,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         private _businessEntityService: BusinessEntityServiceProxy,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private _syncServiceProxy: SyncServiceProxy,
+        private bankAccountsService: BankAccountsService
 
     ) {
         super(injector);
@@ -191,6 +195,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     selectedAccountsChanged() {
         let selectedSyncAccounts = this.mainDataGrid.instance.getVisibleRows().filter(row => row.rowType === 'data');
+        //const selectedBankAccountsIds = selectedSyncAccounts.reduce((allBankAccounts, row) => allBankAccounts.concat(row.data.bankAccounts.filter(account => account.selected).map(account => account.id)), []);
+        //this.bankAccountsService.changeSelectedBankAccountsIds(selectedBankAccountsIds);
         this.selectionChanged.emit(selectedSyncAccounts);
     }
 

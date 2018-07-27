@@ -84,7 +84,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         this.waitForBankAccounts = false;
         this.isActive = bankAccountData.isActive;
         this.visibleAccountCount = bankAccountData.visibleAccountCount;
-        this.bankAccountIds = bankAccountData.bankAccountIds;
+        this.bankAccountIds = bankAccountData.selectedBankAccountIds;
         this.getAccountTotals();
         this.getDailyStats();
     }

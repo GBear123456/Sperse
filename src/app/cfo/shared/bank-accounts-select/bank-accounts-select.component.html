@@ -22,7 +22,7 @@
                                                     showSelectionControls="true"
                                                     tagTemplate="customTagTemplate"
                                                     (onClosed)="businessEntitySelectedChange($event)"
-                                                    [(value)]="selectedBusinessEntityIds">
+                                                    [(value)]="selectedBusinessEntitiesIds">
 
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                                 <span class="tag-value"> {{tag.name}}  </span>

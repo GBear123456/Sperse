@@ -63,7 +63,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+        // this.rootComponent.overflowHidden(true);
         CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
     }
 

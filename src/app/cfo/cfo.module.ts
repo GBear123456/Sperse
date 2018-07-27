@@ -76,7 +76,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
-import { CustomersServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { BankAccountsServiceProxy, BusinessEntityServiceProxy, CustomersServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { QuovoService } from 'app/cfo/shared/common/quovo/QuovoService';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
@@ -191,6 +191,8 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
         QuovoService,
         SyncServiceProxy,
         CalculatorService,
+        BusinessEntityServiceProxy,
+        BankAccountsServiceProxy,
         BankAccountsService
     ]
 })
