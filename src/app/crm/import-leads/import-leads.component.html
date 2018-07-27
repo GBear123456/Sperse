@@ -1,5 +1,5 @@
 <div [@routerTransition] class="import-wrapper">
-    <left-menu *ngIf="wizard.selectedStepIndex == 0"></left-menu>
+    <left-menu [hidden]="wizard?.stepper?.selectedIndex !== wizard?.UPLOAD_STEP_INDEX"></left-menu>
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
