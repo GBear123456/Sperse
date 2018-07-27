@@ -14,8 +14,8 @@ import {
     InviteUserInput, TenantHostType
 } from 'shared/service-proxies/service-proxies';
 import { ImportUserData } from './crm-intro.model';
-import { QuestionnaireComponent } from '@shared/shared-intro-speps/questionnaire/questionnaire.component';
-import { ImportUsersStepComponent } from '@shared/shared-intro-speps/import-users-step/import-users-step.component';
+import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
+import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 
 
 @Component({

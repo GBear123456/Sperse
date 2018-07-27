@@ -290,6 +290,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         return true;
     }
 
+    private normalizePhoneNumber(field, phoneNumber, dataSource) {
+        let value = phoneNumber.replace(/[^\d]/g, '');
+        if ((value.length == AppConsts.maxPhoneLength + 1) && value.charAt(0) === '1')
+            value = value.substr(1);
+        
+        if (value) {
+            this.setFieldIfDefined(value, field.mappedField, dataSource);
+        }
+        return true;
+    }
+
     cancel() {
         this.reset(() => {
             this._router.navigate(['app/crm/dashboard']);
@@ -435,6 +446,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             || field.mappedField == this.BUSINESS_COMPANY_FULL_ADDRESS_ZIP_CODE
             || field.mappedField == this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE) {
             return this.parseZipCode(field, sourceValue, reviewDataSource);
+        } else if (this.PHONE_FIELDS.indexOf(field.mappedField) >= 0) {
+            return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
         }
         return false;
     }
