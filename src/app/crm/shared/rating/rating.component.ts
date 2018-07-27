@@ -27,6 +27,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
         return this.ratingValue;
     }
     @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onRatingUpdated: EventEmitter<any> = new EventEmitter();
 
     ratingMin: number;
     ratingMax: number;
@@ -74,9 +75,9 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                 customerIds: this.selectedKeys,
                 ratingId: this.ratingValue
             })).pipe(finalize(() => {
-                if (this.bulkUpdateMode)
-                    this.ratingValue = this.ratingMin;
+                this.ratingValue = this.ratingMin;
             })).subscribe((result) => {
+                this.onRatingUpdated.emit(this.ratingValue);
                 this.notify.success(this.l('CustomersRated'));
             });
         else
@@ -87,6 +88,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                 if (!this.ratingValue)
                     this.ratingValue = this.ratingMin;
             })).subscribe((result) => {
+                this.onRatingUpdated.emit(this.ratingValue);
                 this.notify.success(this.l('CustomersRated'));
             });
     }

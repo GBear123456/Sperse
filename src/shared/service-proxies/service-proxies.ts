@@ -35530,6 +35530,7 @@ export class SimilarCustomerOutput implements ISimilarCustomerOutput {
     photo!: string | undefined;
     companyName!: string | undefined;
     jobTitle!: string | undefined;
+    ratingId!: number | undefined;
     score!: number | undefined;
 
     constructor(data?: ISimilarCustomerOutput) {
@@ -35548,6 +35549,7 @@ export class SimilarCustomerOutput implements ISimilarCustomerOutput {
             this.photo = data["photo"];
             this.companyName = data["companyName"];
             this.jobTitle = data["jobTitle"];
+            this.ratingId = data["ratingId"];
             this.score = data["score"];
         }
     }
@@ -35566,6 +35568,7 @@ export class SimilarCustomerOutput implements ISimilarCustomerOutput {
         data["photo"] = this.photo;
         data["companyName"] = this.companyName;
         data["jobTitle"] = this.jobTitle;
+        data["ratingId"] = this.ratingId;
         data["score"] = this.score;
         return data; 
     }
@@ -35577,6 +35580,7 @@ export interface ISimilarCustomerOutput {
     photo: string | undefined;
     companyName: string | undefined;
     jobTitle: string | undefined;
+    ratingId: number | undefined;
     score: number | undefined;
 }
 
