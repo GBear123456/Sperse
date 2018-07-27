@@ -32,6 +32,7 @@
     [selectedKeys]="selectedClientKeys"
     [targetSelector]="'[aria-label=Stage]'"
     [hideButtons]="true"
+    [disableWonLost]="true"
     (onItemSelected)="onStagesChanged($event)"
     [list]="leadStages">
 </crm-static-list>

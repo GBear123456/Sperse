@@ -19,7 +19,8 @@
                      [targetSelector]="'[accessKey=CreateLeadStage]'"
                      (onItemSelected)="onStagesChanged($event)"
                      [showTitle]="false"
-                     [list]="stages">
+                     [list]="stages"
+                     [disableWonLost]="true">
     </crm-static-list>
     <crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true"></crm-rating>
     <crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true"></crm-tags-list>
