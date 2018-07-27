@@ -296,7 +296,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let value = phoneNumber.replace(/[^\d]/g, '');
         if ((value.length == AppConsts.maxPhoneLength + 1) && value.charAt(0) === '1')
             value = value.substr(1);
-        
         if (value) {
             this.setFieldIfDefined(value, field.mappedField, dataSource);
         }
@@ -335,8 +334,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             if (this.importedCount > 0) {
                                 this.wizard.showFinishStep();
                                 this.clearToolbarSelectedItems();
-                                (<any>this._reuseService).invalidate(
-                                    this.importTypeIndex ? 'clients': 'leads');
+                                if (this.importType == ImportLeadsInputImportType.Lead) (<any>this._reuseService).invalidate('leads');
+                                if (this.importType == ImportLeadsInputImportType.Client) (<any>this._reuseService).invalidate('clients');
                             } else
                                 this.message.error(res[0].errorMessage);
                         });
