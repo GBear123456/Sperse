@@ -149,6 +149,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.showSteper = false;
         this.uploadFile.reset();
         this.dataMapping.reset();
+        this.selectedStepIndex = 0;
 
         this.mapDataSource = [];
         this.emptyReviewData();
@@ -231,6 +232,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     showFinishStep() {
         this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
+        this.selectedStepIndex = 0;
     }
 
     emptyReviewData() {
