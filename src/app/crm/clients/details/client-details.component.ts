@@ -11,6 +11,7 @@ import {
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -141,28 +142,35 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             this.customerId = customerId;
             let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
             if (leadId) {
-                let leadInfoObservable = this._leadService.getLeadInfo(leadId);
-                forkJoin(customerInfoObservable, leadInfoObservable).subscribe(result => {
+                let leadData, leadInfoObservable = this._leadService.getLeadInfo(leadId);
+                forkJoin(customerInfoObservable, leadInfoObservable).pipe(finalize(() => {
+                    this.finishLoading(true);
+                    if (!leadData)
+                      this.close(true);
+                })).subscribe(result => {
+                    leadData = result;
                     this.fillCustomerDetails(result[0]);
                     this.fillLeadDetails(result[1]);
-                    this.loadLeadsStages(leadId);
-                    this.finishLoading(true);
+                    this.loadLeadsStages();
                 });
             } else
-                customerInfoObservable.subscribe(result => {
+                customerInfoObservable.pipe(finalize(() => {
+                    this.finishLoading(true);
+                    if (!this.customerInfo)
+                      this.close(true);
+                })).subscribe(result => {
                     this.fillCustomerDetails(result);
                     this.fillLeadDetails(result.lastLeadInfo);
-                    this.finishLoading(true);
                 });
         } else if (leadId) {
-            this.loadLeadsStages(leadId);
+            this._customerService['data'].leadInfo = {
+                id: leadId
+            };
+            this.loadLeadsStages();
         }
     }
 
-    private loadLeadsStages(leadId) {
-        this._customerService['data'].leadInfo = {
-            id: leadId
-        };
+    private loadLeadsStages() {
         this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
             .subscribe(result => {
                 this.leadStages = result.stages.map((stage) => {
@@ -234,15 +242,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         );
     }
 
-    close() {
+    close(force = false) {
         this._dialog.closeAll();
-        let data = JSON.stringify(this._customerService['data']);
+        let data = force || JSON.stringify(this._customerService['data']);
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
             { queryParams: _.extend(_.mapObject(this.referrerParams,
                 (val, key) => {
                     return (key == 'referrer' ? undefined : val);
-                }), this.initialData != data ? {refresh: true} : {})
+                }), !force && this.initialData != data ? {refresh: true} : {})
             }
         );
     }

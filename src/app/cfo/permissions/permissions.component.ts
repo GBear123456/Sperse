@@ -4,6 +4,8 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
+import ArrayStore from 'devextreme/data/array_store';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */
@@ -30,13 +32,14 @@ import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 export class PermissionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
-    allUsers: UserListDto[] = [];
+    users: UserListDto[] = [];
     showenUsersIds: number[] = [];
     bankAccountsUsers: BankAccountUsers[];
     syncAccounts: SyncAccountBankDto[];
     showAddUserButton = false;
     isDataLoaded = false;
-    dataSource = [];
+    dataSource: DataSource;
+    addedUsersIds: number[];
     columnsConfiguration = {
         'accountId': {
             'visible': false,
@@ -80,7 +83,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     public headlineConfig = {
         names: [this.l('SetupStep_Permissions')],
         iconSrc: 'assets/common/icons/user-permissions.svg',
-        //onRefresh: this.onRefresh.bind(this),
+        onRefresh: this.onRefresh.bind(this),
     };
     constructor(injector: Injector,
                 private userServiceProxy: UserServiceProxy,
@@ -91,6 +94,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     ngOnInit() {
+        this.addedUsersIds = [];
         this.loadData();
     }
 
@@ -101,10 +105,10 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const usersObservable = this.userServiceProxy.getUsers(
             false,
             undefined,
+            'Pages.CFO.MainInstanceAccess',
             undefined,
             undefined,
-            undefined,
-            undefined,
+            100,
             0
         );
         const bankAccountsObservable = this.bankAccountsServiceProxy.getBankAccounts(instanceType, this.instanceId, 'USD');
@@ -115,13 +119,22 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             usersPermissionsObservable
         ).subscribe(
             res => {
-                this.allUsers = res[0] && res[0].items ? res[0].items : null;
+                this.users = res[0] && res[0].items ? res[0].items : null;
                 this.syncAccounts = res[1];
                 this.bankAccountsUsers = res[2];
             },
             e => {},
             () => {
-                this.dataSource = this.createPermissionsDataSource(this.bankAccountsUsers, this.syncAccounts);
+                this.dataSource = new DataSource(
+                    new ArrayStore({
+                        data: this.createPermissionsDataSource(this.bankAccountsUsers, this.syncAccounts),
+                        onLoaded: () => {
+                            if (!this.dataGrid.instance.option('visible')) {
+                                this.dataGrid.instance.option('visible', true);
+                            }
+                        }
+                    })
+                );
                 this.isDataLoaded = true;
                 this.finishLoading(true);
             }
@@ -150,9 +163,11 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 const account = bankAccountsUsers.find(account => account.bankAccountId === bankAccount.id);
                 if (account && account.userIds.length) {
                     account.userIds.forEach(userId => {
-                        accountPermission[userId] = true;
-                        if (this.showenUsersIds.indexOf(userId) === -1) {
-                            this.showenUsersIds.push(userId);
+                        if (this.users.find(user => user.id === userId)) {
+                            accountPermission[userId] = true;
+                            if (this.showenUsersIds.indexOf(userId) === -1) {
+                                this.showenUsersIds.push(userId);
+                            }
                         }
                     });
                 }
@@ -174,7 +189,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         /** Add addUser column (with add user button) */
         let addUserColumn = columns.find(column => column.dataField === this.columnsConfiguration['addUser'].dataField);
         const showenUsersColumnsAmount = columns.filter(column => column.visible && !isNaN(parseInt(column.dataField))).length;
-        this.showAddUserButton = showenUsersColumnsAmount !== this.allUsers.length;
+        this.showAddUserButton = showenUsersColumnsAmount !== this.users.length;
         const addUserColumnConfig = {
             ...this.columnsConfiguration['addUser'],
             ...{ visible: this.showAddUserButton }
@@ -189,7 +204,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     customizeUserHeader(columnHeader, headerInfo) {
-        let user = this.allUsers.find(user => user.id === +headerInfo.column.dataField);
+        let user = this.users.find(user => user.id === +headerInfo.column.dataField);
         columnHeader.insertAdjacentHTML('beforeEnd',
             `<div class="userFullName dx-datagrid-text-content dx-text-content-alignment-left">${user.userName}</div>
              <div class="userEmail">${user.emailAddress}</div>
@@ -242,10 +257,20 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     onRefresh() {
-        //this.dataGrid.instance.refresh().then(() => {
-        /** @todo fix bug when double column is created after refresh after adding a user */
+        /** Becomes visible after new data loading (dataSource onLoaded method)*/
+        this.dataGrid.instance.option('visible', false);
+        this.removeAddedUserColumns();
         this.loadData();
-        //});
+    }
+
+    /**
+     * Hack to fix error with double columns
+     */
+    removeAddedUserColumns() {
+        this.addedUsersIds.forEach(userId => {
+            this.dataGrid.instance.deleteColumn(userId.toString());
+        });
+        this.addedUsersIds = [];
     }
 
     onRowUpdating(e) {
@@ -274,7 +299,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
 
     showUsersPopup(e) {
         const config: any = {
-            data: { users: this.allUsers.filter(user => this.showenUsersIds.indexOf(user.id) === -1) },
+            data: { users: this.users.filter(user => this.showenUsersIds.indexOf(user.id) === -1) },
             width: '242px',
             height: '231px',
             position: {
@@ -309,6 +334,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 ...{ dataField: userId.toString() },
                 ...this.columnsConfiguration['user']
             });
+        this.addedUsersIds.push(userId);
         this.showenUsersIds.push(userId);
     }
 
@@ -327,8 +353,8 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 /** Remove user from datagrid */
                 this.dataGrid.instance.deleteColumn(stringUserId);
                 /** Update data source */
-                this.dataSource.forEach(account => {
-                    if (account.hasOwnProperty(userId.toString())) {
+                this.dataSource.store()._array.forEach(account => {
+                    if (account.hasOwnProperty(stringUserId)) {
                         account[stringUserId] = false;
                     }
                 });

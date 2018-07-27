@@ -5,7 +5,7 @@
     <setup-steps SelectedStepIndex="4"></setup-steps>
     <div class="frame-wrap">
         <dx-data-grid
-            [hidden]="isDataLoaded && !dataSource.length"
+            [hidden]="isDataLoaded && (!dataSource || (dataSource && !dataSource.totalCount()))"
             [dataSource]="dataSource"
             [columnAutoWidth]="true"
             [customizeColumns]="customizeColumns"
@@ -25,7 +25,7 @@
             </div>
         </dx-data-grid>
         <app-no-data
-            [hidden]="!isDataLoaded || (isDataLoaded && dataSource.length)"
+            [hidden]="!isDataLoaded || (isDataLoaded && dataSource && dataSource.totalCount())"
             [showLink]="false">
         </app-no-data>
     </div>

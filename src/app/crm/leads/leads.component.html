@@ -7,6 +7,9 @@
         [title]="l('Stages')"
         [selectedKeys]="selectedClientKeys"
         [filterModel]="filterModelStages"
+        [showConfirmation]="true"
+        [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
+        [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
         [targetSelector]="'[aria-label=Stage]'"
         [list]="stages"
         (onItemSelected)="updateLeadsStage($event)">
