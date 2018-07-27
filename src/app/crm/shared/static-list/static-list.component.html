@@ -15,7 +15,7 @@
                     'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions())
                 }"
                 [searchEnabled]="false"
-                [selectionMode]="selectedKeys.length ? 'single': 'none'"
+                [selectionMode]="selectedKeys?.length ? 'single': 'none'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"

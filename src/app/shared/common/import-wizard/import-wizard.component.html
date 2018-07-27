@@ -85,10 +85,10 @@
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
                           [paging]="{pageSize: 1000}"
+                          [selectedRowKeys]="selectedMapRowKeys"
                           (onCellClick)="onMapCellClick($event)"
                           (onSelectionChanged)="onMapSelectionChanged($event)"
-                          (onRowValidating)="onRowValidating($event)"
-                          (onContentReady)="onContentReady($event)">
+                          (onRowValidating)="onRowValidating($event)">
                 <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">

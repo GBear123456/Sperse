@@ -334,8 +334,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             if (this.importedCount > 0) {
                                 this.wizard.showFinishStep();
                                 this.clearToolbarSelectedItems();
-                                (<any>this._reuseService).invalidate(
-                                    this.importTypeIndex ? 'clients': 'leads');
+                                if (this.importType == ImportLeadsInputImportType.Lead) (<any>this._reuseService).invalidate('leads');
+                                if (this.importType == ImportLeadsInputImportType.Client) (<any>this._reuseService).invalidate('clients');
                             } else
                                 this.message.error(res[0].errorMessage);
                         });
