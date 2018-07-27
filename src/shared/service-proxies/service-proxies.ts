@@ -39467,6 +39467,7 @@ export interface IUpdateLanguageTextInput {
 
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
+    stageId!: number | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -39503,6 +39504,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     init(data?: any) {
         if (data) {
             this.leadTypeId = data["leadTypeId"];
+            this.stageId = data["stageId"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -39563,6 +39565,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadTypeId"] = this.leadTypeId;
+        data["stageId"] = this.stageId;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -39616,6 +39619,7 @@ export class CreateLeadInput implements ICreateLeadInput {
 
 export interface ICreateLeadInput {
     leadTypeId: number | undefined;
+    stageId: number | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
