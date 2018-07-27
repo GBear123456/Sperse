@@ -194,7 +194,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                             }));
                         else
                             this.complete(records.filter((row) =>
-                                Boolean(this.invalidRowKeys[row.uniqueIdent])));
+                                !this.invalidRowKeys[row.uniqueIdent]));
                     }
                 });
             } else
@@ -241,9 +241,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     initReviewDataSource(mappedFields) {
         this.startLoading(true);
         this.emptyReviewData();        
-    
+
         setTimeout(() => {
-            let dataSource = [], progress = 0, totalCount = this.fileData.data.length - 1,
+            let dataSource = [], progress = 0, totalCount = this.fileData.data.length - (this.fileHasHeader ? 0: 1),
                 onePercentCount = totalCount < 100 ? totalCount: Math.ceil(totalCount / 100),
                 columnsIndex = {}, columnCount = 0;
 
@@ -672,10 +672,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     checkFieldValid(field, dataCell) {
         let value = dataCell.value;
-        if (field == 'phone')
-            value = dataCell.value.replace(/[\(\)-\s]/g, '');
+        if (field == 'phone' && value)
+            value = dataCell.value.replace(/[^\d]/g, '');
 
-        let isValid = AppConsts.regexPatterns[field].test(value);
+        let isValid = !value || AppConsts.regexPatterns[field].test(value);
         if (!isValid) {
             if (this.invalidRowKeys[dataCell.key])
                 this.invalidRowKeys[dataCell.key].push(dataCell.column.dataField);

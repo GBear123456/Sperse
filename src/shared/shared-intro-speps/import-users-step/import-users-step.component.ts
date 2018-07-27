@@ -1,4 +1,4 @@
-import {Component, OnInit, Injector, Input, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
 
 import {
     InviteUserInput,
@@ -86,6 +86,22 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         return false;
     }
 
+    validateDuplicatedEmails = (e) => {
+        if (!e.value)
+            return true;
+
+        let rowIndex = e.validator.element().parentElement.getAttribute('index');
+
+        for (var i = 0; i < this.importUsers.length; i++) {
+            if (i != rowIndex &&
+                this.importUsers[i].email && this.importUsers[i].email.trim().toLowerCase() == e.value.trim().toLowerCase()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     validateInviteUserGroup(index) {
         this.importValidators[index].validate();
     }
@@ -105,5 +121,6 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
     removeImportUser(index: number) {
         this.importUsers.splice(index, 1);
         this.importValidators.splice(index, 1);
+        this.validateUsers();
     }
 }

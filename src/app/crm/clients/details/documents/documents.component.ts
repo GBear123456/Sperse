@@ -473,6 +473,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
     deleteDocument() {
         this.startLoading(true);
+        this.showViewerType = undefined;
+        this.openDocumentMode = false;
         this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
             this.loadDocuments(() => {
                 if (this.actionsTooltip && this.actionsTooltip.visible) {
