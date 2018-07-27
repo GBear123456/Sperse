@@ -85,7 +85,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     selectedPreviewRows: any = [];
     reviewDataSource: any;
     mapDataSource: any;
-    selectedMapRows: any[] = [];
+    selectedMapRowKeys: number[] = [];
 
     selectModeItems = [
         { text: 'Affect on page items', mode: 'page' },
@@ -461,7 +461,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 if (v.mappedField)
                     selectedMapRowKeys.push(v.id);
             });
-            this.selectedMapRows = selectedMapRowKeys;
+            this.selectedMapRowKeys = selectedMapRowKeys;
         }
     }
 
