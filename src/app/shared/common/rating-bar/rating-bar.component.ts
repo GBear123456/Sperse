@@ -8,7 +8,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class RatingBarComponent extends AppComponentBase {
     @Input()
-    rating: number = 0;  
+    rating: number = 0;
 
     constructor(
         injector: Injector

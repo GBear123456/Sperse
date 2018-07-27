@@ -70,7 +70,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (lead && lead.CustomerId)
                 this.selectedClientKeys.push(lead.CustomerId);
         });
-        this.initToolbarConfig();
+        if (this._appService.toolbarConfig)
+            this.initToolbarConfig();
     }
 
     stages = [];
@@ -656,6 +657,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 text: stage.name
             };
         });
+
         this.initToolbarConfig();
     }
 
@@ -755,6 +757,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this.paramsSubscribe();
         this.initFilterConfig();
+
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);

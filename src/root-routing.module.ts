@@ -8,6 +8,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     private handlers: {[key: string]: DetachedRouteHandle} = {};
     private activateTimeout: any;
 
+    constructor(
+        private _injector: Injector
+    ) {
+    }
+
     private getKey(route: ActivatedRouteSnapshot) {
         return route && route.routeConfig.path;
     }
@@ -45,8 +50,11 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         let handle = <any>this.handlers[this.getKey(route)];
         if (handle && handle.componentRef.instance.activate) {
             clearTimeout(this.activateTimeout);
-            this.activateTimeout = setTimeout(() =>
-                handle.componentRef.instance.activate());
+            this.activateTimeout = setTimeout(() => {
+                let router = this._injector.get(Router);
+                if (route['_routerState'].url == router.url)
+                    handle.componentRef.instance.activate();
+            });
         }
         return (this.checkSameRoute(route, handle) ? handle : null);
     }

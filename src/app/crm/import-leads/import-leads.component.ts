@@ -8,6 +8,7 @@ import * as addressParser from 'parse-address';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
@@ -186,6 +187,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
+        private _appService: AppService,
         private _reuseService: RouteReuseStrategy,
         private _leadService: LeadServiceProxy,
         private _router: Router,
@@ -333,7 +335,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             if (this.importedCount > 0) {
                                 this.wizard.showFinishStep();
                                 this.clearToolbarSelectedItems();
-                                (<any>this._reuseService).invalidate('leads');
+                                (<any>this._reuseService).invalidate(
+                                    this.importTypeIndex ? 'clients': 'leads');
                             } else
                                 this.message.error(res[0].errorMessage);
                         });
@@ -586,6 +589,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
+        this._appService.toolbarConfig = null;
     }
 
     clearToolbarSelectedItems() {
@@ -596,5 +600,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingComponent.ratingValue = this.defaultRating;
+        this._appService.toolbarConfig = null;
     }
 }

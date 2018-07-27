@@ -152,6 +152,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         return this.isGranted('Pages.CFO.ClientInstanceAdmin');
     }
 
+    invalidate() {
+        this.refreshDataGrid();
+    }
+
     showColumnChooser() {
         this.dataGrid.instance.showColumnChooser();
     }
