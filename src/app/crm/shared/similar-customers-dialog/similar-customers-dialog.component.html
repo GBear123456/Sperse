@@ -14,10 +14,7 @@
                 <div class="person-title">
                     <h6>{{similarCustomer?.jobTitle}} <span *ngIf="similarCustomer?.companyName">{{similarCustomer?.companyName}}</span></h6>
                 </div>
-                <div class="rating">
-                    <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
-                    <span class="rating_int">{{person.rating}}/10</span>
-                </div>
+                <rating-bar rating="{{ similarCustomer?.ratingId || 0 }}"></rating-bar>
             </div>
         </div>
     </div>

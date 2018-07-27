@@ -39,6 +39,7 @@ export class OperationsWidgetComponent implements OnInit {
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private _stages: any[] = [];
@@ -153,6 +154,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     updateStage(event) {
         this.onUpdateStage.emit(event);
+    }
+
+    updateRating(event) {
+        this.onUpdateRating.emit(event);
     }
 
     refresh() {

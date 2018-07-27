@@ -49,6 +49,7 @@ import { DateTimeService } from './timing/date-time.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.service';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
+import { RatingBarComponent } from './rating-bar/rating-bar.component';
 
 @NgModule({
     imports: [
@@ -120,6 +121,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ConfirmDialogComponent,
         ModalDialogComponent,
         SelectionFilterComponent,
+        RatingBarComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -139,6 +141,7 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
         ConfirmDialogComponent,
         ModalDialogComponent,
         SelectionFilterComponent,
+        RatingBarComponent
     ],
     providers: [
         DateTimeService,
