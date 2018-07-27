@@ -67,10 +67,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private invalidRowKeys: any = {};
     private similarFieldsIndex: any = {};
 
-    private readonly UPLOAD_STEP_INDEX  = 0;
-    private readonly MAPPING_STEP_INDEX = 1;
-    private readonly REVIEW_STEP_INDEX  = 2;
-    private readonly FINISH_STEP_INDEX  = 3;
+    readonly UPLOAD_STEP_INDEX  = 0;
+    readonly MAPPING_STEP_INDEX = 1;
+    readonly REVIEW_STEP_INDEX  = 2;
+    readonly FINISH_STEP_INDEX  = 3;
 
     showSteper = true;
     loadProgress = 0;
