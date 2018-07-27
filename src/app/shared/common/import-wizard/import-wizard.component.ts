@@ -672,9 +672,6 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     checkFieldValid(field, dataCell) {
         let value = dataCell.value;
-        if (field == 'phone' && value)
-            value = dataCell.value.replace(/[^\d]/g, '');
-
         let isValid = !value || AppConsts.regexPatterns[field].test(value);
         if (!isValid) {
             if (this.invalidRowKeys[dataCell.key])
