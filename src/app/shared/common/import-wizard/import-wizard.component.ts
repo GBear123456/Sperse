@@ -87,6 +87,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         {text: 'Affect on page items', mode: 'page'},
         {text: 'Affect all pages items', mode: 'allPages'}
     ];
+    selectedStepIndex = 0;
 
     constructor(
         injector: Injector,
@@ -98,7 +99,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.uploadFile = _formBuilder.group({
             url: ['', Validators.pattern(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/)],
             valid: ['', () => {
-                return this.checkFileDataValid() ? null: { 'required': true };
+                return this.checkFileDataValid() ? null : { 'required': true };
             }]
         });
         this.dataMapping = _formBuilder.group({
@@ -106,7 +107,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 let validationResult: any = { 'required': true };
                 if (this.validateFieldsMapping)
                     _.extend(validationResult, this.validateFieldsMapping(this.getMappedFields()));
-                return validationResult && validationResult.isMapped && !validationResult.error ? null: validationResult;
+                return validationResult && validationResult.isMapped && !validationResult.error ? null : validationResult;
             }]
         });
     }
@@ -686,5 +687,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         if ($event.data && $event.data.highliteFields && 
             $event.data.highliteFields.indexOf($event.value) >= 0
         ) $event.cellElement.classList.add('bold');
+    }
+
+    selectionChange(data) {
+        this.selectedStepIndex = data.selectedIndex;
     }
 }
