@@ -69,8 +69,8 @@
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
-                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">  
-            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
+                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="_toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"

@@ -26,11 +26,13 @@
                           [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
 <crm-static-list
     [width]="'210px'"
+    [highlightSelected]="true"
+    [showConfirmation]="false"
     [title]="l('Stages')"
     [selectedKeys]="selectedClientKeys"
     [targetSelector]="'[aria-label=Stage]'"
     [hideButtons]="true"
-    (onSelectionChanged)="onStagesChanged($event)"
+    (onItemSelected)="onStagesChanged($event)"
     [list]="leadStages">
 </crm-static-list>
 <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
