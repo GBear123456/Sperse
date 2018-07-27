@@ -49,10 +49,11 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.rootComponent = this.getRootComponent();
-        _userService['data'] = { user: null, roles: null };
+        _userService['data'] = { userId: null, user: null, roles: null };
         this._route.params
             .subscribe(params => {
                 this.userId = params['userId'];
+                this._userService['data'].userId = this.userId;
                 this.startLoading(true);
                 forkJoin(
                     this._userService.getUserForEdit(this.userId),

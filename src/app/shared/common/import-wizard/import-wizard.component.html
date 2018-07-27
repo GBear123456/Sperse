@@ -10,7 +10,7 @@
                      (onItemClick)="selectionModeChanged($event)"
                      target=".dx-header-row">
     </dx-context-menu>
-    <mat-horizontal-stepper [linear]="true">
+    <mat-horizontal-stepper [linear]="true" (selectionChange)="selectionChange($event)" [ngClass]="{'updated-padding':selectedStepIndex != 0}">
         <ng-template matStepperIcon="edit" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
         <ng-template matStepperIcon="done" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
         <ng-template matStepperIcon="number" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>

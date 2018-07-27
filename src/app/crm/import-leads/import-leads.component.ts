@@ -577,6 +577,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     clearToolbarSelectedItems() {
         this.selectedStageId = null;
         this.starsListComponent.selectedItemKey = undefined;
+        this.userAssignmentComponent.selectedItemKey = this.userId;
         this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();

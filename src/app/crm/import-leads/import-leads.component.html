@@ -1,5 +1,5 @@
 <div [@routerTransition] class="import-wrapper">
-    <left-menu></left-menu>
+    <left-menu *ngIf="wizard.selectedStepIndex == 0"></left-menu>
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
@@ -22,7 +22,7 @@
     </import-wizard>
 </div>
 
-<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true"
+<crm-user-assignment-list [selectedKeys]="selectedClientKeys" [selectedItemKey]="userId" [bulkUpdateMode]="true"
                           [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
 <crm-static-list
     [width]="'210px'"

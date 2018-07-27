@@ -12732,7 +12732,7 @@ export class LeadServiceProxy {
      * @leadBusinessRequests (optional) 
      * @return Success
      */
-    submitLeadBusinessRequests(leadBusinessRequests: LeadBusinessInfoInput[] | null | undefined): Observable<LeadBusinessInfoOutput[]> {
+    submitLeadBusinessRequests(leadBusinessRequests: LeadBusinessInfoInput[] | null | undefined): Observable<ImportLeadOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitLeadBusinessRequests";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12755,14 +12755,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processSubmitLeadBusinessRequests(<any>response_);
                 } catch (e) {
-                    return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(e);
+                    return <Observable<ImportLeadOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(response_);
+                return <Observable<ImportLeadOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitLeadBusinessRequests(response: HttpResponseBase): Observable<LeadBusinessInfoOutput[]> {
+    protected processSubmitLeadBusinessRequests(response: HttpResponseBase): Observable<ImportLeadOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12776,7 +12776,7 @@ export class LeadServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(LeadBusinessInfoOutput.fromJS(item));
+                    result200.push(ImportLeadOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -12785,14 +12785,14 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LeadBusinessInfoOutput[]>(<any>null);
+        return _observableOf<ImportLeadOutput[]>(<any>null);
     }
 
     /**
      * @input (optional) 
      * @return Success
      */
-    importLeads(input: ImportLeadsInput | null | undefined): Observable<LeadBusinessInfoOutput[]> {
+    importLeads(input: ImportLeadsInput | null | undefined): Observable<ImportLeadOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/ImportLeads";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -12815,14 +12815,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processImportLeads(<any>response_);
                 } catch (e) {
-                    return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(e);
+                    return <Observable<ImportLeadOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LeadBusinessInfoOutput[]>><any>_observableThrow(response_);
+                return <Observable<ImportLeadOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processImportLeads(response: HttpResponseBase): Observable<LeadBusinessInfoOutput[]> {
+    protected processImportLeads(response: HttpResponseBase): Observable<ImportLeadOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12836,7 +12836,7 @@ export class LeadServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(LeadBusinessInfoOutput.fromJS(item));
+                    result200.push(ImportLeadOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -12845,7 +12845,7 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LeadBusinessInfoOutput[]>(<any>null);
+        return _observableOf<ImportLeadOutput[]>(<any>null);
     }
 
     /**
@@ -18096,7 +18096,65 @@ export class SyncAccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(instanceType: InstanceType87 | null | undefined, instanceId: number | null | undefined, input: RenameSyncAccountInput | null | undefined): Observable<void> {
+    update(instanceType: InstanceType87 | null | undefined, instanceId: number | null | undefined, input: UpdateSyncAccountInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Update?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @input (optional) 
+     * @return Success
+     */
+    rename(instanceType: InstanceType88 | null | undefined, instanceId: number | null | undefined, input: RenameSyncAccountInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Rename?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -18154,7 +18212,7 @@ export class SyncAccountServiceProxy {
      * @syncAccountId (optional) 
      * @return Success
      */
-    delete(instanceType: InstanceType88 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<void> {
+    delete(instanceType: InstanceType89 | null | undefined, instanceId: number | null | undefined, syncAccountId: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/Delete?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21385,7 +21443,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType89 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21443,7 +21501,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21501,7 +21559,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType92 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22887,6 +22945,61 @@ export class UserLoginServiceProxy {
     }
 
     protected processGetRecentUserLoginAttempts(response: HttpResponseBase): Observable<ListResultDtoOfUserLoginAttemptDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfUserLoginAttemptDto.fromJS(resultData200) : new ListResultDtoOfUserLoginAttemptDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ListResultDtoOfUserLoginAttemptDto>(<any>null);
+    }
+
+    /**
+     * @userId (optional) 
+     * @return Success
+     */
+    getRecentLoginAttemptsForOtherUser(userId: number | null | undefined): Observable<ListResultDtoOfUserLoginAttemptDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/UserLogin/GetRecentLoginAttemptsForOtherUser?";
+        if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRecentLoginAttemptsForOtherUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecentLoginAttemptsForOtherUser(<any>response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfUserLoginAttemptDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfUserLoginAttemptDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRecentLoginAttemptsForOtherUser(response: HttpResponseBase): Observable<ListResultDtoOfUserLoginAttemptDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -40575,11 +40688,11 @@ export interface ILeadBusinessTeamContactInput {
     phoneNumber: string | undefined;
 }
 
-export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
+export class ImportLeadOutput implements IImportLeadOutput {
     leadName!: string | undefined;
     errorMessage!: string | undefined;
 
-    constructor(data?: ILeadBusinessInfoOutput) {
+    constructor(data?: IImportLeadOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -40595,9 +40708,9 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
         }
     }
 
-    static fromJS(data: any): LeadBusinessInfoOutput {
+    static fromJS(data: any): ImportLeadOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new LeadBusinessInfoOutput();
+        let result = new ImportLeadOutput();
         result.init(data);
         return result;
     }
@@ -40610,7 +40723,7 @@ export class LeadBusinessInfoOutput implements ILeadBusinessInfoOutput {
     }
 }
 
-export interface ILeadBusinessInfoOutput {
+export interface IImportLeadOutput {
     leadName: string | undefined;
     errorMessage: string | undefined;
 }
@@ -40624,6 +40737,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
     starId!: number | undefined;
     leadStageId!: number | undefined;
     importType!: ImportLeadsInputImportType | undefined;
+    ingoreInvalidValues!: boolean | undefined;
 
     constructor(data?: IImportLeadsInput) {
         if (data) {
@@ -40656,6 +40770,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
             this.starId = data["starId"];
             this.leadStageId = data["leadStageId"];
             this.importType = data["importType"];
+            this.ingoreInvalidValues = data["ingoreInvalidValues"];
         }
     }
 
@@ -40688,6 +40803,7 @@ export class ImportLeadsInput implements IImportLeadsInput {
         data["starId"] = this.starId;
         data["leadStageId"] = this.leadStageId;
         data["importType"] = this.importType;
+        data["ingoreInvalidValues"] = this.ingoreInvalidValues;
         return data; 
     }
 }
@@ -40701,6 +40817,7 @@ export interface IImportLeadsInput {
     starId: number | undefined;
     leadStageId: number | undefined;
     importType: ImportLeadsInputImportType | undefined;
+    ingoreInvalidValues: boolean | undefined;
 }
 
 export class ImportLeadInput implements IImportLeadInput {
@@ -46250,6 +46367,50 @@ export interface ICreateSyncAccountInput {
     isSyncBankAccountsEnabled: boolean | undefined;
 }
 
+export class UpdateSyncAccountInput implements IUpdateSyncAccountInput {
+    id!: number | undefined;
+    consumerKey!: string | undefined;
+    consumerSecret!: string | undefined;
+
+    constructor(data?: IUpdateSyncAccountInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.consumerKey = data["consumerKey"];
+            this.consumerSecret = data["consumerSecret"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSyncAccountInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSyncAccountInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["consumerKey"] = this.consumerKey;
+        data["consumerSecret"] = this.consumerSecret;
+        return data; 
+    }
+}
+
+export interface IUpdateSyncAccountInput {
+    id: number | undefined;
+    consumerKey: string | undefined;
+    consumerSecret: string | undefined;
+}
+
 export class RenameSyncAccountInput implements IRenameSyncAccountInput {
     id!: number;
     newName!: string;
@@ -51373,6 +51534,11 @@ export enum InstanceType88 {
     Main = "Main", 
 }
 
+export enum InstanceType89 {
+    User = "User", 
+    Main = "Main", 
+}
+
 export enum SalesSummaryDatePeriod {
     _1 = 1, 
     _2 = 2, 
@@ -51404,17 +51570,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType89 {
-    User = "User", 
-    Main = "Main", 
-}
-
 export enum InstanceType90 {
     User = "User", 
     Main = "Main", 
 }
 
 export enum InstanceType91 {
+    User = "User", 
+    Main = "Main", 
+}
+
+export enum InstanceType92 {
     User = "User", 
     Main = "Main", 
 }
