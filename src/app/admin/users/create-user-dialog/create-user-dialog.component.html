@@ -118,7 +118,7 @@
                 </label>
             </div>
         </mat-tab>
-        <mat-tab label="{{l('OrganizationUnits') | uppercase}}">
+        <mat-tab label="{{l('OrganizationUnits') | uppercase}} {{'(' + getAssignedOrgUnitCount() + ')'}}">
             <div class="tab-content">
                 <organization-unit-tree #organizationUnitTree></organization-unit-tree>
             </div>
