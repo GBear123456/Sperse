@@ -272,7 +272,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.setFieldIfDefined(parsed.state, field.mappedField +
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateCode'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
-            this.setFieldIfDefined(parsed.zip, field.mappedField + '_zipCode', dataSource);
+            const zipCode = parsed.plus4 ? parsed.zip + '-' + parsed.plus4 : parsed.zip;
+            this.setFieldIfDefined(zipCode, field.mappedField + '_zipCode', dataSource);
             this.setFieldIfDefined([parsed.number, parsed.prefix, parsed.street,
                 parsed.street1, parsed.street2, parsed.type].filter(Boolean).join(' '),
                     field.mappedField + '_street', dataSource);
