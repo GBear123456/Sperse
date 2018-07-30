@@ -134,7 +134,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                         visible: !conf.printHidden,
                         action: () => {
                             const viewedDocument = <any>this.getViewedDocumentElement();
-                            if (this.showViewerType !== this.WOPI_VIEWER) {
+                            if (this.showViewerType !== this.WOPI_VIEWER && this.showViewerType !== this.VIDEO_VIEWER) {
                                 const printSrc = this.showViewerType == this.IMAGE_VIEWER ?
                                     this.imageViewer.images[0] :
                                     viewedDocument.textContent;
@@ -288,7 +288,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             setTimeout(() => {
                 this.updateUploadProgress({progress: 0});
             }, 5000);
-        })).subscribe(() => {    
+        })).subscribe(() => {
             this.loadDocuments();
         }, (e) => {
             this.message.error(this.l('AnErrorOccurred'));
@@ -377,7 +377,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
-            printHidden: viewerType === this.WOPI_VIEWER
+            printHidden: viewerType === this.WOPI_VIEWER || viewerType === this.VIDEO_VIEWER || ext === 'pdf'
         });
         switch (viewerType) {
             case this.WOPI_VIEWER:
