@@ -26,6 +26,8 @@ import {
     ImportServiceProxy, ImportInputImportType
 } from '@shared/service-proxies/service-proxies';
 
+import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
@@ -147,6 +149,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     mappingFields: any[] = [];
     importTypeIndex: number = 0;
     importType: ImportInputImportType = ImportInputImportType.Lead;
+    importId: number = 0;
 
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
@@ -186,8 +189,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
+        private _importService: ImportWizardService,
         private _reuseService: RouteReuseStrategy,
-        private _importService: ImportServiceProxy,
+        private _importProxy: ImportServiceProxy,
         private _router: Router,
         private _pipelineService: PipelineService,
         private _nameParser: NameParserService,
@@ -198,6 +202,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
+
+        _importService.cancelListen(() => {
+            if (this.importId)
+                _importProxy.cancel(this.importId);
+        });
     }
 
     private importTypeChanged(event) {
@@ -307,14 +316,32 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.l('LeadsImportComfirmation', [this.totalCount]),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.startLoading(true);
                     let leadsInput = this.createLeadsInput(data);
-                    this._importService.import(leadsInput)
+                    this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
-                        ).subscribe((id) => {
-                            //TODO: id should be used for tracking import
-                            console.log(id);
+                        ).subscribe((importId) => { 
+                            if (importId && !isNaN(importId)) {
+                                this.importId = importId;
+                                this._importService.setupStatusCheck((callback) => {
+                                    this._importProxy.getStatus(importId).subscribe((res) => {
+                                        this.importedCount = res.importedCount;                                        
+                                        if (['A', 'C'].indexOf(res.statusId) >= 0) {
+                                            this.importId = 0;
+                                            (<any>this._reuseService).invalidate('leads');
+                                        }                    
+                                        callback({
+                                            progress: !this.importId ? 100: 
+                                                Math.round((res.importedCount + res.failedCount) / res.totalCount * 100),
+                                            totalCount: res.totalCount,
+                                            importedCount: res.importedCount,
+                                            failedCount: res.failedCount
+                                        });
+                                    })
+                                });
+                            }
+                            this.wizard.showFinishStep();
+                            this.clearToolbarSelectedItems();
                         });
                 }
             }
@@ -323,6 +350,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     createLeadsInput(data: any[]): ImportInput {
         let result = ImportInput.fromJS({
+            fileName: this.wizard.fileName, 
+            fileSize: this.wizard.fileOrigSize, 
+            fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
@@ -568,9 +598,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     clearToolbarSelectedItems() {
         this.stagesComponent.selectedItems = [];
         this.starsListComponent.selectedItemKey = undefined;
+        this.userAssignmentComponent.selectedItemKey = this.userId;
         this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingComponent.ratingValue = this.defaultRating;
+    }
+
+    cancelImport() {
+        this._importService.cancelImport();
     }
 }

@@ -91,7 +91,7 @@
 
     <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
-            <source src="{{currentDocumentURL}}" type="video/{{fileType}}">
+            <source src="{{currentDocumentURL}}">
         </video>
     </vg-player>
 </div>

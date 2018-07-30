@@ -5,6 +5,7 @@ import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
+import { ImportListComponent } from './import-leads/import-list.component';
 
 @NgModule({
     imports: [
@@ -18,7 +19,8 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
                     { path: 'orders', component: OrdersComponent, data: { permission: 'Pages.CRM.Orders' } },
-                    { path: 'import-leads', component: ImportLeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } }
+                    { path: 'import-leads', component: ImportLeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
+                    { path: 'import-list', component: ImportListComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } }
                 ]
             }
         ])

@@ -63,6 +63,7 @@ import { CreateClientDialogComponent } from './shared/create-client-dialog/creat
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
+import { ImportListComponent } from './import-leads/import-list.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
 
@@ -127,6 +128,7 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-
       DashboardComponent,
       DashboardMenuComponent,
       LeadsStatsComponent,
+      ImportListComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent,
       CrmIntroComponent

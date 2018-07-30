@@ -274,4 +274,8 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     getAssignedRoleCount(): number {
         return _.filter(this.roles, { isAssigned: true }).length;
     }
+
+    getAssignedOrgUnitCount(): number {
+        return this.organizationUnitTree.getSelectedOrganizations().length || 0;
+    }
 }
