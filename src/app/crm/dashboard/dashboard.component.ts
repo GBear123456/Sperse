@@ -56,6 +56,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {
         this.dataEmpty = !data.length;
+        if (this.dataEmpty) this.openDialog();
     }
 
     addClient() {

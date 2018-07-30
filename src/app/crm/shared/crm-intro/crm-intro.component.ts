@@ -45,7 +45,9 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         this.dialogRef = <any>injector.get(MatDialogRef);
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.stepper.selectedIndex = 1;
+    }
 
     onSubmit() {
         if (this.showImportUsersStep) {
