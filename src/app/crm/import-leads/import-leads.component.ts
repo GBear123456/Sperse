@@ -8,6 +8,7 @@ import * as addressParser from 'parse-address';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { ImportStatus } from '@shared/AppEnums';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
@@ -326,7 +327,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                 this._importService.setupStatusCheck((callback) => {
                                     this._importProxy.getStatus(importId).subscribe((res) => {
                                         this.importedCount = res.importedCount;                                        
-                                        if (['A', 'C'].indexOf(res.statusId) >= 0) {
+                                        if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
                                             this.importId = 0;
                                             (<any>this._reuseService).invalidate('leads');
                                         }                    
