@@ -344,3 +344,45 @@
     padding: 7px 12px 3px;
 }
 
+.color-div {
+    border: solid 1px;
+    border-radius: 2px;
+    height: 32px;
+}
+.available-balance {
+    border-color: #59de9b;
+    background-color: rgba(89, 222, 155, 0.18);
+}
+.totalCreditLine-balance {
+    background-color: rgba(224, 83, 59, 0.21);
+    border-color: #e78372;
+}
+.balance-container {
+    padding-top: 5px;
+    padding-right: 5px;
+}
+.ratioField {
+    // position: relative;
+    padding-right: 5px;
+
+    .text {
+        display: block;
+    }
+
+    .ratioProgressBar {
+        background-color: #dfdfdf;
+        position: absolute;
+        height: 3px;
+        right: 10px;
+        width: 64px;
+        border-radius: 2px;
+        overflow: hidden;
+
+        .progress {
+            display: block;
+            position: absolute;
+            height: 100%;
+            background-color: #e0533b;
+        }
+    }
+}

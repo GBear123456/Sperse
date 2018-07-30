@@ -913,6 +913,162 @@ export class ActivityServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    transition(input: TransitionActivityDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/Transition";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processTransition(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTransition(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTransition(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    delete(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/Delete?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignUser(input: AssignActivityUserDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/AssignUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAssignUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAssignUser(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAssignUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -24415,7 +24571,7 @@ export class ActivityDto implements IActivityDto {
     type!: ActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
-    userId!: number;
+    assignedUserId!: number | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     stageId!: number | undefined;
@@ -24438,7 +24594,7 @@ export class ActivityDto implements IActivityDto {
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.stageId = data["stageId"];
@@ -24461,7 +24617,7 @@ export class ActivityDto implements IActivityDto {
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["stageId"] = this.stageId;
@@ -24477,7 +24633,7 @@ export interface IActivityDto {
     type: ActivityDtoType | undefined;
     title: string;
     description: string | undefined;
-    userId: number;
+    assignedUserId: number | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     stageId: number | undefined;
@@ -24490,7 +24646,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     type!: CreateActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
-    userId!: number;
+    assignedUserId!: number | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     stageId!: number | undefined;
@@ -24512,7 +24668,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.stageId = data["stageId"];
@@ -24534,7 +24690,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["stageId"] = this.stageId;
@@ -24549,7 +24705,7 @@ export interface ICreateActivityDto {
     type: CreateActivityDtoType | undefined;
     title: string;
     description: string | undefined;
-    userId: number;
+    assignedUserId: number | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     stageId: number | undefined;
@@ -24563,7 +24719,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     type!: UpdateActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
-    userId!: number;
+    assignedUserId!: number | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     stageId!: number | undefined;
@@ -24586,7 +24742,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
-            this.userId = data["userId"];
+            this.assignedUserId = data["assignedUserId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.stageId = data["stageId"];
@@ -24609,7 +24765,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
-        data["userId"] = this.userId;
+        data["assignedUserId"] = this.assignedUserId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["stageId"] = this.stageId;
@@ -24625,7 +24781,7 @@ export interface IUpdateActivityDto {
     type: UpdateActivityDtoType | undefined;
     title: string;
     description: string | undefined;
-    userId: number;
+    assignedUserId: number | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     stageId: number | undefined;
@@ -24676,6 +24832,90 @@ export interface IMoveActivityDto {
     id: number;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+}
+
+export class TransitionActivityDto implements ITransitionActivityDto {
+    id!: number;
+    stageId!: number | undefined;
+    assignTo!: number | undefined;
+
+    constructor(data?: ITransitionActivityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.stageId = data["stageId"];
+            this.assignTo = data["assignTo"];
+        }
+    }
+
+    static fromJS(data: any): TransitionActivityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TransitionActivityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["stageId"] = this.stageId;
+        data["assignTo"] = this.assignTo;
+        return data; 
+    }
+}
+
+export interface ITransitionActivityDto {
+    id: number;
+    stageId: number | undefined;
+    assignTo: number | undefined;
+}
+
+export class AssignActivityUserDto implements IAssignActivityUserDto {
+    id!: number;
+    assignTo!: number | undefined;
+
+    constructor(data?: IAssignActivityUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.assignTo = data["assignTo"];
+        }
+    }
+
+    static fromJS(data: any): AssignActivityUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AssignActivityUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["assignTo"] = this.assignTo;
+        return data; 
+    }
+}
+
+export interface IAssignActivityUserDto {
+    id: number;
+    assignTo: number | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -25156,6 +25396,9 @@ export class BankAccountDto implements IBankAccountDto {
     businessEntityId!: number | undefined;
     isActive!: boolean | undefined;
     balance!: number | undefined;
+    totalCreditLine!: number | undefined;
+    availableBalance!: number | undefined;
+    utilized!: number | undefined;
     syncAccountId!: number | undefined;
     isUsed!: boolean | undefined;
 
@@ -25179,6 +25422,9 @@ export class BankAccountDto implements IBankAccountDto {
             this.businessEntityId = data["businessEntityId"];
             this.isActive = data["isActive"];
             this.balance = data["balance"];
+            this.totalCreditLine = data["totalCreditLine"];
+            this.availableBalance = data["availableBalance"];
+            this.utilized = data["utilized"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
         }
@@ -25202,6 +25448,9 @@ export class BankAccountDto implements IBankAccountDto {
         data["businessEntityId"] = this.businessEntityId;
         data["isActive"] = this.isActive;
         data["balance"] = this.balance;
+        data["totalCreditLine"] = this.totalCreditLine;
+        data["availableBalance"] = this.availableBalance;
+        data["utilized"] = this.utilized;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
         return data; 
@@ -25218,6 +25467,9 @@ export interface IBankAccountDto {
     businessEntityId: number | undefined;
     isActive: boolean | undefined;
     balance: number | undefined;
+    totalCreditLine: number | undefined;
+    availableBalance: number | undefined;
+    utilized: number | undefined;
     syncAccountId: number | undefined;
     isUsed: boolean | undefined;
 }
