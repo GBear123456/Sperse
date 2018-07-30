@@ -1,8 +1,10 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular';
+import { forkJoin } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -10,261 +12,81 @@ import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FiltersService } from '@shared/filters/filters.service';
-import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
-import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
+
+import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
     animations: [appModuleAnimation()],
-    providers: []
+    providers: [ImportServiceProxy]
 })
-export class ImportListComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private rootComponent: any;
     private readonly dataSourceURI = 'Import';
-    private filters: FilterModel[];
 
-    masks = AppConsts.masks;
-    private formatting = AppConsts.formatting;
-
+    public toolbarConfig: any = [];
+    public selectedRowIds: number[] = [];
     public showImportWizard = false;
     public headlineConfig = {
-        names: [this.l('Imports')],
+        names: [this.l('Import')],
         onRefresh: this.refreshDataGrid.bind(this),
-        icon: 'briefcase',
+        icon: 'docs',
         buttons: [
             {
                 enabled: true,
-                action: Function(),
-                lable: this.l('NewImport')
+                action: this.navigateToWizard.bind(this),
+                lable: this.l('AddNewImport')
             }
         ]
     };
 
     constructor(injector: Injector,
-        private _filtersService: FiltersService,
-//                private _orderService: OrderServiceProxy,
+        private _router: Router,
+        private _importProxy: ImportServiceProxy,
         private _appService: AppService
     ) {
         super(injector);
 
-        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
         this.dataSource = {
             store: {
                 type: 'odata',
                 url: this.getODataURL(this.dataSourceURI),
-                version: 4,
+                version: this.getODataVersion(),
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                paginate: true
+                paginate: true,
+                key: 'Id'
             }
         };
     }
 
-    onContentReady(event) {
-        this.setGridDataLoaded();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
-    }
-
-    refreshDataGrid() {
-        this.dataGrid.instance.refresh();
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
-    ngOnInit(): void {
-        this._filtersService.setup(this.filters = [
-            new FilterModel({
-                component: FilterCalendarComponent,
-                operator: {from: 'ge', to: 'le'},
-                caption: 'creation',
-                field: 'CreationTime',
-                items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                options: {method: 'getFilterByDate'}
-            }),
-            new FilterModel({
-                component: FilterDropDownComponent,
-                caption: 'paymentType',
-                items: {
-                    paymentType: new FilterDropDownModel({
-                        displayName: 'Payment Type',
-                        elements: null,
-                        filterField: 'paymentTypeId',
-                        onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                            filter.items['paymentType'].value = event.value;
-                        }
-                    })
-                }
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'product',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'orderTotals',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'currencies',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'recurrence',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'regions',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'zipCode',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'referringAffiliates',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'referringWebsites',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'utmSources',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'utmMediums',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'UtmCampaings',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'entryPages',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'salesAgents',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'cardBins',
-                items: {}
-            })
-        ]);
-
-        this._filtersService.apply(() => {
-            this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
-                    let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
-            );
-        });
-    }
-
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this.toolbarConfig = [
             {
                 location: 'before', items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
-                            },
-                            mouseover: (event) => {
-                                this._filtersService.enable();
-                            },
-                            mouseout: (event) => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase()
-                        }
+                    { 
+                        name: 'back', 
+                        action: this.navigateToDashboard.bind(this) 
                     }
                 ]
             },
             {
                 location: 'before', items: [
-                    { name: 'back' }
-                ]
-            },
-            {
-                location: 'before', items: [
-                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                    { 
+                        name: 'cancel', 
+                        action: this.cancelImport.bind(this),
+                        disabled: !this.selectedRowIds.length
+                    }, {   
+                        name: 'delete', 
+                        action: this.deleteImport.bind(this),
+                        disabled: !this.selectedRowIds.length 
+                    }
                 ]
             },
             {
@@ -299,6 +121,76 @@ export class ImportListComponent extends AppComponentBase implements OnInit, Aft
         ];
     }
 
+    onContentReady(event) {
+        if (!event.component.totalCount())
+            return this.navigateToWizard();
+
+        this.setGridDataLoaded();
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1,
+            width: 40
+        });
+    }
+
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
+    }
+
+    navigateToDashboard() { 
+        this._router.navigate(['app/crm/dashboard']);
+    }
+
+    navigateToWizard() {
+        this._router.navigate(['app/crm/import-leads']);              
+    }
+
+    deleteImport() {
+        this.message.confirm(
+            this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]),
+            isConfirmed => {
+                if (isConfirmed)
+                    forkJoin(
+                        this.selectedRowIds.map((id) => {
+                            return this._importProxy.delete(id);
+                        })
+                    ).subscribe((res) => {
+                        this.refreshDataGrid();
+                    });
+            });
+    }
+
+    cancelImport() {
+        this.message.confirm(
+            this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]),
+            isConfirmed => {
+                if (isConfirmed)
+                  forkJoin(
+                      this.selectedRowIds.map((id) => {
+                          return this._importProxy.cancel(id);
+                      })
+                  ).subscribe((res) => {
+                      this.refreshDataGrid();
+                  });
+            });
+    }
+
+    onCellClick($event) {
+        if ($event.column.dataField == 'FileName') {
+            this._importProxy.getFileUrl($event.data.Id).subscribe((responce) => {
+                if (responce && responce.url)
+                    window.open(responce.url);
+            });
+        }            
+    }
+
+    fileSizeFormat = (data) => {  
+        return Math.round(data.FileSize / 1024) + 'Kb';
+    }
+
     activate() {
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
@@ -306,8 +198,6 @@ export class ImportListComponent extends AppComponentBase implements OnInit, Aft
 
     deactivate() {
         this._appService.toolbarConfig = null;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 

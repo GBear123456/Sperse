@@ -2,9 +2,18 @@
     position: relative;
     top: 74px;
 
-    .pipepline-wrapper {
-        padding: 15px;
-        height: calc(~'100vh - 216px');
-        overflow-y: auto;
+    .margin-left {
+        margin-left: 321px;
     }
+
+    /deep/ dx-data-grid {
+        .dx-datagrid-table {
+            tr td:nth-child(3) {
+                cursor: pointer;
+                color: #424de4!important;
+                text-decoration: underline;
+            }
+        }
+    }
+
 }
