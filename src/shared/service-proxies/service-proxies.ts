@@ -24302,6 +24302,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     bankAccounts!: BankAccountDto[] | undefined;
     syncAccountStatus!: SyncAccountBankDtoSyncAccountStatus | undefined;
     syncRef!: string | undefined;
+    syncTypeId!: string | undefined;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -24326,6 +24327,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             }
             this.syncAccountStatus = data["syncAccountStatus"];
             this.syncRef = data["syncRef"];
+            this.syncTypeId = data["syncTypeId"];
         }
     }
 
@@ -24350,6 +24352,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         }
         data["syncAccountStatus"] = this.syncAccountStatus;
         data["syncRef"] = this.syncRef;
+        data["syncTypeId"] = this.syncTypeId;
         return data; 
     }
 }
@@ -24363,6 +24366,7 @@ export interface ISyncAccountBankDto {
     bankAccounts: BankAccountDto[] | undefined;
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus | undefined;
     syncRef: string | undefined;
+    syncTypeId: string | undefined;
 }
 
 export class BankAccountDto implements IBankAccountDto {
