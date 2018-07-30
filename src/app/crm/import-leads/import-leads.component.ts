@@ -296,7 +296,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let value = phoneNumber.replace(/[^\d]/g, '');
         if ((value.length == AppConsts.maxPhoneLength + 1) && value.charAt(0) === '1')
             value = value.substr(1);
-                
         this.setFieldIfDefined(value || phoneNumber, field.mappedField, dataSource);
 
         return true;

@@ -1,15 +1,21 @@
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
-import { BankAccountsServiceProxy, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+/** Core imports */
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+
+/** Third party imports */
 import { Subscription, of, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
+import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
+import { XeroLoginDialogComponent } from '@app/cfo/shared/common/xero/xero-login-dialog/xero-login-dialog.component';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountBankDto, InstanceType } from '@shared/service-proxies/service-proxies';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { CacheService } from '../../../../../node_modules/ng2-cache-service';
-import * as _ from 'underscore';
 
 @Component({
     selector: 'bank-accounts-component',
@@ -18,6 +24,7 @@ import * as _ from 'underscore';
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, BankAccountsService ]
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
+    @ViewChild(XeroLoginDialogComponent) xeroLoginDialog: XeroLoginDialogComponent;
     initialSyncAccounts;
     filteredBankAccounts;
     bankAccounts$;
@@ -159,20 +166,24 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         }, 0);
     }
 
-    onUpdateAccount(event) {
+    onUpdateAccount(syncAccount: SyncAccountBankDto) {
         if (!this.isInstanceAdmin)
             return;
 
-        if (this.quovoHandler.isLoaded) {
-            if (this.loading) {
-                this.finishLoading(true);
+        if (syncAccount.syncTypeId === 'Q') {
+            if (this.quovoHandler.isLoaded) {
+                if (this.loading) {
+                    this.finishLoading(true);
+                }
+                this.quovoHandler.open(null, syncAccount.syncAccountId);
+            } else {
+                if (!this.loading) {
+                    this.startLoading(true);
+                }
+                setTimeout(() => this.onUpdateAccount(syncAccount), 100);
             }
-            this.quovoHandler.open(null, event.id);
         } else {
-            if (!this.loading) {
-                this.startLoading(true);
-            }
-            setTimeout(() => this.onUpdateAccount({ id: event.id }), 100);
+            this.xeroLoginDialog.show({id: syncAccount.syncAccountId});
         }
     }
 
