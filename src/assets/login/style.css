@@ -284,17 +284,17 @@ footer {
     opacity: 0.5;
 }
 
-a {
+.login a {
     cursor: pointer;
     margin-right: 5px;
 }
 
-a span {
+.login a span {
     -ms-opacity: 0.5;
     opacity: 0.5;
 }
 
-a span.language-icon-current {
+.login a span.language-icon-current {
     -ms-opacity: 1;
     opacity: 1;
 }
