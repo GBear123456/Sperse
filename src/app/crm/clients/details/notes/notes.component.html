@@ -1,13 +1,7 @@
-<div class="wrapper">
-    <div class="left-side">
-        <dx-data-grid id="gridContainer"
-                      [dataSource]="dataSource"
-                      [allowColumnReordering]="true"
-                      [columnAutoWidth]="true"
-                      [allowColumnResizing]="true"
-                      [hoverStateEnabled]="true"
-                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
-                      (onToolbarPreparing)="onToolbarPreparing($event)">
+<mat-drawer-container class="notes-container" autosize>
+    <div class="notes-sidenav-content">
+        <dx-data-grid id="gridContainer" [dataSource]="dataSource" [allowColumnReordering]="true" [columnAutoWidth]="true" [allowColumnResizing]="true"
+            [hoverStateEnabled]="true" (onDataErrorOccurred)="httpConfig.handleError($event.error)" (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
@@ -36,7 +30,8 @@
             <dxo-group-panel [visible]="false"></dxo-group-panel>
         </dx-data-grid>
     </div>
-    <div class="right-side">
+
+    <mat-drawer #drawer class="notes-sidenav" mode="side" position="end">
         <note-add [customerInfo]="data.customerInfo" (onAdded)="noteAdded()"></note-add>
-    </div>
-</div>
+    </mat-drawer>
+</mat-drawer-container>
