@@ -1,0 +1,18 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig"></app-headline>
+    <div class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+    
+            <dx-scheduler
+                [height]="'calc(100vh - 210px)'"
+                [dataSource]="dataSource"
+                [views]="['day', 'week', 'month', 'agenda']"
+                [resources]="resources"
+                (onAppointmentAdding)="onAppointmentAdding($event)"
+                (onAppointmentUpdating)="onAppointmentUpdating($event)"
+                (onAppointmentDeleting)="onAppointmentDeleting($event)"
+            ></dx-scheduler>
+    
+        </div>
+    </div>
+</div>

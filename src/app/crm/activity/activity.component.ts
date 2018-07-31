@@ -1,0 +1,218 @@
+/** Core imports */
+import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { DxSchedulerComponent } from 'devextreme-angular';
+import { forkJoin } from 'rxjs';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { AppService } from '@app/app.service';
+import { AppConsts } from '@shared/AppConsts';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+
+import { ActivityServiceProxy, CreateActivityDto, CreateActivityDtoType, UpdateActivityDto } from '@shared/service-proxies/service-proxies';
+
+@Component({
+    templateUrl: './activity.component.html',
+    styleUrls: ['./activity.component.less'],
+    animations: [appModuleAnimation()],
+    providers: [ActivityServiceProxy]
+})
+export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
+    @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
+
+    private rootComponent: any;
+
+    public resources = [
+        {
+            fieldExpr: "type",
+            useColorAsDefault: true,
+            allowMultiple: false,
+            dataSource: [{
+                  text: this.l('Event'),
+                  id: CreateActivityDtoType.Event,
+                  color: "#727bd2"
+              }, {
+                  text: this.l('Task'),
+                  id: CreateActivityDtoType.Task,
+                  color: "#32c9ed"
+            }],
+            label: this.l("Type")
+        },
+        {
+            fieldExpr: "stageId",
+            allowMultiple: false,
+            dataSource: [],
+            label: this.l("Stage")
+        },
+        {
+            fieldExpr: "opderId",
+            allowMultiple: false,
+            dataSource: [],
+            label: this.l("Order")
+        },
+        {
+            fieldExpr: "leadId",
+            allowMultiple: false,
+            dataSource: [],
+            label: this.l("Lead")
+        },
+        {
+            fieldExpr: "customerId",
+            allowMultiple: false,
+            dataSource: [],
+            label: this.l("Customer")
+        }
+    ];
+    public headlineConfig = {
+        names: [this.l('Tasks')],
+        onRefresh: Function(),
+        icon: 'docs',
+        buttons: [
+            {
+                enabled: true,
+                action: () => { 
+                    this.schedulerComponent.instance
+                        .showAppointmentPopup(new Date(), true);
+                },
+                lable: this.l('AddNewTask')
+            }
+        ]
+    };
+
+    constructor(injector: Injector, 
+        private _router: Router,
+        private _appService: AppService,
+        private _activityProxy: ActivityServiceProxy
+    ) {
+        super(injector);
+
+        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        _activityProxy.getAll(this.appSession.userId, null, null).subscribe((res) => {
+            this.dataSource = res.map((item) => {
+                item['text'] = item.title;
+                return item;
+            });
+        });         
+    }
+
+    initToolbarConfig() {
+        this._appService.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    { 
+                        name: 'back', 
+                        action: Function()
+                    }
+                ]
+            },
+            {
+                location: 'after', items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    }
+                ]
+            }
+        ];
+    }
+
+    onAppointmentAdding($event) {
+        let data = $event.appointmentData;
+        $event.cancel = this._activityProxy.create(
+            CreateActivityDto.fromJS({
+                type: data.type,
+                title: data.text,
+                description: data.description,
+                assignedUserId: this.appSession.userId,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                stageId: data.stageId,
+                leadId: data.leadId,
+                orderId: data.orderId,
+                customerId: data.customerId
+            })
+        ).toPromise().then((res) => {
+            console.log(res);
+        }).catch(err => {
+            this.schedulerComponent.instance
+                .hideAppointmentPopup(false);
+            return true;
+        });
+    }
+
+    onAppointmentUpdating($event) {
+        let data = $event.newData;
+        $event.cancel = this._activityProxy.update(
+            UpdateActivityDto.fromJS({
+                id: data.id,
+                type: data.type,
+                title: data.text,
+                description: data.description,
+                assignedUserId: this.appSession.userId,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                stageId: data.stageId,
+                leadId: data.leadId,
+                orderId: data.orderId,
+                customerId: data.customerId
+            })
+        ).toPromise().then((res) => {
+            console.log(res);
+        }).catch(err => {
+            this.schedulerComponent.instance
+                .hideAppointmentPopup(false);
+            return true;
+        });
+    }
+
+    onAppointmentDeleting($event) {
+        $event.cancel = this._activityProxy
+            .delete($event.appointmentData.id)
+                .toPromise().catch(err => {
+                    return true;
+                });
+    }
+
+    activate() {
+        this.rootComponent.overflowHidden(true);
+        this.initToolbarConfig();
+    }
+
+    deactivate() {
+        this._appService.toolbarConfig = null;
+        this.rootComponent.overflowHidden();
+    }
+
+    ngAfterViewInit(): void {
+        this.rootComponent = this.getRootComponent();
+        this.activate();
+    }
+
+    ngOnDestroy() {
+        this.deactivate();
+    }
+}

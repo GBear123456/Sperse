@@ -40,7 +40,8 @@ import {
     DxSliderModule,
     DxRadioGroupModule,
     DxCheckBoxModule,
-    DxTagBoxModule
+    DxTagBoxModule,
+    DxSchedulerModule
 } from 'devextreme-angular';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -64,6 +65,7 @@ import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list.component';
+import { ActivityComponent } from './activity/activity.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
 
@@ -95,6 +97,7 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-
       DxRadioGroupModule,
       DxCheckBoxModule,
       DxTagBoxModule,
+      DxSchedulerModule,
 
       MatSidenavModule,
       MatProgressBarModule,
@@ -131,7 +134,8 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-
       ImportListComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent,
-      CrmIntroComponent
+      CrmIntroComponent,
+      ActivityComponent
     ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
