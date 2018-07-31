@@ -33,6 +33,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
+    private readonly RESERVED_TIME_SECONDS = 30;
+
     private visibleDocuments: DocumentInfo[];
     private currentDocumentURL: string;
 
@@ -94,7 +96,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     private storeUrlToCache(id: string, urlInfo: GetUrlOutput) {
-        this.cacheService.set(id, urlInfo, { maxAge: urlInfo.validityPeriodSeconds - 30 });
+        this.cacheService.set(id, urlInfo, 
+            { maxAge: urlInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
+    }
+
+    private storeWopiRequestInfoToCache(id: string, requestInfo: WopiRequestOutcoming) {
+        this.cacheService.set(id, requestInfo, 
+            { maxAge: requestInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
     }
 
     private getDocumentUrlInfoObservable(): Observable<GetUrlOutput> {
@@ -109,6 +117,21 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 this.storeUrlToCache(id, urlInfo);
                 return of(urlInfo);
             }));
+    }
+
+    private getViewWopiRequestInfoObservable(): Observable<WopiRequestOutcoming>
+    {
+        let id = this.currentDocumentInfo.id;
+        if (this.cacheService.exists(id)) {
+            let requestInfo = this.cacheService.get(id) as WopiRequestOutcoming;
+            return of(requestInfo);
+        }
+
+        return this._documentService.getViewWopiRequestInfo(id).pipe(
+            flatMap((response) => {
+                this.storeWopiRequestInfoToCache(id, response);
+                return of(response);
+            }));;
     }
 
     initViewerToolbar(conf: any = {}) {
@@ -396,7 +419,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         });
         switch (viewerType) {
             case this.WOPI_VIEWER:
-                this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
                     this.finishLoading(true);
                 })).subscribe((response) => {
                     this.showOfficeOnline(response);

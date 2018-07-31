@@ -25396,9 +25396,6 @@ export class BankAccountDto implements IBankAccountDto {
     businessEntityId!: number | undefined;
     isActive!: boolean | undefined;
     balance!: number | undefined;
-    totalCreditLine!: number | undefined;
-    availableBalance!: number | undefined;
-    utilized!: number | undefined;
     syncAccountId!: number | undefined;
     isUsed!: boolean | undefined;
 
@@ -25422,9 +25419,6 @@ export class BankAccountDto implements IBankAccountDto {
             this.businessEntityId = data["businessEntityId"];
             this.isActive = data["isActive"];
             this.balance = data["balance"];
-            this.totalCreditLine = data["totalCreditLine"];
-            this.availableBalance = data["availableBalance"];
-            this.utilized = data["utilized"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
         }
@@ -25448,9 +25442,6 @@ export class BankAccountDto implements IBankAccountDto {
         data["businessEntityId"] = this.businessEntityId;
         data["isActive"] = this.isActive;
         data["balance"] = this.balance;
-        data["totalCreditLine"] = this.totalCreditLine;
-        data["availableBalance"] = this.availableBalance;
-        data["utilized"] = this.utilized;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
         return data; 
@@ -25467,9 +25458,6 @@ export interface IBankAccountDto {
     businessEntityId: number | undefined;
     isActive: boolean | undefined;
     balance: number | undefined;
-    totalCreditLine: number | undefined;
-    availableBalance: number | undefined;
-    utilized: number | undefined;
     syncAccountId: number | undefined;
     isUsed: boolean | undefined;
 }
@@ -37884,6 +37872,7 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
     accessToken!: string | undefined;
     accessTokenTtl!: number | undefined;
     wopiUrlsrc!: string | undefined;
+    validityPeriodSeconds!: number | undefined;
 
     constructor(data?: IWopiRequestOutcoming) {
         if (data) {
@@ -37899,6 +37888,7 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
             this.accessToken = data["accessToken"];
             this.accessTokenTtl = data["accessTokenTtl"];
             this.wopiUrlsrc = data["wopiUrlsrc"];
+            this.validityPeriodSeconds = data["validityPeriodSeconds"];
         }
     }
 
@@ -37914,6 +37904,7 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
         data["accessToken"] = this.accessToken;
         data["accessTokenTtl"] = this.accessTokenTtl;
         data["wopiUrlsrc"] = this.wopiUrlsrc;
+        data["validityPeriodSeconds"] = this.validityPeriodSeconds;
         return data; 
     }
 }
@@ -37922,6 +37913,7 @@ export interface IWopiRequestOutcoming {
     accessToken: string | undefined;
     accessTokenTtl: number | undefined;
     wopiUrlsrc: string | undefined;
+    validityPeriodSeconds: number | undefined;
 }
 
 export class DocumentTypeInfo implements IDocumentTypeInfo {
