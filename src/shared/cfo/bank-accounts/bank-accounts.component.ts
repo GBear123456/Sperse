@@ -8,6 +8,7 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { AppConsts } from '@shared/AppConsts';
 import { CacheService } from '../../../../node_modules/ng2-cache-service';
 import * as _ from 'underscore';
 
@@ -34,7 +35,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
     quovoHandler: any;
-    private readonly LOCAL_STORAGE = 0;
 
     constructor(
         injector: Injector,
@@ -47,7 +47,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         private _cacheService: CacheService
     ) {
         super(injector);
-        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         this.subscribeToObservables();
     }
 

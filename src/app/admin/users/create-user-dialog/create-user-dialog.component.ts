@@ -61,7 +61,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this._cacheService = this._cacheService.useStorage(0);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
 
         this.saveContextMenuItems = [
             {text: this.l('SaveAndAddNew'), selected: false},

@@ -67,8 +67,6 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private referrerParams;
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
-    private readonly LOCAL_STORAGE = 0;
-
     constructor(injector: Injector,
                 private _router: Router,
                 private _dialog: MatDialog,
@@ -80,7 +78,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _clientDetailsService: ClientDetailsService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         _customerService['data'] = {customerInfo: null, leadInfo: null};
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params

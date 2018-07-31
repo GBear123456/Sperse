@@ -144,7 +144,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
-        this._cacheService = this._cacheService.useStorage(0);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
 
         this.saveContextMenuItems = [
             {text: this.l('SaveAndAddNew'), selected: false},
