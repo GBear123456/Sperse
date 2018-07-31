@@ -68,7 +68,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    refresh(quiet = false, addedNew = false) {
+    refresh(quiet = false, stageId = undefined) {
         this.selectedLeads = [];
         if (!this.refreshTimeout) {
             !quiet && this.startLoading();
@@ -90,7 +90,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             !quiet && this.onStagesLoaded.emit(result);
                         }
                         if (this._dataSource)
-                            this.loadStagesLeads(0, addedNew ? Math.floor(this.stages.length / 2) : undefined, addedNew);
+                            this.loadStagesLeads(0, stageId && _.findIndex(this.stages, 
+                                (obj) => {return obj.id == stageId}), Boolean(stageId));
 
                         this.refreshTimeout = null;
                     });

@@ -100,7 +100,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     public headlineConfig = {
         names: [this.l('Leads')],
-        onRefresh: this.refreshDataGrid.bind(this, false, false),
+        onRefresh: this.refreshDataGrid.bind(this, false),
         icon: 'basket',
         buttons: [
             {
@@ -180,10 +180,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    refreshDataGrid(quiet = false, addedNew = false) {
+    refreshDataGrid(quiet = false, stageId = undefined) {
         setTimeout(() => {
             this.pipelineComponent.refresh(
-                quiet || !this.showPipeline, addedNew);
+                quiet || !this.showPipeline, stageId);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
@@ -191,7 +191,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     invalidate() {
-        this.refreshDataGrid(true, true);
+        this.refreshDataGrid(true);
     }
 
     showColumnChooser() {
@@ -635,8 +635,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: (quite) => {
-                    this.refreshDataGrid(quite, true);
+                refreshParent: (quite, stageId) => {
+                    this.refreshDataGrid(quite, stageId);
                 },
                 isInLeadMode: true
             }

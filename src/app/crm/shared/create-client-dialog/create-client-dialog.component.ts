@@ -330,12 +330,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
+            this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(customerId, leadId);
-            return this.data.refreshParent(true);
-        } else
+            this.data.refreshParent(true, this.stageId);
+        } else {
+            this.data.refreshParent(false, this.stageId);
             this.close();
-        this.data.refreshParent();
+        }
     }
 
     save(event?): void {
