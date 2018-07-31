@@ -8,12 +8,16 @@
               [allowColumnResizing]="true"
               [masterDetail]="{ enabled: true, template: 'detail' }">
     <dxi-column dataField="frequency" caption="{{l('Frequency')}}"></dxi-column>
-    <dxi-column dataField="payerType" caption="{{l('Payer Type')}}"></dxi-column>
+    <dxi-column dataField="payerType" caption="{{l('Type')}}"></dxi-column>
+    <dxi-column dataField="totalFee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
     <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
     <dxi-column caption="" [width]="120" cellTemplate="actionsTemplate"></dxi-column>
 
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.statusCode != 'C'" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
+    </div>
+    <div *dxTemplate="let cell of 'amountTemplate'">
+        <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
     </div>
 
     <div *dxTemplate="let orderSubscription of 'detail'">

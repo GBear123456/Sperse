@@ -35,6 +35,12 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                 .getSubscriptionsHistory(this.data.customerInfo.primaryContactInfo.userId)
                 .subscribe(result => {
                     this.dataSource = result;
+
+                    this.dataSource.forEach(v => {
+                        let totalFee = 0;
+                        v.orderSubscriptions.forEach(v => totalFee += v.fee);
+                        v['totalFee'] = totalFee;
+                    });
                 });
         }
     }
