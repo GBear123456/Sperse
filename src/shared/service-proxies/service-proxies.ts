@@ -25577,6 +25577,9 @@ export class BankAccountDto implements IBankAccountDto {
     businessEntityId!: number | undefined;
     isActive!: boolean | undefined;
     balance!: number | undefined;
+    totalCreditLine!: number | undefined;
+    availableBalance!: number | undefined;
+    utilized!: number | undefined;
     syncAccountId!: number | undefined;
     isUsed!: boolean | undefined;
 
@@ -25600,6 +25603,9 @@ export class BankAccountDto implements IBankAccountDto {
             this.businessEntityId = data["businessEntityId"];
             this.isActive = data["isActive"];
             this.balance = data["balance"];
+            this.totalCreditLine = data["totalCreditLine"];
+            this.availableBalance = data["availableBalance"];
+            this.utilized = data["utilized"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
         }
@@ -25623,6 +25629,9 @@ export class BankAccountDto implements IBankAccountDto {
         data["businessEntityId"] = this.businessEntityId;
         data["isActive"] = this.isActive;
         data["balance"] = this.balance;
+        data["totalCreditLine"] = this.totalCreditLine;
+        data["availableBalance"] = this.availableBalance;
+        data["utilized"] = this.utilized;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
         return data; 
@@ -25639,6 +25648,9 @@ export interface IBankAccountDto {
     businessEntityId: number | undefined;
     isActive: boolean | undefined;
     balance: number | undefined;
+    totalCreditLine: number | undefined;
+    availableBalance: number | undefined;
+    utilized: number | undefined;
     syncAccountId: number | undefined;
     isUsed: boolean | undefined;
 }
@@ -25856,6 +25868,7 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
     frequency!: string | undefined;
     payerId!: string | undefined;
     payerType!: string | undefined;
+    statusCode!: string | undefined;
     status!: string | undefined;
     orderSubscriptions!: OrderSubscriptionDto[] | undefined;
 
@@ -25874,6 +25887,7 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
             this.frequency = data["frequency"];
             this.payerId = data["payerId"];
             this.payerType = data["payerType"];
+            this.statusCode = data["statusCode"];
             this.status = data["status"];
             if (data["orderSubscriptions"] && data["orderSubscriptions"].constructor === Array) {
                 this.orderSubscriptions = [];
@@ -25896,6 +25910,7 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
         data["frequency"] = this.frequency;
         data["payerId"] = this.payerId;
         data["payerType"] = this.payerType;
+        data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         if (this.orderSubscriptions && this.orderSubscriptions.constructor === Array) {
             data["orderSubscriptions"] = [];
@@ -25911,6 +25926,7 @@ export interface IBillingSubscriptionDto {
     frequency: string | undefined;
     payerId: string | undefined;
     payerType: string | undefined;
+    statusCode: string | undefined;
     status: string | undefined;
     orderSubscriptions: OrderSubscriptionDto[] | undefined;
 }
