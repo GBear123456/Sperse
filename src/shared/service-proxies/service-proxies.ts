@@ -38004,7 +38004,7 @@ export interface IDocumentInfo {
 
 export class GetUrlOutput implements IGetUrlOutput {
     url!: string | undefined;
-    validityPeriod!: string | undefined;
+    validityPeriodSeconds!: number | undefined;
 
     constructor(data?: IGetUrlOutput) {
         if (data) {
@@ -38018,7 +38018,7 @@ export class GetUrlOutput implements IGetUrlOutput {
     init(data?: any) {
         if (data) {
             this.url = data["url"];
-            this.validityPeriod = data["validityPeriod"];
+            this.validityPeriodSeconds = data["validityPeriodSeconds"];
         }
     }
 
@@ -38032,14 +38032,14 @@ export class GetUrlOutput implements IGetUrlOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["url"] = this.url;
-        data["validityPeriod"] = this.validityPeriod;
+        data["validityPeriodSeconds"] = this.validityPeriodSeconds;
         return data; 
     }
 }
 
 export interface IGetUrlOutput {
     url: string | undefined;
-    validityPeriod: string | undefined;
+    validityPeriodSeconds: number | undefined;
 }
 
 export class UploadDocumentInput implements IUploadDocumentInput {
@@ -38138,6 +38138,7 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
     accessToken!: string | undefined;
     accessTokenTtl!: number | undefined;
     wopiUrlsrc!: string | undefined;
+    validityPeriodSeconds!: number | undefined;
 
     constructor(data?: IWopiRequestOutcoming) {
         if (data) {
@@ -38153,6 +38154,7 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
             this.accessToken = data["accessToken"];
             this.accessTokenTtl = data["accessTokenTtl"];
             this.wopiUrlsrc = data["wopiUrlsrc"];
+            this.validityPeriodSeconds = data["validityPeriodSeconds"];
         }
     }
 
@@ -38168,6 +38170,7 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
         data["accessToken"] = this.accessToken;
         data["accessTokenTtl"] = this.accessTokenTtl;
         data["wopiUrlsrc"] = this.wopiUrlsrc;
+        data["validityPeriodSeconds"] = this.validityPeriodSeconds;
         return data; 
     }
 }
@@ -38176,6 +38179,7 @@ export interface IWopiRequestOutcoming {
     accessToken: string | undefined;
     accessTokenTtl: number | undefined;
     wopiUrlsrc: string | undefined;
+    validityPeriodSeconds: number | undefined;
 }
 
 export class DocumentTypeInfo implements IDocumentTypeInfo {
