@@ -105,6 +105,5 @@ export class CreateOrEditEditionModalComponent extends AppComponentBase implemen
     close(): void {
         this.active = false;
         this.modal.hide();
-        setTimeout( window.scrollTo(0, 0));
     }
 }

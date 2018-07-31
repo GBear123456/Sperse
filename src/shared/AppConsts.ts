@@ -72,10 +72,12 @@ export class AppConsts {
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/,
         email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")[a-zA-Z]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        phone: /^[0-9]{10,11}$/,
+        phone: /^[0-9]{10}$/,
         url: /(http:\/\/|https:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?/,
         fullName: /^[^\d]+$/
     };
+
+    static readonly maxPhoneLength = 10;
 
     static readonly defaultCompanyName = 'Unknown company';
 

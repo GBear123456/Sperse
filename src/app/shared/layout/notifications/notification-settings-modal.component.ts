@@ -59,7 +59,6 @@ export class NotificationSettingsModalComponent extends AppComponentBase {
 
     close(): void {
         this.modal.hide();
-        setTimeout( window.scrollTo(0, 0));
     }
 
     private getSettings(callback: () => void) {

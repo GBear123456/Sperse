@@ -13,10 +13,12 @@ import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
+import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { RatingComponent } from '../rating/rating.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -31,6 +33,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -48,6 +51,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private readonly SAVE_OPTION_DEFAULT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersTimeout: any;
+    stages: any[] = [];
+    stageId: number;
 
     saveButtonId: string = 'saveClientOptions';
     saveContextMenuItems = [];
@@ -138,7 +143,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _contactAddressService: ContactAddressServiceProxy,
         private _leadService: LeadServiceProxy,
         private _router: Router,
-        private _nameParser: NameParserService
+        private _nameParser: NameParserService,
+        private _pipelineService: PipelineService
     ) {
         super(injector);
 
@@ -156,6 +162,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.addressTypesLoad();
         this.phoneTypesLoad();
         this.emailTypesLoad();
+        if (this.data.isInLeadMode) {
+            this.leadStagesLoad();
+        }
         this.initToolbarConfig();
     }
 
@@ -171,12 +180,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         }
                     },
                     this.data.isInLeadMode ? {
-                        widget: 'dxDropDownMenu',
-                        disabled: true,
                         name: 'stage',
+                        action: this.toggleStages.bind(this),
                         options: {
-                            hint: this.l('Stage'),
-                            items: []
+                            accessKey: 'CreateLeadStage'
                         }
                     }: {
                         name: 'status',
@@ -273,6 +280,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     private createEntity(): void {
         let assignedUserId = this.userAssignmentComponent.selectedItemKey;
+        let stageId = this.stageId;
         let lists = this.listsComponent.selectedItems;
         let tags = this.tagsComponent.selectedItems;
         let ratingId = this.ratingComponent.ratingValue;
@@ -299,6 +307,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             note: this.notes[ContactTypes.Personal],
             organizationNote: this.notes[ContactTypes.Business],
             assignedUserId: assignedUserId,
+            stageId: stageId,
             lists: lists,
             tags: tags,
             ratingId: ratingId
@@ -321,12 +330,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
+            this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(customerId, leadId);
-            return this.data.refreshParent(true);
-        } else
+            this.data.refreshParent(true, this.stageId);
+        } else {
+            this.data.refreshParent(false, this.stageId);
             this.close();
-        this.data.refreshParent();
+        }
     }
 
     save(event?): void {
@@ -458,6 +469,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getDialogPossition(event, shiftX) {
         return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+    }
+
+    toggleStages() {
+        this.stagesComponent.toggle();
     }
 
     toggleTags() {
@@ -771,5 +786,26 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     ngOnDestroy(): void {
         if (this.similarCustomersDialog)
             this.similarCustomersDialog.close();
+    }
+
+    leadStagesLoad() {
+        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
+            .subscribe(result => {
+                this.stages = result.stages.map((stage) => {
+                    if (stage.name === 'New') {
+                        this.stageId = stage.id;
+                    }
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        text: stage.name
+                    };
+                });           
+               
+            });
+    }
+
+    onStagesChanged(event) {
+        this.stageId = event.id;
     }
 }

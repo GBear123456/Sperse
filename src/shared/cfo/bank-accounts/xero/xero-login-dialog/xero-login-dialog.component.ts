@@ -1,6 +1,9 @@
-import { Component, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Output, EventEmitter, Input } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType } from 'shared/service-proxies/service-proxies';
+import {
+    SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType,
+    UpdateSyncAccountInput
+} from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -11,13 +14,14 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [SyncAccountServiceProxy]
 })
 export class XeroLoginDialogComponent extends CFOComponentBase {
+    @Input() operationType: 'add' | 'update' = 'add';
     @Output() onComplete = new EventEmitter();
-
     popupVisible = false;
     consumerKey: string;
     consumerSecret: string;
     isSyncBankAccountsEnabled = true;
     getXeroCertificateUrl: string;
+    accountId: number;
 
     constructor(
         injector: Injector,
@@ -27,7 +31,10 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
         this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + "/Xero/GetCertificate";
     }
 
-    show(): void {
+    show(data: {id: number} = null): void {
+        if (data && data.id) {
+            this.accountId = data.id;
+        }
         this.popupVisible = true;
     }
 
@@ -36,7 +43,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     }
 
     connectToXero(e) {
-        abp.ui.setBusy();
+        abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'))
         this._syncAccountServiceProxy.create(InstanceType[this.instanceType], this.instanceId,
             new CreateSyncAccountInput({
                 typeId: 'X',
@@ -44,16 +51,32 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
                 consumerSecret: this.consumerSecret,
                 isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled
             }))
-            .pipe(finalize(() => {
-                abp.ui.clearBusy();
-
-                this.hide();
-
-                this.consumerKey = null;
-                this.consumerSecret = null;
-            }))
+            .pipe(finalize(this.finalize))
             .subscribe((result) => {
                 this.onComplete.emit();
             });
+    }
+
+    updateSyncAccount() {
+        if (this.accountId) {
+            abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'))
+            this._syncAccountServiceProxy.update(InstanceType[this.instanceType], this.instanceId,
+                new UpdateSyncAccountInput({
+                    id: this.accountId,
+                    consumerKey: this.consumerKey,
+                    consumerSecret: this.consumerSecret
+                }))
+                .pipe(finalize(this.finalize))
+                .subscribe((res) => {
+                    this.onComplete.emit();
+                });
+        }
+    }
+
+    finalize = () => {
+        abp.ui.clearBusy();
+        this.hide();
+        this.consumerKey = null;
+        this.consumerSecret = null;
     }
 }

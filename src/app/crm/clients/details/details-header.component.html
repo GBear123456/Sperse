@@ -12,10 +12,7 @@
                 <img src="../../../../assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
             </div>
         </div>
-        <div class="rating">
-            <mat-progress-bar mode="determinate" color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
-            <span class="rating_int">{{person.rating}}/10</span>
-        </div>
+        <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
     </div>
     <div *ngIf="data?.organizationContactInfo" class="organization_info">
         <div class="delimiter"></div>

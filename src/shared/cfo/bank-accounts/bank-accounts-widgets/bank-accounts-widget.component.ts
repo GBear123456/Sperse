@@ -89,6 +89,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     syncAccountId: number;
     syncAccountIds = [];
     syncRef = '';
+    syncAccount: SyncAccountBankDto;
     popupVisible = false;
     bankAccountInfo: RenameSyncAccountInput = new RenameSyncAccountInput();
 
@@ -410,8 +411,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         return data;
     }
 
-    updateAccountInfo(id) {
-        this.onUpdateAccount.emit({ id: id });
+    updateAccountInfo(data: SyncAccountBankDto) {
+        this.onUpdateAccount.emit(data);
     }
 
     calculateHeight() {
@@ -460,6 +461,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     openActionsMenu(cellObj) {
+        this.syncAccount = cellObj.data;
         this.syncRef = cellObj.text;
         this.syncAccountId = cellObj.data.syncAccountId;
         this.bankAccountInfo.id = this.syncAccountId;
@@ -480,7 +482,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.requestSyncForAccounts();
                 break;
             case this.l('Update_Info'):
-                this.updateAccountInfo(this.syncRef);
+                this.updateAccountInfo(this.syncAccount);
                 break;
             case this.l('Delete'):
                 this.removeAccount(this.syncAccountId);

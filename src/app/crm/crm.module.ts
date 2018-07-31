@@ -65,7 +65,7 @@ import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
-import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
+import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 
 @NgModule({
     imports: [

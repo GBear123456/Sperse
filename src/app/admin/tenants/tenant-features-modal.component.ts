@@ -80,6 +80,5 @@ export class TenantFeaturesModalComponent extends AppComponentBase {
     close(): void {
         this.active = false;
         this.modal.hide();
-        setTimeout( window.scrollTo(0, 0));
     }
 }

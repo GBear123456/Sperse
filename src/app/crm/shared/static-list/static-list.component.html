@@ -12,10 +12,11 @@
             <dx-list #staticList
                 [ngClass]="{
                     'highlightSelected': highlightSelected,
-                    'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions())
+                    'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions()),
+                    'disableWonLost': disableWonLost
                 }"
                 [searchEnabled]="false"
-                [selectionMode]="selectedKeys.length ? 'single': 'none'"
+                [selectionMode]="selectedKeys?.length ? 'single': 'none'"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"

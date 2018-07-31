@@ -23811,6 +23811,61 @@ export class UserLoginServiceProxy {
         }
         return _observableOf<ListResultDtoOfUserLoginAttemptDto>(<any>null);
     }
+
+    /**
+     * @userId (optional) 
+     * @return Success
+     */
+    getRecentLoginAttemptsForOtherUser(userId: number | null | undefined): Observable<ListResultDtoOfUserLoginAttemptDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/UserLogin/GetRecentLoginAttemptsForOtherUser?";
+        if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRecentLoginAttemptsForOtherUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecentLoginAttemptsForOtherUser(<any>response_);
+                } catch (e) {
+                    return <Observable<ListResultDtoOfUserLoginAttemptDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ListResultDtoOfUserLoginAttemptDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRecentLoginAttemptsForOtherUser(response: HttpResponseBase): Observable<ListResultDtoOfUserLoginAttemptDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ListResultDtoOfUserLoginAttemptDto.fromJS(resultData200) : new ListResultDtoOfUserLoginAttemptDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ListResultDtoOfUserLoginAttemptDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -25445,6 +25500,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     bankAccounts!: BankAccountDto[] | undefined;
     syncAccountStatus!: SyncAccountBankDtoSyncAccountStatus | undefined;
     syncRef!: string | undefined;
+    syncTypeId!: string | undefined;
 
     constructor(data?: ISyncAccountBankDto) {
         if (data) {
@@ -25469,6 +25525,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             }
             this.syncAccountStatus = data["syncAccountStatus"];
             this.syncRef = data["syncRef"];
+            this.syncTypeId = data["syncTypeId"];
         }
     }
 
@@ -25493,6 +25550,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         }
         data["syncAccountStatus"] = this.syncAccountStatus;
         data["syncRef"] = this.syncRef;
+        data["syncTypeId"] = this.syncTypeId;
         return data; 
     }
 }
@@ -25506,6 +25564,7 @@ export interface ISyncAccountBankDto {
     bankAccounts: BankAccountDto[] | undefined;
     syncAccountStatus: SyncAccountBankDtoSyncAccountStatus | undefined;
     syncRef: string | undefined;
+    syncTypeId: string | undefined;
 }
 
 export class BankAccountDto implements IBankAccountDto {
@@ -36805,6 +36864,7 @@ export class SimilarCustomerOutput implements ISimilarCustomerOutput {
     photo!: string | undefined;
     companyName!: string | undefined;
     jobTitle!: string | undefined;
+    ratingId!: number | undefined;
     score!: number | undefined;
 
     constructor(data?: ISimilarCustomerOutput) {
@@ -36823,6 +36883,7 @@ export class SimilarCustomerOutput implements ISimilarCustomerOutput {
             this.photo = data["photo"];
             this.companyName = data["companyName"];
             this.jobTitle = data["jobTitle"];
+            this.ratingId = data["ratingId"];
             this.score = data["score"];
         }
     }
@@ -36841,6 +36902,7 @@ export class SimilarCustomerOutput implements ISimilarCustomerOutput {
         data["photo"] = this.photo;
         data["companyName"] = this.companyName;
         data["jobTitle"] = this.jobTitle;
+        data["ratingId"] = this.ratingId;
         data["score"] = this.score;
         return data; 
     }
@@ -36852,6 +36914,7 @@ export interface ISimilarCustomerOutput {
     photo: string | undefined;
     companyName: string | undefined;
     jobTitle: string | undefined;
+    ratingId: number | undefined;
     score: number | undefined;
 }
 
@@ -41458,6 +41521,7 @@ export interface IUpdateLanguageTextInput {
 
 export class CreateLeadInput implements ICreateLeadInput {
     leadTypeId!: number | undefined;
+    stageId!: number | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -41495,6 +41559,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     init(data?: any) {
         if (data) {
             this.leadTypeId = data["leadTypeId"];
+            this.stageId = data["stageId"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -41556,6 +41621,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadTypeId"] = this.leadTypeId;
+        data["stageId"] = this.stageId;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -41610,6 +41676,7 @@ export class CreateLeadInput implements ICreateLeadInput {
 
 export interface ICreateLeadInput {
     leadTypeId: number | undefined;
+    stageId: number | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;

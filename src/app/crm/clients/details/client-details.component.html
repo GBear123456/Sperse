@@ -1,4 +1,4 @@
-<details-header [data]="customerInfo"></details-header>
+<details-header [data]="customerInfo" [ratingId]="ratingId"></details-header>
 <div class="close-details" (click)="close()"></div>
 <div class="box-shadow-wrapper">
   <div class="under-header">
@@ -15,6 +15,7 @@
         [selectedStageId]="clientStageId"
         (print)="printMainArea()"
         (onUpdateStatus)="updateStatus($event)"
+        (onUpdateRating)="updateRating($event)"
         (onDelete)="delete()"
     ></operations-widget>
   </div>

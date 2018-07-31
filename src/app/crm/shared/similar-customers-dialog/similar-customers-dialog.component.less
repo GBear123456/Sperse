@@ -61,31 +61,13 @@
         background-color: #fff;
     }
 
-    mat-progress-bar {
-        width: 100px;
-        height: 3px;
-    }
-
-    /deep/ .mat-progress-bar-fill:after {
-        background-color: #00aeef;
-    }
-
     .personal-info {
         margin-top: 5px;
         padding: 10px 20px 10px 0;
 
-        .rating {
-            display: flex;
-            bottom: 2px;
-            align-items: center;
-            position: relative;
-
-            & > * {
-                max-width: 50%;
-            }
-
-            mat-progress-bar {
-                margin-right: 10px;
+        /deep/ rating-bar {
+            .rating {
+                bottom: 2px !important;
             }
         }
     }

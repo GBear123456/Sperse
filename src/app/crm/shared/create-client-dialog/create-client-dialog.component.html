@@ -9,6 +9,19 @@
         target="#{{saveButtonId}}">
     </dx-context-menu>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <crm-static-list #stagesList
+                     [width]="'210px'"
+                     [selectedKeys]="[this.stageId]"
+                     [showConfirmation]="false"
+                     [selectedItems]=""
+                     [hideButtons]="true"
+                     [highlightSelected]="true"
+                     [targetSelector]="'[accessKey=CreateLeadStage]'"
+                     (onItemSelected)="onStagesChanged($event)"
+                     [showTitle]="false"
+                     [list]="stages"
+                     [disableWonLost]="true">
+    </crm-static-list>
     <crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true"></crm-rating>
     <crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true"></crm-tags-list>
     <crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true"></crm-lists-list>

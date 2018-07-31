@@ -39,6 +39,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     leadId: number;
     leadStages = [];
     clientStageId: number;
+    ratingId: number;
     configMode: boolean;
 
     private initialData: string;
@@ -123,6 +124,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             return !isPrimaryContact;
         });
 
+        this.ratingId = result.ratingId;
         this.primaryContact = result.primaryContactInfo;
         this.customerInfo = result;
         this.initVerificationChecklist();
@@ -304,6 +306,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     updateStatus(statusId: string) {
         this.showConfirmationDialog(statusId);
+    }
+
+    updateRating(ratingId: number) {
+        this.ratingId = ratingId;
     }
 
     initVerificationChecklist(): void {

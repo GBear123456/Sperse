@@ -231,7 +231,7 @@ export abstract class AppComponentBase {
             ScreenHelper.openFullscreen(element);
     }
 
-    getPhoto(photo, gender): string {
+    getPhoto(photo, gender = null): string {
         if (photo)
             return 'data:image/jpeg;base64,' + photo;
         if (gender)

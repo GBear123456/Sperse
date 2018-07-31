@@ -10,7 +10,9 @@ export class PngPrinter implements Printer {
         handle.document.open();
         handle.document.write(div.innerHTML);
         handle.document.close();
-        handle.print();
-        handle.close();
+        handle.onload = () => {
+            handle.print();
+            handle.close();
+        };
     }
 }

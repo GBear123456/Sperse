@@ -7,6 +7,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -39,6 +40,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     constructor(
         injector: Injector,
         private _router: Router,
+        private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         public dialog: MatDialog
@@ -54,6 +56,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {
         this.dataEmpty = !data.length;
+        if (this.dataEmpty) this.openDialog();
     }
 
     addClient() {
@@ -67,6 +70,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
+        this._appService.toolbarConfig = null;
+
         AppComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
