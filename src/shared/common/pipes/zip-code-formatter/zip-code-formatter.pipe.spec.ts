@@ -4,6 +4,7 @@ describe('ZipCodeFormatterPipe', () => {
     it('create an instance', () => {
         const pipe = new ZipCodeFormatterPipe();
         expect(pipe).toBeTruthy();
+        expect(pipe.transform('')).toBe('');
         expect(pipe.transform('123')).toBe('00123');
         expect(pipe.transform('12334')).toBe('12334');
         expect(pipe.transform('12334-3445')).toBe('12334-3445');

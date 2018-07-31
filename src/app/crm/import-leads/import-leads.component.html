@@ -1,5 +1,5 @@
 <div [@routerTransition] class="import-wrapper">
-    <left-menu></left-menu>
+    <left-menu [hidden]="wizard?.stepper?.selectedIndex !== wizard?.UPLOAD_STEP_INDEX"></left-menu>
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
@@ -34,11 +34,14 @@
                           [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
 <crm-static-list
     [width]="'210px'"
+    [highlightSelected]="true"
+    [showConfirmation]="false"
     [title]="l('Stages')"
     [selectedKeys]="selectedClientKeys"
     [targetSelector]="'[aria-label=Stage]'"
     [hideButtons]="true"
-    (onSelectionChanged)="onStagesChanged($event)"
+    [disableWonLost]="true"
+    (onItemSelected)="onStagesChanged($event)"
     [list]="leadStages">
 </crm-static-list>
 <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>

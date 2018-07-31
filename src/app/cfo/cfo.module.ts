@@ -78,7 +78,7 @@ import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
-import { SharedIntroStepsModule } from '@shared/shared-intro-speps/shared-intro-steps.module';
+import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 
 @NgModule({
     imports: [

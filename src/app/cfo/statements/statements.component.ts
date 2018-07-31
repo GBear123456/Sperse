@@ -201,7 +201,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this._cacheService = this._cacheService.useStorage(0);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
 
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';

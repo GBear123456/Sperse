@@ -8,6 +8,7 @@ import * as _ from 'underscore';
 import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-widget.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsDataModel } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-data.model';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'bank-accounts-select',
@@ -26,8 +27,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @Input() emitOnlySelectedBankAccounts = false;
 
     @Output() onBankAccountsSelected: EventEmitter<any> = new EventEmitter();
-
-    private readonly LOCAL_STORAGE = 0;
 
     initDataSource: SyncAccountBankDto[] = [];
     syncAccountsDataSource: SyncAccountBankDto[] = [];
@@ -48,7 +47,7 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
     }
 
     ngOnInit(): void {

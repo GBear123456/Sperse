@@ -30,6 +30,7 @@ export class StaticListComponent extends AppComponentBase {
     tooltipVisible: boolean;
     @Input() selectedItems: any = [];
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
+    @HostBinding('class.disableWonLost') @Input() disableWonLost = false;
 
     constructor(
         injector: Injector,

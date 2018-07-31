@@ -1,3 +1,10 @@
+<dx-progress-bar
+    [min]="0"
+    [max]="100"
+    [value]="0"
+    [width]="300"
+    [visible]="false">
+</dx-progress-bar>
 <div *ngIf="showSteper">
     <h1><i class="{{icon}}"></i>{{title}}</h1>
     <div class="actions" [hidden]="stepper?.selectedIndex == FINISH_STEP_INDEX">
@@ -10,7 +17,7 @@
                      (onItemClick)="selectionModeChanged($event)"
                      target=".dx-header-row">
     </dx-context-menu>
-    <mat-horizontal-stepper [linear]="true">
+    <mat-horizontal-stepper [linear]="true" [ngClass]="{'updated-padding': stepper?.selectedIndex !== UPLOAD_STEP_INDEX}">
         <ng-template matStepperIcon="edit" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
         <ng-template matStepperIcon="done" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
         <ng-template matStepperIcon="number" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
@@ -69,8 +76,8 @@
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
-                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">  
-            <app-toolbar [config]="toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
+                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="_toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"
@@ -78,10 +85,10 @@
                           [allowColumnResizing]="false"
                           [hoverStateEnabled]="true"
                           [paging]="{pageSize: 1000}"
+                          [selectedRowKeys]="selectedMapRowKeys"
                           (onCellClick)="onMapCellClick($event)"
                           (onSelectionChanged)="onMapSelectionChanged($event)"
-                          (onRowValidating)="onRowValidating($event)"
-                          (onContentReady)="onContentReady($event)">
+                          (onRowValidating)="onRowValidating($event)">
                 <dxo-selection selectAllMode="allPages"
                                showCheckBoxesMode="always"
                                mode="multiple">
@@ -127,8 +134,9 @@
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="reviewToolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
+            <app-toolbar [config]="_toolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
+                          [noDataText]="''"
                           [keyExpr]="'uniqueIdent'"
                           [pager]="defaultGridPagerConfig"
                           [dataSource]="reviewDataSource"

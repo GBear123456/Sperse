@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class ZipCodeFormatterPipe implements PipeTransform {
 
     transform(value: string, args?: any): string {
-        let result;
+        let result = value;
         /** Calculate amount of symbols */
         const amountOfSymbols = value.length;
 
@@ -23,7 +23,7 @@ export class ZipCodeFormatterPipe implements PipeTransform {
             result = this.fillEmptyZeroes(numbersBeforeHyphen, 5) + '-' + this.fillEmptyZeroes(numbersAfterHyphen, 4);
         } else if (amountOfSymbols > 5) {
             result = value.substr(0, 5) + '-' + this.fillEmptyZeroes(value.substr(5, 4), 4);
-        } else {
+        } else if (amountOfSymbols) {
             result = this.fillEmptyZeroes(value, 5);
         }
 
@@ -31,6 +31,6 @@ export class ZipCodeFormatterPipe implements PipeTransform {
     }
 
     private fillEmptyZeroes(value: string, necessaryLength: number): string {
-        return value.length === necessaryLength ? value : new Array(necessaryLength - value.length + 1).join('0') + value;
+        return value.length === necessaryLength ? value : '0'.repeat(necessaryLength - value.length) + value;
     }
 }

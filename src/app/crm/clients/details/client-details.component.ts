@@ -39,6 +39,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     leadId: number;
     leadStages = [];
     clientStageId: number;
+    ratingId: number;
     configMode: boolean;
 
     private initialData: string;
@@ -67,8 +68,6 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     private referrerParams;
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
-    private readonly LOCAL_STORAGE = 0;
-
     constructor(injector: Injector,
                 private _router: Router,
                 private _dialog: MatDialog,
@@ -80,7 +79,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _clientDetailsService: ClientDetailsService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this._cacheService = this._cacheService.useStorage(this.LOCAL_STORAGE);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         _customerService['data'] = {customerInfo: null, leadInfo: null};
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
@@ -125,6 +124,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             return !isPrimaryContact;
         });
 
+        this.ratingId = result.ratingId;
         this.primaryContact = result.primaryContactInfo;
         this.customerInfo = result;
         this.initVerificationChecklist();
@@ -306,6 +306,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     updateStatus(statusId: string) {
         this.showConfirmationDialog(statusId);
+    }
+
+    updateRating(ratingId: number) {
+        this.ratingId = ratingId;
     }
 
     initVerificationChecklist(): void {

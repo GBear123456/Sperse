@@ -55,9 +55,16 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         return this._userService.inviteUsers(users);
     }
 
-    validateUsers() {
+    validateUsers(validateAll = false) {
         let result = true;
-        this.importValidators.forEach((v) => { result = result && v.validate().isValid; });
+        this.importValidators.forEach((v) => {
+            if (validateAll) {
+                result = v.validate().isValid && result;
+            }
+            else {
+                result = result && v.validate().isValid;
+            }
+        });
         return this.validationResult = result;
     }
 

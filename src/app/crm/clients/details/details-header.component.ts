@@ -23,24 +23,10 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     providers: [UserServiceProxy, ClientService, ContactPhotoServiceProxy]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
-    @Input()
-    data: CustomerInfoDto;
+    @Input() data: CustomerInfoDto;
+    @Input() ratingId: number;
     canSendVerificationRequest = false;
 
-    person = {
-        id: 1,
-        first_name: 'Matthew',
-        second_name: 'Robertson',
-        rating: 7,
-        person_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png',
-        approved_sum: '45000',
-        requested_sum_min: '100000',
-        requested_sum_max: '245000',
-        profile_created: '6/6/2016',
-        lead_owner_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png',
-        lead_owner_name: 'R.Hibbert',
-        org_photo_url: 'http://absorbmarketing.com/wp-content/uploads/2015/01/Picture-of-person.png'
-    };
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -57,7 +43,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        //  this.person = this.PersonService.getPersonInfo();
     }
 
     requestVerification() {
