@@ -70,10 +70,15 @@ export class LoginService {
     ) {
         this.clear();
 
-        this.authenticateModel =
-            JSON.parse(sessionStorage.getItem('authenticateModel'));
-        this.authenticateResult = 
-            JSON.parse(sessionStorage.getItem('authenticateResult'));
+        let model = JSON.parse(sessionStorage.getItem('authenticateModel'));
+        if (model) {
+            this.authenticateModel = model;
+        }
+
+        let result = JSON.parse(sessionStorage.getItem('authenticateResult'));
+        if (result) {
+            this.authenticateResult = result;
+        }
 
         sessionStorage.removeItem('authenticateModel');
         sessionStorage.removeItem('authenticateResult');

@@ -27,6 +27,7 @@
             <dxo-scrolling showScrollbar="never"></dxo-scrolling>
             <dxo-filter-row [visible]="false"></dxo-filter-row>
             <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
+            <dxi-column dataField="bankAccounts.length" [width]="20" alignment="left" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
             <dxi-column dataField="name" caption="{{l('Account')}}" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
             <dxi-column dataField="syncAccountStatus" caption="{{l('BankAccountsWidget_Sync_status')}}" [width]="200" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
@@ -52,9 +53,8 @@
                                   (onContentReady)="detailContentReady($event)"
                                   (onRowUpdating)="detailsRowUpdating($event)">
                         <dxo-scrolling showScrollbar="never"></dxo-scrolling>
-                        <dxo-editing
-                            mode="popup"
-                            [allowUpdating]="false">
+                        <dxo-editing mode="popup"
+                                     [allowUpdating]="false">
                             <dxo-popup #editingPopup
                                        accessKey="accountsEditingPopup"
                                        [height]="340"
@@ -76,9 +76,36 @@
                         <dxi-column dataField="isActive" [allowEditing]="true" [visible]="false"></dxi-column>
                         <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate"
                                     [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
+                        <dxi-column [width]="200" dataField="availableBalance" cellTemplate="availableBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+                        <dxi-column [width]="200" dataField="totalCreditLine" cellTemplate="totalCreditLineTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+                        <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text)">
                                 <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                            </ng-container>
+                        </div>
+                        <div *dxTemplate="let cell of 'availableBalanceTemplate'" class="color-div available-balance">
+                            <ng-container *ngIf="(cell.text)">
+                                <div class="balance-container">
+                                    <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div *dxTemplate="let cell of 'totalCreditLineTemplate'" class="color-div totalCreditLine-balance">
+                            <ng-container *ngIf="(cell.text)">
+                                <div class="balance-container">
+                                    <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div *dxTemplate="let cell of 'utilizedTemplate'">
+                            <ng-container *ngIf="(cell.text)">
+                                <div class="ratioField">
+                                    <span class="text">{{ cell.text | number:'1.2-2'}}%</span>
+                                    <div class="ratioProgressBar">
+                                        <span class="progress" [style.width]="cell.text + '%'" [style.background-color]="getRatioColor(cell.text)"></span>
+                                    </div>
+                                </div>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'typeTemplate'">
@@ -125,12 +152,11 @@
 
         </dx-data-grid>
     </div>
-    <dx-context-menu
-        [items]="contextMenuItems"
-        target=".options-button"
-        showEvent="dxclick"
-        (onItemClick)="actionsItemClick($event)"
-        [visible]="isContextMenuVisible">
+    <dx-context-menu [items]="contextMenuItems"
+                     target=".options-button"
+                     showEvent="dxclick"
+                     (onItemClick)="actionsItemClick($event)"
+                     [visible]="isContextMenuVisible">
 
         <div *dxTemplate="let e of 'item'">
             <div class="action-menu-item" ngClass="{{e.text | lowercase}}">
@@ -138,15 +164,14 @@
             </div>
         </div>
     </dx-context-menu>
-    <dx-popup
-        class="popup"
-        [width]="350"
-        [height]="250"
-        [showTitle]="true"
-        title="{{l('Edit_Bank_Account_Name')}}"
-        [dragEnabled]="false"
-        [closeOnOutsideClick]="true"
-        [(visible)]="popupVisible">
+    <dx-popup class="popup"
+              [width]="350"
+              [height]="250"
+              [showTitle]="true"
+              title="{{l('Edit_Bank_Account_Name')}}"
+              [dragEnabled]="false"
+              [closeOnOutsideClick]="true"
+              [(visible)]="popupVisible">
         <div *dxTemplate="let data of 'content'">
             <div class="form-group">
                 <label for="bankAccountName">Bank Account Name</label>

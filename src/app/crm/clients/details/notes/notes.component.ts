@@ -1,9 +1,10 @@
 /** Core imports */
-import {Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { formatDate } from '@angular/common';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular';
+import { MatSidenav } from '@angular/material/sidenav';
 import 'devextreme/data/odata/store';
 
 /** Application imports */
@@ -18,7 +19,7 @@ import { CustomersServiceProxy, CustomerInfoDto, NotesServiceProxy } from '@shar
 })
 export class NotesComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
+    @ViewChild('drawer') drawer: MatSidenav;
     public data: {
         customerInfo: CustomerInfoDto
     };
@@ -46,10 +47,28 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     }
 
     onToolbarPreparing($event) {
-        $event.toolbarOptions.items.push({
+        let toolbarItems = $event.toolbarOptions.items;
+        toolbarItems.push({
             location: 'before',
             template: 'title'
         });
+        toolbarItems.push({
+            location: 'after',
+            widget: 'dxButton',
+            options: {
+                icon: ' icon-note',
+                text: this.l('AddNote'),
+                elementAttr: { 'class': 'btn-layout' },
+                onClick: () => this.addNotesToggle()
+            }
+        });
+    }
+
+    addNotesToggle() {
+        this.drawer.toggle();
+        setTimeout(() => {
+            this.dataGrid.instance.updateDimensions();
+        }, 400);
     }
 
     calculateDateCellValue = (data) => {

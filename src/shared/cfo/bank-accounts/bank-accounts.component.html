@@ -25,6 +25,7 @@
     <bank-accounts-widget
         [allowBankAccountsEditing]="true"
         [allowUpdateAccount]="true"
+        [showCreditInfo]="true"
         [dataSource]="bankAccounts$ | async"
         [height]="'100%'"
         (accountsEntitiesBindingChanged)="reloadGrid(true)"

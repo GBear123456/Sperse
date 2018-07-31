@@ -130,3 +130,10 @@ export class ODataSearchStrategy {
     static StartsWith = 'startswith';
     static Equals = 'equals';
 }
+
+export enum ImportStatus {
+    Cancelled = 'A',
+    Completed = 'C',
+    InProgress = 'I',
+    New = 'N'
+}

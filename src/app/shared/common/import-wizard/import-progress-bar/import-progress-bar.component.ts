@@ -41,7 +41,7 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     }
 
     showStatus = () => {
-        return this.progress + '% ' + this.l('Import Progress');
+        return this.progress + '% ' + this.l('ImportProgress');
     }
 
     cancelImport() {

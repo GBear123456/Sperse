@@ -1,27 +1,32 @@
 ﻿:host {
-    .wrapper {
-        display: flex;
-        padding-left: 23px;
+    width: 100%;
+    height: 100%;
+    padding: 0 15px 0 0;
+    display: block;
+    position: relative;
+    
+    .add-note {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
 
-        .left-side {
-            flex: 3 1 auto;
-            /deep/ dx-data-grid {
-                td.text-wrap {
-                    white-space: initial;
-                }
-                .title {
-                    margin-top: 20px;
-                }
-                input {
-                    border-bottom: none;
+    /deep/ dx-data-grid {
+        .title {
+            margin-top: 20px;
+        }
+
+        .dx-button {
+            &.btn-layout {
+                background-color: #00aeef !important;
+                i {
+                    color: #fff;
                 }
             }
         }
-
-        .right-side {
-            flex: 2 1 auto;
-
-        }
-
     }
+}
+
+/deep/ .main-content {
+    max-width: 100%;
 }

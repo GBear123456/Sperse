@@ -25,6 +25,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showColumnHeaders = false;
     @Input() allowUpdateAccount = false;
     @Input() showSyncAccountWithoutBankAccounts = true;
+    @Input() showCreditInfo = false;
     @Input('dataSource')
     set dataSource(dataSource) {
         clearTimeout(this.initBankAccountsTimeout);
@@ -58,7 +59,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
 
     syncAccountsDataSource: SyncAccountBankDto[] = [];
-    baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
+    baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card', 'Brokerage Account'];
     allAccountTypesFilter: string;
     bankAccountTypesForSelect = [];
     existBankAccountTypes = [];
@@ -485,5 +486,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.removeAccount(this.syncAccountId);
                 break;
         }
+    }
+
+    getRatioColor(ratio: number) {
+        if (ratio > 50) return '#df533b';
+        else if (ratio > 30) return '#ed9d1a';
+        else if (ratio > 15) return '#f7d930';
+        else return '#34be75';
     }
 }
