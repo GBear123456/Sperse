@@ -15,25 +15,40 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         customerInfo: CustomerInfoDto
     };
     public dataSource: BillingSubscriptionDto[] = [];
-    private formatting = AppConsts.formatting;
 
     constructor(
         injector: Injector,
         private _customerService: CustomersServiceProxy,
         private _billingService: BillingSubscriptionServiceProxy,
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit() {
         this.data = this._customerService['data'];
+        this.refreshData();
+    }
 
+    refreshData() {
         if (this.data.customerInfo.primaryContactInfo && this.data.customerInfo.primaryContactInfo.userId) {
             this._billingService
-            .getSubscriptionsHistory(this.data.customerInfo.primaryContactInfo.userId)
-            .subscribe(result => {
-                this.dataSource = result;
-            });
+                .getSubscriptionsHistory(this.data.customerInfo.primaryContactInfo.userId)
+                .subscribe(result => {
+                    this.dataSource = result;
+                });
         }
+    }
+
+    cancelSubscription(id: number) {
+        abp.message.confirm('', this.l('CancelBillingConfirm'), result => {
+            if (result) {
+                this._billingService
+                    .cancel(id)
+                    .subscribe(() => {
+                        abp.notify.success(this.l('Cancelled'));
+                        this.refreshData();
+                    });
+            }
+        });
     }
 }

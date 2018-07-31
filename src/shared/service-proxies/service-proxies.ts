@@ -25518,6 +25518,9 @@ export class BankAccountDto implements IBankAccountDto {
     businessEntityId!: number | undefined;
     isActive!: boolean | undefined;
     balance!: number | undefined;
+    totalCreditLine!: number | undefined;
+    availableBalance!: number | undefined;
+    utilized!: number | undefined;
     syncAccountId!: number | undefined;
     isUsed!: boolean | undefined;
 
@@ -25541,6 +25544,9 @@ export class BankAccountDto implements IBankAccountDto {
             this.businessEntityId = data["businessEntityId"];
             this.isActive = data["isActive"];
             this.balance = data["balance"];
+            this.totalCreditLine = data["totalCreditLine"];
+            this.availableBalance = data["availableBalance"];
+            this.utilized = data["utilized"];
             this.syncAccountId = data["syncAccountId"];
             this.isUsed = data["isUsed"];
         }
@@ -25564,6 +25570,9 @@ export class BankAccountDto implements IBankAccountDto {
         data["businessEntityId"] = this.businessEntityId;
         data["isActive"] = this.isActive;
         data["balance"] = this.balance;
+        data["totalCreditLine"] = this.totalCreditLine;
+        data["availableBalance"] = this.availableBalance;
+        data["utilized"] = this.utilized;
         data["syncAccountId"] = this.syncAccountId;
         data["isUsed"] = this.isUsed;
         return data; 
@@ -25580,6 +25589,9 @@ export interface IBankAccountDto {
     businessEntityId: number | undefined;
     isActive: boolean | undefined;
     balance: number | undefined;
+    totalCreditLine: number | undefined;
+    availableBalance: number | undefined;
+    utilized: number | undefined;
     syncAccountId: number | undefined;
     isUsed: boolean | undefined;
 }
@@ -25797,6 +25809,7 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
     frequency!: string | undefined;
     payerId!: string | undefined;
     payerType!: string | undefined;
+    statusCode!: string | undefined;
     status!: string | undefined;
     orderSubscriptions!: OrderSubscriptionDto[] | undefined;
 
@@ -25815,6 +25828,7 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
             this.frequency = data["frequency"];
             this.payerId = data["payerId"];
             this.payerType = data["payerType"];
+            this.statusCode = data["statusCode"];
             this.status = data["status"];
             if (data["orderSubscriptions"] && data["orderSubscriptions"].constructor === Array) {
                 this.orderSubscriptions = [];
@@ -25837,6 +25851,7 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
         data["frequency"] = this.frequency;
         data["payerId"] = this.payerId;
         data["payerType"] = this.payerType;
+        data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         if (this.orderSubscriptions && this.orderSubscriptions.constructor === Array) {
             data["orderSubscriptions"] = [];
@@ -25852,6 +25867,7 @@ export interface IBillingSubscriptionDto {
     frequency: string | undefined;
     payerId: string | undefined;
     payerType: string | undefined;
+    statusCode: string | undefined;
     status: string | undefined;
     orderSubscriptions: OrderSubscriptionDto[] | undefined;
 }
@@ -37988,7 +38004,7 @@ export interface IDocumentInfo {
 
 export class GetUrlOutput implements IGetUrlOutput {
     url!: string | undefined;
-    validityPeriodSeconds!: number | undefined;
+    validityPeriod!: string | undefined;
 
     constructor(data?: IGetUrlOutput) {
         if (data) {
@@ -38002,7 +38018,7 @@ export class GetUrlOutput implements IGetUrlOutput {
     init(data?: any) {
         if (data) {
             this.url = data["url"];
-            this.validityPeriodSeconds = data["validityPeriodSeconds"];
+            this.validityPeriod = data["validityPeriod"];
         }
     }
 
@@ -38016,14 +38032,14 @@ export class GetUrlOutput implements IGetUrlOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["url"] = this.url;
-        data["validityPeriodSeconds"] = this.validityPeriodSeconds;
+        data["validityPeriod"] = this.validityPeriod;
         return data; 
     }
 }
 
 export interface IGetUrlOutput {
     url: string | undefined;
-    validityPeriodSeconds: number | undefined;
+    validityPeriod: string | undefined;
 }
 
 export class UploadDocumentInput implements IUploadDocumentInput {
@@ -38122,7 +38138,6 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
     accessToken!: string | undefined;
     accessTokenTtl!: number | undefined;
     wopiUrlsrc!: string | undefined;
-    validityPeriodSeconds!: number | undefined;
 
     constructor(data?: IWopiRequestOutcoming) {
         if (data) {
@@ -38138,7 +38153,6 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
             this.accessToken = data["accessToken"];
             this.accessTokenTtl = data["accessTokenTtl"];
             this.wopiUrlsrc = data["wopiUrlsrc"];
-            this.validityPeriodSeconds = data["validityPeriodSeconds"];
         }
     }
 
@@ -38154,7 +38168,6 @@ export class WopiRequestOutcoming implements IWopiRequestOutcoming {
         data["accessToken"] = this.accessToken;
         data["accessTokenTtl"] = this.accessTokenTtl;
         data["wopiUrlsrc"] = this.wopiUrlsrc;
-        data["validityPeriodSeconds"] = this.validityPeriodSeconds;
         return data; 
     }
 }
@@ -38163,7 +38176,6 @@ export interface IWopiRequestOutcoming {
     accessToken: string | undefined;
     accessTokenTtl: number | undefined;
     wopiUrlsrc: string | undefined;
-    validityPeriodSeconds: number | undefined;
 }
 
 export class DocumentTypeInfo implements IDocumentTypeInfo {
