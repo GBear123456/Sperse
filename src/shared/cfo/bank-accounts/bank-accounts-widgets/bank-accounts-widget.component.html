@@ -76,22 +76,15 @@
                         <dxi-column dataField="isActive" [allowEditing]="true" [visible]="false"></dxi-column>
                         <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate"
                                     [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
-                        <dxi-column [width]="200" dataField="availableBalance" cellTemplate="availableBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
-                        <dxi-column [width]="200" dataField="totalCreditLine" cellTemplate="totalCreditLineTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+                        <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+                        <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text)">
                                 <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
                             </ng-container>
                         </div>
-                        <div *dxTemplate="let cell of 'availableBalanceTemplate'" class="color-div available-balance">
-                            <ng-container *ngIf="(cell.text)">
-                                <div class="balance-container">
-                                    <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
-                                </div>
-                            </ng-container>
-                        </div>
-                        <div *dxTemplate="let cell of 'totalCreditLineTemplate'" class="color-div totalCreditLine-balance">
+                        <div *dxTemplate="let cell of 'colorBalanceTemplate'" class="color-div">
                             <ng-container *ngIf="(cell.text)">
                                 <div class="balance-container">
                                     <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
