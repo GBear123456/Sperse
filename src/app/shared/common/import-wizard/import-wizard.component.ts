@@ -661,7 +661,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     calculateDisplayValue(data) {
         const MAX_LEN = 80;
         let value = data[this['dataField']];
-        if (value.length > MAX_LEN)
+        if (value && value.length > MAX_LEN)
             return value.substr(0, MAX_LEN) + '...';
         return value;
     }
