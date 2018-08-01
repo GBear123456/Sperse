@@ -3,6 +3,7 @@ import { Component, Inject, Injector, ElementRef, ViewChild, AfterViewInit } fro
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
   selector: 'upload-photo-dialog',
@@ -115,6 +116,14 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     }
 
     onSave(event) {
+        if (this.data.maxSizeBytes && this.imageData.image) {
+            var fileBytes = window.atob(StringHelper.getBase64(this.imageData.image)).length;
+            if (fileBytes > this.data.maxSizeBytes) {
+                abp.message.error(this.l('ProfilePicture_Warn_SizeLimit', (this.data.maxSizeBytes / 1048576).toFixed(2)));
+                return;
+            }
+        }
+
         this.dialogRef.close({
             origImage: this.imageData.image,
             thumImage: this.thumbData
