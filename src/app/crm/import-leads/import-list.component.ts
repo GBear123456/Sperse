@@ -12,14 +12,14 @@ import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
+import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ImportServiceProxy]
+    providers: [ImportServiceProxy, FileSizePipe]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -45,6 +45,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     constructor(injector: Injector,
         private _router: Router,
+        private _sizeFormatPipe: FileSizePipe,
         private _importProxy: ImportServiceProxy,
         private _appService: AppService
     ) {
@@ -188,7 +189,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     fileSizeFormat = (data) => {  
-        return Math.round(data.FileSize / 1024) + 'Kb';
+        return this._sizeFormatPipe.transform(data.FileSize);
     }
 
     activate() {
