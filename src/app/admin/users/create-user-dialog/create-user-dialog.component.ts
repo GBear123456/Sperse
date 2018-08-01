@@ -278,4 +278,34 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     getAssignedOrgUnitCount(): number {
         return this.organizationUnitTree.getSelectedOrganizations().length || 0;
     }
+
+    setComponentToValid(component) {
+        component.option('isValid', true);
+    }
+
+    focusInput(event) {
+        if (!(event.component._value && event.component._value.trim())) {
+            let input = event.event.originalEvent.target;
+            setTimeout(function () {
+                if (input.createTextRange) {
+                    let part = input.createTextRange();
+                    part.move('character', 0);
+                    part.select();
+                } else if (input.setSelectionRange)
+                    input.setSelectionRange(0, 0);
+
+                input.focus();
+            }, 100);
+        }
+    }
+
+    phoneComponentInitialized(event) {
+        setTimeout(() => this.setComponentToValid(event.component), 500);
+    }
+    
+    phoneComponentFocusOut(event) {
+        let value = event.component.option("value");
+        if (!value)
+            this.setComponentToValid(event.component);
+    }
 }

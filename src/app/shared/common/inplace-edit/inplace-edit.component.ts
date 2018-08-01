@@ -16,6 +16,10 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
 
     @Input()
     data: InplaceEditModel;
+    @Input()
+    mask: string;
+    @Input()
+    maskInvalidMessage: string;
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();

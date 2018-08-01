@@ -21,7 +21,18 @@
 
                 <div class="form-group">
                     <label>{{l("PhoneNumber")}}</label>
-                    <input type="tel" name="PhoneNumber" class="form-control" [(ngModel)]="user.phoneNumber" maxlength="24">
+                    <dx-text-box
+                        type="tel" 
+                        name="PhoneNumber" 
+                        class="tabular" 
+                        [(value)]="user.phoneNumber" 
+                        maskInvalidMessage="{{l('PhoneValidationError')}}" 
+                        [mask]="masks.phone"
+                        [isValid]="true"
+                        (onFocusIn)="focusInput($event)"
+                        (onFocusOut)="phoneComponentFocusOut($event)"
+                        (onInitialized)="phoneComponentInitialized($event)">
+                    </dx-text-box>
                 </div>
 
                 <div class="form-group">

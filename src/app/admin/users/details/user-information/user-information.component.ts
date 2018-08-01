@@ -4,19 +4,24 @@ import { UserEditDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
+import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
 import * as _ from 'lodash';
 
 @Component({
     selector: 'user-information',
     templateUrl: './user-information.component.html',
-    styleUrls: ['./user-information.component.less']
+    styleUrls: ['./user-information.component.less'],
+    providers: [ PhoneFormatPipe ]
 })
 export class UserInformationComponent extends AppComponentBase implements OnInit {
     data: GetUserForEditOutput;
 
     passwordObject = { passwordInplaceEdit: false, originalValue: '', value: '' };
     passwordValidator: PasswordComplexityValidator = new PasswordComplexityValidator();
+
+    masks = AppConsts.masks;
 
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
@@ -34,7 +39,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     constructor(injector: Injector,
         private _userService: UserServiceProxy,
-        private _profileService: ProfileServiceProxy) {
+        private _profileService: ProfileServiceProxy,
+        private phoneFormatPipe: PhoneFormatPipe
+    ) {
         super(injector);
 
         this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
@@ -62,7 +69,13 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             validationRules: validationRules,
             lEntityName: field,
             lEditPlaceholder: this.l('EditValuePlaceholder')
-        };
+        } as InplaceEditModel;
+    }
+
+    getPhoneNumberPropData() {
+        let data = this.getPropData('phoneNumber');
+        data.displayValue = this.phoneFormatPipe.transform(data.value);
+        return data;
     }
 
     updateValue(value, fieldName) {
