@@ -175,7 +175,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
                 if (this.loading) {
                     this.finishLoading(true);
                 }
-                this.quovoHandler.open(null, syncAccount.syncAccountId);
+                this.quovoHandler.open(null, syncAccount.syncRef);
             } else {
                 if (!this.loading) {
                     this.startLoading(true);
