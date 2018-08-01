@@ -56,7 +56,7 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
 
         self.uploader.onSuccessItem = (item, response, status) => {
             const resp = <IAjaxResponse>JSON.parse(response);
-            if (resp.success) {
+            if (resp.success && !resp.result.message) {
                 self.temporaryPictureFileName = resp.result.fileName;
                 self.temporaryPictureUrl = AppConsts.remoteServiceBaseUrl + '/Temp/Downloads/' + resp.result.fileName + '?v=' + new Date().valueOf();
 
@@ -81,7 +81,8 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
                 });
 
             } else {
-                this.message.error(resp.error.message);
+                let message = resp.error ? resp.error.message : resp.result.message;
+                this.message.error(message);
             }
         };
 
