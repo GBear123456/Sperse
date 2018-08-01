@@ -36,12 +36,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result && result.origImage) {
-                this.data['photo'] = result.origImage;
-
                 this._userService.updateUserPicture(UpdateUserPictureInput.fromJS({
                     userId: this.data['userId'],
                     image: StringHelper.getBase64(result.origImage)
                 })).subscribe(() => {
+                    this.data['photo'] = result.origImage;
+
                     if (this.data['userId'] == abp.session.userId)
                         abp.event.trigger('profilePictureChanged');
                 });
