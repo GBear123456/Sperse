@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
-import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
-    UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
+import {
+    UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
+    UserRoleDto, PasswordComplexitySetting, TenantHostType, UpdateUserPictureInput
+} from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
 import { DxContextMenuComponent } from 'devextreme-angular';
@@ -8,6 +10,7 @@ import { DxContextMenuComponent } from 'devextreme-angular';
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -19,7 +22,7 @@ import { finalize } from 'rxjs/operators';
 @Component({
     templateUrl: 'create-user-dialog.component.html',
     styleUrls: ['create-user-dialog.component.less'],
-    providers: [ ]
+    providers: []
 })
 export class CreateUserDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
@@ -36,7 +39,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
-    private readonly SAVE_OPTION_DEFAULT   = 1;
+    private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     saveButtonId = 'saveUserOptions';
@@ -64,8 +67,8 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this._cacheService = this._cacheService.useStorage(0);
 
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false},
-            {text: this.l('SaveAndClose'), selected: false}
+            { text: this.l('SaveAndAddNew'), selected: false },
+            { text: this.l('SaveAndClose'), selected: false }
         ];
 
         this.userDataInit();
@@ -79,7 +82,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
             this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
-                allOrganizationUnits : userResult.allOrganizationUnits,
+                allOrganizationUnits: userResult.allOrganizationUnits,
                 selectedOrganizationUnits: userResult.memberedOrganizationUnits
             };
 
@@ -191,7 +194,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     save(): void {
         if (!this.validateForm())
-            return ;
+            return;
 
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
@@ -210,8 +213,17 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
         input.tenantHostType = <any>TenantHostType.PlatformUi;
         this._userService.createOrUpdateUser(input)
-            .pipe(finalize(() => {  saveButton.disabled = false; }))
-            .subscribe(() => this.afterSave() );
+            .pipe(finalize(() => { saveButton.disabled = false; }))
+            .subscribe((userId) => {
+                this._userService.updateUserPicture(UpdateUserPictureInput.fromJS({
+                    userId: userId,
+                    image: StringHelper.getBase64(this.photoOriginalData)
+                })).subscribe(() => {
+                    this.notify.info('User Photo ' + this.l('SavedSuccessfully'));
+                });
+
+                this.afterSave();
+            });
     }
 
     getDialogPossition(event, shiftX) {

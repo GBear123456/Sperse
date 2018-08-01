@@ -22295,8 +22295,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createOrUpdateUser(input: CreateOrUpdateUserInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/CreateOrUpdateUser";
+    updateUserPicture(input: UpdateUserPictureInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdateUserPicture";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -22310,12 +22310,12 @@ export class UserServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateOrUpdateUser(response_);
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateUserPicture(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateOrUpdateUser(<any>response_);
+                    return this.processUpdateUserPicture(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -22324,7 +22324,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processCreateOrUpdateUser(response: HttpResponseBase): Observable<void> {
+    protected processUpdateUserPicture(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22341,6 +22341,62 @@ export class UserServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    createOrUpdateUser(input: CreateOrUpdateUserInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/CreateOrUpdateUser";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdateUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdateUser(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdateUser(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -50454,6 +50510,46 @@ export class UpdateUserPermissionsInput implements IUpdateUserPermissionsInput {
 export interface IUpdateUserPermissionsInput {
     id: number | undefined;
     grantedPermissionNames: string[];
+}
+
+export class UpdateUserPictureInput implements IUpdateUserPictureInput {
+    userId!: number | undefined;
+    image!: string | undefined;
+
+    constructor(data?: IUpdateUserPictureInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.image = data["image"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserPictureInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserPictureInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface IUpdateUserPictureInput {
+    userId: number | undefined;
+    image: string | undefined;
 }
 
 export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
