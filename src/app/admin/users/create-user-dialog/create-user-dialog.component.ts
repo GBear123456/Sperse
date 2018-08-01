@@ -262,12 +262,15 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.save();
     }
 
-    onFullNameKeyUp(event) {
-        this.data.title = event;
-        if (event) {
-            let fullName = nameParser.parseFullName(event.trim());
+    onFullNameKeyUp(title) {
+        this.data.title = title;
+        if (title) {
+            let fullName = nameParser.parseFullName(title.trim());
             this.user.name = fullName.first;
             this.user.surname = fullName.last;
+        } else {
+            this.user.name = '';
+            this.user.surname = '';
         }
     }
 
