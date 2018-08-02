@@ -12,8 +12,9 @@ import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
-import { ActivityServiceProxy, CreateActivityDto, CreateActivityDtoType, UpdateActivityDto } from '@shared/service-proxies/service-proxies';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto, 
+    CreateActivityDtoType, UpdateActivityDto, PipelineDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -26,6 +27,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     private rootComponent: any;
 
+    public currentDate = new Date();
+    public currentView = 'month';
     public resources = [
         {
             fieldExpr: "type",
@@ -41,30 +44,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                   color: "#32c9ed"
             }],
             label: this.l("Type")
-        },
-        {
-            fieldExpr: "stageId",
-            allowMultiple: false,
-            dataSource: [],
-            label: this.l("Stage")
-        },
-        {
-            fieldExpr: "opderId",
-            allowMultiple: false,
-            dataSource: [],
-            label: this.l("Order")
-        },
-        {
-            fieldExpr: "leadId",
-            allowMultiple: false,
-            dataSource: [],
-            label: this.l("Lead")
-        },
-        {
-            fieldExpr: "customerId",
-            allowMultiple: false,
-            dataSource: [],
-            label: this.l("Customer")
         }
     ];
     public headlineConfig = {
@@ -86,7 +65,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     constructor(injector: Injector, 
         private _router: Router,
         private _appService: AppService,
-        private _activityProxy: ActivityServiceProxy
+        private _activityProxy: ActivityServiceProxy,
+        private _pipelineService: PipelineService,
+        private _userServiceProxy: UserServiceProxy
     ) {
         super(injector);
 
@@ -97,6 +78,55 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 return item;
             });
         });         
+
+        this.initResources();      
+    }
+
+    initResources() {
+        forkJoin(this._pipelineService
+            .getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity),
+            this._userServiceProxy.getUsers()
+        ).subscribe((result) => {
+                this.resources.push(
+                    {
+                        fieldExpr: "stageId",
+                        allowMultiple: false,
+                        dataSource: result[0].stages.map((item) => {
+                            item['text'] = item.name;
+                            return item;
+                        }),
+                        label: this.l("Stage")
+                    },
+                    {
+                        fieldExpr: "assignedUserId",
+                        allowMultiple: false,
+                        dataSource: result[1].items.map((item) => {
+                            item['text'] = item.name + '(' + item.emailAddress + ')';
+                            return item;
+                        }),
+                        label: this.l("Assign")
+                    },
+                    {
+                        fieldExpr: "opderId",
+                        allowMultiple: false,
+                        dataSource: [],
+                        label: this.l("Order")
+                    },
+                    {
+                        fieldExpr: "leadId",
+                        allowMultiple: false,
+                        dataSource: [],
+                        label: this.l("Lead")
+                    },
+                    {
+                        fieldExpr: "customerId",
+                        allowMultiple: false,
+                        dataSource: [],
+                        label: this.l("Customer")
+                    }
+                )
+            }
+        );
     }
 
     initToolbarConfig() {
@@ -110,7 +140,39 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 ]
             },
             {
+                location: 'before', items: [
+                    {
+                        widget: 'dxDateBox',
+                        options: {
+                            acceptCustomValue: false,
+                            adaptivityEnabled: true,
+                            value: this.currentDate,
+                            onValueChanged: (event) => {
+                                this.currentDate = event.value;
+                            }
+                        }
+                    }
+                ]
+            },
+            {
                 location: 'after', items: [
+                    {
+                        name: 'select-box',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            width: 120,
+                            selectedIndex: this.currentView.length - 3,
+                            onSelectionChanged: (event) => {
+                                this.currentView = event.itemData.text.toLowerCase();
+                            },
+                            items: [
+                                { text: this.l('Day') }, 
+                                { text: this.l('Week') }, 
+                                { text: this.l('Month') }, 
+                                { text: this.l('Agenda') }
+                            ]
+                        }
+                    },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -147,7 +209,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 type: data.type,
                 title: data.text,
                 description: data.description,
-                assignedUserId: this.appSession.userId,
+                assignedUserId: data.assignedUserId,
                 startDate: data.startDate,
                 endDate: data.endDate,
                 stageId: data.stageId,
@@ -156,7 +218,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 customerId: data.customerId
             })
         ).toPromise().then((res) => {
-            console.log(res);
+            data.id = res;
         }).catch(err => {
             this.schedulerComponent.instance
                 .hideAppointmentPopup(false);
@@ -172,7 +234,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 type: data.type,
                 title: data.text,
                 description: data.description,
-                assignedUserId: this.appSession.userId,
+                assignedUserId: data.assignedUserId,
                 startDate: data.startDate,
                 endDate: data.endDate,
                 stageId: data.stageId,
@@ -180,9 +242,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 orderId: data.orderId,
                 customerId: data.customerId
             })
-        ).toPromise().then((res) => {
-            console.log(res);
-        }).catch(err => {
+        ).toPromise().catch(err => {
             this.schedulerComponent.instance
                 .hideAppointmentPopup(false);
             return true;
@@ -195,6 +255,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 .toPromise().catch(err => {
                     return true;
                 });
+    }
+
+    onOptionChanged($event) {
+        //!!VP this part fix scroll appearance for month view
+        if ($event.component.option('currentView') == 'month')
+            setTimeout(() => {
+                let scroll = $event.element.getElementsByClassName('dx-scrollable-content')[0];
+                if (scroll) {
+                    scroll.classList.remove('dx-scheduler-scrollable-fixed-content');
+                }
+                $event.component.getWorkSpaceScrollable().update();
+            }, 100);
     }
 
     activate() {

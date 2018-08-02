@@ -1,4 +1,23 @@
 :host {
     position: relative;
     top: 74px;
+
+    /deep/ dx-scheduler {
+        margin: 30px;
+        border-radius: 7px;
+        border-top: 2px solid #ddd;
+
+        .dx-scheduler-header {
+            visibility: hidden;    
+        }
+        .dx-scheduler-appointment {
+            border-radius: 7px;
+        }
+        .dx-scheduler-work-space {
+            padding-top:0px;
+        }
+        .dx-scheduler-work-space-month .dx-scheduler-date-table-cell div {
+            min-height: 200px;
+        }
+    }
 }

@@ -4,10 +4,14 @@
         <div class="portlet-body">
     
             <dx-scheduler
-                [height]="'calc(100vh - 210px)'"
+                [height]="'calc(100vh - 270px)'"
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
                 [resources]="resources"
+                [currentView]="currentView"
+                [currentDate]="currentDate"
+                [showAllDayPanel]="false"
+                (onContentReady)="onOptionChanged($event)"
                 (onAppointmentAdding)="onAppointmentAdding($event)"
                 (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentDeleting)="onAppointmentDeleting($event)"
