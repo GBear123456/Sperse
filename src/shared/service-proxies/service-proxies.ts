@@ -39997,7 +39997,7 @@ export interface ISendTestEmailInput {
 }
 
 export class ImportInput implements IImportInput {
-    leads!: ImportItemInput[] | undefined;
+    items!: ImportItemInput[] | undefined;
     lists!: CustomerListInput[] | undefined;
     tags!: CustomerTagInput[] | undefined;
     assignedUserId!: number | undefined;
@@ -40021,10 +40021,10 @@ export class ImportInput implements IImportInput {
 
     init(data?: any) {
         if (data) {
-            if (data["leads"] && data["leads"].constructor === Array) {
-                this.leads = [];
-                for (let item of data["leads"])
-                    this.leads.push(ImportItemInput.fromJS(item));
+            if (data["items"] && data["items"].constructor === Array) {
+                this.items = [];
+                for (let item of data["items"])
+                    this.items.push(ImportItemInput.fromJS(item));
             }
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
@@ -40057,10 +40057,10 @@ export class ImportInput implements IImportInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.leads && this.leads.constructor === Array) {
-            data["leads"] = [];
-            for (let item of this.leads)
-                data["leads"].push(item.toJSON());
+        if (this.items && this.items.constructor === Array) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
         }
         if (this.lists && this.lists.constructor === Array) {
             data["lists"] = [];
@@ -40086,7 +40086,7 @@ export class ImportInput implements IImportInput {
 }
 
 export interface IImportInput {
-    leads: ImportItemInput[] | undefined;
+    items: ImportItemInput[] | undefined;
     lists: CustomerListInput[] | undefined;
     tags: CustomerTagInput[] | undefined;
     assignedUserId: number | undefined;

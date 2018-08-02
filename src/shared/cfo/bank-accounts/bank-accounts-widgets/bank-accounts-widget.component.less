@@ -315,16 +315,20 @@
 /deep/ [accesskey="accountsEditingPopup"] {
     .dx-item-content {
         display: block !important;
+
         .dx-field-item {
             padding: 0;
+
             .dx-field-item-label-location-left {
                 width: 30%;
                 padding-right: 0;
             }
+
             .dx-field-item-content-location-right {
                 width: 70%;
                 padding-left: 0;
             }
+
             .dx-texteditor-empty .dx-placeholder {
                 display: none !important;
             }
@@ -349,20 +353,27 @@
     border-radius: 2px;
     height: 32px;
 }
-.available-balance {
-    border-color: #59de9b;
-    background-color: rgba(89, 222, 155, 0.18);
+
+/deep/ .available-balance {
+    .color-div {
+        border-color: #59de9b;
+        background-color: rgba(89, 222, 155, 0.18);
+    }
 }
-.totalCreditLine-balance {
-    background-color: rgba(224, 83, 59, 0.21);
-    border-color: #e78372;
+
+/deep/ .totalCreditLine-balance {
+    .color-div {
+        background-color: rgba(224, 83, 59, 0.21);
+        border-color: #e78372;
+    }
 }
+
 .balance-container {
     padding-top: 5px;
     padding-right: 5px;
 }
+
 .ratioField {
-    // position: relative;
     padding-right: 5px;
 
     .text {

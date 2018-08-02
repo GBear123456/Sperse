@@ -372,7 +372,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId
         });
-        result.leads = [];
+        result.items = [];
         result.lists = this.listsComponent.selectedItems;
         result.tags = this.tagsComponent.selectedItems;
 
@@ -396,7 +396,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 }
             });
 
-            result.leads.push(lead);
+            result.items.push(lead);
         });
 
         result.importType = this.importType;
