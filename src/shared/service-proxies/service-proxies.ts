@@ -22347,7 +22347,7 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createOrUpdateUser(input: CreateOrUpdateUserInput | null | undefined): Observable<number> {
+    createOrUpdateUser(input: CreateOrUpdateUserInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/User/CreateOrUpdateUser";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22359,7 +22359,6 @@ export class UserServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -22370,14 +22369,14 @@ export class UserServiceProxy {
                 try {
                     return this.processCreateOrUpdateUser(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateOrUpdateUser(response: HttpResponseBase): Observable<number> {
+    protected processCreateOrUpdateUser(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22386,17 +22385,14 @@ export class UserServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -50555,6 +50551,7 @@ export interface IUpdateUserPictureInput {
 export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     user!: UserEditDto;
     assignedRoleNames!: string[];
+    profilePicture!: string | undefined;
     sendActivationEmail!: boolean | undefined;
     setRandomPassword!: boolean | undefined;
     organizationUnits!: number[] | undefined;
@@ -50581,6 +50578,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                 for (let item of data["assignedRoleNames"])
                     this.assignedRoleNames.push(item);
             }
+            this.profilePicture = data["profilePicture"];
             this.sendActivationEmail = data["sendActivationEmail"];
             this.setRandomPassword = data["setRandomPassword"];
             if (data["organizationUnits"] && data["organizationUnits"].constructor === Array) {
@@ -50607,6 +50605,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             for (let item of this.assignedRoleNames)
                 data["assignedRoleNames"].push(item);
         }
+        data["profilePicture"] = this.profilePicture;
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["setRandomPassword"] = this.setRandomPassword;
         if (this.organizationUnits && this.organizationUnits.constructor === Array) {
@@ -50622,6 +50621,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
 export interface ICreateOrUpdateUserInput {
     user: UserEditDto;
     assignedRoleNames: string[];
+    profilePicture: string | undefined;
     sendActivationEmail: boolean | undefined;
     setRandomPassword: boolean | undefined;
     organizationUnits: number[] | undefined;

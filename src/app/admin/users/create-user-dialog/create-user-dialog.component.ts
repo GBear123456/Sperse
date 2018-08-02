@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import {
     UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
-    UserRoleDto, PasswordComplexitySetting, TenantHostType, UpdateUserPictureInput
+    UserRoleDto, PasswordComplexitySetting, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
@@ -210,20 +210,12 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             );
 
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
+        input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
 
         input.tenantHostType = <any>TenantHostType.PlatformUi;
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => { saveButton.disabled = false; }))
-            .subscribe((userId) => {
-                this._userService.updateUserPicture(UpdateUserPictureInput.fromJS({
-                    userId: userId,
-                    image: StringHelper.getBase64(this.photoOriginalData)
-                })).subscribe(() => {
-                    this.notify.info('User Photo ' + this.l('SavedSuccessfully'));
-                });
-
-                this.afterSave();
-            });
+            .subscribe(() => this.afterSave());
     }
 
     getDialogPossition(event, shiftX) {
@@ -246,7 +238,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
                 source: this.photoOriginalData,
-                maxSizeBytes: 5 * 1048576
+                maxSizeBytes: 1048576
             },
             hasBackdrop: true
         }).afterClosed().subscribe((result) => {
