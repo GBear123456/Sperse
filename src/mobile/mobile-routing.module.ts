@@ -12,11 +12,11 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
                 canActivate: [AppRouteGuard],
                 canActivateChild: [AppRouteGuard],
                 children: [
-                    /*{
+                    {
                         path: 'cfo/:instance',
                         loadChildren: 'mobile/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { preload: true }
-                    }*/
+                    }
                 ]
             }
         ])
