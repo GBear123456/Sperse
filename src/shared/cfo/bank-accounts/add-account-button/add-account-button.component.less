@@ -13,6 +13,15 @@
     }
 }
 
+.disabled {
+    color: #808080 !important;
+    cursor: text;
+
+    &:hover {
+        color: #808080 !important;
+    }
+}
+
 /deep/ .dx-overlay-wrapper.addXeroAccount {
     bottom: 0;
     width: 180px;
@@ -21,6 +30,7 @@
     margin: auto;
     left: 565px;
     border: none;
+
     .dx-overlay-content {
         border: none;
         box-shadow: none;
@@ -28,6 +38,7 @@
         -webkit-transform: initial !important;
         transform: initial !important;
         transition: initial !important;
+
         .dx-popover-arrow {
             display: none;
         }
