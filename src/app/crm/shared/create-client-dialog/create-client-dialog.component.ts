@@ -5,7 +5,7 @@ import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput} from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes } from '@shared/AppEnums';
+import { ContactTypes, CustomerType } from '@shared/AppEnums';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
 
@@ -310,7 +310,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             stageId: stageId,
             lists: lists,
             tags: tags,
-            ratingId: ratingId
+            ratingId: ratingId,
+            customerTypeId: this.data.customerType
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -446,7 +447,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     redirectToClientDetails(id: number, leadId?: number) {
         setTimeout(() => {
-            let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
+            let path = this.data.customerType == CustomerType.Partner ?
+                `app/crm/partner/${id}/contact-information` :
+                `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
             this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
         }, 1000);
         this.close();

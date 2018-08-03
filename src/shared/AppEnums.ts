@@ -125,6 +125,11 @@ export class CustomerStatus {
     static Inactive = 'I';
 }
 
+export class CustomerType {
+    static Client = 'C';
+    static Partner = 'P';
+}
+
 export class ODataSearchStrategy {
     static Contains = 'contains';
     static StartsWith = 'startswith';
