@@ -436,21 +436,22 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 this.fileData.data.shift();
                 this.fileHeaderWasGenerated = false;
             }
-
-            let data = this.fileData.data[0].map((field, index) => {
-                let fieldId;
-                return {
-                    id: index,
-                    sourceField: field,
-                    sampleValue: this.lookForValueExample(index),
-                    mappedField: this.lookupFields.every((item) => {
-                        let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
-                        if (isSameField)
-                            fieldId = item.id;
-                        return !isSameField;
-                    }) ? '' : fieldId
-                };
-            });
+            
+            let noNameCount = 0, 
+                data = this.fileData.data[0].map((field, index) => {
+                    let fieldId;
+                    return {
+                        id: index,
+                        sourceField: field || this.l('NoName', [++noNameCount]),
+                        sampleValue: this.lookForValueExample(index),
+                        mappedField: this.lookupFields.every((item) => {
+                            let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
+                            if (isSameField)
+                                fieldId = item.id;
+                            return !isSameField;
+                        }) ? '' : fieldId
+                    };
+                });
 
             this.mapDataSource = {
                 store: {
