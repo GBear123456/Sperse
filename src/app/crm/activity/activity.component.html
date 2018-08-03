@@ -1,6 +1,6 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
-    <div class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
     
             <dx-scheduler
@@ -19,4 +19,21 @@
     
         </div>
     </div>
+
+    <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div class="funnel-wrapper">
+                    <app-pipeline
+                        [dataSource]="pipelineDataSource"
+                        [pipelinePurposeId]="pipelinePurposeId"
+                        [(selectedLeads)]="selectedLeads"
+                        (onStagesLoaded)="onStagesLoaded($event)">
+                        Loading...
+                    </app-pipeline>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

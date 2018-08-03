@@ -4,12 +4,15 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
 import { forkJoin } from 'rxjs';
 import * as _ from 'underscore';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -26,10 +29,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
 
     private rootComponent: any;
+    private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
 
+    public showPipeline = false;
+    public pipelineDataSource: any;
+    public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
+  
+    public selectedLeads: any = [];
     public currentDate = new Date();
     public currentView = 'month';
-    public resources = [
+    public resources: any[] = [
         {
             fieldExpr: "type",
             useColorAsDefault: true,
@@ -72,20 +81,41 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        _activityProxy.getAll(this.appSession.userId, null, null).subscribe((res) => {
+
+        this.initResources();
+        this.initDataSource();
+    }
+
+    initDataSource() {
+        let date = moment(this.currentDate);
+        this._activityProxy.getAll(this.appSession.userId, 
+            null, null).subscribe((res) => {
             this.dataSource = res.map((item) => {
                 item['text'] = item.title;
                 return item;
             });
-        });         
-
-        this.initResources();      
+        });    
+/*
+        this.pipelineDataSource = new DataSource({
+            key: 'id',
+            load: (loadOptions) => {
+                return (new Promise((resolve, reject) => {
+                    resolve([]);
+                })).then(response => {                    
+                    return {
+                        data: response,
+                        totalCount: 10
+                    };
+                });
+            }
+        });     
+*/
     }
 
     initResources() {
         forkJoin(this._pipelineService
-            .getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity),
-            this._userServiceProxy.getUsers()
+            .getPipelineDefinitionObservable(this.pipelinePurposeId),
+            this._userServiceProxy.getUsers(false, '', '', undefined, '', undefined, undefined)
         ).subscribe((result) => {
                 this.resources.push(
                     {
@@ -198,6 +228,30 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'pipeline',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Pipeline);
+                            },
+                        }
+                    },
+                    {
+                        name: 'grid',
+                        action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                        options: {
+                            checkPressed: () => {
+                                return (this.dataLayoutType == DataLayoutType.Grid);
+                            },
+                        }
+                    }
+                ]
             }
         ];
     }
@@ -269,6 +323,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }, 100);
     }
 
+    toggleDataLayout(dataLayoutType) {
+        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+        this.dataLayoutType = dataLayoutType;
+    }
+
     activate() {
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
@@ -286,5 +345,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     ngOnDestroy() {
         this.deactivate();
+    }
+
+    onStagesLoaded($event) {
     }
 }
