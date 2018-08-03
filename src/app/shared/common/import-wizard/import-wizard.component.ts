@@ -615,7 +615,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 if (columnConfig)
                     _.extend(column, columnConfig);
                 this.initColumnTemplate(column);
-                //                this.updateColumnOrder(column);
+                column.calculateDisplayValue = this.calculateDisplayValue;
+//                this.updateColumnOrder(column);
             }
 
             if (!columnConfig || !columnConfig['caption'])
@@ -659,6 +660,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         }
 
         return isValid;
+    }
+
+    calculateDisplayValue(data) {
+        const MAX_LEN = 80;
+        let value = data[this['dataField']];
+        if (value && value.length > MAX_LEN)
+            return value.substr(0, MAX_LEN) + '...';
+        return value;
     }
 
     onReviewCellPrepared($event) {

@@ -14,6 +14,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
   public dialogRef: MatDialogRef<ModalDialogComponent, any>;
 
   @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
+  @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     injector: Injector
@@ -68,12 +69,15 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
           this.dialogRef.close(closeData);
   }
 
-  onTitleChanged() {
-      this.data.isTitleValid = true;
+  titleChanged(event) {
+      let title = event.element.
+          getElementsByTagName('input')[0].value;
+      this.data.isTitleValid = Boolean(title);
+      this.onTitleChanged.emit(title);
   }
 
   titleKeyUp(event) {
-    let title = event.element.getElementsByTagName('input')[0].value;
-    this.onTitleKeyUp.emit(title);
+    this.onTitleKeyUp.emit(event.element.
+        getElementsByTagName('input')[0].value);
   }
 }

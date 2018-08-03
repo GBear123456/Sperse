@@ -10,7 +10,9 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
+import {
+    UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput
+} from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
@@ -158,7 +160,6 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
         this.startLoading(true);
         this._userService.createOrUpdateUser(userInput)
             .subscribe(() => {
-                this.startLoading(true);
                 this._userService.updateUserPermissions(permissionsInput)
                     .pipe(finalize(() => this.finishLoading(true)))
                     .subscribe(() => {
