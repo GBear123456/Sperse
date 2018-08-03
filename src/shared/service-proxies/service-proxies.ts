@@ -14254,7 +14254,7 @@ export class MemberServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    paymentAuthorize(input: PaymentAuthorizeRequestDto | null | undefined): Observable<PaymentAuthorizeResponseDto> {
+    paymentAuthorize(input: MemberPaymentAuthorizeRequestDto | null | undefined): Observable<PaymentAuthorizeResponseDto> {
         let url_ = this.baseUrl + "/api/services/CreditReport/Member/PaymentAuthorize";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -43644,12 +43644,12 @@ export interface ISubmitMemberInfoResultDto {
     paymentAuthorizationRequired: boolean | undefined;
 }
 
-export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
+export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorizeRequestDto {
     registrationId!: string;
     packageId!: number | undefined;
     bankCard!: BankCardDto;
 
-    constructor(data?: IPaymentAuthorizeRequestDto) {
+    constructor(data?: IMemberPaymentAuthorizeRequestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -43669,9 +43669,9 @@ export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
         }
     }
 
-    static fromJS(data: any): PaymentAuthorizeRequestDto {
+    static fromJS(data: any): MemberPaymentAuthorizeRequestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PaymentAuthorizeRequestDto();
+        let result = new MemberPaymentAuthorizeRequestDto();
         result.init(data);
         return result;
     }
@@ -43685,7 +43685,7 @@ export class PaymentAuthorizeRequestDto implements IPaymentAuthorizeRequestDto {
     }
 }
 
-export interface IPaymentAuthorizeRequestDto {
+export interface IMemberPaymentAuthorizeRequestDto {
     registrationId: string;
     packageId: number | undefined;
     bankCard: BankCardDto;

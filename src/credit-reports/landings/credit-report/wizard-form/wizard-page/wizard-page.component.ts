@@ -11,7 +11,7 @@ import {
     MemberServiceProxy,
     CountryServiceProxy,
     RegisterMemberRequestGender,
-    PaymentAuthorizeRequestDto,
+    MemberPaymentAuthorizeRequestDto,
     MemberInfoDto, MemberInfoDtoGender, MemberAddressDto,
     ProfileServiceProxy, PasswordComplexitySetting
 } from '@shared/service-proxies/service-proxies';
@@ -67,7 +67,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     minDate: Date = new Date();
     minAge: number;
     maxAge: number;
-    payment: PaymentAuthorizeRequestDto = new PaymentAuthorizeRequestDto();
+    payment: MemberPaymentAuthorizeRequestDto = new MemberPaymentAuthorizeRequestDto();
     isExistingUser: boolean = !!abp.session.userId;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     passwordComplexityWord: string = 'empty';
@@ -249,7 +249,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         this.fillModelAddress(this.payment);
     }
 
-    fillModelAddress(paymentInfo: PaymentAuthorizeRequestDto) {
+    fillModelAddress(paymentInfo: MemberPaymentAuthorizeRequestDto) {
         this.model.address.streetAddress = paymentInfo.bankCard.billingAddress;
         this.model.address.city = paymentInfo.bankCard.billingCity;
         this.model.address.stateId = paymentInfo.bankCard.billingStateCode;
