@@ -137,7 +137,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         label: this.l("Assign")
                     },
                     {
-                        fieldExpr: "opderId",
+                        fieldExpr: "orderId",
                         allowMultiple: false,
                         dataSource: [],
                         label: this.l("Order")
