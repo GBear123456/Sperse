@@ -19108,6 +19108,64 @@ export class SyncAccountServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @return Success
+     */
+    isAvailableCreateAccount(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/IsAvailableCreateAccount?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsAvailableCreateAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsAvailableCreateAccount(<any>response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<boolean>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processIsAvailableCreateAccount(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(<any>null);
+    }
 }
 
 @Injectable()
@@ -22289,7 +22347,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getFiltersInitialData(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
+    getFiltersInitialData(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined): Observable<FiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetFiltersInitialData?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22347,7 +22405,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionAttributeTypes(instanceType: InstanceType91 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
+    getTransactionAttributeTypes(instanceType: InstanceType92 | null | undefined, instanceId: number | null | undefined): Observable<GetTransactionAttributeTypesOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionAttributeTypes?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -22405,7 +22463,7 @@ export class TransactionsServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    getTransactionDetails(instanceType: InstanceType92 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
+    getTransactionDetails(instanceType: InstanceType93 | null | undefined, instanceId: number | null | undefined, transactionId: number): Observable<GetTransactionDetailsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Transactions/GetTransactionDetails?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -23119,6 +23177,58 @@ export class UserServiceProxy {
     }
 
     protected processUpdateUserPermissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateUserPicture(input: UpdateUserPictureInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdateUserPicture";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateUserPicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateUserPicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateUserPicture(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -42223,7 +42333,7 @@ export interface ISubmitTenantCreationRequestInput {
 }
 
 export class LeadInterestDto implements ILeadInterestDto {
-    productId!: number;
+    productId!: number | undefined;
     quantity!: number;
     amount!: number | undefined;
 
@@ -42261,7 +42371,7 @@ export class LeadInterestDto implements ILeadInterestDto {
 }
 
 export interface ILeadInterestDto {
-    productId: number;
+    productId: number | undefined;
     quantity: number;
     amount: number | undefined;
 }
@@ -51998,9 +52108,50 @@ export interface IUpdateUserPermissionsInput {
     grantedPermissionNames: string[];
 }
 
+export class UpdateUserPictureInput implements IUpdateUserPictureInput {
+    userId!: number | undefined;
+    image!: string | undefined;
+
+    constructor(data?: IUpdateUserPictureInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+            this.image = data["image"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserPictureInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserPictureInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface IUpdateUserPictureInput {
+    userId: number | undefined;
+    image: string | undefined;
+}
+
 export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     user!: UserEditDto;
     assignedRoleNames!: string[];
+    profilePicture!: string | undefined;
     sendActivationEmail!: boolean | undefined;
     setRandomPassword!: boolean | undefined;
     organizationUnits!: number[] | undefined;
@@ -52027,6 +52178,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                 for (let item of data["assignedRoleNames"])
                     this.assignedRoleNames.push(item);
             }
+            this.profilePicture = data["profilePicture"];
             this.sendActivationEmail = data["sendActivationEmail"];
             this.setRandomPassword = data["setRandomPassword"];
             if (data["organizationUnits"] && data["organizationUnits"].constructor === Array) {
@@ -52053,6 +52205,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             for (let item of this.assignedRoleNames)
                 data["assignedRoleNames"].push(item);
         }
+        data["profilePicture"] = this.profilePicture;
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["setRandomPassword"] = this.setRandomPassword;
         if (this.organizationUnits && this.organizationUnits.constructor === Array) {
@@ -52068,6 +52221,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
 export interface ICreateOrUpdateUserInput {
     user: UserEditDto;
     assignedRoleNames: string[];
+    profilePicture: string | undefined;
     sendActivationEmail: boolean | undefined;
     setRandomPassword: boolean | undefined;
     organizationUnits: number[] | undefined;
@@ -53093,6 +53247,11 @@ export enum InstanceType89 {
     Main = "Main", 
 }
 
+export enum InstanceType90 {
+    User = "User", 
+    Main = "Main", 
+}
+
 export enum SalesSummaryDatePeriod {
     _1 = 1, 
     _2 = 2, 
@@ -53124,17 +53283,17 @@ export enum DefaultTimezoneScope {
     _7 = 7, 
 }
 
-export enum InstanceType90 {
-    User = "User", 
-    Main = "Main", 
-}
-
 export enum InstanceType91 {
     User = "User", 
     Main = "Main", 
 }
 
 export enum InstanceType92 {
+    User = "User", 
+    Main = "Main", 
+}
+
+export enum InstanceType93 {
     User = "User", 
     Main = "Main", 
 }

@@ -7,7 +7,7 @@
         [(value)]="data.title"
         [readOnly]="!data.editTitle"
         [isValid]="data.isTitleValid == undefined || data.isTitleValid"
-        (onInput)="onTitleChanged()"
+        (onInput)="titleChanged($event)"
         (onKeyUp)="titleKeyUp($event)">
     </dx-text-box>
     <mat-dialog-actions>

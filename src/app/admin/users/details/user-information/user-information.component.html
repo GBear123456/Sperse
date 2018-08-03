@@ -17,7 +17,7 @@
                     </div>
                     <div class="section-item">
                         <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
-                        <inplace-edit [data]="getPropData('phoneNumber')" (valueChanged)="updateValue($event, 'phoneNumber')"></inplace-edit>
+                        <inplace-edit [data]="getPhoneNumberPropData()" [mask]="masks.phone" [maskInvalidMessage]="l('PhoneValidationError')" (valueChanged)="updateValue($event, 'phoneNumber')"></inplace-edit>
                     </div>
                     <div class="section-item">
                         <div class="item-edit-label">{{l("UserName")}}:</div>

@@ -1,24 +1,31 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService, QuovoHandler } from '../quovo/QuovoService';
+import { SyncAccountServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     selector: 'add-account-button',
     templateUrl: './add-account-button.component.html',
     styleUrls: ['./add-account-button.component.less'],
+    providers: [SyncAccountServiceProxy]
 })
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     tooltipVisible = false;
     quovoHandler: QuovoHandler;
-
+    createAccountAvailable: boolean;
     constructor(
         injector: Injector,
         private quovoService: QuovoService,
-        private cfoService: CFOService
+        private cfoService: CFOService,
+        private _syncAccountServiceProxy: SyncAccountServiceProxy
     ) {
         super(injector);
+        this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                this.createAccountAvailable = result;
+            });
     }
 
     ngOnInit(): void {
@@ -29,6 +36,9 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
     }
 
     openAddAccountDialog() {
+        if (!this.createAccountAvailable)
+            return;
+
         if (this.quovoHandler.isLoaded) {
             if (this.loading) {
                 this.finishLoading(true);

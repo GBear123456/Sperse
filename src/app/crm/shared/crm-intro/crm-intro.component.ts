@@ -40,7 +40,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
     }

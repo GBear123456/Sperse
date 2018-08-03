@@ -1,4 +1,4 @@
-<a id="add-account" (click)="openAddAccountDialog()" class="add-link">+ {{l('Add_account')}}</a>
+<a id="add-account" (click)="openAddAccountDialog()" class="add-link" [ngClass]="{'disabled':!createAccountAvailable}" >+ {{l('Add_account')}}</a>
 
 <dx-tooltip class="addXeroAccount" target="#add-account" [(visible)]="tooltipVisible">
     <div *dxTemplate="let data = data of 'content'">
