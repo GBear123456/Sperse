@@ -329,9 +329,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance)
+    refreshDataGrid(quietly = false) {
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.dataGrid.instance.option('loadPanel.enabled', !quietly);
             this.dataGrid.instance.refresh();
+        }
     }
 
     exportToExcel(): void {
