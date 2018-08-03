@@ -57,6 +57,7 @@ import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboa
 import { ClientDetailsModule } from './clients/details/client-details.module';
 import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
+import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
@@ -125,6 +126,7 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
     ],
     declarations: [
       ClientsComponent,
+      PartnersComponent,
       CreateClientDialogComponent,
       LeadsComponent,
       OrdersComponent,

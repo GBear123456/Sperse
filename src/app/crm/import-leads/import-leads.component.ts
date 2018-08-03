@@ -547,7 +547,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     text: this.l('Clients'),
                                     value: ImportInputImportType.Client
                                 }, {
-                                    disabled: true,
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l('Partners'),
                                     value: ImportInputImportType.Partner

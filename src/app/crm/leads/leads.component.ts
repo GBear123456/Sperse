@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy } from '@shared/AppEnums';
+import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -638,7 +638,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 refreshParent: (quite, stageId) => {
                     this.refreshDataGrid(quite, stageId);
                 },
-                isInLeadMode: true
+                isInLeadMode: true,
+                customerType: CustomerType.Client
             }
         });
     }

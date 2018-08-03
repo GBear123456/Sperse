@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
+import { Router } from '@angular/router';
+
 import {
     UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
     UserRoleDto, PasswordComplexitySetting, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
-import { DxContextMenuComponent } from 'devextreme-angular';
+import { DxContextMenuComponent, DxTextBoxComponent } from 'devextreme-angular';
 
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
@@ -27,6 +29,7 @@ import { finalize } from 'rxjs/operators';
 export class CreateUserDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
+    @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;
 
     user = new UserEditDto();
     roles: UserRoleDto[];
@@ -56,6 +59,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     constructor(
         injector: Injector,
+        private _router: Router,
         public dialog: MatDialog,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,
@@ -68,6 +72,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
         this.saveContextMenuItems = [
             { text: this.l('SaveAndAddNew'), selected: false },
+//            { text: this.l('SaveAndExtend'), selected: false, disabled: true },
             { text: this.l('SaveAndClose'), selected: false }
         ];
 
@@ -163,14 +168,26 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.saveOptionsInit();
     }
 
-    private afterSave(): void {
-        this.notify.info(this.l('SavedSuccessfully'));
-
-        if (this.saveContextMenuItems[0].selected)
+    private afterSave(userId): void {
+        if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
-        else if (this.saveContextMenuItems[1].selected)
+            this.notify.info(this.l('SavedSuccessfully'));
+            this.data.refreshParent(true);
+//        } else if (this.saveContextMenuItems[1].selected) {
+//            this.redirectToUserDetails(userId);
+        } else {
+            this.data.refreshParent();
             this.close();
-        this.data.refreshParent();
+        }
+    }
+
+    redirectToUserDetails(id: number) {
+        setTimeout(() => {
+            this._router.navigate([`app/admin/user/${id}/information`], 
+                { queryParams: { referrer: this._router.url.split('?').shift() } }
+            );
+        }, 1000);
+        this.close();
     }
 
     validateForm() {
@@ -192,7 +209,11 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         return true;
     }
 
-    save(): void {
+    save(event?): void {
+        if (event && event.offsetX > 195)
+            return this.saveContextComponent
+                .instance.option('visible', true);
+
         if (!this.validateForm())
             return;
 
@@ -215,7 +236,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         input.tenantHostType = <any>TenantHostType.PlatformUi;
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => { saveButton.disabled = false; }))
-            .subscribe(() => this.afterSave());
+            .subscribe((userId) => this.afterSave(userId || this.user.id));
     }
 
     getDialogPossition(event, shiftX) {
@@ -255,6 +276,10 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.setRandomPassword = false;
         this.sendActivationEmail = true;
         this.user = new UserEditDto();
+
+        setTimeout(() =>
+            this.setComponentToValid(
+                this.phoneNumber.instance));
     }
 
     onSaveOptionSelectionChanged($event) {

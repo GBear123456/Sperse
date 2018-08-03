@@ -1,0 +1,102 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <crm-static-list
+        [width]="'180px'"
+        [title]="l('Status')"
+        [showConfirmation]="false"
+        [selectedKeys]="selectedPartnerKeys"
+        [hideButtons]="true"
+        [filterModel]="filterModelStatus"
+        [targetSelector]="'[aria-label=Status]'"
+        [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
+        (onItemSelected)="updatePartnerStatuses($event)">
+    </crm-static-list>
+    <crm-tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
+    <crm-user-assignment-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelAssignment"></crm-user-assignment-list>
+    <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
+    <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
+    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div id="ClientsTable">
+                    <dx-data-grid id="gridContainer"
+                                  accesskey="narrowHeaderPanel"
+                                  [dataSource]="dataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [allowColumnResizing]="true"
+                                  [hoverStateEnabled]="true"
+                                  [pager]="defaultGridPagerConfig"
+                                  (onContentReady)="onContentReady($event)"
+                                  (onCellClick)="onCellClick($event)"
+                                  (onEditingStart)="showPartnerDetails($event)"
+                                  (onSelectionChanged)="onSelectionChanged($event)"
+                                  (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                        <dxo-selection selectAllMode="page"
+                                       showCheckBoxesMode="always"
+                                       mode="multiple">
+                        </dxo-selection>
+                        <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
+                        <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
+                                    [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                                    [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
+                                    [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                        <div *dxTemplate="let data of 'photoTemplate'">
+                            <img [src]="getPhoto(data.data.Photo)"
+                                 alt="{{l('AltPersonPhoto')}}"
+                                 width="38"
+                                 class="img-circle" />
+                        </div>
+                        <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
+                        <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
+                        <dxi-column dataField="Email" caption="{{l('Contact.Email')}}"></dxi-column>
+                        <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
+                        <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
+                        <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
+                        <div *dxTemplate="let cellData of 'statusCell'">
+                            <div [class]="'client-status ' + cellData.value | lowercase">
+                                {{cellData.value}}
+                            </div>
+                        </div>
+                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'"
+                                    [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <div *dxTemplate="let data of 'linkToCFOTemplate'">
+                            <ng-container [ngSwitch]="isPartnerCFOAvailable(data.data.UserId)">
+                                <span *ngSwitchCase="true">
+                                    <span [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)"></span>
+                                </span>
+                                <span *ngSwitchCase="false">
+                                    <a *ngIf="canSendVerificationRequest" class="link link-request-verification" (click)="requestVerification(data.data.PrimaryContactId)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                </span>
+                            </ng-container>
+                        </div>
+                        <div *dxTemplate="let cellData of 'dateCell'">
+                            {{cellData.value | date: formatting.dateTime}}
+                        </div>
+                        <div *dxTemplate="let cellData of 'phoneCell'">
+                            {{cellData.value | phone}}
+                        </div>
+
+                        <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                        <dxo-sorting mode="multiple"></dxo-sorting>
+                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-group-panel [visible]="true"></dxo-group-panel>
+                    </dx-data-grid>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>

@@ -47,12 +47,12 @@ import 'devextreme/data/odata/store';
 import * as _ from 'underscore';
 
 @Component({
-    templateUrl: './clients.component.html',
-    styleUrls: ['./clients.component.less'],
+    templateUrl: './partners.component.html',
+    styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
     providers: [ ClientService ]
 })
-export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -62,7 +62,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
-    private readonly dataSourceURI = 'Customer';
+    private readonly dataSourceURI = 'Partner';
     private filters: FilterModel[];
     private rootComponent: any;
     private formatting = AppConsts.formatting;
@@ -77,16 +77,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
 
-    selectedClientKeys: any = [];
+    selectedPartnerKeys: any = [];
     public headlineConfig = {
-        names: [this.l('Customers')],
+        names: [this.l('Partners')],
         icon: 'people',
         onRefresh: this.refreshDataGrid.bind(this),
         buttons: [
             {
                 enabled: true,
-                action: this.createClient.bind(this),
-                lable: this.l('CreateNewCustomer')
+                action: this.createPartner.bind(this),
+                lable: this.l('CreateNewPartner')
             }
         ]
     };
@@ -140,7 +140,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.subRouteParams = this._activatedRoute.queryParams
                 .subscribe(params => {
                     if ('addNew' == params['action'])
-                        setTimeout(() => this.createClient());
+                        setTimeout(() => this.createPartner());
                     if (params['refresh'])
                         this.refreshDataGrid();
             });
@@ -163,7 +163,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     onSelectionChanged($event) {
-        this.selectedClientKeys = $event.component.getSelectedRowKeys();
+        this.selectedPartnerKeys = $event.component.getSelectedRowKeys();
         this.initToolbarConfig();
     }
 
@@ -179,38 +179,34 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.dataGrid.instance.updateDimensions();
     }
 
-    createClient() {
+    createPartner() {
         this.dialog.open(CreateClientDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
                 refreshParent: this.refreshDataGrid.bind(this),
-                customerType: CustomerType.Client
+                customerType: CustomerType.Partner
             }
         }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
 
-    isClientCFOAvailable(userId) {
+    isPartnerCFOAvailable(userId) {
         return this._clientService.isCFOAvailable(userId);
     }
 
-    showClientDetails(event) {
-        let clientId = event.data && event.data.Id;
-        if (!clientId)
+    showPartnerDetails(event) {
+        let partnerId = event.data && event.data.Id;
+        if (!partnerId)
             return;
 
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId],
-            { queryParams: { referrer: 'app/crm/clients'} });
+        this._router.navigate(['app/crm/partner', partnerId],
+            { queryParams: { referrer: 'app/crm/partners'} });
     }
 
     redirectToCFO(event, userId) {
         this._clientService.redirectToCFO(userId);
-    }
-
-    calculateAddressColumnValue(data) {
-        return (data.City || data.StateId) ? [data.City, data.StateId].join(', ') : null;
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -351,7 +347,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             );
 
         this._filtersService.apply(() => {
-            this.selectedClientKeys = [];
+            this.selectedPartnerKeys = [];
             this.initToolbarConfig();
             this.processFilterInternal();
         });
@@ -397,7 +393,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Customers').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Partners').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -574,11 +570,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         );
     }
 
-    updateClientStatuses(status) {
+    updatePartnerStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
         this._clientService.updateCustomerStatuses(
             selectedIds,
-            CustomerType.Client,
+            CustomerType.Partner,
             status.id,
             () => {
                 this.refreshDataGrid();
@@ -591,7 +587,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         let col = $event.column;
         if (col && (col.command || col.name == 'LinkToCFO'))
             return;
-        this.showClientDetails($event);
+        this.showPartnerDetails($event);
     }
 
     ngOnInit() {
