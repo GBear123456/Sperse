@@ -1,0 +1,215 @@
+:host {
+    text-align: initial;
+
+    .header-section {
+        width: 100%;
+        min-height: 150px;
+        clear: both;
+        position: relative;
+
+        .buyer-protection {
+            float: left;
+            font-family: "lato", sans-serif;
+            font-size: 17px;
+            font-weight: bold;
+            color: #4b5457;
+            text-transform: uppercase;
+
+            &-text {
+            }
+
+            img {
+                position: relative;
+                top: -3px;
+            }
+        }
+
+        .step-icon {
+            position: absolute;
+            left: 50%;
+            margin-left: -58px;
+            top: 20px;
+        }
+
+        .contact-info {
+            float: right;
+            text-align: right;
+
+            p {
+                font-family: "lato", sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                color: #4b5457;
+                margin: 0;
+
+                a {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #1bb6b6;
+                }
+            }
+
+            .work-time {
+                font-size: 12px;
+                font-weight: 600;
+                line-height: 1.67;
+                letter-spacing: 0.2px;
+                text-align: right;
+                color: #8a969b;
+                display: inline-block;
+                padding-left: 38px;
+                background: transparent url('/assets/images/credit-report/phone-icon.svg') 8px 10px no-repeat;
+
+                b {
+                    text-transform: uppercase;
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: #4b5457;
+                }
+            }
+        }
+    }
+
+    .dx-texteditor-input {
+        padding: 12px 32px 12px 8px;
+
+        &:disabled {
+            opacity: .5;
+        }
+    }
+
+    input[type="radio"] {
+        display: none;
+    }
+
+    input[type="radio"] {
+        // display: none;
+        + label {
+            position: relative;
+            padding-left: 36px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.1px;
+            color: rgba(23, 28, 29, 0.5);
+
+            img {
+                position: absolute;
+                left: 7px;
+                top: 2px;
+                opacity: 0;
+                transition: .2s;
+            }
+            //color: #171c1d;
+            &::before {
+                content: '';
+                display: block;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                border: solid 1px #dfdfdf;
+                background-color: #fff;
+                position: absolute;
+                left: 5px;
+                transition: .2s;
+            }
+        }
+
+        &:checked {
+            + label {
+                color: #171c1d;
+
+                img {
+                    opacity: 1;
+                }
+
+                &::before {
+                    background-color: rgb(245, 128, 35);
+                    border-color: rgb(245, 128, 35);
+                }
+            }
+        }
+    }
+
+    .with-bg {
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        padding: 24px;
+        margin: 15px 0;
+        display: inline-block;
+        width: 100%;
+
+        .full-width {
+            width: 100%;
+        }
+    }
+
+    .paymentType {
+        display: inline-block;
+        width: 100%;
+
+        .paypalLogo {
+            display: inline-block;
+            opacity: 1;
+        }
+
+        .card-icons {
+            position: static !important;
+            margin-left: 5px;
+            height: 18px;
+        }
+    }
+    // this must be changed
+    .dx-field.row {
+        margin-right: -15px;
+        margin-left: -15px;
+
+        .dx-field-value {
+            width: auto;
+        }
+    }
+
+    /deep/ .with-icon {
+        position: relative;
+
+        &::before {
+            content: '';
+            width: 16px;
+            height: 18px;
+            display: block;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 8px;
+            z-index: 1;
+        }
+
+        &.creditCardNumber::before {
+            background: url('/assets/images/credit-report/credit-card-icon.svg') center center no-repeat;
+        }
+
+        &.cvvCode::before {
+            background: url('/assets/images/credit-report/block-icon.svg') center center no-repeat;
+        }
+
+        &.expDate::before {
+            background: url('/assets/images/credit-report/exp-date-icon.svg') center center no-repeat;
+        }
+
+        &.fullAddress::before {
+            background: url('/assets/images/credit-report/home-icon.svg') center center no-repeat;
+            left: 23px;
+        }
+
+        &.zipCode::before {
+            background: url('/assets/images/credit-report/location-icon.svg') center center no-repeat;
+        }
+
+        input {
+            padding-left: 37px !important;
+        }
+
+        .dx-placeholder {
+            left: 28px;
+        }
+    }
+}

@@ -6,6 +6,7 @@ import { LoginService } from '../../../../../account/login/login.service';
 import { RegisterModel } from './register.model';
 import { v4 as UUID } from 'uuid';
 import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
+import { PaymentInfoComponent } from '@shared/common/widgets/payment-info/payment-info.component';
 import {
     CountryStateDto,
     MemberServiceProxy,
@@ -28,6 +29,7 @@ import * as _ from 'underscore';
 })
 export class CreditWizardPageComponent extends AppComponentBase implements OnInit {
     @ViewChild(WizardComponent) mWizard: WizardComponent;
+    @ViewChild(PaymentInfoComponent) paymentInfo: PaymentInfoComponent;
 
     private readonly WIZARD_MEMBER_INFO_STEP_INDEX = 0;
     private readonly WIZARD_PAYMENT_STEP_INDEX = 1;
@@ -37,10 +39,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     private readonly INPUT_MASK = {
         ssn: "000-00-0000",
         phone: "(000) 000-0000",
-        creditCardNumber: "0000-0000-0000-0099",
-        expirationDate: "00/0000",
-        zipCode: "00000",
-        cvvCode: "0009"
+        zipCode: "00000"
     }
 
     registrationInProgress: boolean = false;
@@ -53,7 +52,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     street_number: string;
     street_name: string;
     states: CountryStateDto[];
-    expirationDate: string;
     uniqueId: string = UUID();
     gender = [
         { text: 'Male', value: RegisterMemberRequestGender._1 },
@@ -104,6 +102,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     ngOnInit() {
+        this.paymentInfo.bankCard = this.payment.bankCard;
         if (this.isExistingUser)
             this.mWizard.addDisabledSteps(this.WIZARD_CONFIRM_STEP_INDEX);
 
@@ -223,12 +222,11 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
             return;
         }
 
-        if (!this.validate(event)) return;
+        if (!this.paymentInfo.validationGroup.validate().isValid) return;
+        event.component.option('disabled', true);
 
         this.payment.packageId = this.model.packageId;
         this.payment.bankCard.holderName = this.model.name + ' ' + this.model.surname;
-        this.payment.bankCard.expirationMonth = this.expirationDate.substring(0, 2);
-        this.payment.bankCard.expirationYear = this.expirationDate.substring(2, 6);
         this.payment.bankCard.billingCountryCode = this.countryCode;
         this.payment.registrationId = this.uniqueId;
         this._memberService.paymentAuthorize(this.payment)
@@ -331,14 +329,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         memberInfo.address = model.address;
 
         return memberInfo;
-    }
-
-    validateExpirationDate(options) {
-        var year = parseInt(options.value.substring(2, 6)),
-            month = parseInt(options.value.substring(0, 2));
-
-        return (month < 13) && (year < ((new Date()).getFullYear() + 10))
-            && (new Date(year, month)).getTime() > Date.now();
     }
 
     validateName(event) {

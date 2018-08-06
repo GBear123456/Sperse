@@ -7,6 +7,8 @@ import { LayoutModule } from '../shared/layout/layout.module';
 import { CreditReportsCommonModule } from '../shared/common/credit-reports-common.module';
 import { MatSliderModule, MatSidenavModule, MatGridListModule } from '@angular/material';
 
+import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
+
 import { LandingRoutingModule } from './landing-routing.module';
 import { LandingComponent } from './landing.component';
 import { ReportWizardModule } from './credit-report/wizard-form/report-wizard.module';
@@ -63,7 +65,8 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
         DxBoxModule,
         DxValidationSummaryModule,
         ReportWizardModule,
-        UtilsModule
+        UtilsModule,
+        PaymentInfoModule
     ],
     declarations: [
         LandingComponent,
