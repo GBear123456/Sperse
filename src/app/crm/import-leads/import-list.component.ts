@@ -30,18 +30,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     public toolbarConfig: any = [];
     public selectedRowIds: number[] = [];
     public showImportWizard = false;
-    public headlineConfig = {
-        names: [this.l('Import')],
-        onRefresh: this.refreshDataGrid.bind(this),
-        icon: 'docs',
-        buttons: [
-            {
-                enabled: true,
-                action: this.navigateToWizard.bind(this),
-                lable: this.l('AddNewImport')
-            }
-        ]
-    };
+    public headlineConfig: any;
 
     constructor(injector: Injector,
         private _router: Router,
@@ -64,6 +53,23 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 paginate: true,
                 key: 'Id'
             }
+        };
+
+        this.initHeadlineConfig();
+    }
+
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            names: [this.l('Import')],
+            onRefresh: this.refreshDataGrid.bind(this),
+            icon: 'docs',
+            buttons: [
+                {
+                    enabled: true,
+                    action: this.navigateToWizard.bind(this),
+                    lable: this.l('AddNewImport')
+                }
+            ]
         };
     }
 
@@ -193,6 +199,11 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     activate() {
+        if (this.dataGrid && this.dataGrid.instance 
+            && !this.dataGrid.instance.totalCount()
+        )
+            return this.navigateToWizard();
+
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
     }

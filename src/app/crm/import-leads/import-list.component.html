@@ -1,4 +1,4 @@
-<div [@routerTransition] [hidden]="isDataLoaded && !totalRowCount">
+<div [@routerTransition] [hidden]="!isDataLoaded || !totalRowCount">
     <left-menu></left-menu>
     <div class="margin-left">        
         <app-headline [config]="headlineConfig"></app-headline>
