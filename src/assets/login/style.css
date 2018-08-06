@@ -534,3 +534,21 @@ input.form-control {
     opacity: 0.5;
     cursor: default;
 }
+
+.modal .modal-content {
+    overflow: hidden;
+}
+.modal .modal-content .modal-header {
+    align-items: center;
+}
+.modal .modal-content .modal-header .modal-title {
+    text-align: left;
+}
+.modal .modal-content .modal-header .close {
+    margin-top: 0;
+}
+.modal .modal-content .modal-body {
+    height: 100%;
+    text-align: left;
+    overflow-y: auto;
+}
