@@ -255,12 +255,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     setTimeout(() => processPartially(), 100);
                 } else {
                     this.updateGroupNames();
-                    this.reviewProgress.instance.option('value', 100);
                     this.reviewDataSource = dataSource;
-
-                    setTimeout(() => {
-                        this.reviewProgress.instance.option('visible', false);
-                    }, 1000);
+                    this.reviewProgress.instance.option('value', 100);
+                    this.reviewProgress.instance.option('visible', false);
                 }
             };
 
