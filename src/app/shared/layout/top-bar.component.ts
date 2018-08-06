@@ -1,4 +1,4 @@
-import {Component, Injector} from '@angular/core';
+import {Component, Injector, ViewChild} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {PanelMenu} from './panel-menu';
 import {PanelMenuItem} from './panel-menu-item';
@@ -15,14 +15,16 @@ import * as _ from 'underscore';
     styleUrls: ['./top-bar.component.less'],
     selector: 'top-bar',
     host: {
-        '(window:resize)': 'toogleNavMenu()'
+        '(window:resize)': 'updateNavMenu()'
     }
 })
 export class TopBarComponent extends AppComponentBase {
     config: any = {};
     selectedIndex: number;
     visibleMenuItemsWidth: 0;
-    showAdaptiveMenu: boolean;
+    updateTimeout: any;
+    navbarItems: any = []; 
+    adaptiveMenuItems: any = []; 
     menu: PanelMenu = <PanelMenu>{
         items: []
     };
@@ -41,7 +43,6 @@ export class TopBarComponent extends AppComponentBase {
                         if (route === item.route || _.contains(item.alterRoutes, route))
                             this.selectedIndex = i;
                     });
-                    this.toogleNavMenu();
                 }, 300);
             }
         });
@@ -49,11 +50,11 @@ export class TopBarComponent extends AppComponentBase {
         _appService.subscribeModuleChange((config) => {
             this.config = config;
             this.visibleMenuItemsWidth = 0;
-            this.showAdaptiveMenu = undefined;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
                 this.initMenu(config['navigation'], 0)
             );
 
+            this.updateNavMenu();
             _appService.topMenu = this.menu;
         });
     }
@@ -67,8 +68,10 @@ export class TopBarComponent extends AppComponentBase {
             let item = new PanelMenuItem(this.l(value[0]),
                 value[1], value[2], value[3], value[4], value[5], value[6]);
             item.visible = this.showMenuItem(item);
-            if (!level && item.visible)
-                this.visibleMenuItemsWidth += (item.text.length * 10 + 32);
+            if (!level && item.visible) {
+                item['length'] = (item.text.length * 10 + 32);
+                this.visibleMenuItemsWidth += item['length'];
+            }            
             navList.push(item);
         });
         return navList;
@@ -79,8 +82,26 @@ export class TopBarComponent extends AppComponentBase {
             this.router.navigate([event.itemData.route]);
     }
 
-    toogleNavMenu() {
-        this.showAdaptiveMenu = window.innerWidth - 550 < this.visibleMenuItemsWidth;
+    updateNavMenu() {
+        this.navbarItems = [];
+        this.adaptiveMenuItems = [];
+        clearTimeout(this.updateTimeout);
+        this.updateTimeout = setTimeout(() => {
+            let availableWidth = window.innerWidth - 600;
+            if (availableWidth < this.visibleMenuItemsWidth) {  
+                let switchItemIndex;
+                this.menu.items.every((item, index) => {
+                    switchItemIndex = index;
+                    if (item.visible)
+                        availableWidth -= item['length'];
+                    return availableWidth >= 0;
+                });
+
+                this.navbarItems = this.menu.items.slice(0, --switchItemIndex);
+                this.adaptiveMenuItems = this.menu.items.slice(switchItemIndex);
+            } else 
+                this.navbarItems = this.menu.items;
+        }, 300);
     }
 
     private checkMenuItemPermission(item): boolean {

@@ -5,14 +5,14 @@
 
 <platform-select></platform-select>
 
-<div class="top-bar-nav" [hidden]="showAdaptiveMenu">
+<div class="top-bar-nav" *ngIf="navbarItems.length">
   <dx-nav-bar
     height="74px"
     [hoverStateEnabled]="true"
     [selectedIndex]="selectedIndex"
     selectionMode="single">
       <dxi-item
-        *ngFor="let link of menu.items; let i = index;"
+        *ngFor="let link of navbarItems; let i = index;"
         [visible]="showMenuItem(link)"
         [disabled]="link.disabled">
         <dx-menu
@@ -28,10 +28,10 @@
   </dx-nav-bar>
 </div>
 
-<div class="adaptive-menu" [hidden]="!showAdaptiveMenu">
+<div class="adaptive-menu" *ngIf="adaptiveMenuItems.length">
   <dx-menu
     accessKey="nav-menu"
-    [dataSource]="menu.items"
+    [dataSource]="adaptiveMenuItems"
     selectionMode="single"
     [hoverStateEnabled]="true"
     submenuDirection="rightOrBottom"
