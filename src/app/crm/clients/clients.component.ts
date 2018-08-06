@@ -132,7 +132,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.stages).name);
         });
 
-        this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
+        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
     }
 
     private paramsSubscribe() {
@@ -192,7 +192,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     isClientCFOAvailable(userId) {
-        return this._clientService.isCFOAvailable(userId);
+        return this._appService.isCFOAvailable(userId);
     }
 
     showClientDetails(event) {
@@ -206,7 +206,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     redirectToCFO(event, userId) {
-        this._clientService.redirectToCFO(userId);
+        this._appService.redirectToCFO(userId);
     }
 
     calculateAddressColumnValue(data) {
@@ -603,7 +603,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     requestVerification(contactId: number) {
-        this._clientService.requestVerification(contactId);
+        this._appService.requestVerification(contactId);
     }
 
     activate() {

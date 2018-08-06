@@ -7,20 +7,20 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { CustomerInfoDto, UserServiceProxy, InstanceServiceProxy, CreateContactPhotoInput,
+import { CustomerInfoDto, UserServiceProxy, CreateContactPhotoInput,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
-import { ClientService } from '@app/crm/clients/clients.service';
+import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [UserServiceProxy, ClientService, ContactPhotoServiceProxy]
+    providers: [UserServiceProxy, AppService, ContactPhotoServiceProxy ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input() data: CustomerInfoDto;
@@ -34,11 +34,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
-        private clientService: ClientService
+        private appService: AppService
     ) {
         super(injector);
 
-        this.canSendVerificationRequest = this.clientService.canSendVerificationRequest();
+        this.canSendVerificationRequest = this.appService.canSendVerificationRequest();
     }
 
     ngOnInit(): void {
@@ -46,7 +46,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     requestVerification() {
-        this.clientService.requestVerification(this.data.primaryContactInfo.id);
+        this.appService.requestVerification(this.data.primaryContactInfo.id);
     }
 
     getDialogPossition(event, shiftX) {

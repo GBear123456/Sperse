@@ -132,7 +132,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.stages).name);
         });
 
-        this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
+        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
     }
 
     private paramsSubscribe() {
@@ -192,7 +192,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     isPartnerCFOAvailable(userId) {
-        return this._clientService.isCFOAvailable(userId);
+        return this._appService.isCFOAvailable(userId);
     }
 
     showPartnerDetails(event) {
@@ -206,7 +206,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     redirectToCFO(event, userId) {
-        this._clientService.redirectToCFO(userId);
+        this._appService.redirectToCFO(userId);
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -599,7 +599,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     requestVerification(contactId: number) {
-        this._clientService.requestVerification(contactId);
+        this._appService.requestVerification(contactId);
     }
 
     activate() {
