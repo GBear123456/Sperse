@@ -201,7 +201,7 @@
             </div>
         </div>
         <div *ngIf="paymentResult" class="base-commerce-validation">
-            <ng-container *ngFor="let item of paymentResult.errors">
+            <ng-container *ngFor="let item of paymentResult?.errors">
                 <div class="dx-validationsummary-item">
                     <div class="dx-item-content dx-validationsummary-item-content">{{ item }}</div>
                 </div>

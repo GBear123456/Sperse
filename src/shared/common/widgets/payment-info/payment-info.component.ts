@@ -23,6 +23,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         cvvCode: "0009"
     }
     validationGroup: any;
+    paymentResult: any;
 
     expirationDate: string;
     bankCard: BankCardDto = new BankCardDto();
