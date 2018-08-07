@@ -1069,6 +1069,316 @@ export class ActivityServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getLeads(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetLeads?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLeads(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLeads(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLeads(response: HttpResponseBase): Observable<EntityInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getClients(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetClients?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetClients(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetClients(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetClients(response: HttpResponseBase): Observable<EntityInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getPartners(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetPartners?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPartners(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPartners(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPartners(response: HttpResponseBase): Observable<EntityInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getOrders(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetOrders?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOrders(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOrders(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOrders(response: HttpResponseBase): Observable<EntityInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getUsers(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<EntityInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetUsers?";
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUsers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUsers(<any>response_);
+                } catch (e) {
+                    return <Observable<EntityInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EntityInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUsers(response: HttpResponseBase): Observable<EntityInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EntityInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EntityInfoDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -25205,6 +25515,50 @@ export interface IAssignActivityUserDto {
     assignTo: number | undefined;
 }
 
+export class EntityInfoDto implements IEntityInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    email!: string | undefined;
+
+    constructor(data?: IEntityInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.email = data["email"];
+        }
+    }
+
+    static fromJS(data: any): EntityInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EntityInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["email"] = this.email;
+        return data; 
+    }
+}
+
+export interface IEntityInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+    email: string | undefined;
+}
+
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
     totalCount!: number | undefined;
     items!: AuditLogListDto[] | undefined;
@@ -40224,7 +40578,6 @@ export class ImportItemInput implements IImportItemInput {
     utmCampaign!: string | undefined;
     utmTerm!: string | undefined;
     utmContent!: string | undefined;
-    customerTypeId!: string | undefined;
 
     constructor(data?: IImportItemInput) {
         if (data) {
@@ -40250,7 +40603,6 @@ export class ImportItemInput implements IImportItemInput {
             this.utmCampaign = data["utmCampaign"];
             this.utmTerm = data["utmTerm"];
             this.utmContent = data["utmContent"];
-            this.customerTypeId = data["customerTypeId"];
         }
     }
 
@@ -40276,7 +40628,6 @@ export class ImportItemInput implements IImportItemInput {
         data["utmCampaign"] = this.utmCampaign;
         data["utmTerm"] = this.utmTerm;
         data["utmContent"] = this.utmContent;
-        data["customerTypeId"] = this.customerTypeId;
         return data; 
     }
 }
@@ -40295,7 +40646,6 @@ export interface IImportItemInput {
     utmCampaign: string | undefined;
     utmTerm: string | undefined;
     utmContent: string | undefined;
-    customerTypeId: string | undefined;
 }
 
 export class ImportPersonalInput implements IImportPersonalInput {
