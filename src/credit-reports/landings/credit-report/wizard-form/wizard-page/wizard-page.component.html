@@ -162,6 +162,13 @@
             <wizard-step-tab></wizard-step-tab>
             <form id="billingInfo">
                 <payment-info [paymentAuthorizationRequired]="paymentAuthorizationRequired"></payment-info>
+                <div *ngIf="paymentResult" class="base-commerce-validation">
+                    <ng-container *ngFor="let item of paymentResult.errors">
+                        <div class="dx-validationsummary-item">
+                            <div class="dx-item-content dx-validationsummary-item-content">{{ item }}</div>
+                        </div>
+                    </ng-container>
+                </div>
                 <button class="button btn-back" (click)="previousStep()" type="button">
                     <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
                 </button>
