@@ -12628,13 +12628,13 @@ export class ImportServiceProxy {
     }
 
     /**
-     * @id (optional) 
+     * @importId (optional) 
      * @return Success
      */
-    getFileUrl(id: string | null | undefined): Observable<GetFileUrlOutput> {
+    getFileUrl(importId: number | null | undefined): Observable<GetFileUrlOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Import/GetFileUrl?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (importId !== undefined)
+            url_ += "importId=" + encodeURIComponent("" + importId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
