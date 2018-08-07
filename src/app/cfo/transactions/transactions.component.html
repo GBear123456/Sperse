@@ -75,7 +75,8 @@
                         <dxi-column dataField="Fees" cssClass="tabular" caption="{{l('Transactions_Fees')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="CategoryName" caption="{{l('Transactions_CategoryName')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="TypeName" caption="{{l('Transactions_Type')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="ExpenseCategoryName" caption="{{l('Transactions_ExpenseCategory')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="ProviderCashFlowCategoryName" caption="{{l('Transactions_ProviderCashFlowCategory')}}" [visible]="false"></dxi-column>
+                        <dxi-column dataField="ProviderCashFlowSubCategoryName" caption="{{l('Transactions_ProviderCashFlowSubCategory')}}" [visible]="false"></dxi-column>
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
