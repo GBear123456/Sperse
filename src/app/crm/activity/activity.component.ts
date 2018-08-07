@@ -30,6 +30,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
+    private dataSourceURI = 'Activity';
 
     public showPipeline = false;
     public pipelineDataSource: any;
@@ -95,21 +96,22 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 return item;
             });
         });    
-/*
-        this.pipelineDataSource = new DataSource({
-            key: 'id',
-            load: (loadOptions) => {
-                return (new Promise((resolve, reject) => {
-                    resolve([]);
-                })).then(response => {                    
-                    return {
-                        data: response,
-                        totalCount: 10
-                    };
-                });
+
+
+        this.pipelineDataSource = {
+            uri: this.dataSourceURI,
+            requireTotalCount: true,
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataURL(this.dataSourceURI),
+                version: this.getODataVersion(),
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                paginate: true
             }
-        });     
-*/
+        };
     }
 
     initResources() {
@@ -173,6 +175,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 location: 'before', items: [
                     {
                         widget: 'dxDateBox',
+                        visible: !this.showPipeline,
                         options: {
                             acceptCustomValue: false,
                             adaptivityEnabled: true,
@@ -188,6 +191,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 location: 'after', items: [
                     {
                         name: 'select-box',
+                        visible: !this.showPipeline,
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 120,
@@ -201,30 +205,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                                 { text: this.l('Month') }, 
                                 { text: this.l('Agenda') }
                             ]
-                        }
-                    },
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
                         }
                     }
                 ]
@@ -324,8 +304,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     toggleDataLayout(dataLayoutType) {
-        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
-        this.dataLayoutType = dataLayoutType;
+        let showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+        if (this.showPipeline != showPipeline) {
+            this.dataLayoutType = dataLayoutType;
+            this.showPipeline = showPipeline;
+            this.initToolbarConfig();
+        }
     }
 
     activate() {

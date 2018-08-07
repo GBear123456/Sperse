@@ -125,6 +125,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.dataSource = {
+            uri: this.dataSourceURI,
             requireTotalCount: true,
             store: {
                 key: 'Id',
