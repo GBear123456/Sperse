@@ -15,6 +15,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 
+import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
@@ -34,6 +36,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     constructor(injector: Injector,
         private _router: Router,
+        private _importService: ImportWizardService,
         private _sizeFormatPipe: FileSizePipe,
         private _importProxy: ImportServiceProxy,
         private _appService: AppService
@@ -129,10 +132,13 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     onContentReady(event) {
+        this.finishLoading();
         if (!event.component.totalCount())
             return this.navigateToWizard();
 
         this.setGridDataLoaded();
+        setTimeout(() => 
+            event.component.option('visible', true));
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
@@ -215,6 +221,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
+        this.startLoading();
         this.activate();
     }
 

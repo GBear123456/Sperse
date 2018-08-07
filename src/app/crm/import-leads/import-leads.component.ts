@@ -151,7 +151,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     mappingFields: any[] = [];
     importTypeIndex: number = 0;
     importType: ImportInputImportType = ImportInputImportType.Lead;
-    importId: number = 0;
 
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
@@ -192,13 +191,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     constructor(
         injector: Injector,
         private _appService: AppService,
-        private _importService: ImportWizardService,
         private _reuseService: RouteReuseStrategy,
         private _importProxy: ImportServiceProxy,
         private _router: Router,
         private _pipelineService: PipelineService,
         private _nameParser: NameParserService,
-        private zipFormatterPipe: ZipCodeFormatterPipe
+        private zipFormatterPipe: ZipCodeFormatterPipe,
+        public importService: ImportWizardService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportItemInput.fromJS({}));
@@ -206,9 +205,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
 
-        _importService.cancelListen(() => {
-            if (this.importId)
-                _importProxy.cancel(this.importId);
+        importService.cancelListen(() => {
+            if (importService.activeImportId)
+                _importProxy.cancel(importService.activeImportId).subscribe(() => {
+                    importService.activeImportId = undefined;
+                });
         });
     }
 
@@ -330,23 +331,24 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.l('LeadsImportComfirmation', [this.totalCount]),
             isConfirmed => {
                 if (isConfirmed) {
+                    this.startLoading(true);
                     let leadsInput = this.createLeadsInput(data);
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId) => { 
                             if (importId && !isNaN(importId)) {
-                                this.importId = importId;
-                                this._importService.setupStatusCheck((callback) => {
+                                this.importService.activeImportId = importId;
+                                this.importService.setupStatusCheck((callback) => {
                                     this._importProxy.getStatus(importId).subscribe((res) => {
                                         this.importedCount = res.importedCount;                                        
                                         if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
-                                            this.importId = 0;
+                                            this.importService.activeImportId = undefined;
                                             (<any>this._reuseService).invalidate('leads');
                                         }                    
                                         callback({
-                                            progress: !this.importId ? 100: 
-                                                Math.round((res.importedCount + res.failedCount) / res.totalCount * 100),
+                                            progress: !this.importService.activeImportId ? 100: 
+                                                Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
                                             totalCount: res.totalCount,
                                             importedCount: res.importedCount,
                                             failedCount: res.failedCount
@@ -623,6 +625,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     cancelImport() {
-        this._importService.cancelImport();
+        this.importService.cancelImport();
     }
 }

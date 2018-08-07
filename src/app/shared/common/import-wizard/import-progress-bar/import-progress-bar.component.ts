@@ -18,7 +18,7 @@ import { ImportWizardService } from '../import-wizard.service';
 export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxProgressBarComponent) progressComponent: DxProgressBarComponent;
              
-    progress: number = 0;
+    progress: number = 100;
     tooltipVisible: boolean;
     tooltipTimeout: any; 
 

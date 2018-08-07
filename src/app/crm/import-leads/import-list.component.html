@@ -1,12 +1,15 @@
 <div [@routerTransition] [hidden]="!isDataLoaded || !totalRowCount">
     <left-menu></left-menu>
     <div class="margin-left">        
-        <app-headline [config]="headlineConfig"></app-headline>
+        <app-headline [config]="headlineConfig">
+            <import-progress-bar></import-progress-bar>
+        </app-headline>
         <app-toolbar [config]="toolbarConfig"></app-toolbar>
         <div class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                  <dx-data-grid id="gridContainer"
                                accesskey="narrowHeaderPanel"
+                               [visible]="false"
                                [dataSource]="dataSource"
                                [allowColumnReordering]="true"
                                [columnAutoWidth]="true"
@@ -26,7 +29,7 @@
                                   [allowUpdating]="false">
                      </dxo-editing>
 
-                     <dxi-column dataField="Id" caption="{{l('Id')}}" sortOrder="asc" [width]="50"></dxi-column>
+                     <dxi-column dataField="Id" caption="{{l('Id')}}" sortOrder="desc" [width]="50"></dxi-column>
                      <dxi-column dataField="FileName" caption="{{l('FileName')}}"></dxi-column>
                      <dxi-column dataField="FileSize" caption="{{l('FileSize')}}" [calculateDisplayValue]="fileSizeFormat"></dxi-column>
                      <dxi-column dataField="StatusName" caption="{{l('Status')}}"></dxi-column>

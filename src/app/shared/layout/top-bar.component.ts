@@ -21,6 +21,7 @@ import * as _ from 'underscore';
 export class TopBarComponent extends AppComponentBase {
     config: any = {};
     selectedIndex: number;
+    lastInnerWidth: number;
     visibleMenuItemsWidth: 0;
     updateTimeout: any;
     navbarItems: any = []; 
@@ -83,25 +84,28 @@ export class TopBarComponent extends AppComponentBase {
     }
 
     updateNavMenu() {
-        this.navbarItems = [];
-        this.adaptiveMenuItems = [];
-        clearTimeout(this.updateTimeout);
-        this.updateTimeout = setTimeout(() => {
-            let availableWidth = window.innerWidth - 600;
-            if (availableWidth < this.visibleMenuItemsWidth) {  
-                let switchItemIndex;
-                this.menu.items.every((item, index) => {
-                    switchItemIndex = index;
-                    if (item.visible)
-                        availableWidth -= item['length'];
-                    return availableWidth >= 0;
-                });
+        if (window.innerWidth != this.lastInnerWidth) {
+            this.navbarItems = [];
+            this.adaptiveMenuItems = [];
+            clearTimeout(this.updateTimeout);
+            this.updateTimeout = setTimeout(() => {
+                this.lastInnerWidth = window.innerWidth;
+                let availableWidth = this.lastInnerWidth - 600;
+                if (availableWidth < this.visibleMenuItemsWidth) {  
+                    let switchItemIndex;
+                    this.menu.items.every((item, index) => {
+                        switchItemIndex = index;
+                        if (item.visible)
+                            availableWidth -= item['length'];
+                        return availableWidth >= 0;
+                    });
 
-                this.navbarItems = this.menu.items.slice(0, --switchItemIndex);
-                this.adaptiveMenuItems = this.menu.items.slice(switchItemIndex);
-            } else 
-                this.navbarItems = this.menu.items;
-        }, 300);
+                    this.navbarItems = this.menu.items.slice(0, --switchItemIndex);
+                    this.adaptiveMenuItems = this.menu.items.slice(switchItemIndex);
+                } else 
+                    this.navbarItems = this.menu.items;
+            }, 300);
+        }
     }
 
     private checkMenuItemPermission(item): boolean {

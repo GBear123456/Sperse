@@ -7,6 +7,8 @@ export class ImportWizardService {
     private subjectCancel: Subject<undefined>;
     private subscribers: Array<Subscription> = [];
 
+    public activeImportId: number = 0;
+
     constructor(injector: Injector) {
         this.subjectProgress = new Subject<any>();
         this.subjectCancel = new Subject<undefined>();
