@@ -26,13 +26,15 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     importedCount: number = 0;
     failedCount: number = 0;
   
+    private subscription: any;
+
     constructor(
         injector: Injector,
         private _importService: ImportWizardService
     ) {
         super(injector);
 
-        _importService.progressListen((data) => {
+        this.subscription = _importService.progressListen((data) => {
             this.progress = data.progress;
             this.totalCount = data.totalCount;
             this.importedCount = data.importedCount;
@@ -56,6 +58,6 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     }
 
     ngOnDestroy() {
-        this._importService.unsubscribe();
+        this.subscription.unsubscribe();
     }
 }

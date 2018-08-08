@@ -168,7 +168,6 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
         UsersDialogComponent
     ],
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
         CustomersServiceProxy,
         SyncServiceProxy,
         CalculatorService

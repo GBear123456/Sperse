@@ -15,8 +15,10 @@ export class ImportWizardService {
     }
 
     progressListen(callback: (progress: any) => any) {
-        this.subscribers.push(this.subjectProgress.
-            asObservable().subscribe(callback));
+        let subscription = this.subjectProgress.
+            asObservable().subscribe(callback);
+        this.subscribers.push(subscription);
+        return subscription;
     }
 
     progressChanged(data: any) {
@@ -31,14 +33,14 @@ export class ImportWizardService {
         this.subjectCancel.next();
     }
 
-    setupStatusCheck(method: (callback: any) => void) {
+    setupStatusCheck(method: (callback: any) => void, initial = true) {
         setTimeout(() => {
             method((data) => {
                 this.progressChanged(data);
                 if (data.progress < 100)
-                    this.setupStatusCheck(method);
+                    this.setupStatusCheck(method, false);
             });
-        }, 1000);
+        }, initial ? 0: 5000);
     }
 
     unsubscribe() {

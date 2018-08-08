@@ -14,14 +14,16 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ImportStatus } from '@shared/AppEnums';
 
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+import { ImportLeadsService } from './import-leads.service';
 
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ImportServiceProxy, FileSizePipe]
+    providers: [FileSizePipe]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -36,7 +38,8 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     constructor(injector: Injector,
         private _router: Router,
-        private _importService: ImportWizardService,
+        private _importWizardService: ImportWizardService,
+        private _importLeadsService: ImportLeadsService,
         private _sizeFormatPipe: FileSizePipe,
         private _importProxy: ImportServiceProxy,
         private _appService: AppService
@@ -136,6 +139,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         if (!event.component.totalCount())
             return this.navigateToWizard();
 
+        this.updateActiveImport();
         this.setGridDataLoaded();
         setTimeout(() => 
             event.component.option('visible', true));
@@ -145,8 +149,18 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         });
     }
 
+    updateActiveImport() {
+        this.dataGrid.instance.getVisibleRows().some((row) => {
+            if (row.data.StatusId == ImportStatus.InProgress) {
+                this._importLeadsService.setupImportCheck(row.data.Id);
+                return true;
+            }
+        });
+    }
+
     refreshDataGrid() {
-        this.dataGrid.instance.refresh();
+        if (this.dataGrid && this.dataGrid.instance)
+            this.dataGrid.instance.refresh();
     }
 
     showColumnChooser() {
@@ -192,7 +206,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     onCellClick($event) {
-        if ($event.column.dataField == 'FileName') {
+        if ($event.rowType == 'data' && $event.column.dataField == 'FileName') {
             this._importProxy.getFileUrl($event.data.Id).subscribe((responce) => {
                 if (responce && responce.url)
                     window.open(responce.url);
@@ -205,13 +219,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     activate() {
-        if (this.dataGrid && this.dataGrid.instance 
-            && !this.dataGrid.instance.totalCount()
-        )
-            return this.navigateToWizard();
-
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
+        this.refreshDataGrid();
     }
 
     deactivate() {
