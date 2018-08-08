@@ -2,13 +2,15 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, BehaviorSubject, race, forkJoin, of, combineLatest } from 'rxjs';
-import { first, reduce, mergeMap, map, filter, toArray } from 'rxjs/operators';
+import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, race, merge } from 'rxjs';
+import { tap, first, reduce, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap, share } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { SyncAccountBankDto, BankAccountDto, BankAccountsServiceProxy, BusinessEntityDto, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+//import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widgets/bank-accounts-data.model';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -16,12 +18,19 @@ import { CFOService } from '@shared/cfo/cfo.service';
 
 @Injectable()
 export class BankAccountsService {
-    syncAccounts$: Observable<SyncAccountBankDto[]>;
+    acceptFilterOnlyOnApply = true;
+    olsFilteredSyncAccounts$: Observable<SyncAccountBankDto[]>;
+    filteredSyncAccounts$: Observable<SyncAccountBankDto[]>;
+    filteredSyncAccountsWithApply$: Observable<SyncAccountBankDto[]>;
+    filteredSyncAccountsSource$: Observable<SyncAccountBankDto[]>;
+    filteredSyncAccountsWithType$: Observable<SyncAccountBankDto[]>;
+    distinctUntilChangedFilteredSyncAccounts$: Observable<SyncAccountBankDto[]>;
+    distinctUntilChangedFilteredSyncAccountsWithApply$: Observable<SyncAccountBankDto[]>;
+    distinctUntilChangedFilteredSyncAccountsSource$: Observable<SyncAccountBankDto[]>;
     allBusinessEntities$: Observable<BusinessEntityDto[]>;
+    businessEntitiesAmount$: Observable<number>;
     selectedBusinessEntities$: Observable<BusinessEntityDto[]>;
     selectedBusinessEntitiesIds$: Observable<number[]>;
-    allBankAccounts$: Observable<BankAccountDto[]>;
-    //filteredSyncAccounts$: Observable<SyncAccountBankDto[]>;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
     cachedData: BankAccountsDataModel = {
         selectedBankAccountIds: [],
@@ -32,47 +41,54 @@ export class BankAccountsService {
     };
     filteredBankAccounts$: Observable<BankAccountDto[]>;
     selectedBankAccounts$: Observable<BankAccountDto[]>;
-    private _syncAccountFilter$: BehaviorSubject<BankAccountsDataModel> = new BehaviorSubject(this.cachedData);
-    syncAccountFilter: Observable<BankAccountsDataModel> = this._syncAccountFilter$.asObservable();
-    filteredSyncAccounts$: Observable<SyncAccountBankDto[]>;
+    selectedBankAccountsIds$: Observable<number[]>;
+    _syncAccountFilter: BehaviorSubject<BankAccountsDataModel> = new BehaviorSubject(this.cachedData);
+    syncAccountFilter$: Observable<BankAccountsDataModel> = this._syncAccountFilter.asObservable();
     accountsDataTotalNetWorth$: Observable<number>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
+    existingBankAccountsTypes$: Observable<string[]>;
+    baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
+    allAccountTypesFilter = this.localizationService.l('AllAccounts');
+    private _selectedBankAccountType: BehaviorSubject<string> = new BehaviorSubject(this.allAccountTypesFilter);
+    selectedBankAccountType$: Observable<string> = this._selectedBankAccountType.asObservable();
+
+    private _applyFilter = new BehaviorSubject(null);
+    applyFilter$ = this._applyFilter.asObservable();
+    _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
+    syncAccounts$ = this._syncAccounts.asObservable();
 
     constructor(private cfoService: CFOService,
                 private bankAccountsServiceProxy: BankAccountsServiceProxy,
                 private businessEntityService: BusinessEntityServiceProxy,
-                private cacheService: CacheService) {
+                private cacheService: CacheService,
+                private localizationService: AppLocalizationService) {
         this.cacheService = this.cacheService.useStorage(0);
-        this.cachedData = { ...this.cachedData, ...this.cacheService.get(this.bankAccountsCacheKey) };
-        this._syncAccountFilter$.next(this.cachedData);
+        this.load();
     }
 
-    load() {
-        //this._syncAccountFilter$.next(this.cachedData);
-        this.syncAccounts$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'USD');
-        this.allBankAccounts$ = this.syncAccounts$
-            .pipe(
-                mergeMap(x => x),
-                reduce((bankAccounts: BankAccountDto[], syncAccount: SyncAccountBankDto) => {
-                    return bankAccounts.concat(syncAccount.bankAccounts);
-                }, [])
-            );
-        this.allBusinessEntities$ = this.businessEntityService.getBusinessEntities(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId);
+    load(acceptFilterOnlyOnApply = true) {
+
+        this.acceptFilterOnlyOnApply = acceptFilterOnlyOnApply;
+        this._selectedBankAccountType.next(this._selectedBankAccountType.value);
+        //this.loadSyncAccounts(acceptFilterOnlyOnApply);
+        this.allBusinessEntities$ = this.businessEntityService.getBusinessEntities(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId).pipe(
+            publishReplay(),
+            refCount()
+        );
+        this.businessEntitiesAmount$ = this.allBusinessEntities$.pipe(map(businessEntities => businessEntities.length));
 
         this.selectedBusinessEntities$ =
             combineLatest(
                 this.allBusinessEntities$,
-                this.syncAccountFilter
+                this.syncAccountFilter$
             ).pipe(
                 mergeMap(([businessEntities, dataFilter]) => {
                     const res = businessEntities.filter(businessEntity => {
                         return dataFilter.selectedBusinessEntitiesIds.indexOf(businessEntity.id) !== -1;
                     });
-                    console.log(res);
                     return of(res);
-                }),
-                first()
+                })
             );
 
         this.selectedBusinessEntitiesIds$ = this.selectedBusinessEntities$.pipe(
@@ -80,13 +96,48 @@ export class BankAccountsService {
                 (entitiesIds, entity) => {
                     return entitiesIds.concat(entity.id);
                 }, [])
-            )
-        )
+            ),
+            //distinctUntilChanged((oldIds, newIds) => !ArrayHelper.dataChanged(oldIds, newIds))
+        );
+
+        this.existingBankAccountsTypes$ = this.syncAccounts$.pipe(
+            map( syncAccounts => {
+
+                let existBankAccountTypes = [];
+                syncAccounts.forEach(syncAccount => {
+                    let types = _.uniq(_.map(syncAccount.bankAccounts, bankAccount => bankAccount.typeName));
+                    existBankAccountTypes = _.union(existBankAccountTypes, types);
+                });
+                let bankAccountTypesForSelect = [];
+                bankAccountTypesForSelect.push(this.allAccountTypesFilter);
+                this.baseBankAccountTypes.forEach(type => {
+                    bankAccountTypesForSelect.push(type);
+                });
+
+                let otherExist = _.some(existBankAccountTypes, x => !_.contains(this.baseBankAccountTypes, x));
+                if (otherExist)
+                    bankAccountTypesForSelect.push(this.localizationService.l('Other'));
+
+                return bankAccountTypesForSelect;
+            }),
+            //distinctUntilChanged((oldTypes, newTypes) => !ArrayHelper.dataChanged(oldTypes, newTypes))
+        );
+
+        this.filteredSyncAccountsWithType$ =
+            combineLatest(
+                this.syncAccounts$,
+                this.selectedBankAccountType$,
+                this.existingBankAccountsTypes$
+            ).pipe(
+                mergeMap(([syncAccounts, selectedType, allTypes]) => {
+                    return of(this.filterByBankAccountType(syncAccounts, selectedType, allTypes));
+                })
+            );
 
         this.filteredSyncAccounts$ =
             combineLatest(
-                this.syncAccounts$,
-                this.syncAccountFilter
+                this.filteredSyncAccountsWithType$,
+                this.syncAccountFilter$
             ).pipe(
                 mergeMap(([syncAccounts, dataFilter]) => {
                     return of(this.filterDataSource(
@@ -99,7 +150,39 @@ export class BankAccountsService {
                 })
             );
 
-        this.filteredBankAccounts$ = this.filteredSyncAccounts$.pipe(
+        this.distinctUntilChangedFilteredSyncAccounts$ = this.filteredSyncAccounts$
+            .pipe(
+                distinctUntilChanged(this.checkDistinct)
+            );
+
+        this.filteredSyncAccountsWithApply$ =
+            this.filteredSyncAccounts$.pipe(
+                first(),
+                switchMap(() => {
+                    return this.applyFilter$;
+                }),
+                withLatestFrom(this.filteredSyncAccounts$, (apply, filteredAccounts) => {
+                    return filteredAccounts;
+                })
+            );
+
+        this.distinctUntilChangedFilteredSyncAccountsWithApply$ =
+            merge(
+                this.distinctUntilChangedFilteredSyncAccounts$,
+                this.filteredSyncAccountsWithApply$
+            );
+
+        this.changeSubscriptions(acceptFilterOnlyOnApply);
+
+        return this.syncAccounts$;
+    }
+
+    changeSubscriptions(acceptFilterOnlyOnApply = true) {
+        /** Check which source to use - those that emitted instanly or those that emitted by apply */
+        this.filteredSyncAccountsSource$ = this.acceptFilterOnlyOnApply ? this.filteredSyncAccountsWithApply$ : this.filteredSyncAccounts$;
+        this.distinctUntilChangedFilteredSyncAccountsSource$ = this.acceptFilterOnlyOnApply ? this.distinctUntilChangedFilteredSyncAccountsWithApply$ : this.distinctUntilChangedFilteredSyncAccounts$;
+
+        this.filteredBankAccounts$ = this.filteredSyncAccountsSource$.pipe(
             map(syncAccounts => syncAccounts.reduce((bankAccounts, syncAccount) => {
                 return bankAccounts.concat(syncAccount.bankAccounts);
             }, []))
@@ -111,6 +194,21 @@ export class BankAccountsService {
             })
         );
 
+        this.selectedBankAccountsIds$ = this.selectedBankAccounts$.pipe(
+            map(bankAccounts => {
+                return bankAccounts.map(account => account.id);
+            }),
+            // distinctUntilChanged((oldAccountsIds, newAccountsIds) => {
+            //     return !ArrayHelper.dataChanged(oldAccountsIds, newAccountsIds);
+            // })
+        );
+
+        this.selectedBankAccountsIds$.subscribe(
+            ids => {
+                this.cachedData.selectedBankAccountIds = ids;
+            }
+        );
+
         this.accountsDataTotalNetWorth$ = this.selectedBankAccounts$
             .pipe(
                 map(bankAccounts => bankAccounts.reduce((sum, bankAccount) => {
@@ -118,10 +216,11 @@ export class BankAccountsService {
                 }, 0))
             );
 
-        this.syncAccountsAmount$ = this.filteredSyncAccounts$
+        this.syncAccountsAmount$ = this.filteredSyncAccountsSource$
             .pipe(
                 map((syncAccounts: any[]) => {
-                    const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected);
+                    /** Selected can be true, false or undefined. Undefined if bank accounts of the sync account are partially selected */
+                    const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
                     return selectedSyncAccounts.length === syncAccounts.length
                         ? selectedSyncAccounts.length.toString()
                         : `${selectedSyncAccounts.length} of ${syncAccounts.length}`;
@@ -137,27 +236,100 @@ export class BankAccountsService {
                         : `${selectedBankAccounts .length} of ${bankAccounts.length}`;
                 })
             );
-
     }
 
-    changeFilter(filter: BankAccountsDataModel) {
-        this.cachedData = {...this.cachedData, ...filter};
-        this.cacheService.set(this.bankAccountsCacheKey, this.cachedData);
-        this._syncAccountFilter$.next(this.cachedData);
+    loadSyncAccounts(acceptFilterOnlyOnApply = true) {
+
+        this.changeSubscriptions(acceptFilterOnlyOnApply);
+
+        this.cachedData = { ...this.cachedData, ...this.cacheService.get(this.bankAccountsCacheKey)};
+        this._syncAccountFilter.next(this.cachedData);
+
+        const bankAccounts$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'USD').pipe(publishReplay(), refCount());
+        bankAccounts$.subscribe( syncAccounts => {
+            /** Load sync account and if they changed - */
+            //if (!this.syncAccounts$.source['_events'][0] || !this.syncAccounts$.source['_events'][0].length || ArrayHelper.dataChanged(this.syncAccounts$.source['_events'][0], syncAccounts)) {
+                this._syncAccounts.next(syncAccounts);
+            //}
+        });
+        return bankAccounts$;
     }
 
-    changeSelectedBankAccountsIds(selectedBankAccountsIds: number[]) {
-        this.cachedData.selectedBankAccountIds = selectedBankAccountsIds;
-        this.cacheService.set(this.bankAccountsCacheKey, this.cachedData);
-        this._syncAccountFilter$.next(this.cachedData);
+    checkDistinct = (oldSyncAccounts: any[], newSyncAccounts: any[]) => {
+        const oldSyncAccountsIds = oldSyncAccounts.map(syncAccount => syncAccount.syncAccountId);
+        const newSyncAccountsIds = newSyncAccounts.map(syncAccount => syncAccount.syncAccountId);
+        return !ArrayHelper.dataChanged(oldSyncAccountsIds, newSyncAccountsIds);
     }
 
-    changeSelectedBusinessEntities(selectedBusinessEntitiesIds: number[]) {
-        if (selectedBusinessEntitiesIds) {
-            this.cachedData.selectedBusinessEntitiesIds = selectedBusinessEntitiesIds;
+    filterByBankAccountType(syncAccounts, type, allTypes) {
+        let filteredSyncAccounts = [];
+
+        syncAccounts.forEach(syncAccount => {
+            let syncAccountCopy: any = { ...{}, ...syncAccount };
+            syncAccountCopy['bankAccounts'] = [];
+            if (type === this.allAccountTypesFilter) {
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
+                });
+                if (syncAccount.bankAccounts.length > 0) {
+                    filteredSyncAccounts.push(syncAccountCopy);
+                }
+            } else if (type === this.localizationService.l('Other')) {
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    let isBankAccountVisible = !_.contains(allTypes, bankAccount.typeName);
+                    if (isBankAccountVisible) {
+                        syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount});
+                    }
+                });
+                if (syncAccountCopy.bankAccounts.length) {
+                    filteredSyncAccounts.push(syncAccountCopy);
+                }
+            } else {
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    let isBankAccountVisible = type === bankAccount.typeName;
+                    if (isBankAccountVisible) {
+                        syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount});
+                    }
+                });
+                if (syncAccountCopy.bankAccounts.length) {
+                    filteredSyncAccounts.push(syncAccountCopy);
+                }
+            }
+        });
+        return filteredSyncAccounts;
+    }
+
+    changeFilter(filter: BankAccountsDataModel, saveInCache = true) {
+        let tempFilter = { ...this.cachedData, ...filter};
+        if (saveInCache) {
+            this.cachedData = tempFilter;
             this.cacheService.set(this.bankAccountsCacheKey, this.cachedData);
-            this._syncAccountFilter$.next(this.cachedData);
         }
+        this._syncAccountFilter.next(tempFilter);
+    }
+
+    applyFilter() {
+        this._applyFilter.next(null);
+    }
+
+    changeSelectedBankAccountsIds(selectedBankAccountsIds: number[], saveInCache = true) {
+        if (selectedBankAccountsIds) {
+            this.changeFilter({
+                selectedBankAccountIds: selectedBankAccountsIds
+            }, saveInCache);
+        }
+    }
+
+    changeSelectedBusinessEntities(selectedBusinessEntitiesIds: number[], saveInCache = true) {
+        if (selectedBusinessEntitiesIds) {
+            this.changeFilter({
+                selectedBusinessEntitiesIds: selectedBusinessEntitiesIds
+            }, saveInCache);
+        }
+    }
+
+    changeBankAccountType(type: string) {
+        this._selectedBankAccountType.next(type);
     }
 
     filterDataSource(syncAccounts: SyncAccountBankDto[], businessEntitiesIds: number[], selectedAccountsIds: number[], visibleBankAccountsIds: number[], isActive = null): SyncAccountBankDto[] {
@@ -206,6 +378,13 @@ export class BankAccountsService {
         return result;
     }
 
+    changeActiveFilter(value: boolean) {
+        this.changeFilter({
+            isActive: value,
+            selectedBankAccountIds: null
+        });
+    }
+
     changeAndGetBankAccountFilter(accountFilter: FilterModel, data: BankAccountsDataModel, initialDataSource: SyncAccountBankDto[]) {
         let accountFilterModel = <any>accountFilter.items.element;
         if (ArrayHelper.dataChanged(initialDataSource, accountFilterModel.dataSource)) {
@@ -229,4 +408,7 @@ export class BankAccountsService {
             bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
         return bankAccountCount;
     }
+
+
+
 }

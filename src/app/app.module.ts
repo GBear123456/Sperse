@@ -9,6 +9,7 @@ import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/
 import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
 
 /** Application imports */
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import {ImpersonationService} from '@admin/users/impersonation.service';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';
@@ -18,7 +19,7 @@ import {AppRoutingModule} from './app-routing.module';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -53,6 +54,9 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         InstanceServiceProxy,
         CFOService,
         ContactServiceProxy,
+        BusinessEntityServiceProxy,
+        BankAccountsServiceProxy,
+        BankAccountsService
     ]
 })
 export class AppModule {}

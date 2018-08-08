@@ -20,14 +20,13 @@
     <div class="filter-actions-is-active">
         <div class="is-active-filter">
             <span>{{bankAccountsService.cachedData.isActive !== false ? l('Active') : l('Disabled')}}</span>
-            <dx-switch [value]="bankAccountsService.cachedData.isActive !== false" (onValueChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
+            <dx-switch [value]="bankAccountsService.cachedData.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
         </div>
     </div>
 
     <bank-accounts-widget
         [allowBankAccountsEditing]="true"
         [allowUpdateAccount]="true"
-        [dataSource]="syncAccounts$ | async"
         [height]="'100%'"
         (selectionChanged)="selectedAccountsChange($event)"
         (onUpdateAccount)="onUpdateAccount($event)"

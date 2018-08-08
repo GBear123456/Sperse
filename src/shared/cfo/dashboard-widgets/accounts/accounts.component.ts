@@ -1,21 +1,26 @@
+/** Core imports */
 import { Component, Injector, OnInit, Output, Input, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DashboardService } from '../dashboard.service';
+import { Router } from '@angular/router';
+
+/** Third party libraries */
+import * as moment from 'moment';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
-import * as moment from 'moment';
+import { DashboardService } from '../dashboard.service';
 
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.less'],
-    providers: [DashboardServiceProxy]
+    providers: [ DashboardServiceProxy ]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
-    @Input() waitForBankAccounts = false;
-    @Input() waitForPeriods = false;
+    //@Input() waitForBankAccounts = false;
 
     accountsData: any;
     bankAccountIds: number[] = [];
@@ -36,12 +41,14 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsSliderSelected = 1;
     isActive = null;
     visibleAccountCount = 0;
+    bankAccountsService: BankAccountsService;
 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
         private _dashboardProxy: DashboardServiceProxy,
-        private _router: Router
+        private _router: Router,
+        bankAccountsService: BankAccountsService
     ) {
         super(injector);
 
@@ -49,31 +56,29 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
         _dashboardService.subscribePeriodChange(
             this.onDailyStatsPeriodChanged.bind(this));
+
+        this.bankAccountsService = bankAccountsService;
     }
 
     ngOnInit() {
-        this.getAccountTotals();
+       this.getAccountTotals();
     }
 
     getAccountTotals(): void {
-        if (!this.waitForBankAccounts) {
             this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
                 .subscribe((result) => {
                     this.accountsData = result;
                 });
-        }
     }
 
     getDailyStats(): void {
-        if (!this.waitForBankAccounts && !this.waitForPeriods) {
             this.startLoading();
             this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
+                .pipe(finalize(() => this.finishLoading()))
                 .subscribe(result => {
                     this.dailyStatsData = result;
                     this.setDailyStatsAmount();
-                }, () => this.finishLoading(),
-                () => this.finishLoading());
-        }
+                });
     }
 
     navigateTo() {
@@ -81,7 +86,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     filterByBankAccounts(bankAccountData) {
-        this.waitForBankAccounts = false;
+        //this.waitForBankAccounts = false;
         this.isActive = bankAccountData.isActive;
         this.visibleAccountCount = bankAccountData.visibleAccountCount;
         this.bankAccountIds = bankAccountData.selectedBankAccountIds;
@@ -112,7 +117,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             this.endDate = currentDate;
         }
 
-        this.waitForPeriods = false;
+        //this.waitForPeriods = false;
         this.getDailyStats();
     }
 

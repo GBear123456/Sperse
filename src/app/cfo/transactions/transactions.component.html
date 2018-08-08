@@ -272,8 +272,8 @@
     </div>
 </div>
 <bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
-                      [highlightedBankAccountIds]="bankAccounts"
                       useGlobalCache="true"
-                      (onBankAccountsSelected)="applyTotalBankAccountFilter($event)">
+                      [highlightedBankAccountIds]="bankAccounts"
+                      (onApplySelected)="applyTotalBankAccountFilter($event)">
 </bank-accounts-select>
 <app-transaction-detail-info [transactionId]="transactionId" (onTooltipClosed)="refreshDataGrid()"></app-transaction-detail-info>

@@ -13,7 +13,7 @@
                 </div>
             </div>
         </dx-tooltip>
-        <div class="value" id="valueTotal">{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <div class="value" id="valueTotal">{{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
         <div class="name">{{l('Current_Balance')}}</div>
     </div>
     <div class="account-item dailyStats">
@@ -41,10 +41,10 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseenter()">
         <a class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountIds.length && bankAccountIds.length !== visibleAccountCount ? bankAccountIds.length + ' of ': ''}}{{ visibleAccountCount }}</div>
+        <div class="value">{{ bankAccountsService.accountsAmount$ | async }}</div>
         <div class="name">
-            {{bankAccountIds.length ? l(isActive ? 'Active' : 'Disabled') : ''}} {{l((bankAccountIds.length ? '': 'Total_') + 'Accounts')}}
-            <ng-container *ngIf="bankAccountIds.length">
+            {{(bankAccountsService.filteredBankAccounts$ | async)?.length ? l(bankAccountsService.cachedData.isActive ? 'Active' : 'Disabled') : ''}} {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
+            <ng-container *ngIf="(bankAccountsService.filteredBankAccounts$ | async)?.length">
                 <span class="filtered">*</span>
             </ng-container>
         </div>

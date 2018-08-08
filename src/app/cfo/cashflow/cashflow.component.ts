@@ -1,8 +1,9 @@
 /** Core imports */
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import DevExpress from 'devextreme/bundles/dx.all';
 import config from 'devextreme/core/config';
@@ -14,8 +15,8 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, forkJoin, of, from } from 'rxjs';
-import { pluck, mergeMap, map, filter, toArray } from 'rxjs/operators';
+import { BehaviorSubject, Subject, Subscription, Observable, forkJoin, from, of, combineLatest } from 'rxjs';
+import { distinctUntilChanged, first, filter, pluck, mergeMap, map, toArray, skip, skipWhile, switchMap } from 'rxjs/operators';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
 import * as _ from 'underscore.string';
@@ -35,6 +36,7 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import {
     CashflowServiceProxy,
     StatsFilter,
@@ -51,6 +53,7 @@ import {
     InstanceType10,
     InstanceType17,
     InstanceType18,
+    SyncAccountBankDto,
     UpdateForecastInput,
     CashFlowStatsDetailDtoStatus,
     AddForecastInput,
@@ -130,7 +133,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
     transactionId: any;
-    selectedBankAccounts;
+    selectedBankAccountsIds;
     sliderReportPeriod = {
         start: null,
         end: null,
@@ -169,6 +172,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Bank accounts of user with extracted bank accounts */
     private bankAccounts: BankAccountDto[];
     private activeBankAccounts: BankAccountDto[];
+
+    private syncAccounts: any;
 
     /** Source of the cashflow table (data fields descriptions and data) */
     dataSource;
@@ -763,6 +768,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     tabularFontName;
 
+    private _checkSelectedAccountsChanges: Subject<null> = new Subject();
+    private checkSelectedAccountsChanges$ = this._checkSelectedAccountsChanges.asObservable();
+    private selectedAccountsSubscription: Subscription;
+
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -777,7 +786,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _calculatorService: CalculatorService,
                 private _cellsCopyingService: CellsCopyingService,
                 private cashflowService: CashflowService,
-                private _bankAccountsService: BankAccountsService
+                private _bankAccountsService: BankAccountsService,
+                private _router: Router
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(0);
@@ -801,28 +811,40 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter.currencyId = this.currencyId;
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTreeObservable = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
+        let getCashFlowInitialData$ = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
+        let getForecastModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+        let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
-        forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
-            .subscribe(result => {
+        this._bankAccountsService.load();
+
+        /** Reload stats data if selected accounts changed and component state is becomes active (after return to this cached component )*/
+        this._bankAccountsService.selectedBankAccountsIds$.pipe(
+            /** To avoid refresh after changing in this component */
+            skipWhile(() => this._route['_routerState'].snapshot.url === this._router.url),
+            /** Delay until checkSelected method call next in activate method */
+            switchMap(() => this.checkSelectedAccountsChanges$)
+        ).subscribe(() => this.loadGridDataSource() );
+
+        const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
+        forkJoin(getCashFlowInitialData$, getForecastModels$, getCategoryTree$, getCashflowGridSettings, syncAccounts$)
+            .subscribe(([initialData, forecastModels, categoryTree, cashflowSettings, syncAccounts]) => {
                 /** Initial data handling */
-                this.handleCashFlowInitialResult(result[0], result[4]);
+                this.handleCashFlowInitialResult(initialData, syncAccounts);
 
                 /** Forecast models handling */
-                this.handleForecastModelResult(result[1]);
+                this.handleForecastModelResult(forecastModels);
 
                 /** Handle the get categories response */
-                this.handleGetCategoryTreeResult(result[2]);
+                this.handleGetCategoryTreeResult(categoryTree);
 
                 /** Handle the get cashflow grid settings response*/
-                this.handleGetCashflowGridSettingsResult(result[3]);
+                this.handleGetCashflowGridSettingsResult(cashflowSettings);
 
                 this.initFiltering();
+
+                this.loadGridDataSource();
             });
 
         this.initHeadlineConfig();
@@ -947,7 +969,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
                 }
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.selectedBankAccounts = filter.items.element.value;
+                    /** apply filter on top */
+                    this._bankAccountsService.applyFilter();
+                    /** apply filter in sidebar */
+                    filter.items.element.setValue(this._bankAccountsService.cachedData.selectedBankAccountIds, filter);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -1005,18 +1030,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Handle the subscription result from getInitialData Observable
      * @param initialDataResult
      */
-    handleCashFlowInitialResult(initialDataResult, bankAccounts) {
+    handleCashFlowInitialResult(initialDataResult, syncAccounts) {
         this.initialData = initialDataResult;
         this.cashflowTypes = this.initialData.cashflowTypes;
         this.addCashflowType(Total, this.l('Ending Cash Balance'));
         this.addCashflowType(NetChange, this.l('Net Change'));
         this.bankAccounts = this.initialData.banks.map(x => x.bankAccounts).reduce((x, y) => x.concat(y), []);
         this.activeBankAccounts = this.bankAccounts.filter(b => b.isActive);
-        this.createFilters(initialDataResult, bankAccounts);
+        this.syncAccounts = syncAccounts;
+        this.createFilters(initialDataResult, syncAccounts);
         this.setupFilters(this.filters);
     }
 
-    createFilters(initialData, bankAccounts) {
+    createFilters(initialData, syncAccounts) {
         this.filters = [
             new FilterModel({
                 field: 'accountIds',
@@ -1025,7 +1051,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: {
                     element: new BankAccountFilterModel(
                         {
-                            dataSource: bankAccounts,
+                            dataSource: syncAccounts,
                             nameField: 'name',
                             keyExpr: 'id'
                         }
@@ -1331,6 +1357,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (period === StatsFilterGroupByPeriod.Monthly) {
             this.requestFilter.dailyPeriods = this.getDailyPeriods();
         }
+        this.requestFilter.accountIds = this._bankAccountsService.cachedData.selectedBankAccountIds;
 
         /** Clear cache of tree paths */
         this.treePathes = {};
@@ -1844,13 +1871,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     refreshDataGrid() {
+        this.startLoading();
         this.noRefreshedAfterSync = false;
         this.getUserPreferencesForCell.cache = {};
         this.getCellOptionsFromCell.cache = {};
         this.getNewTextWidth.cache = {};
         this.monthsDaysLoadedPathes = [];
         this.anotherPeriodAccountsValues.clear();
-        this.operations.bankAccountSelector.getBankAccounts(true);
+        this._bankAccountsService.loadSyncAccounts().pipe(first()).subscribe(() => {
+            this._bankAccountsService.applyFilter();
+            this.loadGridDataSource();
+            this.finishLoading();
+        });
         this.initHeadlineConfig();
     }
 
@@ -5317,7 +5349,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
 
-                let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccounts, paramValue);
+                let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccountsIds, paramValue);
                 this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
                 this.getCellOptionsFromCell.cache = {};
@@ -5444,13 +5476,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     setBankAccountsFilter(data) {
         let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        if (!accountFilter) {
-            setTimeout(() => { this.setBankAccountsFilter(data); }, 300);
-        } else {
-            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.operations.bankAccountSelector.initDataSource);
-            this._filtersService.change(accountFilter);
-        }
-        this.allowChangingForecast = data.isActive;
+        accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this._bankAccountsService.cachedData, this.syncAccounts);
+        this._filtersService.change(accountFilter);
+        this._bankAccountsService.applyFilter();
+        this.allowChangingForecast = this._bankAccountsService.cachedData.isActive;
     }
 
     discardDiscrepancy(cellObj) {
@@ -5682,7 +5711,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.setupFilters(this.filters);
         this.initFiltering();
         this.pivotGrid.instance.repaint();
-        this.operations.bankAccountSelector.handleSelectedBankAccounts();
+        this._bankAccountsService.loadSyncAccounts();
+        this.selectedAccountsSubscription = this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(
+            () => this._checkSelectedAccountsChanges.next()
+        );
         this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
@@ -5691,6 +5723,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
+        if (this.selectedAccountsSubscription)
+            this.selectedAccountsSubscription.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 

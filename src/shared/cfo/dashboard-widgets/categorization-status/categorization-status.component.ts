@@ -4,6 +4,7 @@ import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoCl
 import { Router } from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 
 @Component({
     selector: 'app-categorization-status',
@@ -22,7 +23,8 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         private _dashboardService: DashboardServiceProxy,
         private _classificationService: ClassificationServiceProxy,
         public dialog: MatDialog,
-        private _router: Router
+        private _router: Router,
+        private bankAccountsService: BankAccountsService
     ) {
         super(injector);
     }
@@ -33,7 +35,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
 
     getCategorizationStatus(): void {
         if (!this.waitForBankAccounts) {
-            this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.bankAccountIds)
+            this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.selectedBankAccountIds)
                 .subscribe((result) => {
                     this.categorySynchData = result;
                     this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
@@ -82,9 +84,9 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             }
         };
 
-        if (this.bankAccountFilterData.bankAccountIds && this.bankAccountFilterData.bankAccountIds.length) {
+        if (this.bankAccountFilterData.selectedBankAccountIds && this.bankAccountFilterData.selectedBankAccountIds.length) {
             filter['Account'] = {
-                element: this.bankAccountFilterData.bankAccountIds
+                element: this.bankAccountFilterData.selectedBankAccountIds
             };
         }
 

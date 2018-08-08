@@ -1,9 +1,10 @@
-import { Component, Injector, Input, Output, EventEmitter, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 
 @Component({
     selector: 'cashflow-operations',
@@ -11,29 +12,16 @@ import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-peri
     styleUrls: ['./operations.component.less']
 })
 
-export class OperationsComponent extends AppComponentBase implements OnDestroy {
+export class OperationsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
-    private initTimeout: any;
     private initReportPeriodTimeout: any;
-    private initSelectedBankAccountsTimeout: any;
     @Input('reportPeriod')
     set reportPeriod(reportPeriod) {
         clearTimeout(this.initReportPeriodTimeout);
         this.initReportPeriodTimeout = setTimeout(() => {
             this.sliderReportPeriod = reportPeriod;
         }, 300);
-    }
-    @Input('selectedBankAccounts')
-    set selectedBankAccounts(selectedBankAccounts) {
-        if (selectedBankAccounts) {
-            clearTimeout(this.initSelectedBankAccountsTimeout);
-            this.initSelectedBankAccountsTimeout = setTimeout(() => {
-                this.bankAccountSelector.setSelectedBankAccounts(selectedBankAccounts);
-                this.setBankAccountCount(selectedBankAccounts, this.visibleAccountCount);
-                this.initToolbarConfig();
-            }, 300);
-        }
     }
     @Output() repaintCashflow: EventEmitter<any> = new EventEmitter();
     @Output() onGroupBy: EventEmitter<any> = new EventEmitter();
@@ -46,7 +34,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     @Output() onReportPeriodChange: EventEmitter<any> = new EventEmitter();
     @Output() onSelectedBankAccountsChange: EventEmitter<any> = new EventEmitter();
 
-    bankAccountCount = '';
+    bankAccountCount: string;
     visibleAccountCount = 0;
     sliderReportPeriod = {
         start: null,
@@ -55,6 +43,21 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         maxDate: null
     };
     totalCount = 3;
+
+    constructor(injector: Injector,
+        private _filtersService: FiltersService,
+        private _appService: AppService,
+        private _bankAccountsService: BankAccountsService
+    ) {
+        super(injector);
+    }
+
+    ngOnInit() {
+        this._bankAccountsService.accountsAmount$.subscribe( amount => {
+            this.bankAccountCount = amount;
+            this.initToolbarConfig();
+        });
+    }
 
     initToolbarConfig() {
         this._appService.toolbarConfig = [
@@ -285,14 +288,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
         ];
     }
 
-    constructor(injector: Injector,
-        private _filtersService: FiltersService,
-        private _appService: AppService
-    ) {
-        super(injector);
-        this.initToolbarConfig();
-    }
-
     exportTo(event) {
         this.download.emit(event);
     }
@@ -340,18 +335,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     }
 
     filterByBankAccounts(data) {
-        this.visibleAccountCount = data.visibleAccountCount;
-        this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
         this.onSelectedBankAccountsChange.emit(data);
-    }
-
-    setBankAccountCount(bankAccountIds, visibleAccountCount) {
-        if (!bankAccountIds || !bankAccountIds.length)
-            this.bankAccountCount = '';
-        else if (!visibleAccountCount || bankAccountIds.length === visibleAccountCount)
-            this.bankAccountCount = bankAccountIds.length;
-        else
-            this.bankAccountCount = bankAccountIds.length + ' of ' + visibleAccountCount;
     }
 
     toggleBankAccountTooltip() {

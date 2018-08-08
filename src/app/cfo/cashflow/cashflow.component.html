@@ -4,7 +4,6 @@
 
 <cashflow-operations
     [reportPeriod]="sliderReportPeriod"
-    [selectedBankAccounts]="selectedBankAccounts"
     (repaintCashflow)="repaintDataGrid()"
     (onGroupBy)="changeGroupBy($event)"
     (handleFullscreen)="toggleFullscreen(getFullscreenElement())"

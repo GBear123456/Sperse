@@ -1,7 +1,7 @@
 <div class="filter-actions" #filterActions>
     <div class="filter-by-types">
-        <dx-tabs [dataSource]="bankAccountTypesForSelect"
-                 [selectedItem]="selectedBankAccountType"
+        <dx-tabs [dataSource]="bankAccountsService.existingBankAccountsTypes$ | async"
+                 [selectedItem]="bankAccountsService.selectedBankAccountType$ | async"
                  (onItemClick)="bankAccountTypeChanged($event)">
         </dx-tabs>
     </div>
@@ -10,7 +10,7 @@
     <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
         <dx-data-grid id="gridContainer"
                       [width]="'100%'"
-                      [(dataSource)]="syncAccountsDataSource"
+                      [dataSource]="dataSource"
                       [masterDetail]="{ enabled: false, template: 'detail' }"
                       keyExpr="syncAccountId"
                       [showColumnHeaders]="showColumnHeaders"
@@ -30,7 +30,6 @@
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
             <dxi-column dataField="name" caption="{{l('Account')}}" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
             <dxi-column dataField="syncAccountStatus" caption="{{l('BankAccountsWidget_Sync_status')}}" [width]="200" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
-            <dxi-column dataField="visible" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption="" cellTemplate="invisibleTemplate" cssClass="no-padding"></dxi-column>
             <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
@@ -67,8 +66,7 @@
                         <dxi-column dataField="highlighted" [allowEditing]="false" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
                         <dxi-column dataField="selected" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                         <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="true"></dxi-column>
-                        <dxi-column dataField="visible" [allowEditing]="false" selectedFilterOperation="=" [filterValue]="true" [width]="1" caption=""
-                                    cellTemplate="invisibleTemplate"></dxi-column>
+
                         <dxi-column dataField="accountNumber" cssClass="accountNumber" [allowEditing]="false" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="true"></dxi-column>
                         <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                     cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
@@ -84,7 +82,6 @@
                         <div *dxTemplate="let cell of 'typeTemplate'">
                             <span [attr.data-text]="cell.text | lowercase">{{cell.text}}</span>
                         </div>
-                        <div *dxTemplate="let cell of 'invisibleTemplate'"></div>
                         <div *dxTemplate="let cell of 'businessEntityEditSelect'">
                             <dx-select-box [items]="businessEntities"
                                            displayExpr="name"
@@ -121,7 +118,6 @@
                     <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y '}}</div>
                 </ng-container>
             </div>
-            <div *dxTemplate="let cell of 'invisibleTemplate'"></div>
 
         </dx-data-grid>
     </div>

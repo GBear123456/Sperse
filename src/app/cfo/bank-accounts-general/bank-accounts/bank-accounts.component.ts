@@ -2,10 +2,9 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Observable, Subscription } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { finalize, first } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
-//import * as _ from 'underscore';
 
 /** Application imports */
 import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
@@ -13,7 +12,7 @@ import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
 import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { InstanceType, SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
+import { InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'bank-accounts-component',
@@ -21,12 +20,12 @@ import { InstanceType, SyncAccountBankDto } from '@shared/service-proxies/servic
     styleUrls: ['./bank-accounts.component.less']
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    syncAccounts$: Observable<SyncAccountBankDto[]>;
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
     quovoHandler: any;
     bankAccountsService: BankAccountsService;
     private readonly LOCAL_STORAGE = 0;
+    syncAccounts;
 
     constructor(
         injector: Injector,
@@ -44,10 +43,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
 
     subscribeToObservables() {
         this.syncCompletedSubscription = this._synchProgress.syncCompleted$.subscribe(() => {
-            this.bankAccountsService.load();
+            this.refresh();
         });
         this.refreshSubscription = this._bankAccountsGeneralService.refresh$.subscribe( () => {
-            this.bankAccountsService.load();
+            this.refresh();
         });
     }
 
@@ -57,9 +56,8 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     ngOnInit() {
-        this.bankAccountsService.load();
-        /** Get new source if amount of bank accounts changes */
-        this.syncAccounts$ = this.bankAccountsService.filteredSyncAccounts$.pipe(distinctUntilChanged((oldSyncAccounts, newSyncAccounts) => oldSyncAccounts.length === newSyncAccounts.length));
+        this.activate();
+        this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
         this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
     }
 
@@ -67,13 +65,23 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this.deactivate();
     }
 
+    refresh() {
+        const elementForSpinner = document.querySelector('.frame-wrap');
+        abp.ui.setBusy(elementForSpinner);
+        this.bankAccountsService.loadSyncAccounts().pipe(finalize(() => { abp.ui.clearBusy(elementForSpinner); }))
+            .subscribe(() => {});
+    }
+
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
-        this.bankAccountsService.changeSelectedBusinessEntities(selectedEntitiesIds);
+        this.bankAccountsService.changeFilter({
+            selectedBusinessEntitiesIds: selectedEntitiesIds,
+            selectedBankAccountIds: null
+        });
+        this.bankAccountsService.applyFilter();
     }
 
     selectedAccountsChange(syncAccounts) {
-        const selectedBankAccounts = syncAccounts.reduce((selectedBankAccountsIds, syncAccount) => selectedBankAccountsIds.concat(syncAccount.data.bankAccounts.filter(bankAccount => bankAccount.selected).map(bankAccount => bankAccount.id)), []);
-        this.bankAccountsService.changeSelectedBankAccountsIds(selectedBankAccounts);
+        this.bankAccountsService.applyFilter();
     }
 
     onUpdateAccount(event) {
@@ -104,16 +112,15 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this._synchProgress.refreshSyncComponent();
     }
 
-    isActiveChanged(e) {
-        this.bankAccountsService.changeFilter({
-            isActive: e.value,
-            selectedBankAccountIds: null
-        });
+    activate() {
+        /** Load sync accounts */
+        this.bankAccountsService.loadSyncAccounts(false)/*.subscribe(() => {
+            this.bankAccountsService.applyFilter();
+        });*/
     }
 
-    activate() {}
-
     deactivate() {
+        //this.bankAccountsService.applyFilter();
         this.unsubscribeSubscriptions();
     }
 }

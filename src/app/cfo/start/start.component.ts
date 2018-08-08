@@ -41,6 +41,9 @@ export class StartComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
+        if (this.dashboardComponent) {
+            this.dashboardComponent.deactivate();
+        }
         CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
     }
 }

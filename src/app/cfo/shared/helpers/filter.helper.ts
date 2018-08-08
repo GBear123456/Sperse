@@ -32,7 +32,7 @@ export class FilterHelpers {
         }
     }
 
-    static filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {        
+    static filterByAccount(filter: FilterModel, requestFilter: StatsFilter) {
         if (filter.items && filter.items.element) {
             requestFilter.accountIds = [];
             filter.items.element['dataSource'].forEach((syncAccount, i) => {
@@ -40,7 +40,7 @@ export class FilterHelpers {
                     if (bankAccount['selected']) {
                         requestFilter.accountIds.push(+bankAccount.id);
                     }
-                });                
+                });
             });
         }
     }

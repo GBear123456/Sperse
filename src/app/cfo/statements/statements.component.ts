@@ -1,20 +1,31 @@
+/** Core imports */
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
+/** Third party imports */
+import { DxDataGridComponent } from 'devextreme-angular';
+import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
+import { Subject, Subscription, forkJoin } from 'rxjs';
+import { finalize, first, skipWhile, switchMap } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { AppService } from '@app/app.service';
+import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
+import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
+import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 import { FiltersService } from '@shared/filters/filters.service';
-import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
-import { CacheService } from 'ng2-cache-service';
-import { DxDataGridComponent } from 'devextreme-angular';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
-
 import {
     StatsFilter,
     BankAccountsServiceProxy,
@@ -23,16 +34,7 @@ import {
     CashFlowForecastServiceProxy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
-
-import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-
-import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import * as _ from 'underscore';
-import * as moment from 'moment';
-import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
-import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
-import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
+import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -57,6 +59,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         maxDate: moment().utc().add(10, 'year').year()
     };
 
+    private syncAccounts: any;
     private requestFilter: StatsFilter;
     public statementsData: BankAccountDailyStatDto[] = [];
 
@@ -65,10 +68,43 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         precision: 2
     };
 
+    private _checkSelectedAccountsChanges: Subject<null> = new Subject();
+    private checkSelectedAccountsChanges$ = this._checkSelectedAccountsChanges.asObservable();
+    private selectedAccountsSubscription: Subscription;
+
+    constructor(
+        private injector: Injector,
+        private _appService: AppService,
+        private _filtersService: FiltersService,
+        private _bankAccountService: BankAccountsServiceProxy,
+        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private _cacheService: CacheService,
+        private bankAccountsService: BankAccountsService,
+        private _router: Router
+    ) {
+        super(injector);
+
+        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        this._cacheService = this._cacheService.useStorage(0);
+
+        this.requestFilter = new StatsFilter();
+        this.requestFilter.currencyId = 'USD';
+        this.requestFilter.startDate = moment().utc().subtract(2, 'year');
+        this.requestFilter.endDate = moment().utc().add(1, 'year');
+    }
+
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Statements')],
-            onRefresh: () => this.bankAccountSelector.getBankAccounts(true),
+            onRefresh: () => {
+                abp.ui.setBusy();
+                this.bankAccountsService.loadSyncAccounts().pipe(
+                    first(),
+                    finalize(() => abp.ui.clearBusy())
+                ).subscribe(() => {
+                    this.setBankAccountsFilter();
+                });
+            },
             iconSrc: 'assets/common/icons/credit-card-icon.svg'
         };
     }
@@ -189,45 +225,41 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         ];
     }
 
-    constructor(
-        injector: Injector,
-        private _appService: AppService,
-        private _filtersService: FiltersService,
-        private _bankAccountService: BankAccountsServiceProxy,
-        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-        private _cacheService: CacheService,
-        private _bankAccountsService: BankAccountsService
-    ) {
-        super(injector);
-
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this._cacheService = this._cacheService.useStorage(0);
-
-        this.requestFilter = new StatsFilter();
-        this.requestFilter.currencyId = 'USD';
-        this.requestFilter.startDate = moment().utc().subtract(2, 'year');
-        this.requestFilter.endDate = moment().utc().add(1, 'year');
-    }
-
     ngOnInit(): void {
         super.ngOnInit();
 
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountService.getBankAccounts(InstanceType[this.instanceType], this.instanceId, 'USD');
-        forkJoin(getForecastModelsObservable, getBankAccountsObservable)
-            .subscribe(result => {
-                this.handleForecastModelResult(result[0]);
-                this.createFilters(result[1]);
+        this.bankAccountsService.load();
+        let forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+        let syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
+        this.bankAccountsService.accountsAmount$.subscribe(amount => {
+            this.bankAccountCount = amount;
+            this.initToolbarConfig();
+        });
+        forkJoin(forecastsModels$, syncAccounts$)
+            .subscribe(([forecastsModels, syncAccounts]) => {
+                this.syncAccounts = syncAccounts;
+                this.handleForecastModelResult(forecastsModels);
+                this.createFilters(syncAccounts);
                 this._filtersService.setup(this.filters);
                 this.initFiltering();
                 this.initToolbarConfig();
+                this.setBankAccountsFilter();
             });
 
         this.initHeadlineConfig();
-        this.initToolbarConfig();
+
+        /** Reload data if selected accounts changed and component state becomes active (after return to this cached component )*/
+        this.bankAccountsService.selectedBankAccountsIds$.pipe(
+            /** To avoid refresh after changing in this component */
+            skipWhile(() => this._route['_routerState'].snapshot.url === this._router.url),
+            /** Delay until checkSelected method call next in activate method */
+            switchMap(() => this.checkSelectedAccountsChanges$)
+        ).subscribe(() => {
+            this.setBankAccountsFilter();
+        });
     }
 
-    createFilters(bankAccounts) {
+    createFilters(syncAccounts) {
         this.filters = [
             new FilterModel({
                 component: FilterCalendarComponent,
@@ -245,7 +277,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 items: {
                     element: new BankAccountFilterModel(
                         {
-                            dataSource: bankAccounts,
+                            dataSource: syncAccounts,
                             nameField: 'name',
                             keyExpr: 'id'
                         })
@@ -350,8 +382,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         this.sliderReportPeriod.end = this.sliderReportPeriod.maxDate;
                 }
                 if (filter.caption.toLowerCase() === 'account') {
-                    this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
-                    this.setBankAccountCount(filter.items.element.value, this.visibleAccountCount);
+                    /** apply filter on top */
+                    this.bankAccountsService.applyFilter();
+                    /** apply filter in sidebar */
+                    filter.items.element.setValue(this.bankAccountsService.cachedData.selectedBankAccountIds, filter);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -364,10 +398,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.refreshData();
             this.initToolbarConfig();
         });
-    }
-
-    setBankAccountCount(bankAccountIds, visibleAccountCount) {
-        this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     }
 
     toggleBankAccountTooltip() {
@@ -430,16 +460,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.change(dateFilter);
     }
 
-    setBankAccountsFilter(data) {
+    setBankAccountsFilter() {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        if (!accountFilter) {
-            setTimeout(() => { this.setBankAccountsFilter(data); }, 300);
-        } else {
-            accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, data, this.bankAccountSelector.initDataSource);
-            this.visibleAccountCount = data.visibleAccountCount;
-            this.setBankAccountCount(data.bankAccountIds, data.visibleAccountCount);
-            this._filtersService.change(accountFilter);
-        }
+        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.cachedData, this.syncAccounts);
+        this._filtersService.change(accountFilter);
+        this.bankAccountsService.applyFilter();
     }
 
     showCompactRowsHeight() {
@@ -460,7 +485,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.initToolbarConfig();
         this._filtersService.setup(this.filters);
         this.initFiltering();
-        this.bankAccountSelector.handleSelectedBankAccounts();
+        this.bankAccountsService.loadSyncAccounts();
+        this.selectedAccountsSubscription = this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => this._checkSelectedAccountsChanges.next());
         this.synchProgressComponent.requestSyncAjax();
         this.getRootComponent().overflowHidden(true);
     }
@@ -469,6 +495,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
+        if (this.selectedAccountsSubscription)
+            this.selectedAccountsSubscription.unsubscribe();
         this.getRootComponent().overflowHidden();
     }
 }

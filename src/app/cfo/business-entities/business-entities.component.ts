@@ -1,17 +1,21 @@
+/** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 
-import { appModuleAnimation } from '@shared/animations/routerTransition';
+/** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
-
 import { Observable, forkJoin } from 'rxjs';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
+import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 
 @Component({
     selector: 'business-entities',
@@ -33,7 +37,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _businessEntityService: BusinessEntityServiceProxy,
-        private _router: Router) {
+        private _router: Router,
+        private bankAccountsService: BankAccountsService) {
         super(injector);
         this.rootComponent = this.getRootComponent();
     }
@@ -66,7 +71,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 }
             }
         };
-
+        this.bankAccountsService.load();
         this.isAddButtonDisabled = !this.isInstanceAdmin;
     }
 
@@ -151,16 +156,17 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     openBankAccountSelectComponent(businessEntity) {
         this.lastSelectedBusinessEntity = businessEntity;
         this.bankAccountSelector.targetBankAccountsTooltip = '#business-entity-arrow-' + businessEntity.Id;
-        //this.bankAccountSelector.highlightedBankAccountIds = businessEntity.BankAccountIds;
-        this.bankAccountSelector.setSelectedBankAccounts(businessEntity.BankAccountIds);
+        this.bankAccountsService.changeSelectedBusinessEntities([], false);
+        this.bankAccountsService.changeSelectedBankAccountsIds(businessEntity.BankAccountIds, false);
+        this.bankAccountsService.applyFilter();
         this.bankAccountSelector.toggleBankAccountTooltip();
     }
 
-    applyBankAccountIds(data) {
+    applyBankAccountIds() {
         if (this.lastSelectedBusinessEntity) {
-            let bankAccountIdsForLink = _.difference(data.bankAccountIds, this.lastSelectedBusinessEntity.BankAccountIds);
-            let bankAccountIdsForRemoveLink = _.difference(this.lastSelectedBusinessEntity.BankAccountIds, data.bankAccountIds);
-            let bankAccountIdsForRelink = _.intersection(bankAccountIdsForLink, data.usedBankAccountIds);
+            let bankAccountIdsForLink = _.difference(this.bankAccountsService._syncAccountFilter.value.selectedBankAccountIds, this.lastSelectedBusinessEntity.BankAccountIds);
+            let bankAccountIdsForRemoveLink = _.difference(this.lastSelectedBusinessEntity.BankAccountIds, this.bankAccountsService._syncAccountFilter.value.selectedBankAccountIds);
+            let bankAccountIdsForRelink = _.intersection(bankAccountIdsForLink, this.bankAccountsService._syncAccountFilter.value.usedBankAccountIds);
             if (bankAccountIdsForRelink && bankAccountIdsForRelink.length) {
                 abp.message.confirm(this.l('BusinessEntities_UpdateBankAccount_Confirm_Text'), this.l('BusinessEntities_UpdateBankAccount_Confirm_Title'), (result) => {
                     if (result) {
@@ -199,7 +205,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             )
                 .subscribe((result) => {
                     this.dataGrid.instance.refresh();
-                    this.bankAccountSelector.getBankAccounts();
                     this.lastSelectedBusinessEntity = null;
                 });
         }

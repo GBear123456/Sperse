@@ -9,20 +9,20 @@
                             <div class="dx-field">
                                 <div class="dx-field-label"><span class="business-entity-test">{{l('Financial_Accounts_For')}}</span></div>
                                 <div class="dx-field-value">
-                                    <ng-container *ngIf="!businessEntityExist">
+                                    <ng-container *ngIf="!(bankAccountsService.allBusinessEntities$ | async)?.length">
                                         <div class="label-container">
                                             <span class="tag-value"> {{l('All_Entities')}} </span>
                                         </div>
                                     </ng-container>
-                                    <ng-container *ngIf="businessEntityExist">
-                                        <dx-tag-box [dataSource]="businessEntities"
+                                    <ng-container *ngIf="(bankAccountsService.allBusinessEntities$ | async)?.length">
+                                        <dx-tag-box [dataSource]="bankAccountsService.allBusinessEntities$ | async"
                                                     displayExpr="name"
                                                     valueExpr="id"
                                                     placeholder="All Entities"
                                                     showSelectionControls="true"
                                                     tagTemplate="customTagTemplate"
-                                                    (onClosed)="businessEntitySelectedChange($event)"
-                                                    [(value)]="selectedBusinessEntitiesIds">
+                                                    (onClosed)="changeSelectedBusinessEntities($event)"
+                                                    [value]="bankAccountsService.selectedBusinessEntitiesIds$ | async">
 
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                                 <span class="tag-value"> {{tag.name}}  </span>
@@ -39,13 +39,12 @@
                 <ng-container *ngIf="showIsActiveFilter">
                     <div class="filter-actions-is-active">
                         <div class="is-active-filter">
-                            <span>{{isActive ? l('Active') : l('Disabled')}}</span>
-                            <dx-switch [(value)]="isActive" (onValueChanged)="isActiveChanged($event)" [width]="32"></dx-switch>
+                            <span>{{bankAccountsService.cachedData.isActive ? l('Active') : l('Disabled')}}</span>
+                            <dx-switch [value]="bankAccountsService.cachedData.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
                         </div>
                     </div>
                 </ng-container>
-                <bank-accounts-widget [dataSource]="syncAccountsDataSource"
-                                      [showAdvancedColumns]="true"
+                <bank-accounts-widget [showAdvancedColumns]="true"
                                       [highlightedBankAccountIds]="highlightedBankAccountIds"
                                       [highlightUsedRows]="highlightUsedRows">
                 </bank-accounts-widget>

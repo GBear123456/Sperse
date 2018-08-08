@@ -15,7 +15,7 @@
                         </h2>
                         <add-account-button></add-account-button>
                     </header>
-                    <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()" waitForBankAccounts="true" waitForPeriods="true"></app-accounts>
+                    <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
                 </section>
                 <section class="analytics">
                     <div class="analytics-wrap">
@@ -43,8 +43,7 @@
                 </section>
             </div>
             <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
-                                    useGlobalCache="true"
-                                    (onBankAccountsSelected)="filterByBankAccounts($event)">
+                                  useGlobalCache="true">
             </bank-accounts-select>
         </dx-scroll-view>
     </div>
