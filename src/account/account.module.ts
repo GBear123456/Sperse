@@ -24,6 +24,7 @@ import { TenantChangeModalComponent } from './shared/tenant-change-modal.compone
 import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
+import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 
 @NgModule({
     imports: [
@@ -39,6 +40,7 @@ import { CompleteTenantRegistrationComponent } from './register/complete-tenant-
         CommonModule,
 
         UtilsModule,
+        PaymentInfoModule,
         ServiceProxyModule,
         AccountRoutingModule
     ],

@@ -293,6 +293,11 @@ label {
     padding-top: 0;
 }
 
+/deep/ input[type="radio"]:checked + label::before {
+    background-color: #f58023 !important;
+    border-color: #f58023 !important;
+}
+
 .toggle-password {
     display: inline-block;
     text-transform: uppercase;
