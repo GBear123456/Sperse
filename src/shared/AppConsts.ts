@@ -54,7 +54,7 @@ export class AppConsts {
     static readonly PipelinePurposeIds = {
         lead: 'L',
         order: 'O',
-        activity: 'T'
+        activity: 'A'
     };
 
     static readonly masks = {
