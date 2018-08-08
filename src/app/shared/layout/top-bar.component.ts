@@ -31,20 +31,25 @@ export class TopBarComponent extends AppComponentBase {
     };
 
     constructor(injector: Injector,
-                private _appSessionService: AppSessionService,
-                private _appService: AppService,
-                public router: Router) {
+         private _appSessionService: AppSessionService,
+         private _appService: AppService,
+         public router: Router
+    ) {
         super(injector);
 
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
-                setTimeout(() => {
-                    this.menu.items.forEach((item, i) => {
-                        let route = this.router.url.split('?')[0];
-                        if (route === item.route || _.contains(item.alterRoutes, route))
-                            this.selectedIndex = i;
-                    });
-                }, 300);
+                let currModuleName = (this.config.name || '').toLowerCase();
+                if (currModuleName && currModuleName != _appService.getModule())
+                    _appService.initModule();
+                else
+                    setTimeout(() => {
+                        this.menu.items.forEach((item, i) => {
+                            let route = this.router.url.split('?')[0];
+                            if (route === item.route || _.contains(item.alterRoutes, route))
+                                this.selectedIndex = i;
+                        });
+                    }, 300);
             }
         });
 
@@ -55,8 +60,8 @@ export class TopBarComponent extends AppComponentBase {
                 this.initMenu(config['navigation'], 0)
             );
 
-            this.updateNavMenu();
             _appService.topMenu = this.menu;
+            this.updateNavMenu(true);
         });
     }
 
@@ -83,8 +88,8 @@ export class TopBarComponent extends AppComponentBase {
             this.router.navigate([event.itemData.route]);
     }
 
-    updateNavMenu() {
-        if (window.innerWidth != this.lastInnerWidth) {
+    updateNavMenu(forced = false) {
+        if (forced || (window.innerWidth != this.lastInnerWidth)) {
             this.navbarItems = [];
             this.adaptiveMenuItems = [];
             clearTimeout(this.updateTimeout);

@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
-import { Router } from '@angular/router';
 
 import * as moment from 'moment';
 
@@ -19,14 +18,12 @@ import { FiltersService } from '@shared/filters/filters.service';
 export class AppComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
     private viewContainerRef: ViewContainerRef;
-    private router: Router;
 
     installationMode = false;
 
     public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef,
-        private _router: Router,
         private _chatSignalrService: ChatSignalrService,
         private _appSessionService: AppSessionService,
         public appService: AppService,
@@ -34,7 +31,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     ) {
         super(injector);
         this.viewContainerRef = viewContainerRef; // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
-        this.router = _router;
     }
 
     ngOnInit(): void {
