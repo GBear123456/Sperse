@@ -2290,13 +2290,13 @@ export class BillingSubscriptionServiceProxy {
     }
 
     /**
-     * @userId (optional) 
+     * @customerId (optional) 
      * @return Success
      */
-    getSubscriptionsHistory(userId: number | null | undefined): Observable<BillingSubscriptionDto[]> {
+    getSubscriptionsHistory(customerId: number | null | undefined): Observable<BillingSubscriptionDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/BillingSubscription/GetSubscriptionsHistory?";
-        if (userId !== undefined)
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        if (customerId !== undefined)
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
