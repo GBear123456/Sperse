@@ -248,6 +248,30 @@
                             </div>
                         </div>
                     </tab>
+                    <tab heading="{{l('Base Commerce Link')}}" *ngIf="true" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="BCUserName">{{l("User Name")}}</label>
+                                <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="BCPassword">{{l("Password")}}</label>
+                                <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="BCKey">{{l("Key")}}</label>
+                                <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
+                            </div>
+                            <h5>{{l("Environment")}}</h5>
+                            <div class="md-checkbox-list">
+                                <label for="BCIsSandBox" class="m-checkbox">
+                                    <input id="BCIsSandBox" class="md-check" type="checkbox" name="BCIsSandBox" [(ngModel)]="baseCommercePaymentSettings.sandBox">
+                                    {{l("SandBox")}}
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </tab>
                     <tab *ngIf="true" heading="{{l('Invoice')}}" customClass="m-tabs__item">
                         <!-- *ngIf="true" is a workaround for https://github.com/valor-software/ng2-bootstrap/issues/823 -->
                         <h5>{{l("InvoiceInformation")}}</h5>

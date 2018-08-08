@@ -6,14 +6,19 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { DefaultTimezoneScope, SendTestEmailInput, TenantSettingsEditDto, TenantSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    DefaultTimezoneScope, SendTestEmailInput, TenantSettingsEditDto, TenantSettingsServiceProxy,
+    IdcsSettings, BaseCommercePaymentSettings, TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
+import { Observable, forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['./tenant-settings.component.less']
+    styleUrls: ['./tenant-settings.component.less'],
+    providers: [TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
@@ -26,6 +31,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
     loading = false;
     settings: TenantSettingsEditDto = undefined;
+    idcsSettings: IdcsSettings = new IdcsSettings();
+    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
+    isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
 
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
@@ -39,6 +47,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     constructor(
         injector: Injector,
         private _tenantSettingsService: TenantSettingsServiceProxy,
+        private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
+        private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService,
         private _tokenService: TokenService
     ) {
@@ -65,14 +75,28 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     getSettings(): void {
         this.loading = true;
-        this._tenantSettingsService.getAllSettings()
+
+        let requests: Observable<any>[] = [
+            this._tenantSettingsService.getAllSettings(),
+            this._tenantPaymentSettingsService.getBaseCommercePaymentSettings()
+        ];
+
+        if (this.isCreditReportFeatureEnabled)
+            requests.push(this._tenantSettingsCreditReportService.getIdcsSettings());
+
+        forkJoin(requests)
             .pipe(finalize(() => { this.loading = false; }))
-            .subscribe((result: TenantSettingsEditDto) => {
-                this.settings = result;
+            .subscribe((result) => {
+                this.settings = result[0];
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
                     this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values['Abp.Timing.TimeZone'];
                 }
+
+                this.baseCommercePaymentSettings = result[1];
+
+                if (this.isCreditReportFeatureEnabled)
+                    this.idcsSettings = result[2];
             });
     }
 
@@ -146,7 +170,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     saveAll(): void {
-        this._tenantSettingsService.updateAllSettings(this.settings).subscribe(() => {
+        let requests: Observable<any>[] = [
+            this._tenantSettingsService.updateAllSettings(this.settings),
+            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings)
+        ];
+        if (this.isCreditReportFeatureEnabled)
+            requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
+
+        forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
 
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {

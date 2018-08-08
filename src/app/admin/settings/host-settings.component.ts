@@ -3,12 +3,17 @@ import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput } from '@shared/service-proxies/service-proxies';
+import {
+    ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput,
+    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy
+} from '@shared/service-proxies/service-proxies';
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['./host-settings.component.less']
+    styleUrls: ['./host-settings.component.less'],
+    providers: [TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
@@ -18,6 +23,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     testEmailAddress: string = undefined;
     showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Application;
+    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
 
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
@@ -27,6 +33,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         injector: Injector,
         private _hostSettingService: HostSettingsServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
+        private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService
     ) {
         super(injector);
@@ -35,13 +42,16 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     }
 
     loadHostSettings(): void {
-        const self = this;
-        self._hostSettingService.getAllSettings()
-            .subscribe(setting => {
-                self.hostSettings = setting;
-                self.initialTimeZone = setting.general.timezone;
-                self.usingDefaultTimeZone = setting.general.timezoneForComparison === self.setting.get('Abp.Timing.TimeZone');
-            });
+        forkJoin(
+            this._hostSettingService.getAllSettings(),
+            this._tenantPaymentSettingsService.getBaseCommercePaymentSettings()
+        ).subscribe(([allSettings, baseCommerceSettings]) => {
+            this.hostSettings = allSettings;
+            this.initialTimeZone = allSettings.general.timezone;
+            this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
+
+            this.baseCommercePaymentSettings = baseCommerceSettings;
+        });
     }
 
     loadEditions(): void {
@@ -90,12 +100,14 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     }
 
     saveAll(): void {
-        const self = this;
-        self._hostSettingService.updateAllSettings(self.hostSettings).subscribe(result => {
-            self.notify.info(self.l('SavedSuccessfully'));
+        forkJoin(
+            this._hostSettingService.updateAllSettings(this.hostSettings),
+            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings)
+        ).subscribe(result => {
+            this.notify.info(this.l('SavedSuccessfully'));
 
-            if (abp.clock.provider.supportsMultipleTimezone && self.usingDefaultTimeZone && self.initialTimeZone !== self.hostSettings.general.timezone) {
-                self.message.info(self.l('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
+            if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.hostSettings.general.timezone) {
+                this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
                     window.location.reload();
                 });
             }
