@@ -10,12 +10,19 @@
         margin-left: calc(~"50% - 400px");
         margin-top: 150px;
 
+        p {
+            font-size: 18px;
+        }
+
         /deep/ import-progress-bar {
             position: relative;
             width: 100%;
-            height: 80px;
+            height: 90px;
             dx-progress-bar {
                 position: initial!important;
+            }
+            .dx-progressbar-status {
+                visibility: hidden;
             }
             .dx-progressbar-container {
                 border: 1px solid #ddd;

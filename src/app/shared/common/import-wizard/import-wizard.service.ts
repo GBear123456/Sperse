@@ -6,6 +6,7 @@ export class ImportWizardService {
     private subjectProgress: Subject<any>;
     private subjectCancel: Subject<undefined>;
     private subscribers: Array<Subscription> = [];
+    private statusCheckTimeout: any;
 
     public activeImportId: number = 0;
 
@@ -34,7 +35,8 @@ export class ImportWizardService {
     }
 
     setupStatusCheck(method: (callback: any) => void, initial = true) {
-        setTimeout(() => {
+        clearTimeout(this.statusCheckTimeout);
+        this.statusCheckTimeout = setTimeout(() => {
             method((data) => {
                 this.progressChanged(data);
                 if (data.progress < 100)

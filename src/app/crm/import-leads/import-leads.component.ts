@@ -148,6 +148,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     totalCount: number = 0;
     importedCount: number = 0;
+    failedCount: number = 0;
     mappingFields: any[] = [];
     importTypeIndex: number = 0;
     importType: ImportInputImportType = ImportInputImportType.Lead;
@@ -340,6 +341,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             if (importId && !isNaN(importId))
                               this._importLeadsService.setupImportCheck(importId, (res) => {
                                   this.importedCount = res.importedCount;
+                                  this.failedCount = res.failedCount;
                               });
                             this.wizard.showFinishStep();
                             this.clearToolbarSelectedItems();

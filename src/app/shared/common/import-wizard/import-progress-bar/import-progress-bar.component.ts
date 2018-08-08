@@ -18,6 +18,8 @@ import { ImportWizardService } from '../import-wizard.service';
 export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxProgressBarComponent) progressComponent: DxProgressBarComponent;
              
+    @Input() summaryTooltip: boolean = true;
+
     progress: number = 100;
     tooltipVisible: boolean;
     tooltipTimeout: any; 
@@ -51,10 +53,12 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     }
 
     toggleTooltip(visible) {
-        clearTimeout(this.tooltipTimeout);
-        this.tooltipTimeout = setTimeout(() => {
-            this.tooltipVisible =  visible;
-        }, 1000);
+        if (this.summaryTooltip) {
+            clearTimeout(this.tooltipTimeout);
+            this.tooltipTimeout = setTimeout(() => {
+                this.tooltipVisible =  visible;
+            }, 1000);
+        }
     }
 
     ngOnDestroy() {

@@ -10,8 +10,9 @@
     </dx-progress-bar>
 </div>
 
-<dx-tooltip target="#progressContainer"
+<dx-tooltip *ngIf="summaryTooltip"
             [width]="400"
+            target="#progressContainer"
             [showEvent]="'mouseenter'"
             [(visible)]="tooltipVisible">
     <div *dxTemplate="let data = data of 'content'">

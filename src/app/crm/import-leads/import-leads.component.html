@@ -16,7 +16,10 @@
         <div class="success">
             <div *ngIf="importWizardService.activeImportId">
                 <h1>{{l('ImportProgressHeader')}}</h1>
-                <import-progress-bar></import-progress-bar>
+                <p>{{l('Total')}}: {{totalCount}}</p>
+                <p>{{l('Imported')}}: {{importedCount}}</p>
+                <p>{{l('Failed')}}: {{failedCount}}</p>
+                <import-progress-bar [summaryTooltip]="false"></import-progress-bar>
                 <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
                 <button class="button-layout button-default" (click)="cancelImport()">{{l('CancelImport')}}</button>
             </div>
