@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router, RouteReuseStrategy } from '@angular/router';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
@@ -16,7 +16,6 @@ import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.compon
 import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
-import { ImportStatus } from '@shared/AppEnums';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { AppConsts } from '@shared/AppConsts';
@@ -29,12 +28,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+import { ImportLeadsService } from './import-leads.service';
 
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ZipCodeFormatterPipe, ImportServiceProxy ]
+    providers: [ ZipCodeFormatterPipe ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -191,13 +191,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     constructor(
         injector: Injector,
         private _appService: AppService,
-        private _reuseService: RouteReuseStrategy,
         private _importProxy: ImportServiceProxy,
         private _router: Router,
         private _pipelineService: PipelineService,
         private _nameParser: NameParserService,
+        private _importLeadsService: ImportLeadsService,
         private zipFormatterPipe: ZipCodeFormatterPipe,
-        public importService: ImportWizardService
+        public importWizardService: ImportWizardService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportItemInput.fromJS({}));
@@ -205,10 +205,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
 
-        importService.cancelListen(() => {
-            if (importService.activeImportId)
-                _importProxy.cancel(importService.activeImportId).subscribe(() => {
-                    importService.activeImportId = undefined;
+        importWizardService.cancelListen(() => {
+            if (importWizardService.activeImportId)
+                _importProxy.cancel(importWizardService.activeImportId).subscribe(() => {
+                    importWizardService.activeImportId = undefined;
                 });
         });
     }
@@ -337,25 +337,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         .pipe(
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId) => { 
-                            if (importId && !isNaN(importId)) {
-                                this.importService.activeImportId = importId;
-                                this.importService.setupStatusCheck((callback) => {
-                                    this._importProxy.getStatus(importId).subscribe((res) => {
-                                        this.importedCount = res.importedCount;                                        
-                                        if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
-                                            this.importService.activeImportId = undefined;
-                                            (<any>this._reuseService).invalidate('leads');
-                                        }                    
-                                        callback({
-                                            progress: !this.importService.activeImportId ? 100: 
-                                                Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
-                                            totalCount: res.totalCount,
-                                            importedCount: res.importedCount,
-                                            failedCount: res.failedCount
-                                        });
-                                    })
-                                });
-                            }
+                            if (importId && !isNaN(importId))
+                              this._importLeadsService.setupImportCheck(importId, (res) => {
+                                  this.importedCount = res.importedCount;
+                              });
                             this.wizard.showFinishStep();
                             this.clearToolbarSelectedItems();
                         });
@@ -625,6 +610,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     cancelImport() {
-        this.importService.cancelImport();
+        this.importWizardService.cancelImport();
     }
 }

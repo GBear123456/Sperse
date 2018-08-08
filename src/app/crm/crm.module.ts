@@ -66,9 +66,12 @@ import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list.component';
+import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
+
+import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -140,7 +143,8 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
       ActivityComponent
     ],
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
+        ImportServiceProxy,
+        ImportLeadsService
     ],
     entryComponents: [
         CreateClientDialogComponent,
