@@ -58,7 +58,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
-    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy } from '@shared/service-proxies/service-proxies';
+    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -185,6 +185,7 @@ import { VgBufferingModule } from 'videogular2/buffering';
     ContactPhoneServiceProxy,
     ContactLinkServiceProxy,
     CustomersServiceProxy,
+    PartnerServiceProxy,
     ContactEmploymentServiceProxy,
     MemberServiceProxy,
     OrganizationContactServiceProxy,

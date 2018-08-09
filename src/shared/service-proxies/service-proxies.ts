@@ -14212,6 +14212,61 @@ export class LeadServiceProxy {
     }
 
     /**
+     * @customerId (optional) 
+     * @return Success
+     */
+    getLast(customerId: number | null | undefined): Observable<LeadInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLast?";
+        if (customerId !== undefined)
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLast(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLast(<any>response_);
+                } catch (e) {
+                    return <Observable<LeadInfoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LeadInfoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLast(response: HttpResponseBase): Observable<LeadInfoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LeadInfoDto.fromJS(resultData200) : new LeadInfoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LeadInfoDto>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -16267,6 +16322,181 @@ export class PackageServiceProxy {
             }));
         }
         return _observableOf<ListResultDtoOfPackageDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class PartnerServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    get(id: number | null | undefined): Observable<PartnerInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/Get?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(<any>response_);
+                } catch (e) {
+                    return <Observable<PartnerInfoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PartnerInfoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<PartnerInfoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PartnerInfoDto.fromJS(resultData200) : new PartnerInfoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PartnerInfoDto>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateType(input: UpdatePartnerTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/UpdateType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateType(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateType(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateType(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getTypes(): Observable<PartnerTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/GetTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<PartnerTypeDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PartnerTypeDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTypes(response: HttpResponseBase): Observable<PartnerTypeDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PartnerTypeDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PartnerTypeDto[]>(<any>null);
     }
 }
 
@@ -36122,7 +36352,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
     creationDate!: moment.Moment | undefined;
     userContextOrderId!: number | undefined;
     userContextOrderType!: string | undefined;
-    lastLeadInfo!: LeadInfoDto | undefined;
 
     constructor(data?: ICustomerInfoDto) {
         if (data) {
@@ -36162,7 +36391,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
             this.userContextOrderId = data["userContextOrderId"];
             this.userContextOrderType = data["userContextOrderType"];
-            this.lastLeadInfo = data["lastLeadInfo"] ? LeadInfoDto.fromJS(data["lastLeadInfo"]) : <any>undefined;
         }
     }
 
@@ -36202,7 +36430,6 @@ export class CustomerInfoDto implements ICustomerInfoDto {
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["userContextOrderId"] = this.userContextOrderId;
         data["userContextOrderType"] = this.userContextOrderType;
-        data["lastLeadInfo"] = this.lastLeadInfo ? this.lastLeadInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -36223,7 +36450,6 @@ export interface ICustomerInfoDto {
     creationDate: moment.Moment | undefined;
     userContextOrderId: number | undefined;
     userContextOrderType: string | undefined;
-    lastLeadInfo: LeadInfoDto | undefined;
 }
 
 export class PersonContactInfoDto implements IPersonContactInfoDto {
@@ -36368,78 +36594,6 @@ export interface IOrganizationContactInfoDto {
     primaryAddress: ContactAddressDto | undefined;
     details: ContactInfoDetailsDto | undefined;
     comment: string | undefined;
-}
-
-export class LeadInfoDto implements ILeadInfoDto {
-    id!: number | undefined;
-    stage!: string | undefined;
-    amount!: number | undefined;
-    creationDate!: moment.Moment | undefined;
-    modificationDate!: moment.Moment | undefined;
-    sourceCode!: string | undefined;
-    campaignCode!: string | undefined;
-    affiliateCode!: string | undefined;
-    channelCode!: string | undefined;
-    comments!: string | undefined;
-
-    constructor(data?: ILeadInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.stage = data["stage"];
-            this.amount = data["amount"];
-            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
-            this.modificationDate = data["modificationDate"] ? moment(data["modificationDate"].toString()) : <any>undefined;
-            this.sourceCode = data["sourceCode"];
-            this.campaignCode = data["campaignCode"];
-            this.affiliateCode = data["affiliateCode"];
-            this.channelCode = data["channelCode"];
-            this.comments = data["comments"];
-        }
-    }
-
-    static fromJS(data: any): LeadInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["stage"] = this.stage;
-        data["amount"] = this.amount;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["modificationDate"] = this.modificationDate ? this.modificationDate.toISOString() : <any>undefined;
-        data["sourceCode"] = this.sourceCode;
-        data["campaignCode"] = this.campaignCode;
-        data["affiliateCode"] = this.affiliateCode;
-        data["channelCode"] = this.channelCode;
-        data["comments"] = this.comments;
-        return data; 
-    }
-}
-
-export interface ILeadInfoDto {
-    id: number | undefined;
-    stage: string | undefined;
-    amount: number | undefined;
-    creationDate: moment.Moment | undefined;
-    modificationDate: moment.Moment | undefined;
-    sourceCode: string | undefined;
-    campaignCode: string | undefined;
-    affiliateCode: string | undefined;
-    channelCode: string | undefined;
-    comments: string | undefined;
 }
 
 export class PersonInfoDto implements IPersonInfoDto {
@@ -43730,6 +43884,78 @@ export interface IProcessLeadInput {
     leadId: number | undefined;
 }
 
+export class LeadInfoDto implements ILeadInfoDto {
+    id!: number | undefined;
+    stage!: string | undefined;
+    amount!: number | undefined;
+    creationDate!: moment.Moment | undefined;
+    modificationDate!: moment.Moment | undefined;
+    sourceCode!: string | undefined;
+    campaignCode!: string | undefined;
+    affiliateCode!: string | undefined;
+    channelCode!: string | undefined;
+    comments!: string | undefined;
+
+    constructor(data?: ILeadInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.stage = data["stage"];
+            this.amount = data["amount"];
+            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.modificationDate = data["modificationDate"] ? moment(data["modificationDate"].toString()) : <any>undefined;
+            this.sourceCode = data["sourceCode"];
+            this.campaignCode = data["campaignCode"];
+            this.affiliateCode = data["affiliateCode"];
+            this.channelCode = data["channelCode"];
+            this.comments = data["comments"];
+        }
+    }
+
+    static fromJS(data: any): LeadInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["stage"] = this.stage;
+        data["amount"] = this.amount;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["modificationDate"] = this.modificationDate ? this.modificationDate.toISOString() : <any>undefined;
+        data["sourceCode"] = this.sourceCode;
+        data["campaignCode"] = this.campaignCode;
+        data["affiliateCode"] = this.affiliateCode;
+        data["channelCode"] = this.channelCode;
+        data["comments"] = this.comments;
+        return data; 
+    }
+}
+
+export interface ILeadInfoDto {
+    id: number | undefined;
+    stage: string | undefined;
+    amount: number | undefined;
+    creationDate: moment.Moment | undefined;
+    modificationDate: moment.Moment | undefined;
+    sourceCode: string | undefined;
+    campaignCode: string | undefined;
+    affiliateCode: string | undefined;
+    channelCode: string | undefined;
+    comments: string | undefined;
+}
+
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
     id!: number | undefined;
     sourceCode!: string | undefined;
@@ -46115,6 +46341,122 @@ export interface IPackageDto {
     creationTime: moment.Moment | undefined;
     creatorUserId: number | undefined;
     id: number | undefined;
+}
+
+export class PartnerInfoDto implements IPartnerInfoDto {
+    typeId!: string | undefined;
+
+    constructor(data?: IPartnerInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.typeId = data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): PartnerInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PartnerInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface IPartnerInfoDto {
+    typeId: string | undefined;
+}
+
+export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
+    partnerId!: number | undefined;
+    typeId!: string;
+
+    constructor(data?: IUpdatePartnerTypeInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.partnerId = data["partnerId"];
+            this.typeId = data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdatePartnerTypeInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdatePartnerTypeInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["partnerId"] = this.partnerId;
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface IUpdatePartnerTypeInput {
+    partnerId: number | undefined;
+    typeId: string;
+}
+
+export class PartnerTypeDto implements IPartnerTypeDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IPartnerTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PartnerTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PartnerTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPartnerTypeDto {
+    id: string | undefined;
+    name: string | undefined;
 }
 
 export class PaymentInfoDto implements IPaymentInfoDto {

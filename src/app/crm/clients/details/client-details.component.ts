@@ -1,12 +1,16 @@
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
+import { CustomerType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CustomersServiceProxy,
     CustomerInfoDto,
     UpdateCustomerStatusInput,
     LeadServiceProxy,
-    LeadInfoDto
+    LeadInfoDto,
+    PartnerServiceProxy,
+    PartnerInfoDto,
+    UpdatePartnerTypeInput
 } from '@shared/service-proxies/service-proxies';
 import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material';
@@ -32,6 +36,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
 
     customerId: number;
+    customerType: string;
     customerInfo: CustomerInfoDto;
     primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
@@ -41,20 +46,13 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     clientStageId: number;
     ratingId: number;
     configMode: boolean;
+    partnerInfo: PartnerInfoDto;
+    partnerTypeId: string;
+    partnerTypes = [];
 
     private initialData: string;
 
-    navLinks = [
-        {'label': 'Contact Information', 'route': 'contact-information'},
-        {'label': 'Lead Information', 'route': 'lead-information'},
-        {'label': 'Questionnaire', 'route': 'questionnaire'},
-        {'label': 'Documents', 'route': 'documents'},
-        {'label': 'Application Status', 'route': 'application-status', 'hiddenForLeads': true},
-        {'label': 'Referral History', 'route': 'referral-history'},
-        {'label': 'Payment Information', 'route': 'payment-information', 'hiddenForLeads': true},
-        {'label': 'Activity Logs', 'route': 'activity-logs'},
-        {'label': 'Notes', 'route': 'notes'}
-    ];
+    navLinks = [];
 
     rightPanelSetting: any = {
         clientScores: true,
@@ -74,26 +72,34 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _route: ActivatedRoute,
                 private _cacheService: CacheService,
                 private _customerService: CustomersServiceProxy,
+                private _partnerService: PartnerServiceProxy,
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
                 private _clientDetailsService: ClientDetailsService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
-        _customerService['data'] = {customerInfo: null, leadInfo: null};
+        _customerService['data'] = {
+            customerInfo: null,
+            leadInfo: null,
+            partnerInfo: null
+        };
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
             .subscribe(params => {
                 let clientId = params['clientId'],
+                    partnerId = params['partnerId'],
+                    customerId = clientId || partnerId,
                     leadId = params['leadId'];
                 _customerService['data'].customerInfo = {
-                    id: clientId
+                    id: customerId
                 };
 
                 if (leadId) {
                     this.leadId = leadId;
                 }
-                this.loadData(clientId, leadId);
+                this.loadData(customerId, leadId, partnerId);
+                this.InitNavLinks();
             }));
 
         this.paramsSubscribe.push(this._route.queryParams
@@ -113,6 +119,20 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                         'rightPanelOpened') ? data.rightPanelOpened : true;
                 });
         });
+    }
+
+    private InitNavLinks() {
+        this.navLinks = [
+            {'label': 'Contact Information', 'route': 'contact-information'},
+            {'label': 'Lead Information', 'route': 'lead-information', 'hidden': this.customerType == CustomerType.Partner},
+            {'label': 'Questionnaire', 'route': 'questionnaire'},
+            {'label': 'Documents', 'route': 'documents'},
+            {'label': 'Application Status', 'route': 'application-status', 'hidden': !!this.leadId},
+            {'label': 'Referral History', 'route': 'referral-history'},
+            {'label': 'Payment Information', 'route': 'payment-information', 'hidden': !!this.leadId},
+            {'label': 'Activity Logs', 'route': 'activity-logs'},
+            {'label': 'Notes', 'route': 'notes'}
+        ];
     }
 
     private fillCustomerDetails(result) {
@@ -136,7 +156,13 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.leadInfo = result;
     }
 
-    loadData(customerId: number, leadId: number) {
+    private fillPartnerDetails(result) {
+        this._customerService['data'].partnerInfo = result;
+        this.partnerInfo = result;
+        this.partnerTypeId = result.typeId;
+    }
+
+    loadData(customerId: number, leadId: number, partnerId: number) {
         if (customerId) {
             this.startLoading(true);
             this.customerId = customerId;
@@ -146,22 +172,38 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 forkJoin(customerInfoObservable, leadInfoObservable).pipe(finalize(() => {
                     this.finishLoading(true);
                     if (!leadData)
-                      this.close(true);
+                        this.close(true);
                 })).subscribe(result => {
                     leadData = result;
                     this.fillCustomerDetails(result[0]);
                     this.fillLeadDetails(result[1]);
                     this.loadLeadsStages();
                 });
-            } else
-                customerInfoObservable.pipe(finalize(() => {
-                    this.finishLoading(true);
-                    if (!this.customerInfo)
-                      this.close(true);
-                })).subscribe(result => {
-                    this.fillCustomerDetails(result);
-                    this.fillLeadDetails(result.lastLeadInfo);
-                });
+            } else {
+                this.customerType = partnerId ? CustomerType.Partner : CustomerType.Client;
+                if (this.customerType == CustomerType.Partner) {
+                    let partnerInfoObservable = this._partnerService.get(partnerId);
+                    forkJoin(customerInfoObservable, partnerInfoObservable).pipe(finalize(() => {
+                        this.finishLoading(true);
+                        if (!this.partnerInfo)
+                            this.close(true);
+                    })).subscribe(result => {
+                        this.fillCustomerDetails(result[0]);
+                        this.fillPartnerDetails(result[1]);
+                        this.loadPartnerTypes();
+                    });
+                } else {
+                    let lastLeadInfoObservable = this._leadService.getLast(customerId);
+                    forkJoin(customerInfoObservable, lastLeadInfoObservable).pipe(finalize(() => {
+                        this.finishLoading(true);
+                        if (!this.customerInfo)
+                            this.close(true);
+                    })).subscribe(result => {
+                        this.fillCustomerDetails(result[0]);
+                        this.fillLeadDetails(result[1]);
+                    });
+                }
+            }
         } else if (leadId) {
             this._customerService['data'].leadInfo = {
                 id: leadId
@@ -182,6 +224,20 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     };
                 });
                 this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+            });
+    }
+
+    private loadPartnerTypes() {
+        this._partnerService.getTypes()
+            .subscribe(list => {
+                this.partnerTypes = list.map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        text: item.name,
+                        action: this.updatePartnerType.bind(this)
+                    };
+                });
             });
     }
 
@@ -346,6 +402,33 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         this.toolbarComponent.refresh();
         $event.event.stopPropagation();
+    }
+
+
+    updatePartnerType($event) {
+        this.showUpdatePartnerTypeConfirmationDialog($event.itemData.id);
+        $event.event.stopPropagation();
+    }
+
+    private showUpdatePartnerTypeConfirmationDialog(typeId) {
+        this.message.confirm(
+            this.l('PartnerTypeUpdateWarningMessage'),
+            this.l('PartnerTypeUpdateConfirmationTitle'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this._partnerService.updateType(UpdatePartnerTypeInput.fromJS({
+                        partnerId: this.customerId,
+                        typeId: typeId
+                    })).subscribe(() => {
+                        this.partnerInfo.typeId = typeId;
+                        this.partnerTypeId = typeId;
+                        this.notify.success(this.l('TypeSuccessfullyUpdated'));
+                    });
+                } else {
+                    this.toolbarComponent.partnerTypesComponent.listComponent.option('selectedItemKeys', [this.partnerInfo.typeId]);
+                }
+            }
+        );
     }
 
     toggleConfigMode() {

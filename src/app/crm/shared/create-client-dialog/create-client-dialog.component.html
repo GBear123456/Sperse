@@ -22,6 +22,18 @@
                      [list]="stages"
                      [disableWonLost]="true">
     </crm-static-list>
+    <crm-static-list #partnerTypesList
+                    [width]="'210px'"
+                    [selectedKeys]="[partnerTypeId]"
+                    [showConfirmation]="false"
+                    [selectedItems]=""
+                    [hideButtons]="true"
+                    [highlightSelected]="true"
+                    [targetSelector]="'[accessKey=PartnerTypesList]'"
+                    (onItemSelected)="onPartnerTypeChanged($event)"
+                    [showTitle]="false"
+                    [list]="partnerTypes">
+    </crm-static-list>
     <crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true"></crm-rating>
     <crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true"></crm-tags-list>
     <crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true"></crm-lists-list>
