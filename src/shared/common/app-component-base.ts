@@ -352,4 +352,10 @@ export abstract class AppComponentBase {
     appRootUrl(): string {
         return this.appUrlService.appRootUrl;
     }
+
+    toTitleCase(value: string) {
+        return value.replace(/\b\w+/g, function(txt){
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
 }

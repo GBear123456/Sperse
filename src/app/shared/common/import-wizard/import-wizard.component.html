@@ -153,6 +153,10 @@
                                mode="multiple">
                 </dxo-selection>
 
+                <div *dxTemplate="let cellData of 'titleCaseCell'">
+                    {{toTitleCase(cellData.value)}}
+                </div>
+
                 <div *dxTemplate="let cellData of 'phoneCell'" [ngClass]="{invalid: !checkFieldValid('phone', cellData)}">
                     {{cellData.value | phone}}
                 </div>
