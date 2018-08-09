@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { Subscription, Subject } from 'rxjs';
-import { first, finalize, skipWhile, delayWhen, distinctUntilChanged, last, withLatestFrom, filter, switchMap } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
@@ -20,7 +19,6 @@ import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
-import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     selector: 'dashboard',
@@ -46,10 +44,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         {name: 'View_Transaction_Details', route: '../transactions'},
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
-
-    private _componentActivated: Subject<null> = new Subject();
-    private componentActivated$ = this._componentActivated.asObservable();
-    selectedAccountsSubscription: Subscription;
 
     constructor(
         injector: Injector,
@@ -85,6 +79,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
                 this.updateAfterActivation = true;
             }
         });
+
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
@@ -113,11 +108,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         const element = this.getElementRef().nativeElement.querySelector('.dx-scrollable');
         abp.ui.setBusy(element);
         this.bankAccountsService.loadSyncAccounts().pipe(
-            first(),
             finalize(() => abp.ui.clearBusy(element))
-        ).subscribe(() => {
-            this.bankAccountsService.applyFilter();
-        });
+        );
     }
 
     periodChanged($event) {
@@ -137,10 +129,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.synchProgressComponent.requestSyncAjax();
     }
 
-    deactivate() {
-        if (this.selectedAccountsSubscription)
-            this.selectedAccountsSubscription.unsubscribe();
-    }
+    deactivate() {}
 
     openDialog() {
         this.dialogConfig.height = '655px';

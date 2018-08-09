@@ -95,7 +95,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 { text: this.l('Sync_Now') }
             ];
         }
-        this.bankAccountsService.distinctUntilChangedFilteredSyncAccountsSource$.subscribe((syncAccounts) => {
+        this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$.subscribe((syncAccounts) => {
             if (!this.showSyncAccountWithoutBankAccounts) {
                 syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length);
             }

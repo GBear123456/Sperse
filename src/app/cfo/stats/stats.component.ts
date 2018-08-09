@@ -157,9 +157,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private syncAccounts: any;
     bankAccountsService: BankAccountsService;
-    private _checkSelectedAccountsChanges: Subject<null> = new Subject();
-    private checkSelectedAccountsChanges$ = this._checkSelectedAccountsChanges.asObservable();
-    private selectedAccountsSubscription: Subscription;
+    private updateAfterActivation: boolean;
+    private syncAccountsSubscription: Subscription;
+
     constructor(
         injector: Injector,
         private _appService: AppService,
@@ -326,20 +326,11 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
         this.requestFilter.endDate = moment().utc().add(1, 'year');
 
-        const syncAccounts$ = this.bankAccountsService.load().pipe(first());
+        this.bankAccountsService.loadSyncAccounts();
+        const syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
         this.bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountsCount = amount;
             this.initToolbarConfig();
-        });
-
-        /** Update after returning back to this component and selected accounts changing */
-        this.bankAccountsService.selectedBankAccountsIds$.pipe(
-            /** To avoid refresh after changing in this component */
-            skipWhile(() => this._route['_routerState'].snapshot.url === this._router.url),
-            /** Delay until checkSelected method call next in activate method */
-            switchMap(() => this.checkSelectedAccountsChanges$)
-        ).subscribe(() => {
-            this.loadStatsData();
         });
 
         /** Create parallel operations */
@@ -354,9 +345,17 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 /** Forecast models handling */
                 this.handleForecastModelResult(forecastsModels);
 
-                this.setBankAccountsFilter();
+                /** After selected accounts change */
+                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                    /** filter all widgets by new data if change is on this component */
+                    if (this._route['_routerState'].snapshot.url === this._router.url) {
+                        this.setBankAccountsFilter();
+                        /** if change is on another component - mark this for future update */
+                    } else {
+                        this.updateAfterActivation = true;
+                    }
+                });
 
-                this.loadStatsData();
             });
 
         this.initHeadlineConfig();
@@ -784,12 +783,19 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
         this.setupFilters();
         this.initFiltering();
-        this.bankAccountsService.loadSyncAccounts();
-        this.selectedAccountsSubscription = this.bankAccountsService.selectedBankAccountsIds$
-            .pipe(first())
-            .subscribe(() => {
-                this._checkSelectedAccountsChanges.next(); }
-        );
+
+        /** Load sync accounts (if something change - subscription in ngOnInit fires) */
+        this.syncAccountsSubscription = this.bankAccountsService.loadSyncAccounts().subscribe(() => {
+            /** Apply filter to update all calculations as in this component updating only on apply */
+            this.bankAccountsService.applyFilter();
+        });
+
+        /** If selected accounts changed in another component - update widgets */
+        if (this.updateAfterActivation) {
+            this.setBankAccountsFilter();
+            this.updateAfterActivation = false;
+        }
+
         this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
@@ -798,8 +804,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
-        if (this.selectedAccountsSubscription)
-            this.selectedAccountsSubscription.unsubscribe();
+        if (this.syncAccountsSubscription)
+            this.syncAccountsSubscription.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 

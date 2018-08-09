@@ -114,9 +114,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
     private syncAccounts: any;
 
-    private _componentActivated: Subject<null> = new Subject();
-    private componentActivated$ = this._componentActivated.asObservable();
-    private selectedAccountsSubscription: Subscription;
+    updateAfterActivation: boolean;
+    private syncAccountsSubscription: Subscription;
 
     initHeadlineConfig() {
         this.headlineConfig = {
@@ -501,10 +500,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             onChanged: this.getTotalValues.bind(this)
         });
 
+        this._bankAccountsService.loadSyncAccounts();
         forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
-            this._bankAccountsService.load().pipe(first())
+            this._bankAccountsService.syncAccounts$.pipe(first())
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
             this.syncAccounts = syncAccounts;
             this.filters = [
@@ -610,21 +610,23 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ];
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
-            this.applyTotalBankAccountFilter();
+            //this.applyTotalBankAccountFilter();
+            /** After selected accounts change */
+            /** @todo check why is not working when changed selected in another components */
+            this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                /** filter all widgets by new data if change is on this component */
+                if (this._route['_routerState'].snapshot.url === this._router.url) {
+                    this.applyTotalBankAccountFilter();
+                } else {
+                    /** if change is on another component - mark this for future update */
+                    this.updateAfterActivation = true;
+                }
+            });
         });
 
         this._bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
-        });
-
-        /** Reload data if selected accounts changed and component state becomes active (after return to this cached component )*/
-        this._bankAccountsService.selectedBankAccountsIds$.pipe(
-            /** To avoid refresh after changing in this component */
-            skipWhile(() => this._route['_routerState'].snapshot.url === this._router.url),
-            switchMap(() => this.componentActivated$)
-        ).subscribe(() => {
-            this.applyTotalBankAccountFilter();
         });
     }
 
@@ -1068,10 +1070,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
         this.filtersService.setup(this.filters);
         this.initFiltering();
-        this._bankAccountsService.loadSyncAccounts();
-        this.selectedAccountsSubscription = this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(
-            () => this._componentActivated.next()
-        );
+
+        /** Load sync accounts (if something change - subscription in ngOnInit fires) */
+        this.syncAccountsSubscription = this._bankAccountsService.loadSyncAccounts().subscribe(() => {
+            /** Apply filter to update all calculations as in this component updating only on apply */
+            this._bankAccountsService.applyFilter();
+        });
+
+        /** If selected accounts changed in another component - update widgets */
+        if (this.updateAfterActivation) {
+            this.applyTotalBankAccountFilter();
+            this.updateAfterActivation = false;
+        }
+
         this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
@@ -1080,8 +1091,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this.filtersService.unsubscribe();
-        if (this.selectedAccountsSubscription)
-            this.selectedAccountsSubscription.unsubscribe();
+        if (this.syncAccountsSubscription)
+            this.syncAccountsSubscription.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 }

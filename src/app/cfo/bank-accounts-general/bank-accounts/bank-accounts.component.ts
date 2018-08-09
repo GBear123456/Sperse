@@ -80,7 +80,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this.bankAccountsService.applyFilter();
     }
 
-    selectedAccountsChange(syncAccounts) {
+    selectedAccountsChange() {
         this.bankAccountsService.applyFilter();
     }
 
@@ -114,13 +114,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
 
     activate() {
         /** Load sync accounts */
-        this.bankAccountsService.loadSyncAccounts(false)/*.subscribe(() => {
-            this.bankAccountsService.applyFilter();
-        });*/
+        this.bankAccountsService.loadSyncAccounts(false);
     }
 
     deactivate() {
-        //this.bankAccountsService.applyFilter();
         this.unsubscribeSubscriptions();
     }
 }

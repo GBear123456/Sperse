@@ -768,9 +768,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     tabularFontName;
 
-    private _checkSelectedAccountsChanges: Subject<null> = new Subject();
-    private checkSelectedAccountsChanges$ = this._checkSelectedAccountsChanges.asObservable();
-    private selectedAccountsSubscription: Subscription;
+    updateAfterActivation: boolean;
+    private syncAccountsSubscription: Subscription;
 
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
@@ -817,15 +816,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        this._bankAccountsService.load();
-
-        /** Reload stats data if selected accounts changed and component state is becomes active (after return to this cached component )*/
-        this._bankAccountsService.selectedBankAccountsIds$.pipe(
-            /** To avoid refresh after changing in this component */
-            skipWhile(() => this._route['_routerState'].snapshot.url === this._router.url),
-            /** Delay until checkSelected method call next in activate method */
-            switchMap(() => this.checkSelectedAccountsChanges$)
-        ).subscribe(() => this.loadGridDataSource() );
+        this._bankAccountsService.loadSyncAccounts();
 
         const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
         forkJoin(getCashFlowInitialData$, getForecastModels$, getCategoryTree$, getCashflowGridSettings, syncAccounts$)
@@ -844,7 +835,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 this.initFiltering();
 
-                this.loadGridDataSource();
+                /** After selected accounts change */
+                this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                    /** filter all widgets by new data if change is on this component */
+                    if (this._route['_routerState'].snapshot.url === this._router.url) {
+                        this.loadGridDataSource();
+                        /** if change is on another component - mark this for future update */
+                    } else {
+                        this.updateAfterActivation = true;
+                    }
+                });
             });
 
         this.initHeadlineConfig();
@@ -5711,10 +5711,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.setupFilters(this.filters);
         this.initFiltering();
         this.pivotGrid.instance.repaint();
-        this._bankAccountsService.loadSyncAccounts();
-        this.selectedAccountsSubscription = this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(
-            () => this._checkSelectedAccountsChanges.next()
-        );
+
+        /** Load sync accounts (if something change - subscription in ngOnInit fires) */
+        this.syncAccountsSubscription = this._bankAccountsService.loadSyncAccounts().subscribe(() => {
+            /** Apply filter to update all calculations as in this component updating only on apply */
+            this._bankAccountsService.applyFilter();
+        });
+
+        /** If selected accounts changed in another component - update widgets */
+        if (this.updateAfterActivation) {
+            this.loadGridDataSource();
+            this.updateAfterActivation = false;
+        }
+
         this.synchProgressComponent.requestSyncAjax();
         this.rootComponent.overflowHidden(true);
     }
@@ -5723,8 +5732,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
-        if (this.selectedAccountsSubscription)
-            this.selectedAccountsSubscription.unsubscribe();
+        if (this.syncAccountsSubscription)
+            this.syncAccountsSubscription.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 
