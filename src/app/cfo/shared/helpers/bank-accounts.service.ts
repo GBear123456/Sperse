@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, forkJoin, never } from 'rxjs';
-import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap, reduce, tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, forkJoin } from 'rxjs';
+import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap, reduce } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 
@@ -231,7 +231,7 @@ export class BankAccountsService {
             map(bankAccounts => {
                 return bankAccounts && bankAccounts.length ? bankAccounts[0].isActive : this.state.isActive;
             }),
-            this.distinctUntilChanged()
+            distinctUntilChanged()
         );
 
         this.selectedBankAccounts$ = this.filteredBankAccounts$.pipe(
