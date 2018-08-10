@@ -9,10 +9,13 @@
     </div>
     <operations-widget
         [clientId]="customerId"
+        [customerType]="customerType"
         [leadId]="leadId"
         [customerInfo]="customerInfo"
         [stages]="leadStages"
         [selectedStageId]="clientStageId"
+        [partnerTypes]="partnerTypes"
+        [selectedPartnerTypeId]="partnerTypeId"
         (print)="printMainArea()"
         (onUpdateStatus)="updateStatus($event)"
         (onUpdateRating)="updateRating($event)"
@@ -30,7 +33,7 @@
       </div>
       <dx-scroll-view showScrollbar="onHover">
         <nav mat-tab-nav-bar>
-            <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hiddenForLeads && leadId" [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams">
+            <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams">
                 {{link.label}}
             </a>
         </nav>

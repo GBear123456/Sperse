@@ -16,6 +16,8 @@ import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxie
 import { KbaResultModule } from './member-area/kba-result/kba-result.module';
 
 import { CacheService } from 'ng2-cache-service';
+import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
+import { CacheMemoryStorage } from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
 
 @NgModule({
     declarations: [
@@ -40,7 +42,11 @@ import { CacheService } from 'ng2-cache-service';
     providers: [
         PackageIdService,
         CreditReportServiceProxy,
-        CacheService
+        CacheService,
+        {
+            provide: CacheStorageAbstract,
+            useClass: CacheMemoryStorage
+        },
     ]
 })
 export class CreditReportsModule { }

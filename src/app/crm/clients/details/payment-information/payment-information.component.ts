@@ -30,19 +30,17 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     }
 
     refreshData() {
-        if (this.data.customerInfo.primaryContactInfo && this.data.customerInfo.primaryContactInfo.userId) {
-            this._billingService
-                .getSubscriptionsHistory(this.data.customerInfo.primaryContactInfo.userId)
-                .subscribe(result => {
-                    this.dataSource = result;
+        this._billingService
+            .getSubscriptionsHistory(this.data.customerInfo.id)
+            .subscribe(result => {
+                this.dataSource = result;
 
-                    this.dataSource.forEach(v => {
-                        let totalFee = 0;
-                        v.orderSubscriptions.forEach(v => totalFee += v.fee);
-                        v['totalFee'] = totalFee;
-                    });
+                this.dataSource.forEach(v => {
+                    let totalFee = 0;
+                    v.orderSubscriptions.forEach(v => totalFee += v.fee);
+                    v['totalFee'] = totalFee;
                 });
-        }
+            });
     }
 
     cancelSubscription(id: number) {

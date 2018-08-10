@@ -67,6 +67,11 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.l('Stage'),
             icon: this.getImgURI('status-icon')
         },
+        partnerType: {
+            accessKey: 'PartnerType',
+            text: this.l('Type'),
+            icon: this.getImgURI('status-icon')
+        },
         delete: {
             text: this.l('Delete'),
             icon: this.getImgURI('delete-icon')

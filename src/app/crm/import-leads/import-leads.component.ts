@@ -230,7 +230,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private initFieldsConfig() {
         this.FIELDS_TO_CAPITALIZE.forEach(field => {
-            this.fieldsConfig[field] = { cssClass: 'capitalize' };
+            this.fieldsConfig[field] = { cellTemplate: 'titleCaseCell' };
         });
 
         this.PHONE_FIELDS.forEach(field => {

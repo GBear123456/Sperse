@@ -59,6 +59,7 @@
                         <dxi-column dataField="City" caption="{{l('Contact.City')}}"></dxi-column>
                         <dxi-column dataField="StateId" caption="{{l('Contact.State')}}"></dxi-column>
                         <dxi-column dataField="Status" caption="{{l('Status')}}" cellTemplate="statusCell"></dxi-column>
+                        <dxi-column dataField="PartnerType" caption="{{l('Type')}}"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
                                 {{cellData.value}}
