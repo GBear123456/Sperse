@@ -114,8 +114,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
     private syncAccounts: any;
 
-    updateAfterActivation: boolean;
-    private syncAccountsSubscription: Subscription;
+    private updateAfterActivation: boolean;
 
     initHeadlineConfig() {
         this.headlineConfig = {
@@ -403,9 +402,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-        this._bankAccountsService.loadSyncAccounts().pipe(first()).subscribe(() => {
-            this.applyTotalBankAccountFilter();
-        });
+        this._bankAccountsService.load().subscribe();
         this.categorizationComponent.refreshCategories();
     }
 
@@ -500,7 +497,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             onChanged: this.getTotalValues.bind(this)
         });
 
-        this._bankAccountsService.loadSyncAccounts();
+        this._bankAccountsService.load();
         forkJoin(
             this._TransactionsServiceProxy.getTransactionTypesAndCategories(),
             this._TransactionsServiceProxy.getFiltersInitialData(InstanceType[this.instanceType], this.instanceId),
@@ -610,9 +607,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ];
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
-            //this.applyTotalBankAccountFilter();
             /** After selected accounts change */
-            /** @todo check why is not working when changed selected in another components */
             this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                 /** filter all widgets by new data if change is on this component */
                 if (this._route['_routerState'].snapshot.url === this._router.url) {
@@ -637,7 +632,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     /** apply filter on top */
                     this._bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this._bankAccountsService.cachedData.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this._bankAccountsService.state.selectedBankAccountIds, filter);
                 }
 
                 if (filter.caption.toLowerCase() === 'classified') {
@@ -670,7 +665,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     applyTotalBankAccountFilter() {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this._bankAccountsService.cachedData, this.syncAccounts);
+        accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this._bankAccountsService.state, this.syncAccounts);
         this.setDataSource();
         this.filtersService.change(accountFilter);
         this._bankAccountsService.applyFilter();
@@ -684,7 +679,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     /** apply filter on top */
                     this._bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this._bankAccountsService.cachedData.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this._bankAccountsService.state.selectedBankAccountIds, filter);
                 }
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
@@ -1072,10 +1067,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initFiltering();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this.syncAccountsSubscription = this._bankAccountsService.loadSyncAccounts().subscribe(() => {
-            /** Apply filter to update all calculations as in this component updating only on apply */
-            this._bankAccountsService.applyFilter();
-        });
+        this._bankAccountsService.load();
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
@@ -1091,8 +1083,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this.filtersService.unsubscribe();
-        if (this.syncAccountsSubscription)
-            this.syncAccountsSubscription.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 }

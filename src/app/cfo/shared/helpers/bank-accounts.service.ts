@@ -2,15 +2,15 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { Observable, BehaviorSubject, ReplaySubject, of, combineLatest } from 'rxjs';
-import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, forkJoin, never } from 'rxjs';
+import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap, reduce, tap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { SyncAccountBankDto, BankAccountDto, BankAccountsServiceProxy, BusinessEntityDto, BusinessEntityServiceProxy, InstanceType, InstanceType7 } from '@shared/service-proxies/service-proxies';
-import { BankAccountsDataModel } from '@shared/cfo/bank-accounts-widgets/bank-accounts-data.model';
+import { SyncAccountBankDto, BankAccountDto, BankAccountsServiceProxy, BusinessEntityDto, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -23,12 +23,11 @@ export class BankAccountsService {
     filteredSyncAccountsSource$: Observable<SyncAccountBankDto[]>;
     filteredSyncAccountsWithType$: Observable<SyncAccountBankDto[]>;
     distinctUntilChangedFilteredSyncAccounts$: Observable<SyncAccountBankDto[]>;
-    allBusinessEntities$: Observable<BusinessEntityDto[]>;
     businessEntitiesAmount$: Observable<number>;
     selectedBusinessEntities$: Observable<BusinessEntityDto[]>;
     selectedBusinessEntitiesIds$: Observable<number[]>;
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
-    cachedData: BankAccountsDataModel = {
+    state: BankAccountsState = {
         selectedBankAccountIds: [],
         isActive: true,
         visibleAccountCount: 0,
@@ -36,10 +35,13 @@ export class BankAccountsService {
         selectedBusinessEntitiesIds: []
     };
     filteredBankAccounts$: Observable<BankAccountDto[]>;
+    filteredBankAccountsIds$: Observable<number[]>;
+    filteredBankAccountsStatus$: Observable<boolean>;
     selectedBankAccounts$: Observable<BankAccountDto[]>;
+    //posibleSelectedBankAccountsIds$: Observable<number[]>;
     selectedBankAccountsIds$: Observable<number[]>;
-    _syncAccountFilter: BehaviorSubject<BankAccountsDataModel> = new BehaviorSubject(this.cachedData);
-    syncAccountFilter$: Observable<BankAccountsDataModel> = this._syncAccountFilter.asObservable();
+    _syncAccountsState: BehaviorSubject<BankAccountsState> = new BehaviorSubject(this.state);
+    syncAccountsState$: Observable<BankAccountsState> = this._syncAccountsState.asObservable();
     accountsDataTotalNetWorth$: Observable<number>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
@@ -52,8 +54,16 @@ export class BankAccountsService {
     private _applyFilter = new BehaviorSubject(null);
     applyFilter$ = this._applyFilter.asObservable();
     _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
-    syncAccounts$ = this._syncAccounts.asObservable();
+    _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
+    syncAccounts$: Observable<SyncAccountBankDto[]>;
+    bankAccounts$: Observable<BankAccountDto[]>;
+    businessEntities$: Observable<BusinessEntityDto[]>;
     syncAccountsRequest$;
+    businessEntitiesRequest$;
+    private _pauser: Subject<boolean> = new Subject();
+
+    private _activeStatus: BehaviorSubject<boolean> = new BehaviorSubject(this.state.isActive);
+    //activeStatus$ = this._activeStatus.asObservable();
 
     constructor(private cfoService: CFOService,
                 private bankAccountsServiceProxy: BankAccountsServiceProxy,
@@ -61,27 +71,30 @@ export class BankAccountsService {
                 private cacheService: CacheService,
                 private localizationService: AppLocalizationService) {
         this.cacheService = this.cacheService.useStorage(0);
-        this.load();
-    }
 
-    load(acceptFilterOnlyOnApply = true) {
+        this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
+        this.businessEntities$ = this._businessEntities.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
 
-        this.acceptFilterOnlyOnApply = acceptFilterOnlyOnApply;
-        this._selectedBankAccountType.next(this._selectedBankAccountType.value);
-        this.allBusinessEntities$ = this.businessEntityService.getBusinessEntities(InstanceType7.Main, undefined).pipe(
-            publishReplay(),
-            refCount()
+        this.bankAccounts$ = this.syncAccounts$
+            .pipe(
+                mergeMap(x => x),
+                reduce((bankAccounts: BankAccountDto[], syncAccount: SyncAccountBankDto) => {
+                    return bankAccounts.concat(syncAccount.bankAccounts);
+                }, [])
+            );
+
+        this.businessEntitiesAmount$ = this.businessEntities$.pipe(
+            map(businessEntities => businessEntities.length),
+            distinctUntilChanged()
         );
-        this.businessEntitiesAmount$ = this.allBusinessEntities$.pipe(map(businessEntities => businessEntities.length));
-
         this.selectedBusinessEntities$ =
             combineLatest(
-                this.allBusinessEntities$,
-                this.syncAccountFilter$
+                this.businessEntities$,
+                this.syncAccountsState$
             ).pipe(
-                mergeMap(([businessEntities, dataFilter]) => {
+                mergeMap(([businessEntities, state]) => {
                     const res = businessEntities.filter(businessEntity => {
-                        return dataFilter.selectedBusinessEntitiesIds.indexOf(businessEntity.id) !== -1;
+                        return state.selectedBusinessEntitiesIds.indexOf(businessEntity.id) !== -1;
                     });
                     return of(res);
                 }),
@@ -116,7 +129,7 @@ export class BankAccountsService {
 
                 return bankAccountTypesForSelect;
             }),
-            distinctUntilChanged((oldTypes, newTypes) => !ArrayHelper.dataChanged(oldTypes, newTypes))
+            distinctUntilChanged(this.arrayDistinct)
         );
 
         this.filteredSyncAccountsWithType$ =
@@ -127,27 +140,48 @@ export class BankAccountsService {
             ).pipe(
                 mergeMap(([syncAccounts, selectedType, allTypes]) => {
                     return of(this.filterByBankAccountType(syncAccounts, selectedType, allTypes));
-                })
+                }),
+                distinctUntilChanged(this.arrayDistinct)
             );
 
         this.filteredSyncAccounts$ = combineLatest(
             this.filteredSyncAccountsWithType$,
-            this.syncAccountFilter$
+            this.syncAccountsState$
         ).pipe(
-            mergeMap(([syncAccounts, dataFilter]) => {
+            mergeMap(([syncAccounts, state]) => {
                 return of(this.filterDataSource(
                     syncAccounts,
-                    dataFilter.selectedBusinessEntitiesIds,
-                    dataFilter.selectedBankAccountIds,
-                    dataFilter.visibleBankAccountIds,
-                    dataFilter.isActive
+                    state.selectedBusinessEntitiesIds,
+                    state.selectedBankAccountIds,
+                    state.visibleBankAccountIds,
+                    state.isActive
                 ));
-            })
+            }),
+            distinctUntilChanged(this.arrayDistinct)
         );
+
+        /** Stream of posible bank accounts */
+        // this.posibleSelectedBankAccountsIds$ =
+        //     /** Implemented pauser to allow to update all values and then run combineLatest (it runs only once) */
+        //     this._pauser.pipe(
+        //         switchMap(paused => {
+        //             return paused ? never() : combineLatest(
+        //                 this.bankAccounts$,
+        //                 this.selectedBusinessEntitiesIds$,
+        //                 this.selectedBankAccountType$,
+        //                 this.activeStatus$
+        //             ).pipe(
+        //                 mergeMap(([bankAccounts, selectedBusinessEntities, selectedType, activeStatus]) => {
+        //                     return (this.getPosibleSelectedBankAccountsIds(bankAccounts, activeStatus, selectedBusinessEntities, selectedType));
+        //                 }),
+        //                 distinctUntilChanged(this.arrayDistinct)
+        //             );
+        //         })
+        //     );
 
         this.distinctUntilChangedFilteredSyncAccounts$ = this.filteredSyncAccounts$
             .pipe(
-                distinctUntilChanged(this.checkDistinct)
+                distinctUntilChanged(this.accountsChanged)
             );
 
         this.filteredSyncAccountsWithApply$ =
@@ -158,7 +192,8 @@ export class BankAccountsService {
                 }),
                 withLatestFrom(this.filteredSyncAccounts$, (apply, filteredAccounts) => {
                     return filteredAccounts;
-                })
+                }),
+                distinctUntilChanged(this.arrayDistinct)
             );
 
         /** @todo check how to get which data was latest from combineLatest */
@@ -173,33 +208,61 @@ export class BankAccountsService {
                         return this.acceptFilterOnlyOnApply ? filteredWithApply : filtered;
                     })
                 );
-            })
+            }),
+            distinctUntilChanged(this.arrayDistinct)
         );
 
         this.filteredBankAccounts$ = this.filteredSyncAccountsSource$.pipe(
-            map(syncAccounts => syncAccounts.reduce((bankAccounts, syncAccount) => {
-                return bankAccounts.concat(syncAccount.bankAccounts);
-            }, []))
+            map(syncAccounts => {
+                return syncAccounts.reduce((bankAccounts, syncAccount) => {
+                        return bankAccounts.concat(syncAccount.bankAccounts);
+                    }, []
+                );
+            }),
+            distinctUntilChanged(this.arrayDistinct)
+        );
+
+        this.filteredBankAccountsIds$ = this.filteredBankAccounts$.pipe(
+            map(bankAccounts => bankAccounts.map(bankAccount => bankAccount.id)),
+            distinctUntilChanged(this.arrayDistinct)
+        );
+
+        this.filteredBankAccountsStatus$ = this.filteredBankAccounts$.pipe(
+            map(bankAccounts => {
+                return bankAccounts && bankAccounts.length ? bankAccounts[0].isActive : this.state.isActive;
+            }),
+            this.distinctUntilChanged()
         );
 
         this.selectedBankAccounts$ = this.filteredBankAccounts$.pipe(
             map((bankAccounts: any) => {
                 return bankAccounts.filter(bankAccount => bankAccount.selected);
-            })
+            }),
+            distinctUntilChanged(this.arrayDistinct)
         );
 
         this.selectedBankAccountsIds$ = this.selectedBankAccounts$.pipe(
             map(bankAccounts => {
                 return bankAccounts.map(account => account.id);
             }),
-            distinctUntilChanged((oldAccountsIds, newAccountsIds) => {
-                return !ArrayHelper.dataChanged(oldAccountsIds, newAccountsIds);
-            })
+            distinctUntilChanged(this.arrayDistinct)
         );
 
-        this.selectedBankAccountsIds$.subscribe(
-            ids => {
-                this.cachedData.selectedBankAccountIds = ids;
+        this.selectedBankAccountsIds$.pipe(
+            withLatestFrom(this.filteredBankAccountsIds$)
+        ).subscribe(
+            ([selectedAccountsIds, filteredAccountsIds]) => {
+                /** If selected bank accounts sets to none - select all filtered */
+                if (!selectedAccountsIds || !selectedAccountsIds.length) {
+                    this.changeSelectedBankAccountsIds(filteredAccountsIds);
+                    this.applyFilter();
+                } else {
+                    /** If selected are differ from saved in store - update store */
+                    if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
+                        this.state.selectedBankAccountIds = selectedAccountsIds;
+                        this.cacheService.set(this.bankAccountsCacheKey, this.state);
+                    }
+                }
             }
         );
 
@@ -234,35 +297,80 @@ export class BankAccountsService {
                 distinctUntilChanged()
             );
 
-        return this.syncAccounts$;
     }
 
-    loadSyncAccounts(acceptFilterOnlyOnApply = true) {
+    loadState() {
+
+        /** Get fitler data from cache and apply it to update all accounts */
+        this.state = {...this.state, ...this.cacheService.get(this.bankAccountsCacheKey)};
+        this._syncAccountsState.next(this.state);
+
+        /** @todo think about application state handling with posibleAccountsIds stream */
+        /** Start pause to avoid multiple filtering in combine latest */
+        //this._pauser.next(true);
+        //this._activeStatus.next(this.state.isActive);
+        //this.selectedBusinessEntitiesIds$
+        /** Finish pause */
+        this._pauser.next(false);
+    }
+
+    load(acceptFilterOnlyOnApply = true) {
+        /** Change accept value */
+        this.acceptFilterOnlyOnApply = acceptFilterOnlyOnApply;
+
+        this.loadState();
+
         if (!this.syncAccountsRequest$) {
-            this.acceptFilterOnlyOnApply = acceptFilterOnlyOnApply;
-
-            this.cachedData = {...this.cachedData, ...this.cacheService.get(this.bankAccountsCacheKey)};
-            this._syncAccountFilter.next(this.cachedData);
-
-            this.syncAccountsRequest$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'USD').pipe(publishReplay(), refCount());
+            this.syncAccountsRequest$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'USD').pipe(
+                publishReplay(),
+                refCount()
+            );
             this.syncAccountsRequest$
                 .pipe(finalize(() => { this.syncAccountsRequest$ = null; }))
                 .subscribe(syncAccounts => {
-                    /** Load sync account and if they changed - */
-                    //if (!this.syncAccounts$.source['_events'][0] || !this.syncAccounts$.source['_events'][0].length || ArrayHelper.dataChanged(this.syncAccounts$.source['_events'][0], syncAccounts)) {
                     this._syncAccounts.next(syncAccounts);
-                    //}
                 });
         }
 
-        return this.syncAccountsRequest$;
+        if (!this.businessEntitiesRequest$) {
+            this.businessEntitiesRequest$ = this.businessEntityService.getBusinessEntities(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId).pipe(
+                publishReplay(),
+                refCount()
+            );
+
+            this.businessEntitiesRequest$
+                .pipe(finalize(() => { this.businessEntitiesRequest$ = null; }))
+                .subscribe(businessEntities => {
+                    this._businessEntities.next(businessEntities);
+                });
+        }
+
+        const combinedRequest = forkJoin(
+            this.syncAccountsRequest$,
+            this.businessEntitiesRequest$
+        );
+
+        combinedRequest.subscribe(() => {
+            this.filteredSyncAccounts$.pipe(first()).subscribe(() => {
+                this.applyFilter();
+            });
+        });
+
+        return combinedRequest;
     }
 
-    checkDistinct = (oldSyncAccounts: any[], newSyncAccounts: any[]) => {
+    /** Check if sync accounts and bank accounts changed */
+    accountsChanged = (oldSyncAccounts: any[], newSyncAccounts: any[]) => {
         const oldSyncAccountsIds = oldSyncAccounts.map(syncAccount => syncAccount.syncAccountId);
         const newSyncAccountsIds = newSyncAccounts.map(syncAccount => syncAccount.syncAccountId);
-        return !ArrayHelper.dataChanged(oldSyncAccountsIds, newSyncAccountsIds);
+        const accountsIdsCollector = (accountsIds, syncAccount) => accountsIds.concat(syncAccount.bankAccounts);
+        const oldBankAccountsIds = oldSyncAccounts.reduce(accountsIdsCollector, []);
+        const newBankAccountsIds = newSyncAccounts.reduce(accountsIdsCollector, []);
+        return !ArrayHelper.dataChanged(oldSyncAccountsIds, newSyncAccountsIds) &&
+               !ArrayHelper.dataChanged(oldBankAccountsIds, newBankAccountsIds);
     }
+
+    arrayDistinct = (oldData, newData) => !ArrayHelper.dataChanged(oldData, newData);
 
     filterByBankAccountType(syncAccounts, type, allTypes) {
         let filteredSyncAccounts = [];
@@ -302,13 +410,13 @@ export class BankAccountsService {
         return filteredSyncAccounts;
     }
 
-    changeFilter(filter: BankAccountsDataModel, saveInCache = true) {
-        let tempFilter = { ...this.cachedData, ...filter};
+    changeState(state: BankAccountsState, saveInCache = true) {
+        let tempFilter = { ...this.state, ...state};
         if (saveInCache) {
-            this.cachedData = tempFilter;
-            this.cacheService.set(this.bankAccountsCacheKey, this.cachedData);
+            this.state = tempFilter;
+            this.cacheService.set(this.bankAccountsCacheKey, this.state);
         }
-        this._syncAccountFilter.next(tempFilter);
+        this._syncAccountsState.next(tempFilter);
     }
 
     applyFilter() {
@@ -317,7 +425,7 @@ export class BankAccountsService {
 
     changeSelectedBankAccountsIds(selectedBankAccountsIds: number[], saveInCache = true) {
         if (selectedBankAccountsIds) {
-            this.changeFilter({
+            this.changeState({
                 selectedBankAccountIds: selectedBankAccountsIds
             }, saveInCache);
         }
@@ -325,7 +433,7 @@ export class BankAccountsService {
 
     changeSelectedBusinessEntities(selectedBusinessEntitiesIds: number[], saveInCache = true) {
         if (selectedBusinessEntitiesIds) {
-            this.changeFilter({
+            this.changeState({
                 selectedBusinessEntitiesIds: selectedBusinessEntitiesIds
             }, saveInCache);
         }
@@ -334,6 +442,14 @@ export class BankAccountsService {
     changeBankAccountType(type: string) {
         this._selectedBankAccountType.next(type);
     }
+
+    // getPosibleSelectedBankAccountsIds(bankAccounts: BankAccountDto[], activeStatus: boolean, selectedBusinessEntities: number[], selectedType: string): number[] {
+    //     return bankAccounts.filter(account => {
+    //         return (account.isActive || account.isActive === null) &&
+    //                (!selectedBusinessEntities.length || selectedBusinessEntities.indexOf(account.businessEntityId) !== -1) &&
+    //                (selectedType === this.allAccountTypesFilter || account.typeName === selectedType);
+    //     }).map(account => account.id);
+    // }
 
     filterDataSource(syncAccounts: SyncAccountBankDto[], businessEntitiesIds: number[], selectedAccountsIds: number[], visibleBankAccountsIds: number[], isActive = null): SyncAccountBankDto[] {
         let result: SyncAccountBankDto[] = [];
@@ -382,13 +498,14 @@ export class BankAccountsService {
     }
 
     changeActiveFilter(value: boolean) {
-        this.changeFilter({
+        this.changeState({
             isActive: value,
             selectedBankAccountIds: null
         });
+        this._activeStatus.next(value);
     }
 
-    changeAndGetBankAccountFilter(accountFilter: FilterModel, data: BankAccountsDataModel, initialDataSource: SyncAccountBankDto[]) {
+    changeAndGetBankAccountFilter(accountFilter: FilterModel, data: BankAccountsState, initialDataSource: SyncAccountBankDto[]) {
         let accountFilterModel = <any>accountFilter.items.element;
         if (ArrayHelper.dataChanged(initialDataSource, accountFilterModel.dataSource)) {
             accountFilterModel.dataSource = initialDataSource;

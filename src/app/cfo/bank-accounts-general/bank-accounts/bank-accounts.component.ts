@@ -68,12 +68,13 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     refresh() {
         const elementForSpinner = document.querySelector('.frame-wrap');
         abp.ui.setBusy(elementForSpinner);
-        this.bankAccountsService.loadSyncAccounts().pipe(finalize(() => { abp.ui.clearBusy(elementForSpinner); }))
-            .subscribe(() => {});
+        this.bankAccountsService.load(false)
+            .pipe(finalize(() => { abp.ui.clearBusy(elementForSpinner); }))
+            .subscribe();
     }
 
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
-        this.bankAccountsService.changeFilter({
+        this.bankAccountsService.changeState({
             selectedBusinessEntitiesIds: selectedEntitiesIds,
             selectedBankAccountIds: null
         });
@@ -114,7 +115,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
 
     activate() {
         /** Load sync accounts */
-        this.bankAccountsService.loadSyncAccounts(false);
+        this.bankAccountsService.load(false);
     }
 
     deactivate() {

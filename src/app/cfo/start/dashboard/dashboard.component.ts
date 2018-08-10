@@ -67,13 +67,13 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             buttons: []
         };
         /** Load sync accounts */
-        this.bankAccountsService.loadSyncAccounts();
+        this.bankAccountsService.load();
 
         /** After selected accounts change */
         this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
             /** filter all widgets by new data if change is on this component */
             if (this._route['_routerState'].snapshot.url === this._router.url) {
-                this.filterByBankAccounts(this.bankAccountsService.cachedData);
+                this.filterByBankAccounts(this.bankAccountsService.state);
             /** if change is on another component - mark this for future update */
             } else {
                 this.updateAfterActivation = true;
@@ -107,9 +107,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     refreshWidgets() {
         const element = this.getElementRef().nativeElement.querySelector('.dx-scrollable');
         abp.ui.setBusy(element);
-        this.bankAccountsService.loadSyncAccounts().pipe(
+        /** @todo check requests */
+        this.bankAccountsService.load().pipe(
             finalize(() => abp.ui.clearBusy(element))
-        );
+        ).subscribe();
     }
 
     periodChanged($event) {
@@ -118,11 +119,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this.bankAccountsService.loadSyncAccounts();
+        this.bankAccountsService.load();
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
-            this.filterByBankAccounts(this.bankAccountsService.cachedData);
+            this.filterByBankAccounts(this.bankAccountsService.state);
             this.updateAfterActivation = false;
         }
 

@@ -164,9 +164,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     applyBankAccountIds() {
         if (this.lastSelectedBusinessEntity) {
-            let bankAccountIdsForLink = _.difference(this.bankAccountsService._syncAccountFilter.value.selectedBankAccountIds, this.lastSelectedBusinessEntity.BankAccountIds);
-            let bankAccountIdsForRemoveLink = _.difference(this.lastSelectedBusinessEntity.BankAccountIds, this.bankAccountsService._syncAccountFilter.value.selectedBankAccountIds);
-            let bankAccountIdsForRelink = _.intersection(bankAccountIdsForLink, this.bankAccountsService._syncAccountFilter.value.usedBankAccountIds);
+            let bankAccountIdsForLink = _.difference(this.bankAccountsService._syncAccountsState.value.selectedBankAccountIds, this.lastSelectedBusinessEntity.BankAccountIds);
+            let bankAccountIdsForRemoveLink = _.difference(this.lastSelectedBusinessEntity.BankAccountIds, this.bankAccountsService._syncAccountsState.value.selectedBankAccountIds);
+            let bankAccountIdsForRelink = _.intersection(bankAccountIdsForLink, this.bankAccountsService._syncAccountsState.value.usedBankAccountIds);
             if (bankAccountIdsForRelink && bankAccountIdsForRelink.length) {
                 abp.message.confirm(this.l('BusinessEntities_UpdateBankAccount_Confirm_Text'), this.l('BusinessEntities_UpdateBankAccount_Confirm_Title'), (result) => {
                     if (result) {

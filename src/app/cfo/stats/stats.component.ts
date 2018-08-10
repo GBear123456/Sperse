@@ -158,7 +158,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private syncAccounts: any;
     bankAccountsService: BankAccountsService;
     private updateAfterActivation: boolean;
-    private syncAccountsSubscription: Subscription;
 
     constructor(
         injector: Injector,
@@ -326,8 +325,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
         this.requestFilter.endDate = moment().utc().add(1, 'year');
 
-        this.bankAccountsService.loadSyncAccounts();
-        const syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
+        const bankAccountAndBusinessEntities$ = this.bankAccountsService.load();
         this.bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountsCount = amount;
             this.initToolbarConfig();
@@ -335,8 +333,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         /** Create parallel operations */
         const forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        forkJoin(syncAccounts$, forecastsModels$)
-            .subscribe(([syncAccounts, forecastsModels]) => {
+        forkJoin(bankAccountAndBusinessEntities$, forecastsModels$)
+            .subscribe(([[syncAccounts, businessEntities], forecastsModels]) => {
                 this.syncAccounts = syncAccounts;
 
                 /** Initial data handling */
@@ -344,6 +342,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
                 /** Forecast models handling */
                 this.handleForecastModelResult(forecastsModels);
+
+                this.initFiltering();
 
                 /** After selected accounts change */
                 this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
@@ -359,7 +359,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             });
 
         this.initHeadlineConfig();
-        this.initFiltering();
         this.calculateChartsSize();
     }
 
@@ -396,7 +395,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     /** apply filter on top */
                     this.bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.cachedData.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -550,13 +549,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     getUpdatedDataSource() {
         abp.ui.setBusy();
-        this.bankAccountsService.loadSyncAccounts().pipe(
-            first(),
+        this.bankAccountsService.load().pipe(
             finalize(() => abp.ui.clearBusy() )
         )
-        .subscribe(() => {
-            this.setBankAccountsFilter();
-        });
+        .subscribe();
     }
 
     ngAfterViewInit(): void {
@@ -634,7 +630,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     setBankAccountsFilter() {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.cachedData, this.syncAccounts);
+        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.state, this.syncAccounts);
         this._filtersService.change(accountFilter);
         this.bankAccountsService.applyFilter();
     }
@@ -785,10 +781,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.initFiltering();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this.syncAccountsSubscription = this.bankAccountsService.loadSyncAccounts().subscribe(() => {
-            /** Apply filter to update all calculations as in this component updating only on apply */
-            this.bankAccountsService.applyFilter();
-        });
+        this.bankAccountsService.load();
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
@@ -804,8 +797,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
-        if (this.syncAccountsSubscription)
-            this.syncAccountsSubscription.unsubscribe();
         this.rootComponent.overflowHidden();
     }
 

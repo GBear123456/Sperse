@@ -2,7 +2,7 @@
     <selection-filter
         [allItemsText]="l('All_Entities')"
         [title]="l('Financial_Accounts_For')"
-        [selectionList]="bankAccountsService.allBusinessEntities$ | async"
+        [selectionList]="bankAccountsService.businessEntities$ | async"
         [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
         (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
@@ -19,8 +19,8 @@
 
     <div class="filter-actions-is-active">
         <div class="is-active-filter">
-            <span>{{bankAccountsService.cachedData.isActive !== false ? l('Active') : l('Disabled')}}</span>
-            <dx-switch [value]="bankAccountsService.cachedData.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
+            <span>{{bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled')}}</span>
+            <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
         </div>
     </div>
 

@@ -1,4 +1,4 @@
-export class BankAccountsDataModel {
+export class BankAccountsState {
     selectedBankAccountIds?: number[];
     isActive?: boolean;
     usedBankAccountIds?: number[];

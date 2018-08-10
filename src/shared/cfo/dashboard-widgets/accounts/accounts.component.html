@@ -43,7 +43,7 @@
         <a class="view-details">{{l('Select')}}</a>
         <div class="value">{{ bankAccountsService.accountsAmount$ | async }}</div>
         <div class="name">
-            {{(bankAccountsService.filteredBankAccounts$ | async)?.length ? l(bankAccountsService.cachedData.isActive ? 'Active' : 'Disabled') : ''}} {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
+            {{(bankAccountsService.filteredBankAccounts$ | async)?.length ? l((bankAccountsService.filteredBankAccountsStatus$ | async) ? 'Active' : 'Disabled') : ''}} {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
             <ng-container *ngIf="(bankAccountsService.filteredBankAccounts$ | async)?.length">
                 <span class="filtered">*</span>
             </ng-container>

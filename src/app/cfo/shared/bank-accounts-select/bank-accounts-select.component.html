@@ -9,13 +9,13 @@
                             <div class="dx-field">
                                 <div class="dx-field-label"><span class="business-entity-test">{{l('Financial_Accounts_For')}}</span></div>
                                 <div class="dx-field-value">
-                                    <ng-container *ngIf="!(bankAccountsService.allBusinessEntities$ | async)?.length">
+                                    <ng-container *ngIf="!(bankAccountsService.businessEntities$ | async)?.length">
                                         <div class="label-container">
                                             <span class="tag-value"> {{l('All_Entities')}} </span>
                                         </div>
                                     </ng-container>
-                                    <ng-container *ngIf="(bankAccountsService.allBusinessEntities$ | async)?.length">
-                                        <dx-tag-box [dataSource]="bankAccountsService.allBusinessEntities$ | async"
+                                    <ng-container *ngIf="(bankAccountsService.businessEntities$ | async)?.length">
+                                        <dx-tag-box [dataSource]="bankAccountsService.businessEntities$ | async"
                                                     displayExpr="name"
                                                     valueExpr="id"
                                                     placeholder="All Entities"
@@ -39,8 +39,8 @@
                 <ng-container *ngIf="showIsActiveFilter">
                     <div class="filter-actions-is-active">
                         <div class="is-active-filter">
-                            <span>{{bankAccountsService.cachedData.isActive ? l('Active') : l('Disabled')}}</span>
-                            <dx-switch [value]="bankAccountsService.cachedData.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
+                            <span>{{bankAccountsService.state.isActive ? l('Active') : l('Disabled')}}</span>
+                            <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
                         </div>
                     </div>
                 </ng-container>

@@ -69,7 +69,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     };
 
     private updateAfterActivation: boolean;
-    private syncAccountsSubscription: Subscription;
 
     constructor(
         private injector: Injector,
@@ -97,12 +96,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             names: [this.l('Statements')],
             onRefresh: () => {
                 abp.ui.setBusy();
-                this.bankAccountsService.loadSyncAccounts().pipe(
-                    first(),
+                this.bankAccountsService.load().pipe(
                     finalize(() => abp.ui.clearBusy())
-                ).subscribe(() => {
-                    this.setBankAccountsFilter();
-                });
+                ).subscribe();
             },
             iconSrc: 'assets/common/icons/credit-card-icon.svg'
         };
@@ -227,7 +223,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     ngOnInit(): void {
         super.ngOnInit();
 
-        this.bankAccountsService.loadSyncAccounts();
+        this.bankAccountsService.load();
         let forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
         this.bankAccountsService.accountsAmount$.subscribe(amount => {
@@ -385,7 +381,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     /** apply filter on top */
                     this.bankAccountsService.applyFilter();
                     /** apply filter in sidebar */
-                    filter.items.element.setValue(this.bankAccountsService.cachedData.selectedBankAccountIds, filter);
+                    filter.items.element.setValue(this.bankAccountsService.state.selectedBankAccountIds, filter);
                 }
 
                 let filterMethod = FilterHelpers['filterBy' + this.capitalize(filter.caption)];
@@ -462,7 +458,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     setBankAccountsFilter() {
         let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.cachedData, this.syncAccounts);
+        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.state, this.syncAccounts);
         this._filtersService.change(accountFilter);
         this.bankAccountsService.applyFilter();
     }
@@ -487,10 +483,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.initFiltering();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
-        this.syncAccountsSubscription = this.bankAccountsService.loadSyncAccounts().subscribe(() => {
-            /** Apply filter to update all calculations as in this component updating only on apply */
-            this.bankAccountsService.applyFilter();
-        });
+        this.bankAccountsService.load();
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
@@ -506,8 +499,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.toolbarConfig = null;
         this._filtersService.unsubscribe();
-        if (this.syncAccountsSubscription)
-            this.syncAccountsSubscription.unsubscribe();
         this.getRootComponent().overflowHidden();
     }
 }
