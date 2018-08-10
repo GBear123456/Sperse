@@ -7,20 +7,21 @@ import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { FileSystemFileEntry } from 'ngx-file-drop';
-import { finalize } from 'rxjs/operators';
+import { finalize, flatMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { CacheService } from '../../../../../../node_modules/ng2-cache-service';
 
 /** Application imports */
 import { UploadDocumentDialogComponent } from '@app/crm/clients/details/upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CustomersServiceProxy, CustomerInfoDto, DocumentServiceProxy, UploadDocumentInput,
-DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, GetUrlOutput } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ClientDetailsService } from '../client-details.service';
-
 
 @Component({
     templateUrl: './documents.component.html',
@@ -31,6 +32,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+
+    private readonly RESERVED_TIME_SECONDS = 30;
 
     private visibleDocuments: DocumentInfo[];
     private currentDocumentURL: string;
@@ -68,11 +71,13 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         private _documentTypeService: DocumentTypeServiceProxy,
         private _customerService: CustomersServiceProxy,
         private _clientService: ClientDetailsService,
-        private printerService: PrinterService
+        private printerService: PrinterService,
+        private cacheService: CacheService
     ) {
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        this.cacheService = this.cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
 
         this.actionMenuItems = [
             {
@@ -81,19 +86,52 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             },
             {
                 text: this.l('Download'),
-                action: () => {
-                    this._documentService.getUrl(this.currentDocumentInfo.id).subscribe(url => {
-                        this.currentDocumentURL = url;
-                        this.downloadDocument();
-                        this.hideActionsMenu();
-                    })
-                }
+                action: this.downloadDocumentFromActionsMenu.bind(this)
             },
             {
                 text: this.l('Delete'),
                 action: this.deleteDocument.bind(this)
             }
         ];
+    }
+
+    private storeUrlToCache(id: string, urlInfo: GetUrlOutput) {
+        this.cacheService.set(id, urlInfo, 
+            { maxAge: urlInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
+    }
+
+    private storeWopiRequestInfoToCache(id: string, requestInfo: WopiRequestOutcoming) {
+        this.cacheService.set(id, requestInfo, 
+            { maxAge: requestInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
+    }
+
+    private getDocumentUrlInfoObservable(): Observable<GetUrlOutput> {
+        let id = this.currentDocumentInfo.id;
+        if (this.cacheService.exists(id)) {
+            let urlInfo = this.cacheService.get(id) as GetUrlOutput;
+            return of(urlInfo);
+        }
+
+        return this._documentService.getUrl(id).pipe(
+            flatMap((urlInfo) => {
+                this.storeUrlToCache(id, urlInfo);
+                return of(urlInfo);
+            }));
+    }
+
+    private getViewWopiRequestInfoObservable(): Observable<WopiRequestOutcoming>
+    {
+        let id = this.currentDocumentInfo.id;
+        if (this.cacheService.exists(id)) {
+            let requestInfo = this.cacheService.get(id) as WopiRequestOutcoming;
+            return of(requestInfo);
+        }
+
+        return this._documentService.getViewWopiRequestInfo(id).pipe(
+            flatMap((response) => {
+                this.storeWopiRequestInfoToCache(id, response);
+                return of(response);
+            }));;
     }
 
     initViewerToolbar(conf: any = {}) {
@@ -134,7 +172,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                         visible: !conf.printHidden,
                         action: () => {
                             const viewedDocument = <any>this.getViewedDocumentElement();
-                            if (this.showViewerType !== this.WOPI_VIEWER) {
+                            if (this.showViewerType !== this.WOPI_VIEWER && this.showViewerType !== this.VIDEO_VIEWER) {
                                 const printSrc = this.showViewerType == this.IMAGE_VIEWER ?
                                     this.imageViewer.images[0] :
                                     viewedDocument.textContent;
@@ -288,7 +326,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             setTimeout(() => {
                 this.updateUploadProgress({progress: 0});
             }, 5000);
-        })).subscribe(() => {    
+        })).subscribe(() => {
             this.loadDocuments();
         }, (e) => {
             this.message.error(this.l('AnErrorOccurred'));
@@ -377,28 +415,28 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
             prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
             nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
-            printHidden: viewerType === this.WOPI_VIEWER
+            printHidden: viewerType === this.WOPI_VIEWER || viewerType === this.VIDEO_VIEWER || ext === 'pdf'
         });
         switch (viewerType) {
             case this.WOPI_VIEWER:
-                this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
+                this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
                     this.finishLoading(true);
                 })).subscribe((response) => {
                     this.showOfficeOnline(response);
                 });
                 break;
             case this.VIDEO_VIEWER:
-                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
-                    this.currentDocumentURL = url;
+                this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
+                    this.currentDocumentURL = urlInfo.url;
                     this.finishLoading(true);
                     this.showViewerType = viewerType;
                     this.openDocumentMode = true;
                 });
                 break;
             default:
-                this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
-                    this.currentDocumentURL = url;
-                    this.downloadFileBlob(url, (blob) => {
+                this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
+                    this.currentDocumentURL = urlInfo.url;
+                    this.downloadFileBlob(urlInfo.url, (blob) => {
                         let reader = new FileReader();
                         reader.addEventListener('loadend', () => {
                             let content = StringHelper.getBase64(reader.result);
@@ -489,11 +527,17 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     downloadDocument() {
         if (this.currentDocumentURL)
             window.open(this.currentDocumentURL, '_self');
-        else
-            this._documentService.getUrl(this.currentDocumentInfo.id).subscribe((url) => {
-                if (this.currentDocumentURL = url)
-                    this.downloadDocument();
+        else {
+            this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
+                this.currentDocumentURL = urlInfo.url;
+                this.downloadDocument();
             });
+        }
+    }
+
+    downloadDocumentFromActionsMenu() {
+        this.downloadDocument();
+        this.hideActionsMenu();
     }
 
     rotateImageRight() {

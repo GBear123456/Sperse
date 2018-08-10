@@ -34,8 +34,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private lastStage: any;
 
     @Output() selectedLeadsChange = new EventEmitter<any>();
-    @Input()
-    get selectedLeads() {
+    @Input() get selectedLeads() {
         return this._selectedLeads || [];
     }
     set selectedLeads(leads) {
@@ -57,7 +56,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
-    private readonly dataSourceURI = 'Lead';
     private subscribers = [];
 
     constructor(injector: Injector,
@@ -68,7 +66,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    refresh(quiet = false, addedNew = false) {
+    refresh(quiet = false, stageId = undefined) {
         this.selectedLeads = [];
         if (!this.refreshTimeout) {
             !quiet && this.startLoading();
@@ -90,7 +88,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             !quiet && this.onStagesLoaded.emit(result);
                         }
                         if (this._dataSource)
-                            this.loadStagesLeads(0, addedNew ? Math.floor(this.stages.length / 2) : undefined, addedNew);
+                            this.loadStagesLeads(0, stageId && _.findIndex(this.stages, 
+                                (obj) => {return obj.id == stageId}), Boolean(stageId));
 
                         this.refreshTimeout = null;
                     });
@@ -123,7 +122,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
-            this.getODataURL(this.dataSourceURI,
+            this.getODataURL(this._dataSource.uri,
                 this.queryWithSearch.concat({or: [{StageId: stage.id}]}));
         dataSource.sort({getter: 'Id', desc: true});
         dataSource.pageIndex(page);
@@ -351,15 +350,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(lead, checkedCard);
             this.selectedLeads = this.getSelectedLeads();
-        } else
-            lead && this._router.navigate(
-                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
-                    queryParams: {
-                        referrer: 'app/crm/leads',
-                        dataLayoutType: DataLayoutType.Pipeline
-                    }
-                }
-            );
+        } else {
+            if (lead.CustomerId && lead.Id)
+              lead && this._router.navigate(
+                  ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
+                      queryParams: {
+                          referrer: 'app/crm/leads',
+                          dataLayoutType: DataLayoutType.Pipeline
+                      }
+                  }
+              );
+        }
         this.hideStageHighlighting();
     }
 }

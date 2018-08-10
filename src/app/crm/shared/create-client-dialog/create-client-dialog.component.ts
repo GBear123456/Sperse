@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild, Injector, OnDestroy } from '@angular/core
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
     ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
-    PersonInfoDto, LeadServiceProxy, CreateLeadInput} from '@shared/service-proxies/service-proxies';
+    PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes } from '@shared/AppEnums';
+import { ContactTypes, CustomerType } from '@shared/AppEnums';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
 
@@ -30,10 +30,11 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy ]
+    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy, PartnerServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -53,6 +54,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
+    partnerTypes: any[] = [];
+    partnerTypeId: number;
 
     saveButtonId: string = 'saveClientOptions';
     saveContextMenuItems = [];
@@ -144,13 +147,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _leadService: LeadServiceProxy,
         private _router: Router,
         private _nameParser: NameParserService,
-        private _pipelineService: PipelineService
+        private _pipelineService: PipelineService,
+        private _partnerService: PartnerServiceProxy
     ) {
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
-        this._cacheService = this._cacheService.useStorage(0);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
 
         this.saveContextMenuItems = [
             {text: this.l('SaveAndAddNew'), selected: false},
@@ -164,6 +168,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.emailTypesLoad();
         if (this.data.isInLeadMode) {
             this.leadStagesLoad();
+        }
+        if (this.data.customerType == CustomerType.Partner ) {
+            this.partnerTypesLoad();
         }
         this.initToolbarConfig();
     }
@@ -185,7 +192,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         options: {
                             accessKey: 'CreateLeadStage'
                         }
-                    }: {
+                    } : this.data.customerType == CustomerType.Client ? {
                         name: 'status',
                         widget: 'dxDropDownMenu',
                         disabled: true,
@@ -200,6 +207,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                                     text: 'Inactive',
                                 }
                             ]
+                        }
+                    } :
+                    {
+                        name: 'partnerType',
+                        action: this.togglePartnerTypes.bind(this),
+                        options: {
+                            accessKey: 'PartnerTypesList'
                         }
                     },
                     {
@@ -310,7 +324,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             stageId: stageId,
             lists: lists,
             tags: tags,
-            ratingId: ratingId
+            ratingId: ratingId,
+            customerTypeId: this.data.customerType,
+            partnerTypeId: this.partnerTypeId
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -330,12 +346,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
+            this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
             this.redirectToClientDetails(customerId, leadId);
-            return this.data.refreshParent(true);
-        } else
+            this.data.refreshParent(true, this.stageId);
+        } else {
+            this.data.refreshParent(false, this.stageId);
             this.close();
-        this.data.refreshParent();
+        }
     }
 
     save(event?): void {
@@ -444,7 +462,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     redirectToClientDetails(id: number, leadId?: number) {
         setTimeout(() => {
-            let path = `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
+            let path = this.data.customerType == CustomerType.Partner ?
+                `app/crm/partner/${id}/contact-information` :
+                `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
             this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
         }, 1000);
         this.close();
@@ -471,6 +491,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     toggleStages() {
         this.stagesComponent.toggle();
+    }
+
+    togglePartnerTypes() {
+        this.partnerTypesComponent.toggle();
     }
 
     toggleTags() {
@@ -763,6 +787,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.tagsComponent.reset();
         this.listsComponent.reset();
         this.userAssignmentComponent.reset();
+        this.partnerTypeId = undefined;
     }
 
     onSaveOptionSelectionChanged($event) {
@@ -798,12 +823,29 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         name: stage.name,
                         text: stage.name
                     };
-                });           
-               
+                });
             });
     }
 
     onStagesChanged(event) {
         this.stageId = event.id;
+    }
+
+    partnerTypesLoad() {
+        this._partnerService.getTypes()
+            .subscribe(list => {
+                this.partnerTypes = list.map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        text: item.name
+                    };
+                });
+            });
+    }
+
+    onPartnerTypeChanged(event) {
+        this.partnerTypeId = event.id;
+        this.partnerTypesComponent.apply();
     }
 }

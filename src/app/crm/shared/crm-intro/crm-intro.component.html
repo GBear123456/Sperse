@@ -2,6 +2,25 @@
 <mat-dialog-content>
     <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
         <mat-step>
+            <div class="video step-item">
+                <div class="header">
+                    <span>{{l('CRM')}} - {{l('Product_Video_Introduction')}}</span>
+                </div>
+                <div class="main">
+                    <div class="video-wrapper">
+                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+                                <div class="wistia_embed wistia_async_kqjpmot28u videoFoam=true" style="height:100%;width:100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button mat-button (click)="goToStep(1)" class="btn btn-layout">{{l('Back')}}</button>
+                </div>
+            </div>
+        </mat-step>
+        <mat-step>
             <div class="first-step step-item">
                 <div class="header">
                     <span>{{l('Introduction_Tour')}}</span>
@@ -9,18 +28,18 @@
                 <div class="main">
                     <h2>{{l('CRM')}}</h2>
                     <p>{{l('CRM_description')}}</p>
-                    <div class="play" (click)="goToStep(9)">
+                    <div class="play" (click)="goToStep(0)">
                         <img src="assets/common/images/crm-intro/play-btn.png">
                         <div class="bottomp">
                             <p>
-                                {{l('Know_Your')}} <span class="color-blue">{{l('Customers')}}</span>
+                                {{l('Know_Your')}} <span class="color-blue">{{l('CRM_Customers')}}</span>
                             </p>
                             <img src="assets/common/images/crm-intro/frb.png">
                         </div>
                     </div>
                 </div>
                 <div class="footer">
-                    <a (click)="goToStep(9)">
+                    <a (click)="goToStep(0)">
                         <img src="assets/common/images/crm-intro/button-play.svg" alt="play"> {{l('Play_Video')}}
                     </a>
                     <button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
@@ -123,12 +142,12 @@
         <mat-step>
             <div class="forth-step step-item">
                 <div class="header">
-                    <span>{{l('Transactions_Search_Filter_Organize')}}</span>
+                    <span>{{l('Collaborative_Document_Managment')}}</span>
                 </div>
                 <div class="main top-fromLeft-bg">
                     <div class="content">
                         <p class="color-blue">
-                            {{l('Transactions_Search_Filter_Organize_Description')}}
+                            {{l('Collaborative_Document_Managment_Description')}}
                         </p>
                         <img src="/assets/common/images/crm-intro/documents-types.png" alt="{{l('Documents_Types')}}" class="documents-types img-responsive">
                     </div>
@@ -143,7 +162,7 @@
         <mat-step>
             <div class="fifth-step step-item">
                 <div class="header">
-                    <span>{{l('Your_Financial_Snapshot')}}</span>
+                    <span>{{l('Intelligent_Data_Import_Export_Wizard')}}</span>
                 </div>
                 <div class="main">
                     <div class="main-content">
@@ -234,25 +253,6 @@
                     <button class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
                         {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
                     </button>
-                </div>
-            </div>
-        </mat-step>
-        <mat-step>
-            <div class="video step-item">
-                <div class="header">
-                    <span>{{l('CRM')}} - {{l('Product_Video_Introduction')}}</span>
-                </div>
-                <div class="main">
-                    <div class="video-wrapper">
-                        <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
-                            <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
-                                <div class="wistia_embed wistia_async_kqjpmot28u videoFoam=true" style="height:100%;width:100%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer">
-                    <button mat-button (click)="goToStep(0)" class="btn btn-layout">{{l('Back')}}</button>
                 </div>
             </div>
         </mat-step>

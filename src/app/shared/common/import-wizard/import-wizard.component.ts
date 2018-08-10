@@ -79,6 +79,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     fileData: any;
     fileName = '';
     fileSize = '';
+    fileContent = '';
+    fileOrigSize = 0;
     fileHasHeader = false;
     fileHeaderWasGenerated = false;
 
@@ -253,12 +255,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                     setTimeout(() => processPartially(), 100);
                 } else {
                     this.updateGroupNames();
-                    this.reviewProgress.instance.option('value', 100);
                     this.reviewDataSource = dataSource;
-
-                    setTimeout(() => {
-                        this.reviewProgress.instance.option('visible', false);
-                    }, 1000);
+                    this.reviewProgress.instance.option('value', 100);
+                    this.reviewProgress.instance.option('visible', false);
                 }
             };
 
@@ -373,7 +372,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     }
 
     parse(content) {
-        this._parser.parse(content.trim(), {
+        this.fileContent = content.trim();
+        this._parser.parse(this.fileContent, {
             complete: (results) => {
                 if (results.errors.length)
                     this.message.error(this.l('IncorrectFileFormatError'));
@@ -393,6 +393,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     loadFileContent(file) {
         this.loadProgress = 0;
         this.fileName = file.name;
+        this.fileOrigSize = file.size;
         this.fileSize = this.getFileSize(file.size);
         let reader = new FileReader();
         reader.onload = (event) => {
@@ -432,21 +433,22 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 this.fileData.data.shift();
                 this.fileHeaderWasGenerated = false;
             }
-
-            let data = this.fileData.data[0].map((field, index) => {
-                let fieldId;
-                return {
-                    id: index,
-                    sourceField: field,
-                    sampleValue: this.lookForValueExample(index),
-                    mappedField: this.lookupFields.every((item) => {
-                        let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
-                        if (isSameField)
-                            fieldId = item.id;
-                        return !isSameField;
-                    }) ? '' : fieldId
-                };
-            });
+            
+            let noNameCount = 0, 
+                data = this.fileData.data[0].map((field, index) => {
+                    let fieldId;
+                    return {
+                        id: index,
+                        sourceField: field || this.l('NoName', [++noNameCount]),
+                        sampleValue: this.lookForValueExample(index),
+                        mappedField: this.lookupFields.every((item) => {
+                            let isSameField = item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase() == field.toLowerCase();
+                            if (isSameField)
+                                fieldId = item.id;
+                            return !isSameField;
+                        }) ? '' : fieldId
+                    };
+                });
 
             this.mapDataSource = {
                 store: {
@@ -611,7 +613,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                 if (columnConfig)
                     _.extend(column, columnConfig);
                 this.initColumnTemplate(column);
-                //                this.updateColumnOrder(column);
+                column.calculateDisplayValue = this.calculateDisplayValue;
+//                this.updateColumnOrder(column);
             }
 
             if (!columnConfig || !columnConfig['caption'])
@@ -655,6 +658,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         }
 
         return isValid;
+    }
+
+    calculateDisplayValue(data) {
+        const MAX_LEN = 80;
+        let value = data[this['dataField']];
+        if (value && value.length > MAX_LEN)
+            return value.substr(0, MAX_LEN) + '...';
+        return value;
     }
 
     onReviewCellPrepared($event) {

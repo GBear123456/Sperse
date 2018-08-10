@@ -28,7 +28,8 @@ export class AppConsts {
     static readonly localization = {
         defaultLocalizationSourceName: 'Platform',
         CRMLocalizationSourceName: 'CRM',
-        CFOLocalizationSourceName: 'CFO'
+        CFOLocalizationSourceName: 'CFO',
+        CreditReportLocalizationSourceName: 'CreditReport'
     };
 
     static readonly modules = {
@@ -52,7 +53,8 @@ export class AppConsts {
 
     static readonly PipelinePurposeIds = {
         lead: 'L',
-        order: 'O'
+        order: 'O',
+        activity: 'A'
     };
 
     static readonly masks = {
@@ -84,5 +86,7 @@ export class AppConsts {
     static readonly SYS_ID_CRM_CANCEL_LEAD       = 'CRM.CancelLead';
     static readonly SYS_ID_CRM_UPDATE_LEAD_STAGE = 'CRM.UpdateLeadStage';
     static readonly SYS_ID_CRM_PROCESS_LEAD      = 'CRM.ProcessLead';
+
+    static readonly CACHE_TYPE_LOCAL_STORAGE = 0;
 }
 

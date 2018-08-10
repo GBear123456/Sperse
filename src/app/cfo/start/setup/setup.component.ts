@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
+import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';

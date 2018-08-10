@@ -1,5 +1,5 @@
 import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
-import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, Routes, RouterModule, Router, NavigationEnd } from '@angular/router';
+import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Router, Routes, NavigationEnd } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { AppRootComponent } from 'root.components';
 
@@ -71,24 +71,31 @@ const routes: Routes = [{
         {
             path: 'account',
             loadChildren: 'account/account.module#AccountModule', //Lazy load account module
-            data: {preload: true}
+            data: { preload: true }
+        },
+        {
+            path: 'credit-reports',
+            loadChildren: 'credit-reports/credit-reports.module#CreditReportsModule', //Lazy load account module
+            data: { preload: true }
         },
         {
             path: 'mobile',
             loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
-            data: {preload: true}
+            data: { preload: true }
         },
         {
             path: 'desktop',
             loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-            data: {preload: true}
+            data: { preload: true } 
         }
     ]
 }];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+    exports: [
+        RouterModule
+    ]
 })
 
 export class RootRoutingModule implements AfterViewInit {
@@ -109,7 +116,7 @@ export class RootRoutingModule implements AfterViewInit {
                loadChildren: AppConsts.isMobile
                    ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
                    : 'app/app.module#AppModule',         //Lazy load desktop module
-               data: {preload: true}
+               data: { preload: true }
            }
         );
         _router.resetConfig(_router.config);

@@ -40,7 +40,8 @@ import {
     DxSliderModule,
     DxRadioGroupModule,
     DxCheckBoxModule,
-    DxTagBoxModule
+    DxTagBoxModule,
+    DxSchedulerModule
 } from 'devextreme-angular';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -56,6 +57,7 @@ import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboa
 import { ClientDetailsModule } from './clients/details/client-details.module';
 import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
+import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
@@ -63,8 +65,13 @@ import { CreateClientDialogComponent } from './shared/create-client-dialog/creat
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
+import { ImportListComponent } from './import-leads/import-list.component';
+import { ImportLeadsService } from './import-leads/import-leads.service';
+import { ActivityComponent } from './activity/activity.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
+
+import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -94,6 +101,7 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
       DxRadioGroupModule,
       DxCheckBoxModule,
       DxTagBoxModule,
+      DxSchedulerModule,
 
       MatSidenavModule,
       MatProgressBarModule,
@@ -121,18 +129,22 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
     ],
     declarations: [
       ClientsComponent,
+      PartnersComponent,
       CreateClientDialogComponent,
       LeadsComponent,
       OrdersComponent,
       DashboardComponent,
       DashboardMenuComponent,
       LeadsStatsComponent,
+      ImportListComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent,
-      CrmIntroComponent
+      CrmIntroComponent,
+      ActivityComponent
     ],
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
+        ImportServiceProxy,
+        ImportLeadsService
     ],
     entryComponents: [
         CreateClientDialogComponent,

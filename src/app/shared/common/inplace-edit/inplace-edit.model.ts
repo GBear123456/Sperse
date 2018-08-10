@@ -1,5 +1,6 @@
 export class InplaceEditModel {
     id: number;
+    displayValue: string;
     value: string;
     validationRules: object[];
     isEditDialogEnabled: boolean = false;

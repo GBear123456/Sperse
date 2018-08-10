@@ -1,0 +1,97 @@
+:host {
+    display: inline-block;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+
+    .loadindicator {
+        height: 16px;
+        width: 16px;
+        left: -9px;
+        display: inline-block;
+        border: 2px solid rgba(53,200,168,.9);
+        border-left-color: rgba(255,255,255,.2);
+        border-bottom-color: rgba(255,255,255,.2);
+        border-radius: 50%;
+        position: relative;
+        -webkit-animation: rotation .6s infinite linear;
+        -moz-animation: rotation .6s infinite linear;
+        -o-animation: rotation .6s infinite linear;
+        animation: rotation .6s infinite linear;
+
+        &.error {
+            border-top-color: orange;
+            border-right-color: orange;
+        }
+    }
+
+    /deep/ dx-progress-bar {
+        display: inline-block;
+        .dx-progressbar-wrapper {
+            margin-top: 15px;
+        }
+        .dx-progressbar-range-container {
+            display: block;
+            margin-right: 10px;
+            position: relative;
+            .dx-progressbar-container {
+                border: 0;
+                height: 7px;
+                background: #fff;
+                border-radius: 4px;
+                overflow: hidden;
+
+                .dx-progressbar-range {
+                    border: 0;
+                    background-color: #35C8A8;
+                    border-radius: 4px 0 0 4px;
+                    margin-top: 0;
+                }
+            }
+        }
+        .dx-progressbar-status {
+            width: 100%;
+            text-align: center;
+        }
+    }
+}
+
+// animation rotate
+@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+        -o-transform: rotate(0deg);
+    }
+    to {
+        -o-transform: rotate(359deg);
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}

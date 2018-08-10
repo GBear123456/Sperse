@@ -1,0 +1,12 @@
+<div *ngIf="model.passed; else elseBlock" class="text-center congratulations">
+  {{l('kbaSuccessMessage')}}<br>
+  <span class="redirect-msg">{{l('kbaRedirectMessage')}}...</span>
+</div>
+<ng-template #elseBlock>
+    <div *ngIf="model.err; else elseBlock" class="error">
+        {{l(showingError)}}
+    </div>
+    <ng-template #elseBlock>
+        <div class="text-center error unknown-error">{{l('kbaUnknownErrorMessage')}}</div>
+    </ng-template>
+</ng-template>

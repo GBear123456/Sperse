@@ -1,0 +1,21 @@
+:host {
+    position: relative;
+    display: block;
+    height: 100%;
+    top: 74px;
+
+    .margin-left {
+        margin-left: 321px;
+    }
+
+    /deep/ dx-data-grid {
+        .dx-datagrid-table {
+            tr td:nth-child(3) {
+                cursor: pointer;
+                color: #424de4!important;
+                text-decoration: underline;
+            }
+        }
+    }
+
+}

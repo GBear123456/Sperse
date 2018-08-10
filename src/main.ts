@@ -12,7 +12,11 @@ if (environment.production) {
 }
 
 const bootstrap = () => {
-    return platformBrowserDynamic().bootstrapModule(RootModule);
+    let loginPageHandler = window['loginPageHandler'];
+    if (loginPageHandler)
+        loginPageHandler(environment.appConfig);
+    else
+        return platformBrowserDynamic().bootstrapModule(RootModule);
 };
 
 /* "Hot Module Replacement" is enabled as described on

@@ -67,6 +67,11 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.l('Stage'),
             icon: this.getImgURI('status-icon')
         },
+        partnerType: {
+            accessKey: 'PartnerType',
+            text: this.l('Type'),
+            icon: this.getImgURI('status-icon')
+        },
         delete: {
             text: this.l('Delete'),
             icon: this.getImgURI('delete-icon')
@@ -74,6 +79,10 @@ export class ToolBarComponent extends AppComponentBase {
         discard: {
             text: this.l('Discard'),
             icon: this.getImgURI('delete-icon')
+        },
+        cancel: {
+            text: this.l('Cancel'),
+            icon: this.getImgURI('close')
         },
         folder: {
             hint: this.l('Folder'),
@@ -297,7 +306,7 @@ export class ToolBarComponent extends AppComponentBase {
                     link, item.options['width']);
                 link.onClick = (event) => {
                     if (item.name == 'select-box')
-                        $('.dx-dropdownmenu-button[select-caption="' + item.text + '"]')
+                        $('.dx-dropdownmenu-button[select-caption' + (item.text ? '="' + item.text + ':"': '') + ']')
                             .attr('select-value', event.itemData.text);
                     /** if each item has its own click handler - call it */
                     (link.action && link.action.call(this, this.getOptions() || event)) ||

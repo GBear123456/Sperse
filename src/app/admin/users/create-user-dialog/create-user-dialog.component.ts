@@ -1,13 +1,18 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
-import { UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
-    UserRoleDto, PasswordComplexitySetting, TenantHostType } from '@shared/service-proxies/service-proxies';
+import { Router } from '@angular/router';
+
+import {
+    UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
+    UserRoleDto, PasswordComplexitySetting, TenantHostType
+} from '@shared/service-proxies/service-proxies';
 
 import { AppConsts } from '@shared/AppConsts';
-import { DxContextMenuComponent } from 'devextreme-angular';
+import { DxContextMenuComponent, DxTextBoxComponent } from 'devextreme-angular';
 
 import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
@@ -19,11 +24,12 @@ import { finalize } from 'rxjs/operators';
 @Component({
     templateUrl: 'create-user-dialog.component.html',
     styleUrls: ['create-user-dialog.component.less'],
-    providers: [ ]
+    providers: []
 })
 export class CreateUserDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
+    @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;
 
     user = new UserEditDto();
     roles: UserRoleDto[];
@@ -36,7 +42,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
-    private readonly SAVE_OPTION_DEFAULT   = 1;
+    private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     saveButtonId = 'saveUserOptions';
@@ -53,6 +59,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     constructor(
         injector: Injector,
+        private _router: Router,
         public dialog: MatDialog,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,
@@ -61,11 +68,12 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this._cacheService = this._cacheService.useStorage(0);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
 
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false},
-            {text: this.l('SaveAndClose'), selected: false}
+            { text: this.l('SaveAndAddNew'), selected: false },
+//            { text: this.l('SaveAndExtend'), selected: false, disabled: true },
+            { text: this.l('SaveAndClose'), selected: false }
         ];
 
         this.userDataInit();
@@ -79,7 +87,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
             this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
-                allOrganizationUnits : userResult.allOrganizationUnits,
+                allOrganizationUnits: userResult.allOrganizationUnits,
                 selectedOrganizationUnits: userResult.memberedOrganizationUnits
             };
 
@@ -160,14 +168,26 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.saveOptionsInit();
     }
 
-    private afterSave(): void {
-        this.notify.info(this.l('SavedSuccessfully'));
-
-        if (this.saveContextMenuItems[0].selected)
+    private afterSave(userId): void {
+        if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
-        else if (this.saveContextMenuItems[1].selected)
+            this.notify.info(this.l('SavedSuccessfully'));
+            this.data.refreshParent(true);
+//        } else if (this.saveContextMenuItems[1].selected) {
+//            this.redirectToUserDetails(userId);
+        } else {
+            this.data.refreshParent();
             this.close();
-        this.data.refreshParent();
+        }
+    }
+
+    redirectToUserDetails(id: number) {
+        setTimeout(() => {
+            this._router.navigate([`app/admin/user/${id}/information`], 
+                { queryParams: { referrer: this._router.url.split('?').shift() } }
+            );
+        }, 1000);
+        this.close();
     }
 
     validateForm() {
@@ -189,9 +209,13 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         return true;
     }
 
-    save(): void {
+    save(event?): void {
+        if (event && event.offsetX > 195)
+            return this.saveContextComponent
+                .instance.option('visible', true);
+
         if (!this.validateForm())
-            return ;
+            return;
 
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
@@ -207,11 +231,12 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             );
 
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
+        input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
 
         input.tenantHostType = <any>TenantHostType.PlatformUi;
         this._userService.createOrUpdateUser(input)
-            .pipe(finalize(() => {  saveButton.disabled = false; }))
-            .subscribe(() => this.afterSave() );
+            .pipe(finalize(() => { saveButton.disabled = false; }))
+            .subscribe((userId) => this.afterSave(userId || this.user.id));
     }
 
     getDialogPossition(event, shiftX) {
@@ -233,7 +258,8 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     showUploadPhoto($event) {
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
-                source: this.photoOriginalData
+                source: this.photoOriginalData,
+                maxSizeBytes: 1048576
             },
             hasBackdrop: true
         }).afterClosed().subscribe((result) => {
@@ -250,6 +276,10 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.setRandomPassword = false;
         this.sendActivationEmail = true;
         this.user = new UserEditDto();
+
+        setTimeout(() =>
+            this.setComponentToValid(
+                this.phoneNumber.instance));
     }
 
     onSaveOptionSelectionChanged($event) {
@@ -262,12 +292,15 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.save();
     }
 
-    onFullNameKeyUp(event) {
-        this.data.title = event;
-        if (event) {
-            let fullName = nameParser.parseFullName(event.trim());
+    onFullNameKeyUp(title) {
+        this.data.title = title;
+        if (title) {
+            let fullName = nameParser.parseFullName(title.trim());
             this.user.name = fullName.first;
             this.user.surname = fullName.last;
+        } else {
+            this.user.name = '';
+            this.user.surname = '';
         }
     }
 
@@ -277,5 +310,35 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     getAssignedOrgUnitCount(): number {
         return this.organizationUnitTree.getSelectedOrganizations().length || 0;
+    }
+
+    setComponentToValid(component) {
+        component.option('isValid', true);
+    }
+
+    focusInput(event) {
+        if (!(event.component._value && event.component._value.trim())) {
+            let input = event.event.originalEvent.target;
+            setTimeout(function () {
+                if (input.createTextRange) {
+                    let part = input.createTextRange();
+                    part.move('character', 0);
+                    part.select();
+                } else if (input.setSelectionRange)
+                    input.setSelectionRange(0, 0);
+
+                input.focus();
+            }, 100);
+        }
+    }
+
+    phoneComponentInitialized(event) {
+        setTimeout(() => this.setComponentToValid(event.component), 500);
+    }
+    
+    phoneComponentFocusOut(event) {
+        let value = event.component.option("value");
+        if (!value)
+            this.setComponentToValid(event.component);
     }
 }

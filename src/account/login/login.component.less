@@ -188,6 +188,10 @@
     }
 }
 
+/deep/ .modal-open {
+    overflow: hidden !important;
+}
+
 .modal {
     .modal-content {
         overflow: hidden;
@@ -203,7 +207,7 @@
         .modal-body {
             height: 100%;
             text-align: left;
-            overflow-y: scroll;
+            overflow-y: auto;
         }
     }
 }

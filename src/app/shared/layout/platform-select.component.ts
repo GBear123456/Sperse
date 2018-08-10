@@ -26,17 +26,17 @@ export class PlatformSelectComponent extends AppComponentBase {
         super(injector);
 
         _appService.getModules().forEach((module) => {
-            if (module !== 'CFO') {
-                this.modules.push({
-                    code: module,
-                    name: module
-                });
-            } else {
+            if (module === 'CFO') {
                 let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
                 this.modules.push({
                     code: module,
                     name: 'CFO',
                     uri: cfoPersonalEnable ? 'user' : 'main',
+                });
+            } else {
+                this.modules.push({
+                    code: module,
+                    name: module
                 });
             }
 
@@ -59,7 +59,12 @@ export class PlatformSelectComponent extends AppComponentBase {
             this.uri = switchModule.uri;
 
             this._appService.switchModule(this.module, { instance: this.uri });
-            this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
+
+            let moduleConfig = this._appService.getModuleConfig(switchModule.name);
+            if (moduleConfig.defaultPath)
+                this._router.navigate([moduleConfig.defaultPath]);
+            else
+                this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
             this._dropDown.close();
         }
     }

@@ -159,6 +159,10 @@
 
     /deep/ mat-horizontal-stepper {
 
+        mat-step-header[ng-reflect-label="Review"] {
+            pointer-events: none!important;
+        }
+
         &.updated-padding {
             .mat-horizontal-content-container {
                 padding: 0 20px;
@@ -285,16 +289,6 @@
 
     /deep/ dx-data-grid {
         height: calc(~"100vh - 210px") !important;
-
-        td.capitalize {
-            & {
-                text-transform: lowercase
-            }
-
-            &:first-letter {
-                text-transform: uppercase
-            }
-        }
 
         td.bold {
             font-weight: bold!important;

@@ -40,12 +40,19 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
+
+        this.showImportUsersStep = (!abp.session.tenantId || this.feature.isEnabled('Admin'))
+            && this.permission.isGranted('Pages.Administration.Users')
+            && this.permission.isGranted('Pages.Administration.Users.Create')
+            && this.permission.isGranted('Pages.Administration.Roles');
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.stepper.selectedIndex = 1;
+    }
 
     onSubmit() {
         if (this.showImportUsersStep) {

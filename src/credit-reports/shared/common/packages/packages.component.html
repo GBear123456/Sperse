@@ -1,0 +1,17 @@
+<ng-container *ngFor="let item of packageList?.items">
+    <form (ngSubmit)="choosePackage(packageVal.value)" #packageForm="ngForm">
+        <input hidden
+               type="number"
+               id="PackageId"
+               #packageVal
+               name="PackageId"
+               [(ngModel)]="item.id">
+        <button class="button" type="submit">
+            <span class="package-name">{{l(item.name)}} <span class="price">{{item.initialPaymentAmount | currency:'USD':true:'1.0-0'}}</span></span>
+            <span class="package-desc">{{l(item.description)}}</span>
+            <span class="package-trial">{{item.trialPeriodDays}}-{{l('DayTrialAccess')}}</span>
+            <span class="package-month">{{l('MonthlyPayment')}} {{item.monthlyPaymentAmount | currency:'USD':true:'1.0-0'}}<sup>/mo</sup></span>
+            <span *ngIf="item.isSimulatorEnabled">{{l('PackageSimulatorEnabled')}}</span>
+        </button>
+    </form>
+</ng-container>

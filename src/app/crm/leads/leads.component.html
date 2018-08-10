@@ -1,5 +1,7 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
     <crm-static-list
         [width]="'210px'"
         [title]="l('Stages')"
@@ -67,7 +69,7 @@
                         <dxi-column dataField="LeadRequestDate" caption="{{l('LeadRequestDate')}}" [visible]="false" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="SourceCode" caption="{{l('SourceCode')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="StreetAddress" caption="{{l('Contact.StreetAddress')}}" [visible]="false"></dxi-column>
-                        <dxi-column dataField="Zip" caption="{{l('Contact.Zip')}}" [visible]="false" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="ZipCode" caption="{{l('Contact.Zip')}}" [visible]="false" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="Website" caption="{{l('Website')}}" [visible]="false"></dxi-column>
                         <dxi-column dataField="PhoneExtension" caption="{{l('Contact.PhoneExtension')}}" [visible]="false" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="Title" caption="{{l('Title')}}" [visible]="false"></dxi-column>

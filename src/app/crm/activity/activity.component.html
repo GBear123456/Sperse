@@ -1,0 +1,41 @@
+<div [@routerTransition]>
+    <app-headline [config]="headlineConfig">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+    
+            <dx-scheduler
+                [height]="'calc(100vh - 270px)'"
+                [dataSource]="dataSource"
+                [views]="['day', 'week', 'month', 'agenda']"
+                [resources]="resources"
+                [currentView]="currentView"
+                [currentDate]="currentDate"
+                [showAllDayPanel]="false"
+                (onContentReady)="onOptionChanged($event)"
+                (onAppointmentAdding)="onAppointmentAdding($event)"
+                (onAppointmentUpdating)="onAppointmentUpdating($event)"
+                (onAppointmentDeleting)="onAppointmentDeleting($event)"
+            ></dx-scheduler>
+    
+        </div>
+    </div>
+
+    <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div class="funnel-wrapper">
+                    <app-pipeline
+                        [dataSource]="pipelineDataSource"
+                        [pipelinePurposeId]="pipelinePurposeId"
+                        [(selectedLeads)]="selectedLeads"
+                        (onStagesLoaded)="onStagesLoaded($event)">
+                        Loading...
+                    </app-pipeline>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

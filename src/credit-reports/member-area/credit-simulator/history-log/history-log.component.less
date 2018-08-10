@@ -1,0 +1,78 @@
+@import "../../_member-area.settings.less";
+.history-log {
+    padding-bottom: 20px;
+    ol {
+        margin: 0;
+        padding: 0;
+        // list-style-type: none;
+        li {
+            padding: 10px 0;
+            list-style-position: inside;
+            .request-description {
+                margin-top: 12px;
+                font-family: @lato;
+                font-size: 15px;
+                line-height: 1.47;
+                font-weight: 600;
+                color: #8a969b;
+                width: 56%;
+                display: inline-block;
+                vertical-align: top;
+                .request {
+                    font-family: @lato;
+                    font-size: 15px;
+                    line-height: 1.47;
+                    text-align: left;
+                    display: block;
+                }
+            }
+            .new-score-detail {
+                margin-top: 12px;
+                line-height: 1.4;
+                width: 40%;
+                display: inline-block;
+                text-align: right;
+                .score-group {
+                    font-weight: 800;
+                    color: #161b1d;
+                }
+                .changes {
+                    min-width: 71px;
+                    height: 24px;
+                    border-radius: 100px;
+                    background-color: #f8f8f8;
+                    display: inline-block;
+                    padding: 3px 6px;
+                    text-align: center;
+                    margin-left: 10px;
+                    &.positive {
+                        background-color: #ebfcf3;
+                        color: #34be75;
+                    }
+                    &.negative {
+                        background-color: #fff2f0;
+                        color: #e0533b;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.welcome {
+    padding: 25px;
+    background: #fafafa;
+    &-title {
+        font-size: 20px;
+        font-family: @robotoslab;
+        color: #171c1d;
+        text-align: left;
+        margin: 0;
+    }
+    &-text {
+        color: #8a969b;
+        font-size: 18px;
+        text-align: justify;
+        margin: 20px 0;
+    }
+}

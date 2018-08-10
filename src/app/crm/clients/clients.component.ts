@@ -6,7 +6,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy } from '@shared/AppEnums';
+import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -35,8 +35,7 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
-import { InstanceServiceProxy, GetUserInstanceInfoOutputStatus,
-    CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 import { ClientService } from '@app/crm/clients/clients.service';
@@ -99,7 +98,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _cfoInstanceServiceProxy: InstanceServiceProxy,
         private _customersServiceProxy: CustomersServiceProxy,
         private _clientService: ClientService
     ) {
@@ -134,7 +132,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.stages).name);
         });
 
-        this.canSendVerificationRequest = this._clientService.canSendVerificationRequest();
+        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
     }
 
     private paramsSubscribe() {
@@ -146,10 +144,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if (params['refresh'])
                         this.refreshDataGrid();
             });
-    }
-
-    private checkCFOClientAccessPermission() {
-        return this.isGranted('Pages.CFO.ClientInstanceAdmin');
     }
 
     invalidate() {
@@ -190,12 +184,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {refreshParent: this.refreshDataGrid.bind(this)}
+            data: {
+                refreshParent: this.refreshDataGrid.bind(this),
+                customerType: CustomerType.Client
+            }
         }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
 
     isClientCFOAvailable(userId) {
-        return ((userId != null) && this.checkCFOClientAccessPermission());
+        return this._appService.isCFOAvailable(userId);
     }
 
     showClientDetails(event) {
@@ -209,12 +206,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     redirectToCFO(event, userId) {
-        this._cfoInstanceServiceProxy.getUserInstanceInfo(userId).subscribe(result => {
-            if (result && result.id && (result.status === GetUserInstanceInfoOutputStatus.Active))
-                window.open(abp.appPath + 'app/cfo/' + result.id + '/start');
-            else
-                this.notify.error(this.l('CFOInstanceInactive'));
-        });
+        this._appService.redirectToCFO(userId);
     }
 
     calculateAddressColumnValue(data) {
@@ -583,36 +575,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        if (this.isGranted('Pages.CRM.BulkUpdates')) {
-            let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-            if (selectedIds && selectedIds.length) {
-                this.showConfirmationDialog(selectedIds, status.id);
-            } else {
-                this.message.warn(this.l('NoRecordsToUpdate'));
-            }
-        }
-    }
-
-    private showConfirmationDialog(selectedIds: number[], statusId: string) {
-        this.message.confirm(
-            this.l('ClientsUpdateStatusWarningMessage'),
-            this.l('ClientStatusUpdateConfirmationTitle'),
-            isConfirmed => {
-                if (isConfirmed)
-                    this.updateClientStatusesInternal(selectedIds, statusId);
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        this._clientService.updateCustomerStatuses(
+            selectedIds,
+            CustomerType.Client,
+            status.id,
+            () => {
+                this.refreshDataGrid();
+                this.dataGrid.instance.clearSelection();
             }
         );
-    }
-
-    private updateClientStatusesInternal (customerIds: number[], statusId: string) {
-        this._customersServiceProxy.updateCustomerStatuses(new UpdateCustomerStatusesInput({
-            customerIds: customerIds,
-            statusId: statusId
-        })).subscribe(() => {
-            this.notify.success(this.l('StatusSuccessfullyUpdated'));
-            this.refreshDataGrid();
-            this.dataGrid.instance.clearSelection();
-        });
     }
 
     onCellClick($event) {
@@ -631,7 +603,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     requestVerification(contactId: number) {
-        this._clientService.requestVerification(contactId);
+        this._appService.requestVerification(contactId);
     }
 
     activate() {

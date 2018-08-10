@@ -1,1 +1,16 @@
-<div [@routerTransition] class="login-wraper"></div>
+<div [@routerTransition] class="login-wraper">
+    <div *ngIf="paymentRequired" class="payment">
+        <payment-info class="payment-info"></payment-info>
+        <div *ngIf="paymentResult" class="base-commerce-validation">
+            <ng-container *ngFor="let item of paymentResult.errors">
+                <div class="dx-validationsummary-item">
+                    <div class="dx-item-content dx-validationsummary-item-content">{{ item }}</div>
+                </div>
+            </ng-container>
+        </div>
+        <button class="btn btn-primary submit-button"
+                (click)="billingInfoSubmit($event)">
+            {{l('Submit')}}
+        </button>
+    </div>
+</div>

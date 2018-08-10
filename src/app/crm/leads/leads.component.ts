@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy } from '@shared/AppEnums';
+import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -100,7 +100,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     public headlineConfig = {
         names: [this.l('Leads')],
-        onRefresh: this.refreshDataGrid.bind(this, false, false),
+        onRefresh: this.refreshDataGrid.bind(this, false),
         icon: 'basket',
         buttons: [
             {
@@ -125,6 +125,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.dataSource = {
+            uri: this.dataSourceURI,
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -180,10 +181,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    refreshDataGrid(quiet = false, addedNew = false) {
+    refreshDataGrid(quiet = false, stageId = undefined) {
         setTimeout(() => {
             this.pipelineComponent.refresh(
-                quiet || !this.showPipeline, addedNew);
+                quiet || !this.showPipeline, stageId);
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
@@ -191,7 +192,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     invalidate() {
-        this.refreshDataGrid(true, true);
+        this.refreshDataGrid(true);
     }
 
     showColumnChooser() {
@@ -635,10 +636,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: (quite) => {
-                    this.refreshDataGrid(quite, true);
+                refreshParent: (quite, stageId) => {
+                    this.refreshDataGrid(quite, stageId);
                 },
-                isInLeadMode: true
+                isInLeadMode: true,
+                customerType: CustomerType.Client
             }
         });
     }

@@ -1,0 +1,399 @@
+:host {
+    text-align: start;
+
+    /deep/ .no-padding {
+        padding: 0 !important;
+    }
+
+    .filter-actions {
+        width: 100%;
+        display: inline-block;
+        height: 30px;
+
+        .filter-by-types {
+            float: left;
+            height: 30px;
+
+            /deep/ .dx-tabs {
+                border: 0;
+                text-align: left;
+                margin-top: -10px;
+            }
+
+            /deep/ .dx-tabs-wrapper {
+                display: inline-block;
+            }
+
+            /deep/ .dx-tab {
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 1.21;
+                letter-spacing: 0.3px;
+                color: #677380;
+                padding: 9px 10px 3px 0;
+                background-color: transparent;
+
+                .dx-tab-content {
+                    border-bottom: 2px solid transparent;
+                }
+
+                .dx-tab-text {
+                    font-size: 14px;
+                }
+            }
+
+            /deep/ .dx-tab.dx-tab-selected {
+                border: 0;
+                font-weight: 600;
+                color: #202b35;
+
+                .dx-tab-content {
+                    border-bottom-color: #00AEEF;
+                }
+
+                &:after {
+                    border: 0;
+                }
+            }
+
+            /deep/ .dx-tab {
+                display: inline-block;
+
+                .dx-tab-text {
+                    line-height: 17px;
+                }
+            }
+        }
+    }
+
+    /deep/ .highlighted-row {
+        background-color: #f3fff7;
+    }
+
+    dx-tag-box {
+        height: auto;
+    }
+
+    .label-container {
+        padding-top: 7px;
+    }
+
+    /deep/ #gridContainer {
+        height: 100% !important;
+        font-size: 12px;
+
+        .dx-datagrid-headers .dx-datagrid-content,
+        .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+            border-bottom: 0;
+        }
+
+        .dx-datagrid-rowsview,
+        .dx-datagrid-rowsview .dx-selection.dx-row > td {
+            border: 0;
+        }
+
+        tr[aria-selected ="true"] {
+            background-color: transparent;
+        }
+
+        table.dx-datagrid-table {
+            border-spacing: 0;
+            table-layout: auto;
+
+            .dx-master-detail-row {
+                position: relative;
+
+                .dx-header-row {
+                    td {
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        color: rgba(104, 111, 118, 0.6);
+                        font-size: 13px;
+                        letter-spacing: 0.5px;
+                    }
+                }
+
+                .dx-master-detail-cell {
+                    border: none;
+                    background: #fff;
+                    padding: 0;
+
+                    & > div {
+                        padding-bottom: 8px;
+                    }
+                }
+
+                #gridContainer .dx-datagrid-headers .dx-datagrid-content {
+                    border-bottom: 0;
+                }
+
+                .dx-datagrid-focus-overlay {
+                    border: 0;
+                }
+
+                .dx-scrollable-content {
+                    display: inline-flex;
+                }
+
+                .dx-datagrid-headers {
+                    border: 0;
+                }
+
+                .dx-datagrid {
+                    background-color: #f3f7fa;
+                }
+
+                table.dx-datagrid-table {
+                    border-collapse: collapse !important;
+                    border-spacing: 0 0 !important;
+
+                    .dx-row.dx-data-row {
+                        border: 0 !important;
+                        box-shadow: none !important;
+
+                        td {
+                            padding: 3px 8px !important;
+                            font-weight: 500;
+                            color: #67737f;
+                        }
+                    }
+                }
+
+                .type-container {
+                    [data-text="checking"] {
+                        color: #3dbff0 !important;
+                    }
+
+                    [data-text="savings"] {
+                        color: #b55db2 !important;
+                    }
+
+                    [data-text="credit card"] {
+                        color: #8fc447 !important;
+                    }
+                }
+            }
+
+            .account-status {
+                width: 100%;
+                border-radius: 15px;
+                display: inline-block;
+                background: #f3f7fa;
+                color: #424c56;
+                text-transform: uppercase;
+                text-align: center;
+                position: relative;
+                border: 0;
+                font-weight: 400 !important;
+                padding: 3px 2px 3px 16px;
+                font-size: 13px;
+
+                &::before {
+                    width: 8px;
+                    height: 8px;
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    left: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                }
+
+                &.completed {
+                    &::before {
+                        background: #37d749;
+                    }
+                }
+
+                &.inprogress {
+                    &::before {
+                        background: #f9af47;
+                    }
+                }
+
+                &.actionrequired,
+                &.syncpending,
+                &.unavailable {
+                    &::before {
+                        background: #f45a34;
+                    }
+                }
+            }
+
+            .dx-datagrid-rowsview {
+                .dx-datagrid-content tr td.tabular {
+                    font-family: 'Lato', sans-serif !important;
+                }
+            }
+
+            .dx-row.dx-data-row {
+                border: 1px solid #e5e9ec;
+                border-radius: 4px;
+
+                td {
+                    padding: 10px 8px;
+                    vertical-align: middle;
+
+                    .dx-checkbox-icon {
+                        margin-top: 4px;
+                    }
+
+                    .dx-checkbox-container,
+                    &.dx-editor-cell {
+                        text-overflow: clip;
+                    }
+                }
+            }
+
+            .emptyRow td {
+                padding-bottom: 8px;
+            }
+        }
+    }
+
+    /deep/.dx-datagrid-rowsview {
+        .dx-column-lines {
+            td {
+                height: 24px !important;
+            }
+
+            table {
+                border-collapse: separate;
+                border-spacing: 0 15px;
+            }
+        }
+    }
+
+    /deep/.dx-checkbox-icon {
+        margin-top: 0;
+    }
+
+    .number-value {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        color: #677380;
+    }
+
+    /deep/ .expand-div {
+        border: solid #677380;
+        border-width: 0 1px 1px 0;
+        padding: 3px;
+        display: inline-block;
+        margin: 3px;
+        align-self: flex-end;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+    }
+
+    .sync-date {
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.42;
+        letter-spacing: 0.2px;
+        color: #afb4bb;
+        text-align: center;
+    }
+
+    .highlight-used-rows {
+        /deep/ .used-row {
+            background-color: darken(#f3f7fa, 4%);
+        }
+    }
+
+    .blue {
+        color: #00AEEF;
+    }
+
+    /deep/ .bold {
+        font-weight: 600 !important;
+    }
+}
+
+/deep/ [accesskey="accountsEditingPopup"] {
+    .dx-item-content {
+        display: block !important;
+
+        .dx-field-item {
+            padding: 0;
+
+            .dx-field-item-label-location-left {
+                width: 30%;
+                padding-right: 0;
+            }
+
+            .dx-field-item-content-location-right {
+                width: 70%;
+                padding-left: 0;
+            }
+
+            .dx-texteditor-empty .dx-placeholder {
+                display: none !important;
+            }
+        }
+    }
+}
+
+.options-button {
+    height: 24px;
+}
+
+.delete {
+    color: red;
+}
+
+.action-menu-item {
+    padding: 7px 12px 3px;
+}
+
+.color-div {
+    border: solid 1px;
+    border-radius: 2px;
+    height: 32px;
+}
+
+/deep/ .available-balance {
+    .color-div {
+        border-color: #59de9b;
+        background-color: rgba(89, 222, 155, 0.18);
+    }
+}
+
+/deep/ .totalCreditLine-balance {
+    .color-div {
+        background-color: rgba(224, 83, 59, 0.21);
+        border-color: #e78372;
+    }
+}
+
+.balance-container {
+    padding-top: 5px;
+    padding-right: 5px;
+}
+
+.ratioField {
+    padding-right: 5px;
+
+    .text {
+        display: block;
+    }
+
+    .ratioProgressBar {
+        background-color: #dfdfdf;
+        position: absolute;
+        height: 3px;
+        right: 10px;
+        width: 64px;
+        border-radius: 2px;
+        overflow: hidden;
+
+        .progress {
+            display: block;
+            position: absolute;
+            height: 100%;
+            background-color: #e0533b;
+        }
+    }
+}

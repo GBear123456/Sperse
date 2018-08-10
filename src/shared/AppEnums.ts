@@ -125,8 +125,20 @@ export class CustomerStatus {
     static Inactive = 'I';
 }
 
+export class CustomerType {
+    static Client = 'C';
+    static Partner = 'P';
+}
+
 export class ODataSearchStrategy {
     static Contains = 'contains';
     static StartsWith = 'startswith';
     static Equals = 'equals';
+}
+
+export enum ImportStatus {
+    Cancelled = 'A',
+    Completed = 'C',
+    InProgress = 'I',
+    New = 'N'
 }

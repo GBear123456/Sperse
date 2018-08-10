@@ -19,8 +19,9 @@ import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filte
 import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.component';
 
 import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxRadioGroupModule,
-    DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule, DxRangeSliderModule } from 'devextreme-angular';
-import { BankAccountsWidgetsModule } from 'shared/cfo/bank-accounts-widgets/bank-accounts-widgets.module';
+    DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule, DxRangeSliderModule
+} from 'devextreme-angular';
+import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 
@@ -29,7 +30,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         ngCommon.CommonModule,
         CommonModule,
         FormsModule,
-        BankAccountsWidgetsModule,
+        BankAccountsCommonModule,
 
         DxCheckBoxModule,
         DxSelectBoxModule,

@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { DxChartComponent } from 'devextreme-angular';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
-import { Subject, Subscription, forkJoin } from 'rxjs';
-import { first, finalize, skipWhile, switchMap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -32,8 +32,7 @@ import {
     BankAccountDailyStatDto,
     GroupBy,
     CashFlowForecastServiceProxy,
-    InstanceType,
-    SyncAccountBankDto
+    InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
@@ -80,7 +79,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     chartsWidth;
     isForecast = false;
     reportPeriodTooltipVisible = false;
-    //bankAccountCount = '';
     bankAccountsCount: string;
     barChartTooltipFields = [
         {
@@ -175,7 +173,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.bankAccountsService = bankAccountsService;
 
         this._appService.narrowingPageContentWhenFixedFilter = false;
-        this._cacheService = this._cacheService.useStorage(0);
+        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 

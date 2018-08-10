@@ -28,10 +28,8 @@ import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 
 export function appInitializerFactory(
     injector: Injector,
-    platformLocation: PlatformLocation) {
+    platformLocation: PlatformLocation) {    
     return () => {
-        abp.ui.setBusy();
-
         handleLogoutRequest(injector.get(AppAuthService));
 
         return new Promise<boolean>((resolve, reject) => {
@@ -51,19 +49,12 @@ export function appInitializerFactory(
                             $('body').attr('class', appUiCustomizationService.getAccountModuleBodyClass());
                         }
 
-                        //tenant specific custom css
-                        if (appSessionService.tenant && appSessionService.tenant.customCssId) {
-                            $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + appSessionService.tenant.customCssId + '" rel="stylesheet"/>');
-                        }
-
                         //set og share image meta tag
                         if (!appSessionService.tenant || !appSessionService.tenant.logoId) {
                             $('meta[property=og\\:image]').attr('content', window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png');
                         } else {
                             $('meta[property=og\\:image]').attr('content', AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSessionService.tenant.logoId);
                         }
-
-                        abp.ui.clearBusy();
 
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
@@ -77,7 +68,6 @@ export function appInitializerFactory(
                         }
                     },
                     (err) => {
-                        abp.ui.clearBusy();
                         reject(err);
                     }
                 );

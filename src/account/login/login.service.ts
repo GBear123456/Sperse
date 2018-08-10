@@ -69,6 +69,19 @@ export class LoginService {
         private _authService: AppAuthService
     ) {
         this.clear();
+
+        let model = JSON.parse(sessionStorage.getItem('authenticateModel'));
+        if (model) {
+            this.authenticateModel = model;
+        }
+
+        let result = JSON.parse(sessionStorage.getItem('authenticateResult'));
+        if (result) {
+            this.authenticateResult = result;
+        }
+
+        sessionStorage.removeItem('authenticateModel');
+        sessionStorage.removeItem('authenticateResult');
     }
 
     authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {

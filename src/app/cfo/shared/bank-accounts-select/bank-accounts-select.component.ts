@@ -1,15 +1,13 @@
 import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
-
-import { CacheService } from 'ng2-cache-service';
 import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 
 @Component({
     selector: 'bank-accounts-select',
     templateUrl: './bank-accounts-select.component.html',
     styleUrls: ['./bank-accounts-select.component.less'],
-    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, CacheService ]
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
 export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
     @Input() targetBankAccountsTooltip = '';

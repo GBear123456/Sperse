@@ -1,0 +1,554 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+header,
+footer {
+    flex: none;
+}
+
+.main-content {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.login {
+    background-color: #FFFFFF !important;
+}
+
+.login .logo {
+    margin: 0 auto;
+    padding: 15px;
+    text-align: center;
+}
+
+.login .content {
+    background-color: #eceef1;
+    border-radius: 7px;
+    width: 400px;
+    margin: 40px auto 10px auto;
+    padding: 30px;
+    padding-top: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.login .content h3 {
+    color: #4db3a5;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 400 !important;
+}
+
+.login .content h4 {
+    color: #555;
+}
+
+.login .content .hint {
+    color: #999;
+    padding: 0;
+    margin: 15px 0 7px 0;
+}
+
+.login .content .login-form,
+.login .content .forget-form {
+    padding: 0px;
+    margin: 0px;
+}
+
+.login .content .form-control {
+    border: none;
+    background-color: #dde3ec;
+    height: 43px;
+    color: #8290a3;
+    border: 1px solid #dde3ec;
+}
+
+.login .content .form-control:focus,
+.login .content .form-control:active {
+    border: 1px solid #c3ccda;
+}
+
+.login .content .form-control::-moz-placeholder {
+    color: #8290a3;
+    opacity: 1;
+}
+
+.login .content .form-control:-ms-input-placeholder {
+    color: #8290a3;
+}
+
+.login .content .form-control::-webkit-input-placeholder {
+    color: #8290a3;
+}
+
+.login .content select.form-control {
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.login .content .form-title {
+    font-weight: 300;
+    margin-bottom: 25px;
+}
+
+.login .content .form-actions {
+    clear: both;
+    border: 0px;
+    border-bottom: 1px solid #eee;
+    padding: 0px 30px 25px 30px;
+    margin-left: -30px;
+    margin-right: -30px;
+}
+
+.login-options {
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.login-options h4 {
+    float: left;
+    font-weight: 600;
+    font-size: 15px;
+    color: #7d91aa !important;
+}
+
+.login-options .social-icons {
+    float: right;
+    padding-top: 3px;
+}
+
+.social-icons {
+    padding: 0;
+    margin: 0;
+}
+
+.social-icons li {
+    float: left;
+    display: inline;
+    list-style: none;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    text-indent: -9999px;
+}
+
+.social-icons li > a {
+    border-radius: 2px;
+    width: 28px;
+    height: 28px;
+    display: block;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+.social-icons li:hover > a {
+    background-position: 0 -38px;
+}
+
+.social-icons li .twitter {
+    background: url(/assets/common/images/social/twitter.png) no-repeat;
+}
+
+.social-icons li .facebook {
+    background: url(/assets/common/images/social/facebook.png) no-repeat;
+}
+
+.social-icons li .googleplus {
+    background: url(/assets/common/images/social/google.png) no-repeat;
+}
+
+.social-icons li .microsoft {
+    background: url(/assets/common/images/social/microsoft.png) no-repeat;
+}
+
+.social-icons li .openidconnect {
+    background: url(/assets/common/images/social/open-id-connect.png) no-repeat;
+}
+
+.login-options .social-icons li a {
+    border-radius: 15px 15px 15px 15px !important;
+    -moz-border-radius: 15px 15px 15px 15px !important;
+    -webkit-border-radius: 15px 15px 15px 15px !important;
+}
+
+.login .content .form-actions .checkbox {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.login .content .forget-form .form-actions {
+    border: 0;
+    margin-bottom: 0;
+    padding-bottom: 20px;
+}
+
+.login .content .register-form .form-actions {
+    border: 0;
+    margin-bottom: 0;
+    padding-bottom: 0px;
+}
+
+.login .content .form-actions .btn {
+    margin-top: 1px;
+}
+
+.login .content .form-actions .btn-success {
+    font-weight: 600;
+    padding: 10px 20px !important;
+}
+
+.login .content .form-actions .btn-default {
+    font-weight: 600;
+    padding: 10px 25px !important;
+    color: #6c7a8d;
+    background-color: #ffffff;
+    border: none;
+}
+
+.login .content .form-actions .btn-default:hover {
+    background-color: #fafaff;
+    color: #45b6af;
+}
+
+.login .content .forget-password {
+    font-size: 14px;
+    float: right;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.login .content .check {
+    color: #8290a3;
+}
+
+.login .content .rememberme {
+    margin-left: 8px;
+    margin-top: 10px;
+}
+
+.login .content .create-account {
+    margin: 0 -40px -40px -40px;
+    padding: 15px 0 17px 0;
+    text-align: center;
+    background-color: #6c7a8d;
+    border-radius: 0 0 7px 7px;
+}
+
+.login .content .create-account p a {
+    font-weight: 600;
+    font-size: 14px;
+    color: #c3cedd;
+}
+
+.login .content .create-account .pipe-divider {
+    color: #c3cedd;
+}
+
+.login .content .create-account a {
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.login .content .alert {
+    margin-bottom: 10px;
+}
+
+.login .content .alert:last-child {
+    margin-bottom: 0;
+}
+
+.login .copyright {
+    text-align: center;
+    margin: 10px auto;
+    padding: 10px;
+    color: #7a8ca5;
+    font-size: 13px;
+}
+
+.language-switch-area {
+    text-align: center;
+    padding: 10px;
+}
+
+.login .language-switch-area .language-icon {
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+}
+
+.login a {
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.login a span {
+    -ms-opacity: 0.5;
+    opacity: 0.5;
+}
+
+.login a span.language-icon-current {
+    -ms-opacity: 1;
+    opacity: 1;
+}
+
+@media (max-width: 440px) {
+    .login .logo {
+        margin-top: 10px;
+    }
+    .login .content {
+        width: 280px;
+        margin-top: 10px;
+    }
+    .login .content h3 {
+        font-size: 22px;
+    }
+    .forget-password {
+        display: inline-block;
+        margin-top: 20px;
+    }
+    .login-options .social-icons {
+        float: left;
+        padding-top: 3px;
+    }
+    .login .checkbox {
+        font-size: 13px;
+    }
+}
+
+.content.account-forms {
+    margin-top: 10px;
+}
+
+.content.tenant-change-box {
+    padding: 16px;
+    text-align: center;
+}
+
+input.form-control {
+    padding: 6px 12px;
+}
+
+.login .logo {
+    text-align: center;
+    padding: 15px 0;
+}
+
+.modal .modal-header {
+    flex: 1 0 auto;
+}
+
+.modal .modal-header .close {
+    display: block;
+    margin: 2px 0 0;
+    font-size: 1.2em !important;
+    line-height: 1 !important;
+}
+
+.slogan-side img {
+    margin: 60px auto;
+}
+
+.slogan-side .slogan {
+    font-size: 24px;
+    font-weight: 600;
+    color: #424c56;
+    text-transform: uppercase;
+}
+
+.slogan-side .slogan-description {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.44;
+    color: #888d92;
+}
+
+.form-wrapper h1 {
+    margin-top: 90px;
+    margin-bottom: 75px;
+    font-size: 32px;
+    font-weight: 600;
+    text-align: center;
+    color: #424c56;
+}
+
+.form-wrapper .login-form {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.form-wrapper .dx-texteditor-input,
+.form-wrapper input.form-control {
+    font-size: 16px;
+    font-weight: 300;
+    color: #888d92;
+}
+
+.form-wrapper .form-actions .submit {
+    min-width: 300px;
+    border-radius: 100px;
+    background-color: #00aeef;
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+    border: 0;
+    box-shadow: none;
+    line-height: 54px;
+    position: relative;
+}
+
+.form-wrapper .form-actions .submit[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.form-wrapper .form-actions .submit img {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline {
+    margin-bottom: 0;
+    padding-left: 25px;
+    font-size: 14px;
+    font-weight: 300;
+    color: #888d92;
+    position: relative;
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline:hover {
+    color: #565a5e;
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline input {
+    display: none;
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline > span {
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #888d92;
+    display: block;
+    position: absolute;
+    left: 6px;
+    top: 2px;
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline > span::after {
+    border: 1px solid #fff;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    left: 3px;
+    top: 3px;
+    width: 7px;
+    height: 4px;
+    display: block;
+    content: '';
+    position: relative;
+    border-right: 0;
+    border-top: 0;
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline > input:checked ~ span {
+    border-color: #00aeef;
+    background-color: #00aeef;
+}
+
+.form-wrapper .mt-checkbox-list .mt-checkbox.mt-checkbox-outline > input:checked ~ span::after {
+    border-color: #fff;
+}
+
+.form-wrapper .forget-password {
+    padding-top: 10px;
+    font-size: 14px;
+    font-weight: 300;
+    color: #888d92;
+}
+
+.form-wrapper .forget-password:hover {
+    color: #565a5e;
+    text-decoration: none;
+}
+
+.form-wrapper .register-account {
+    font-size: 15px;
+    font-weight: 300;
+    color: #888d92;
+}
+
+.form-wrapper .register-account a {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: #00aeef;
+}
+
+.form-wrapper .register-account a:hover {
+    color: #0089bc;
+}
+
+.form-wrapper .agree-rights {
+    font-size: 15px;
+    font-weight: 300;
+    color: #888d92;
+    margin-top: 30px;
+    margin-bottom: 75px;
+}
+
+.form-wrapper .agree-rights a {
+    font-weight: 400;
+    color: #888d92;
+}
+
+.form-wrapper .agree-rights a:hover {
+    color: #565a5e;
+}
+
+.login-wraper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.form-control:focus {
+    border-bottom-color: #00aeef;
+}
+
+.help-block {
+    text-align: left;
+}
+
+.btn.disabled,
+.btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.modal .modal-content {
+    overflow: hidden;
+}
+.modal .modal-content .modal-header {
+    align-items: center;
+}
+.modal .modal-content .modal-header .modal-title {
+    text-align: left;
+}
+.modal .modal-content .modal-header .close {
+    margin-top: 0;
+}
+.modal .modal-content .modal-body {
+    height: 100%;
+    text-align: left;
+    overflow-y: auto;
+}

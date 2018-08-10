@@ -8,7 +8,8 @@
     ["Leads", "Pages.CRM.Leads", "icon-globe", "/app/crm/leads"],
     ["Clients", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients"],
     ["Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders"],
-    ["Partners", "", "icon-layers", ""],
+    ["Tasks", "", "icon-globe", "/app/crm/activity"],
+    ["Partners", "", "icon-globe", "/app/crm/partners"],
     ["Reports", "", "", ""],
     ["Products", "", "", ""]    
   ]

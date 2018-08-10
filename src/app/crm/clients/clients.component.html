@@ -1,5 +1,7 @@
 <div [@routerTransition]>
-    <app-headline [config]="headlineConfig"></app-headline>
+    <app-headline [config]="headlineConfig">
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
     <crm-static-list
         [width]="'180px'"
         [title]="l('Status')"
