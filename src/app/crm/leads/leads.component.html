@@ -95,7 +95,8 @@
                         [dataSource]="pipelineDataSource"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
-                        (onStagesLoaded)="onStagesLoaded($event)">
+                        (onStagesLoaded)="onStagesLoaded($event)"
+                        (onCardClick)="onCardClick($event)">
                         Loading...
                     </app-pipeline>
                 </div>

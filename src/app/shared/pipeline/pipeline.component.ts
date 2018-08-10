@@ -24,6 +24,7 @@ import DataSource from 'devextreme/data/data_source';
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
 
     private _selectedLeads: any;
     private _dataSource: any;
@@ -123,7 +124,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
             this.getODataURL(this._dataSource.uri,
-                this.queryWithSearch.concat({or: [{StageId: stage.id}]}));
+                this.queryWithSearch.concat({and: [
+                    _.extend({StageId: stage.id}, this._dataSource.customFilter)
+                ]}
+            )
+        );
         dataSource.sort({getter: 'Id', desc: true});
         dataSource.pageIndex(page);
         dataSource.load().done((leads) => {
@@ -341,7 +346,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.shiftStartLead = null;
     }
 
-    onCardClick(lead, event) {
+    onCardClickInternal(lead, event) {
         let clickedOnCheckbox = event.target.classList.contains('dx-checkbox-icon');
         if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
             let checkedCard = this.highlightSelectedCard(event);
@@ -350,17 +355,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(lead, checkedCard);
             this.selectedLeads = this.getSelectedLeads();
-        } else {
-            if (lead.CustomerId && lead.Id)
-              lead && this._router.navigate(
-                  ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
-                      queryParams: {
-                          referrer: 'app/crm/leads',
-                          dataLayoutType: DataLayoutType.Pipeline
-                      }
-                  }
-              );
-        }
+        } else 
+            this.onCardClick.emit(lead);
         this.hideStageHighlighting();
     }
 }

@@ -783,4 +783,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         e.component.option('visible', false);
         e.component.hide();
     }
+
+    onCardClick(lead) {
+        if (lead && lead.CustomerId && lead.Id)
+            this._router.navigate(
+                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
+                    queryParams: {
+                        referrer: 'app/crm/leads',
+                        dataLayoutType: DataLayoutType.Pipeline
+                    }
+                }
+            );
+    }
 }

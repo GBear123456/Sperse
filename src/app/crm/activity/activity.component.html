@@ -10,14 +10,18 @@
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
                 [resources]="resources"
+                [timeZone]="''"
                 [currentView]="currentView"
                 [currentDate]="currentDate"
                 [showAllDayPanel]="false"
-                (onContentReady)="onOptionChanged($event)"
-                (onAppointmentAdding)="onAppointmentAdding($event)"
-                (onAppointmentUpdating)="onAppointmentUpdating($event)"
+                [textExpr]="'Title'"
+                [startDateExpr]="'StartDate'"
+                [endDateExpr]="'EndDate'"
+                [descriptionExpr]="'Description'"
+                (onContentReady)="onContentReady($event)"
                 (onAppointmentDeleting)="onAppointmentDeleting($event)"
-            ></dx-scheduler>
+                (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
+            </dx-scheduler>
     
         </div>
     </div>
@@ -30,7 +34,8 @@
                         [dataSource]="pipelineDataSource"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
-                        (onStagesLoaded)="onStagesLoaded($event)">
+                        (onStagesLoaded)="onStagesLoaded($event)"
+                        (onCardClick)="showActivityDialog($event)">
                         Loading...
                     </app-pipeline>
                 </div>

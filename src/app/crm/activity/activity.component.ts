@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular';
 import DataSource from 'devextreme/data/data_source';
+import { MatDialog } from '@angular/material';
 import { forkJoin } from 'rxjs';
 import * as _ from 'underscore';
 import * as moment from 'moment';
@@ -12,12 +13,15 @@ import * as moment from 'moment';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto, 
     CreateActivityDtoType, UpdateActivityDto, PipelineDto } from '@shared/service-proxies/service-proxies';
+
+import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -27,21 +31,24 @@ import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto,
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Grid;
     private dataSourceURI = 'Activity';
+    private stages: any;
 
     public showPipeline = false;
     public pipelineDataSource: any;
-    public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
+    public pipelinePurposeId = 
+        AppConsts.PipelinePurposeIds.activity;
   
     public selectedLeads: any = [];
     public currentDate = new Date();
     public currentView = 'month';
     public resources: any[] = [
         {
-            fieldExpr: "type",
+            fieldExpr: "Type",
             useColorAsDefault: true,
             allowMultiple: false,
             dataSource: [{
@@ -58,14 +65,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     ];
     public headlineConfig = {
         names: [this.l('Tasks')],
-        onRefresh: Function(),
+        onRefresh: this.refresh.bind(this),
         icon: 'docs',
         buttons: [
             {
                 enabled: true,
                 action: () => { 
-                    this.schedulerComponent.instance
-                        .showAppointmentPopup(new Date(), true);
+                    this.showActivityDialog(new Date());
                 },
                 lable: this.l('AddNewTask')
             }
@@ -74,6 +80,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     constructor(injector: Injector, 
         private _router: Router,
+        public dialog: MatDialog,
         private _appService: AppService,
         private _activityProxy: ActivityServiceProxy,
         private _pipelineService: PipelineService,
@@ -83,23 +90,33 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
-        this.initResources();
         this.initDataSource();
     }
 
     initDataSource() {
-        let date = moment(this.currentDate);
-        this._activityProxy.getAll(this.appSession.userId, 
-            null, null).subscribe((res) => {
-            this.dataSource = res.map((item) => {
-                item['text'] = item.title;
-                return item;
-            });
-        });    
-
+        this.dataSource = {
+            requireTotalCount: false,
+            filter: [['AssignedUserId', '=', this.appSession.userId]],
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataURL(this.dataSourceURI),
+                version: this.getODataVersion(),
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    if (request.method == 'PATCH') {
+                        request.method = 'PUT'
+                        request.url = request.url.split('odata').shift() 
+                            + 'api/services/CRM/Activity/Update';
+                    }
+                },
+                paginate: false
+            }
+        };
 
         this.pipelineDataSource = {
             uri: this.dataSourceURI,
+            customFilter: {AssignedUserId: this.appSession.userId},
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -112,53 +129,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 paginate: true
             }
         };
-    }
-
-    initResources() {
-        forkJoin(this._pipelineService
-            .getPipelineDefinitionObservable(this.pipelinePurposeId),
-            this._userServiceProxy.getUsers(false, '', '', undefined, '', undefined, undefined)
-        ).subscribe((result) => {
-                this.resources.push(
-                    {
-                        fieldExpr: "stageId",
-                        allowMultiple: false,
-                        dataSource: result[0].stages.map((item) => {
-                            item['text'] = item.name;
-                            return item;
-                        }),
-                        label: this.l("Stage")
-                    },
-                    {
-                        fieldExpr: "assignedUserId",
-                        allowMultiple: false,
-                        dataSource: result[1].items.map((item) => {
-                            item['text'] = item.name + '(' + item.emailAddress + ')';
-                            return item;
-                        }),
-                        label: this.l("Assign")
-                    },
-                    {
-                        fieldExpr: "orderId",
-                        allowMultiple: false,
-                        dataSource: [],
-                        label: this.l("Order")
-                    },
-                    {
-                        fieldExpr: "leadId",
-                        allowMultiple: false,
-                        dataSource: [],
-                        label: this.l("Lead")
-                    },
-                    {
-                        fieldExpr: "customerId",
-                        allowMultiple: false,
-                        dataSource: [],
-                        label: this.l("Customer")
-                    }
-                )
-            }
-        );
     }
 
     initToolbarConfig() {
@@ -236,53 +206,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         ];
     }
 
-    onAppointmentAdding($event) {
-        let data = $event.appointmentData;
-        $event.cancel = this._activityProxy.create(
-            CreateActivityDto.fromJS({
-                type: data.type,
-                title: data.text,
-                description: data.description,
-                assignedUserId: data.assignedUserId,
-                startDate: data.startDate,
-                endDate: data.endDate,
-                stageId: data.stageId,
-                leadId: data.leadId,
-                orderId: data.orderId,
-                customerId: data.customerId
-            })
-        ).toPromise().then((res) => {
-            data.id = res;
-        }).catch(err => {
-            this.schedulerComponent.instance
-                .hideAppointmentPopup(false);
-            return true;
-        });
-    }
-
-    onAppointmentUpdating($event) {
-        let data = $event.newData;
-        $event.cancel = this._activityProxy.update(
-            UpdateActivityDto.fromJS({
-                id: data.id,
-                type: data.type,
-                title: data.text,
-                description: data.description,
-                assignedUserId: data.assignedUserId,
-                startDate: data.startDate,
-                endDate: data.endDate,
-                stageId: data.stageId,
-                leadId: data.leadId,
-                orderId: data.orderId,
-                customerId: data.customerId
-            })
-        ).toPromise().catch(err => {
-            this.schedulerComponent.instance
-                .hideAppointmentPopup(false);
-            return true;
-        });
-    }
-
     onAppointmentDeleting($event) {
         $event.cancel = this._activityProxy
             .delete($event.appointmentData.id)
@@ -291,9 +214,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 });
     }
 
-    onOptionChanged($event) {
+    onContentReady($event) {
         //!!VP this part fix scroll appearance for month view
-        if ($event.component.option('currentView') == 'month')
+        if (this.currentView == 'month')
             setTimeout(() => {
                 let scroll = $event.element.getElementsByClassName('dx-scrollable-content')[0];
                 if (scroll) {
@@ -303,6 +226,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }, 100);
     }
 
+    onAppointmentFormCreated(event) {
+        event.component.hideAppointmentPopup(false);
+        this.showActivityDialog(event.appointmentData);
+    }
+
     toggleDataLayout(dataLayoutType) {
         let showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         if (this.showPipeline != showPipeline) {
@@ -310,6 +238,27 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             this.showPipeline = showPipeline;
             this.initToolbarConfig();
         }
+    }
+
+    showActivityDialog(appointment) {
+        this.dialog.open(CreateActivityDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                stages: this.stages,
+                appointment: appointment instanceof Date ? {
+                    startDate: appointment
+                }: appointment,
+                refreshParent: this.refresh.bind(this)
+            }
+        });
+    }
+
+    refresh(quietly = false, stageId) {
+        this.schedulerComponent.instance.repaint();
+        this.pipelineComponent.refresh(
+            quietly || !this.showPipeline, stageId);
     }
 
     activate() {
@@ -332,5 +281,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     onStagesLoaded($event) {
+        this.stages = $event.stages;
     }
 }
