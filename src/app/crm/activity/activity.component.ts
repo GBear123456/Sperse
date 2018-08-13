@@ -96,7 +96,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     initDataSource() {
         this.dataSource = {
             requireTotalCount: false,
-            filter: [['AssignedUserId', '=', this.appSession.userId]],
+            filter: {
+                'AssignedUserIds': {
+                    'any': {
+                        'Id': this.appSession.userId
+                    }
+                }
+            },
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -116,7 +122,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
         this.pipelineDataSource = {
             uri: this.dataSourceURI,
-            customFilter: {AssignedUserId: this.appSession.userId},
+            customFilter: {
+                'AssignedUserIds': {
+                    'any': {
+                        'Id': this.appSession.userId
+                    }
+                }
+            },
             requireTotalCount: true,
             store: {
                 key: 'Id',
