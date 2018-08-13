@@ -16,7 +16,7 @@ import {
     DxProgressBarModule
 } from 'devextreme-angular';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { BankAccountsService } from './helpers/bank-accounts.service';
@@ -83,6 +83,9 @@ import { SynchProgressComponent } from './synch-progress/synch-progress.componen
     ],
     providers: [
         QuovoService,
+        ContactServiceProxy,
+        BusinessEntityServiceProxy,
+        BankAccountsServiceProxy,
         BankAccountsService,
         SyncServiceProxy
     ]

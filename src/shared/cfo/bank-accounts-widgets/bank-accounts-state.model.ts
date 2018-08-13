@@ -3,6 +3,5 @@ export class BankAccountsState {
     isActive?: boolean;
     usedBankAccountIds?: number[];
     visibleBankAccountIds?: number[];
-    visibleAccountCount?: number;
     selectedBusinessEntitiesIds?: number[];
 }

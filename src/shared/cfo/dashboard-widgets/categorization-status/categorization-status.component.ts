@@ -4,7 +4,6 @@ import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoCl
 import { Router } from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
 
 @Component({
     selector: 'app-categorization-status',
@@ -23,8 +22,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         private _dashboardService: DashboardServiceProxy,
         private _classificationService: ClassificationServiceProxy,
         public dialog: MatDialog,
-        private _router: Router,
-        private bankAccountsService: BankAccountsService
+        private _router: Router
     ) {
         super(injector);
     }

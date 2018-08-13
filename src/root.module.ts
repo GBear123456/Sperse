@@ -28,7 +28,7 @@ import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 
 export function appInitializerFactory(
     injector: Injector,
-    platformLocation: PlatformLocation) {    
+    platformLocation: PlatformLocation) {
     return () => {
         handleLogoutRequest(injector.get(AppAuthService));
 

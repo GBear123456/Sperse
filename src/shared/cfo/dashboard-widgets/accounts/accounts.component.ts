@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
 import { DashboardService } from '../dashboard.service';

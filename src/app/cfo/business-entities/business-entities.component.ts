@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';

@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
 import DataSource from 'devextreme/data/data_source';
@@ -14,7 +14,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';

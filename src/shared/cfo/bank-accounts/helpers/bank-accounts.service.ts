@@ -30,11 +30,12 @@ export class BankAccountsService {
     state: BankAccountsState = {
         selectedBankAccountIds: [],
         isActive: true,
-        visibleAccountCount: 0,
+        usedBankAccountIds: [],
         visibleBankAccountIds: [],
         selectedBusinessEntitiesIds: []
     };
     filteredBankAccounts$: Observable<BankAccountDto[]>;
+    filteredBankAccountsIds: number[];
     filteredBankAccountsIds$: Observable<number[]>;
     filteredBankAccountsStatus$: Observable<boolean>;
     selectedBankAccounts$: Observable<BankAccountDto[]>;
@@ -87,6 +88,7 @@ export class BankAccountsService {
             map(businessEntities => businessEntities.length),
             distinctUntilChanged()
         );
+
         this.selectedBusinessEntities$ =
             combineLatest(
                 this.businessEntities$,
@@ -227,6 +229,10 @@ export class BankAccountsService {
             distinctUntilChanged(this.arrayDistinct)
         );
 
+        this.filteredBankAccountsIds$.subscribe(ids => {
+            this.filteredBankAccountsIds = ids;
+        });
+
         this.filteredBankAccountsStatus$ = this.filteredBankAccounts$.pipe(
             map(bankAccounts => {
                 return bankAccounts && bankAccounts.length ? bankAccounts[0].isActive : this.state.isActive;
@@ -254,8 +260,10 @@ export class BankAccountsService {
             ([selectedAccountsIds, filteredAccountsIds]) => {
                 /** If selected bank accounts sets to none - select all filtered */
                 if (!selectedAccountsIds || !selectedAccountsIds.length) {
-                    this.changeSelectedBankAccountsIds(filteredAccountsIds);
-                    this.applyFilter();
+                    if (this.acceptFilterOnlyOnApply) {
+                        this.changeSelectedBankAccountsIds(filteredAccountsIds);
+                        this.applyFilter();
+                    }
                 } else {
                     /** If selected are differ from saved in store - update store */
                     if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
@@ -305,13 +313,18 @@ export class BankAccountsService {
         this.state = {...this.state, ...this.cacheService.get(this.bankAccountsCacheKey)};
         this._syncAccountsState.next(this.state);
 
+        if (this.acceptFilterOnlyOnApply && (!this.state.selectedBankAccountIds || !this.state.selectedBankAccountIds.length)) {
+            this.changeSelectedBankAccountsIds(this.filteredBankAccountsIds);
+            this.applyFilter();
+        }
+
         /** @todo think about application state handling with posibleAccountsIds stream */
         /** Start pause to avoid multiple filtering in combine latest */
         //this._pauser.next(true);
         //this._activeStatus.next(this.state.isActive);
         //this.selectedBusinessEntitiesIds$
         /** Finish pause */
-        this._pauser.next(false);
+        //this._pauser.next(false);
     }
 
     load(acceptFilterOnlyOnApply = true) {

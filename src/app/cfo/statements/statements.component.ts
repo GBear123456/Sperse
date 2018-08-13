@@ -14,8 +14,8 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';

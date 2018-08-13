@@ -9,7 +9,7 @@ import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/
 import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
 
 /** Application imports */
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import {ImpersonationService} from '@admin/users/impersonation.service';
 import {AppComponent} from './app.component';
 import {AppService} from './app.service';

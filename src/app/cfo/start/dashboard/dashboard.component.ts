@@ -8,9 +8,9 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { SynchProgressComponent } from '@app/cfo/shared/common/synch-progress/synch-progress.component';
+import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';

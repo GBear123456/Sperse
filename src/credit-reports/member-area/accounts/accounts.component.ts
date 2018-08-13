@@ -6,14 +6,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
-import * as _ from 'underscore';
 
 import { BankAccountsComponent } from '@shared/cfo/bank-accounts/bank-accounts.component';
 import { InstanceType, SyncServiceProxy, InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './accounts.component.html',
-    providers: [],
+    providers: [ ],
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase {
@@ -48,7 +47,7 @@ export class AccountsComponent extends AppComponentBase {
     }
 
     onSyncComplete() {
-        this.bankAccounts.loadBankAccounts();
+        this.bankAccounts.activate();
     }
 
     private addAccount() {
@@ -75,7 +74,7 @@ export class AccountsComponent extends AppComponentBase {
                 }))
                 .subscribe(() => {
                     this._cfoService.instanceChangeProcess(() => {
-                        this.bankAccounts.loadBankAccounts();
+                        this.bankAccounts.activate();
                         this.finishLoading(true);
                     });
                 });

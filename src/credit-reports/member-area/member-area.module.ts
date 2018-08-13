@@ -17,8 +17,6 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '../shared/common/user-only.cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 
-import * as _ from 'underscore';
-
 @NgModule({
     imports: [
         CommonModule,

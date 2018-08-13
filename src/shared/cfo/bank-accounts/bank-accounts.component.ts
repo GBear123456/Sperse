@@ -1,17 +1,18 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { Subscription } from 'rxjs';
 import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
-import { BankAccountsGeneralService } from '@app/cfo/bank-accounts-general/bank-accounts-general.service';
-import { QuovoService } from '@app/cfo/shared/common/quovo/QuovoService';
-import { SynchProgressService } from '@app/cfo/shared/common/synch-progress/synch-progress.service';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
+import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { InstanceType, SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
+import { XeroLoginDialogComponent } from '@shared/cfo/bank-accounts/xero/xero-login-dialog/xero-login-dialog.component';
 
 @Component({
     selector: 'bank-accounts-component',
@@ -24,7 +25,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     refreshSubscription: Subscription;
     quovoHandler: any;
     bankAccountsService: BankAccountsService;
-    private readonly LOCAL_STORAGE = 0;
     syncAccounts;
 
     constructor(
@@ -35,6 +35,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         private _bankAccountsGeneralService: BankAccountsGeneralService
     ) {
         super(injector);
+        this.bankAccountsService = bankAccountsService;
         this.subscribeToObservables();
     }
 

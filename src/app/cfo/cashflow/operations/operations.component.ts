@@ -4,7 +4,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 
 @Component({
     selector: 'cashflow-operations',

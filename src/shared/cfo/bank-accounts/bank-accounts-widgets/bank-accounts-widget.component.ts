@@ -8,7 +8,7 @@ import { forkJoin } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { BankAccountsService } from '@app/cfo/shared/helpers/bank-accounts.service';
+import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy, SyncAccountBankDto, UpdateBankAccountDto, RenameSyncAccountInput } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
