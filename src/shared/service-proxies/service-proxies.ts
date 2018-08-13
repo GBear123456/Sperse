@@ -16550,6 +16550,58 @@ export class PartnerServiceProxy {
         }
         return _observableOf<PartnerTypeDto[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getFiltersInitialData(): Observable<PartnerFiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/GetFiltersInitialData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFiltersInitialData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFiltersInitialData(<any>response_);
+                } catch (e) {
+                    return <Observable<PartnerFiltersInitialData>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PartnerFiltersInitialData>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<PartnerFiltersInitialData> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PartnerFiltersInitialData.fromJS(resultData200) : new PartnerFiltersInitialData();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PartnerFiltersInitialData>(<any>null);
+    }
 }
 
 @Injectable()
@@ -46544,6 +46596,122 @@ export class PartnerTypeDto implements IPartnerTypeDto {
 export interface IPartnerTypeDto {
     id: string | undefined;
     name: string | undefined;
+}
+
+export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
+    types!: PartnerTypeDto[] | undefined;
+    statuses!: CustomerStatusDto[] | undefined;
+    users!: UserInfoDto[] | undefined;
+    lists!: CustomerListInfoDto[] | undefined;
+    tags!: CustomerTagInfoDto[] | undefined;
+    ratings!: CustomerRatingInfoDto[] | undefined;
+    stars!: CustomerStarInfoDto[] | undefined;
+
+    constructor(data?: IPartnerFiltersInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["types"] && data["types"].constructor === Array) {
+                this.types = [];
+                for (let item of data["types"])
+                    this.types.push(PartnerTypeDto.fromJS(item));
+            }
+            if (data["statuses"] && data["statuses"].constructor === Array) {
+                this.statuses = [];
+                for (let item of data["statuses"])
+                    this.statuses.push(CustomerStatusDto.fromJS(item));
+            }
+            if (data["users"] && data["users"].constructor === Array) {
+                this.users = [];
+                for (let item of data["users"])
+                    this.users.push(UserInfoDto.fromJS(item));
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(CustomerListInfoDto.fromJS(item));
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(CustomerTagInfoDto.fromJS(item));
+            }
+            if (data["ratings"] && data["ratings"].constructor === Array) {
+                this.ratings = [];
+                for (let item of data["ratings"])
+                    this.ratings.push(CustomerRatingInfoDto.fromJS(item));
+            }
+            if (data["stars"] && data["stars"].constructor === Array) {
+                this.stars = [];
+                for (let item of data["stars"])
+                    this.stars.push(CustomerStarInfoDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PartnerFiltersInitialData {
+        data = typeof data === 'object' ? data : {};
+        let result = new PartnerFiltersInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.types && this.types.constructor === Array) {
+            data["types"] = [];
+            for (let item of this.types)
+                data["types"].push(item.toJSON());
+        }
+        if (this.statuses && this.statuses.constructor === Array) {
+            data["statuses"] = [];
+            for (let item of this.statuses)
+                data["statuses"].push(item.toJSON());
+        }
+        if (this.users && this.users.constructor === Array) {
+            data["users"] = [];
+            for (let item of this.users)
+                data["users"].push(item.toJSON());
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        if (this.ratings && this.ratings.constructor === Array) {
+            data["ratings"] = [];
+            for (let item of this.ratings)
+                data["ratings"].push(item.toJSON());
+        }
+        if (this.stars && this.stars.constructor === Array) {
+            data["stars"] = [];
+            for (let item of this.stars)
+                data["stars"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPartnerFiltersInitialData {
+    types: PartnerTypeDto[] | undefined;
+    statuses: CustomerStatusDto[] | undefined;
+    users: UserInfoDto[] | undefined;
+    lists: CustomerListInfoDto[] | undefined;
+    tags: CustomerTagInfoDto[] | undefined;
+    ratings: CustomerRatingInfoDto[] | undefined;
+    stars: CustomerStarInfoDto[] | undefined;
 }
 
 export class PaymentInfoDto implements IPaymentInfoDto {

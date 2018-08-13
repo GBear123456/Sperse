@@ -2,7 +2,7 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <crm-static-list
+    <crm-static-list #statusesList
         [width]="'180px'"
         [title]="l('Status')"
         [showConfirmation]="false"
@@ -12,6 +12,19 @@
         [targetSelector]="'[aria-label=Status]'"
         [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
         (onItemSelected)="updatePartnerStatuses($event)">
+    </crm-static-list>
+    <crm-static-list #partnerTypesList
+        [width]="'180px'"
+        [title]="l('Type')"
+        [selectedKeys]="selectedPartnerKeys"
+        [showConfirmation]="true"
+        [updateConfirmationTitle]="l('PartnerTypeUpdateConfirmationTitle')"
+        [updateConfirmationMessage]="l('PartnersUpdateTypeWarningMessage')"
+        [hideButtons]="true"
+        [filterModel]="filterModelType"
+        [targetSelector]="'[accessKey=PartnerType]'"
+        [list]="partnerTypes"
+        (onItemSelected)="updatePartnerTypes($event)">
     </crm-static-list>
     <crm-tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
     <crm-lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
