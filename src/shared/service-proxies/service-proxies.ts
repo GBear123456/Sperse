@@ -25450,7 +25450,7 @@ export class ActivityDto implements IActivityDto {
     type!: ActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
-    assignedUserId!: number | undefined;
+    assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     stageId!: number | undefined;
@@ -25473,7 +25473,11 @@ export class ActivityDto implements IActivityDto {
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
-            this.assignedUserId = data["assignedUserId"];
+            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
+                this.assignedUserIds = [];
+                for (let item of data["assignedUserIds"])
+                    this.assignedUserIds.push(item);
+            }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.stageId = data["stageId"];
@@ -25496,7 +25500,11 @@ export class ActivityDto implements IActivityDto {
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
-        data["assignedUserId"] = this.assignedUserId;
+        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["stageId"] = this.stageId;
@@ -25512,7 +25520,7 @@ export interface IActivityDto {
     type: ActivityDtoType | undefined;
     title: string;
     description: string | undefined;
-    assignedUserId: number | undefined;
+    assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     stageId: number | undefined;
@@ -25525,7 +25533,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     type!: CreateActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
-    assignedUserId!: number | undefined;
+    assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     stageId!: number | undefined;
@@ -25547,7 +25555,11 @@ export class CreateActivityDto implements ICreateActivityDto {
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
-            this.assignedUserId = data["assignedUserId"];
+            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
+                this.assignedUserIds = [];
+                for (let item of data["assignedUserIds"])
+                    this.assignedUserIds.push(item);
+            }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.stageId = data["stageId"];
@@ -25569,7 +25581,11 @@ export class CreateActivityDto implements ICreateActivityDto {
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
-        data["assignedUserId"] = this.assignedUserId;
+        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["stageId"] = this.stageId;
@@ -25584,7 +25600,7 @@ export interface ICreateActivityDto {
     type: CreateActivityDtoType | undefined;
     title: string;
     description: string | undefined;
-    assignedUserId: number | undefined;
+    assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     stageId: number | undefined;
@@ -25598,7 +25614,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     type!: UpdateActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
-    assignedUserId!: number | undefined;
+    assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     stageId!: number | undefined;
@@ -25621,7 +25637,11 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
-            this.assignedUserId = data["assignedUserId"];
+            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
+                this.assignedUserIds = [];
+                for (let item of data["assignedUserIds"])
+                    this.assignedUserIds.push(item);
+            }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.stageId = data["stageId"];
@@ -25644,7 +25664,11 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
-        data["assignedUserId"] = this.assignedUserId;
+        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["stageId"] = this.stageId;
@@ -25660,7 +25684,7 @@ export interface IUpdateActivityDto {
     type: UpdateActivityDtoType | undefined;
     title: string;
     description: string | undefined;
-    assignedUserId: number | undefined;
+    assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     stageId: number | undefined;
@@ -25716,7 +25740,7 @@ export interface IMoveActivityDto {
 export class TransitionActivityDto implements ITransitionActivityDto {
     id!: number;
     stageId!: number | undefined;
-    assignTo!: number | undefined;
+    assignedUserIds!: number[] | undefined;
 
     constructor(data?: ITransitionActivityDto) {
         if (data) {
@@ -25731,7 +25755,11 @@ export class TransitionActivityDto implements ITransitionActivityDto {
         if (data) {
             this.id = data["id"];
             this.stageId = data["stageId"];
-            this.assignTo = data["assignTo"];
+            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
+                this.assignedUserIds = [];
+                for (let item of data["assignedUserIds"])
+                    this.assignedUserIds.push(item);
+            }
         }
     }
 
@@ -25746,7 +25774,11 @@ export class TransitionActivityDto implements ITransitionActivityDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["stageId"] = this.stageId;
-        data["assignTo"] = this.assignTo;
+        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
         return data; 
     }
 }
@@ -25754,12 +25786,12 @@ export class TransitionActivityDto implements ITransitionActivityDto {
 export interface ITransitionActivityDto {
     id: number;
     stageId: number | undefined;
-    assignTo: number | undefined;
+    assignedUserIds: number[] | undefined;
 }
 
 export class AssignActivityUserDto implements IAssignActivityUserDto {
     id!: number;
-    assignTo!: number | undefined;
+    assignedUserIds!: number[] | undefined;
 
     constructor(data?: IAssignActivityUserDto) {
         if (data) {
@@ -25773,7 +25805,11 @@ export class AssignActivityUserDto implements IAssignActivityUserDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.assignTo = data["assignTo"];
+            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
+                this.assignedUserIds = [];
+                for (let item of data["assignedUserIds"])
+                    this.assignedUserIds.push(item);
+            }
         }
     }
 
@@ -25787,14 +25823,18 @@ export class AssignActivityUserDto implements IAssignActivityUserDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["assignTo"] = this.assignTo;
+        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
+            data["assignedUserIds"] = [];
+            for (let item of this.assignedUserIds)
+                data["assignedUserIds"].push(item);
+        }
         return data; 
     }
 }
 
 export interface IAssignActivityUserDto {
     id: number;
-    assignTo: number | undefined;
+    assignedUserIds: number[] | undefined;
 }
 
 export class EntityInfo implements IEntityInfo {
