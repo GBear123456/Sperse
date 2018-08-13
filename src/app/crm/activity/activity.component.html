@@ -10,16 +10,16 @@
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
                 [resources]="resources"
-                [timeZone]="''"
-                [currentView]="currentView"
-                [currentDate]="currentDate"
-                [showAllDayPanel]="false"
+                [timeZone]="timezone"
+                [(currentView)]="currentView"
+                [(currentDate)]="currentDate"
+                [showAllDayPanel]="true"
                 [textExpr]="'Title'"
                 [startDateExpr]="'StartDate'"
-                [endDateExpr]="'EndDate'"
+                [endDateExpr]="'EndDate'"        
+                [remoteFiltering]="false"
                 [descriptionExpr]="'Description'"
                 (onContentReady)="onContentReady($event)"
-                (onAppointmentDeleting)="onAppointmentDeleting($event)"
                 (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
             </dx-scheduler>
     
