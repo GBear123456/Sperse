@@ -13,6 +13,29 @@
         display: block;
     }
 
+    .transactions-tabs {
+        margin-bottom: 0;
+        border: 0;
+        flex-wrap: nowrap;
+
+        .nav-item {
+            cursor: pointer;
+
+            .nav-link {
+                border-radius: 0;
+                border-color: #fff;
+                border-bottom-width: 3px;
+                transition: .2s;
+
+                &.active {
+                    white-space: nowrap;
+                    color: #00aeef;
+                    border-bottom-color: #00aeef;
+                }
+            }
+        }
+    }
+
     .main-wrapper {
         max-width: 100vw;
         display: flex;
@@ -24,7 +47,6 @@
             }
 
             .transactions {
-
                 width: calc(~"100% - 340px");
             }
         }

@@ -79,6 +79,7 @@ import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-w
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
+import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
 
 @NgModule({
     imports: [
@@ -155,7 +156,8 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
         TransactionDetailInfoComponent,
         ReportPeriodComponent,
         ImportFromQuickBooksButtonComponent,
-        UsersDialogComponent
+        UsersDialogComponent,
+        KeyPhrasesComponent
     ],
     entryComponents: [
         RuleDialogComponent,

@@ -65,6 +65,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
     defaultSubaccountTooltipVisible = false;
+    showClassify = true;
+    filterItems: any[];
 
     private readonly dataSourceURI = 'Transaction';
     private readonly totalDataSourceURI = 'TransactionTotal';
@@ -687,6 +689,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     return filterMethod.call(this, filter);
             }
         );
+
+        this.filterItems = filterQuery;
         this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
 

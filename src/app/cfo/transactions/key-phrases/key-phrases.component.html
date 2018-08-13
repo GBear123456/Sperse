@@ -1,0 +1,45 @@
+<div>
+    <div class="tree-header" *ngIf="showHeader">
+        <h3 *ngIf="showTitle">
+            {{l('Key Phrases')}}
+            <span class="close" (click)="close.emit(null)"></span>
+        </h3>
+    </div>
+    <dx-tree-list
+        [width]="width"
+        [height]="height"
+        [dataSource]="keyPhrasesData"
+        [hoverStateEnabled]="true"
+        [loadPanel]="{enabled: true}"
+        dataStructure="tree"
+        (onCellClick)="onCellClick($event)"
+        (onRowClick)="onRowClick($event)"
+        itemsExpr="groups">
+        <dxi-column 
+            dataField="keyPhrases"
+            [allowSorting]="true"
+            [sortIndex]="0"
+            [sortOrder]="'asc'"
+            [cellTemplate]="'keyPhrasesTemplate'">
+        </dxi-column>
+        <dxi-column
+            dataField="count"
+            [cellTemplate]="'keyPhrasesCountTemplate'">
+        </dxi-column>
+
+        <div *dxTemplate="let cell of 'keyPhrasesTemplate'">
+            <ng-container>
+                <div class="category-hover"></div>
+                <span> {{ cell.text }} </span>
+                <div class="category-drop-area">
+                    <div *ngIf="isInstanceAdmin" class="category-drop-add-rule">Add Rule</div>
+                </div>
+            </ng-container>
+        </div>
+        <div *dxTemplate="let cell of 'keyPhrasesCountTemplate'">
+            <div *ngIf="cell.value" class="transactionCount">
+                <span> {{ cell.text }} </span>
+            </div>
+        </div>
+    </dx-tree-list>
+</div>

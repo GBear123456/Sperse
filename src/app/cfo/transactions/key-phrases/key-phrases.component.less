@@ -1,0 +1,196 @@
+:host {
+    h3 {
+        width: 340px;
+        font-size: 16px;
+        line-height: 1.38;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+        padding: 20px 0 10px 20px;
+
+        .close {
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            float: right;
+            cursor: pointer;
+            position: relative;
+
+            &:after, &:before {
+                position: absolute;
+                top: 0;
+                left: 8px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #1b1b1b;
+            }
+
+            &:before {
+                transform: rotate(45deg);
+            }
+
+            &:after {
+                transform: rotate(-45deg);
+            }
+        }
+    }
+
+    /deep/ dx-tree-list {
+        max-width: 100% !important;
+
+        .dx-treelist-headers {
+            display: none;
+        }
+
+        .dx-treelist-rowsview {
+            border: none;
+            background-color: #ffffff;
+
+            .dx-treelist-empty-space {
+                padding-right: 5px;
+            }
+
+            .dx-treelist-content {
+                margin-right: 3px;
+                margin-bottom: 15px;
+
+                .dx-treelist-focus-overlay {
+                    border: 1px solid #00aeef;
+                    height: 35px !important;
+                }
+            }
+
+            table {
+                border-spacing: 0 5px;
+                border-collapse: separate;
+
+                colgroup {
+                    col:nth-child(2) {
+                        width: 54px !important;
+                    }
+
+                    col:last-child {
+                        width: 48px !important;
+                    }
+                }
+
+                td {
+                    overflow: visible !important;
+                    text-overflow: initial !important;
+                    border: none !important;
+                    background-color: transaparent !important;
+                }
+
+                tr.dx-data-row {
+                    &.subCategory {
+                        .dx-treelist-text-content span {
+                            font-size: 14px !important;
+                            font-weight: 300 !important;
+                        }
+
+                        .dx-command-edit {
+                            .dx-link-add {
+                                display: none !important;
+                            }
+                        }
+                    }
+
+                    &[aria-level="1"] {
+                        td .category-hover, td .category-drop-area {
+                            width: calc(~"100% - 33px");
+                        }
+                    }
+
+                    &[aria-level="0"] {
+                        td .category-hover, td .category-drop-area {
+                            width: calc(~"100% - 18px");
+                        }
+
+                        .dx-treelist-text-content span {
+                            font-weight: bold;
+                        }
+                    }
+
+                    td {
+                        &:first-child .dx-treelist-text-content {
+                            width: 250px;
+                        }
+
+                        &:nth-child(2) {
+                            position: absolute;
+                            right: 13px;
+                        }
+
+                        .category-hover, .category-drop-area {
+                            position: absolute;
+                            height: 32px;
+                            margin-top: -7px;
+                            right: 0px;
+                            z-index: -1;
+                        }
+
+                        .category-drop-area {
+                            z-index: 1000;
+                            margin-top: -29px;
+                            display: none;
+                            text-align: right;
+
+                            .category-drop-add-rule {
+                                display: none;
+                                position: relative;
+                                top: 4px;
+                                right: 1px;
+                                padding: 4px 8px;
+                                border-radius: 11px;
+                                font-size: 10px;
+                                color: orange;
+                                font-weight: 500;
+                                background-color: #FFFBF5;
+
+                                &.element-drag-hover {
+                                    border: 1px solid orange;
+                                }
+                            }
+                        }
+
+                        .dx-treelist-text-content {
+                            overflow: visible !important;
+                            font-size: 15px;
+                            font-style: normal;
+                            font-stretch: normal;
+                            letter-spacing: 0.3px;
+                            color: #424c56;
+
+                            span:not(.dx-treelist-search-text) {
+                                max-width: stretch;
+                                display: inline-block;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                width: 83%;
+                            }
+                        }
+
+                        .transactionCount {
+                            border-radius: 10px;
+                            background-color: #f0f2f5;
+                            min-width: 30px;
+                            max-width: 100px;
+                            text-align: center;
+                            font-size: 11px;
+                            color: #9a9fa4;
+
+                            span {
+                                margin: 3px 8px;
+                                display: inline-block;
+                            }
+                        }
+
+                        &.dx-command-edit a {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
