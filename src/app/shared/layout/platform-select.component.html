@@ -9,7 +9,7 @@
             <dxi-item *ngFor="let item of modules" (mouseover)="onHover(item.code)">
                 <div class="module-select-item {{item.code | lowercase }}">
                     <input value="{{item.code}}" readonly>
-                    <div [class]="isDisabled(item.code) ? 'disabled': (item.code==module && item.uri==uri ? 'selected': '')">{{l(item.name)}}</div>
+                    <div [class]="isDisabled(item.name) ? 'disabled': (item.code==module && item.uri==uri ? 'selected': '')">{{l(item.name)}}</div>
                     <i *ngIf="item.code==module && item.uri==uri" class="dx-icon-check"></i>
                 </div>
             </dxi-item>

@@ -36,7 +36,7 @@
 
 <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [selectedItemKey]="userId" [bulkUpdateMode]="true"
                           [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
-<crm-static-list
+<crm-static-list #stagesList
     [width]="'210px'"
     [highlightSelected]="true"
     [showConfirmation]="false"
@@ -47,6 +47,18 @@
     [disableWonLost]="true"
     (onItemSelected)="onStagesChanged($event)"
     [list]="leadStages">
+</crm-static-list>
+<crm-static-list #partnerTypesList
+    [width]="'210px'"
+    [highlightSelected]="true"
+    [title]="l('PartnerType')"
+    [selectedKeys]="[selectedPartnerTypId]"
+    [showConfirmation]="false"
+    [hideButtons]="true"
+    [highlightSelected]="true"
+    [targetSelector]="'[accessKey=PartnerType]'"
+    (onItemSelected)="onPartnerTypeChanged($event)"
+    [list]="partnerTypes">
 </crm-static-list>
 <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
 <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></crm-tags-list>

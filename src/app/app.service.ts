@@ -39,13 +39,13 @@ export class AppService extends AppServiceBase {
                 'API',
                 'CFO',
                 'CRM',
+                'CreditReports',
                 'Cloud',
                 'Forms',
                 'HR',
                 'HUB',
                 'Slice',
-                'Store',
-                'CreditReports'
+                'Store'
             ],
             {
                 admin: require('./admin/module.config.json'),
