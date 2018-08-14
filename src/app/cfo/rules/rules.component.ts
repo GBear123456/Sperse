@@ -57,7 +57,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -95,7 +95,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     { name: 'fullscreen', action: this.fullscreen.bind(this), adaptive: false }
                 ]
             }
-        ];
+        ]);
     }
 
     refreshList() {
@@ -225,7 +225,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
         this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;

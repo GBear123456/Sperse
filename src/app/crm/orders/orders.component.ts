@@ -270,7 +270,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -385,7 +385,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     // }
                 ]
             }
-        ];
+        ]);
     }
 
     filterByOrderStages(filter: FilterModel) {
@@ -424,7 +424,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

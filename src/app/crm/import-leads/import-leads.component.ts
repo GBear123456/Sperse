@@ -345,7 +345,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
-                        ).subscribe((importId) => { 
+                        ).subscribe((importId) => {
                             if (importId && !isNaN(importId))
                               this._importLeadsService.setupImportCheck(importId, (res) => {
                                   this.importedCount = res.importedCount;
@@ -361,8 +361,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     createLeadsInput(data: any[]): ImportInput {
         let result = ImportInput.fromJS({
-            fileName: this.wizard.fileName, 
-            fileSize: this.wizard.fileOrigSize, 
+            fileName: this.wizard.fileName,
+            fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
@@ -615,7 +615,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
     }
 
     clearToolbarSelectedItems() {
@@ -627,7 +627,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingComponent.ratingValue = this.defaultRating;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
     }
 
     cancelImport() {
