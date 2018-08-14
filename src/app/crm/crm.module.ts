@@ -51,6 +51,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 /** Application imports */
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
@@ -146,7 +147,8 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
     ],
     providers: [
         ImportServiceProxy,
-        ImportLeadsService
+        ImportLeadsService,
+        ZendeskService
     ],
     entryComponents: [
         CreateClientDialogComponent,

@@ -6,12 +6,11 @@ import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, Catego
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
-import DsataSource from 'devextreme/data/data_source';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import * as XLSX from 'xlsx';
 import { finalize } from 'rxjs/operators';
 
-class UploadCategoryModel{
+class UploadCategoryModel {
     'Cashflow Type': string;
     'Accounting Type': string;
     'Category': string;
@@ -20,7 +19,7 @@ class UploadCategoryModel{
     'Sub Category Id': number;
     'Transaction Count': number;
     'COAID': number;
-};
+}
 
 @Component({
     selector: 'chart-of-accounts',
@@ -53,8 +52,8 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         //this.dataSource = {
         //  store: {
         //    type: 'odata',
-        //    url: this.getODataURL(this.dataSourceURI),
-        //    version: this.getODataVersion(),
+        //    url: this.getODataUrl(this.dataSourceURI),
+        //    version: AppConsts.ODataVersion,
         //    beforeSend: function (request) {
         //      request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
         //    }
@@ -115,7 +114,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
 
         reader.readAsBinaryString(target.files[0]);
     }
-    
+
     refreshCategories() {
         this.categorizationComponent.refreshCategories(false);
     }

@@ -1,16 +1,25 @@
+/** Core imports */
 import { Component, OnInit, ViewChild, Injector, OnDestroy } from '@angular/core';
-import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
-    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
-    PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
-
-import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes, CustomerType } from '@shared/AppEnums';
-import { DxContextMenuComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
 
+/** Third party imports */
 import { MatDialog } from '@angular/material';
-import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
+import { DxContextMenuComponent } from 'devextreme-angular';
+import { CacheService } from 'ng2-cache-service';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { AppConsts } from '@shared/AppConsts';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { ContactTypes, CustomerType } from '@shared/AppEnums';
+import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
+CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
+ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
+PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
@@ -18,19 +27,13 @@ import { RatingComponent } from '../rating/rating.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-
-import { CacheService } from 'ng2-cache-service';
-import * as _ from 'underscore';
-import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
-import { finalize } from 'rxjs/operators';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy, PartnerServiceProxy ]
+    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, PartnerServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -140,7 +143,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _cacheService: CacheService,
         private _countryService: CountryServiceProxy,
         private _customersService: CustomersServiceProxy,
-        private _photoUploadService: ContactPhotoServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -148,7 +150,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _router: Router,
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
-        private _partnerService: PartnerServiceProxy
+        private _partnerService: PartnerServiceProxy,
+        private dialogService: DialogService
     ) {
         super(injector);
 
@@ -486,7 +489,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getDialogPossition(event, shiftX) {
-        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {

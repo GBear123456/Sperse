@@ -1,26 +1,25 @@
+/** Core imports */
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
-import { ActivityServiceProxy, CreateActivityDtoType, CreateActivityDto, UpdateActivityDto } from '@shared/service-proxies/service-proxies';
 
-import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes, CustomerType } from '@shared/AppEnums';
-import { DxContextMenuComponent } from 'devextreme-angular';
-import { Router } from '@angular/router';
-
+/** Third party imports */
 import { MatDialog } from '@angular/material';
+import { DxContextMenuComponent } from 'devextreme-angular';
+import { CacheService } from 'ng2-cache-service';
+import { finalize } from 'rxjs/operators';
+import * as moment from 'moment';
+
+/** Application imports */
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { ActivityServiceProxy, CreateActivityDtoType, CreateActivityDto, UpdateActivityDto } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-
-import { CacheService } from 'ng2-cache-service';
-import { finalize } from 'rxjs/operators';
-import * as _ from 'underscore';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
     styleUrls: ['create-activity-dialog.component.less'],
-    providers: [ ActivityServiceProxy ]
+    providers: [ ActivityServiceProxy, DialogService ]
 })
 export class CreateActivityDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -49,10 +48,9 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _router: Router,
         private _cacheService: CacheService,
-        private _pipelineService: PipelineService,
-        private _activityProxy: ActivityServiceProxy
+        private _activityProxy: ActivityServiceProxy,
+        private dialogService: DialogService
     ) {
         super(injector);
 
@@ -171,7 +169,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             type: this.data.appointment.Type,
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
-            assignedUserId: this.data.appointment.AssignedUserId 
+            assignedUserId: this.data.appointment.AssignedUserId
                 || this.appSession.userId,
             startDate: this.getDateWithoutTimezone(this.data.appointment.StartDate),
             endDate: this.getDateWithoutTimezone(this.data.appointment.EndDate),
@@ -204,11 +202,11 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
-            this.data.refreshParent(true, 
+            this.data.refreshParent(true,
                 this.data.appointment.StageId);
         } else if (this.saveContextMenuItems[1].selected) {
             this.close();
-            this.data.refreshParent(false, 
+            this.data.refreshParent(false,
                 this.data.appointment.StageId);
        }
     }
@@ -222,7 +220,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             this.createEntity();
     }
 
-    validateData() {       
+    validateData() {
         if (!this.data.appointment.Title) {
             this.data.isTitleValid = false;
             return this.notify.error(this.l('TitleIsRequired'));
@@ -231,11 +229,11 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         if (!this.dateValidator.validate().isValid)
             return this.notify.error(this.l('DatePeriodIsRequired'));
 
-        return true;        
+        return true;
     }
 
     getDialogPossition(event, shiftX) {
-        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {
@@ -287,7 +285,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                     $event.component.option('opened', true);
                     setTimeout(() => {$event.event.target.value = search;});
                     if (!Array(res).length)
-                        $event.component.option('noDataText', this.l('No items found.'));            
+                        $event.component.option('noDataText', this.l('No items found.'));
                 }
             });
         }, 500);

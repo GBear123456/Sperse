@@ -3,9 +3,8 @@ import {NgModule, ModuleWithProviders} from '@angular/core';
 import * as ngCommon from '@angular/common';
 import {RouterModule} from '@angular/router';
 
-/** Third party imports */
-
 /** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
 import { ExportService } from './export/export.service';
@@ -55,6 +54,7 @@ export class CommonModule {
                 AppRouteGuard,
                 AppSessionService,
                 AppUrlService,
+                AppLocalizationService,
                 ExportService,
                 ExportGoogleSheetService,
                 AppUiCustomizationService,

@@ -54,6 +54,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                     return obj;
                 }, {});
     }
+
     public static getSearchKeyWords(value: string) {
         let words = value.match(this._wordRegex);
         let noisyWords = _.union(this._removeFromEnd, this._remove);

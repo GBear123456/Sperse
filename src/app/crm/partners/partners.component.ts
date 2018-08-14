@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     Component,
     OnInit,
@@ -5,11 +6,19 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { DxDataGridComponent } from 'devextreme-angular';
+import 'devextreme/data/odata/store';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
@@ -17,10 +26,6 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
-import { MatDialog } from '@angular/material';
-
-import { AppService } from '@app/app.service';
-
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -32,19 +37,11 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-
-import { CustomersServiceProxy, PartnerServiceProxy, BulkUpdatePartnerTypeInput } from '@shared/service-proxies/service-proxies';
+import { PartnerServiceProxy, BulkUpdatePartnerTypeInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-
-import { DxDataGridComponent } from 'devextreme-angular';
-
-import 'devextreme/data/odata/store';
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -102,7 +99,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _customersServiceProxy: CustomersServiceProxy,
         private _clientService: ClientService,
         private _partnerService: PartnerServiceProxy
     ) {
@@ -112,8 +108,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -593,8 +589,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processFilterInternal() {
-        this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.filters, (filter) => {
+        this.processODataFilter(
+            this.dataGrid.instance,
+            this.dataSourceURI,
+            this.filters,
+            (filter) => {
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
                 if (filterMethod)

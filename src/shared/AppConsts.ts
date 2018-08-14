@@ -88,5 +88,7 @@ export class AppConsts {
     static readonly SYS_ID_CRM_PROCESS_LEAD      = 'CRM.ProcessLead';
 
     static readonly CACHE_TYPE_LOCAL_STORAGE = 0;
+
+    static readonly ODataVersion = 4;
 }
 
