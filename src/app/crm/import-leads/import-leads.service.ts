@@ -8,6 +8,6 @@ export class ImportLeadsService {
     ) {    }
 
     setupImportCheck(importId, method = undefined) {
-        this._importWizardService.setupImportCheck(importId, method, 'leads');
+        this._importWizardService.setupStatusCheck(importId, method, 'leads');
     }
 }
