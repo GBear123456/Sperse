@@ -3,6 +3,7 @@
 }
 
 :host {
+    display: block;
     position: relative;
     top: 74px;
 
@@ -11,14 +12,14 @@
         border-radius: 7px;
         border-top: 2px solid #ddd;
 
+        .dx-loadpanel-content {
+            display: none;
+        }
         .dx-scheduler-header {
-            visibility: hidden;    
+            background-color: #FFF!important;
         }
         .dx-scheduler-appointment {
             border-radius: 7px;
-        }
-        .dx-scheduler-work-space {
-            padding-top:0px;
         }
         .dx-scheduler-work-space-month .dx-scheduler-date-table-cell div {
             min-height: 200px;

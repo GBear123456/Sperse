@@ -23,6 +23,8 @@ import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto,
 
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 
+import buildQuery from 'odata-query';
+
 @Component({
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.less'],
@@ -38,6 +40,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     private dataSourceURI = 'Activity';
     private stages: any;
 
+    public timezone: string;
     public showPipeline = false;
     public pipelineDataSource: any;
     public pipelinePurposeId =
@@ -90,24 +93,43 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
+        if (abp.clock.provider.supportsMultipleTimezone)
+            this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
+
         this.initDataSource();
     }
 
     initDataSource() {
         this.dataSource = {
             requireTotalCount: false,
-            filter: [['AssignedUserId', '=', this.appSession.userId]],
             store: {
                 key: 'Id',
                 type: 'odata',
                 url: this.getODataURL(this.dataSourceURI),
                 version: this.getODataVersion(),
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    this.startLoading();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    if (request.method == 'PATCH') {
-                        request.method = 'PUT'
-                        request.url = request.url.split('odata').shift()
-                            + 'api/services/CRM/Activity/Update';
+                    let customize = ['DELETE', 'PATCH'].indexOf(request.method);
+                    if (customize >= 0) {
+                        if (customize)
+                            request.method = 'PUT';
+                        let endpoint = this.parseODataURL(request.url);
+                        request.url = endpoint.url + 'api/services/CRM/Activity/'
+                            + (customize ? 'Update': 'Delete?Id=' + endpoint.id);
+                    } else {
+                        request.params.$filter = buildQuery(
+                            {
+                                filter: [
+                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
+                                    {
+                                        or: [
+                                            {and: [{StartDate: {le: this.getEndDate()}}, {EndDate: {ge: this.getStartDate()}}]}
+                                        ]
+                                    }
+                                ]
+                            }
+                        ).split('=').pop();
                     }
                 },
                 paginate: false
@@ -116,7 +138,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
         this.pipelineDataSource = {
             uri: this.dataSourceURI,
-            customFilter: {AssignedUserId: this.appSession.userId},
+            customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -131,6 +153,32 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         };
     }
 
+    parseODataURL(url) {
+        let parts = url.split('odata');
+        return {
+            id: parts.pop().replace(/\D/g, ''),
+            url: parts.pop()
+        }
+    }
+
+    getCurrentDate() {
+        let date = new Date(this.currentDate);
+        date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
+        return moment.utc(date);
+    }
+
+    getPeriodType() {
+        return this.currentView == 'agenda' ? 'day': this.currentView;
+    }
+
+    getStartDate() {
+        return this.getCurrentDate().startOf(<any>this.getPeriodType()).toDate();
+    }
+
+    getEndDate() {
+        return this.getCurrentDate().endOf(<any>this.getPeriodType()).toDate();
+    }
+
     initToolbarConfig() {
         this._appService.updateToolbar([
             {
@@ -141,6 +189,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     }
                 ]
             },
+/*
             {
                 location: 'before', items: [
                     {
@@ -179,6 +228,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     }
                 ]
             },
+*/
             {
                 location: 'after',
                 areItemsDependent: true,
@@ -206,16 +256,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         ]);
     }
 
-    onAppointmentDeleting($event) {
-        $event.cancel = this._activityProxy
-            .delete($event.appointmentData.id)
-                .toPromise().catch(err => {
-                    return true;
-                });
-    }
-
     onContentReady($event) {
         //!!VP this part fix scroll appearance for month view
+        setTimeout(() => this.finishLoading(), 2000);
         if (this.currentView == 'month')
             setTimeout(() => {
                 let scroll = $event.element.getElementsByClassName('dx-scrollable-content')[0];
@@ -241,6 +284,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     showActivityDialog(appointment) {
+        this.schedulerComponent.instance.hideAppointmentTooltip();
         this.dialog.open(CreateActivityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,

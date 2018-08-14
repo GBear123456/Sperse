@@ -15,6 +15,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
+import * as moment from 'moment';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -195,7 +196,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     getDateWithoutTimezone(date) {
         date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-        return date;
+        return moment(date);
     }
 
     private afterSave(): void
