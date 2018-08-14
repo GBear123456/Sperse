@@ -25889,6 +25889,7 @@ export class EntityInfo implements IEntityInfo {
     id!: number | undefined;
     name!: string | undefined;
     email!: string | undefined;
+    isActive!: boolean | undefined;
 
     constructor(data?: IEntityInfo) {
         if (data) {
@@ -25904,6 +25905,7 @@ export class EntityInfo implements IEntityInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.email = data["email"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -25919,6 +25921,7 @@ export class EntityInfo implements IEntityInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["email"] = this.email;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
@@ -25927,6 +25930,7 @@ export interface IEntityInfo {
     id: number | undefined;
     name: string | undefined;
     email: string | undefined;
+    isActive: boolean | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
