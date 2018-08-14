@@ -451,6 +451,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initToolbarConfig();
         this.getStages();
         this.partnerTypesLoad();
+
+        if (this.wizard.stepper.selectedIndex == this.wizard.FINISH_STEP_INDEX)
+            setTimeout(() => this.wizard.reset());
     }
 
     deactivate() {
