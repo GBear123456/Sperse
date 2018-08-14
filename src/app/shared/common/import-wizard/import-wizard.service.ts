@@ -1,6 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 
+import { RouteReuseStrategy } from '@angular/router';
+
+import { ImportStatus } from '@shared/AppEnums';
+import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+
 @Injectable()
 export class ImportWizardService {
     private subjectProgress: Subject<any>;
@@ -10,7 +15,10 @@ export class ImportWizardService {
 
     public activeImportId: number = 0;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,
+        private _reuseService: RouteReuseStrategy,
+        private _importProxy: ImportServiceProxy
+    ) {
         this.subjectProgress = new Subject<any>();
         this.subjectCancel = new Subject<undefined>();
     }
@@ -32,6 +40,26 @@ export class ImportWizardService {
 
     cancelImport() {  
         this.subjectCancel.next();
+    }
+
+    setupImportCheck(importId, method = undefined, invalUri = undefined) {
+        this.activeImportId = importId;
+        this.setupStatusCheck((callback) => {
+            this._importProxy.getStatus(importId).subscribe((res) => {
+                method && method(res);
+                if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
+                    invalUri && (<any>this._reuseService).invalidate(invalUri);
+                    this.activeImportId = undefined;
+                }                    
+                callback({
+                    progress: !this.activeImportId ? 100: 
+                        Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
+                    totalCount: res.totalCount,
+                    importedCount: res.importedCount,
+                    failedCount: res.failedCount
+                });
+            })
+        });
     }
 
     setupStatusCheck(method: (callback: any) => void, initial = true) {
