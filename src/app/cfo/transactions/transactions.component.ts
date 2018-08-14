@@ -130,7 +130,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -248,7 +248,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             }
-        ];
+        ]);
     }
 
     constructor(injector: Injector,
@@ -323,7 +323,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         debitClassifiedCount++;
                 }
             });
-            this.bankAccounts = _.uniq(bankAccounts);
+            setTimeout(() => { this.bankAccounts = _.uniq(bankAccounts); });
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -343,11 +343,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = totals[0].debitTotal;
                 this.debitTransactionCount = totals[0].debitCount;
                 this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
-                if (totals[0].bankAccounts) {
-                    this.bankAccounts = totals[0].bankAccounts;
-                } else {
-                    this.bankAccounts = [];
-                }
+                setTimeout(() => {
+                    if (totals[0].bankAccounts) {
+                        this.bankAccounts = totals[0].bankAccounts;
+                    } else {
+                        this.bankAccounts = [];
+                    }
+                });
 
                 this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
                 this.adjustmentTotal = totals[0].adjustmentTotal;
@@ -361,7 +363,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = 0;
                 this.debitTransactionCount = 0;
 
-                this.bankAccounts = [];
+                setTimeout(() => { this.bankAccounts = []; });
 
                 this.transactionTotal = 0;
                 this.transactionCount = 0;
@@ -1032,7 +1034,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
@@ -1053,7 +1055,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     deactivate() {
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

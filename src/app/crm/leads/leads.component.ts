@@ -367,7 +367,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -552,7 +552,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 ]
             }
-        ];
+        ]);
     }
 
     showCompactRowsHeight() {
@@ -626,7 +626,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     initDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
-                this.pipelineDataSource = this.dataSource;
+                setTimeout(() => { this.pipelineDataSource = this.dataSource; });
         }
     }
 
@@ -771,7 +771,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
 
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.subRouteParams.unsubscribe();

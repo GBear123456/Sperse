@@ -18,7 +18,7 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto, 
+import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto,
     CreateActivityDtoType, UpdateActivityDto, PipelineDto } from '@shared/service-proxies/service-proxies';
 
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
@@ -40,9 +40,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     public showPipeline = false;
     public pipelineDataSource: any;
-    public pipelinePurposeId = 
+    public pipelinePurposeId =
         AppConsts.PipelinePurposeIds.activity;
-  
+
     public selectedLeads: any = [];
     public currentDate = new Date();
     public currentView = 'month';
@@ -70,7 +70,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         buttons: [
             {
                 enabled: true,
-                action: () => { 
+                action: () => {
                     this.showActivityDialog(new Date());
                 },
                 lable: this.l('AddNewTask')
@@ -78,7 +78,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         ]
     };
 
-    constructor(injector: Injector, 
+    constructor(injector: Injector,
         private _router: Router,
         public dialog: MatDialog,
         private _appService: AppService,
@@ -106,7 +106,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     if (request.method == 'PATCH') {
                         request.method = 'PUT'
-                        request.url = request.url.split('odata').shift() 
+                        request.url = request.url.split('odata').shift()
                             + 'api/services/CRM/Activity/Update';
                     }
                 },
@@ -132,11 +132,11 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
-                    { 
-                        name: 'back', 
+                    {
+                        name: 'back',
                         action: Function()
                     }
                 ]
@@ -170,9 +170,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                                 this.currentView = event.itemData.text.toLowerCase();
                             },
                             items: [
-                                { text: this.l('Day') }, 
-                                { text: this.l('Week') }, 
-                                { text: this.l('Month') }, 
+                                { text: this.l('Day') },
+                                { text: this.l('Week') },
+                                { text: this.l('Month') },
                                 { text: this.l('Agenda') }
                             ]
                         }
@@ -203,7 +203,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     }
                 ]
             }
-        ];
+        ]);
     }
 
     onAppointmentDeleting($event) {
@@ -267,7 +267,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     deactivate() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 

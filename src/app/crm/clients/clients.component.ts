@@ -358,7 +358,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -499,7 +499,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     }
                 ]
             }
-        ];
+        ]);
     }
 
     toggleUserAssignment() {
@@ -626,7 +626,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 

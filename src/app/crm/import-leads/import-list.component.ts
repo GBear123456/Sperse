@@ -83,22 +83,22 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         this.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'back', 
-                        action: this.navigateToDashboard.bind(this) 
+                    {
+                        name: 'back',
+                        action: this.navigateToDashboard.bind(this)
                     }
                 ]
             },
             {
                 location: 'before', items: [
-                    { 
-                        name: 'cancel', 
+                    {
+                        name: 'cancel',
                         action: this.cancelImport.bind(this),
                         disabled: !this.selectedRowIds.length
-                    }, {   
-                        name: 'delete', 
+                    }, {
+                        name: 'delete',
                         action: this.deleteImport.bind(this),
-                        disabled: !this.selectedRowIds.length 
+                        disabled: !this.selectedRowIds.length
                     }
                 ]
             },
@@ -141,7 +141,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
         this.updateActiveImport();
         this.setGridDataLoaded();
-        setTimeout(() => 
+        setTimeout(() =>
             event.component.option('visible', true));
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
@@ -167,12 +167,12 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         this.dataGrid.instance.showColumnChooser();
     }
 
-    navigateToDashboard() { 
+    navigateToDashboard() {
         this._router.navigate(['app/crm/dashboard']);
     }
 
     navigateToWizard() {
-        this._router.navigate(['app/crm/import-leads']);              
+        this._router.navigate(['app/crm/import-leads']);
     }
 
     deleteImport() {
@@ -211,10 +211,10 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 if (responce && responce.url)
                     window.open(responce.url);
             });
-        }            
+        }
     }
 
-    fileSizeFormat = (data) => {  
+    fileSizeFormat = (data) => {
         return this._sizeFormatPipe.transform(data.FileSize);
     }
 
@@ -225,7 +225,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     deactivate() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 

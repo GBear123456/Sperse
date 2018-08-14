@@ -320,7 +320,7 @@ export class ToolBarComponent extends AppComponentBase {
     initToolbarItems() {
         let items = [];
         let responsiveItems = [];
-        this._config.forEach((group) => {
+        this._config && this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
                 this.initDropDownMenu(item);

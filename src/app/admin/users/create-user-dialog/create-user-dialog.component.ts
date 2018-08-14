@@ -183,7 +183,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     redirectToUserDetails(id: number) {
         setTimeout(() => {
-            this._router.navigate([`app/admin/user/${id}/information`], 
+            this._router.navigate([`app/admin/user/${id}/information`],
                 { queryParams: { referrer: this._router.url.split('?').shift() } }
             );
         }, 1000);
@@ -335,7 +335,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     phoneComponentInitialized(event) {
         setTimeout(() => this.setComponentToValid(event.component), 500);
     }
-    
+
     phoneComponentFocusOut(event) {
         let value = event.component.option("value");
         if (!value)

@@ -70,7 +70,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
 
         AppComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
         this.rootComponent.overflowHidden(true);

@@ -57,7 +57,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     totalCount = 3;
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -282,7 +282,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
             },
-        ];
+        ]);
     }
 
     constructor(injector: Injector,
@@ -359,6 +359,6 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
     }
 }

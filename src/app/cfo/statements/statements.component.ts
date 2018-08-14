@@ -74,7 +74,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = <any>[
+        this._appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -186,7 +186,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             }
-        ];
+        ]);
     }
 
     constructor(
@@ -467,7 +467,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     deactivate() {
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.getRootComponent().overflowHidden();
     }
