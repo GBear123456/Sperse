@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     Component,
     OnInit,
@@ -6,14 +7,18 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
+
+/** Third party imports */
 import { MatDialog } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DxDataGridComponent } from 'devextreme-angular';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AppComponentBase } from '@shared/common/app-component-base';
-
 import { AppService } from '@app/app.service';
-
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -25,23 +30,18 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
-
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-
 import { CommonLookupServiceProxy, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { DxDataGridComponent } from 'devextreme-angular';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -119,7 +119,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
-        private _commonLookupService: CommonLookupServiceProxy,
         private _leadService: LeadServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -130,8 +129,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
@@ -615,10 +614,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         context.processODataFilter.call(context,
             this.dataGrid.instance, this.dataSourceURI,
                 this.filters, (filter) => {
-                    let filterMethod = this['filterBy' +
-                        this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
                 }
         );
     }

@@ -2,7 +2,6 @@ import { Component, Injector, OnInit, ViewContainerRef, ViewEncapsulation } from
 import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { LoginService } from './login/login.service';

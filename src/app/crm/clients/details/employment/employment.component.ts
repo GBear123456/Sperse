@@ -1,18 +1,24 @@
+/** Core imports */
+import { Component, OnInit, Injector, Input } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { BehaviorSubject } from 'rxjs';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 import { LinkType, LinkUsageType } from '@shared/AppEnums';
-import { Component, OnInit, Injector, Input } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { MatDialog } from '@angular/material';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
 
 @Component({
     selector: 'employment',
     templateUrl: './employment.component.html',
-    styleUrls: ['./employment.component.less']
+    styleUrls: ['./employment.component.less'],
+    providers: [ DialogService ]
 })
 export class EmploymentComponent extends AppComponentBase implements OnInit {
     @Input()
@@ -47,7 +53,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _сontactEmploymentService: ContactEmploymentServiceProxy,
         private _organizationContactServiceProxy: OrganizationContactServiceProxy,
-        private dialog: MatDialog) {
+        private dialog: MatDialog,
+        private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
@@ -246,7 +253,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('.address-wrapper');
-        return this.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {

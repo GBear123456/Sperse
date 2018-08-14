@@ -15,8 +15,7 @@ import { CustomerType } from '@shared/AppEnums';
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less'],
-    providers: [ AppLocalizationService ]
+    styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;

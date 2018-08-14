@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppConsts } from '@shared/AppConsts';
@@ -42,7 +42,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private _router: Router,
         private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        private zendeskService: ZendeskService,
         public dialog: MatDialog
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -72,14 +72,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     ngAfterViewInit(): void {
         this._appService.updateToolbar(null);
 
-        AppComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+        this.zendeskService.showWidget();
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     ngOnDestroy() {
-        AppComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this.zendeskService.hideWidget();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
         this.rootComponent.overflowHidden();

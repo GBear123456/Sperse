@@ -1,14 +1,11 @@
 /** Core imports */
 import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular';
-import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material';
-import { forkJoin } from 'rxjs';
-import * as _ from 'underscore';
 import * as moment from 'moment';
+import buildQuery from 'odata-query';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -17,19 +14,14 @@ import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { UserServiceProxy, ActivityServiceProxy, CreateActivityDto,
-    CreateActivityDtoType, UpdateActivityDto, PipelineDto } from '@shared/service-proxies/service-proxies';
-
+import { ActivityServiceProxy, CreateActivityDtoType } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
-
-import buildQuery from 'odata-query';
 
 @Component({
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ActivityServiceProxy]
+    providers: [ ActivityServiceProxy ]
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
@@ -51,19 +43,19 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public currentView = 'month';
     public resources: any[] = [
         {
-            fieldExpr: "Type",
+            fieldExpr: 'Type',
             useColorAsDefault: true,
             allowMultiple: false,
             dataSource: [{
                   text: this.l('Event'),
                   id: CreateActivityDtoType.Event,
-                  color: "#727bd2"
+                  color: '#727bd2'
               }, {
                   text: this.l('Task'),
                   id: CreateActivityDtoType.Task,
-                  color: "#32c9ed"
+                  color: '#32c9ed'
             }],
-            label: this.l("Type")
+            label: this.l('Type')
         }
     ];
     public headlineConfig = {
@@ -82,12 +74,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     };
 
     constructor(injector: Injector,
-        private _router: Router,
         public dialog: MatDialog,
-        private _appService: AppService,
-        private _activityProxy: ActivityServiceProxy,
-        private _pipelineService: PipelineService,
-        private _userServiceProxy: UserServiceProxy
+        private _appService: AppService
     ) {
         super(injector);
 
@@ -105,8 +93,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.startLoading();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -116,7 +104,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             request.method = 'PUT';
                         let endpoint = this.parseODataURL(request.url);
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
-                            + (customize ? 'Update': 'Delete?Id=' + endpoint.id);
+                            + (customize ? 'Update' : 'Delete?Id=' + endpoint.id);
                     } else {
                         request.params.$filter = buildQuery(
                             {
@@ -143,8 +131,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
@@ -158,7 +146,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         return {
             id: parts.pop().replace(/\D/g, ''),
             url: parts.pop()
-        }
+        };
     }
 
     getCurrentDate() {
@@ -168,7 +156,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     getPeriodType() {
-        return this.currentView == 'agenda' ? 'day': this.currentView;
+        return this.currentView == 'agenda' ? 'day' : this.currentView;
     }
 
     getStartDate() {

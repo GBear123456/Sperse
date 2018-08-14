@@ -1,26 +1,28 @@
+/** Core imports */
 import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { LocalizationService } from '@abp/localization/localization.service';
+
+/** Third party imports */
+import * as _ from 'underscore';
+
+/** Application imports */
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { LocalizationService } from '@abp/localization/localization.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
-import { environment } from 'environments/environment';
-import { FilterModel } from '@shared/filters/models/filter.model';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
+import { ODataService } from '@shared/common/odata/odata.service';
 
-import buildQuery from 'odata-query';
-import * as _ from 'underscore';
-import { ODataSearchStrategy } from '@shared/AppEnums';
 declare let require: any;
 
 export abstract class AppComponentBase {
@@ -43,6 +45,8 @@ export abstract class AppComponentBase {
     ui: AppUiCustomizationService;
     loading: boolean;
     appUrlService: AppUrlService;
+    localizationService: AppLocalizationService;
+    oDataService: ODataService;
 
     public searchValue: string;
     public searchColumns: any[];
@@ -51,9 +55,6 @@ export abstract class AppComponentBase {
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
     public capitalize = require('underscore.string/capitalize');
-
-    private static isZendeskWebwidgetSetup = false;
-    private static showZendeskWebwidgetTimeout: any;
 
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
@@ -79,6 +80,8 @@ export abstract class AppComponentBase {
         this._exportService = _injector.get(ExportService);
         this.primengTableHelper = new PrimengTableHelper();
         this.appUrlService = _injector.get(AppUrlService);
+        this.localizationService = _injector.get(AppLocalizationService);
+        this.oDataService = this._injector.get(ODataService);
     }
 
     @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -104,81 +107,11 @@ export abstract class AppComponentBase {
     }
 
     l(key: string, ...args: any[]): string {
-        args.unshift(key);
-        args.unshift(this.localizationSourceName);
-        return this.ls.apply(this, args);
+        return this.localizationService.l(key, this.localizationSourceName, args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
-        let source = abp.localization.values[sourcename];
-        if (!source || !source[key])
-            sourcename = AppConsts.localization.defaultLocalizationSourceName;
-
-        let localizedText = this.localization.localize(key, sourcename);
-        if (!localizedText)
-            localizedText = key;
-
-        if (!args || !args.length)
-            return localizedText;
-
-        args.unshift(localizedText);
-        return abp.utils.formatString.apply(this, args);
-    }
-
-    getODataURL(uri: String, filter?: Object) {
-        return AppConsts.remoteServiceBaseUrl + '/odata/' +
-            uri + (filter ? buildQuery({ filter }) : '');
-    }
-
-    getODataVersion() {
-        return 4;
-    }
-
-    advancedODataFilter(grid: any, uri: string, query: any[]) {
-        let queryWithSearch = query.concat(this.getSearchFilter());
-        let dataSource = grid.getDataSource();
-        dataSource['_store']['_url'] = this.getODataURL(uri, queryWithSearch);
-        dataSource.load().done(() => grid.repaint());
-        return queryWithSearch;
-    }
-
-    processODataFilter(grid, uri, filters, getCheckCustom) {
-        this.isDataLoaded = false;
-        return this.advancedODataFilter(grid, uri,
-            filters.map((filter) => {
-                return getCheckCustom && getCheckCustom(filter) ||
-                    filter.getODataFilterObject();
-            })
-        );
-    }
-
-    getSearchFilter() {
-        let data = {};
-        let filterData: any[] = [];
-
-        if (this.searchColumns && this.searchValue) {
-            let values = FilterModel.getSearchKeyWords(this.searchValue);
-            values.forEach((val) => {
-                let valueFilterData: any[] = [];
-                this.searchColumns.forEach((col) => {
-                    let colName = col.name || col;
-                    let searchStrategy = col.strategy || ODataSearchStrategy.Contains;
-                    let el = this.getFilterExpression(colName, searchStrategy, val);
-                    valueFilterData.push(el);
-                });
-
-                let elF = {
-                    or: valueFilterData
-                };
-                filterData.push(elF);
-            });
-
-            data = {
-                and: filterData
-            };
-        }
-
-        return data;
+        return this.localizationService.ls(sourcename, key, args);
     }
 
     isFeatureEnable(featureName: string): boolean {
@@ -220,8 +153,7 @@ export abstract class AppComponentBase {
     }
 
     exportToGoogleSheet(option) {
-        this._exportService.exportToGoogleSheets(
-            this.dataGrid, option == 'all');
+        this._exportService.exportToGoogleSheets(this.dataGrid, option == 'all');
     }
 
     toggleFullscreen(element: any) {
@@ -267,22 +199,6 @@ export abstract class AppComponentBase {
             this.dataGrid.instance.refresh();
     }
 
-    private getFilterExpression(colName: string, strategy: string, value: string): object {
-        let el = {};
-        el[colName] = {};
-
-        switch (strategy) {
-            case ODataSearchStrategy.Contains:
-            case ODataSearchStrategy.StartsWith:
-                el[colName][strategy] = value;
-                break;
-            case ODataSearchStrategy.Equals:
-            default:
-                el[colName] = value;
-        }
-        return el;
-    }
-
     protected setTitle(moduleName: string) {
         let rootComponent: any = this.getRootComponent();
         rootComponent.setTitle(this.appSession.tenantName, moduleName);
@@ -297,60 +213,21 @@ export abstract class AppComponentBase {
         }
     }
 
-    protected calculateDialogPosition(event, parent, shiftX, shiftY) {
-        if (parent) {
-            let rect = parent.getBoundingClientRect();
-            return {
-                top: (rect.top + rect.height / 2 - shiftY) + 'px',
-                left: (rect.left + rect.width / 2 - shiftX) + 'px'
-            };
-        } else {
-            return {
-                top: event.clientY - shiftY + 'px',
-                left: event.clientX - shiftX + 'px'
-            };
-        }
-    }
-
-    private static zendeskWebwidgetSetup(service: ngxZendeskWebwidgetService) {
-        if (AppComponentBase.isZendeskWebwidgetSetup) {
-            return;
-        }
-
-        service.setSettings(
-            {
-                webWidget: {
-                    launcher: {
-                        label: {
-                            '*': abp.localization.localize('QuestionsOrFeedback',
-                                AppConsts.localization.defaultLocalizationSourceName)
-                        }
-                    }
-                }
-            }
-        );
-
-        AppComponentBase.isZendeskWebwidgetSetup = true;
-    }
-
-    protected static zendeskWebwidgetShow(service: ngxZendeskWebwidgetService) {
-        if (environment.zenDeskEnabled) {
-            AppComponentBase.zendeskWebwidgetSetup(service);
-            this.showZendeskWebwidgetTimeout = setTimeout(() => {
-                service.show();
-            }, 2000);
-        }
-    }
-
-    protected static zendeskWebwidgetHide(service: ngxZendeskWebwidgetService) {
-        if (environment.zenDeskEnabled) {
-            clearTimeout(this.showZendeskWebwidgetTimeout);
-            service.hide();
-        }
-    }
-
     appRootUrl(): string {
         return this.appUrlService.appRootUrl;
+    }
+
+    getODataUrl(uri: String, filter?: Object) {
+        return this.oDataService.getODataUrl(uri, filter);
+    }
+
+    processODataFilter(grid, uri, filters, getCheckCustom) {
+        this.isDataLoaded = false;
+        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue);
+    }
+
+    getSearchFilter() {
+        return this.oDataService.getSearchFilter(this.searchColumns, this.searchValue);
     }
 
     toTitleCase(value: string) {
