@@ -328,8 +328,6 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             }, 5000);
         })).subscribe(() => {
             this.loadDocuments();
-        }, (e) => {
-            this.message.error(this.l('AnErrorOccurred'));
         });
     }
 

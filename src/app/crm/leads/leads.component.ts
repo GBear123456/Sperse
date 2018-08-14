@@ -172,6 +172,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContentReady(event) {
+        this.finishLoading();
         if (this.dataLayoutType == DataLayoutType.Grid)
             this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
@@ -182,11 +183,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     refreshDataGrid(quiet = false, stageId = undefined) {
         setTimeout(() => {
-            this.pipelineComponent.refresh(
-                quiet || !this.showPipeline, stageId);
-            this.dataGrid.instance.refresh().then(() => {
-                this.setGridDataLoaded();
-            });
+            if (this.showPipeline)
+                this.pipelineComponent.refresh(
+                    quiet || !this.showPipeline, stageId);
+            else
+                this.dataGrid.instance.refresh().then(() => {
+                    this.setGridDataLoaded();
+                });
         });
     }
 
@@ -626,6 +629,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
                 setTimeout(() => { this.pipelineDataSource = this.dataSource; });
+        } else {
+            let instance = this.dataGrid && this.dataGrid.instance;
+            if (instance && !instance.option('dataSource')) {
+                instance.option('dataSource', this.dataSource);
+                this.startLoading();
+            }
         }
     }
 

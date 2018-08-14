@@ -231,7 +231,7 @@ export abstract class AppComponentBase {
     }
 
     toTitleCase(value: string) {
-        return value.replace(/\b\w+/g, function(txt){
+        return value && value.replace(/\b\w+/g, function(txt){
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     }

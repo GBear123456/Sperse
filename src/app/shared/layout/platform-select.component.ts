@@ -52,10 +52,10 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     changeModule(event) {
         let switchModule = this.modules[event.itemIndex];
-        if ((this.module !== switchModule.code || this.uri !== switchModule.uri) &&
-            this._appService.isModuleActive(switchModule.code)
+        if ((this.module !== switchModule.name || this.uri !== switchModule.uri) &&
+            this._appService.isModuleActive(switchModule.name)
         ) {
-            this.module = switchModule.code;
+            this.module = switchModule.name;
             this.uri = switchModule.uri;
 
             this._appService.switchModule(this.module, { instance: this.uri });
