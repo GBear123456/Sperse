@@ -42,33 +42,35 @@ export class ImportWizardService {
         this.subjectCancel.next();
     }
 
-    setupImportCheck(importId, method = undefined, invalUri = undefined) {
-        this.activeImportId = importId;
-        this.setupStatusCheck((callback) => {
+    setupStatusCheck(importId, method = undefined, invalUri = undefined) {
+        this.setupCheckTimeout((callback) => {
             this._importProxy.getStatus(importId).subscribe((res) => {
                 method && method(res);
                 if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
                     invalUri && (<any>this._reuseService).invalidate(invalUri);
                     this.activeImportId = undefined;
-                }                    
-                callback({
-                    progress: !this.activeImportId ? 100: 
-                        Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
-                    totalCount: res.totalCount,
-                    importedCount: res.importedCount,
-                    failedCount: res.failedCount
-                });
+                }    
+                if (<ImportStatus>res.statusId == ImportStatus.InProgress) {
+                    this.activeImportId = importId;
+                    callback({
+                        progress: !this.activeImportId ? 100: 
+                            Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
+                        totalCount: res.totalCount,
+                        importedCount: res.importedCount,
+                        failedCount: res.failedCount
+                    });
+                }
             })
         });
     }
 
-    setupStatusCheck(method: (callback: any) => void, initial = true) {
+    setupCheckTimeout(method: (callback: any) => void, initial = true) {
         clearTimeout(this.statusCheckTimeout);
         this.statusCheckTimeout = setTimeout(() => {
             method((data) => {
                 this.progressChanged(data);
                 if (data.progress < 100)
-                    this.setupStatusCheck(method, false);
+                    this.setupCheckTimeout(method, false);
             });
         }, initial ? 0: 5000);
     }

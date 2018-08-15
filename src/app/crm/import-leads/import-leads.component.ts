@@ -30,6 +30,8 @@ import {
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { ImportLeadsService } from './import-leads.service';
 
+import { ImportStatus } from '@shared/AppEnums';
+
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
@@ -151,6 +153,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME,
         this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE
     ];
+
+    importStatuses: any = ImportStatus;
+    importStatus: ImportStatus;
 
     totalCount: number = 0;
     importedCount: number = 0;
@@ -327,11 +332,22 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
     }
 
+    navigateToList() {
+        this._router.navigate(['app/crm/import-list']);
+    }
+
     reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
+        this.importStatus = undefined;
         this.clearToolbarSelectedItems();
         this.wizard.reset(callback);
+    }
+
+    updateImportStatus(res) {
+        this.importStatus = <ImportStatus>res.statusId;
+        this.importedCount = res.importedCount;
+        this.failedCount = res.failedCount;
     }
 
     complete(data) {
@@ -347,11 +363,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId) => {
                             if (importId && !isNaN(importId))
-                              this._importLeadsService.setupImportCheck(importId, (res) => {
-                                  this.importedCount = res.importedCount;
-                                  this.failedCount = res.failedCount;
-                              });
-                            this.wizard.showFinishStep();
+                                this._importProxy.getStatus(importId).subscribe((res) => {
+                                    this.updateImportStatus(res);
+                                    if (!this.showedFinishStep())
+                                         this.wizard.showFinishStep();
+                                    if (<ImportStatus>res.statusId == ImportStatus.InProgress)
+                                        this._importLeadsService.setupImportCheck(importId, (res) => {
+                                            this.updateImportStatus(res);
+                                        });
+                                });
                             this.clearToolbarSelectedItems();
                         });
                 }
@@ -446,14 +466,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.deactivate();
     }
 
+    showedFinishStep() {
+        return this.wizard.stepper.selectedIndex == this.wizard.FINISH_STEP_INDEX;
+    }
+
     activate() {
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
         this.getStages();
         this.partnerTypesLoad();
 
-        if (this.wizard.stepper.selectedIndex == this.wizard.FINISH_STEP_INDEX)
-            setTimeout(() => this.wizard.reset());
+        if (this.showedFinishStep())
+            setTimeout(() => this.reset());
     }
 
     deactivate() {
