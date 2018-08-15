@@ -5,8 +5,9 @@
 
     var remoteServiceUrl = '', loginInformations;
     var pathParts = location.pathname.split('/').filter(Boolean);
+    var cookie = queryString(document.cookie, ';');
     if (
-        (!pathParts.length && document.cookie.indexOf('Abp.AuthToken') < 0) || 
+        (!pathParts.length && !cookie['Abp.AuthToken']) ||
         (pathParts.pop() == 'login')
     ) {
         window.loginPageHandler = function(appConfig) {
