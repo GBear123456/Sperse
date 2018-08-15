@@ -14,11 +14,11 @@
                 height="350"
                 [searchEnabled]="true"
                 [searchExpr]="'name'"
-                [selectionMode]="bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
+                [selectionMode]="multiSelection || (bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single')"
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"
-                [selectedItemKeys]="selectedItemKeys"
+                [(selectedItemKeys)]="selectedItemKeys"
                 (onContentReady)="onContentReady($event)"
                 (onInitialized)="onInitialized($event)"
                 (onSelectionChanged)="onSelectionChange($event)">

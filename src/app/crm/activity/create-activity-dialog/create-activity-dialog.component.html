@@ -21,9 +21,9 @@
             [list]="data.stages"
             [disableWonLost]="true">
     </crm-static-list>
-    <crm-user-assignment-list 
+    <crm-user-assignment-list [multiSelection]="true"
             [targetSelector]="'[accesskey=\'UserAssign\']'" 
-            [selectedItemKey]="data.appointment.AssignedUserId" 
+            [(selectedItemKey)]="data.appointment.AssignedUserIds" 
             [hideButtons]="true">
     </crm-user-assignment-list>
 
