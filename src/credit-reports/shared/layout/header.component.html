@@ -91,7 +91,7 @@
                                                     </span>
                                                 </a>
                                             </li>
-                                            <li class="m-nav__item">
+                                            <li *ngIf="hasPlatformPermissions" class="m-nav__item">
                                                 <a href="/" class="m-nav__link">
                                                     <i class="m-nav__link-icon fa fa-reply m--font-danger"></i>
                                                     <span class="m-nav__link-title">
@@ -103,7 +103,7 @@
                                                     </span>
                                                 </a>
                                             </li>
-                                            <li class="m-nav__separator m-nav__separator--fit"></li>
+                                            <li *ngIf="hasPlatformPermissions || isImpersonatedLogin" class="m-nav__separator m-nav__separator--fit"></li>
                                             <li class="m-nav__item">
                                                 <a href="javascript:;" class="m-nav__link" (click)="showLinkedAccounts()">
                                                     <i class="m-nav__link-icon flaticon-user-settings"></i>
