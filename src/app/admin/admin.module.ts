@@ -64,6 +64,7 @@ import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl
 import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { UserDetailsModule } from './users/details/user-details.module';
+import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 
 @NgModule({
     imports: [
@@ -107,7 +108,8 @@ import { UserDetailsModule } from './users/details/user-details.module';
         AutoCompleteModule,
         EditorModule,
         InputMaskModule,
-        UserDetailsModule
+        UserDetailsModule,
+        PaymentInfoModule
     ],
     declarations: [
         UsersComponent,
