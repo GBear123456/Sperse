@@ -8,7 +8,7 @@
     var cookie = queryString(document.cookie, ';');
     var params = queryString(document.location.search.substr(1), '&');
     if (
-        !(params.secureId && params.tenantId) && (
+        !params.secureId && (
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
         )

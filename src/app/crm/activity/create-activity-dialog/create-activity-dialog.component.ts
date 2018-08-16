@@ -282,20 +282,27 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     lookupItems($event) {
+        let uri = $event.component.option('name'),
+            search = this.latestSearchPhrase = $event.event.target.value;
+
+        if (this[uri.toLowerCase()].length) {
+            setTimeout(() => {$event.event.target.value = search;});
+            this[uri.toLowerCase()] = [];
+        }
+
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            let uri = $event.component.option('name'),
-                search = this.latestSearchPhrase = $event.event.target.value;
             $event.component.option('opened', true);
-            $event.component.option('noDataText', this.l('Looking for items...'));
+            $event.component.option('noDataText', this.l('LookingForItems'));
             this.lookup(uri, search).then((res) => {
                 if (search == this.latestSearchPhrase) {
                     this[uri.toLowerCase()] = res;
                     $event.component.option('opened', true);
                     setTimeout(() => {$event.event.target.value = search;});
-                    if (!Array(res).length)
-                        $event.component.option('noDataText', this.l('No items found.'));
-                }
+                    if (!res['length'])
+                        $event.component.option('noDataText', this.l('NoItemsFound'));
+                } else
+                    $event.component.option('opened', false);
             });
         }, 500);
     }
