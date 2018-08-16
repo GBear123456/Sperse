@@ -5,9 +5,13 @@
 
     var remoteServiceUrl = '', loginInformations;
     var pathParts = location.pathname.split('/').filter(Boolean);
+    var cookie = queryString(document.cookie, ';');
+    var params = queryString(document.location.search.substr(1), '&');
     if (
-        (!pathParts.length && document.cookie.indexOf('Abp.AuthToken') < 0) || 
-        (pathParts.pop() == 'login')
+        !params.secureId && (
+            (!pathParts.length && !cookie['Abp.AuthToken']) ||
+            (pathParts.pop() == 'login')
+        )
     ) {
         window.loginPageHandler = function(appConfig) {
             return $.ajax({

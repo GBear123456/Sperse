@@ -91,7 +91,19 @@
                                                     </span>
                                                 </a>
                                             </li>
-                                            <li *ngIf="isImpersonatedLogin" class="m-nav__separator m-nav__separator--fit"></li>
+                                            <li *ngIf="hasPlatformPermissions" class="m-nav__item">
+                                                <a href="/" class="m-nav__link">
+                                                    <i class="m-nav__link-icon fa fa-reply m--font-danger"></i>
+                                                    <span class="m-nav__link-title">
+                                                        <span class="m-nav__link-wrap">
+                                                            <span class="m-nav__link-text">
+                                                                {{l("BackToPlatform")}}
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li *ngIf="hasPlatformPermissions || isImpersonatedLogin" class="m-nav__separator m-nav__separator--fit"></li>
                                             <li class="m-nav__item">
                                                 <a href="javascript:;" class="m-nav__link" (click)="showLinkedAccounts()">
                                                     <i class="m-nav__link-icon flaticon-user-settings"></i>
@@ -166,17 +178,17 @@
                                                 </a>
                                             </li>
                                             <!--<li class="m-nav__item" *ngIf="!isGranted('Pages.Administration.UiCustomization')">
-                                                <a routerLink="admin/ui-customization" class="m-nav__link">
-                                                    <i class="m-nav__link-icon flaticon-medical"></i>
-                                                    <span class="m-nav__link-title">
-                                                        <span class="m-nav__link-wrap">
-                                                            <span class="m-nav__link-text">
-                                                                {{l("VisualSettings")}}
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                </a>
-                                            </li>-->
+        <a routerLink="admin/ui-customization" class="m-nav__link">
+            <i class="m-nav__link-icon flaticon-medical"></i>
+            <span class="m-nav__link-title">
+                <span class="m-nav__link-wrap">
+                    <span class="m-nav__link-text">
+                        {{l("VisualSettings")}}
+                    </span>
+                </span>
+            </span>
+        </a>
+    </li>-->
                                             <li class="m-nav__item">
                                                 <a href={{helpLink}} target="_blank" class="m-nav__link">
                                                     <i class="m-nav__link-icon flaticon-info"></i>

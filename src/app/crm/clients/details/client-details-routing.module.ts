@@ -32,7 +32,7 @@ import { NotesComponent } from './notes/notes.component';
                 ]
             },
             {
-                path: 'partner/:clientId',
+                path: 'partner/:partnerId',
                 component: ClientDetailsComponent,
                 children: [
                     {path: '', redirectTo: 'contact-information', pathMatch: 'full' },

@@ -1,22 +1,28 @@
-import { AppConsts } from '@shared/AppConsts';
+/** Core imports */
 import { Component, OnInit, Injector, Input } from '@angular/core';
-import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+
+/** Third party imports */
 import { MatDialog } from '@angular/material';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 import {
-    CustomersServiceProxy, CustomerInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
+    CustomerInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 
-import * as _ from 'underscore';
-
 @Component({
     selector: 'addresses',
     templateUrl: './addresses.component.html',
-    styleUrls: ['./addresses.component.less']
+    styleUrls: ['./addresses.component.less'],
+    providers: [ DialogService ]
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
@@ -40,10 +46,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     constructor(injector: Injector,
                 public dialog: MatDialog,
                 private _clientDetailsService: ClientDetailsService,
-                private _customerService: CustomersServiceProxy,
                 private _addressService: ContactAddressServiceProxy,
                 private _countryService: CountryServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy) {
+                private _organizationContactService: OrganizationContactServiceProxy,
+                private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _addressService.getAddressUsageTypes().subscribe(result => {
@@ -64,7 +70,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('.address-wrapper');
-        return this.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {

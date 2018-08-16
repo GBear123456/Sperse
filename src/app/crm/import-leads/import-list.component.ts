@@ -5,18 +5,16 @@ import { Router } from '@angular/router';
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular';
 import { forkJoin } from 'rxjs';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
+
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ImportStatus } from '@shared/AppEnums';
-
-import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { ImportLeadsService } from './import-leads.service';
 
 @Component({
@@ -38,7 +36,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     constructor(injector: Injector,
         private _router: Router,
-        private _importWizardService: ImportWizardService,
         private _importLeadsService: ImportLeadsService,
         private _sizeFormatPipe: FileSizePipe,
         private _importProxy: ImportServiceProxy,
@@ -51,8 +48,8 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
@@ -83,22 +80,22 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         this.toolbarConfig = [
             {
                 location: 'before', items: [
-                    { 
-                        name: 'back', 
-                        action: this.navigateToDashboard.bind(this) 
+                    {
+                        name: 'back',
+                        action: this.navigateToDashboard.bind(this)
                     }
                 ]
             },
             {
                 location: 'before', items: [
-                    { 
-                        name: 'cancel', 
+                    {
+                        name: 'cancel',
                         action: this.cancelImport.bind(this),
                         disabled: !this.selectedRowIds.length
-                    }, {   
-                        name: 'delete', 
+                    }, {
+                        name: 'delete',
                         action: this.deleteImport.bind(this),
-                        disabled: !this.selectedRowIds.length 
+                        disabled: !this.selectedRowIds.length
                     }
                 ]
             },
@@ -141,7 +138,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
         this.updateActiveImport();
         this.setGridDataLoaded();
-        setTimeout(() => 
+        setTimeout(() =>
             event.component.option('visible', true));
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
@@ -167,12 +164,12 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         this.dataGrid.instance.showColumnChooser();
     }
 
-    navigateToDashboard() { 
+    navigateToDashboard() {
         this._router.navigate(['app/crm/dashboard']);
     }
 
     navigateToWizard() {
-        this._router.navigate(['app/crm/import-leads']);              
+        this._router.navigate(['app/crm/import-leads']);
     }
 
     deleteImport() {
@@ -211,10 +208,10 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 if (responce && responce.url)
                     window.open(responce.url);
             });
-        }            
+        }
     }
 
-    fileSizeFormat = (data) => {  
+    fileSizeFormat = (data) => {
         return this._sizeFormatPipe.transform(data.FileSize);
     }
 
@@ -225,7 +222,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     }
 
     deactivate() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
 

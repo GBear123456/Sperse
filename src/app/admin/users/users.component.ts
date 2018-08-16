@@ -154,7 +154,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -249,7 +249,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     }
                 ]
             }
-        ];
+        ]);
     }
 
     initFilterConfig() {
@@ -387,7 +387,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden();
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
     }
 

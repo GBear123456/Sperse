@@ -1351,10 +1351,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e => {},
             () => {
                 if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
-                    this._appService.toolbarIsHidden = true;
+                    this._appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
-                    this._appService.toolbarIsHidden = false;
+                    this.operations.initToolbarConfig();
                     this.dataSource = this.getApiDataSource();
 
                     /** Init footer toolbar with the gathered data from the previous requests */
@@ -5689,7 +5689,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     deactivate() {
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

@@ -1,30 +1,31 @@
+/** Core imports */
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { DxContextMenuComponent, DxTextBoxComponent } from 'devextreme-angular';
+import { CacheService } from 'ng2-cache-service';
+import * as nameParser from 'parse-full-name';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
 import {
     UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
     UserRoleDto, PasswordComplexitySetting, TenantHostType
 } from '@shared/service-proxies/service-proxies';
-
 import { AppConsts } from '@shared/AppConsts';
-import { DxContextMenuComponent, DxTextBoxComponent } from 'devextreme-angular';
-
-import { MatDialog } from '@angular/material';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
-
-import { CacheService } from 'ng2-cache-service';
-import * as _ from 'underscore';
-import * as nameParser from 'parse-full-name';
-
 import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } from '../../shared/organization-unit-tree.component';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
     styleUrls: ['create-user-dialog.component.less'],
-    providers: []
+    providers: [ DialogService ]
 })
 export class CreateUserDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
@@ -63,7 +64,8 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         public dialog: MatDialog,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private dialogService: DialogService
     ) {
         super(injector);
 
@@ -183,7 +185,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     redirectToUserDetails(id: number) {
         setTimeout(() => {
-            this._router.navigate([`app/admin/user/${id}/information`], 
+            this._router.navigate([`app/admin/user/${id}/information`],
                 { queryParams: { referrer: this._router.url.split('?').shift() } }
             );
         }, 1000);
@@ -240,7 +242,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     }
 
     getDialogPossition(event, shiftX) {
-        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     getInputElementValue(event) {
@@ -335,9 +337,9 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     phoneComponentInitialized(event) {
         setTimeout(() => this.setComponentToValid(event.component), 500);
     }
-    
+
     phoneComponentFocusOut(event) {
-        let value = event.component.option("value");
+        let value = event.component.option('value');
         if (!value)
             this.setComponentToValid(event.component);
     }

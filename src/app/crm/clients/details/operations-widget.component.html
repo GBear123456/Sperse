@@ -25,6 +25,19 @@
         [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
         (onItemSelected)="updateStatus($event)">
     </crm-static-list>
+    <crm-static-list
+        #partnerTypesList
+        [width]="'210px'"
+        [title]="localizationService.l('Type')"
+        [selectedKeys]="[selectedPartnerTypeId]"
+        [selectedItems]=""
+        [hideButtons]="true"
+        [highlightSelected]="true"
+        (onSelectionChanged)="updatePartnerType($event)"
+        [targetSelector]="'[accessKey=PartnerType]'"
+        [showTitle]="false"
+        [list]="partnerTypes">
+    </crm-static-list>
     <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.tags"></crm-tags-list>
     <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.lists"></crm-lists-list>
     <crm-user-assignment-list [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.assignedUserId"></crm-user-assignment-list>

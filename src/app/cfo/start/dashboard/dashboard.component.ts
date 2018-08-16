@@ -1,16 +1,20 @@
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+/** Core imports */
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { appModuleAnimation } from 'shared/animations/routerTransition';
+
+/** Third party imports */
+import { MatDialog, MatDialogConfig } from '@angular/material';
+
+/** Application imports */
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
 import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/categorization-status/categorization-status.component';
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-
-import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
@@ -41,7 +45,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
+        private zendeskService: ZendeskService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -64,12 +68,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     ngAfterViewInit(): void {
-        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+        this.zendeskService.showWidget();
     }
 
     ngOnDestroy(): void {
         this.rootComponent.overflowHidden();
-        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this.zendeskService.hideWidget();
         this._dashboardService.unsubscribe();
 
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');

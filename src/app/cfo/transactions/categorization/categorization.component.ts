@@ -1,19 +1,21 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild, HostBinding } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+/** Core imports */
+import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxTreeListComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import {
-    CategoryTreeServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
-    GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
+CategoryTreeServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
+GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
-import { MatDialog } from '@angular/material';
-import DataSource from 'devextreme/data/data_source';
-
-import * as _ from 'underscore';
 
 @Component({
     selector: 'categorization',
@@ -122,8 +124,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         this.transactionsCountDataSource = new DataSource({
             store: {
                 type: 'odata',
-                url: this.getODataURL('TransactionCount'),
-                version: this.getODataVersion(),
+                url: this.getODataUrl('TransactionCount'),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -701,7 +703,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     refreshTransactionsCountDataSource() {
         if (this.transactionsCountDataSource) {
-            this.transactionsCountDataSource.store()['_url'] = this.getODataURL('TransactionCount', this._transactionsFilterQuery);
+            this.transactionsCountDataSource.store()['_url'] = this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
             this.transactionsCountDataSource.load();
         }
     }

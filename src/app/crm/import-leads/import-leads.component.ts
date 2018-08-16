@@ -24,17 +24,19 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportInputImportType
+    ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { ImportLeadsService } from './import-leads.service';
 
+import { ImportStatus } from '@shared/AppEnums';
+
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ZipCodeFormatterPipe ]
+    providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -43,7 +45,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
 
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
@@ -90,6 +93,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_EMAIL1 = 'businessInfo_workEmail1';
     private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2';
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
+
+    private readonly IMPORT_TYPE_LEAD_INDEX = 0;
+    private readonly IMPORT_TYPE_CLIENT_INDEX = 1;
+    private readonly IMPORT_TYPE_PARTNER_INDEX = 2;
+    private readonly IMPORT_TYPE_ORDER_INDEX = 3;
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -146,6 +154,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE
     ];
 
+    importStatuses: any = ImportStatus;
+    importStatus: ImportStatus;
+
     totalCount: number = 0;
     importedCount: number = 0;
     failedCount: number = 0;
@@ -165,8 +176,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     toolbarConfig = [];
     selectedClientKeys: any = [];
     selectedStageId: number;
+    selectedPartnerTypId: number;
     defaultRating = 5;
     leadStages = [];
+    partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     readonly mappingObjectNames = {
@@ -197,6 +210,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _pipelineService: PipelineService,
         private _nameParser: NameParserService,
         private _importLeadsService: ImportLeadsService,
+        private _partnerService: PartnerServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
         public importWizardService: ImportWizardService
     ) {
@@ -215,15 +229,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private importTypeChanged(event) {
-        const IMPORT_TYPE_ITEM_INDEX = 0;
-
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
 
-
-        if (this.importTypeIndex != IMPORT_TYPE_ITEM_INDEX) {
+        if (this.importTypeIndex != this.IMPORT_TYPE_LEAD_INDEX)
             this.selectedStageId = null;
-        }
+
+        if (this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX)
+            this.selectedPartnerTypId = null;
 
         this.initToolbarConfig();
     }
@@ -319,11 +332,22 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         });
     }
 
+    navigateToList() {
+        this._router.navigate(['app/crm/import-list']);
+    }
+
     reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
+        this.importStatus = undefined;
         this.clearToolbarSelectedItems();
         this.wizard.reset(callback);
+    }
+
+    updateImportStatus(res) {
+        this.importStatus = <ImportStatus>res.statusId;
+        this.importedCount = res.importedCount;
+        this.failedCount = res.failedCount;
     }
 
     complete(data) {
@@ -337,13 +361,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
-                        ).subscribe((importId) => { 
+                        ).subscribe((importId) => {
                             if (importId && !isNaN(importId))
-                              this._importLeadsService.setupImportCheck(importId, (res) => {
-                                  this.importedCount = res.importedCount;
-                                  this.failedCount = res.failedCount;
-                              });
-                            this.wizard.showFinishStep();
+                                this._importProxy.getStatus(importId).subscribe((res) => {
+                                    this.updateImportStatus(res);
+                                    if (!this.showedFinishStep())
+                                         this.wizard.showFinishStep();
+                                    if (<ImportStatus>res.statusId == ImportStatus.InProgress)
+                                        this._importLeadsService.setupImportCheck(importId, (res) => {
+                                            this.updateImportStatus(res);
+                                        });
+                                });
                             this.clearToolbarSelectedItems();
                         });
                 }
@@ -353,13 +381,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     createLeadsInput(data: any[]): ImportInput {
         let result = ImportInput.fromJS({
-            fileName: this.wizard.fileName, 
-            fileSize: this.wizard.fileOrigSize, 
+            fileName: this.wizard.fileName,
+            fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,
             assignedUserId: this.userAssignmentComponent.selectedItemKey || this.userId,
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
-            leadStageId: this.selectedStageId
+            leadStageId: this.selectedStageId,
+            partnerTypeId: this.selectedPartnerTypId
         });
         result.items = [];
         result.lists = this.listsComponent.selectedItems;
@@ -437,10 +466,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.deactivate();
     }
 
+    showedFinishStep() {
+        return this.wizard.stepper.selectedIndex == this.wizard.FINISH_STEP_INDEX;
+    }
+
     activate() {
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
         this.getStages();
+        this.partnerTypesLoad();
+
+        if (this.showedFinishStep())
+            setTimeout(() => this.reset());
     }
 
     deactivate() {
@@ -561,7 +598,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedStageId
                         },
-                        disabled: Boolean(this.importTypeIndex)
+                        disabled: this.importTypeIndex != this.IMPORT_TYPE_LEAD_INDEX
+                    },
+                    {
+                        name: 'partnerType',
+                        action: () => this.partnerTypesComponent.toggle(),
+                        attr: {
+                            'filter-selected': !!this.selectedPartnerTypId
+                        },
+                        disabled: this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX
                     },
                     {
                         name: 'lists',
@@ -597,21 +642,40 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 ]
             }
         ];
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
     }
 
     clearToolbarSelectedItems() {
         this.selectedStageId = null;
+        this.selectedPartnerTypId = null;
         this.starsListComponent.selectedItemKey = undefined;
         this.userAssignmentComponent.selectedItemKey = this.userId;
         this.userAssignmentComponent.selectedKeys = [this.userId];
         this.listsComponent.reset();
         this.tagsComponent.reset();
         this.ratingComponent.ratingValue = this.defaultRating;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
     }
 
     cancelImport() {
         this.importWizardService.cancelImport();
+    }
+
+    partnerTypesLoad() {
+        this._partnerService.getTypes()
+            .subscribe(list => {
+                this.partnerTypes = list.map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        text: item.name
+                    };
+                });
+            });
+    }
+
+    onPartnerTypeChanged(event) {
+        this.selectedPartnerTypId = event.id;
+        this.initToolbarConfig();
     }
 }

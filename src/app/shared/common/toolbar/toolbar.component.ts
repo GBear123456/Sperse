@@ -67,6 +67,11 @@ export class ToolBarComponent extends AppComponentBase {
             text: this.l('Stage'),
             icon: this.getImgURI('status-icon')
         },
+        partnerType: {
+            accessKey: 'PartnerType',
+            text: this.l('Type'),
+            icon: this.getImgURI('status-icon')
+        },
         delete: {
             text: this.l('Delete'),
             icon: this.getImgURI('delete-icon')
@@ -315,7 +320,7 @@ export class ToolBarComponent extends AppComponentBase {
     initToolbarItems() {
         let items = [];
         let responsiveItems = [];
-        this._config.forEach((group) => {
+        this._config && this._config.forEach((group) => {
             let count = group.items.length;
             group.items.forEach((item, index) => {
                 this.initDropDownMenu(item);

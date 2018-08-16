@@ -11,11 +11,13 @@ import {
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
     selector: 'contacts',
     templateUrl: './contacts.component.html',
-    styleUrls: ['./contacts.component.less']
+    styleUrls: ['./contacts.component.less'],
+    providers: [ DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
@@ -31,10 +33,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     constructor(injector: Injector,
                 public dialog: MatDialog,
                 private _clientDetailsService: ClientDetailsService,
-                private _customerService: CustomersServiceProxy,
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy) {
+                private _organizationContactService: OrganizationContactServiceProxy,
+                private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
@@ -42,7 +44,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('ul');
-        return this.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {

@@ -1,6 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 
+import { RouteReuseStrategy } from '@angular/router';
+
+import { ImportStatus } from '@shared/AppEnums';
+import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+
 @Injectable()
 export class ImportWizardService {
     private subjectProgress: Subject<any>;
@@ -10,7 +15,10 @@ export class ImportWizardService {
 
     public activeImportId: number = 0;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,
+        private _reuseService: RouteReuseStrategy,
+        private _importProxy: ImportServiceProxy
+    ) {
         this.subjectProgress = new Subject<any>();
         this.subjectCancel = new Subject<undefined>();
     }
@@ -34,13 +42,35 @@ export class ImportWizardService {
         this.subjectCancel.next();
     }
 
-    setupStatusCheck(method: (callback: any) => void, initial = true) {
+    setupStatusCheck(importId, method = undefined, invalUri = undefined) {
+        this.setupCheckTimeout((callback) => {
+            this._importProxy.getStatus(importId).subscribe((res) => {
+                method && method(res);
+                if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
+                    invalUri && (<any>this._reuseService).invalidate(invalUri);
+                    this.activeImportId = undefined;
+                }    
+                if (<ImportStatus>res.statusId == ImportStatus.InProgress) {
+                    this.activeImportId = importId;
+                    callback({
+                        progress: !this.activeImportId ? 100: 
+                            Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
+                        totalCount: res.totalCount,
+                        importedCount: res.importedCount,
+                        failedCount: res.failedCount
+                    });
+                }
+            })
+        });
+    }
+
+    setupCheckTimeout(method: (callback: any) => void, initial = true) {
         clearTimeout(this.statusCheckTimeout);
         this.statusCheckTimeout = setTimeout(() => {
             method((data) => {
                 this.progressChanged(data);
                 if (data.progress < 100)
-                    this.setupStatusCheck(method, false);
+                    this.setupCheckTimeout(method, false);
             });
         }, initial ? 0: 5000);
     }

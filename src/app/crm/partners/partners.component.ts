@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     Component,
     OnInit,
@@ -5,11 +6,19 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { DxDataGridComponent } from 'devextreme-angular';
+import 'devextreme/data/odata/store';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
@@ -17,10 +26,6 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
-import { MatDialog } from '@angular/material';
-
-import { AppService } from '@app/app.service';
-
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -32,25 +37,17 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-
-import { CustomersServiceProxy, UpdateCustomerStatusesInput } from '@shared/service-proxies/service-proxies';
+import { PartnerServiceProxy, BulkUpdatePartnerTypeInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-
-import { DxDataGridComponent } from 'devextreme-angular';
-
-import 'devextreme/data/odata/store';
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService ]
+    providers: [ ClientService, PartnerServiceProxy ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -59,7 +56,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
 
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Partner';
@@ -74,6 +72,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
     filterModelStatus: FilterModel;
+    filterModelType: FilterModel;
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
 
@@ -91,6 +90,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ]
     };
 
+    partnerTypes = [];
+
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _router: Router,
@@ -98,8 +99,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _customersServiceProxy: CustomersServiceProxy,
-        private _clientService: ClientService
+        private _clientService: ClientService,
+        private _partnerService: PartnerServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -107,8 +108,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -218,7 +219,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this._filtersService.setup(this.filters);
             this._filtersService.checkIfAnySelected();
         } else
-            this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
+            this._partnerService.getFiltersInitialData().subscribe(result =>
                 this._filtersService.setup(
                     this.filters = [
                         new FilterModel({
@@ -248,6 +249,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 element: new FilterCheckBoxesModel(
                                     {
                                         dataSource: result.statuses,
+                                        nameField: 'name',
+                                        keyExpr: 'id'
+                                    })
+                            }
+                        }),
+                        this.filterModelType = new FilterModel({
+                            component: FilterCheckBoxesComponent,
+                            caption: 'type',
+                            field: 'PartnerTypeId',
+                            items: {
+                                element: new FilterCheckBoxesModel(
+                                    {
+                                        dataSource: result.types,
                                         nameField: 'name',
                                         keyExpr: 'id'
                                     })
@@ -354,7 +368,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -415,6 +429,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         action: this.toggleStatus.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected
+                        }
+                    },
+                    {
+                        name: 'partnerType',
+                        action: this.toggleType.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelType && this.filterModelType.isSelected
                         }
                     },
                     {
@@ -495,7 +516,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     }
                 ]
             }
-        ];
+        ]);
     }
 
     toggleUserAssignment() {
@@ -504,6 +525,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     toggleStatus() {
         this.statusComponent.toggle();
+    }
+
+    toggleType() {
+        this.partnerTypesComponent.toggle();
     }
 
     toggleLists() {
@@ -534,6 +559,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         return FilterHelpers.filterBySetOfValues(filter);
     }
 
+    filterByType(filter: FilterModel) {
+        return FilterHelpers.filterBySetOfValues(filter);
+    }
+
     filterByAssignedUser(filter: FilterModel) {
         return FilterHelpers.filterBySetOfValues(filter);
     }
@@ -560,8 +589,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processFilterInternal() {
-        this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.filters, (filter) => {
+        this.processODataFilter(
+            this.dataGrid.instance,
+            this.dataSourceURI,
+            this.filters,
+            (filter) => {
                 let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
                 if (filterMethod)
@@ -581,6 +613,30 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.dataGrid.instance.clearSelection();
             }
         );
+    }
+
+    updatePartnerTypes($event) {
+        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+        this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
+            partnerIds: selectedIds,
+            typeId: $event.id
+        })).subscribe(() => {
+            this.refreshDataGrid();
+            this.dataGrid.instance.clearSelection();
+        });
+    }
+
+    private partnerTypesLoad() {
+        this._partnerService.getTypes()
+            .subscribe(list => {
+                this.partnerTypes = list.map((item) => {
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        text: item.name
+                    };
+                });
+            });
     }
 
     onCellClick($event) {
@@ -616,13 +672,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.refreshDataGrid();
 
         this.showHostElement();
+
+        this.partnerTypesLoad();
     }
 
     deactivate() {
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 

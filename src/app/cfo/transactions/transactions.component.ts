@@ -1,10 +1,19 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-
-import { AppService } from '@app/app.service';
+/** Core imports */
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+/** Third party imports */
+import { DxDataGridComponent } from 'devextreme-angular';
+import { MatDialog } from '@angular/material';
+import { forkJoin } from 'rxjs';
+import 'devextreme/data/odata/store';
+import DataSource from 'devextreme/data/data_source';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { AppService } from '@app/app.service';
 import { TransactionsServiceProxy,
          InstanceType,
          ClassificationServiceProxy,
@@ -12,28 +21,17 @@ import { TransactionsServiceProxy,
          AutoClassifyDto,
          ResetClassificationDto,
          BankAccountsServiceProxy } from '@shared/service-proxies/service-proxies';
-
 import { FiltersService } from '@shared/filters/filters.service';
-import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.component';
-
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
-
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxDataGridComponent } from 'devextreme-angular';
-import { MatDialog } from '@angular/material';
-import { forkJoin } from 'rxjs';
-import 'devextreme/data/odata/store';
-import * as _ from 'underscore';
-
-import DataSource from 'devextreme/data/data_source';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
@@ -130,7 +128,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -248,7 +246,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             }
-        ];
+        ]);
     }
 
     constructor(injector: Injector,
@@ -323,7 +321,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         debitClassifiedCount++;
                 }
             });
-            this.bankAccounts = _.uniq(bankAccounts);
+            setTimeout(() => { this.bankAccounts = _.uniq(bankAccounts); });
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -343,11 +341,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = totals[0].debitTotal;
                 this.debitTransactionCount = totals[0].debitCount;
                 this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
-                if (totals[0].bankAccounts) {
-                    this.bankAccounts = totals[0].bankAccounts;
-                } else {
-                    this.bankAccounts = [];
-                }
+                setTimeout(() => {
+                    if (totals[0].bankAccounts) {
+                        this.bankAccounts = totals[0].bankAccounts;
+                    } else {
+                        this.bankAccounts = [];
+                    }
+                });
 
                 this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
                 this.adjustmentTotal = totals[0].adjustmentTotal;
@@ -361,7 +361,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = 0;
                 this.debitTransactionCount = 0;
 
-                this.bankAccounts = [];
+                setTimeout(() => { this.bankAccounts = []; });
 
                 this.transactionTotal = 0;
                 this.transactionCount = 0;
@@ -474,8 +474,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -485,8 +485,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.totalDataSource = new DataSource({
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.totalDataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.totalDataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -655,8 +655,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
-        let filterQuery = this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
+        let filterQuery = this.processODataFilter(
+            this.dataGrid.instance,
+            this.dataSourceURI,
+            this.cashFlowCategoryFilter.concat(this.filters),
             (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account') {
                     this.bankAccountSelector.setSelectedBankAccounts(filter.items.element.value);
@@ -668,7 +670,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     return filterMethod.call(this, filter);
             }
         );
-        this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
+        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
 
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
@@ -1032,7 +1034,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
@@ -1053,7 +1055,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     deactivate() {
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

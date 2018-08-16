@@ -43,6 +43,11 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
+
+        this.showImportUsersStep = (!abp.session.tenantId || this.feature.isEnabled('Admin'))
+            && this.permission.isGranted('Pages.Administration.Users')
+            && this.permission.isGranted('Pages.Administration.Users.Create')
+            && this.permission.isGranted('Pages.Administration.Roles');
     }
 
     ngOnInit() {

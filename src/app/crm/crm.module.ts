@@ -51,6 +51,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 /** Application imports */
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
@@ -68,6 +69,7 @@ import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
+import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 
@@ -139,15 +141,18 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
       ImportListComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent,
+      CreateActivityDialogComponent,
       CrmIntroComponent,
       ActivityComponent
     ],
     providers: [
         ImportServiceProxy,
-        ImportLeadsService
+        ImportLeadsService,
+        ZendeskService
     ],
     entryComponents: [
         CreateClientDialogComponent,
+        CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
         CrmIntroComponent
     ]

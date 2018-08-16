@@ -1,5 +1,12 @@
+/** Core imports */
 import { Component, OnInit, Injector, Input } from '@angular/core';
+
+/** Third party import */
 import { MatDialog } from '@angular/material';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { CustomerStatus } from '@shared/AppEnums';
@@ -10,8 +17,6 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CustomerInfoDto, UserServiceProxy, CreateContactPhotoInput,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -20,7 +25,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [UserServiceProxy, AppService, ContactPhotoServiceProxy ]
+    providers: [ AppService, ContactPhotoServiceProxy, DialogService, UserServiceProxy ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input() data: CustomerInfoDto;
@@ -34,7 +39,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
-        private appService: AppService
+        private appService: AppService,
+        private dialogService: DialogService
     ) {
         super(injector);
 
@@ -50,7 +56,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getDialogPossition(event, shiftX) {
-        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     showOrganizationDetails(event) {

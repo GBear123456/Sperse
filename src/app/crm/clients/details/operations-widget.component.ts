@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
@@ -9,12 +10,12 @@ import { StaticListComponent } from '../../shared/static-list/static-list.compon
 import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
 import { ClientDetailsService } from './client-details.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CustomerType } from '@shared/AppEnums';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less'],
-    providers: [ AppLocalizationService ]
+    styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -24,11 +25,13 @@ export class OperationsWidgetComponent implements OnInit {
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
 
     /*** @todo add localization service */
 
     @Input() customerInfo: CustomerInfoDto;
     @Input() clientId: number;
+    @Input() customerType: string;
     @Input() leadId: number;
     @Input() selectedStageId: number;
     @Input()
@@ -36,13 +39,28 @@ export class OperationsWidgetComponent implements OnInit {
         this._stages = stages;
         this.initToolbarConfig();
     }
+    get stages(): any[] {
+        return this._stages;
+    }
+    @Input() selectedPartnerTypeId: string;
+    @Input()
+    set partnerTypes(partnerTypes: any[]) {
+        this._partnerTypes = partnerTypes;
+        this.initToolbarConfig();
+    }
+    get partnerTypes(): any[] {
+        return this._partnerTypes;
+    }
+
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private _stages: any[] = [];
+    private _partnerTypes: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
 
     toolbarConfig = [];
@@ -60,43 +78,48 @@ export class OperationsWidgetComponent implements OnInit {
         this.initToolbarConfig();
     }
 
-    get stages(): any[] {
-        return this._stages;
-    }
-
     initToolbarConfig(config = null) {
+        let items = [
+            {
+                name: 'assign',
+                action: this.toggleUserAssignment.bind(this)
+            },
+            this.leadId ? {
+                name: 'stage',
+                action: this.toggleStages.bind(this)
+            } :
+            {
+                name: 'status',
+                action: this.toggleStatus.bind(this)
+            }
+        ];
+        if (this.customerType == CustomerType.Partner) {
+            items.push({
+                name: 'partnerType',
+                action: this.togglePartnerTypes.bind(this)
+            });
+        }
+        items = items.concat([
+            {
+                name: 'lists',
+                action: this.toggleLists.bind(this)
+            },
+            {
+                name: 'tags',
+                action: this.toggleTags.bind(this)
+            },
+            {
+                name: 'rating',
+                action: this.toggleRating.bind(this),
+            },
+            {
+                name: 'star',
+                action: this.toggleStars.bind(this),
+            }
+        ]);
         this.toolbarConfig = config || [
             {
-                location: 'before', items: [
-                {
-                    name: 'assign',
-                    action: this.toggleUserAssignment.bind(this)
-                },
-                this.leadId ? {
-                    name: 'stage',
-                    action: this.toggleStages.bind(this)
-                } :
-                {
-                    name: 'status',
-                    action: this.toggleStatus.bind(this)
-                },
-                {
-                    name: 'lists',
-                    action: this.toggleLists.bind(this)
-                },
-                {
-                    name: 'tags',
-                    action: this.toggleTags.bind(this)
-                },
-                {
-                    name: 'rating',
-                    action: this.toggleRating.bind(this),
-                },
-                {
-                    name: 'star',
-                    action: this.toggleStars.bind(this),
-                }
-            ]}, {
+                location: 'before', items: items}, {
                 location: 'before', items: [
                     {
                         name: 'print',
@@ -118,6 +141,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     toggleStatus() {
         this.statusComponent.toggle();
+    }
+
+    togglePartnerTypes() {
+        this.partnerTypesComponent.toggle();
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -154,6 +181,10 @@ export class OperationsWidgetComponent implements OnInit {
 
     updateStage(event) {
         this.onUpdateStage.emit(event);
+    }
+
+    updatePartnerType(event) {
+        this.onUpdatePartnerType.emit(event);
     }
 
     updateRating(event) {

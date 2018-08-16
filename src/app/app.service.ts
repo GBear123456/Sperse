@@ -16,7 +16,7 @@ declare let require: any;
 export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
 
-    public toolbarConfig: any;
+    public toolbarConfig: any = null;
     public toolbarIsAdaptive = true;
     public toolbarIsHidden  = false;
     public narrowingPageContentWhenFixedFilter = true;
@@ -29,6 +29,7 @@ export class AppService extends AppServiceBase {
     private userServiceProxy: UserServiceProxy;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
+    private _setToolbarTimeout: number;
 
     constructor(injector: Injector) {
         super(
@@ -39,13 +40,13 @@ export class AppService extends AppServiceBase {
                 'API',
                 'CFO',
                 'CRM',
+                'CreditReports',
                 'Cloud',
                 'Forms',
                 'HR',
                 'HUB',
                 'Slice',
-                'Store',
-                'CreditReports'
+                'Store'
             ],
             {
                 admin: require('./admin/module.config.json'),
@@ -62,6 +63,11 @@ export class AppService extends AppServiceBase {
         this.userServiceProxy = injector.get(UserServiceProxy);
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
+    }
+
+    updateToolbar(config) {
+        clearTimeout(this._setToolbarTimeout);
+        this._setToolbarTimeout = setTimeout(() => { this.toolbarConfig = config; });
     }
 
     setContactInfoVisibility(value: boolean) {

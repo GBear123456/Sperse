@@ -3,18 +3,19 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    CustomersServiceProxy, CustomerInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
+    CustomerInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
-
 import { MatDialog } from '@angular/material';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
     selector: 'socials',
     templateUrl: './socials.component.html',
-    styleUrls: ['./socials.component.less']
+    styleUrls: ['./socials.component.less'],
+    providers: [ DialogService ]
 })
 export class SocialsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
@@ -46,9 +47,9 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
-                private _customerService: CustomersServiceProxy,
                 private _contactLinkService: ContactLinkServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy) {
+                private _organizationContactService: OrganizationContactServiceProxy,
+                private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
@@ -57,7 +58,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('li');
-        return this.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {

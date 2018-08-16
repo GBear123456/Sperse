@@ -1,7 +1,18 @@
+/** Core imports */
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { DxChartComponent } from 'devextreme-angular';
+import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
+import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
+import { forkJoin } from 'rxjs';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
-
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -10,15 +21,9 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { CacheService } from 'ng2-cache-service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { forkJoin } from 'rxjs';
-import { DxChartComponent } from 'devextreme-angular';
-import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-
 import {
     StatsFilter,
     BankAccountsServiceProxy,
@@ -29,8 +34,6 @@ import {
     SyncAccountBankDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import * as _ from 'underscore';
-import * as moment from 'moment';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
@@ -159,8 +162,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _statsService: StatsService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
-        private _bankAccountsService: BankAccountsService
+        private _bankAccountsService: BankAccountsService,
+        private zendeskService: ZendeskService
     ) {
         super(injector);
         this._appService.narrowingPageContentWhenFixedFilter = false;
@@ -169,7 +172,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = <any>[
+        this._appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -304,7 +307,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                     {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
                 ]
             }
-        ];
+        ]);
     }
 
     ngOnInit() {
@@ -526,15 +529,15 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+        this.zendeskService.showWidget();
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this.zendeskService.hideWidget();
         super.ngOnDestroy();
     }
 
@@ -759,7 +762,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     deactivate() {
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

@@ -1,17 +1,21 @@
+/** Core import s*/
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 
-import { appModuleAnimation } from '@shared/animations/routerTransition';
+/** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
-
 import { Observable, forkJoin } from 'rxjs';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
+import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'business-entities',
@@ -59,8 +63,8 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }

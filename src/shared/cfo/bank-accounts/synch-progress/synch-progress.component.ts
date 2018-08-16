@@ -24,7 +24,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     tooltipVisible: boolean;
     timeoutHandler: any;
     accountProgressTooltipTarget;
-    accountProgressTooltipVisible: boolean = false;
+    accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
 
     readonly maxTryCount = 3;
@@ -71,14 +71,13 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 this.hasFailedAccounts = hasFailed;
 
                 if (this.currentProgress != 100) {
-                    this.completed = false;
-
+                    setTimeout(() => { this.completed = false; });
                     this.timeoutHandler = setTimeout(
                         () => this.getSynchProgressAjax(), 10 * 1000
                     );
                 } else {
                     if (!this.completed) {
-                        this.completed = true;
+                        setTimeout(() => { this.completed = true; });
                         this.onComplete.emit();
                     } else if (this.lastSyncDate && this.lastSyncDate < result.totalProgress.lastSyncDate) {
                         this.onComplete.emit();
