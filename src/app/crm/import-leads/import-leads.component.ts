@@ -156,6 +156,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     importStatuses: any = ImportStatus;
     importStatus: ImportStatus;
+    hideLeftMenu = false;
 
     totalCount: number = 0;
     importedCount: number = 0;
@@ -472,7 +473,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     activate() {
         this.rootComponent.overflowHidden(true);
-        this.initToolbarConfig();
+
         this.getStages();
         this.partnerTypesLoad();
 
@@ -677,5 +678,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     onPartnerTypeChanged(event) {
         this.selectedPartnerTypId = event.id;
         this.initToolbarConfig();
+    }
+
+    onStepChanged(event) {
+        if (event)
+            this.hideLeftMenu = event.selectedIndex
+                != this.wizard.UPLOAD_STEP_INDEX;
+        else 
+            setTimeout(() => this.initToolbarConfig());
     }
 }

@@ -1,5 +1,5 @@
 <div [@routerTransition] class="import-wrapper">
-    <left-menu [hidden]="wizard?.stepper?.selectedIndex !== wizard?.UPLOAD_STEP_INDEX"></left-menu>
+    <left-menu [hidden]="hideLeftMenu"></left-menu>
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
@@ -10,6 +10,7 @@
         [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
         [validateFieldsMapping]="validateFieldsMapping"
         [toolbarConfig]="toolbarConfig"
+        (onSelectionChanged)="onStepChanged($event)"
         (onComplete)="complete($event)"
         (onCancel)="cancel()">
 
@@ -25,7 +26,7 @@
             </div>
       
             <div *ngIf="importStatus == importStatuses.Completed">
-                <h1>{{l('ImportedLeadsHeader', importedCount, totalCount, l(this.importType.toString() + 's').toLowerCase())}}</h1>
+                <h1>{{ l('ImportedLeadsHeader', importedCount, totalCount, l(importType.toString() + 's').toLowerCase()) }}</h1>
                 <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
                 <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
                 <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>

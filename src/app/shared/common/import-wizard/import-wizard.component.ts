@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 
@@ -22,7 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase implements OnInit {
+export class ImportWizardComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
@@ -51,6 +51,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     public static readonly FieldSeparator = '_';
     public static readonly FieldLocalizationPrefix = 'Import';
@@ -65,13 +66,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private reviewGroups: any = [];
     private validateFieldList: string[] = ['email', 'phone', 'url'];
     private invalidRowKeys: any = {};
-    private similarFieldsIndex: any = {};
+    private similarFieldsIndex: any = {};    
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
     readonly REVIEW_STEP_INDEX = 2;
     readonly FINISH_STEP_INDEX = 3;
 
+    selectedStepIndex = 0;
     showSteper = true;
     loadProgress = 0;
     dropZoneProgress = 0;
@@ -119,6 +121,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this.localizationSourceName = this.localizationSource;
+    }
+
+    ngAfterViewInit() {
+        this.selectedStepChanged(null);
     }
 
     reset(callback = null) {
@@ -674,4 +680,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         ) $event.cellElement.classList.add('bold');
     }
 
+    selectedStepChanged(event) {
+        this.onSelectionChanged.emit(event);
+        if (event)
+            this.selectedStepIndex = event.selectedIndex;
+    }
 }
