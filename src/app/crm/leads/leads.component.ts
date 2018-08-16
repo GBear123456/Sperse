@@ -100,7 +100,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     public headlineConfig = {
         names: [this.l('Leads')],
-        onRefresh: this.refreshDataGrid.bind(this, false),
+        onRefresh: () => {
+            this.refreshDataGrid();
+        },
         icon: 'basket',
         buttons: [
             {
@@ -184,8 +186,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     refreshDataGrid(quiet = false, stageId = undefined) {
         setTimeout(() => {
             if (this.showPipeline)
-                this.pipelineComponent.refresh(
-                    quiet || !this.showPipeline, stageId);
+                this.pipelineComponent.refresh(quiet, stageId);
             else
                 this.dataGrid.instance.refresh().then(() => {
                     this.setGridDataLoaded();
