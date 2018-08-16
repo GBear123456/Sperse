@@ -11,15 +11,9 @@
         </li>
       </ul>
       <div *ngIf="phone.inplaceEdit" class="inplace-edit-wrapper">
-        <dx-validation-group>
-          <dx-text-box class="tabular" placeholder="" mask="{{masks.phone}}" maskInvalidMessage="{{l('PhoneValidationError')}}" [(value)]="phone.phoneNumber" (onValueChanged)="itemValueChanged('phoneNumber', phone)">
-            <dx-validator>
-              <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
-            </dx-validator>
-          </dx-text-box>
-          <dx-button class="update" icon="todo" (onClick)="updateItem('phoneNumber', phone, $event)"></dx-button>
-          <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
-        </dx-validation-group>
+        <country-phone-number [(phoneNumber)]="phone.phoneNumber" #countryPhoneNumber></country-phone-number>
+        <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber.isValid(), phone, $event)"></dx-button>
+        <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
       </div>
     </div>
   </div>

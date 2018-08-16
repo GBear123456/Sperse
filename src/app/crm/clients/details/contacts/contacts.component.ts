@@ -66,7 +66,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             value: data && data[field],
             name: this.getFieldName(field),
             contactId: data && data.contactId
-            || this.contactInfoData && this.contactInfoData.contactId,
+                || this.contactInfoData && this.contactInfoData.contactId,
             emailAddress: data && data.emailAddress,
             phoneNumber: data && data.phoneNumber,
             phoneExtension: data && data.phoneExtension,
@@ -184,6 +184,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
     itemValueChanged(field, item) {
         this._isInPlaceEditAllowed = item[field] == item.original;
+    }
+
+    updatePhoneNumber(isValid, item, event) {
+        if (isValid)
+            this.updateItem('phoneNumber', item, event);
     }
 
     updateItem(field, item, event) {

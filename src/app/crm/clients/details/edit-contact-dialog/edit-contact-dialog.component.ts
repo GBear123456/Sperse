@@ -1,10 +1,10 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Inject, Injector, ElementRef } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import * as _ from 'underscore';
 
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 import {
     ContactEmailServiceProxy,
     ContactPhoneServiceProxy,
@@ -21,6 +21,8 @@ import {
     }
 })
 export class EditContactDialog extends AppComponentBase {
+    @ViewChild('countryPhoneNumber') countryPhoneNumber;
+
     isValid: boolean = false;
     action: string;
     types: any[] = [];
@@ -89,7 +91,9 @@ export class EditContactDialog extends AppComponentBase {
     }
 
     onSave(event) {
-        if (this.validator.validate().isValid)
+        if ((this.data.field == 'phoneNumber' && this.countryPhoneNumber.isValid()) || 
+            (this.data.field != 'phoneNumber' && this.validator.validate().isValid)
+        )
             this.dialogRef.close(true);
     }
 
