@@ -20,7 +20,8 @@
                      (onItemSelected)="onStagesChanged($event)"
                      [showTitle]="false"
                      [list]="stages"
-                     [disableWonLost]="true">
+                     [funnelStyling]="true"
+                     [disableHindmost]="true">
     </crm-static-list>
     <crm-static-list #partnerTypesList
                     [width]="'210px'"

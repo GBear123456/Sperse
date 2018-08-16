@@ -30,7 +30,8 @@ export class StaticListComponent extends AppComponentBase {
     tooltipVisible: boolean;
     @Input() selectedItems: any = [];
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
-    @HostBinding('class.disableWonLost') @Input() disableWonLost = false;
+    @HostBinding('class.disableHindmost') @Input() disableHindmost = false;
+    @HostBinding('class.funnel-styling') @Input() funnelStyling = false;
 
     constructor(
         injector: Injector,

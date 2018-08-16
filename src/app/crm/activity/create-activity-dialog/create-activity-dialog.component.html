@@ -18,8 +18,8 @@
             [targetSelector]="'[accessKey=ActivityStage]'"
             (onItemSelected)="onStagesChanged($event)"
             [showTitle]="false"
-            [list]="data.stages"
-            [disableWonLost]="true">
+            [funnelStyling]="true"
+            [list]="data.stages">
     </crm-static-list>
     <crm-user-assignment-list [multiSelection]="true"
             [targetSelector]="'[accesskey=\'UserAssign\']'" 
