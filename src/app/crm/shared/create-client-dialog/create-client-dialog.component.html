@@ -68,8 +68,8 @@
                       <dx-text-box #emailComponent
                         name="email"
                         [width]="'260px'"
-                        (onKeyUp)="onKeyUp($event, 'emails', type, emails)"
-                        (onInitialized)="onComponentInitialized($event, 'emails', type)">
+                        (onKeyUp)="onEmailKeyUp($event, type)"
+                        (onInitialized)="onEmailComponentInitialized($event, type)">
                         <dx-validator>
                           <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
                         </dx-validator>
@@ -93,20 +93,14 @@
 			  </div>
 			  <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
 				<div class="field phone H">
-					<label>{{l('Phone')}}</label>
-					<dx-text-box
-						class="tabular"
-						name="phone"
-						maskInvalidMessage="{{l('PhoneValidationError')}}"
-						[mask]="masks.phone"
-						[width]="'205px'"
-						(onKeyUp)="onKeyUp($event, 'phones', type, phones)"
-						(onFocusIn)="focusInput($event)"
-						(onInitialized)="onComponentInitialized($event, 'phones', type)">
-                        <dx-validator>
-                          <dxi-validation-rule type="pattern" [pattern]="phoneRegEx" message="{{l('PhoneValidationError')}}."></dxi-validation-rule>
-                        </dx-validator>
-					</dx-text-box>
+                    <label>{{l('Phone')}}</label>
+                    <country-phone-number 
+                        [(phoneNumber)]="phones[type]"
+                        [required]="false"
+                        #countryPhoneNumber
+                        (onKeyUp)="onPhoneKeyUp($event, countryPhoneNumber.isValid(), type)"
+                        (onInitialized)="onPhoneComponentInitialized($event, type)">
+                    </country-phone-number>
 					<dx-number-box
 						class="tabular"
 						name="phoneExtension"

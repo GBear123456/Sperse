@@ -295,7 +295,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let parsed = addressParser.parseLocation(fullAddress);
 
         if (parsed) {
-            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);
+            this.setFieldIfDefined(AppConsts.defaultCountry, field.mappedField + '_countryCode', dataSource);
             this.setFieldIfDefined(parsed.state, field.mappedField +
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateCode'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
