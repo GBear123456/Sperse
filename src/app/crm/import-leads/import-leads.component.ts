@@ -156,6 +156,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     importStatuses: any = ImportStatus;
     importStatus: ImportStatus;
+    hideLeftMenu = false;
 
     totalCount: number = 0;
     importedCount: number = 0;
@@ -295,7 +296,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let parsed = addressParser.parseLocation(fullAddress);
 
         if (parsed) {
-            this.setFieldIfDefined('US', field.mappedField + '_countryCode', dataSource);
+            this.setFieldIfDefined(AppConsts.defaultCountry, field.mappedField + '_countryCode', dataSource);
             this.setFieldIfDefined(parsed.state, field.mappedField +
                 (parsed.state && parsed.state.length > 3 ? '_stateName' : '_stateCode'), dataSource);
             this.setFieldIfDefined(parsed.city, field.mappedField + '_city', dataSource);
@@ -472,7 +473,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     activate() {
         this.rootComponent.overflowHidden(true);
-        this.initToolbarConfig();
+
         this.getStages();
         this.partnerTypesLoad();
 
@@ -677,5 +678,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     onPartnerTypeChanged(event) {
         this.selectedPartnerTypId = event.id;
         this.initToolbarConfig();
+    }
+
+    onStepChanged(event) {
+        if (event)
+            this.hideLeftMenu = event.selectedIndex
+                != this.wizard.UPLOAD_STEP_INDEX;
+        else 
+            setTimeout(() => this.initToolbarConfig());
     }
 }

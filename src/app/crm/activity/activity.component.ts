@@ -109,7 +109,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         request.params.$filter = buildQuery(
                             {
                                 filter: [
-                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
+//                                    {AssignedUserIds: {any: {Id: this.appSession.userId}}},
                                     {
                                         or: [
                                             {and: [{StartDate: {le: this.getEndDate()}}, {EndDate: {ge: this.getStartDate()}}]}
@@ -126,7 +126,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
         this.pipelineDataSource = {
             uri: this.dataSourceURI,
-            customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
+//            customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -160,11 +160,15 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     getStartDate() {
-        return this.getCurrentDate().startOf(<any>this.getPeriodType()).toDate();
+        let period = <any>this.getPeriodType();
+        return this.getCurrentDate().startOf(period)
+            .add(period == 'month' ? -10: 0, 'days').toDate();
     }
 
     getEndDate() {
-        return this.getCurrentDate().endOf(<any>this.getPeriodType()).toDate();
+        let period = <any>this.getPeriodType();
+        return this.getCurrentDate().endOf(period)
+            .add(period == 'month' ? 10: 0, 'days').toDate();
     }
 
     initToolbarConfig() {

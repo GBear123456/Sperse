@@ -62,6 +62,12 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             {text: this.l('SaveAndClose'), selected: false}
         ];
 
+
+        if (this.data.appointment.Id)
+            this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
+                this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
+            });
+
         this.loadResourcesData();
         this.initToolbarConfig();
     }
@@ -131,9 +137,12 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     ngOnInit() {
         super.ngOnInit();
 
+        if (!this.data.appointment.AssignedUserIds)
+            this.data.appointment.AssignedUserIds = [];
+
         if (!this.data.appointment.StageId && this.data.stages)
             this.data.appointment.StageId =
-                this.data.stages[Math.round(this.data.stages.length / 2)].id;
+                this.data.stages[Math.floor(this.data.stages.length / 2)].id;
 
         if (!this.data.appointment.Type)
             this.data.appointment.Type = CreateActivityDtoType.Event;
@@ -169,8 +178,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             type: this.data.appointment.Type,
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
-            assignedUserId: this.data.appointment.AssignedUserId
-                || this.appSession.userId,
+            assignedUserIds: this.data.appointment.AssignedUserIds 
+                || [this.appSession.userId],
             startDate: this.getDateWithoutTimezone(this.data.appointment.StartDate),
             endDate: this.getDateWithoutTimezone(this.data.appointment.EndDate),
             stageId: this.data.appointment.StageId,
@@ -273,20 +282,27 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     lookupItems($event) {
+        let uri = $event.component.option('name'),
+            search = this.latestSearchPhrase = $event.event.target.value;
+
+        if (this[uri.toLowerCase()].length) {
+            setTimeout(() => {$event.event.target.value = search;});
+            this[uri.toLowerCase()] = [];
+        }
+
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            let uri = $event.component.option('name'),
-                search = this.latestSearchPhrase = $event.event.target.value;
             $event.component.option('opened', true);
-            $event.component.option('noDataText', this.l('Looking for items...'));
+            $event.component.option('noDataText', this.l('LookingForItems'));
             this.lookup(uri, search).then((res) => {
                 if (search == this.latestSearchPhrase) {
                     this[uri.toLowerCase()] = res;
                     $event.component.option('opened', true);
                     setTimeout(() => {$event.event.target.value = search;});
-                    if (!Array(res).length)
-                        $event.component.option('noDataText', this.l('No items found.'));
-                }
+                    if (!res['length'])
+                        $event.component.option('noDataText', this.l('NoItemsFound'));
+                } else
+                    $event.component.option('opened', false);
             });
         }, 500);
     }

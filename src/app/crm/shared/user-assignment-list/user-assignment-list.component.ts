@@ -15,17 +15,20 @@ import { finalize } from 'rxjs/operators';
   providers: [UserAssignmentServiceProxy]
 })
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
+    @Input() multiSelection: boolean = false;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
-    @Input() set selectedItemKey(value) {
-        this.selectedItemKeys = [value];
+    @Input() get selectedItemKey() {
+        return this.multiSelection ? this.selectedItemKeys : 
+            (this.selectedItemKeys && this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined);
     }
-    get selectedItemKey() {
-        return this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined;
+    set selectedItemKey(value) {
+        this.selectedItemKeys = this.multiSelection ? value: [value];
     }
+    @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
     list: any;
@@ -55,7 +58,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     private disableInactiveUsers() {
-        this.list.forEach(el => {
+        this.list && this.list.forEach(el => {
             if (!el.isActive)
                 el.disabled = true;
         });
@@ -176,8 +179,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     onSelectionChange(event) {
-        this.selectedItemKey = event && event.addedItems.length ? event.addedItems[0].id : undefined;
         this.onSelectionChanged.emit(event);
+        this.selectedItemKeyChange.emit(
+            this.multiSelection ? this.selectedItemKeys: event.addedItems[0]);
     }
 
     checkPermissions() {

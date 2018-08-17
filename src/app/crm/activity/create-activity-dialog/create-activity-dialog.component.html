@@ -18,12 +18,12 @@
             [targetSelector]="'[accessKey=ActivityStage]'"
             (onItemSelected)="onStagesChanged($event)"
             [showTitle]="false"
-            [list]="data.stages"
-            [disableWonLost]="true">
+            [funnelStyling]="true"
+            [list]="data.stages">
     </crm-static-list>
-    <crm-user-assignment-list 
+    <crm-user-assignment-list [multiSelection]="true"
             [targetSelector]="'[accesskey=\'UserAssign\']'" 
-            [selectedItemKey]="data.appointment.AssignedUserId" 
+            [(selectedItemKey)]="data.appointment.AssignedUserIds" 
             [hideButtons]="true">
     </crm-user-assignment-list>
 
@@ -46,7 +46,8 @@
                 <dx-date-box
                     maxLength="10"
                     type="datetime"
-                    [width]="'360px'" 
+                    [max]="data.appointment.EndDate"
+                    [width]="'360px'"                   
                     [(value)]="data.appointment.StartDate">
                     <dx-validator>
                       <dxi-validation-rule type="required" message="{{l('DateIsRequired')}}."></dxi-validation-rule>
@@ -58,6 +59,7 @@
                 <dx-date-box
                     maxLength="10"
                     type="datetime"
+                    [min]="data.appointment.StartDate"
                     [width]="'360px'"
                     [(value)]="data.appointment.EndDate">
                     <dx-validator>
@@ -82,7 +84,7 @@
             </dx-select-box>
         </div>
         <div class="field">
-            <label>{{l('Customer')}}</label>
+            <label>{{l('Client')}}</label>
             <dx-select-box
                 name="Clients"
                 displayExpr="name"

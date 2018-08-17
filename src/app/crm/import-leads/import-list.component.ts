@@ -32,7 +32,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     public toolbarConfig: any = [];
     public selectedRowIds: number[] = [];
     public showImportWizard = false;
-    public headlineConfig: any;
+    public headlineConfig: any = {};
 
     constructor(injector: Injector,
         private _router: Router,
@@ -56,9 +56,10 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 paginate: true,
                 key: 'Id'
             }
-        };
+        };        
 
         this.initHeadlineConfig();
+        this.initToolbarConfig();
     }
 
     initHeadlineConfig() {
@@ -206,7 +207,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         if ($event.rowType == 'data' && $event.column.dataField == 'FileName') {
             this._importProxy.getFileUrl($event.data.Id).subscribe((responce) => {
                 if (responce && responce.url)
-                    window.open(responce.url);
+                    window.open(responce.url, '_self');
             });
         }
     }
@@ -217,7 +218,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     activate() {
         this.rootComponent.overflowHidden(true);
-        this.initToolbarConfig();
         this.refreshDataGrid();
     }
 

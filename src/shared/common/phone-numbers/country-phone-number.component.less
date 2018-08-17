@@ -1,0 +1,60 @@
+:host {
+    .wrapper {
+        display: inline-block;
+        width: 70%;
+    }
+
+    /deep/ div.input-group {
+        border-bottom: 1px solid #dfdfdf;
+        input {
+            border: none;
+        }    
+    }  
+
+    /deep/ .ng-invalid.ng-touched {
+        .input-group:after {
+            pointer-events: none;
+            font-weight: bold;
+            background-color: #d9534f;
+            color: #fff;
+            content: '!';
+            position: absolute;
+            top: 50%;
+            margin-top: -9px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 13px;
+            right: 10px;
+        }
+    }
+
+    /deep/ input.form-control:focus {
+        border-color: #dfdfdf;
+    }
+      
+    .invalid-message-wrapper{
+        position: relative;
+        line-height: 1.35715;
+    }
+    
+    .invalid-message {
+        position: absolute;
+        width: auto;
+        height: auto;
+        z-index: 1501;
+        margin: 0px;
+        left: 0px;
+        top: 0px;
+        transform: translate(0px, 0px);
+        background-color: #d9534f;
+        color: #fff;
+        border-radius: 4px;
+        padding: 10px;
+        font-size: .85em;
+        line-height: normal;
+        word-wrap: break-word;
+    }  
+}
