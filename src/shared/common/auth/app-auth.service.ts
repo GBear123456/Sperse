@@ -30,9 +30,9 @@ export class AppAuthService implements OnDestroy {
         clearTimeout(this.tokenCheckTimeout);
         let currentToken = abp.auth.getToken();
         if (currentToken)
-            this._ngZone.runOutsideAngular(() => {
+//            this._ngZone.runOutsideAngular(() => {
                 setTimeout(() => this.checkAuthToken(currentToken), 3000);
-            });
+//            });
     }
 
     stopTokenCheck() {
