@@ -1,12 +1,16 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, NgZone } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+
 
 @Injectable()
 export class AppAuthService implements OnDestroy {
     private tokenCheckTimeout: any;
 
-    constructor(private _appLocalizationService: AppLocalizationService) {
+    constructor(
+        private _appLocalizationService: AppLocalizationService,
+        private _ngZone: NgZone = null,
+    ) {
         this.startTokenCheck();
     }
 
@@ -26,7 +30,9 @@ export class AppAuthService implements OnDestroy {
         clearTimeout(this.tokenCheckTimeout);
         let currentToken = abp.auth.getToken();
         if (currentToken)
-            setTimeout(() => this.checkAuthToken(currentToken), 3000);
+            this._ngZone.runOutsideAngular(() => {
+                setTimeout(() => this.checkAuthToken(currentToken), 3000);
+            });
     }
 
     stopTokenCheck() {
