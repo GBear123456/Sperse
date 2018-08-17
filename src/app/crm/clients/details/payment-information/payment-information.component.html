@@ -7,9 +7,14 @@
               [columnAutoWidth]="true"
               [allowColumnResizing]="true"
               [masterDetail]="{ enabled: true, template: 'detail' }">
-    <dxi-column dataField="frequency" caption="{{l('Frequency')}}"></dxi-column>
-    <dxi-column dataField="payerType" caption="{{l('Type')}}"></dxi-column>
-    <dxi-column dataField="totalFee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
+
+    <dxi-column dataField="serviceType"></dxi-column>
+    <dxi-column dataField="startDate" dataType="date"></dxi-column>
+    <dxi-column dataField="endDate" dataType="date"></dxi-column>
+    <dxi-column dataField="trialEndDate" dataType="date"></dxi-column>
+    <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
+    <dxi-column dataField="productType"></dxi-column>
+    <dxi-column dataField="productId"></dxi-column>
     <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
     <dxi-column caption="" [width]="120" cellTemplate="actionsTemplate"></dxi-column>
 
@@ -20,16 +25,17 @@
         <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
     </div>
 
-    <div *dxTemplate="let orderSubscription of 'detail'">
-        <div class="master-detail-caption">{{'Billing\'s orders'}}</div>
-        <dx-data-grid [dataSource]="orderSubscription.data.orderSubscriptions"
+    <div *dxTemplate="let billingSubscription of 'detail'">
+        <div class="master-detail-caption">{{'Billing info'}}</div>
+        <dx-data-grid [dataSource]="[billingSubscription.data.billingSubscription]"
                       [showBorders]="true"
                       [columnAutoWidth]="true">
-            <dxi-column dataField="startDate" dataType="date"></dxi-column>
-            <dxi-column dataField="endDate" dataType="date"></dxi-column>
-            <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
-            <dxi-column dataField="productType"></dxi-column>
-            <dxi-column dataField="productId"></dxi-column>
+
+            <dxi-column dataField="frequency" caption="{{l('Frequency')}}"></dxi-column>
+            <dxi-column dataField="payerType" caption="{{l('Type')}}"></dxi-column>
+            <dxi-column dataField="fee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
+            <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
+            <dxi-column dataField="paymentMethod"></dxi-column>
 
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
