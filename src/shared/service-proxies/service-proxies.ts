@@ -17228,11 +17228,14 @@ export class PipelineServiceProxy {
     }
 
     /**
+     * @purposeId (optional) 
      * @pipelineId (optional) 
      * @return Success
      */
-    getPipelineDefinition(pipelineId: number | null | undefined): Observable<PipelineDto> {
+    getPipelineDefinition(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+        if (purposeId !== undefined)
+            url_ += "PurposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         if (pipelineId !== undefined)
             url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
