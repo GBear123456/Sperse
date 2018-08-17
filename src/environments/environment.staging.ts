@@ -1,5 +1,5 @@
 export const environment = {
-    production: false,
+    production: true,
     zenDeskEnabled: true,
     hmr: false,
     appConfig: 'appconfig.staging.json'
