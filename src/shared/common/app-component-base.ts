@@ -107,11 +107,11 @@ export abstract class AppComponentBase {
     }
 
     l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, this.localizationSourceName, args);
+        return this.localizationService.l(key, this.localizationSourceName, ...args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
-        return this.localizationService.ls(sourcename, key, args);
+        return this.localizationService.ls(sourcename, key, ...args);
     }
 
     isFeatureEnable(featureName: string): boolean {
