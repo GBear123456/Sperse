@@ -6,6 +6,8 @@ import { RouteReuseStrategy } from '@angular/router';
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 
+import * as _ from 'underscore';
+
 @Injectable()
 export class ImportWizardService {
     private subjectProgress: Subject<any>;
@@ -45,20 +47,23 @@ export class ImportWizardService {
     setupStatusCheck(importId, method = undefined, invalUri = undefined) {
         this.setupCheckTimeout((callback) => {
             this._importProxy.getStatus(importId).subscribe((res) => {
-                method && method(res);
+                method && method(res);  
+                let data = {
+                     totalCount: res.totalCount,
+                     importedCount: res.importedCount,
+                     failedCount: res.failedCount
+                 };
                 if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
                     invalUri && (<any>this._reuseService).invalidate(invalUri);
+                    callback(_.extend(data, {progress: 100}));
                     this.activeImportId = undefined;
                 }    
                 if (<ImportStatus>res.statusId == ImportStatus.InProgress) {
                     this.activeImportId = importId;
-                    callback({
-                        progress: !this.activeImportId ? 100: 
-                            Math.round(((res.importedCount || 0) + (res.failedCount || 0)) / res.totalCount * 100),
-                        totalCount: res.totalCount,
-                        importedCount: res.importedCount,
-                        failedCount: res.failedCount
-                    });
+                    callback(_.extend(data, {
+                        progress: Math.round(((res.importedCount || 0) + 
+                            (res.failedCount || 0)) / res.totalCount * 100)
+                    }));
                 }
             })
         });
