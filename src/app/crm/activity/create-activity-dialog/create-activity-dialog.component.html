@@ -43,7 +43,7 @@
 			  <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
             <div class="field">
                 <label>{{l('StartDate')}}</label>
-                <dx-date-box
+                <dx-date-box #startDate
                     maxLength="10"
                     type="datetime"
                     [max]="data.appointment.EndDate"
@@ -56,7 +56,7 @@
             </div>
             <div class="field">
                 <label>{{l('EndDate')}}</label>
-                <dx-date-box
+                <dx-date-box #endDate
                     maxLength="10"
                     type="datetime"
                     [min]="data.appointment.StartDate"
