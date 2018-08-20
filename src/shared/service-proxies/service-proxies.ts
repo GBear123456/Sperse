@@ -2279,128 +2279,6 @@ export class BaseCommercePushNotificationHandlerServiceProxy {
 }
 
 @Injectable()
-export class BillingSubscriptionServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @customerId (optional) 
-     * @return Success
-     */
-    getSubscriptionsHistory(customerId: number | null | undefined): Observable<BillingSubscriptionDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/BillingSubscription/GetSubscriptionsHistory?";
-        if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSubscriptionsHistory(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSubscriptionsHistory(<any>response_);
-                } catch (e) {
-                    return <Observable<BillingSubscriptionDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<BillingSubscriptionDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSubscriptionsHistory(response: HttpResponseBase): Observable<BillingSubscriptionDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(BillingSubscriptionDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<BillingSubscriptionDto[]>(<any>null);
-    }
-
-    /**
-     * @billingSubscriptionId (optional) 
-     * @return Success
-     */
-    cancel(billingSubscriptionId: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/BillingSubscription/Cancel?";
-        if (billingSubscriptionId !== undefined)
-            url_ += "billingSubscriptionId=" + encodeURIComponent("" + billingSubscriptionId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCancel(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCancel(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCancel(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class BusinessEntityServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -15399,6 +15277,128 @@ export class OrderServiceProxy {
 }
 
 @Injectable()
+export class OrderSubscriptionServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @customerId (optional) 
+     * @return Success
+     */
+    getSubscriptionHistory(customerId: number | null | undefined): Observable<OrderSubscriptionDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/GetSubscriptionHistory?";
+        if (customerId !== undefined)
+            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSubscriptionHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSubscriptionHistory(<any>response_);
+                } catch (e) {
+                    return <Observable<OrderSubscriptionDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<OrderSubscriptionDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSubscriptionHistory(response: HttpResponseBase): Observable<OrderSubscriptionDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(OrderSubscriptionDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<OrderSubscriptionDto[]>(<any>null);
+    }
+
+    /**
+     * @orderSubscriptionId (optional) 
+     * @return Success
+     */
+    cancel(orderSubscriptionId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/Cancel?";
+        if (orderSubscriptionId !== undefined)
+            url_ += "orderSubscriptionId=" + encodeURIComponent("" + orderSubscriptionId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancel(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancel(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class OrganizationContactServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -17228,11 +17228,14 @@ export class PipelineServiceProxy {
     }
 
     /**
+     * @purposeId (optional) 
      * @pipelineId (optional) 
      * @return Success
      */
-    getPipelineDefinition(pipelineId: number | null | undefined): Observable<PipelineDto> {
+    getPipelineDefinition(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+        if (purposeId !== undefined)
+            url_ += "PurposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         if (pipelineId !== undefined)
             url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -26751,130 +26754,6 @@ export interface IUpdateBankAccountDto {
     typeId: string | undefined;
     isActive: boolean;
     businessEntityId: number | undefined;
-}
-
-export class BillingSubscriptionDto implements IBillingSubscriptionDto {
-    id!: number | undefined;
-    frequency!: string | undefined;
-    payerId!: string | undefined;
-    payerType!: string | undefined;
-    statusCode!: string | undefined;
-    status!: string | undefined;
-    orderSubscriptions!: OrderSubscriptionDto[] | undefined;
-
-    constructor(data?: IBillingSubscriptionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.frequency = data["frequency"];
-            this.payerId = data["payerId"];
-            this.payerType = data["payerType"];
-            this.statusCode = data["statusCode"];
-            this.status = data["status"];
-            if (data["orderSubscriptions"] && data["orderSubscriptions"].constructor === Array) {
-                this.orderSubscriptions = [];
-                for (let item of data["orderSubscriptions"])
-                    this.orderSubscriptions.push(OrderSubscriptionDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BillingSubscriptionDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new BillingSubscriptionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["frequency"] = this.frequency;
-        data["payerId"] = this.payerId;
-        data["payerType"] = this.payerType;
-        data["statusCode"] = this.statusCode;
-        data["status"] = this.status;
-        if (this.orderSubscriptions && this.orderSubscriptions.constructor === Array) {
-            data["orderSubscriptions"] = [];
-            for (let item of this.orderSubscriptions)
-                data["orderSubscriptions"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IBillingSubscriptionDto {
-    id: number | undefined;
-    frequency: string | undefined;
-    payerId: string | undefined;
-    payerType: string | undefined;
-    statusCode: string | undefined;
-    status: string | undefined;
-    orderSubscriptions: OrderSubscriptionDto[] | undefined;
-}
-
-export class OrderSubscriptionDto implements IOrderSubscriptionDto {
-    id!: number | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    fee!: number | undefined;
-    productType!: string | undefined;
-    productId!: string | undefined;
-
-    constructor(data?: IOrderSubscriptionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.fee = data["fee"];
-            this.productType = data["productType"];
-            this.productId = data["productId"];
-        }
-    }
-
-    static fromJS(data: any): OrderSubscriptionDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrderSubscriptionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["fee"] = this.fee;
-        data["productType"] = this.productType;
-        data["productId"] = this.productId;
-        return data; 
-    }
-}
-
-export interface IOrderSubscriptionDto {
-    id: number | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    fee: number | undefined;
-    productType: string | undefined;
-    productId: string | undefined;
 }
 
 export class BusinessEntityDto implements IBusinessEntityDto {
@@ -45513,6 +45392,146 @@ export class BillingSubscriptionStatusDto implements IBillingSubscriptionStatusD
 export interface IBillingSubscriptionStatusDto {
     id: string | undefined;
     name: string | undefined;
+}
+
+export class OrderSubscriptionDto implements IOrderSubscriptionDto {
+    id!: number | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    fee!: number | undefined;
+    productType!: string | undefined;
+    productId!: string | undefined;
+    serviceType!: string | undefined;
+    trialEndDate!: moment.Moment | undefined;
+    statusCode!: string | undefined;
+    status!: string | undefined;
+    billingSubscription!: BillingSubscriptionDto | undefined;
+
+    constructor(data?: IOrderSubscriptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
+            this.productType = data["productType"];
+            this.productId = data["productId"];
+            this.serviceType = data["serviceType"];
+            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.statusCode = data["statusCode"];
+            this.status = data["status"];
+            this.billingSubscription = data["billingSubscription"] ? BillingSubscriptionDto.fromJS(data["billingSubscription"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): OrderSubscriptionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderSubscriptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
+        data["productType"] = this.productType;
+        data["productId"] = this.productId;
+        data["serviceType"] = this.serviceType;
+        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["statusCode"] = this.statusCode;
+        data["status"] = this.status;
+        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IOrderSubscriptionDto {
+    id: number | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    fee: number | undefined;
+    productType: string | undefined;
+    productId: string | undefined;
+    serviceType: string | undefined;
+    trialEndDate: moment.Moment | undefined;
+    statusCode: string | undefined;
+    status: string | undefined;
+    billingSubscription: BillingSubscriptionDto | undefined;
+}
+
+export class BillingSubscriptionDto implements IBillingSubscriptionDto {
+    id!: number | undefined;
+    frequency!: string | undefined;
+    payerId!: string | undefined;
+    payerType!: string | undefined;
+    statusCode!: string | undefined;
+    status!: string | undefined;
+    fee!: number | undefined;
+    paymentMethod!: string | undefined;
+
+    constructor(data?: IBillingSubscriptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.frequency = data["frequency"];
+            this.payerId = data["payerId"];
+            this.payerType = data["payerType"];
+            this.statusCode = data["statusCode"];
+            this.status = data["status"];
+            this.fee = data["fee"];
+            this.paymentMethod = data["paymentMethod"];
+        }
+    }
+
+    static fromJS(data: any): BillingSubscriptionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BillingSubscriptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["frequency"] = this.frequency;
+        data["payerId"] = this.payerId;
+        data["payerType"] = this.payerType;
+        data["statusCode"] = this.statusCode;
+        data["status"] = this.status;
+        data["fee"] = this.fee;
+        data["paymentMethod"] = this.paymentMethod;
+        return data; 
+    }
+}
+
+export interface IBillingSubscriptionDto {
+    id: number | undefined;
+    frequency: string | undefined;
+    payerId: string | undefined;
+    payerType: string | undefined;
+    statusCode: string | undefined;
+    status: string | undefined;
+    fee: number | undefined;
+    paymentMethod: string | undefined;
 }
 
 export class ContactInfoBaseDto implements IContactInfoBaseDto {

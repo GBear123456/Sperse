@@ -25,7 +25,7 @@
                                     <span *ngIf="lead?.StartDate">{{ removeTimezoneOffset(lead?.StartDate) | date : 'M/d, H:mm' }} - {{ removeTimezoneOffset(lead?.EndDate) | date : 'M/d, H:mm' }}</span>
                                 </div>
                                 <div class="text-right pipeline-photo-wrap">
-                                    <img [src]="getPhoto(lead?.Photo, lead?.Gender)" alt="{{lead?.Name}}" class="img-responsive img-circle" width="34">
+                                    <div [ngStyle]="{'background-image': 'url(' + getPhoto(lead?.Photo, lead?.Gender) + ')'}" class="img-responsive img-circle"></div>
                                 </div>
                             </div>
                       </div>

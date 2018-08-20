@@ -11,9 +11,10 @@
             </div>
             <dx-list #staticList
                 [ngClass]="{
+                    'funnel-styling': funnelStyling,
                     'highlightSelected': highlightSelected,
                     'unclicked': !selectedKeys?.length || (!highlightSelected && !checkPermissions()),
-                    'disableWonLost': disableWonLost
+                    'disableHindmost': disableHindmost
                 }"
                 [searchEnabled]="false"
                 [selectionMode]="selectedKeys?.length ? 'single': 'none'"

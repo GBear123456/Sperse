@@ -128,10 +128,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this._sessionService.getCurrentLoginInformations()
-            .subscribe((result: GetCurrentLoginInformationsOutput) => {
-                this.tenant = result.tenant;
-            });
+        this.tenant = this.appSession.tenant;
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {

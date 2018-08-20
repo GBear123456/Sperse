@@ -11,6 +11,7 @@
         [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
         [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
         [targetSelector]="'[aria-label=Stage]'"
+        [funnelStyling]="true"
         [list]="stages"
         (onItemSelected)="updateLeadsStage($event)">
     </crm-static-list>
