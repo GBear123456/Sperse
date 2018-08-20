@@ -24,7 +24,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
+    ImportServiceProxy, ImportInputImportType, PartnerServiceProxy, PartnerTypeServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
@@ -36,7 +36,7 @@ import { ImportStatus } from '@shared/AppEnums';
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
+    providers: [ ZipCodeFormatterPipe, PartnerServiceProxy, PartnerTypeServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -212,6 +212,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _nameParser: NameParserService,
         private _importLeadsService: ImportLeadsService,
         private _partnerService: PartnerServiceProxy,
+        private _partnerTypeServic: PartnerTypeServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
         public importWizardService: ImportWizardService
     ) {
@@ -664,7 +665,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     partnerTypesLoad() {
-        this._partnerService.getTypes()
+        this._partnerTypeServic.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {
                     return {

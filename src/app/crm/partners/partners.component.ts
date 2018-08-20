@@ -38,7 +38,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { PartnerServiceProxy, BulkUpdatePartnerTypeInput } from '@shared/service-proxies/service-proxies';
+import { PartnerServiceProxy, PartnerTypeServiceProxy, BulkUpdatePartnerTypeInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -47,7 +47,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, PartnerServiceProxy ]
+    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -100,7 +100,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _clientService: ClientService,
-        private _partnerService: PartnerServiceProxy
+        private _partnerService: PartnerServiceProxy,
+        private _partnerTypeService: PartnerTypeServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -627,7 +628,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private partnerTypesLoad() {
-        this._partnerService.getTypes()
+        this._partnerTypeService.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {
                     return {
