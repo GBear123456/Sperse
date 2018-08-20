@@ -18,7 +18,7 @@ import { ContactTypes, CustomerType } from '@shared/AppEnums';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
 CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
 ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
-PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
+PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
@@ -33,7 +33,8 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, PartnerServiceProxy ]
+    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy,
+        PartnerServiceProxy, PartnerTypeServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -151,6 +152,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
         private _partnerService: PartnerServiceProxy,
+        private _partnerTypeService: PartnerTypeServiceProxy,
         private dialogService: DialogService
     ) {
         super(injector);
@@ -844,7 +846,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     partnerTypesLoad() {
-        this._partnerService.getTypes()
+        this._partnerTypeService.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {
                     return {

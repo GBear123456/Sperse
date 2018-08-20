@@ -16554,62 +16554,6 @@ export class PartnerServiceProxy {
     /**
      * @return Success
      */
-    getTypes(): Observable<PartnerTypeDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Partner/GetTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTypes(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetTypes(<any>response_);
-                } catch (e) {
-                    return <Observable<PartnerTypeDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PartnerTypeDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetTypes(response: HttpResponseBase): Observable<PartnerTypeDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(PartnerTypeDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PartnerTypeDto[]>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getFiltersInitialData(): Observable<PartnerFiltersInitialData> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetFiltersInitialData";
         url_ = url_.replace(/[?&]$/, "");
@@ -16669,6 +16613,62 @@ export class PartnerTypeServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<PartnerTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/PartnerType/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<PartnerTypeDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PartnerTypeDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<PartnerTypeDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PartnerTypeDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PartnerTypeDto[]>(<any>null);
     }
 
     /**
@@ -46753,46 +46753,6 @@ export interface IBulkUpdatePartnerTypeInput {
     typeId: number | undefined;
 }
 
-export class PartnerTypeDto implements IPartnerTypeDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IPartnerTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): PartnerTypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PartnerTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IPartnerTypeDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
 export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
     types!: PartnerTypeDto[] | undefined;
     statuses!: CustomerStatusDto[] | undefined;
@@ -46907,6 +46867,46 @@ export interface IPartnerFiltersInitialData {
     tags: CustomerTagInfoDto[] | undefined;
     ratings: CustomerRatingInfoDto[] | undefined;
     stars: CustomerStarInfoDto[] | undefined;
+}
+
+export class PartnerTypeDto implements IPartnerTypeDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IPartnerTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PartnerTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PartnerTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPartnerTypeDto {
+    id: number | undefined;
+    name: string | undefined;
 }
 
 export class CreatePartnerTypeInput implements ICreatePartnerTypeInput {
