@@ -1,6 +1,5 @@
 import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
@@ -21,7 +20,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     constructor(
         injector: Injector,
         private zendeskService: ZendeskService,
-        private _router: Router,
         private _synchProgress: SynchProgressService,
         private _bankAccountsGeneralService: BankAccountsGeneralService
     ) {

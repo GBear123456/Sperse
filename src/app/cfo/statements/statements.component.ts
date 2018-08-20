@@ -74,119 +74,121 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
+        if (this.componentIsActivated) {
+            this._appService.updateToolbar([
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                setTimeout(() => {
+                                    this.dataGrid.instance.repaint();
+                                }, 1000);
+                                this._filtersService.fixed = !this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
-                                this._filtersService.enable();
+                            options: {
+                                checkPressed: () => {
+                                    return this._filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this._filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this._filtersService.fixed)
+                                        this._filtersService.disable();
+                                }
                             },
-                            mouseout: (event) => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                            attr: {
+                                'filter-selected': this._filtersService.hasFilterSelected
                             }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'select-box',
-                        text: '',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Scenario'),
-                            accessKey: 'statsForecastSwitcher',
-                            items: this.forecastModelsObj.items,
-                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
-                            height: 39,
-                            width: 243,
-                            adaptive: false,
-                            onSelectionChanged: (e) => {
-                                if (e) {
-                                    this.forecastModelsObj.selectedItemIndex = e.itemIndex;
-                                    this.refreshData();
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'select-box',
+                            text: '',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Scenario'),
+                                accessKey: 'statsForecastSwitcher',
+                                items: this.forecastModelsObj.items,
+                                selectedIndex: this.forecastModelsObj.selectedItemIndex,
+                                height: 39,
+                                width: 243,
+                                adaptive: false,
+                                onSelectionChanged: (e) => {
+                                    if (e) {
+                                        this.forecastModelsObj.selectedItemIndex = e.itemIndex;
+                                        this.refreshData();
+                                    }
                                 }
                             }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'reportPeriod',
-                        action: this.toggleReportPeriodFilter.bind(this),
-                        options: {
-                            id: 'reportPeriod',
-                            icon: 'assets/common/icons/report-period.svg'
-                        }
-                    },
-                    {
-                        name: 'bankAccountSelect',
-                        widget: 'dxButton',
-                        action: this.toggleBankAccountTooltip.bind(this),
-                        options: {
-                            id: 'bankAccountSelect',
-                            text: this.l('Accounts'),
-                            icon: 'assets/common/icons/accounts.svg'
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'reportPeriod',
+                            action: this.toggleReportPeriodFilter.bind(this),
+                            options: {
+                                id: 'reportPeriod',
+                                icon: 'assets/common/icons/report-period.svg'
+                            }
                         },
-                        attr: {
-                            'custaccesskey': 'bankAccountSelect',
-                            'accountCount': this.bankAccountCount
+                        {
+                            name: 'bankAccountSelect',
+                            widget: 'dxButton',
+                            action: this.toggleBankAccountTooltip.bind(this),
+                            options: {
+                                id: 'bankAccountSelect',
+                                text: this.l('Accounts'),
+                                icon: 'assets/common/icons/accounts.svg'
+                            },
+                            attr: {
+                                'custaccesskey': 'bankAccountSelect',
+                                'accountCount': this.bankAccountCount
+                            }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [
-                                {
-                                    action: Function(),
-                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
-                                    icon: 'pdf',
-                                }, {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                }, {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                },
-                                { type: 'downloadOptions' }
-                            ]
-                        }
-                    },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
-                ]
-            }
-        ]);
+                    ]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [
+                                    {
+                                        action: Function(),
+                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                        icon: 'pdf',
+                                    }, {
+                                        action: this.exportToXLS.bind(this),
+                                        text: this.l('Export to Excel'),
+                                        icon: 'xls',
+                                    }, {
+                                        action: this.exportToGoogleSheet.bind(this),
+                                        text: this.l('Export to Google Sheets'),
+                                        icon: 'sheet'
+                                    },
+                                    { type: 'downloadOptions' }
+                                ]
+                            }
+                        },
+                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    ]
+                }
+            ]);
+        }
     }
 
     constructor(

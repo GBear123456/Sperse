@@ -128,125 +128,127 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
-            {
-                location: 'before', items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            this.filtersService.fixed =
-                                !this.filtersService.fixed;
-                            if (this.filtersService.fixed)
-                                this.categoriesShowed = false;
-                            else
-                                this.categoriesShowed =
-                                    this._categoriesShowedBefore;
-                            this.filtersService.enable();
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this.filtersService.fixed;
-                            },
-                            mouseover: (event) => {
+        if (this.componentIsActivated) {
+            this._appService.updateToolbar([
+                {
+                    location: 'before', items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                this.filtersService.fixed =
+                                    !this.filtersService.fixed;
+                                if (this.filtersService.fixed)
+                                    this.categoriesShowed = false;
+                                else
+                                    this.categoriesShowed =
+                                        this._categoriesShowedBefore;
                                 this.filtersService.enable();
                             },
-                            mouseout: (event) => {
-                                if (!this.filtersService.fixed)
-                                    this.filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this.filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            value: this.searchValue,
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' '
-                            + this.l('Transactions').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
+                            options: {
+                                checkPressed: () => {
+                                    return this.filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this.filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this.filtersService.fixed)
+                                        this.filtersService.disable();
+                                }
+                            },
+                            attr: {
+                                'filter-selected': this.filtersService.hasFilterSelected
                             }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'searchAll',
-                        action: this.searchAllClick.bind(this),
-                        options: {
-                            text: this.l('Search All'),
-                            adaptive: false
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'search',
+                            widget: 'dxTextBox',
+                            options: {
+                                value: this.searchValue,
+                                width: '279',
+                                mode: 'search',
+                                placeholder: this.l('Search') + ' '
+                                + this.l('Transactions').toLowerCase(),
+                                onValueChanged: (e) => {
+                                    this.searchValueChange(e);
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'searchAll',
+                            action: this.searchAllClick.bind(this),
+                            options: {
+                                text: this.l('Search All'),
+                                adaptive: false
+                            },
+                            attr: {
+                                'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
+                                'custaccesskey': 'search-container'
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'bankAccountSelect',
+                            widget: 'dxButton',
+                            action: this.toggleBankAccountTooltip.bind(this),
+                            options: {
+                                id: 'bankAccountSelect',
+                                text: this.l('Accounts'),
+                                icon: 'assets/common/icons/accounts.svg'
+                            },
+                            attr: {
+                                'custaccesskey': 'bankAccountSelect',
+                                'accountCount': this.bankAccountCount
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'after', items: [
+                        {name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this)},
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [{
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                }, {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                }, {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                }, {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                }, {type: 'downloadOptions'}]
+                            }
                         },
-                        attr: {
-                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) ) ? true : false,
-                            'custaccesskey': 'search-container'
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'bankAccountSelect',
-                        widget: 'dxButton',
-                        action: this.toggleBankAccountTooltip.bind(this),
-                        options: {
-                            id: 'bankAccountSelect',
-                            text: this.l('Accounts'),
-                            icon: 'assets/common/icons/accounts.svg'
-                        },
-                        attr: {
-                            'custaccesskey': 'bankAccountSelect',
-                            'accountCount': this.bankAccountCount
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after', items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
-                        }
-                    },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
-                ]
-            }
-        ]);
+                        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+                    ]
+                }
+            ]);
+        }
     }
 
     constructor(injector: Injector,

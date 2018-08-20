@@ -1,5 +1,4 @@
 import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -35,9 +34,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     ActionTitle = 'CUSTOM CHART';
 
     constructor(injector: Injector,
-        private _router: Router,
-        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
-        private _classificationServiceProxy: ClassificationServiceProxy){
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
         super(injector);
     }
 

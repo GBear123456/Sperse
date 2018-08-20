@@ -172,142 +172,144 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            setTimeout(() => {
-                                this.linearChart.instance.render();
-                                this.barChart.instance.render();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
+        if (this.componentIsActivated) {
+            this._appService.updateToolbar([
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                setTimeout(() => {
+                                    this.linearChart.instance.render();
+                                    this.barChart.instance.render();
+                                }, 1000);
+                                this._filtersService.fixed = !this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
-                                this._filtersService.enable();
+                            options: {
+                                checkPressed: () => {
+                                    return this._filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this._filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this._filtersService.fixed)
+                                        this._filtersService.disable();
+                                }
                             },
-                            mouseout: (event) => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
+                            attr: {
+                                'filter-selected': this._filtersService.hasFilterSelected
                             }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
                         }
-                    }
-                ]
-            },
-            // {
-            //     location: 'before',
-            //     items: [
-            //         { name: 'back' }
-            //     ]
-            // },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'select-box',
-                        text: '',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Scenario'),
-                            accessKey: 'statsForecastSwitcher',
-                            items: this.forecastModelsObj.items,
-                            selectedIndex: this.forecastModelsObj.selectedItemIndex,
-                            height: 39,
-                            width: 243,
-                            adaptive: false,
-                            onSelectionChanged: (e) => {
-                                if (e) {
-                                    this.changeSelectedForecastModel(e);
-                                    this.loadStatsData();
+                    ]
+                },
+                // {
+                //     location: 'before',
+                //     items: [
+                //         { name: 'back' }
+                //     ]
+                // },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'select-box',
+                            text: '',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Scenario'),
+                                accessKey: 'statsForecastSwitcher',
+                                items: this.forecastModelsObj.items,
+                                selectedIndex: this.forecastModelsObj.selectedItemIndex,
+                                height: 39,
+                                width: 243,
+                                adaptive: false,
+                                onSelectionChanged: (e) => {
+                                    if (e) {
+                                        this.changeSelectedForecastModel(e);
+                                        this.loadStatsData();
+                                    }
                                 }
                             }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'reportPeriod',
-                        action: this.toggleReportPeriodFilter.bind(this),
-                        options: {
-                            id: 'reportPeriod',
-                            icon: 'assets/common/icons/report-period.svg'
-                        }
-                    },
-                    {
-                        name: 'bankAccountSelect',
-                        widget: 'dxButton',
-                        action: this.toggleBankAccountTooltip.bind(this),
-                        options: {
-                            id: 'bankAccountSelect',
-                            text: this.l('Accounts'),
-                            icon: 'assets/common/icons/accounts.svg'
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'reportPeriod',
+                            action: this.toggleReportPeriodFilter.bind(this),
+                            options: {
+                                id: 'reportPeriod',
+                                icon: 'assets/common/icons/report-period.svg'
+                            }
                         },
-                        attr: {
-                            'custaccesskey': 'bankAccountSelect',
-                            'accountCount': this.bankAccountCount
+                        {
+                            name: 'bankAccountSelect',
+                            widget: 'dxButton',
+                            action: this.toggleBankAccountTooltip.bind(this),
+                            options: {
+                                id: 'bankAccountSelect',
+                                text: this.l('Accounts'),
+                                icon: 'assets/common/icons/accounts.svg'
+                            },
+                            attr: {
+                                'custaccesskey': 'bankAccountSelect',
+                                'accountCount': this.bankAccountCount
+                            }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                items: [
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [
-                                {
-                                    action: this.download.bind(this, 'pdf'),
-                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
-                                    icon: 'pdf',
-                                },
-                                {
-                                    action: this.download.bind(this, 'png'),
-                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
-                                    icon: 'png',
-                                },
-                                {
-                                    action: this.download.bind(this, 'jpeg'),
-                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
-                                    icon: 'jpeg',
-                                },
-                                {
-                                    action: this.download.bind(this, 'svg'),
-                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
-                                    icon: 'svg',
-                                },
-                                {
-                                    action: this.download.bind(this, 'gif'),
-                                    text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
-                                    icon: 'gif',
-                                }
-                            ]
-                        }
-                    },
-                    { name: 'print', action: this.print.bind(this) }
-                ]
-            },
-            {
-                location: 'after',
-                items: [
-                    {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
-                ]
-            }
-        ]);
+                    ]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [
+                                    {
+                                        action: this.download.bind(this, 'pdf'),
+                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                        icon: 'pdf',
+                                    },
+                                    {
+                                        action: this.download.bind(this, 'png'),
+                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PNG'),
+                                        icon: 'png',
+                                    },
+                                    {
+                                        action: this.download.bind(this, 'jpeg'),
+                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'JPEG'),
+                                        icon: 'jpeg',
+                                    },
+                                    {
+                                        action: this.download.bind(this, 'svg'),
+                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'SVG'),
+                                        icon: 'svg',
+                                    },
+                                    {
+                                        action: this.download.bind(this, 'gif'),
+                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'GIF'),
+                                        icon: 'gif',
+                                    }
+                                ]
+                            }
+                        },
+                        {name: 'print', action: this.print.bind(this)}
+                    ]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
+                    ]
+                }
+            ]);
+        }
     }
 
     ngOnInit() {

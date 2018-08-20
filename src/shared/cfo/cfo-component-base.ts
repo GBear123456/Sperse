@@ -1,5 +1,6 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OnInit, OnDestroy, Injector } from '@angular/core';
+import { OnInit, OnDestroy, Injector, HostBinding } from '@angular/core';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
@@ -11,8 +12,11 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     get isInstanceAdmin() {
         return this.instanceType == InstanceType.User || (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin'));
     }
-
+    get componentIsActivated(): boolean {
+        return this._route['_routerState'].snapshot.url === this._router.url;
+    }
     protected _route: ActivatedRoute;
+    protected _router: Router;
     _cfoService: CFOService;
 
     private _sub: any;
@@ -23,6 +27,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this._route = injector.get(ActivatedRoute);
+        this._router = injector.get(Router);
         this._cfoService = injector.get(CFOService);
 
         if (this.constructor == this._route.component)

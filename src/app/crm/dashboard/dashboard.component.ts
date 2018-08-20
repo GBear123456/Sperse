@@ -91,7 +91,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.dialogConfig.id = 'crm-intro';
         this.dialogConfig.panelClass = ['crm-intro', 'setup'];
         this.dialogConfig.data = { alreadyStarted: false };
-
         const dialogRef = this.dialog.open(CrmIntroComponent, this.dialogConfig);
         dialogRef.afterClosed().subscribe(result => {
             // if (result && result.isGetStartedButtonClicked) this.onStart();

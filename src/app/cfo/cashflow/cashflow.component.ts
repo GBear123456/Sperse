@@ -801,14 +801,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter.currencyId = this.currencyId;
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
         /** Create parallel operations */
-        let getCashFlowInitialDataObservable = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
-        let getForecastModelsObservable = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTreeObservable = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
+        let cashFlowInitialData$ = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
+        let getForecastModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+        let categoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
-        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        let getBankAccountsObservable = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
-        forkJoin(getCashFlowInitialDataObservable, getForecastModelsObservable, getCategoryTreeObservable, getCashflowGridSettings, getBankAccountsObservable)
+        let cashflowGridSettings$ = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
+        let bankAccounts$ = this._bankAccountsServiceProxy.getBankAccounts(InstanceType[this.instanceType], this.instanceId, this.currencyId);
+        forkJoin(cashFlowInitialData$, getForecastModels$, categoryTree$, cashflowGridSettings$, bankAccounts$)
             .subscribe(result => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(result[0], result[4]);
@@ -959,7 +959,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.closeTransactionsDetail();
             this.filteredLoad = true;
             this.loadGridDataSource();
-            this.operations.initToolbarConfig();
+            this.initToolbarConfig();
         });
         /** Repaint pivot grid after closing the filter modal */
         this._filtersService.subjectFilterDisable.subscribe(e => {
@@ -968,6 +968,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 1000
             );
         });
+    }
+
+    initToolbarConfig() {
+        if (this.componentIsActivated) {
+            this.operations.initToolbarConfig();
+        }
     }
 
     /**
@@ -1354,7 +1360,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this._appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
-                    this.operations.initToolbarConfig();
+                    this.initToolbarConfig();
                     this.dataSource = this.getApiDataSource();
 
                     /** Init footer toolbar with the gathered data from the previous requests */
@@ -5678,7 +5684,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     activate() {
         this._filtersService.localizationSourceName = this.localizationSourceName;
-        this.operations.initToolbarConfig();
+        this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
         this.pivotGrid.instance.repaint();
