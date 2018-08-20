@@ -136,6 +136,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         this.dataMapping.reset();
         this.mapDataSource = [];
         this.emptyReviewData();
+        this.selectedStepIndex = 0;
 
         setTimeout(() => {
             this.showSteper = true;
@@ -213,7 +214,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     }
 
     showFinishStep() {
-        this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
+        this.stepper.selectedIndex = 
+            this.selectedStepIndex = 
+                this.FINISH_STEP_INDEX;
     }
 
     emptyReviewData() {

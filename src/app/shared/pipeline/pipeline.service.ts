@@ -25,26 +25,17 @@ export class PipelineService {
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
         return this._pipelineServiceProxy
-            .getPipelinesData(pipelinePurposeId)
-            .pipe(switchMap(result => {
-                let pipelineId = result[0].id;
-                if ((!this.pipeline || pipelineId != this.pipeline.id) && result.length > 0)
-                    return this._pipelineServiceProxy.getPipelineDefinition(result[0].id)
-                        .pipe(
-                            map(result => {
-                                result.stages.sort((a, b) => {
-                                    return a.sortOrder > b.sortOrder ? 1 : -1;
-                                }).forEach((item) => {
-                                    item['index'] = Math.abs(item.sortOrder);
-                                    item['dragAllowed'] = true;
-                                });
-                                this.pipeline = result;
-                                this.stages = result.stages;
-                                return result;
-                            })
-                        );
-                else
-                    return of(this.pipeline);
+            .getPipelineDefinition(pipelinePurposeId, undefined)
+            .pipe(map(result => {
+                result.stages.sort((a, b) => {
+                    return a.sortOrder > b.sortOrder ? 1 : -1;
+                }).forEach((item) => {
+                    item['index'] = Math.abs(item.sortOrder);
+                    item['dragAllowed'] = true;
+                });
+                this.pipeline = result;
+                this.stages = result.stages;
+                return result;
             }));
     }
 

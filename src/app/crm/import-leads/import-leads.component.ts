@@ -340,6 +340,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     reset(callback = null) {
         this.totalCount = 0;
         this.importedCount = 0;
+        this.hideLeftMenu = false;
         this.importStatus = undefined;
         this.clearToolbarSelectedItems();
         this.wizard.reset(callback);

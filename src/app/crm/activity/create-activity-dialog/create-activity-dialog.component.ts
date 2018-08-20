@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { DxContextMenuComponent } from 'devextreme-angular';
+import { DxContextMenuComponent, DxDateBoxComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -25,6 +25,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild('startDate') startDate: DxDateBoxComponent;
+    @ViewChild('endDate') endDate: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private readonly SAVE_OPTION_DEFAULT   = 1;
@@ -266,9 +268,14 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         this.data.title = '';
         this.data.isTitleValid = true;
         this.userAssignmentComponent.reset();
-        this.data.appointment = {
-            type: CreateActivityDtoType.Event
+        this.data.appointment = {            
+            Type: CreateActivityDtoType.Event
         };
+
+        setTimeout(() => {
+            this.startDate.instance.option('isValid', true);
+            this.endDate.instance.option('isValid', true);
+        }, 100);
     }
 
     onSaveOptionSelectionChanged($event) {
