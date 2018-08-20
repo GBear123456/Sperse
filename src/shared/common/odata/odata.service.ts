@@ -3,32 +3,48 @@ import { AppConsts } from '@shared/AppConsts';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataSearchStrategy } from '@shared/AppEnums';
 import buildQuery from 'odata-query';
+import { InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ODataService {
 
-    getODataUrl(uri: String, filter?: Object) {
-        return AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
+    getODataUrl(uri: String, filter?: Object, instanceData = null) {
+        let url = AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
+        if (instanceData) {
+            url += (url.indexOf('?') == -1 ? '?' : '&');
+
+            if (instanceData.instanceType !== undefined && InstanceType[instanceData.instanceType] !== undefined) {
+                url += 'instanceType=' + encodeURIComponent('' + InstanceType[instanceData.instanceType]) + '&';
+            }
+
+            if (instanceData.instanceId !== undefined) {
+                url += 'instanceId=' + encodeURIComponent('' + instanceData.instanceId) + '&';
+            }
+
+            url = url.replace(/[?&]$/, '');
+        }
+        return url;
     }
 
-    private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string) {
+    private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string, instanceData = null) {
         let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue));
         let dataSource = grid.getDataSource();
-        dataSource['_store']['_url'] = this.getODataUrl(uri, queryWithSearch);
+        dataSource['_store']['_url'] = this.getODataUrl(uri, queryWithSearch, instanceData);
         dataSource.load().done(() => grid.repaint());
         return queryWithSearch;
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, searchColumns: any[], searchValue: string) {
+    processODataFilter(grid, uri, filters, getCheckCustom, searchColumns: any[], searchValue: string, instanceData = null) {
         return this.advancedODataFilter(grid, uri,
             filters.map((filter) => {
                 return getCheckCustom && getCheckCustom(filter) ||
                     filter.getODataFilterObject();
             }),
             searchColumns,
-            searchValue
+            searchValue,
+            instanceData
         );
     }
 
