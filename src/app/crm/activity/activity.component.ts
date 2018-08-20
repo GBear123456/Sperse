@@ -68,7 +68,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 action: () => {
                     this.showActivityDialog(new Date());
                 },
-                lable: this.l('AddNewTask')
+                lable: 'AddNewTask'
             }
         ]
     };
@@ -80,6 +80,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+
+        this.headlineConfig.buttons.forEach((button) => {
+            button.lable = this.l(button.lable);
+        });
 
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
