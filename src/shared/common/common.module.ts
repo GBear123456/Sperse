@@ -23,6 +23,7 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 import { InternationalPhoneNumberModule } from '../../node_modules/ngx-international-phone-number/src';
+import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import { InternationalPhoneNumberModule } from '../../node_modules/ngx-internati
         FileSizePipe,
         ZipCodeFormatterPipe,
         InfoComponent,
-        CountryPhoneNumberComponent
+        CountryPhoneNumberComponent,
+        TitleCasePipe
     ],
     exports: [
         CalendarComponent,
@@ -43,7 +45,8 @@ import { InternationalPhoneNumberModule } from '../../node_modules/ngx-internati
         FileSizePipe,
         ZipCodeFormatterPipe,
         InfoComponent,
-        CountryPhoneNumberComponent
+        CountryPhoneNumberComponent,
+        TitleCasePipe
     ],
     imports: [
         ngCommon.CommonModule,

@@ -229,10 +229,4 @@ export abstract class AppComponentBase {
     getSearchFilter() {
         return this.oDataService.getSearchFilter(this.searchColumns, this.searchValue);
     }
-
-    toTitleCase(value: string) {
-        return value && value.replace(/\b\w+/g, function(txt){
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
-    }
 }
