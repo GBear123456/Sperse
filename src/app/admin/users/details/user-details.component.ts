@@ -159,6 +159,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
 
         this.startLoading(true);
         this._userService.createOrUpdateUser(userInput)
+            .pipe(finalize(() => this.finishLoading(true)))
             .subscribe(() => {
                 this._userService.updateUserPermissions(permissionsInput)
                     .pipe(finalize(() => this.finishLoading(true)))
@@ -166,6 +167,6 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
                         this.close();
                         this.notify.info(this.l('SavedSuccessfully'));
                     });
-            }, undefined, () => this.finishLoading(true));
+            });
     }
 }

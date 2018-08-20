@@ -55,19 +55,16 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     }
 
     getODataUrl(uri: String, filter?: Object) {
-        let url = super.getODataUrl(uri, filter);
-        url += (url.indexOf('?') == -1 ? '?' : '&');
+        return super.getODataUrl(uri, filter, {
+            instanceType: this.instanceType,
+            instanceId: this.instanceId
+        });
+    }
 
-        if (this.instanceType !== undefined && InstanceType[this.instanceType] !== undefined) {
-            url += 'instanceType=' + encodeURIComponent('' + InstanceType[this.instanceType]) + '&';
-        }
-
-        if (this.instanceId !== undefined) {
-            url += 'instanceId=' + encodeURIComponent('' + this.instanceId) + '&';
-        }
-
-        url = url.replace(/[?&]$/, '');
-
-        return url;
+    processODataFilter(grid, uri, filters, getCheckCustom) {
+        return super.processODataFilter(grid, uri, filters, getCheckCustom, {
+            instanceType: this.instanceType,
+            instanceId: this.instanceId
+        });
     }
 }

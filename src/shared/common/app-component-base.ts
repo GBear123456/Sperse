@@ -217,22 +217,16 @@ export abstract class AppComponentBase {
         return this.appUrlService.appRootUrl;
     }
 
-    getODataUrl(uri: String, filter?: Object) {
-        return this.oDataService.getODataUrl(uri, filter);
+    getODataUrl(uri: String, filter?: Object, instanceData = null) {
+        return this.oDataService.getODataUrl(uri, filter, instanceData);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom) {
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
         this.isDataLoaded = false;
-        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue);
+        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData);
     }
 
     getSearchFilter() {
         return this.oDataService.getSearchFilter(this.searchColumns, this.searchValue);
-    }
-
-    toTitleCase(value: string) {
-        return value && value.replace(/\b\w+/g, function(txt){
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
     }
 }

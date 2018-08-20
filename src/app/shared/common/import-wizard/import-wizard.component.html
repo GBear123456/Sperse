@@ -154,7 +154,7 @@
                 </dxo-selection>
 
                 <div *dxTemplate="let cellData of 'titleCaseCell'">
-                    {{toTitleCase(cellData.value)}}
+                    {{cellData.value | titleCase}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'phoneCell'" [ngClass]="{invalid: !checkFieldValid('phone', cellData)}">
