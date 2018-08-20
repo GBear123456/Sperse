@@ -126,7 +126,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!dataSource)
             dataSource = this._dataSources[stage.name] = 
                 new DataSource(_.extend(this._dataSource, {
-                    requireTotalCount: false,
+                    //requireTotalCount: false,
                     select: this.selectFields
                 }));
 
