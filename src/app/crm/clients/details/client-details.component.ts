@@ -9,6 +9,7 @@ import {
     LeadServiceProxy,
     LeadInfoDto,
     PartnerServiceProxy,
+    PartnerTypeServiceProxy,
     PartnerInfoDto,
     UpdatePartnerTypeInput
 } from '@shared/service-proxies/service-proxies';
@@ -73,6 +74,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _cacheService: CacheService,
                 private _customerService: CustomersServiceProxy,
                 private _partnerService: PartnerServiceProxy,
+                private _partnerTypeService: PartnerTypeServiceProxy,
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
                 private _clientDetailsService: ClientDetailsService) {
@@ -228,7 +230,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     private loadPartnerTypes() {
-        this._partnerService.getTypes()
+        this._partnerTypeService.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {
                     return {
