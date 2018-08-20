@@ -65,7 +65,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
     defaultSubaccountTooltipVisible = false;
-    showClassify = true;
+    toggleTabContent = true;
     filterItems: any[];
 
     private readonly dataSourceURI = 'Transaction';

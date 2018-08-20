@@ -24,18 +24,13 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
     private _keyPhrasesFilterQuery: any[];
 
     @Output() close: EventEmitter<any> = new EventEmitter();
-    noDataText: string;
     keyPhrasesDataSource: any;
-    showHeader = true;
-    showTitle = true;
     keyPhrasesData = [];
 
     constructor(
         injector: Injector
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
         this.keyPhrasesDataSource = new DataSource({
             store: {
                 type: 'odata',
@@ -46,7 +41,6 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
                 }
             }
         });
-
         this.startLoading();
     }
 
@@ -61,14 +55,6 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        if (this.keyPhrasesList) {
-            this.refreshkeyPhrasesCountDataSource();
-        }
-    }
-
-    onRowClick(event) {
-    }
-
-    onCellClick(event) {
+        this.refreshkeyPhrasesCountDataSource();
     }
 }

@@ -8,18 +8,18 @@
                 <div class="categories">
                     <ul class="nav nav-tabs nav-fill transactions-tabs">
                         <li class="nav-item">
-                            <a (click)="showClassify = !showClassify" class="nav-link" [ngClass]="{'active' : showClassify}">
+                            <a (click)="toggleTabContent = !toggleTabContent" class="nav-link" [ngClass]="{'active' : toggleTabContent}">
                                 {{l('ClassifyTransactions')}}
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a (click)="showClassify = !showClassify" class="nav-link" [ngClass]="{'active' : !showClassify}">
+                            <a (click)="toggleTabContent = !toggleTabContent" class="nav-link" [ngClass]="{'active' : !toggleTabContent}">
                                 {{l('Key Phrases')}}
                             </a>
                         </li>
                     </ul>
                     <categorization
-                        [hidden]="!showClassify"
+                        [hidden]="!toggleTabContent"
                         [width]="'340px'"
                         [height]="'calc(100vh - 300px)'"
                         [showTitle]="true"
@@ -40,7 +40,7 @@
                         [width]="'340px'"
                         [height]="'calc(100vh - 300px)'"
                         [filterItems]="filterItems"
-                        [hidden]="showClassify"
+                        [hidden]="toggleTabContent"
                         (close)="categoriesShowed = false">
                     </key-phrases>
                 </div>
