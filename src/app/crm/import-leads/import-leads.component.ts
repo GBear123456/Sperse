@@ -477,7 +477,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.rootComponent.overflowHidden(true);
 
         this.getStages();
-        this.partnerTypesLoad();
+        this.loadPartnerTypes();
 
         if (this.showedFinishStep())
             setTimeout(() => this.reset());
@@ -664,7 +664,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importWizardService.cancelImport();
     }
 
-    partnerTypesLoad() {
+    loadPartnerTypes() {
         this._partnerTypeServic.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {

@@ -175,7 +175,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.leadStagesLoad();
         }
         if (this.data.customerType == CustomerType.Partner ) {
-            this.partnerTypesLoad();
+            this.loadPartnerTypes();
         }
         this.initToolbarConfig();
     }
@@ -845,7 +845,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.stageId = event.id;
     }
 
-    partnerTypesLoad() {
+    loadPartnerTypes() {
         this._partnerTypeService.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {
