@@ -185,7 +185,7 @@
                         </div>
                     </div>
                     <ng-container></ng-container>
-                    <div class="row" *ngFor="let attr of transactionInfo?.attributes">
+                    <div class="row align-items-center" *ngFor="let attr of transactionInfo?.attributes">
                         <div class="col-3 text-right light-gray">{{transactionAttributeTypes[attr.typeId].name}}</div>
                         <div class="col-9">{{attr.value}}</div>
                     </div>
