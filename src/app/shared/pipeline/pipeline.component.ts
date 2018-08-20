@@ -45,7 +45,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._selectedLeads = leads;
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
-
+      
+    @Input() selectFields: string[];    
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
@@ -121,8 +122,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name];
+
         if (!dataSource)
-            dataSource = this._dataSources[stage.name] = new DataSource(this._dataSource);
+            dataSource = this._dataSources[stage.name] = 
+                new DataSource(_.extend(this._dataSource, {
+                    requireTotalCount: false,
+                    select: this.selectFields
+                }));
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =

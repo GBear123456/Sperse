@@ -13,51 +13,67 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        window.loginPageHandler = function(appConfig) {
-            return $.ajax({
-                url: '/assets/' + appConfig,
-                method: 'GET',
-            }).done(result => {
-                remoteServiceUrl = result.remoteServiceBaseUrl;
-                var cookie = queryString(document.cookie, ';');
-                var currentUrl = window.location.protocol + '//' + window.location.host;
-                if (result.appBaseUrl !== currentUrl) {
-                    $.ajax({
-                        url: remoteServiceUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=1',
-                        method: 'GET',
-                        headers: {
-                            'Accept-Language': cookie[AbpLocalizationCultureName]
-                        }
-                    }).done((tenantApiHostOutput) => {
-                        let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
+        window.loginPageHandler = function(appConfig) {}
 
-                        if (tenantApiHostOutput.apiHostName !== null) {
-                            remoteServiceUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.apiHostName;
-                        } else {
-                            remoteServiceUrl = result.remoteServiceBaseUrl;
-                        }
-
-                        getCurrentLoginInformations();
-                    });
-                } else {
-                    getCurrentLoginInformations();
-                }
-            });
-        };
         document.getElementById('loginPage').style.display = 'block';
         document.getElementById('loadSpinner').style.display = 'none';
         window.history.pushState("", "", '/account/login' + document.location.search);
+
+        getAppConfig();
+    }
+
+    function ajax(url, headers) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url);
+
+            for (var header in headers)
+                xhr.setRequestHeader(header, headers[header]);
+
+            xhr.onload = function() {
+                if (xhr.status === 200)
+                    resolve(JSON.parse(xhr.responseText));
+                else
+                    reject(xhr);
+            };
+            xhr.send();        
+        });
+    }
+
+    function getAppConfig() {
+        ajax('/assets/appconfig.json').then(function(result) {
+            remoteServiceUrl = result.remoteServiceBaseUrl;
+            var cookie = queryString(document.cookie, ';');
+            var currentUrl = window.location.protocol + '//' + window.location.host;
+            if (result.appBaseUrl !== currentUrl) {
+                ajax(remoteServiceUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=1',
+                    {
+                        'Accept-Language': cookie[AbpLocalizationCultureName]
+                    }
+                ).then((tenantApiHostOutput) => {
+                    let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
+
+                    if (tenantApiHostOutput.apiHostName !== null) {
+                        remoteServiceUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.apiHostName;
+                    } else {
+                        remoteServiceUrl = result.remoteServiceBaseUrl;
+                    }
+
+                    getCurrentLoginInformations();
+                });
+            } else {
+                getCurrentLoginInformations();
+            }
+        });
     }
 
     function getCurrentLoginInformations() {
-        $.ajax({
-            url: remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
-            method: 'GET',
-            headers: {
+        ajax(remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
+            {
                 "Content-Type": "application/json", 
                 "Accept": "application/json"                
             }
-        }).done((response) => {
+        ).then(function(response) {
             loginInformations = response && response.result;
             $('div.logo img').attr('src', 
                 loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
@@ -75,47 +91,6 @@
                 result[parts[0].trim()] = parts[1].trim();
         });
         return result;
-    }
-
-    window.authenticate = function() {
-        var params = queryString(document.location.search.substr(1), '&');
-        var cookie = queryString(document.cookie, ';');
-        var authenticateModel = JSON.stringify({
-            userNameOrEmailAddress: loginForm.elements['userNameOrEmailAddress'].value,
-            password: loginForm.elements['password'].value,
-            twoFactorRememberClientToken: cookie[TwoFactorRememberClientToken],
-            singleSignIn: params.ss,
-            returnUrl: params.returnUrl,
-            autoDetectTenancy: true
-        });
-        
-        abp.ui.setBusy();
-        $.ajax({
-            url: remoteServiceUrl + '/api/TokenAuth/Authenticate',
-            data: authenticateModel,
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json", 
-                "Accept": "application/json"                
-            },
-            error: function(request) {
-                abp.ui.clearBusy();
-                var response = JSON.parse(request.responseText);
-                if (response.error)
-                    abp.message.error(response.error.details, response.error.message);
-            }
-        }).done((response) => {
-            abp.ui.clearBusy();
-            if (response.result) {
-                handleAuthResult(response.result);
-                sessionStorage.setItem('authenticateResult',  
-                    JSON.stringify(response.result));
-                sessionStorage.setItem('authenticateModel', 
-                    authenticateModel);
-            }
-        });
-
-        return false;
     }
 
     function navigate(path, params) {
@@ -192,58 +167,101 @@
         }
     }
 
-    window.inputChanged = function() {
-        var login = loginForm.elements['userNameOrEmailAddress'];
-        var password = loginForm.elements['password'];
-        var button = loginForm.elements['submit'];
-        if (login.value && password.value)
-            button.removeAttribute('disabled');
-        else
-            button.setAttribute('disabled', '');
-    }
+    if (loginForm) {
+        loginForm.onsubmit = function() {      
+            var params = queryString(document.location.search.substr(1), '&');
+            var cookie = queryString(document.cookie, ';');
+            var authenticateModel = JSON.stringify({
+                userNameOrEmailAddress: loginForm.elements['userNameOrEmailAddress'].value,
+                password: loginForm.elements['password'].value,
+                twoFactorRememberClientToken: cookie[TwoFactorRememberClientToken],
+                singleSignIn: params.ss,
+                returnUrl: params.returnUrl,
+                autoDetectTenancy: true
+            });
+            
+            abp.ui.setBusy();
+            $.ajax({
+                url: remoteServiceUrl + '/api/TokenAuth/Authenticate',
+                data: authenticateModel,
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json", 
+                    "Accept": "application/json"                
+                },
+                error: function(request) {
+                    abp.ui.clearBusy();
+                    var response = JSON.parse(request.responseText);
+                    if (response.error)
+                        abp.message.error(response.error.details, response.error.message);
+                }
+            }).done((response) => {
+                abp.ui.clearBusy();
+                if (response.result) {
+                    handleAuthResult(response.result);
+                    sessionStorage.setItem('authenticateResult',  
+                        JSON.stringify(response.result));
+                    sessionStorage.setItem('authenticateModel', 
+                        authenticateModel);
+                }
+            });
 
-    window.addEventListener('DOMContentLoaded', function() {
-        let privacy = $('#privacy');
-        privacy.on('show.bs.modal', function() {
-            $(this)
-                .addClass('modal-scrollfix')
-                .find('.modal-body')
-                .html('loading...')
-                .load(remoteServiceUrl + '/docs/privacy.html', function() {
-                    privacy
-                        .removeClass('modal-scrollfix')
-                        .modal('handleUpdate');
-                });
-        });
-
-        let terms = $('#terms');
-        terms.on('show.bs.modal', function() {
-            $(this)
-                .addClass('modal-scrollfix')
-                .find('.modal-body')
-                .html('loading...')
-                .load(remoteServiceUrl + '/docs/terms.html', function() {
-                    terms
-                        .removeClass('modal-scrollfix')
-                        .modal('handleUpdate');
-                });
-        });
-
-        $('.print-this').on('click', function() {
-            printElement($('.print-this-section')[0]);
-        });
-
-        function printElement(elem) {
-            let domClone = elem.cloneNode(true);
-            let printSection = document.getElementById('printSection');
-            if (!printSection) {
-                printSection = document.createElement('div');
-                printSection.id = 'printSection';
-                document.body.appendChild(printSection);
-            }
-            printSection.innerHTML = '';
-            printSection.appendChild(domClone);
-            window.print();
+            return false;
         }
-    });
+
+        loginForm.onkeypress = loginForm.onchange = function() {
+            var login = loginForm.elements['userNameOrEmailAddress'];
+            var password = loginForm.elements['password'];
+            var button = loginForm.elements['submit'];
+            if (login.value && password.value)
+                button.removeAttribute('disabled');
+            else
+                button.setAttribute('disabled', '');
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            let privacy = $('#privacy');
+            privacy.on('show.bs.modal', function() {
+                $(this)
+                    .addClass('modal-scrollfix')
+                    .find('.modal-body')
+                    .html('loading...')
+                    .load(remoteServiceUrl + '/docs/privacy.html', function() {
+                        privacy
+                            .removeClass('modal-scrollfix')
+                            .modal('handleUpdate');
+                    });
+            });
+
+            let terms = $('#terms');
+            terms.on('show.bs.modal', function() {
+                $(this)
+                    .addClass('modal-scrollfix')
+                    .find('.modal-body')
+                    .html('loading...')
+                    .load(remoteServiceUrl + '/docs/terms.html', function() {
+                        terms
+                            .removeClass('modal-scrollfix')
+                            .modal('handleUpdate');
+                    });
+            });
+
+            $('.print-this').on('click', function() {
+                printElement($('.print-this-section')[0]);
+            });
+
+            function printElement(elem) {
+                let domClone = elem.cloneNode(true);
+                let printSection = document.getElementById('printSection');
+                if (!printSection) {
+                    printSection = document.createElement('div');
+                    printSection.id = 'printSection';
+                    document.body.appendChild(printSection);
+                }
+                printSection.innerHTML = '';
+                printSection.appendChild(domClone);
+                window.print();
+            }
+        });
+    }
 })();
