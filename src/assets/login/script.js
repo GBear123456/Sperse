@@ -220,34 +220,38 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            let privacy = $('#privacy');
-            privacy.on('show.bs.modal', function() {
-                $(this)
-                    .addClass('modal-scrollfix')
-                    .find('.modal-body')
-                    .html('loading...')
-                    .load(remoteServiceUrl + '/docs/privacy.html', function() {
-                        privacy
-                            .removeClass('modal-scrollfix')
-                            .modal('handleUpdate');
-                    });
-            });
+            $( document ).ready( function() {
+                $('.agree-rights').show();
 
-            let terms = $('#terms');
-            terms.on('show.bs.modal', function() {
-                $(this)
-                    .addClass('modal-scrollfix')
-                    .find('.modal-body')
-                    .html('loading...')
-                    .load(remoteServiceUrl + '/docs/terms.html', function() {
-                        terms
-                            .removeClass('modal-scrollfix')
-                            .modal('handleUpdate');
-                    });
-            });
+                var privacy = $('#privacy');
+                privacy.on('show.bs.modal', function() {
+                    $(this)
+                        .addClass('modal-scrollfix')
+                        .find('.modal-body')
+                        .html('loading...')
+                        .load(remoteServiceUrl + '/docs/privacy.html', function() {
+                            privacy
+                                .removeClass('modal-scrollfix')
+                                .modal('handleUpdate');
+                        });
+                });
 
-            $('.print-this').on('click', function() {
-                printElement($('.print-this-section')[0]);
+                var terms = $('#terms');
+                terms.on('show.bs.modal', function() {
+                    $(this)
+                        .addClass('modal-scrollfix')
+                        .find('.modal-body')
+                        .html('loading...')
+                        .load(remoteServiceUrl + '/docs/terms.html', function() {
+                            terms
+                                .removeClass('modal-scrollfix')
+                                .modal('handleUpdate');
+                        });
+                });
+
+                $('.print-this').on('click', function() {
+                    printElement($('.print-this-section')[0]);
+                });
             });
 
             function printElement(elem) {
