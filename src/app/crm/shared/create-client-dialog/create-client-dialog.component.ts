@@ -731,7 +731,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     setComponentToValid(field, type, reset = false) {
         let component = this[field + this.capitalize(type)];
         reset && component.reset();
-        setTimeout(() => component.option('isValid', true));
+        if (component.option)
+            setTimeout(() => component.option('isValid', true));
     }
 
     showUploadPhoto($event) {
@@ -768,7 +769,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     resetFullDialog() {
         this.contactTypes.forEach((type) => {
             this.resetComponent(this['emails' + this.capitalize(type)]);
-            this.resetComponent(this['phones' + this.capitalize(type)]);
+            this['phones' + this.capitalize(type)].reset();
             this.clearButtonVisible[type]['emails'] = false;
             this.clearButtonVisible[type]['phones'] = false;
             this.addButtonVisible[type]['emails'] = false;
@@ -776,7 +777,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts.emails[type] = [];
             this.contacts.phones[type] = [];
             this.emails[type] = [];
-            this.phones[type] = [];
             this.phoneExtension[type] = undefined;
             this.contacts.addresses[type] = {};
             this.notes[type] = undefined;

@@ -46,7 +46,9 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     }
 
     reset() {
-        this.phoneNumber = undefined;
+        this.phoneNumber = AppConsts.defaultCountryCode;
+        this.model.control.markAsPristine();
+        this.model.control.markAsUntouched();
     }
 
     ngOnInit() {
