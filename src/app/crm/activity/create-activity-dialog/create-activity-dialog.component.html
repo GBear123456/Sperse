@@ -50,7 +50,7 @@
                     [width]="'360px'"                   
                     [(value)]="data.appointment.StartDate">
                     <dx-validator>
-                      <dxi-validation-rule type="required" message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
+                      <dxi-validation-rule type="required" message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-date-box>
             </div>
@@ -63,7 +63,7 @@
                     [width]="'360px'"
                     [(value)]="data.appointment.EndDate">
                     <dx-validator>
-                      <dxi-validation-rule type="required" message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
+                      <dxi-validation-rule type="required" message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-date-box>
             </div>
