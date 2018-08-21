@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { DashboardService } from '../dashboard.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
 import * as moment from 'moment';
 
 @Component({
@@ -40,8 +39,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private _dashboardProxy: DashboardServiceProxy,
-        private _router: Router
+        private _dashboardProxy: DashboardServiceProxy
     ) {
         super(injector);
 

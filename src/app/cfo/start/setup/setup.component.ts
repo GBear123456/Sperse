@@ -1,5 +1,4 @@
 import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { finalize } from 'rxjs/operators';
@@ -26,7 +25,6 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
 
     constructor(injector: Injector,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private _router: Router,
         private _quovoService: QuovoService,
         private _syncService: SyncServiceProxy,
         public dialog: MatDialog

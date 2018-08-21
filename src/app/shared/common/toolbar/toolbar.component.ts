@@ -306,7 +306,7 @@ export class ToolBarComponent extends AppComponentBase {
                     link, item.options['width']);
                 link.onClick = (event) => {
                     if (item.name == 'select-box')
-                        $('.dx-dropdownmenu-button[select-caption' + (item.text ? '="' + item.text + ':"': '') + ']')
+                        $('.dx-dropdownmenu-button[select-caption' + (item.text ? '="' + item.text + ':"' : '') + ']')
                             .attr('select-value', event.itemData.text);
                     /** if each item has its own click handler - call it */
                     (link.action && link.action.call(this, this.getOptions() || event)) ||

@@ -627,7 +627,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    private partnerTypesLoad() {
+    private loadPartnerTypes() {
         this._partnerTypeService.getAll()
             .subscribe(list => {
                 this.partnerTypes = list.map((item) => {
@@ -674,7 +674,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
         this.showHostElement();
 
-        this.partnerTypesLoad();
+        this.loadPartnerTypes();
     }
 
     deactivate() {

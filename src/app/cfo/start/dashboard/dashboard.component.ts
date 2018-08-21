@@ -99,6 +99,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     activate() {
         this.bankAccountSelector.getBankAccounts();
         this.synchProgressComponent.requestSyncAjax();
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
+        this.rootComponent.overflowHidden();
     }
 
     openDialog() {

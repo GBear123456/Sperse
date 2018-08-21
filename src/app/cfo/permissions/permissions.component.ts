@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -87,7 +86,6 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         onRefresh: this.onRefresh.bind(this),
     };
     constructor(injector: Injector,
-                private _router: Router,
                 private userServiceProxy: UserServiceProxy,
                 private bankAccountsServiceProxy: BankAccountsServiceProxy,
                 private securityManagmentServiceProxy: SecurityManagementServiceProxy,
@@ -125,9 +123,9 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
                 this.syncAccounts = res[1];
                 this.bankAccountsUsers = res[2];
             },
-            e => { 
+            e => {
                 this.finishLoading(true);
-                this._router.navigate(['app/cfo/main/start']);                
+                this._router.navigate(['app/cfo/main/start']);
             },
             () => {
                 this.dataSource = new DataSource(

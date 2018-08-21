@@ -40,14 +40,14 @@ export class ImportWizardService {
         this.subjectCancel.asObservable().subscribe(callback);
     }
 
-    cancelImport() {  
+    cancelImport() {
         this.subjectCancel.next();
     }
 
     setupStatusCheck(importId, method = undefined, invalUri = undefined) {
         this.setupCheckTimeout((callback) => {
             this._importProxy.getStatus(importId).subscribe((res) => {
-                method && method(res);  
+                method && method(res);
                 let data = {
                      totalCount: res.totalCount,
                      importedCount: res.importedCount,
@@ -57,11 +57,11 @@ export class ImportWizardService {
                     invalUri && (<any>this._reuseService).invalidate(invalUri);
                     callback(_.extend(data, {progress: 100}));
                     this.activeImportId = undefined;
-                }    
+                }
                 if (<ImportStatus>res.statusId == ImportStatus.InProgress) {
                     this.activeImportId = importId;
                     callback(_.extend(data, {
-                        progress: Math.round(((res.importedCount || 0) + 
+                        progress: Math.round(((res.importedCount || 0) +
                             (res.failedCount || 0)) / res.totalCount * 100)
                     }));
                 }

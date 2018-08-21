@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Injector, Input, HostListener } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
@@ -136,8 +136,16 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     this.initCallback.call(this);
                 else
                     this.initCallback = Function();
-                this.chartWidth = this.getElementRef().nativeElement.clientWidth - 60;
+                this.chartWidth = this.getChartWidth();
             });
+    }
+
+    @HostListener('window:resize', ['$event']) onResize() {
+        this.chartWidth = this.getChartWidth();
+    }
+
+    getChartWidth() {
+        return this.getElementRef().nativeElement.clientWidth - 60;
     }
 
     /** Replace minus for the brackets */

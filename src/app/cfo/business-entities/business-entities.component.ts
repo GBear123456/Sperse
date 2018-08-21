@@ -1,6 +1,5 @@
 /** Core import s*/
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -36,8 +35,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        private _businessEntityService: BusinessEntityServiceProxy,
-        private _router: Router) {
+        private _businessEntityService: BusinessEntityServiceProxy) {
         super(injector);
         this.rootComponent = this.getRootComponent();
     }
