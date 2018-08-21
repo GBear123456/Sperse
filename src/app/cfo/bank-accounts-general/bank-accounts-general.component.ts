@@ -66,7 +66,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     }
 
     ngOnDestroy() {
-        this.rootComponent.overflowHidden();
+        if (this.rootComponent) {
+            this.rootComponent.overflowHidden();
+        }
         this.zendeskService.hideWidget();
     }
 

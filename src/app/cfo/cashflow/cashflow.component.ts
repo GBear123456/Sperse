@@ -1357,7 +1357,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e => {},
             () => {
                 if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
-                    this._appService.updateToolbar(null);
+                    if (this.componentIsActivated)
+                        this._appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
                     this.initToolbarConfig();
