@@ -16777,12 +16777,18 @@ export class PartnerTypeServiceProxy {
 
     /**
      * @id (optional) 
+     * @moveToTypeId (optional) 
+     * @deleteAllReferences (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined): Observable<void> {
+    delete(id: number | null | undefined, moveToTypeId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/PartnerType/Delete?";
         if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (moveToTypeId !== undefined)
+            url_ += "MoveToTypeId=" + encodeURIComponent("" + moveToTypeId) + "&"; 
+        if (deleteAllReferences !== undefined)
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
