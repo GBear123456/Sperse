@@ -163,7 +163,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let gridElm = this.reviewGrid.instance.element();
-            if (gridElm.getElementsByClassName('invalid').length) {
+            if (Object.keys(this.invalidRowKeys).length) {
                 let dialogData = { importAll: true };
                 this._dialog.open(ConfirmImportDialog, {
                     data: dialogData
@@ -173,16 +173,19 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                         records = records.length && records || this.reviewDataSource;
                         if (dialogData.importAll)
                             this.complete(records.map((row) => {
+                                let rowData = row;
                                 if (this.invalidRowKeys[row.uniqueIdent]) {
+                                    rowData = _.clone(row);
                                     this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
-                                        row[field] = null;
-                                    });
+                                        rowData[field] = undefined;
+                                    });                                    
                                 }
-                                return row;
-                            }));
+                                return rowData;
+                            }), dialogData.importAll);
                         else
-                            this.complete(records.filter((row) =>
-                                !this.invalidRowKeys[row.uniqueIdent]));
+                            this.complete(records.filter((row) => {
+                                return !this.invalidRowKeys[row.uniqueIdent];
+                            }), dialogData.importAll);
                     }
                 });
             } else
@@ -208,9 +211,15 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         });
     }
 
-    complete(rows = null) {
+    complete(rows = null, importAll = true) {
+        if (rows && !rows.length)
+            return this.message.info(this.l('Import_NoRecordsAvailable'));
+
         let data = rows || this.reviewGrid.instance.getSelectedRowsData();
-        this.onComplete.emit(data.length && data || this.reviewDataSource);
+        this.onComplete.emit({
+            records: data.length && data || this.reviewDataSource, 
+            importAll: importAll
+        });
     }
 
     showFinishStep() {
@@ -248,6 +257,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                             });
                             if (!this.checkDuplicate(row, data)) {
                                 this.checkSimilarGroups(data);
+                                this.validateRowFields(data);
                                 dataSource.push(data);
                             }
                         }
@@ -656,17 +666,28 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
             column.cellTemplate = field + 'Cell';
     }
 
+    validateRowFields(data) {
+        this.validateFieldList.forEach((fld) => {
+            Object.keys(data).forEach((field) => {
+                if (field.toLowerCase().includes(fld) && 
+                    !this.checkFieldValid(fld, {value: data[field]})
+                )
+                    this.addInvalidField(data.uniqueIdent, field);
+            })
+        });
+    }
+
+    addInvalidField(key, field) {
+        let invalidRowFields = this.invalidRowKeys[key];
+        if (invalidRowFields && invalidRowFields.indexOf(field) < 0)
+            invalidRowFields.push(field);
+        else
+            this.invalidRowKeys[key] = [field];
+    }
+
     checkFieldValid(field, dataCell) {
         let value = dataCell.value;
-        let isValid = !value || AppConsts.regexPatterns[field].test(value);
-        if (!isValid) {
-            if (this.invalidRowKeys[dataCell.key])
-                this.invalidRowKeys[dataCell.key].push(dataCell.column.dataField);
-            else
-                this.invalidRowKeys[dataCell.key] = [dataCell.column.dataField];
-        }
-
-        return isValid;
+        return !value || AppConsts.regexPatterns[field].test(value);
     }
 
     calculateDisplayValue(data) {

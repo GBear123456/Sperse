@@ -354,13 +354,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     complete(data) {
-        this.totalCount = data.length;
+        this.totalCount = data.records.length;
         this.message.confirm(
             this.l('LeadsImportComfirmation', [this.totalCount]),
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    let leadsInput = this.createLeadsInput(data);
+                    let leadsInput = this.createLeadsInput(data.records, data.importAll);
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
@@ -382,7 +382,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         );
     }
 
-    createLeadsInput(data: any[]): ImportInput {
+    createLeadsInput(data: any[], importAll: boolean = true): ImportInput {
         let result = ImportInput.fromJS({
             fileName: this.wizard.fileName,
             fileSize: this.wizard.fileOrigSize,
@@ -391,7 +391,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
-            partnerTypeId: this.selectedPartnerTypId
+            partnerTypeId: this.selectedPartnerTypId,
+            ingoreInvalidValues: importAll
         });
         result.items = [];
         result.lists = this.listsComponent.selectedItems;
