@@ -219,7 +219,7 @@
                 button.setAttribute('disabled', '');
         }
 
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('load', function() {
             $( document ).ready( function() {
                 $('.agree-rights').show();
 
