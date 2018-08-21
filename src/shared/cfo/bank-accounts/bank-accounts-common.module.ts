@@ -13,7 +13,9 @@ import {
     DxButtonModule,
     DxSwitchModule,
     DxTagBoxModule,
-    DxProgressBarModule
+    DxProgressBarModule,
+    DxValidatorModule,
+    DxValidationSummaryModule
 } from 'devextreme-angular';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -51,7 +53,9 @@ import { SynchProgressComponent } from './synch-progress/synch-progress.componen
         DxButtonModule,
         DxSwitchModule,
         DxTagBoxModule,
-        DxProgressBarModule
+        DxProgressBarModule,
+        DxValidatorModule,
+        DxValidationSummaryModule
     ],
     declarations: [
         BankAccountsComponent,

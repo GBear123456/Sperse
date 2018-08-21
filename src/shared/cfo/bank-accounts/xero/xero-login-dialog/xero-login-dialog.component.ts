@@ -44,6 +44,16 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
         this.popupVisible = false;
     }
 
+    onClick(event) {
+        let result = event.validationGroup.validate();
+        if (result.isValid) {
+            if (this.operationType === 'add')
+                this.connectToXero(event);
+            else
+                this.updateSyncAccount();
+        }
+    }
+
     connectToXero(e) {
         abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'));
         this._syncAccountServiceProxy.create(InstanceType[this.instanceType], this.instanceId,
