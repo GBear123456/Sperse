@@ -16675,8 +16675,8 @@ export class PartnerTypeServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    create(input: CreatePartnerTypeInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/PartnerType/Create";
+    rename(input: RenamePartnerTypeInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PartnerType/Rename";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -16691,11 +16691,11 @@ export class PartnerTypeServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
+            return this.processRename(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreate(<any>response_);
+                    return this.processRename(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -16704,59 +16704,7 @@ export class PartnerTypeServiceProxy {
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    update(input: UpdatePartnerTypeInfoInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/PartnerType/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdate(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdate(response: HttpResponseBase): Observable<void> {
+    protected processRename(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -46773,7 +46721,7 @@ export interface IPartnerInfoDto {
 
 export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
     partnerId!: number | undefined;
-    typeId!: number | undefined;
+    name!: string | undefined;
 
     constructor(data?: IUpdatePartnerTypeInput) {
         if (data) {
@@ -46787,7 +46735,7 @@ export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
     init(data?: any) {
         if (data) {
             this.partnerId = data["partnerId"];
-            this.typeId = data["typeId"];
+            this.name = data["name"];
         }
     }
 
@@ -46801,14 +46749,14 @@ export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["partnerId"] = this.partnerId;
-        data["typeId"] = this.typeId;
+        data["name"] = this.name;
         return data; 
     }
 }
 
 export interface IUpdatePartnerTypeInput {
     partnerId: number | undefined;
-    typeId: number | undefined;
+    name: string | undefined;
 }
 
 export class BulkUpdatePartnerTypeInput implements IBulkUpdatePartnerTypeInput {
@@ -47018,47 +46966,11 @@ export interface IPartnerTypeDto {
     name: string | undefined;
 }
 
-export class CreatePartnerTypeInput implements ICreatePartnerTypeInput {
-    name!: string;
-
-    constructor(data?: ICreatePartnerTypeInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CreatePartnerTypeInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreatePartnerTypeInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICreatePartnerTypeInput {
-    name: string;
-}
-
-export class UpdatePartnerTypeInfoInput implements IUpdatePartnerTypeInfoInput {
+export class RenamePartnerTypeInput implements IRenamePartnerTypeInput {
     id!: number | undefined;
     name!: string;
 
-    constructor(data?: IUpdatePartnerTypeInfoInput) {
+    constructor(data?: IRenamePartnerTypeInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -47074,9 +46986,9 @@ export class UpdatePartnerTypeInfoInput implements IUpdatePartnerTypeInfoInput {
         }
     }
 
-    static fromJS(data: any): UpdatePartnerTypeInfoInput {
+    static fromJS(data: any): RenamePartnerTypeInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdatePartnerTypeInfoInput();
+        let result = new RenamePartnerTypeInput();
         result.init(data);
         return result;
     }
@@ -47089,7 +47001,7 @@ export class UpdatePartnerTypeInfoInput implements IUpdatePartnerTypeInfoInput {
     }
 }
 
-export interface IUpdatePartnerTypeInfoInput {
+export interface IRenamePartnerTypeInput {
     id: number | undefined;
     name: string;
 }

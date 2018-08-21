@@ -104,18 +104,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     calculateChartsScrolableHeight() {
-        let contentHeight = $('.list-of-synch-accounts').height();
-        if (contentHeight < 230) {
-            return 200;
-        } else if (contentHeight < 300) {
-            return 230;
-        } else if (contentHeight < 400) {
-            return 330;
-        } else if (contentHeight < 500) {
-            return 430;
-        } else {
-            return 550;
-        }
+        return document.querySelector('.scroll-zone').clientHeight;
     }
 
     toggleComponent() {
