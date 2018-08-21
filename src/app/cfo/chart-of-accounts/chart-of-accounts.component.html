@@ -3,7 +3,7 @@
     <div class="content-wrap">
         <setup-steps SelectedStepIndex="2"></setup-steps>
         <div class="grid-wrapper">
-            <categorization [width]="'calc(100vw - 685px)'"
+            <categorization [width]="'calc(100vw - 744px)'"
                             [height]="'calc(100vh - 218px)'"
                             [showTitle]="false"
                             [showHeader]="true"
@@ -16,21 +16,34 @@
             </categorization>
         </div>
         <div class="right-actions">
-            <p *ngIf="ActionTitle" class="title">{{ActionTitle}}</p>
-            <div class="file" *ngIf="isInstanceAdmin">
-                <label class="file-upload links">
-                    + Upload file
-                    <input type="file" (change)="uploadExcel($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="+ Upload file" class="no-display" />
-                </label>
+            <div>
+                <p class="title">{{l('CustomCharts_Title')}}</p>
+                <div class="links-wrap" *ngIf="isInstanceAdmin">
+                    <i class="arrow-icon"></i>
+                    <import-quick-book-button (onClose)="refreshCategories()"></import-quick-book-button>
+                </div>
+                <hr style="width: calc(100% - 70px); margin-left: 70px;"/>
+                <div class="links-wrap">
+                    <i class="arrow-icon"></i>
+                    <import-xero-chart-of-accounts-button (onComplete)="refresh()"></import-xero-chart-of-accounts-button>
+                </div>
             </div>
-            <div class="links-wrap" (click)="downloadExcel()">
-                <p class="links">Download Excel template </p>
-            </div>
-            <div class="links-wrap" *ngIf="isInstanceAdmin">
-                <import-quick-book-button (onClose)="refreshCategories()"></import-quick-book-button>
-            </div>
-            <div class="links-wrap">
-                <import-xero-chart-of-accounts-button (onComplete)="refresh()"></import-xero-chart-of-accounts-button>
+
+            <div>
+                <div class="text-center" (click)="downloadExcel()">
+                    <p class="links">
+                        {{l('CustomCharts_DownloadExcel')}}
+                    </p>
+                </div>
+                <div class="file" *ngIf="isInstanceAdmin">
+                    <label class="file-upload links">
+                        + {{l('CustomCharts_UploadFile')}}
+                        <input type="file" (change)="uploadExcel($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="+ Upload file" class="no-display" />
+                    </label>
+                </div>
+                <div class="info-text">
+                    {{l('CustomCharts_InfoText')}}
+                </div>
             </div>
         </div>
 

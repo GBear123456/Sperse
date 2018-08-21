@@ -801,6 +801,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.tagsComponent.reset();
         this.listsComponent.reset();
         this.userAssignmentComponent.reset();
+        this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
+        this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
         this.partnerTypeId = undefined;
     }
 
