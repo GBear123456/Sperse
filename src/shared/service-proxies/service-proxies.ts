@@ -46721,7 +46721,7 @@ export interface IPartnerInfoDto {
 
 export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
     partnerId!: number | undefined;
-    name!: string | undefined;
+    typeName!: string | undefined;
 
     constructor(data?: IUpdatePartnerTypeInput) {
         if (data) {
@@ -46735,7 +46735,7 @@ export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
     init(data?: any) {
         if (data) {
             this.partnerId = data["partnerId"];
-            this.name = data["name"];
+            this.typeName = data["typeName"];
         }
     }
 
@@ -46749,19 +46749,19 @@ export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["partnerId"] = this.partnerId;
-        data["name"] = this.name;
+        data["typeName"] = this.typeName;
         return data; 
     }
 }
 
 export interface IUpdatePartnerTypeInput {
     partnerId: number | undefined;
-    name: string | undefined;
+    typeName: string | undefined;
 }
 
 export class BulkUpdatePartnerTypeInput implements IBulkUpdatePartnerTypeInput {
     partnerIds!: number[];
-    typeId!: number | undefined;
+    typeName!: string | undefined;
 
     constructor(data?: IBulkUpdatePartnerTypeInput) {
         if (data) {
@@ -46782,7 +46782,7 @@ export class BulkUpdatePartnerTypeInput implements IBulkUpdatePartnerTypeInput {
                 for (let item of data["partnerIds"])
                     this.partnerIds.push(item);
             }
-            this.typeId = data["typeId"];
+            this.typeName = data["typeName"];
         }
     }
 
@@ -46800,14 +46800,14 @@ export class BulkUpdatePartnerTypeInput implements IBulkUpdatePartnerTypeInput {
             for (let item of this.partnerIds)
                 data["partnerIds"].push(item);
         }
-        data["typeId"] = this.typeId;
+        data["typeName"] = this.typeName;
         return data; 
     }
 }
 
 export interface IBulkUpdatePartnerTypeInput {
     partnerIds: number[];
-    typeId: number | undefined;
+    typeName: string | undefined;
 }
 
 export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
