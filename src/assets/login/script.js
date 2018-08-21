@@ -75,11 +75,14 @@
             }
         ).then(function(response) {
             loginInformations = response && response.result;
-            $('div.logo img').attr('src', 
-                loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
-                remoteServiceUrl + '/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
-                '/assets/common/images/app-logo-on-dark.png'
-            ).show();
+            if (window['logoImage']) {
+                logoImage.setAttribute('src', 
+                    loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
+                    remoteServiceUrl + '/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
+                    '/assets/common/images/app-logo-on-dark.png'
+                );
+                logoImage.style.display = 'block';
+            }
         });
     }
 
