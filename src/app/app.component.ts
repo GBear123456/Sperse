@@ -42,14 +42,15 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appSessionService.tenantId > 0 &&
+        return false && this._appSessionService.tenantId > 0 &&
             (this._appSessionService.tenant.isInTrialPeriod ||
                 this.subscriptionIsExpiringSoon());
     }
 
     subscriptionIsExpiringSoon(): boolean {
         if (this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
+            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') 
+                >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
         return false;
     }

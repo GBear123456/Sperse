@@ -153,8 +153,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.searchValue = '';
     }
 
+    private isActivated() {
+        return this.subRouteParams && !this.subRouteParams.closed;
+    }
+
     private paramsSubscribe() {
-        if (!this.subRouteParams || this.subRouteParams.closed)
+        if (!this.isActivated())
             this.subRouteParams = this._route.queryParams.subscribe(params => {
                 if (params['dataLayoutType']) {
                     let dataLayoutType = params['dataLayoutType'];
@@ -370,7 +374,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.isActivated() && this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
