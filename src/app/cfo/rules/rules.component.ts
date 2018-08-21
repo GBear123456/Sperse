@@ -42,7 +42,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         names: [this.l('Manage rules')],
         iconSrc: 'assets/common/icons/manage-icon.svg',
         buttons: []
-    };;
+    };
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -99,8 +99,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     refreshList() {
+        this.startLoading();
         this._ClassificationService.getRules(InstanceType[this.instanceType], this.instanceId, null)
             .subscribe(result => {
+                this.finishLoading();
                 this.ruleTreeListDataSource = new DataSource({
                     store: {
                         key: 'id',
@@ -112,7 +114,11 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     fullscreen() {
-        this.toggleFullscreen(document.body);
+        this.toggleFullscreen(document.documentElement);
+        setTimeout(() => {
+            if (this.treeList && this.treeList.instance)
+                this.treeList.instance.repaint();
+        }, 100);
     }
 
     onEditingStart(e) {

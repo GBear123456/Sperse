@@ -4,8 +4,9 @@
     </app-headline>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <dx-tree-list height="calc(100vh - 210px)"
-                          [hoverStateEnabled]="true"
+            <dx-tree-list height="100%" 
+                          [noDataText]="''"
+                          [hoverStateEnabled]="true"                          
                           [dataSource]="ruleTreeListDataSource"
                           [sorting]="{mode: 'none'}"
                           [selection]="{allowSelectAll: false, mode: 'none'}"
