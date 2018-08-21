@@ -31,7 +31,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
-    ActionTitle = 'CUSTOM CHART';
 
     constructor(injector: Injector,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
