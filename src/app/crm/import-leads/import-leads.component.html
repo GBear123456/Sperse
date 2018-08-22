@@ -1,5 +1,5 @@
 <div [@routerTransition] class="import-wrapper">
-    <left-menu [hidden]="wizard?.stepper?.selectedIndex !== wizard?.UPLOAD_STEP_INDEX"></left-menu>
+    <left-menu [hidden]="hideLeftMenu"></left-menu>
     <import-wizard
         [title]="l('Import leads')"
         icon="icon-globe"
@@ -10,11 +10,12 @@
         [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
         [validateFieldsMapping]="validateFieldsMapping"
         [toolbarConfig]="toolbarConfig"
+        (onSelectionChanged)="onStepChanged($event)"
         (onComplete)="complete($event)"
         (onCancel)="cancel()">
 
         <div class="success">
-            <div *ngIf="importWizardService.activeImportId">
+            <div *ngIf="importStatus == importStatuses.InProgress">
                 <h1>{{l('ImportProgressHeader')}}</h1>
                 <p>{{l('Total')}}: {{totalCount}}</p>
                 <p>{{l('Imported')}}: {{importedCount}}</p>
@@ -24,11 +25,16 @@
                 <button class="button-layout button-default" (click)="cancelImport()">{{l('CancelImport')}}</button>
             </div>
 
-            <div *ngIf="!importWizardService.activeImportId">
-                <h1>{{l('ImportedLeadsHeader', importedCount, totalCount, l(this.importType.toString() + 's').toLowerCase())}}</h1>
+            <div *ngIf="importStatus == importStatuses.Completed">
+                <h1>{{ l('ImportedLeadsHeader', importedCount, totalCount, l(importType.toString() + 's').toLowerCase()) }}</h1>
                 <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
                 <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
                 <button class="button-layout button-default" (click)="cancel()">{{l('GoToDashboard')}}</button>
+            </div>
+
+            <div *ngIf="importStatus == importStatuses.New">
+                <h1>{{l('PendingLeadsHeader')}}</h1>
+                <button class="button-layout button-primary" (click)="navigateToList()">{{l('ViewAllImports')}}</button>
             </div>
         </div>
     </import-wizard>
@@ -36,7 +42,7 @@
 
 <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [selectedItemKey]="userId" [bulkUpdateMode]="true"
                           [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
-<crm-static-list
+<crm-static-list #stagesList
     [width]="'210px'"
     [highlightSelected]="true"
     [showConfirmation]="false"
@@ -44,10 +50,24 @@
     [selectedKeys]="selectedClientKeys"
     [targetSelector]="'[aria-label=Stage]'"
     [hideButtons]="true"
-    [disableWonLost]="true"
+    [disableHindmost]="true"
+    [funnelStyling]="true"
     (onItemSelected)="onStagesChanged($event)"
     [list]="leadStages">
 </crm-static-list>
+<!--<crm-static-list #partnerTypesList-->
+    <!--[width]="'210px'"-->
+    <!--[highlightSelected]="true"-->
+    <!--[title]="l('PartnerType')"-->
+    <!--[selectedKeys]="[selectedPartnerTypId]"-->
+    <!--[showConfirmation]="false"-->
+    <!--[hideButtons]="true"-->
+    <!--[highlightSelected]="true"-->
+    <!--[targetSelector]="'[accessKey=PartnerType]'"-->
+    <!--(onItemSelected)="onPartnerTypeChanged($event)"-->
+    <!--[list]="partnerTypes">-->
+<!--</crm-static-list>-->
+<crm-types-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
 <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
 <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></crm-tags-list>
 <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></crm-rating>

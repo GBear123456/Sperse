@@ -1,17 +1,20 @@
+/** Core imports */
 import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 
+/** Third party imports */
+import { Router } from '@angular/router';
+import DataSource from 'devextreme/data/data_source';
+import { DragulaService } from 'ng2-dragula';
+import * as moment from 'moment';
+import * as _ from 'lodash';
+
+/** Application imports */
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { AppComponentBase } from '@shared/common/app-component-base';
+
+import { PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
-import { DragulaService } from 'ng2-dragula';
-import { Router } from '@angular/router';
-
-import * as _ from 'lodash';
-import * as moment from 'moment';
-
-import DataSource from 'devextreme/data/data_source';
 
 @Component({
     selector: 'app-pipeline',
@@ -24,6 +27,7 @@ import DataSource from 'devextreme/data/data_source';
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
 
     private _selectedLeads: any;
     private _dataSource: any;
@@ -41,7 +45,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._selectedLeads = leads;
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
-
+      
+    @Input() selectFields: string[];    
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
@@ -88,7 +93,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             !quiet && this.onStagesLoaded.emit(result);
                         }
                         if (this._dataSource)
-                            this.loadStagesLeads(0, stageId && _.findIndex(this.stages, 
+                            this.loadStagesLeads(0, stageId && _.findIndex(this.stages,
                                 (obj) => {return obj.id == stageId}), Boolean(stageId));
 
                         this.refreshTimeout = null;
@@ -117,13 +122,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name];
+
         if (!dataSource)
-            dataSource = this._dataSources[stage.name] = new DataSource(this._dataSource);
+            dataSource = this._dataSources[stage.name] = 
+                new DataSource(_.extend(this._dataSource, {
+                    //requireTotalCount: false,
+                    select: this.selectFields
+                }));
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
-            this.getODataURL(this._dataSource.uri,
-                this.queryWithSearch.concat({or: [{StageId: stage.id}]}));
+            this.getODataUrl(this._dataSource.uri,
+                this.queryWithSearch.concat({and: [
+                    _.extend({StageId: stage.id}, this._dataSource.customFilter)
+                ]}
+            )
+        );
         dataSource.sort({getter: 'Id', desc: true});
         dataSource.pageIndex(page);
         dataSource.load().done((leads) => {
@@ -331,7 +345,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     deselectAllCards() {
         let elements = this.getSelectedCards();
-        while(elements.length){
+        while (elements.length){
             this.setCardSelection(elements[0], false);
         }
     }
@@ -341,7 +355,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.shiftStartLead = null;
     }
 
-    onCardClick(lead, event) {
+    onCardClickInternal(lead, event) {
         let clickedOnCheckbox = event.target.classList.contains('dx-checkbox-icon');
         if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
             let checkedCard = this.highlightSelectedCard(event);
@@ -350,17 +364,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(lead, checkedCard);
             this.selectedLeads = this.getSelectedLeads();
-        } else {
-            if (lead.CustomerId && lead.Id)
-              lead && this._router.navigate(
-                  ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
-                      queryParams: {
-                          referrer: 'app/crm/leads',
-                          dataLayoutType: DataLayoutType.Pipeline
-                      }
-                  }
-              );
-        }
+        } else
+            this.onCardClick.emit(lead);
         this.hideStageHighlighting();
     }
 }

@@ -10,14 +10,18 @@
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
                 [resources]="resources"
-                [currentView]="currentView"
-                [currentDate]="currentDate"
-                [showAllDayPanel]="false"
-                (onContentReady)="onOptionChanged($event)"
-                (onAppointmentAdding)="onAppointmentAdding($event)"
-                (onAppointmentUpdating)="onAppointmentUpdating($event)"
-                (onAppointmentDeleting)="onAppointmentDeleting($event)"
-            ></dx-scheduler>
+                [timeZone]="''"
+                [(currentView)]="currentView"
+                [(currentDate)]="currentDate"
+                [showAllDayPanel]="true"
+                [textExpr]="'Title'"
+                [startDateExpr]="'StartDate'"
+                [endDateExpr]="'EndDate'"        
+                [remoteFiltering]="false"
+                [descriptionExpr]="'Description'"
+                (onContentReady)="onContentReady($event)"
+                (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
+            </dx-scheduler>
     
         </div>
     </div>
@@ -26,11 +30,13 @@
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
+                    <!-- [selectFields]="['Title', 'Description', 'StartDate', 'EndDate', 'StageId']" -->
                     <app-pipeline
-                        [dataSource]="pipelineDataSource"
+                        [dataSource]="pipelineDataSource"                        
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
-                        (onStagesLoaded)="onStagesLoaded($event)">
+                        (onStagesLoaded)="onStagesLoaded($event)"
+                        (onCardClick)="showActivityDialog($event)">
                         Loading...
                     </app-pipeline>
                 </div>

@@ -1,6 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, Output, Input, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
 
 /** Third party libraries */
 import * as moment from 'moment';
@@ -20,7 +19,6 @@ import { DashboardService } from '../dashboard.service';
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
     @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
-    //@Input() waitForBankAccounts = false;
 
     accountsData: any;
     bankAccountIds: number[] = [];
@@ -47,14 +45,13 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         injector: Injector,
         private _dashboardService: DashboardService,
         private _dashboardProxy: DashboardServiceProxy,
-        private _router: Router,
         bankAccountsService: BankAccountsService
     ) {
         super(injector);
 
         this.endDate = moment().utc().startOf('day');
 
-        _dashboardService.subscribePeriodChange(
+        this._dashboardService.subscribePeriodChange(
             this.onDailyStatsPeriodChanged.bind(this));
 
         this.bankAccountsService = bankAccountsService;

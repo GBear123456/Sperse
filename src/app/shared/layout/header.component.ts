@@ -128,10 +128,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this._sessionService.getCurrentLoginInformations()
-            .subscribe((result: GetCurrentLoginInformationsOutput) => {
-                this.tenant = result.tenant;
-            });
+        this.tenant = this.appSession.tenant;
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
@@ -197,7 +194,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
+        return false;
+        //return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
     }
 
     subscriptionIsExpiringSoon(): boolean {

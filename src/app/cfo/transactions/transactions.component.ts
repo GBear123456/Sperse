@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
@@ -8,16 +7,16 @@ import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { Subject, Subscription, forkJoin } from 'rxjs';
-import { first, switchMap, skipWhile } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
-import { AppConsts } from '@shared/AppConsts';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     TransactionsServiceProxy,
     InstanceType,
@@ -136,136 +135,136 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
-            {
-                location: 'before', items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            this.filtersService.fixed =
-                                !this.filtersService.fixed;
-                            if (this.filtersService.fixed)
-                                this.categoriesShowed = false;
-                            else
-                                this.categoriesShowed =
-                                    this._categoriesShowedBefore;
-                            this.filtersService.enable();
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this.filtersService.fixed;
-                            },
-                            mouseover: (event) => {
+        if (this.componentIsActivated) {
+            this._appService.updateToolbar([
+                {
+                    location: 'before', items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                this.filtersService.fixed =
+                                    !this.filtersService.fixed;
+                                if (this.filtersService.fixed)
+                                    this.categoriesShowed = false;
+                                else
+                                    this.categoriesShowed =
+                                        this._categoriesShowedBefore;
                                 this.filtersService.enable();
                             },
-                            mouseout: (event) => {
-                                if (!this.filtersService.fixed)
-                                    this.filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this.filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            value: this.searchValue,
-                            width: '279',
-                            mode: 'search',
-                            placeholder: this.l('Search') + ' '
-                            + this.l('Transactions').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
+                            options: {
+                                checkPressed: () => {
+                                    return this.filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this.filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this.filtersService.fixed)
+                                        this.filtersService.disable();
+                                }
+                            },
+                            attr: {
+                                'filter-selected': this.filtersService.hasFilterSelected
                             }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'searchAll',
-                        action: this.searchAllClick.bind(this),
-                        options: {
-                            text: this.l('Search All'),
-                            adaptive: false
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'search',
+                            widget: 'dxTextBox',
+                            options: {
+                                value: this.searchValue,
+                                width: '279',
+                                mode: 'search',
+                                placeholder: this.l('Search') + ' '
+                                + this.l('Transactions').toLowerCase(),
+                                onValueChanged: (e) => {
+                                    this.searchValueChange(e);
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'searchAll',
+                            action: this.searchAllClick.bind(this),
+                            options: {
+                                text: this.l('Search All'),
+                                adaptive: false
+                            },
+                            attr: {
+                                'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
+                                'custaccesskey': 'search-container'
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'bankAccountSelect',
+                            widget: 'dxButton',
+                            action: this.toggleBankAccountTooltip.bind(this),
+                            options: {
+                                id: 'bankAccountSelect',
+                                text: this.l('Accounts'),
+                                icon: 'assets/common/icons/accounts.svg'
+                            },
+                            attr: {
+                                'custaccesskey': 'bankAccountSelect',
+                                'accountCount': this.bankAccountCount
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'after', items: [
+                        {name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this)},
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [{
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                }, {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                }, {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                }, {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                }, {type: 'downloadOptions'}]
+                            }
                         },
-                        attr: {
-                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey) ) ? true : false,
-                            'custaccesskey': 'search-container'
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'bankAccountSelect',
-                        widget: 'dxButton',
-                        action: this.toggleBankAccountTooltip.bind(this),
-                        options: {
-                            id: 'bankAccountSelect',
-                            text: this.l('Accounts'),
-                            icon: 'assets/common/icons/accounts.svg'
-                        },
-                        attr: {
-                            'custaccesskey': 'bankAccountSelect',
-                            'accountCount': this.bankAccountCount
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after', items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
-                        }
-                    },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
-                ]
-            }
-        ];
+                        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+                    ]
+                }
+            ]);
+        }
     }
 
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _appService: AppService,
-        private _activatedRoute: ActivatedRoute,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService,
-        private _bankAccountsService: BankAccountsService,
-        private _router: Router
+        private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
 
@@ -328,7 +327,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         debitClassifiedCount++;
                 }
             });
-            this.bankAccounts = _.uniq(bankAccounts);
+            setTimeout(() => { this.bankAccounts = _.uniq(bankAccounts); });
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -348,11 +347,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = totals[0].debitTotal;
                 this.debitTransactionCount = totals[0].debitCount;
                 this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
-                if (totals[0].bankAccounts) {
-                    this.bankAccounts = totals[0].bankAccounts;
-                } else {
-                    this.bankAccounts = [];
-                }
+                setTimeout(() => {
+                    if (totals[0].bankAccounts) {
+                        this.bankAccounts = totals[0].bankAccounts;
+                    } else {
+                        this.bankAccounts = [];
+                    }
+                });
 
                 this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
                 this.adjustmentTotal = totals[0].adjustmentTotal;
@@ -366,7 +367,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.debitTransactionTotal = 0;
                 this.debitTransactionCount = 0;
 
-                this.bankAccounts = [];
+                setTimeout(() => { this.bankAccounts = []; });
 
                 this.transactionTotal = 0;
                 this.transactionCount = 0;
@@ -479,8 +480,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -490,8 +491,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.totalDataSource = new DataSource({
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.totalDataSourceURI),
-                version: this.getODataVersion(),
+                url: this.getODataUrl(this.totalDataSourceURI),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -607,7 +608,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     //items: { BusinessEntity: '' }
                 })
             ];
-            this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
+            this.filtersService.setup(this.filters, this._route.snapshot.queryParams, false);
             this.initFiltering();
             /** After selected accounts change */
             this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
@@ -674,8 +675,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
-        let filterQuery = this.processODataFilter(this.dataGrid.instance,
-            this.dataSourceURI, this.cashFlowCategoryFilter.concat(this.filters),
+        let filterQuery = this.processODataFilter(
+            this.dataGrid.instance,
+            this.dataSourceURI,
+            this.cashFlowCategoryFilter.concat(this.filters),
             (filter) => {
                 if (filter.caption && filter.caption.toLowerCase() === 'account') {
                     /** apply filter on top */
@@ -691,7 +694,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
 
         this.filterItems = filterQuery;
-        this.totalDataSource['_store']['_url'] = this.getODataURL(this.totalDataSourceURI, filterQuery);
+        this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
         this.totalDataSource.load();
 
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
@@ -1055,7 +1058,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
@@ -1085,7 +1088,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     deactivate() {
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

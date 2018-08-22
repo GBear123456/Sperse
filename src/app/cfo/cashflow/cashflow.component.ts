@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -784,8 +783,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _calculatorService: CalculatorService,
                 private _cellsCopyingService: CellsCopyingService,
                 private cashflowService: CashflowService,
-                private _bankAccountsService: BankAccountsService,
-                private _router: Router
+                private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
         this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
@@ -983,7 +981,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.closeTransactionsDetail();
             this.filteredLoad = true;
             this.loadGridDataSource();
-            this.operations.initToolbarConfig();
+            this.initToolbarConfig();
         });
         /** Repaint pivot grid after closing the filter modal */
         this._filtersService.subjectFilterDisable.subscribe(e => {
@@ -992,6 +990,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 1000
             );
         });
+    }
+
+    initToolbarConfig() {
+        if (this.componentIsActivated) {
+            this.operations.initToolbarConfig();
+        }
     }
 
     /**
@@ -1377,10 +1381,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e => {},
             () => {
                 if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
-                    this._appService.toolbarIsHidden = true;
+                    if (this.componentIsActivated)
+                        this._appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
-                    this._appService.toolbarIsHidden = false;
+                    this.initToolbarConfig();
                     this.dataSource = this.getApiDataSource();
 
                     /** Init footer toolbar with the gathered data from the previous requests */
@@ -5704,7 +5709,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     activate() {
         this._filtersService.localizationSourceName = this.localizationSourceName;
-        this.operations.initToolbarConfig();
+        this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
         this.pivotGrid.instance.repaint();
@@ -5724,7 +5729,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     deactivate() {
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
     }

@@ -53,18 +53,10 @@
 
     <div *ngIf="data.field == 'phoneNumber'">
       <label>{{l('Phone')}}</label>
-      <dx-text-box      
-        name="phone"
-        [disabled]="!isEditAllowed"
-        mask="{{masks.phone}}"
-        maskInvalidMessage="{{l('PhoneValidationError')}}"
-        [(value)]="data.phoneNumber"
-        (onFocusIn)="focusInput($event)">
-        <dx-validator>
-          <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
-        </dx-validator>
-      </dx-text-box><br>
+      <country-phone-number [(phoneNumber)]="data.phoneNumber" #countryPhoneNumber></country-phone-number>
+    </div>
 
+    <div *ngIf="data.field == 'phoneNumber'">
       <label>{{l('Extension')}}</label>
       <dx-number-box
         name="phoneExtension"

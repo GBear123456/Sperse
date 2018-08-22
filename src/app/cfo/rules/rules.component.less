@@ -1,15 +1,18 @@
 :host {
+    display: block;
     position: relative;
     top: 75px;
 
     &.fullscreen {
-        top: -75px !important;
-        dx-tree-list {
+        top: 0px !important;
+        .portlet-body {
+            margin: 0px !important;
             height: calc(~"100vh - 61px")!important;
         }
     }
     .portlet-body {
         margin: 0px 42px;
+        height: calc(~"100vh - 210px");
     }
     /deep/ dx-tree-list {
         .dx-treelist-header-panel {

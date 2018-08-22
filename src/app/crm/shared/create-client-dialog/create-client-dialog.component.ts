@@ -1,43 +1,49 @@
+/** Core imports */
 import { Component, OnInit, ViewChild, Injector, OnDestroy } from '@angular/core';
-import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
-    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
-    PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
-
-import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes, CustomerType } from '@shared/AppEnums';
-import { DxContextMenuComponent } from 'devextreme-angular';
 import { Router } from '@angular/router';
 
+/** Third party imports */
 import { MatDialog } from '@angular/material';
-import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
+import { DxContextMenuComponent } from 'devextreme-angular';
+import { CacheService } from 'ng2-cache-service';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { AppConsts } from '@shared/AppConsts';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { ContactTypes, CustomerType } from '@shared/AppEnums';
+import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
+CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
+ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
+PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { RatingComponent } from '../rating/rating.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
+import { TypesListComponent } from '../types-list/types-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-
-import { CacheService } from 'ng2-cache-service';
-import * as _ from 'underscore';
-import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
-import { finalize } from 'rxjs/operators';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, LeadServiceProxy, PartnerServiceProxy ]
+    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy,
+        PartnerServiceProxy, PartnerTypeServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
+    //@ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
@@ -54,7 +60,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
-    partnerTypes: any[] = [];
+    //partnerTypes: any[] = [];
     partnerTypeId: number;
 
     saveButtonId: string = 'saveClientOptions';
@@ -140,7 +146,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _cacheService: CacheService,
         private _countryService: CountryServiceProxy,
         private _customersService: CustomersServiceProxy,
-        private _photoUploadService: ContactPhotoServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -148,7 +153,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _router: Router,
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
-        private _partnerService: PartnerServiceProxy
+        private _partnerService: PartnerServiceProxy,
+        private _partnerTypeService: PartnerTypeServiceProxy,
+        private dialogService: DialogService
     ) {
         super(injector);
 
@@ -169,9 +176,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode) {
             this.leadStagesLoad();
         }
-        if (this.data.customerType == CustomerType.Partner ) {
-            this.partnerTypesLoad();
-        }
+        // if (this.data.customerType == CustomerType.Partner ) {
+        //     this.loadPartnerTypes();
+        // }
         this.initToolbarConfig();
     }
 
@@ -486,7 +493,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getDialogPossition(event, shiftX) {
-        return this.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {
@@ -655,23 +662,23 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getValidateFieldValue(field, type) {
         let value;
-        if (field == 'emails')
+        if (field == 'emails') {
             value = {
                 type: this.emailType[type],
                 email: this.emails[type]
             };
-        else if (field == 'phones') {
+            this.resetComponent(this[field + this.capitalize(type)]);
+        } else if (field == 'phones') {
             value = {
                 type: this.phoneType[type],
                 number: this.phones[type],
                 ext: this.phoneExtension[type]
             };
             this.phoneExtension[type] = undefined;
+            this[field + this.capitalize(type)].reset();
         }
 
-        this.resetComponent(this[field + this.capitalize(type)]);
         this.addButtonVisible[type][field] = false;
-
         return value;
     }
 
@@ -682,10 +689,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     validateEmailAddress(value): boolean {
         return this.emailRegEx.test(value);
-    }
-
-    validatePhoneNumber(value): boolean {
-        return this.phoneRegEx.test(value);
     }
 
     onTypeChanged($event, field, type) {
@@ -700,13 +703,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator].push($event.component);
     }
 
-    onKeyUp($event, field, type, data) {
+    onEmailKeyUp($event, type) {
+        let field = 'emails';
         let value = this.getInputElementValue($event);
-        this.addButtonVisible[type][field] = field == 'emails' ?
-            this.validateEmailAddress(value): this.validatePhoneNumber(value);
+        this.addButtonVisible[type][field] = this.validateEmailAddress(value);
 
-        data[type] = value;
+        this.emails[type] = value;
 
+        this.checkSimilarCustomers();
+        this.clearButtonVisible[type][field] = value
+            && !this.addButtonVisible[type][field];
+    }
+
+    onPhoneKeyUp(value, isValid, type) {
+        let field = 'phones';
+        this.addButtonVisible[type][field] = isValid;
         this.checkSimilarCustomers();
         this.clearButtonVisible[type][field] = value
             && !this.addButtonVisible[type][field];
@@ -724,7 +735,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     setComponentToValid(field, type, reset = false) {
         let component = this[field + this.capitalize(type)];
         reset && component.reset();
-        setTimeout(() => component.option('isValid', true));
+        if (component.option)
+            setTimeout(() => component.option('isValid', true));
     }
 
     showUploadPhoto($event) {
@@ -742,9 +754,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         $event.stopPropagation();
     }
 
-    onComponentInitialized($event, field, type) {
+    onEmailComponentInitialized($event, type) {
+        let field = 'emails';
         this[field + this.capitalize(type)] = $event.component;
         $event.component.option('value', this[field][type]);
+    }
+
+    onPhoneComponentInitialized(component, type) {
+        this['phones' + this.capitalize(type)] = component;
     }
 
     emptyInput(field, type) {
@@ -756,7 +773,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     resetFullDialog() {
         this.contactTypes.forEach((type) => {
             this.resetComponent(this['emails' + this.capitalize(type)]);
-            this.resetComponent(this['phones' + this.capitalize(type)]);
+            this['phones' + this.capitalize(type)].reset();
             this.clearButtonVisible[type]['emails'] = false;
             this.clearButtonVisible[type]['phones'] = false;
             this.addButtonVisible[type]['emails'] = false;
@@ -764,7 +781,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts.emails[type] = [];
             this.contacts.phones[type] = [];
             this.emails[type] = [];
-            this.phones[type] = [];
             this.phoneExtension[type] = undefined;
             this.contacts.addresses[type] = {};
             this.notes[type] = undefined;
@@ -787,6 +803,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.tagsComponent.reset();
         this.listsComponent.reset();
         this.userAssignmentComponent.reset();
+        this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
+        this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
         this.partnerTypeId = undefined;
     }
 
@@ -831,21 +849,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.stageId = event.id;
     }
 
-    partnerTypesLoad() {
-        this._partnerService.getTypes()
-            .subscribe(list => {
-                this.partnerTypes = list.map((item) => {
-                    return {
-                        id: item.id,
-                        name: item.name,
-                        text: item.name
-                    };
-                });
-            });
-    }
+    // loadPartnerTypes() {
+    //     this._partnerTypeService.getAll()
+    //         .subscribe(list => {
+    //             this.partnerTypes = list.map((item) => {
+    //                 return {
+    //                     id: item.id,
+    //                     name: item.name,
+    //                     text: item.name
+    //                 };
+    //             });
+    //         });
+    // }
 
     onPartnerTypeChanged(event) {
-        this.partnerTypeId = event.id;
+        this.partnerTypeId = event.selectedRowKeys[0];
         this.partnerTypesComponent.apply();
     }
 }

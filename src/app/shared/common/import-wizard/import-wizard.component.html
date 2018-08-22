@@ -7,9 +7,9 @@
 </dx-progress-bar>
 <div *ngIf="showSteper">
     <h1><i class="{{icon}}"></i>{{title}}</h1>
-    <div class="actions" [hidden]="stepper?.selectedIndex == FINISH_STEP_INDEX">
+    <div class="actions" [hidden]="selectedStepIndex == FINISH_STEP_INDEX">
         <button class="button-layout button-default" (click)="cancel()">{{l('Cancel')}}</button>
-        <button class="button-layout button-primary" (click)="next()">{{stepper?.selectedIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
+        <button class="button-layout button-primary" (click)="next()">{{selectedStepIndex == REVIEW_STEP_INDEX ? l('Import'): l('Next')}}</button>
         <div class="separator"></div>
         <button class="refresh-button"></button>
     </div>
@@ -17,12 +17,12 @@
                      (onItemClick)="selectionModeChanged($event)"
                      target=".dx-header-row">
     </dx-context-menu>
-    <mat-horizontal-stepper [linear]="true" [ngClass]="{'updated-padding': stepper?.selectedIndex !== UPLOAD_STEP_INDEX}">
-        <ng-template matStepperIcon="edit" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
-        <ng-template matStepperIcon="done" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
-        <ng-template matStepperIcon="number" let-index="index"><span [ngClass]="{'selected': stepper?.selectedIndex >= index}">{{index + 1}}</span></ng-template>
+    <mat-horizontal-stepper [linear]="true" [ngClass]="{'updated-padding': selectedStepIndex !== UPLOAD_STEP_INDEX}" (selectionChange)="selectedStepChanged($event)">
+        <ng-template matStepperIcon="edit" let-index="index"><span [ngClass]="{'selected': selectedStepIndex >= index}">{{index + 1}}</span></ng-template>
+        <ng-template matStepperIcon="done" let-index="index"><span [ngClass]="{'selected': selectedStepIndex >= index}">{{index + 1}}</span></ng-template>
+        <ng-template matStepperIcon="number" let-index="index"><span [ngClass]="{'selected': selectedStepIndex >= index}">{{index + 1}}</span></ng-template>
         <mat-step [stepControl]="uploadFile" [label]="l('Upload file')"
-                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
+                  [editable]="selectedStepIndex != FINISH_STEP_INDEX">
             <form [formGroup]="uploadFile">
                 <div class="block left">
                     <h3 [hidden]="dropZoneProgress || loadProgress" class="title">{{l('Upload from computer')}}</h3>
@@ -76,8 +76,8 @@
             </form>
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
-                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="_toolbarConfig" *ngIf="stepper?.selectedIndex == MAPPING_STEP_INDEX"></app-toolbar>
+                  [editable]="selectedStepIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == MAPPING_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"
@@ -133,8 +133,8 @@
             </dx-data-grid>
         </mat-step>
         <mat-step [label]="l('Review')"
-                  [editable]="stepper?.selectedIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="_toolbarConfig" *ngIf="stepper?.selectedIndex == REVIEW_STEP_INDEX"></app-toolbar>
+                  [editable]="selectedStepIndex != FINISH_STEP_INDEX">
+            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == REVIEW_STEP_INDEX"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
                           [noDataText]="''"
                           [keyExpr]="'uniqueIdent'"
@@ -154,7 +154,7 @@
                 </dxo-selection>
 
                 <div *dxTemplate="let cellData of 'titleCaseCell'">
-                    {{toTitleCase(cellData.value)}}
+                    {{cellData.value | titleCase}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'phoneCell'" [ngClass]="{invalid: !checkFieldValid('phone', cellData)}">

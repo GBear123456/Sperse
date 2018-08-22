@@ -60,7 +60,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before',
                 items: [
@@ -285,7 +285,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                 {name: 'fullscreen', action: this.fullscreen.bind(this)}
             ]
             },
-        ];
+        ]);
     }
 
     exportTo(event) {
@@ -343,6 +343,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
     }
 }

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 
@@ -22,7 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
     templateUrl: 'import-wizard.component.html',
     styleUrls: ['import-wizard.component.less']
 })
-export class ImportWizardComponent extends AppComponentBase implements OnInit {
+export class ImportWizardComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
     @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
     @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
@@ -51,6 +51,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
 
     @Output() onCancel: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     public static readonly FieldSeparator = '_';
     public static readonly FieldLocalizationPrefix = 'Import';
@@ -65,13 +66,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
     private reviewGroups: any = [];
     private validateFieldList: string[] = ['email', 'phone', 'url'];
     private invalidRowKeys: any = {};
-    private similarFieldsIndex: any = {};
+    private similarFieldsIndex: any = {};    
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
     readonly REVIEW_STEP_INDEX = 2;
     readonly FINISH_STEP_INDEX = 3;
 
+    selectedStepIndex = 0;
     showSteper = true;
     loadProgress = 0;
     dropZoneProgress = 0;
@@ -121,6 +123,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.localizationSourceName = this.localizationSource;
     }
 
+    ngAfterViewInit() {
+        this.selectedStepChanged(null);
+    }
+
     reset(callback = null) {
         this.fileData = null;
         this.dropZoneProgress = 0;
@@ -130,6 +136,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         this.dataMapping.reset();
         this.mapDataSource = [];
         this.emptyReviewData();
+        this.selectedStepIndex = 0;
 
         setTimeout(() => {
             this.showSteper = true;
@@ -156,7 +163,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             }
         } else if (this.stepper.selectedIndex == this.REVIEW_STEP_INDEX) {
             let gridElm = this.reviewGrid.instance.element();
-            if (gridElm.getElementsByClassName('invalid').length) {
+            if (Object.keys(this.invalidRowKeys).length) {
                 let dialogData = { importAll: true };
                 this._dialog.open(ConfirmImportDialog, {
                     data: dialogData
@@ -166,16 +173,19 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                         records = records.length && records || this.reviewDataSource;
                         if (dialogData.importAll)
                             this.complete(records.map((row) => {
+                                let rowData = row;
                                 if (this.invalidRowKeys[row.uniqueIdent]) {
+                                    rowData = _.clone(row);
                                     this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
-                                        row[field] = null;
-                                    });
+                                        rowData[field] = undefined;
+                                    });                                    
                                 }
-                                return row;
-                            }));
+                                return rowData;
+                            }), dialogData.importAll);
                         else
-                            this.complete(records.filter((row) =>
-                                !this.invalidRowKeys[row.uniqueIdent]));
+                            this.complete(records.filter((row) => {
+                                return !this.invalidRowKeys[row.uniqueIdent];
+                            }), dialogData.importAll);
                     }
                 });
             } else
@@ -201,13 +211,21 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    complete(rows = null) {
+    complete(rows = null, importAll = true) {
+        if (rows && !rows.length)
+            return this.message.info(this.l('Import_NoRecordsAvailable'));
+
         let data = rows || this.reviewGrid.instance.getSelectedRowsData();
-        this.onComplete.emit(data.length && data || this.reviewDataSource);
+        this.onComplete.emit({
+            records: data.length && data || this.reviewDataSource, 
+            importAll: importAll
+        });
     }
 
     showFinishStep() {
-        this.stepper.selectedIndex = this.FINISH_STEP_INDEX;
+        this.stepper.selectedIndex = 
+            this.selectedStepIndex = 
+                this.FINISH_STEP_INDEX;
     }
 
     emptyReviewData() {
@@ -239,6 +257,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
                             });
                             if (!this.checkDuplicate(row, data)) {
                                 this.checkSimilarGroups(data);
+                                this.validateRowFields(data);
                                 dataSource.push(data);
                             }
                         }
@@ -647,17 +666,28 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
             column.cellTemplate = field + 'Cell';
     }
 
+    validateRowFields(data) {
+        this.validateFieldList.forEach((fld) => {
+            Object.keys(data).forEach((field) => {
+                if (field.toLowerCase().includes(fld) && 
+                    !this.checkFieldValid(fld, {value: data[field]})
+                )
+                    this.addInvalidField(data.uniqueIdent, field);
+            })
+        });
+    }
+
+    addInvalidField(key, field) {
+        let invalidRowFields = this.invalidRowKeys[key];
+        if (invalidRowFields && invalidRowFields.indexOf(field) < 0)
+            invalidRowFields.push(field);
+        else
+            this.invalidRowKeys[key] = [field];
+    }
+
     checkFieldValid(field, dataCell) {
         let value = dataCell.value;
-        let isValid = !value || AppConsts.regexPatterns[field].test(value);
-        if (!isValid) {
-            if (this.invalidRowKeys[dataCell.key])
-                this.invalidRowKeys[dataCell.key].push(dataCell.column.dataField);
-            else
-                this.invalidRowKeys[dataCell.key] = [dataCell.column.dataField];
-        }
-
-        return isValid;
+        return !value || AppConsts.regexPatterns[field].test(value);
     }
 
     calculateDisplayValue(data) {
@@ -674,4 +704,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit {
         ) $event.cellElement.classList.add('bold');
     }
 
+    selectedStepChanged(event) {
+        this.onSelectionChanged.emit(event);
+        if (event)
+            this.selectedStepIndex = event.selectedIndex;
+    }
 }

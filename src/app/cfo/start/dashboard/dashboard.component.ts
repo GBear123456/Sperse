@@ -1,16 +1,15 @@
 /** Core imports */
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
@@ -48,10 +47,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
         private bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
-        private _router: Router
+        private zendeskService: ZendeskService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -86,11 +84,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     ngAfterViewInit(): void {
-        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+        this.zendeskService.showWidget();
     }
 
     ngOnDestroy(): void {
-        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        this.rootComponent.overflowHidden();
+        this.zendeskService.hideWidget();
         this._dashboardService.unsubscribe();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
@@ -128,9 +127,12 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         }
 
         this.synchProgressComponent.requestSyncAjax();
+        this.rootComponent.overflowHidden(true);
     }
 
-    deactivate() {}
+    deactivate() {
+        this.rootComponent.overflowHidden();
+    }
 
     openDialog() {
         this.dialogConfig.height = '655px';

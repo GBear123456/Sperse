@@ -1,10 +1,9 @@
 import {Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { Router } from '@angular/router';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 @Component({
     selector: 'bank-accounts',
@@ -20,8 +19,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     constructor(
         injector: Injector,
-        private _ngxZendeskWebwidgetService: ngxZendeskWebwidgetService,
-        private _router: Router,
+        private zendeskService: ZendeskService,
         private _synchProgress: SynchProgressService,
         private _bankAccountsGeneralService: BankAccountsGeneralService
     ) {
@@ -63,13 +61,15 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        // this.rootComponent.overflowHidden(true);
-        CFOComponentBase.zendeskWebwidgetShow(this._ngxZendeskWebwidgetService);
+        this.rootComponent.overflowHidden(true);
+        this.zendeskService.showWidget();
     }
 
     ngOnDestroy() {
-        this.rootComponent.overflowHidden();
-        CFOComponentBase.zendeskWebwidgetHide(this._ngxZendeskWebwidgetService);
+        if (this.rootComponent) {
+            this.rootComponent.overflowHidden();
+        }
+        this.zendeskService.hideWidget();
     }
 
     progressCompleted() {

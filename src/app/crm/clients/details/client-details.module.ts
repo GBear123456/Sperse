@@ -20,6 +20,7 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
+import { TypesListComponent } from '../../shared/types-list/types-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
@@ -58,7 +59,8 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
-    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
+    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy,
+    PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -70,6 +72,7 @@ import { VgCoreModule } from 'videogular2/core';
 import { VgControlsModule } from 'videogular2/controls';
 import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
+import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-list.component';
 
 @NgModule({
   declarations: [
@@ -103,10 +106,12 @@ import { VgBufferingModule } from 'videogular2/buffering';
     NoteAddComponent,
     TagsListComponent,
     ListsListComponent,
+    TypesListComponent,
     UserAssignmentComponent,
     RatingComponent,
     StarsListComponent,
     StaticListComponent,
+    AdvancedListComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
     DocumentTypesListComponent
@@ -157,10 +162,12 @@ import { VgBufferingModule } from 'videogular2/buffering';
     RequiredDocumentsComponent,
     TagsListComponent,
     ListsListComponent,
+    TypesListComponent,
     UserAssignmentComponent,
     RatingComponent,
     StarsListComponent,
     StaticListComponent,
+    AdvancedListComponent,
     DocumentTypesListComponent
   ],
   entryComponents: [
@@ -186,6 +193,7 @@ import { VgBufferingModule } from 'videogular2/buffering';
     ContactLinkServiceProxy,
     CustomersServiceProxy,
     PartnerServiceProxy,
+    PartnerTypeServiceProxy,
     ContactEmploymentServiceProxy,
     MemberServiceProxy,
     OrganizationContactServiceProxy,

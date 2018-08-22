@@ -14,7 +14,7 @@ import { finalize } from 'rxjs/operators';
   selector: 'crm-tags-list',
   templateUrl: './tags-list.component.html',
   styleUrls: ['./tags-list.component.less'],
-  providers: [CustomerTagsServiceProxy]
+  providers: [ CustomerTagsServiceProxy ]
 })
 export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
@@ -62,7 +62,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation', 
+                        this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation',
                             this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
@@ -95,7 +95,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             else
                 this._tagsService.tagCustomers(TagCustomersInput.fromJS({
                     customerIds: customerIds,
-                    tags: tags 
+                    tags: tags
                 })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
                 })).subscribe((result) => {
@@ -261,7 +261,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 else {
                     $event.component.cancelEditData();
                     $event.component.getScrollable().scrollTo(0);
-                    this.addNewTimeout = setTimeout(()=> {
+                    this.addNewTimeout = setTimeout(() => {
                         $event.component.addRow();
                     });
                 }
@@ -328,7 +328,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') && 
+        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

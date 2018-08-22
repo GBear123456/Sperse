@@ -3,6 +3,7 @@ import { Component, OnInit, Input, Output, ViewChild, EventEmitter } from '@angu
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
+import { TypesListComponent } from '../../shared/types-list/types-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
@@ -15,18 +16,17 @@ import { CustomerType } from '@shared/AppEnums';
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less'],
-    providers: [ AppLocalizationService ]
+    styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent implements OnInit {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: TagsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild('statusesList') statusComponent: StaticListComponent;
-    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
 
     /*** @todo add localization service */
 

@@ -12,7 +12,6 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 
-
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
@@ -69,7 +68,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 private _orderService: OrderServiceProxy,
-                private _appService: AppService) {
+                private _appService: AppService
+                ) {
         super(injector);
 
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -78,13 +78,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataSource = {
             store: {
                 type: 'odata',
-                url: this.getODataURL(this.dataSourceURI),
+                url: this.getODataUrl(this.dataSourceURI),
                 version: 4,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
                 paginate: true
-                }
+            }
         };
 
         this.initToolbarConfig();
@@ -258,8 +258,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(this.dataGrid.instance,
-                this.dataSourceURI, this.filters, (filter) => {
+            this.processODataFilter(
+                this.dataGrid.instance,
+                this.dataSourceURI,
+                this.filters,
+                (filter) => {
                     let filterMethod = this['filterBy' +
                     this.capitalize(filter.caption)];
                     if (filterMethod)
@@ -270,7 +273,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     initToolbarConfig() {
-        this._appService.toolbarConfig = [
+        this._appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -385,7 +388,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     // }
                 ]
             }
-        ];
+        ]);
     }
 
     filterByOrderStages(filter: FilterModel) {
@@ -424,7 +427,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnDestroy() {
-        this._appService.toolbarConfig = null;
+        this._appService.updateToolbar(null);
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

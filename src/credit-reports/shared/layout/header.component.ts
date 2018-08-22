@@ -54,6 +54,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
+    hasPlatformPermissions = false;
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
@@ -117,6 +118,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                     routerUrl: '/credit-reports/member-area/accounts'
                 });
         }
+
+        this.hasPlatformPermissions =
+            (this._featureChecker.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) ||
+            (this._featureChecker.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) ||
+            (this._featureChecker.isEnabled('Admin') && this._permissionChecker.isGranted('Pages.Administration.Users'));
     }
     get multiTenancySideIsTenant(): boolean {
         return this._abpSessionService.tenantId > 0;
@@ -238,7 +244,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
+        return false;
+        //return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
     }
 
     subscriptionIsExpiringSoon(): boolean {

@@ -32,54 +32,105 @@
     }
 
     .right-actions {
-        width: 321px;
-        height: calc(~"100vh - 150px");
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 381px;
         background-color: #fff;
-        padding: 35px 25px 25px 25px;
+        padding: 25px 25px 25px 25px;
         float: right;
         border-left: 1px solid #dfdfdf;
 
         .title {
-            font-size: 17px;
-            padding-left: 14px;
-            padding-bottom: 23px;
+            font-size: 18px;
             font-weight: 400;
-            letter-spacing: 1px;
-            text-decoration: none;
-            color: rgb(103, 115, 128);
+            line-height: 2.78;
+            letter-spacing: 0.4px;
+            color: #677380;
         }
 
         .file {
             padding-right: 14px;
             padding-left: 14px;
-            height: 55px;
-            border: 1px dashed #dfdfdf;
+            height: 58px;
+            border: 1px dashed #dadee1;
             border-radius: 10px;
             text-align: center;
 
             .file-upload {
                 padding-top: 18px;
-                font-size: 15px;
             }
 
             .file-upload + label {
                 display: none;
             }
 
-            .no-display{
+            .no-display {
                 display: none;
             }
         }
 
-        .links-wrap {
-            text-align: center;
-            padding-top: 23px;
+        /deep/.links-wrap {
+            position: relative;
+
+            .arrow-icon {
+                position: absolute;
+                right: 0;
+                background: url('../../../assets/common/icons/right-arrow-icon.svg') right center no-repeat;
+                width: 12px;
+                height: 19px;
+                background-size: cover;
+                top: 20px;
+            }
+
+            .xero-container,
+            .qb-container {
+                display: flex;
+                align-items: center;
+                height: 100%;
+                width: 100%;
+                padding: 7px 0;
+            }
+
+            p {
+                color: #202b35;
+                line-height: 1.38;
+                letter-spacing: 0.3px;
+                font-size: 16px;
+                font-weight: 600;
+                margin: 0;
+
+                &:last-child {
+                    font-weight: 700;
+                }
+            }
+
+            .import-text {
+                height: 56px;
+                padding-top: 2px;
+                margin-left: 15px;
+            }
         }
 
         .links {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
             align-self: center;
             color: #00aeef;
             cursor: pointer;
+        }
+
+        .info-text {
+            background-color: #f3f7fa;
+            font-size: 14px;
+            font-weight: 400;
+            color: #677380;
+            line-height: 1.36;
+            letter-spacing: 0.3px;
+            margin: 25px -25px -25px;
+            padding: 25px;
         }
     }
 

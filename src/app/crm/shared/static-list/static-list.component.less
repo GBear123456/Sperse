@@ -34,7 +34,7 @@
             background-color: #effafe;
         }
 
-        &.disableWonLost {
+        &.disableHindmost {
             .dx-item {
                 &:first-child ,
                 &:last-child {
@@ -49,13 +49,86 @@
                     }
 
                     .item-row:before {
-                        background: #ccc;
+                        background: #ccc!important;
+                    }
+                }
+            }
+        }
+
+        &.funnel-styling {
+            .dx-list-item {
+                .item-row[id] {
+                    position: relative;
+                    border: 0;
+                    padding-left: 15px;
+                    &::before {
+                        width: 15px;
+                        height: 15px;
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        left: -5px;
+                        top: 45%;
+                        transform: translateY(-50%);
+                        border-radius: 50%;
+                    }
+                }
+
+                &:nth-child(4) .item-row[id] {
+                    &::before {
+                        background: #00aeef;
+                    }
+                }
+                &:nth-child(5), &:nth-child(6), &:nth-child(7) {
+                    .item-row[id] {
+                        &::before {
+                            background: #e55e5e;
+                        }
+                    }
+                }
+                &:nth-child(1), &:nth-child(2), &:nth-child(3) {
+                    .item-row[id] {
+                        &::before {
+                            background: #8dc53e;
+                        }
+                    }
+                }
+                &:nth-child(1), &:nth-child(7) {
+                    .item-row[id] {
+                        &::before {
+                            opacity: 0.6;
+                        }
+                    }
+                }
+                &:nth-child(2), &:nth-child(6) {
+                    .item-row[id] {
+                        &::before {
+                            opacity: 0.4;
+                        }
+                    }
+                }
+                &:nth-child(3), &:nth-child(5) {
+                    .item-row[id] {
+                        &::before {
+                            opacity: 0.2;
+                        }
                     }
                 }
             }
         }
 
         .dx-list-item {
+            .item-row {
+                display: flex;
+                justify-content: space-between;
+
+                a.dx-link-filter {
+                    width: 30px;
+                    background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
+                    cursor: pointer;
+                }
+            }
+
             &.dx-state-hover {
                 background-color: #f5f5f5;
             }
@@ -89,71 +162,5 @@
         .dx-icon-clear {
             right: 0px;
         }
-
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-
-            a.dx-link-filter {
-                width: 30px;
-                background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
-                cursor: pointer;
-            }
-
-            &.new,
-            &.unreachable,
-            &.uninterested,
-            &.interested,
-            &.in-progress,
-            &.won,
-            &.lost {
-                position: relative;
-                border: 0;
-                padding-left: 15px;
-                &::before {
-                    width: 15px;
-                    height: 15px;
-                    content: '';
-                    display: block;
-                    position: absolute;
-                    left: -5px;
-                    top: 45%;
-                    transform: translateY(-50%);
-                    border-radius: 50%;
-                }
-                &.new {
-                    &::before {
-                        background: #00aeef;
-                    }
-                }
-                &.unreachable, &.uninterested, &.lost {
-                    &::before {
-                        background: #e55e5e;
-                    }
-                }
-                &.interested, &.in-progress, &.won {
-                    &::before {
-                        background: #8dc53e;
-                    }
-                }
-                &.won, &.lost {
-                    &::before {
-                        opacity: 0.6;
-                    }
-                }
-                &.unreachable, &.in-progress {
-                    &::before {
-                        opacity: 0.4;
-                    }
-                }
-                &.interested, &.uninterested {
-                    &::before {
-                        opacity: 0.2;
-                    }
-                }
-            }
-
-        }
     }
-
 }

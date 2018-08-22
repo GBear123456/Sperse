@@ -34,8 +34,8 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
         this.keyPhrasesDataSource = new DataSource({
             store: {
                 type: 'odata',
-                url: this.getODataURL('TransactionGroup'),
-                version: this.getODataVersion(),
+                url: this.getODataUrl('TransactionGroup'),
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
@@ -46,7 +46,7 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
 
     refreshkeyPhrasesCountDataSource() {
         if (this.keyPhrasesDataSource) {
-            this.keyPhrasesDataSource.store()['_url'] = this.getODataURL('TransactionGroup', this._keyPhrasesFilterQuery);
+            this.keyPhrasesDataSource.store()['_url'] = this.getODataUrl('TransactionGroup', this._keyPhrasesFilterQuery);
             this.keyPhrasesDataSource.load().done((result) => {
                 event.preventDefault();
                 this.keyPhrasesData = result;

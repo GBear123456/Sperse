@@ -24,7 +24,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     tooltipVisible: boolean;
     timeoutHandler: any;
     accountProgressTooltipTarget;
-    accountProgressTooltipVisible: boolean = false;
+    accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
 
     readonly maxTryCount = 3;
@@ -71,14 +71,13 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 this.hasFailedAccounts = hasFailed;
 
                 if (this.currentProgress != 100) {
-                    this.completed = false;
-
+                    setTimeout(() => { this.completed = false; });
                     this.timeoutHandler = setTimeout(
                         () => this.getSynchProgressAjax(), 10 * 1000
                     );
                 } else {
                     if (!this.completed) {
-                        this.completed = true;
+                        setTimeout(() => { this.completed = true; });
                         this.onComplete.emit();
                     } else if (this.lastSyncDate && this.lastSyncDate < result.totalProgress.lastSyncDate) {
                         this.onComplete.emit();
@@ -105,18 +104,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     calculateChartsScrolableHeight() {
-        let contentHeight = $('.list-of-synch-accounts').height();
-        if (contentHeight < 230) {
-            return 200;
-        } else if (contentHeight < 300) {
-            return 230;
-        } else if (contentHeight < 400) {
-            return 330;
-        } else if (contentHeight < 500) {
-            return 430;
-        } else {
-            return 550;
-        }
+        return document.querySelector('.scroll-zone').clientHeight;
     }
 
     toggleComponent() {

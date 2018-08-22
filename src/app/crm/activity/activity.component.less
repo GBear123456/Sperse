@@ -1,23 +1,40 @@
+/deep/ .dx-scheduler-appointment-popup {
+    display: none;
+}
+
 :host {
+    display: block;
     position: relative;
     top: 74px;
 
     /deep/ dx-scheduler {
         margin: 30px;
-        border-radius: 7px;
-        border-top: 2px solid #ddd;
 
+        .dx-loadpanel-content {
+            display: none;
+        }
         .dx-scheduler-header {
-            visibility: hidden;    
+            background-color: #FFF!important;
         }
         .dx-scheduler-appointment {
             border-radius: 7px;
         }
-        .dx-scheduler-work-space {
-            padding-top:0px;
-        }
         .dx-scheduler-work-space-month .dx-scheduler-date-table-cell div {
             min-height: 200px;
+        }
+        .dx-scheduler-date-time-indicator {
+            height: 2px!important;
+            background-color: #00aeef!important;
+            &:before {
+                font: 31px/1 DXIcons!important;
+                color: #00aeef!important; 
+            }
+        }
+        .dx-scheduler-time-panel-current-time-cell {
+            color: #00aeef!important;
+            &:before {
+                background-color: #00aeef!important;
+            }
         }
     }
 

@@ -2,10 +2,10 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
 import * as ngCommon from '@angular/common';
 import {RouterModule} from '@angular/router';
-
-/** Third party imports */
+import { FormsModule } from '@angular/forms';
 
 /** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from './session/app-session.service';
 import { AppUrlService } from './nav/app-url.service';
 import { ExportService } from './export/export.service';
@@ -21,6 +21,9 @@ import { PhoneFormatPipe } from './pipes/phone-format/phone-format.pipe';
 import { AddressFormatPipe } from './pipes/address-format.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
+import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
+import { InternationalPhoneNumberModule } from '../../node_modules/ngx-international-phone-number/src';
+import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 
 @NgModule({
     declarations: [
@@ -30,7 +33,9 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
-        InfoComponent
+        InfoComponent,
+        CountryPhoneNumberComponent,
+        TitleCasePipe
     ],
     exports: [
         CalendarComponent,
@@ -40,10 +45,14 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
         FileSizePipe,
         ZipCodeFormatterPipe,
         InfoComponent,
+        CountryPhoneNumberComponent,
+        TitleCasePipe
     ],
     imports: [
         ngCommon.CommonModule,
         RouterModule,
+        FormsModule,
+        InternationalPhoneNumberModule
     ]
 })
 export class CommonModule {
@@ -55,6 +64,7 @@ export class CommonModule {
                 AppRouteGuard,
                 AppSessionService,
                 AppUrlService,
+                AppLocalizationService,
                 ExportService,
                 ExportGoogleSheetService,
                 AppUiCustomizationService,

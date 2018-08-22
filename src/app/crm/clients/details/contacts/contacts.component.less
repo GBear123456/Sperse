@@ -34,13 +34,15 @@
       font-family: Montserrat;
     }
 
-    dx-text-box, dx-button {
+    dx-text-box, dx-button, international-phone-number {
       display: inline-block;
     }
-    dx-text-box {
+    
+    dx-text-box, international-phone-number {
       min-width: 230px;
       width: 70%;
     }
+    
     dx-button {
       /deep/ &.update i {
         color: #00aeef;
@@ -51,7 +53,12 @@
 
       border: none;
       position: relative;
-      top: -14px;
+    }
+    
+    dx-validation-group {
+      /deep/ dx-button {
+        top: -14px;
+      }
     }
   }
 

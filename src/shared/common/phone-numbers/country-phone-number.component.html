@@ -1,0 +1,13 @@
+<div class="wrapper">
+    <international-phone-number 
+        class="tabular"
+        placeholder=""
+        [(ngModel)]="phoneNumber"
+        [required]="required"
+        #intPhoneNumberModel="ngModel"
+        (onKeyUp)="keyUp($event)"
+        (onFocusIn)="focusIn($event)"
+        (onFocusOut)="focusOut($event)">
+    </international-phone-number>
+    <div *ngIf="errorVisible" class="invalid-message-wrapper"><div class="invalid-message">{{ l('PhoneValidationError') }}</div></div>
+</div>

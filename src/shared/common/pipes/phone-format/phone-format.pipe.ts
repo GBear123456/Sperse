@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { parse, formatNumber, ParsedNumber } from 'libphonenumber-js';
+import { AppConsts } from '@shared/AppConsts';
 
 @Pipe({
     name: 'phone'
@@ -10,7 +11,7 @@ export class PhoneFormatPipe implements PipeTransform {
         if (value) {
             const defaultParseOptions = {
                 extended: true,
-                defaultCountry: 'US'
+                defaultCountry: AppConsts.defaultCountry
             };
             const parsedNumber: ParsedNumber = parse(value, {...defaultParseOptions, ...parseOptions});
             if (Object.keys(parsedNumber).length) {

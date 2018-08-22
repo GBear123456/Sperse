@@ -13,9 +13,7 @@
     <meta name="author" content="">
     <meta name="description" content="">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700|Material+Icons|Kameron|Lato|Open+Sans|Work+Sans" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
@@ -32,9 +30,9 @@
     <div id="loginPage" style="display: none;">
         <div class="login">
             <header>
-                <div class="logo">
+                <div class="logo" style="width:200px;height:60px;">
                     <a routerlink="/" ng-reflect-router-link="/" href="/">
-                        <img alt="logo" height="60" width="200" class="ng-star-inserted" style="display: none">
+                        <img id="logoImage" alt="logo" height="60" width="200" class="ng-star-inserted" style="display: none;">
                     </a>
                 </div>
             </header>
@@ -49,7 +47,7 @@
                                         <div _ngcontent-c1="" class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
                                             <h1 _ngcontent-c1="" class="d-none d-md-block">Sperse Login</h1>
                                             <h1 _ngcontent-c1="" class="d-md-none">Login</h1>
-                                            <form id="loginForm" class="login-form ng-pristine ng-invalid ng-touched" method="post" novalidate="" onsubmit="return authenticate()" onkeypress="inputChanged()" onchange="inputChanged()">
+                                            <form id="loginForm" class="login-form ng-pristine ng-invalid ng-touched" method="post" novalidate="">
                                                 <div _ngcontent-c1="" class="form-group clearfix">
                                                     <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-pristine ng-invalid ng-touched" autofocus="" autocomplete="off" name="userNameOrEmailAddress" required="" tabindex="1" type="text" ng-reflect-required="" ng-reflect-name="userNameOrEmailAddress" placeholder="Email address">
                                                     <div _ngcontent-c1="" class="form-group clearfix">
@@ -66,11 +64,11 @@
                                                 <div _ngcontent-c1="" class="form-actions">
                                                     <button  _ngcontent-c1="" class="submit" name="submit" type="submit" disabled=""> Login <img _ngcontent-c1="" class="pull-right" alt="right arrow" src="/assets/common/icons/arrow-right-long-icon.svg"></button>
                                                 </div>
-                                                <p _ngcontent-c1="" class="agree-rights">By continuing I agree to <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#terms" data-toggle="modal">Terms</a> &amp; <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#privacy" data-toggle="modal">Policies</a>.</p>
+                                                <p _ngcontent-c1="" class="agree-rights" style="display: none;">By continuing I agree to <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#terms" data-toggle="modal">Terms</a> &amp; <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#privacy" data-toggle="modal">Policies</a>.</p>
                                             </form>
-                                            <div _ngcontent-c1="" class="create-account">
+                                            <!-- div _ngcontent-c1="" class="create-account">
                                                 <p _ngcontent-c1="" class="ng-tns-c1-0 ng-star-inserted" style=""><a _ngcontent-c1="" class="uppercase" id="register-btn" routerlink="/account/select-edition" ng-reflect-router-link="/account/select-edition" href="/account/select-edition">New tenant</a><span _ngcontent-c1="" class="pipe-divider"> | </span></p>
-                                            </div>
+                                            </div -->
                                         </div>
                                     </div>
                                     <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="privacy" role="dialog" tabindex="-1">
@@ -120,6 +118,6 @@
     </div>
     <!-- Spinner -->
     <div id="loadSpinner" class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
-    <script src="assets/login/script.js"></script>
+    <script src="assets/login/script.js" async></script>
 </body>
 </html>

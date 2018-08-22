@@ -1,10 +1,8 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 /** Third party imports */
-import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { MatTabsModule, MatDialogModule, MatStepperModule, MatTooltipModule } from '@angular/material';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
@@ -42,6 +40,7 @@ import { ModalModule } from 'ngx-bootstrap';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
@@ -172,7 +171,8 @@ import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.comp
     providers: [
         CustomersServiceProxy,
         SyncServiceProxy,
-        CalculatorService
+        CalculatorService,
+        ZendeskService
     ]
 })
 

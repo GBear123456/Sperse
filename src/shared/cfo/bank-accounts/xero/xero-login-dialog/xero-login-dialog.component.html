@@ -1,28 +1,151 @@
 <dx-popup class="popup xeroLoginDialog"
-          [width]="880"
-          [height]="655"
-          [showTitle]="true"
+          [width]="960"
+          [height]="630"
           title="Xero"
           [dragEnabled]="false"
+          [showTitle]="false"
           [closeOnOutsideClick]="false"
           [(visible)]="popupVisible">
+
     <div *dxTemplate="let data of 'content'">
-        <div class="field">
-            <div class="field-label">{{l('ConsumerKey')}}</div>
-            <div class="field-value">
-                <dx-text-box [(value)]="consumerKey"></dx-text-box>
+        <div class="row modal-wrapper">
+            <button class="close" (click)="hide()">
+                <img src="assets/common/images/xero/close.svg" alt="close" class="close">
+            </button>
+            <div class="col xero-side">
+                <header>
+                    <img
+                        src="assets/common/images/xero/xero.png"
+                        srcset="assets/common/images/xero/xero@2x.png 2x, assets/common/images/xero/xero@3x.png 3x"
+                        alt="Xero"
+                        class="hero-image">
+
+                    <img src="assets/common/images/xero/white-arrow-left.svg" alt="Arrow left" class="img-arrow-left">
+                </header>
+                <div class="content">
+                    <h2>Sync your Xero account to</h2>
+                    <ul class="xero-list fa-ul">
+                        <li class="xero-item"><i class="fa fa-check"></i> Import your chart of accounts</li>
+                        <li class="xero-item"><i class="fa fa-check"></i> View historical & forecast reports</li>
+                        <li class="xero-item"><i class="fa fa-check"></i> Avoid clasifying transactons twice</li>
+                        <li class="xero-item"><i class="fa fa-check"></i> Generate custom reports with data</li>
+                        <li class="xero-item"><i class="fa fa-check"></i> Update invoices, bills & Payments</li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="field">
-            <div class="field-label">{{l('ConsumerSecret')}}</div>
-            <div class="field-value">
-                <dx-text-box [(value)]="consumerSecret"></dx-text-box>
+            <div class="col sperse-side">
+                <header>
+                    <h2 class="sperse-title">Sperse integration with Xero</h2>
+                    <img
+                        src="assets/common/images/xero/sperse-logo.png"
+                        srcset="assets/common/images/xero/sperse-logo@2x.png 2x, assets/common/images/xero/sperse-logo@3x.png 3x"
+                        alt="Sperse"
+                        class="sperse-logo">
+                    <img src="assets/common/images/xero/blue-arrow-right.svg" alt="Arrow right" class="img-arrow-right">
+                </header>
+                <div class="content">
+                    <div class="first-step-content" [hidden]="showForm">
+                        <div class="row title-col">
+                            <div class="col text-right">
+                                <h3 class="xero-logo-text">
+                                    <img src="assets/common/images/xero/xero-small-logo.png" alt="xero">
+                                    xero
+                                </h3>
+                            </div>
+                            <div class="col text-center">&nbsp;</div>
+                            <div class="col text-left">
+                                <h3 class="sperse-logo-text">
+                                    <img src="assets/common/images/xero/sperse-small-logo.png" alt="sperse">
+                                    sperse
+                                </h3>
+                            </div>
+                        </div>
+                        <ul class="xero-integration-list">
+                            <li class="row item-row align-items-center">
+                                <span class="col text-right">Chart of accounts</span>
+                                <span class="col text-center"><img src="assets/common/images/xero/small-blue-arrow.svg" alt="Chart of accounts" class="small-blue-arrow"></span>
+                                <span class="col text-left">Chart of accounts</span>
+                            </li>
+                            <li class="row item-row align-items-center">
+                                <span class="col text-right">Bank accounts</span>
+                                <span class="col text-center"><img src="assets/common/images/xero/small-blue-arrow.svg" alt="Bank accounts" class="small-blue-arrow"></span>
+                                <span class="col text-left">Bank accounts</span>
+                            </li>
+                            <li class="row item-row align-items-center">
+                                <span class="col text-right">Xero transactions</span>
+                                <span class="col text-center"><img src="assets/common/images/xero/small-blue-arrow.svg" alt="Transactions" class="small-blue-arrow"></span>
+                                <span class="col text-left">Transactions</span>
+                            </li>
+                            <li class="row item-row align-items-center">
+                                <span class="col text-right">Customer contacts</span>
+                                <span class="col text-center">
+                                    <img src="assets/common/images/xero/small-blue-arrow.svg" alt="Contacts" class="small-blue-arrow">
+                                    <img src="assets/common/images/xero/small-orange-arrow.svg" alt="Contacts" class="small-orange-arrow">
+                                </span>
+                                <span class="col text-left">CRM contacts</span>
+                            </li>
+                            <li class="row item-row align-items-center">
+                                <span class="col text-right">Invoices & bills</span>
+                                <span class="col text-center">
+                                    <img src="assets/common/images/xero/small-blue-arrow.svg" alt="Invoices & bills" class="small-blue-arrow">
+                                    <img src="assets/common/images/xero/small-orange-arrow.svg" alt="Invoices & bills" class="small-orange-arrow">
+                                </span>
+                                <span class="col text-left">Invoices & bills</span>
+                            </li>
+                        </ul>
+                        <button class="btn-black" (click)="showForm = !showForm">Click here to connect</button>
+                    </div>
+
+                    <div class="second-step-content" [hidden]="!showForm">
+                        <div class="form">
+                            <div class="field">
+                                <div class="field-label">{{l('ConsumerKey')}}</div>
+                                <div class="field-value">
+                                    <dx-text-box [(value)]="consumerKey">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{l('ConsumerKey')}} is required"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="field-label">{{l('ConsumerSecret')}}</div>
+                                <div class="field-value">
+                                    <dx-text-box [(value)]="consumerSecret">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required" message="{{l('ConsumerSecret')}} is required"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <dx-validation-summary id="summary"></dx-validation-summary>
+                                <dx-button 
+                                    type="success"
+                                    [text]="operationType === 'add' ? l('Connect') : l('Update')"
+                                    (onClick)="onClick($event)"
+                                    class="btn-black">
+                                </dx-button>
+                            </div>
+                        </div>
+
+                        <footer>
+                            <div class="footer-links">
+                                <a href="{{getXeroCertificateUrl}}" target="_blank" class="link get-cert">
+                                    <img src="assets/common/images/xero/icon-download.svg" alt="download" class="download-icon">
+                                    {{l('DownloadCertificate')}}
+                                </a>
+                                <a href="https://support.sperse.com/hc/en-us/articles/360008220714-Sperse-integration-with-Xero" target="_blank" class="link link-info">
+                                    <img src="assets/common/images/xero/icon-info.svg" alt="info" class="info-icon">
+                                    {{l('Info')}}
+                                </a>
+                            </div>
+                        </footer>
+                    </div>
+                    
+                </div>
             </div>
-        </div>
-        <div class="button-container">
-            <dx-button [text]="operationType === 'add' ? l('Add') : l('Update')" (onClick)="operationType === 'add' ? connectToXero($event) : updateSyncAccount()" class="add-button"></dx-button>
-            <a href="https://developer.xero.com/documentation/auth-and-limits/private-applications" target="_blank" class="link info">{{l('Info')}}</a>
-            <a href="{{getXeroCertificateUrl}}" target="_blank" class="link get-cert">{{l('DownloadCertificate')}}</a>
         </div>
     </div>
+
 </dx-popup>

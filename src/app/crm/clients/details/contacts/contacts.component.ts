@@ -11,11 +11,13 @@ import {
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
     selector: 'contacts',
     templateUrl: './contacts.component.html',
-    styleUrls: ['./contacts.component.less']
+    styleUrls: ['./contacts.component.less'],
+    providers: [ DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
@@ -31,10 +33,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     constructor(injector: Injector,
                 public dialog: MatDialog,
                 private _clientDetailsService: ClientDetailsService,
-                private _customerService: CustomersServiceProxy,
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
-                private _organizationContactService: OrganizationContactServiceProxy) {
+                private _organizationContactService: OrganizationContactServiceProxy,
+                private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
@@ -42,7 +44,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('ul');
-        return this.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
     calculateShiftY(event) {
@@ -66,7 +68,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             value: data && data[field],
             name: this.getFieldName(field),
             contactId: data && data.contactId
-            || this.contactInfoData && this.contactInfoData.contactId,
+                || this.contactInfoData && this.contactInfoData.contactId,
             emailAddress: data && data.emailAddress,
             phoneNumber: data && data.phoneNumber,
             phoneExtension: data && data.phoneExtension,
@@ -184,6 +186,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
     itemValueChanged(field, item) {
         this._isInPlaceEditAllowed = item[field] == item.original;
+    }
+
+    updatePhoneNumber(isValid, item, event) {
+        if (isValid)
+            this.updateItem('phoneNumber', item, event);
     }
 
     updateItem(field, item, event) {

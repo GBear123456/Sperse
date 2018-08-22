@@ -9,10 +9,10 @@
 
   <div class="page-content-wrapper">
     <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
-    <app-toolbar *ngIf="appService.toolbarConfig"
+    <app-toolbar
         [config]="appService.toolbarConfig"
         [adaptive]="appService.toolbarIsAdaptive"
-        [hidden]="appService.toolbarIsHidden">
+        [hidden]="!appService.toolbarConfig || appService.toolbarIsHidden">
     </app-toolbar>
     <div class="page-content"
         [ngClass]="{'fixed-filters': appService.narrowingPageContentWhenFixedFilter && appService.toolbarConfig && filtersService.fixed}">

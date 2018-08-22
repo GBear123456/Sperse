@@ -1,6 +1,5 @@
 import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { Router } from '@angular/router';
 
 @Component({
     templateUrl: './setup-steps.component.html',
@@ -20,8 +19,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
-    constructor(injector: Injector,
-        private _router: Router) {
+    constructor(injector: Injector) {
         super(injector);
     }
 

@@ -1,38 +1,282 @@
 /deep/ .xeroLoginDialog.dx-overlay-wrapper {
     background-color: rgba(0, 0, 0, 0.7);
 
+    > .dx-overlay-content {
+        border: 0;
+    }
+
     .dx-popup-content {
-        padding-top: 40px;
-        .field {
-            padding-bottom: 30px;
+        padding: 0;
 
-            .field-label {
+        .modal-wrapper {
+            height: 100%;
+            position: relative;
+
+            button.close {
+                position: absolute;
+                right: 25px;
+                top: 10px;
+                z-index: 20;
+                opacity: 1;
+
+                .close {
+                    opacity: 1;
+
+                    &:hover {
+                        opacity: .5;
+                    }
+                }
             }
 
-            .field-value {
-                font-size: 12px;
-                letter-spacing: 0.2px;
-                line-height: 20px;
-                margin-left: auto;
-            }
-        }
+            .btn-black {
+                padding: 16px 49px 17px;
+                font-family: Montserrat;
+                font-size: 16px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1;
+                letter-spacing: 0.3px;
+                text-align: left;
+                color: rgb(255, 255, 255);
+                border-radius: 26px;
+                background-color: rgb(33, 44, 54);
+                border: 0;
 
-        .button-container {
-            width: 100%;
-            position: absolute;
-            position: absolute;
-            bottom: 27px;
-            right: 0;
-            padding: 0 20px;
-            left: 0;
-
-            .link {
-                float: right;
-                margin: 7px;
+                &:hover {
+                    opacity: .9;
+                }
             }
 
-            .add-button{
-                float: left;
+            .xero-side,
+            .sperse-side {
+                header {
+                    height: 215px;
+                    align-items: center;
+                    justify-content: center;
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+
+                    .img-arrow-left,
+                    .img-arrow-right {
+                        position: absolute;
+                        top: 54%;
+                        right: 10px;
+                    }
+
+                    .img-arrow-right {
+                        right: auto;
+                        left: 10px;
+                    }
+                }
+            }
+
+            .xero-side {
+                background-color: rgb(0, 180, 217);
+                color: #fff;
+                padding-right: 0;
+
+                header {
+                    justify-content: flex-end;
+                }
+
+                .hero-image {
+                    max-width: 275px;
+                    border-radius: 50%;
+                    object-fit: contain;
+                }
+
+                .content {
+                    max-width: 300px;
+                    margin: 0 auto;
+                    padding-top: 60px;
+                    // height: 100%;
+
+                    h2 {
+                        font-family: Montserrat;
+                        font-size: 22px;
+                        font-weight: 500;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1.09;
+                        letter-spacing: normal;
+                        text-align: left;
+                        margin-bottom: 20px;
+                    }
+
+                    .xero-list {
+                        list-style-type: none;
+                        padding: 0;
+                        margin: 0;
+
+                        .xero-item {
+                            padding: 7px 0;
+                        }
+                    }
+                }
+            }
+            .sperse-side {
+                background-color: #fff;
+                padding-left: 0;
+
+                header {
+                    h2 {
+                        font-family: Montserrat;
+                        font-size: 24px;
+                        font-weight: 500;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: 1;
+                        letter-spacing: normal;
+                        color: rgb(33, 44, 54);
+                    }
+
+                    .sperse-logo {
+                        max-width: 240px;
+                    }
+                }
+
+                .content {
+                    max-width: 360px;
+                    margin: 0 auto;
+                    padding-top: 20px;
+                    height: calc(~"100% - 215px");
+
+                    .xero-integration-list {
+                        margin: 0;
+                        padding: 0;
+                        list-style-type: none;
+                    }
+
+                    .title-col {
+                        .col {
+                            h3 {
+                                font-family: Montserrat;
+                                font-size: 13px;
+                                font-weight: 500;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 1.85;
+                                letter-spacing: 0.5px;
+                                color: rgb(33, 44, 54);
+                                text-transform: uppercase;
+                            }
+
+                            &.text-center {
+                                max-width: 40px;
+                            }
+                        }
+                    }
+
+                    .item-row {
+                        margin-bottom: 10px;
+
+                        .col {
+                            position: relative;
+                            font-family: Montserrat;
+                            font-size: 14px;
+                            font-weight: 300;
+                            font-style: normal;
+                            font-stretch: normal;
+                            line-height: 1.64;
+                            letter-spacing: 0.3px;
+                            text-align: left;
+                            color: rgb(66, 76, 86);
+
+                            &.text-center {
+                                max-width: 40px;
+                                padding: 0;
+                            }
+
+                            .small-blue-arrow,
+                            .small-orange-arrow {
+                                max-width: 14px;
+                                display: block;
+                                margin: 0 auto;
+                            }
+                            .small-orange-arrow {
+                                transform: rotate(180deg);
+                            }
+                        }
+                    }
+
+                    .first-step-content {
+                        text-align: center;
+
+                        .btn-black {
+                            margin-top: 45px;
+                            cursor: pointer;
+                        }
+                    }
+
+                    .second-step-content {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        height: 100%;
+
+                        .field {
+                            .field-label {
+                                font-family: Montserrat;
+                                font-size: 13px;
+                                font-weight: 300;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 1.92;
+                                letter-spacing: 0.3px;
+                                text-align: left;
+                                color: rgb(103, 115, 128);
+                            }
+                            input {
+                                padding: 8px 0;
+                                font-family: Montserrat;
+                                font-size: 17px;
+                                font-weight: normal;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 1.47;
+                                letter-spacing: 0.3px;
+                                text-align: left;
+                                color: rgb(66, 76, 86);
+                                border-bottom: 1px solid rgb(218, 222, 225);
+                            }
+                        }
+
+                        .btn-black {
+                            margin-top: 28px;
+                            .dx-button-content {
+                                padding: 0;
+                                line-height: 1;
+
+                            }
+                        }
+
+                        .footer-links {
+                            text-align: center;
+                            padding-bottom: 30px;
+
+                            .link {
+                                font-family: Montserrat;
+                                font-size: 16px;
+                                font-weight: normal;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 1;
+                                letter-spacing: 0.3px;
+                                text-align: left;
+                                margin: 10px;
+                                color: #00aeef;
+                                text-decoration: none;
+                                transition: .2s;
+
+                                &:hover {
+                                    color: lighten(#00aeef, 10%);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

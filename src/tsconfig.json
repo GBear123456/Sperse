@@ -25,10 +25,10 @@
     }
   },
   "include": [
-      "./**/*"
+      "./**/*",
+      "./node_modules/ngx-international-phone-number/src/"
   ],
   "exclude": [
-      "node_modules",
       "./account/register/**",
       "./account/payment/**"
   ]

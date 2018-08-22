@@ -31,6 +31,10 @@
 
 .row {
     padding: 2px 0;
+    
+    [class^='col'] {
+        white-space: normal;
+    }
 }
 
 .uppercase {
@@ -46,7 +50,7 @@
 .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: nowrap !important;
 }
 
 .blue-edit-pencil {

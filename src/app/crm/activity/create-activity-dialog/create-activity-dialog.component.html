@@ -1,0 +1,126 @@
+<modal-dialog (onTitleKeyUp)="titleChanged($event)">
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="saveContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
+        target="#{{saveButtonId}}">
+    </dx-context-menu>
+    <app-toolbar [config]="toolbarConfig"></app-toolbar>
+    <crm-static-list #stagesList
+            [width]="'210px'"
+            [selectedKeys]="[data.appointment.StageId]"
+            [showConfirmation]="false"
+            [selectedItems]=""
+            [hideButtons]="true"
+            [highlightSelected]="true"
+            [targetSelector]="'[accessKey=ActivityStage]'"
+            (onItemSelected)="onStagesChanged($event)"
+            [showTitle]="false"
+            [funnelStyling]="true"
+            [list]="data.stages">
+    </crm-static-list>
+    <crm-user-assignment-list [multiSelection]="true"
+            [targetSelector]="'[accesskey=\'UserAssign\']'" 
+            [(selectedItemKey)]="data.appointment.AssignedUserIds" 
+            [hideButtons]="true">
+    </crm-user-assignment-list>
+
+    <div class="tab-content">
+        <div class="field">
+            <label>{{l('Type')}}</label>
+            <dx-select-box
+                name="type"
+                placeholder="{{l('Type')}}"
+                displayExpr="name"
+                valueExpr="name"
+                [width]="'360px'"
+                [dataSource]="types"
+                [(value)]="data.appointment.Type">
+            </dx-select-box>
+        </div>
+			  <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
+            <div class="field">
+                <label>{{l('StartDate')}}</label>
+                <dx-date-box #startDate
+                    maxLength="10"
+                    type="datetime"
+                    [max]="data.appointment.EndDate"
+                    [width]="'360px'"                   
+                    [(value)]="data.appointment.StartDate">
+                    <dx-validator>
+                      <dxi-validation-rule type="required" message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-date-box>
+            </div>
+            <div class="field">
+                <label>{{l('EndDate')}}</label>
+                <dx-date-box #endDate
+                    maxLength="10"
+                    type="datetime"
+                    [min]="data.appointment.StartDate"
+                    [width]="'360px'"
+                    [(value)]="data.appointment.EndDate">
+                    <dx-validator>
+                      <dxi-validation-rule type="required" message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-date-box>
+            </div>
+        </dx-validation-group>
+        <div class="field">
+            <label>{{l('Lead')}}</label>
+            <dx-select-box
+                name="Leads"
+                displayExpr="name"
+                valueExpr="id"
+                [width]="'360px'"
+                [dataSource]="leads"
+                placeholder="Search..."
+                [searchEnabled]="true"
+                [searchTimeout]="0" 
+                [(value)]="data.appointment.LeadId"
+                (onInput)="lookupItems($event)">
+            </dx-select-box>
+        </div>
+        <div class="field">
+            <label>{{l('Client')}}</label>
+            <dx-select-box
+                name="Clients"
+                displayExpr="name"
+                valueExpr="id"
+                placeholder="Search..."
+                [width]="'360px'"
+                [dataSource]="clients"
+                [searchEnabled]="true"       
+                [searchTimeout]="0" 
+                [(value)]="data.appointment.CustomerId"
+                (onInput)="lookupItems($event)">
+            </dx-select-box>
+        </div>
+        <div class="field">
+            <label>{{l('Order')}}</label>
+            <dx-select-box
+                name="Orders"
+                displayExpr="name"
+                valueExpr="id"
+                placeholder="Search..."
+                [width]="'360px'"
+                [dataSource]="orders"
+                [searchEnabled]="true"
+                [searchTimeout]="0" 
+                [(value)]="data.appointment.OrderId"
+                (onInput)="lookupItems($event)">
+            </dx-select-box>
+        </div>
+        <div class="field">
+            <label class="comment">{{l('Description')}}</label>
+            <dx-text-area
+              name="description"
+              [width]="'360px'"
+              [height]="'100px'"
+              [(value)]="data.appointment.Description">
+            </dx-text-area>
+        </div>
+    </div>
+</modal-dialog>

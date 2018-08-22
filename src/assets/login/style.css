@@ -9,7 +9,7 @@ footer {
     flex: none;
 }
 
-.main-content {
+.login .main-content {
     flex: 1 0 auto;
     width: 100%;
     max-width: 1400px;
@@ -115,63 +115,6 @@ footer {
     font-weight: 600;
     font-size: 15px;
     color: #7d91aa !important;
-}
-
-.login-options .social-icons {
-    float: right;
-    padding-top: 3px;
-}
-
-.social-icons {
-    padding: 0;
-    margin: 0;
-}
-
-.social-icons li {
-    float: left;
-    display: inline;
-    list-style: none;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    text-indent: -9999px;
-}
-
-.social-icons li > a {
-    border-radius: 2px;
-    width: 28px;
-    height: 28px;
-    display: block;
-    background-position: 0 0;
-    background-repeat: no-repeat;
-    transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-    -ms-transition: all 0.3s ease-in-out;
-    -moz-transition: all 0.3s ease-in-out;
-    -webkit-transition: all 0.3s ease-in-out;
-}
-
-.social-icons li:hover > a {
-    background-position: 0 -38px;
-}
-
-.social-icons li .twitter {
-    background: url(/assets/common/images/social/twitter.png) no-repeat;
-}
-
-.social-icons li .facebook {
-    background: url(/assets/common/images/social/facebook.png) no-repeat;
-}
-
-.social-icons li .googleplus {
-    background: url(/assets/common/images/social/google.png) no-repeat;
-}
-
-.social-icons li .microsoft {
-    background: url(/assets/common/images/social/microsoft.png) no-repeat;
-}
-
-.social-icons li .openidconnect {
-    background: url(/assets/common/images/social/open-id-connect.png) no-repeat;
 }
 
 .login-options .social-icons li a {

@@ -16,6 +16,7 @@ import { AppConsts } from '@shared/AppConsts';
 export class XeroLoginDialogComponent extends CFOComponentBase {
     @Input() operationType: 'add' | 'update' = 'add';
     @Output() onComplete = new EventEmitter();
+    showForm = false;
     popupVisible = false;
     consumerKey: string;
     consumerSecret: string;
@@ -28,7 +29,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
         private _syncAccountServiceProxy: SyncAccountServiceProxy
     ) {
         super(injector);
-        this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + "/Xero/GetCertificate";
+        this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + '/Xero/GetCertificate';
     }
 
     show(data: {id: number} = null): void {
@@ -39,11 +40,22 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     }
 
     hide(): void {
+        this.showForm = false;
         this.popupVisible = false;
     }
 
+    onClick(event) {
+        let result = event.validationGroup.validate();
+        if (result.isValid) {
+            if (this.operationType === 'add')
+                this.connectToXero(event);
+            else
+                this.updateSyncAccount();
+        }
+    }
+
     connectToXero(e) {
-        abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'))
+        abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'));
         this._syncAccountServiceProxy.create(InstanceType[this.instanceType], this.instanceId,
             new CreateSyncAccountInput({
                 typeId: 'X',
@@ -59,7 +71,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
 
     updateSyncAccount() {
         if (this.accountId) {
-            abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'))
+            abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'));
             this._syncAccountServiceProxy.update(InstanceType[this.instanceType], this.instanceId,
                 new UpdateSyncAccountInput({
                     id: this.accountId,

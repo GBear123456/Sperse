@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef, NgZone } from '@angular/core';
 
 import * as moment from 'moment';
 
@@ -17,20 +17,18 @@ import { FiltersService } from '@shared/filters/filters.service';
 })
 export class AppComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
-    private viewContainerRef: ViewContainerRef;
-
     installationMode = false;
 
     public constructor(
         injector: Injector,
-        viewContainerRef: ViewContainerRef,
+        private _ngZone: NgZone,
+        private viewContainerRef: ViewContainerRef, // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
         private _chatSignalrService: ChatSignalrService,
         private _appSessionService: AppSessionService,
         public appService: AppService,
         public filtersService: FiltersService
     ) {
         super(injector);
-        this.viewContainerRef = viewContainerRef; // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
     }
 
     ngOnInit(): void {
@@ -44,16 +42,16 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appSessionService.tenantId > 0 &&
+        return false && this._appSessionService.tenantId > 0 &&
             (this._appSessionService.tenant.isInTrialPeriod ||
                 this.subscriptionIsExpiringSoon());
     }
 
     subscriptionIsExpiringSoon(): boolean {
         if (this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
+            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') 
+                >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
-
         return false;
     }
 
@@ -62,8 +60,10 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
             return;
         }
 
-        mApp.init();
-        mLayout.init();
-        mApp.initialized = true;
+//        this._ngZone.runOutsideAngular(() => {
+            mApp.init();
+            mLayout.init();
+            mApp.initialized = true;
+//        });
     }
 }

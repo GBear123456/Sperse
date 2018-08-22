@@ -1,7 +1,6 @@
 import { Component, Injector, OnInit, Input } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
 
@@ -21,8 +20,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         injector: Injector,
         private _dashboardService: DashboardServiceProxy,
         private _classificationService: ClassificationServiceProxy,
-        public dialog: MatDialog,
-        private _router: Router
+        public dialog: MatDialog
     ) {
         super(injector);
     }
