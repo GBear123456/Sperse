@@ -24,7 +24,7 @@
                 <button class="button-layout button-primary" (click)="reset()">{{l('AnotherImport')}}</button>
                 <button class="button-layout button-default" (click)="cancelImport()">{{l('CancelImport')}}</button>
             </div>
-      
+
             <div *ngIf="importStatus == importStatuses.Completed">
                 <h1>{{ l('ImportedLeadsHeader', importedCount, totalCount, l(importType.toString() + 's').toLowerCase()) }}</h1>
                 <!-- h3>{{l('ImportedLeadsMessage')}}</h3 -->
@@ -55,18 +55,19 @@
     (onItemSelected)="onStagesChanged($event)"
     [list]="leadStages">
 </crm-static-list>
-<crm-static-list #partnerTypesList
-    [width]="'210px'"
-    [highlightSelected]="true"
-    [title]="l('PartnerType')"
-    [selectedKeys]="[selectedPartnerTypId]"
-    [showConfirmation]="false"
-    [hideButtons]="true"
-    [highlightSelected]="true"
-    [targetSelector]="'[accessKey=PartnerType]'"
-    (onItemSelected)="onPartnerTypeChanged($event)"
-    [list]="partnerTypes">
-</crm-static-list>
+<!--<crm-static-list #partnerTypesList-->
+    <!--[width]="'210px'"-->
+    <!--[highlightSelected]="true"-->
+    <!--[title]="l('PartnerType')"-->
+    <!--[selectedKeys]="[selectedPartnerTypId]"-->
+    <!--[showConfirmation]="false"-->
+    <!--[hideButtons]="true"-->
+    <!--[highlightSelected]="true"-->
+    <!--[targetSelector]="'[accessKey=PartnerType]'"-->
+    <!--(onItemSelected)="onPartnerTypeChanged($event)"-->
+    <!--[list]="partnerTypes">-->
+<!--</crm-static-list>-->
+<crm-types-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
 <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onListsChanged($event)"></crm-lists-list>
 <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectedChanged)="onTagsChanged($event)"></crm-tags-list>
 <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [ratingValue]="defaultRating" [hideButtons]="true" (onValueChanged)="onRatingChanged($event)"></crm-rating>

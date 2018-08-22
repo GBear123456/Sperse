@@ -63,8 +63,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'RemoveFromBulkUpdateConfirmation' : 'AddToListsBulkUpdateConfirmation', 
-                            this.selectedKeys.length, this.selectedLists.length || this.l('all')), 
+                        this.l(isRemove ? 'RemoveFromBulkUpdateConfirmation' : 'AddToListsBulkUpdateConfirmation',
+                            this.selectedKeys.length, this.selectedLists.length || this.l('all')),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);
@@ -94,7 +94,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             else
                 this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
                     customerIds: customerIds,
-                    lists: lists 
+                    lists: lists
                 })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
                 })).subscribe((result) => {
@@ -328,7 +328,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') && 
+        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

@@ -1,7 +1,6 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
@@ -15,7 +14,6 @@ import {
     MatStepperModule
 } from '@angular/material';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { CommonModule } from '@shared/common/common.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import {

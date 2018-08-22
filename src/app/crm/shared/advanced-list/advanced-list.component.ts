@@ -1,41 +1,46 @@
-import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular/core';
+import {Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCustomerTagInput, UntagCustomersInput, UpdateCustomerTagsInput } from '@shared/service-proxies/service-proxies';
+import { CustomerListsServiceProxy, AddCustomersToListsInput, CustomerListInput,
+    UpdateCustomerListInput, UpdateCustomerListsInput} from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
+import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { MatDialog } from '@angular/material';
-import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { finalize } from 'rxjs/operators';
 
 @Component({
-  selector: 'crm-tags-list',
-  templateUrl: './tags-list.component.html',
-  styleUrls: ['./tags-list.component.less'],
-  providers: [ CustomerTagsServiceProxy ]
+    selector: 'app-advanced-list',
+    templateUrl: './advanced-list.component.html',
+    styleUrls: ['./advanced-list.component.less'],
+    providers: [CustomerListsServiceProxy]
 })
-export class TagsListComponent extends AppComponentBase implements OnInit {
+export class AdvancedListComponent extends AppComponentBase implements OnInit {
+    @Input() name: string;
+    @Input() permissionName = 'Pages.CRM.Customers.ManageListsAndTags';
+    @Input() bulkUpdateConfirmationKey: string;
+    @Input() bulkRemoveConfirmationKey: string;
+    @Input() dataSource: any;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Tags']";
+    @Input() targetSelector = '[aria-label="Lists"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() set selectedItems(value) {
-        this.selectedTags = value;
+        this.selectedLists = value;
     }
     get selectedItems() {
-        return this.selectedTags.map(item => {
-            return CustomerTagInput.fromJS(_.findWhere(this.list, {id: item}));
-        });
+        return this.selectedLists.map(item => {
+            return CustomerListInput.fromJS(_.findWhere(this.list, {id: item}));
+        }).filter(Boolean);
     }
-    @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
-    private selectedTags = [];
-
-    list: any = [];
+    selectedLists = [];
+    list: any;
 
     lastNewAdded: any;
     addNewTimeout: any;
@@ -45,8 +50,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _filterService: FiltersService,
-        private _tagsService: CustomerTagsServiceProxy
+        private _filterService: FiltersService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -58,12 +62,13 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     apply(isRemove: boolean = false, selectedKeys = undefined) {
         if (this.listComponent) {
+            this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation',
-                            this.selectedKeys.length),
+                        this.l(isRemove ? this.bulkRemoveConfirmationKey : this.bulkUpdateConfirmationKey,
+                            this.selectedKeys.length, this.selectedLists.length || this.l('all')),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);
@@ -81,34 +86,36 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     process(isRemove: boolean) {
         let customerIds = this.selectedKeys;
-        let tags = this.selectedItems;
+        let lists = this.selectedItems;
         if (this.bulkUpdateMode) {
-            if (isRemove)
-                this._tagsService.untagCustomers(UntagCustomersInput.fromJS({
-                    customerIds: customerIds,
-                    tagIds: this.selectedTags
-                })).pipe(finalize(() => {
-                    this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('TagsUnassigned'));
-                });
-            else
-                this._tagsService.tagCustomers(TagCustomersInput.fromJS({
-                    customerIds: customerIds,
-                    tags: tags
-                })).pipe(finalize(() => {
-                    this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('TagsAssigned'));
-                });
+            // if (isRemove)
+            //     this._listsService.removeCustomersFromLists(customerIds, this.selectedLists
+            //     ).pipe(finalize(() => {
+            //         this.listComponent.deselectAll();
+            //     })).subscribe((result) => {
+            //         this.notify.success(this.l('ListsUnassigned'));
+            //     });
+            // else
+            //     this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
+            //         customerIds: customerIds,
+            //         lists: lists
+            //     })).pipe(finalize(() => {
+            //         this.listComponent.deselectAll();
+            //     })).subscribe((result) => {
+            //         this.notify.success(this.l('ListsAssigned'));
+            //     });
         }
-        else
-            this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
-                customerId: customerIds[0],
-                tags: tags
-            })).subscribe((result) => {
-                this.notify.success(this.l('CustomerTagsUpdated'));
-            });
+        // else
+        //     this._listsService.updateCustomerLists(UpdateCustomerListsInput.fromJS({
+        //         customerId: customerIds[0],
+        //         lists: lists
+        //     })).subscribe((result) => {
+        //         this.notify.success(this.l('CustomerListsUpdated'));
+        //     });
+    }
+
+    refresh() {
+        /** Emit to parent refresh event */
     }
 
     clear() {
@@ -120,18 +127,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.listComponent = $event.component;
     }
 
-    ngOnInit() {
-        this.refresh();
-    }
-
-    refresh() {
-        this._tagsService.getTags().subscribe((result) => {
-            this.list = result.map((obj) => {
-                obj['parent'] = 0;
-                return obj;
-            });
-        });
-    }
+    ngOnInit() {}
 
     reset() {
         this.selectedItems = [];
@@ -174,7 +170,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                         this.filterModel.items.element.value = [$event.data.id];
                         $event.cellElement.parentElement.classList.add('filtered');
                     }
-
                     this._filterService.change(this.filterModel);
                 });
         }
@@ -197,7 +192,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 items: _.filter(this.list, (obj) => {
                     return (obj.id != itemId);
                 }),
-                entityPrefix: 'Tag',
+                entityPrefix: this.capitalize(this.name),
                 reassignToItemId: undefined,
                 localization: this.localizationSourceName
             };
@@ -205,38 +200,41 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData
         }).afterClosed().subscribe((result) => {
-            if (result)
-                this._tagsService
-                    .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
-                    .subscribe(() => {
-                        this.refresh();
-                        this.clearFilterIfSelected(itemId);
-                    });
-            else
-                this.tooltipVisible = true;
-            });
+            // if (result)
+            //     this._listsService
+            //         .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
+            //         .subscribe(() => {
+            //             this.refresh();
+            //             this.clearFilterIfSelected(itemId);
+            //         });
+            // else
+            //     this.tooltipVisible = true;
+        });
     }
 
     onRowUpdating($event) {
-        let tagName = $event.newData.name.trim();
+        let listName = $event.newData.name.trim();
 
-        if (!tagName || this.IsDuplicate(tagName)) {
+        if (!listName || this.IsDuplicate(listName)) {
             $event.cancel = true;
             return;
         }
 
-        this._tagsService.rename(UpdateCustomerTagInput.fromJS({
-            id: $event.oldData.id,
-            name: tagName
-        })).subscribe((res) => {
-            if (res)
-                $event.cancel = true;
-        });
+        let id = $event.oldData.id;
+        if (Number.isInteger(id)) {
+            // this._listsService.rename(UpdateCustomerListInput.fromJS({
+            //     id: id,
+            //     name: listName
+            // })).subscribe((res) => {
+            //     if (res)
+            //         $event.cancel = true;
+            // });
+        }
     }
 
     onRowInserting($event) {
-        let tagName = $event.data.name.trim();
-        if (!tagName || this.IsDuplicate(tagName))
+        let listName = $event.data.name.trim();
+        if (!listName || this.IsDuplicate(listName))
             $event.cancel = true;
     }
 
@@ -246,11 +244,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             return (obj.name.toLowerCase() == nameNormalized);
         });
         return duplicates.length > 0;
-    }
-
-    onSelectionChanged($event) {
-        this.selectedTags = $event.selectedRowKeys;
-        this.onSelectedChanged.emit($event);
     }
 
     editorPrepared($event) {
@@ -276,8 +269,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            this.selectedTags = this.listComponent.option('selectedRowKeys');
-            this.selectedTags.push($event.key);
+            this.selectedLists = this.listComponent.option('selectedRowKeys');
+            this.selectedLists.push($event.key);
         });
     }
 
@@ -324,11 +317,15 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             else if (this.lastNewAdded.name == item2)
                 return 1;
         }
-        return 0;
+    }
+
+    onSelectionChange(event) {
+        this.selectedItems = event.selectedRowKeys;
+        this.onSelectionChanged.emit(event);
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
+        return this.permission.isGranted(this.permissionName) &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

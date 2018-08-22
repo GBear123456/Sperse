@@ -26,6 +26,7 @@ import { StaticListComponent } from '../../shared/static-list/static-list.compon
 import { RatingComponent } from '../rating/rating.component';
 import { TagsListComponent } from '../tags-list/tags-list.component';
 import { ListsListComponent } from '../lists-list/lists-list.component';
+import { TypesListComponent } from '../types-list/types-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -38,10 +39,11 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
+    //@ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     contactTypes = [ContactTypes.Personal, ContactTypes.Business];
@@ -58,7 +60,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
-    partnerTypes: any[] = [];
+    //partnerTypes: any[] = [];
     partnerTypeId: number;
 
     saveButtonId: string = 'saveClientOptions';
@@ -174,9 +176,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode) {
             this.leadStagesLoad();
         }
-        if (this.data.customerType == CustomerType.Partner ) {
-            this.loadPartnerTypes();
-        }
+        // if (this.data.customerType == CustomerType.Partner ) {
+        //     this.loadPartnerTypes();
+        // }
         this.initToolbarConfig();
     }
 
@@ -847,21 +849,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.stageId = event.id;
     }
 
-    loadPartnerTypes() {
-        this._partnerTypeService.getAll()
-            .subscribe(list => {
-                this.partnerTypes = list.map((item) => {
-                    return {
-                        id: item.id,
-                        name: item.name,
-                        text: item.name
-                    };
-                });
-            });
-    }
+    // loadPartnerTypes() {
+    //     this._partnerTypeService.getAll()
+    //         .subscribe(list => {
+    //             this.partnerTypes = list.map((item) => {
+    //                 return {
+    //                     id: item.id,
+    //                     name: item.name,
+    //                     text: item.name
+    //                 };
+    //             });
+    //         });
+    // }
 
     onPartnerTypeChanged(event) {
-        this.partnerTypeId = event.id;
+        this.partnerTypeId = event.selectedRowKeys[0];
         this.partnerTypesComponent.apply();
     }
 }

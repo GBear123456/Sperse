@@ -3,7 +3,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCustomerTagInput, UntagCustomersInput, UpdateCustomerTagsInput } from '@shared/service-proxies/service-proxies';
+import {
+    BulkUpdatePartnerTypeInput,
+    PartnerTypeServiceProxy,
+    PartnerServiceProxy,
+    RenamePartnerTypeInput,
+    UpdatePartnerTypeInput
+} from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { MatDialog } from '@angular/material';
@@ -11,29 +17,29 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
 import { finalize } from 'rxjs/operators';
 
 @Component({
-  selector: 'crm-tags-list',
-  templateUrl: './tags-list.component.html',
-  styleUrls: ['./tags-list.component.less'],
-  providers: [ CustomerTagsServiceProxy ]
+    selector: 'crm-types-list',
+    templateUrl: './types-list.component.html',
+    styleUrls: ['./types-list.component.less'],
+    providers: [ PartnerTypeServiceProxy, PartnerServiceProxy ]
 })
-export class TagsListComponent extends AppComponentBase implements OnInit {
+export class TypesListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Tags']";
+    @Input() targetSelector = '[aria-label="Type"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() set selectedItems(value) {
-        this.selectedTags = value;
+        this.selectedTypes = value;
     }
     get selectedItems() {
-        return this.selectedTags.map(item => {
-            return CustomerTagInput.fromJS(_.findWhere(this.list, {id: item}));
+        return this.selectedTypes.map(item => {
+            return _.findWhere(this.list, {id: item});
         });
     }
     @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
-    private selectedTags = [];
+    private selectedTypes = [];
 
     list: any = [];
 
@@ -46,7 +52,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _filterService: FiltersService,
-        private _tagsService: CustomerTagsServiceProxy
+        private _partnerService: PartnerServiceProxy,
+        private _partnerTypeService: PartnerTypeServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -62,7 +69,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation',
+                        this.l(isRemove ? 'RemoveFromTypeBulkUpdateConfirmation' : 'AddToTypeUpdateConfirmation',
                             this.selectedKeys.length),
                         isConfirmed => {
                             if (isConfirmed)
@@ -80,34 +87,26 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     process(isRemove: boolean) {
-        let customerIds = this.selectedKeys;
-        let tags = this.selectedItems;
+        const partnerIds = this.selectedKeys;
+        const selectedItem = this.selectedItems[0];
+        const typeName = isRemove ? null : selectedItem.name;
+        const notifyMessageKey = isRemove ? 'TypesUnassigned' : 'TypesAssigned';
         if (this.bulkUpdateMode) {
-            if (isRemove)
-                this._tagsService.untagCustomers(UntagCustomersInput.fromJS({
-                    customerIds: customerIds,
-                    tagIds: this.selectedTags
-                })).pipe(finalize(() => {
-                    this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('TagsUnassigned'));
-                });
-            else
-                this._tagsService.tagCustomers(TagCustomersInput.fromJS({
-                    customerIds: customerIds,
-                    tags: tags
-                })).pipe(finalize(() => {
-                    this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('TagsAssigned'));
-                });
+            this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
+                partnerIds: partnerIds,
+                typeName: typeName
+            })).pipe(finalize(() => {
+                this.listComponent.deselectAll();
+            })).subscribe((result) => {
+                this.notify.success(this.l(notifyMessageKey));
+            });
         }
         else
-            this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
-                customerId: customerIds[0],
-                tags: tags
+            this._partnerService.updateType(UpdatePartnerTypeInput.fromJS({
+                partnerId: partnerIds[0],
+                typeName: typeName ? typeName : null
             })).subscribe((result) => {
-                this.notify.success(this.l('CustomerTagsUpdated'));
+                this.notify.success(this.l(typeName ? 'PartnerTypesUpdated' : 'TypesUnassigned'));
             });
     }
 
@@ -125,7 +124,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this._tagsService.getTags().subscribe((result) => {
+        this._partnerTypeService.getAll().subscribe((result) => {
             this.list = result.map((obj) => {
                 obj['parent'] = 0;
                 return obj;
@@ -149,7 +148,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -197,7 +196,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 items: _.filter(this.list, (obj) => {
                     return (obj.id != itemId);
                 }),
-                entityPrefix: 'Tag',
+                entityPrefix: 'Type',
                 reassignToItemId: undefined,
                 localization: this.localizationSourceName
             };
@@ -206,7 +205,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             data: dialogData
         }).afterClosed().subscribe((result) => {
             if (result)
-                this._tagsService
+                this._partnerTypeService
                     .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
                     .subscribe(() => {
                         this.refresh();
@@ -214,20 +213,20 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                     });
             else
                 this.tooltipVisible = true;
-            });
+        });
     }
 
     onRowUpdating($event) {
-        let tagName = $event.newData.name.trim();
+        let typeName = $event.newData.name.trim();
 
-        if (!tagName || this.IsDuplicate(tagName)) {
+        if (!typeName  || this.IsDuplicate(typeName )) {
             $event.cancel = true;
             return;
         }
 
-        this._tagsService.rename(UpdateCustomerTagInput.fromJS({
+        this._partnerTypeService.rename(RenamePartnerTypeInput.fromJS({
             id: $event.oldData.id,
-            name: tagName
+            name: typeName
         })).subscribe((res) => {
             if (res)
                 $event.cancel = true;
@@ -235,8 +234,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowInserting($event) {
-        let tagName = $event.data.name.trim();
-        if (!tagName || this.IsDuplicate(tagName))
+        let typeName = $event.data.name.trim();
+        if (!typeName || this.IsDuplicate(typeName))
             $event.cancel = true;
     }
 
@@ -249,7 +248,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     onSelectionChanged($event) {
-        this.selectedTags = $event.selectedRowKeys;
+        this.selectedTypes = $event.selectedRowKeys;
         this.onSelectedChanged.emit($event);
     }
 
@@ -276,8 +275,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            this.selectedTags = this.listComponent.option('selectedRowKeys');
-            this.selectedTags.push($event.key);
+            this.selectedTypes = this.listComponent.option('selectedRowKeys');
+            this.selectedTypes.push($event.key);
         });
     }
 
@@ -301,7 +300,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     onContentReady($event) {
-        this.highlightSelectedFilters();
+        //this.highlightSelectedFilters();
     }
 
     highlightSelectedFilters() {

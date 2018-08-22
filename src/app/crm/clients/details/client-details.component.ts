@@ -408,7 +408,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
 
     updatePartnerType($event) {
-        this.showUpdatePartnerTypeConfirmationDialog($event.itemData.id);
+        this.showUpdatePartnerTypeConfirmationDialog($event.selectedRowKeys[0]);
         $event.event.stopPropagation();
     }
 

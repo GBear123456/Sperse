@@ -23,19 +23,20 @@
                      [funnelStyling]="true"
                      [disableHindmost]="true">
     </crm-static-list>
-    <crm-static-list #partnerTypesList
-                    [width]="'210px'"
-                    [selectedKeys]="[partnerTypeId]"
-                    [showConfirmation]="false"
-                    [selectedItems]=""
-                    [hideButtons]="true"
-                    [highlightSelected]="true"
-                    [targetSelector]="'[accessKey=PartnerTypesList]'"
-                    (onItemSelected)="onPartnerTypeChanged($event)"
-                    [showTitle]="false"
-                    [list]="partnerTypes">
-    </crm-static-list>
+    <!--<crm-static-list #partnerTypesList-->
+                    <!--[width]="'210px'"-->
+                    <!--[selectedKeys]="[partnerTypeId]"-->
+                    <!--[showConfirmation]="false"-->
+                    <!--[selectedItems]=""-->
+                    <!--[hideButtons]="true"-->
+                    <!--[highlightSelected]="true"-->
+                    <!--[targetSelector]="'[accessKey=PartnerTypesList]'"-->
+                    <!--(onItemSelected)="onPartnerTypeChanged($event)"-->
+                    <!--[showTitle]="false"-->
+                    <!--[list]="partnerTypes">-->
+    <!--</crm-static-list>-->
     <crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true"></crm-rating>
+    <crm-types-list [targetSelector]="'[accesskey=\'PartnerTypesList\']'" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
     <crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true"></crm-tags-list>
     <crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true"></crm-lists-list>
     <crm-user-assignment-list [targetSelector]="'[accesskey=\'ClientAssign\']'" [hideButtons]="true"></crm-user-assignment-list>
@@ -95,7 +96,7 @@
 			  <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
 				<div class="field phone H">
                     <label>{{l('Phone')}}</label>
-                    <country-phone-number 
+                    <country-phone-number
                         [(phoneNumber)]="phones[type]"
                         [required]="false"
                         #countryPhoneNumber

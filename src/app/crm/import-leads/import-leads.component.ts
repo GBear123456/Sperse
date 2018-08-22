@@ -13,6 +13,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
 import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
+import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
@@ -43,10 +44,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    @ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
 
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_prefix';
@@ -679,7 +680,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     onPartnerTypeChanged(event) {
-        this.selectedPartnerTypId = event.id;
+        this.selectedPartnerTypId = event.selectedRowKeys[0];
+        this.partnerTypesComponent.apply();
         this.initToolbarConfig();
     }
 
@@ -687,7 +689,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         if (event)
             this.hideLeftMenu = event.selectedIndex
                 != this.wizard.UPLOAD_STEP_INDEX;
-        else 
+        else
             setTimeout(() => this.initToolbarConfig());
     }
 }

@@ -13,21 +13,44 @@
         [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
         (onItemSelected)="updatePartnerStatuses($event)">
     </crm-static-list>
-    <crm-static-list #partnerTypesList
-        [width]="'180px'"
-        [title]="l('Type')"
-        [selectedKeys]="selectedPartnerKeys"
-        [showConfirmation]="true"
-        [updateConfirmationTitle]="l('PartnerTypeUpdateConfirmationTitle')"
-        [updateConfirmationMessage]="l('PartnersUpdateTypeWarningMessage')"
-        [hideButtons]="true"
-        [filterModel]="filterModelType"
-        [targetSelector]="'[accessKey=PartnerType]'"
-        [list]="partnerTypes"
-        (onItemSelected)="updatePartnerTypes($event)">
-    </crm-static-list>
+
+    <!--<crm-static-list #partnerTypesList-->
+        <!--[width]="'180px'"-->
+        <!--[title]="l('Type')"-->
+        <!--[selectedKeys]="selectedPartnerKeys"-->
+        <!--[showConfirmation]="true"-->
+        <!--[updateConfirmationTitle]="l('PartnerTypeUpdateConfirmationTitle')"-->
+        <!--[updateConfirmationMessage]="l('PartnersUpdateTypeWarningMessage')"-->
+        <!--[hideButtons]="true"-->
+        <!--[filterModel]="filterModelType"-->
+        <!--[targetSelector]="'[accessKey=PartnerType]'"-->
+        <!--[list]="partnerTypes"-->
+        <!--(onItemSelected)="updatePartnerTypes($event)">-->
+    <!--</crm-static-list>-->
+    <!---->
+    <crm-types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></crm-types-list>
     <crm-tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
     <crm-lists-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
+
+    <!--<app-advanced-list-->
+        <!--[data]="partnerTypes"-->
+        <!--[permissionName]="'Pages.CRM.Customers.ManageListsAndTags'"-->
+        <!--[bulkRemoveConfirmationKey]="'RemoveFromTypeBulkUpdateConfirmation'"-->
+        <!--[bulkUpdateConfirmationKey]="'AddToTypeUpdateConfirmation'"-->
+    <!--&gt;</app-advanced-list>-->
+    <!--<app-advanced-list-->
+        <!--[data]="tags"-->
+        <!--[permissionName]="'Pages.CRM.Customers.ManageListsAndTags'"-->
+        <!--[bulkRemoveConfirmationKey]="'UntagBulkUpdateConfirmation'"-->
+        <!--[bulkUpdateConfirmationKey]="'TagBulkUpdateConfirmation'"-->
+    <!--&gt;</app-advanced-list>-->
+    <!--<app-advanced-list-->
+        <!--[data]="lists"-->
+        <!--[permissionName]="'Pages.CRM.Customers.ManageListsAndTags'"-->
+        <!--[bulkRemoveConfirmationKey]="'AddToListsBulkUpdateConfirmation'"-->
+        <!--[bulkUpdateConfirmationKey]="'RemoveFromBulkUpdateConfirmation'"-->
+    <!--&gt;</app-advanced-list>-->
+
     <crm-user-assignment-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelAssignment"></crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
