@@ -27,15 +27,16 @@ export class PipelineService {
         return this._pipelineServiceProxy
             .getPipelineDefinition(pipelinePurposeId, undefined)
             .pipe(map(result => {
-                result.stages.sort((a, b) => {
+                let pipelineDefinition = result[0];
+                pipelineDefinition.stages.sort((a, b) => {
                     return a.sortOrder > b.sortOrder ? 1 : -1;
                 }).forEach((item) => {
                     item['index'] = Math.abs(item.sortOrder);
                     item['dragAllowed'] = true;
                 });
-                this.pipeline = result;
-                this.stages = result.stages;
-                return result;
+                this.pipeline = pipelineDefinition;
+                this.stages = pipelineDefinition.stages;
+                return pipelineDefinition;
             }));
     }
 
