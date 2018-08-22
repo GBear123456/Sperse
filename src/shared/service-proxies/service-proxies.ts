@@ -17409,8 +17409,8 @@ export class PipelineServiceProxy {
      * @pipelineId (optional) 
      * @return Success
      */
-    getPipelineDefinition(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+    getPipelineDefinitions(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinitions?";
         if (purposeId !== undefined)
             url_ += "PurposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         if (pipelineId !== undefined)
@@ -17427,11 +17427,11 @@ export class PipelineServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPipelineDefinition(response_);
+            return this.processGetPipelineDefinitions(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPipelineDefinition(<any>response_);
+                    return this.processGetPipelineDefinitions(<any>response_);
                 } catch (e) {
                     return <Observable<PipelineDto[]>><any>_observableThrow(e);
                 }
@@ -17440,7 +17440,7 @@ export class PipelineServiceProxy {
         }));
     }
 
-    protected processGetPipelineDefinition(response: HttpResponseBase): Observable<PipelineDto[]> {
+    protected processGetPipelineDefinitions(response: HttpResponseBase): Observable<PipelineDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 

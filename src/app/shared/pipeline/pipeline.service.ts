@@ -25,7 +25,7 @@ export class PipelineService {
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
         return this._pipelineServiceProxy
-            .getPipelineDefinition(pipelinePurposeId, undefined)
+            .getPipelineDefinitions(pipelinePurposeId, undefined)
             .pipe(map(result => {
                 let pipelineDefinition = result[0];
                 pipelineDefinition.stages.sort((a, b) => {
