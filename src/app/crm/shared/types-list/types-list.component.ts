@@ -69,8 +69,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'RemoveFromTypeBulkUpdateConfirmation' : 'AddToTypeUpdateConfirmation',
-                            this.selectedKeys.length),
+                        this.l(isRemove ? 'RemoveFromTypeBulkUpdateConfirmation' : 'AddToTypeUpdateConfirmation', this.selectedKeys.length, this.selectedItems[0].name),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);

@@ -537,6 +537,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initToolbarConfig();
     }
 
+    onPartnerTypeChanged(event) {
+        this.selectedPartnerTypId = event.selectedRowKeys[0];
+        this.initToolbarConfig();
+    }
+
     onListsChanged(event) {
         this.isListsSelected = !!event.selectedRowKeys.length;
         this.initToolbarConfig();
@@ -677,12 +682,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     };
                 });
             });
-    }
-
-    onPartnerTypeChanged(event) {
-        this.selectedPartnerTypId = event.selectedRowKeys[0];
-        this.partnerTypesComponent.apply();
-        this.initToolbarConfig();
     }
 
     onStepChanged(event) {

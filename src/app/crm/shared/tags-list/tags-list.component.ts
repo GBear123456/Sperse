@@ -149,7 +149,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }

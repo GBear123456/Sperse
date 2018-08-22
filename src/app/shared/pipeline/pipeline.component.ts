@@ -45,8 +45,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._selectedLeads = leads;
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
-      
-    @Input() selectFields: string[];    
+
+    @Input() selectFields: string[];
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
@@ -124,7 +124,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             dataSource = this._dataSources[stage.name];
 
         if (!dataSource)
-            dataSource = this._dataSources[stage.name] = 
+            dataSource = this._dataSources[stage.name] =
                 new DataSource(_.extend(this._dataSource, {
                     //requireTotalCount: false,
                     select: this.selectFields
@@ -301,7 +301,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private setCardSelection(card, selectedValue) {
         let method = selectedValue ? 'add' : 'remove';
         card.classList[method]('selected');
-        var checkBoxElm = card.getElementsByTagName('dx-check-box')[0];
+        let checkBoxElm = card.getElementsByTagName('dx-check-box')[0];
         if (checkBoxElm)
             checkBoxElm.classList[method]('dx-checkbox-checked');
     }
