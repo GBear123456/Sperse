@@ -6,7 +6,7 @@
             <dx-progress-bar #progressBar
                              id="progress-bar-status"
                              width="210"
-                             [ngClass]="{'error': hasFailedAccounts, 'complete': progressBar.value == maxValue }"
+                             [ngClass]="{ 'error': hasFailedAccounts, 'complete': completed }"
                              [min]="0"
                              [max]="100"
                              [showStatus]="false"
