@@ -203,7 +203,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this.clearInplaceData();
         address.inplaceEdit = false;
         this._isInPlaceEditAllowed = true;
-        event.jQueryEvent.stopPropagation();
+        event.event.stopPropagation();
     }
 
     clearInplaceData() {
