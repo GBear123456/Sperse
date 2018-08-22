@@ -17409,8 +17409,8 @@ export class PipelineServiceProxy {
      * @pipelineId (optional) 
      * @return Success
      */
-    getPipelineDefinition(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+    getPipelineDefinitions(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinitions?";
         if (purposeId !== undefined)
             url_ += "PurposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         if (pipelineId !== undefined)
@@ -17427,20 +17427,20 @@ export class PipelineServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPipelineDefinition(response_);
+            return this.processGetPipelineDefinitions(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPipelineDefinition(<any>response_);
+                    return this.processGetPipelineDefinitions(<any>response_);
                 } catch (e) {
-                    return <Observable<PipelineDto>><any>_observableThrow(e);
+                    return <Observable<PipelineDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PipelineDto>><any>_observableThrow(response_);
+                return <Observable<PipelineDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPipelineDefinition(response: HttpResponseBase): Observable<PipelineDto> {
+    protected processGetPipelineDefinitions(response: HttpResponseBase): Observable<PipelineDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17451,7 +17451,11 @@ export class PipelineServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PipelineDto.fromJS(resultData200) : new PipelineDto();
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PipelineDto.fromJS(item));
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -17459,7 +17463,7 @@ export class PipelineServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PipelineDto>(<any>null);
+        return _observableOf<PipelineDto[]>(<any>null);
     }
 }
 
