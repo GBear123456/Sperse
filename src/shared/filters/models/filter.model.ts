@@ -1,6 +1,7 @@
 import { Type } from '@angular/core';
 import { FilterItemModel, DisplayElement } from './filter-item.model';
 import { FilterComponent } from './filter-component';
+import { Observable } from 'rxjs';
 import * as _ from 'underscore';
 declare let require: any;
 let capitalize = require('underscore.string/capitalize');
@@ -11,12 +12,18 @@ export class FilterModelBase<T extends FilterItemModel> {
     caption: string;
     field?: any;
     items?: { [item: string]: T; };
+    items$?: Observable<{ [item: string]: T; }>;
     displayElements?: any[];
     options?: any;
-    isSelected: boolean = false;
+    isSelected = false;
 
     public constructor(init?: Partial<FilterModelBase<T>>) {
         Object.assign(this, init);
+        if (this.items$ && this.items$ instanceof Observable) {
+            this.items$.subscribe(items => {
+                this.items = items;
+            });
+        }
     }
 
     updateCaptions() {

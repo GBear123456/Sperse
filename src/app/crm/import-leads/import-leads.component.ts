@@ -3,12 +3,15 @@ import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angul
 import { Router } from '@angular/router';
 
 /** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as addressParser from 'parse-address';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
+import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
@@ -24,20 +27,17 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
-    ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-    ImportServiceProxy, ImportInputImportType, PartnerServiceProxy, PartnerTypeServiceProxy
+ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
+ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
-
-import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { ImportLeadsService } from './import-leads.service';
-
 import { ImportStatus } from '@shared/AppEnums';
 
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ZipCodeFormatterPipe, PartnerServiceProxy, PartnerTypeServiceProxy ]
+    providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
@@ -178,7 +178,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     toolbarConfig = [];
     selectedClientKeys: any = [];
     selectedStageId: number;
-    selectedPartnerTypId: number;
+    selectedPartnerTypeName: string;
     defaultRating = 5;
     leadStages = [];
     partnerTypes = [];
@@ -213,9 +213,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _nameParser: NameParserService,
         private _importLeadsService: ImportLeadsService,
         private _partnerService: PartnerServiceProxy,
-        private _partnerTypeServic: PartnerTypeServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
-        public importWizardService: ImportWizardService
+        public importWizardService: ImportWizardService,
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportItemInput.fromJS({}));
@@ -239,7 +239,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.selectedStageId = null;
 
         if (this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX)
-            this.selectedPartnerTypId = null;
+            this.selectedPartnerTypeName = null;
 
         this.initToolbarConfig();
     }
@@ -321,11 +321,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private normalizePhoneNumber(field, phoneNumber, dataSource) {
-        let value = phoneNumber.replace(/[^\d]/g, '');
-        if ((value.length == AppConsts.maxPhoneLength + 1) && value.charAt(0) === '1')
-            value = value.substr(1);
+        let value = phoneNumber.replace(/[^\d+]/g, '');
         this.setFieldIfDefined(value || phoneNumber, field.mappedField, dataSource);
-
         return true;
     }
 
@@ -361,7 +358,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    let leadsInput = this.createLeadsInput(data.records, data.importAll);
+                    let leadsInput = this.createLeadsInput(data.records);
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
@@ -392,7 +389,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
-            partnerTypeId: this.selectedPartnerTypId,
+            partnerTypeName: this.selectedPartnerTypeName,
             ingoreInvalidValues: importAll
         });
         result.items = [];
@@ -479,8 +476,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.rootComponent.overflowHidden(true);
 
         this.getStages();
-        this.loadPartnerTypes();
-
         if (this.showedFinishStep())
             setTimeout(() => this.reset());
     }
@@ -534,6 +529,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     onStagesChanged(event) {
         this.selectedStageId = event.id;
+        this.initToolbarConfig();
+    }
+
+    onPartnerTypeChanged(event) {
+        this.selectedPartnerTypeName = event.selectedRowsData[0].name;
         this.initToolbarConfig();
     }
 
@@ -609,7 +609,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'partnerType',
                         action: () => this.partnerTypesComponent.toggle(),
                         attr: {
-                            'filter-selected': !!this.selectedPartnerTypId
+                            'filter-selected': !!this.selectedPartnerTypeName
                         },
                         disabled: this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX
                     },
@@ -652,7 +652,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     clearToolbarSelectedItems() {
         this.selectedStageId = null;
-        this.selectedPartnerTypId = null;
+        this.selectedPartnerTypeName = null;
         this.starsListComponent.selectedItemKey = undefined;
         this.userAssignmentComponent.selectedItemKey = this.userId;
         this.userAssignmentComponent.selectedKeys = [this.userId];
@@ -667,22 +667,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     loadPartnerTypes() {
-        this._partnerTypeServic.getAll()
-            .subscribe(list => {
-                this.partnerTypes = list.map((item) => {
-                    return {
-                        id: item.id,
-                        name: item.name,
-                        text: item.name
-                    };
-                });
-            });
-    }
-
-    onPartnerTypeChanged(event) {
-        this.selectedPartnerTypId = event.selectedRowKeys[0];
-        this.partnerTypesComponent.apply();
-        this.initToolbarConfig();
+        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
+            partnerTypes => this.partnerTypes = partnerTypes
+        );
     }
 
     onStepChanged(event) {

@@ -9,10 +9,12 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { CrmStoreState, PipelinesStoreSelectors } from '@app/crm/shared/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -68,7 +70,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 private _orderService: OrderServiceProxy,
-                private _appService: AppService
+                private _appService: AppService,
+                private store$: Store<CrmStoreState.CrmState>
                 ) {
         super(injector);
 
@@ -135,7 +138,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource: FilterHelpers.ConvertPipelinesToTreeSource(result.pipelines),
+                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: 'Order'}))),
                                 nameField: 'name',
                                 parentExpr: 'parentId',
                                 keyExpr: 'id'

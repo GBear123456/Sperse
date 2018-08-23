@@ -5,7 +5,7 @@ import { finalize } from 'rxjs/operators';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, RateCustomerInput, RateCustomersInput } from '@shared/service-proxies/service-proxies';
+import { CustomerRatingsServiceProxy, CustomerRatingInfoDto, RateCustomerInput, RateCustomersInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-rating',
@@ -17,7 +17,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() ratingValue: number;
-    @Input() targetSelector = "[aria-label='Rating']";
+    @Input() targetSelector = '[aria-label="Rating"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() set selectedItemKey(value) {
@@ -82,7 +82,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
             });
         else
             this._ratingService.rateCustomer(RateCustomerInput.fromJS({
-                customerId: this.selectedKeys[0],
+                contactGroupId: this.selectedKeys[0],
                 ratingId: this.ratingValue
             })).pipe(finalize(() => {
                 if (!this.ratingValue)
@@ -136,7 +136,8 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnInit() {
-        this._ratingService.getRatings().subscribe((result) => {
+        /** @todo get from store */
+        this._ratingService.getRatings().subscribe((result: CustomerRatingInfoDto[]) => {
             if (result.length) {
                 this.ratingMin = result[0].id;
                 this.ratingMax = result[result.length - 1].id;
@@ -145,13 +146,13 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
             }
         });
     }
-    
+
     onValueChange(event) {
         this.onValueChanged.emit(event);
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') && 
+        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

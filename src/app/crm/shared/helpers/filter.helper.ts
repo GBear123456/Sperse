@@ -8,7 +8,7 @@ import * as _ from 'underscore';
 
 export class FilterHelpers {
     static nameParts = ['NamePrefix', 'FirstName', 'MiddleName', 'LastName', 'NameSuffix', 'NickName'];
-    
+
     static ConvertPipelinesToTreeSource(data: PipelineDto[]): any[] {
         let result = [];
         data.forEach((pipeline, i) => {
@@ -69,7 +69,7 @@ export class FilterHelpers {
     static filterByClientName(filter: FilterModel) {
         let data = {};
         let filterData = [];
-        let element = filter.items["Name"];
+        let element = filter.items['Name'];
         if (element && element.value) {
             let values = FilterModel.getSearchKeyWords(element.value);
             values.forEach((val) => {
@@ -80,7 +80,7 @@ export class FilterHelpers {
                     el[x][ODataSearchStrategy.StartsWith] = val;
                     valFilterData.push(el);
                 });
-                
+
                 let valFilter = {
                     or: valFilterData
                 };
@@ -109,22 +109,6 @@ export class FilterHelpers {
             };
         }
         return data;
-    }
-
-    static getRatingFilterItems(ratings) {
-        let minRating = ratings[0].id;
-        let maxRating = ratings[ratings.length - 1].id;
-        let result = 
-        { 
-            from: new FilterItemModel(),
-            to: new FilterItemModel(),
-            element:  new FilterRangeModel({
-                min: minRating,
-                max: maxRating,
-                step: 1                        
-            })
-        };
-        return result;
     }
 
     static filterByRating(filter: FilterModel) {

@@ -108,7 +108,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
     createOrganization(data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            customerId: this.customerInfo.id,
+            contactGroupId: this.customerInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);

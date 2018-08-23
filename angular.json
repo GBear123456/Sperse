@@ -73,12 +73,10 @@
               "node_modules/bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
               "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/ng2-image-viewer/imageviewer.scss",
-
               "src/assets/metronic/src/vendors/line-awesome/css/line-awesome.css",
               "src/assets/metronic/src/vendors/flaticon/css/flaticon.css",
               "src/assets/metronic/src/vendors/metronic/css/styles.css",
               "src/assets/Jcrop/css/Jcrop.css",
-
               "src/assets/primeng/datatable/css/primeng.datatable.css",
               "src/assets/primeng/file-upload/css/primeng.file-upload.css",
               "src/assets/primeng/autocomplete/css/primeng.autocomplete.css",
@@ -86,16 +84,12 @@
               "src/assets/common/styles/metronic-customize-angular.less",
               "src/assets/fonts/fonts-poppins.css",
               "src/assets/fonts/fonts-roboto.css",
-
               "src/node_modules/devextreme/dist/css/dx.common.css",
               "src/node_modules/devextreme/dist/css/dx.light.css",
-
               "node_modules/dragula/dist/dragula.css",
-
               "src/app/shared/core.less",
               "src/app/shared/layout/layout.less",
               "src/app/shared/dx-customs.less",
-
               "src/styles.css"
             ],
             "scripts": [
@@ -322,16 +316,13 @@
               "node_modules/jquery-validation/dist/jquery.validate.js",
               "node_modules/jquery-migrate/dist/jquery-migrate.min.js",
               "node_modules/jqueryui/jquery-ui.min.js",
-
               "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/bootstrap-hover-dropdown/bootstrap-hover-dropdown.js",
               "node_modules/jquery-slimscroll/jquery.slimscroll.js",
               "node_modules/js-cookie/src/js.cookie.js",
-
               "node_modules/jquery.uniform/dist/js/jquery.uniform.standalone.js",
               "node_modules/lodash/lodash.min.js",
-
               "node_modules/jquery-form/src/jquery.form.js",
               "node_modules/timeago/jquery.timeago.js",
               "node_modules/@aspnet/signalr/dist/browser/signalr.min.js",
@@ -445,13 +436,10 @@
               "src/assets/Jcrop/css/Jcrop.css",
               "src/assets/primeng/file-upload/css/primeng.file-upload.css",
               "src/assets/primeng/autocomplete/css/primeng.autocomplete.css",
-
               "src/node_modules/devextreme/dist/css/dx.common.css",
               "src/node_modules/devextreme/dist/css/dx.light.css",
               "node_modules/dragula/dist/dragula.css",
-
               "node_modules/videogular2/fonts/videogular.css",
-
               "src/app/shared/core.less",
               "src/app/shared/layout/layout.less",
               "src/assets/fonts/fonts-poppins.css",
@@ -524,5 +512,8 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
   }
 }

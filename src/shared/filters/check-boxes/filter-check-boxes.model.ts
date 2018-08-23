@@ -1,9 +1,11 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 
 export class FilterCheckBoxesModel extends FilterItemModel {
     dataSource: any;
+    dataSource$: Observable<any>;
     keyExpr: any;
     parentExpr?: any = 'parentId';
     nameField: string;
@@ -11,18 +13,23 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     public constructor(init?: Partial<FilterCheckBoxesModel>) {
         super();
         Object.assign(this, init);
+        if (this.dataSource$ && this.dataSource$ instanceof Observable) {
+            this.dataSource$.subscribe(source => {
+                this.dataSource = source;
+            });
+        }
     }
 
     getDisplayElements(): DisplayElement[] {
         let result: DisplayElement[] = [];
         this.value && this.value.sort().forEach(x => {
             let data = _.find(this.dataSource, (val: any, i, arr) => val.id == x);
-            data && result.push(<DisplayElement>{ 
-                item: this, 
-                displayValue: data.name, 
-                args: x, 
-                parentCode: data[this.parentExpr], 
-                sortField: x 
+            data && result.push(<DisplayElement>{
+                item: this,
+                displayValue: data.name,
+                args: x,
+                parentCode: data[this.parentExpr],
+                sortField: x
             });
         });
 
@@ -40,8 +47,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
                 result.push(x);
-            }
-            else {
+            } else {
                 result.push(x);
             }
         });

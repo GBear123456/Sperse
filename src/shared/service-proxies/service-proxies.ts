@@ -14877,14 +14877,14 @@ export class NotesServiceProxy {
     }
 
     /**
-     * @customerId (optional) 
+     * @contactGroupId (optional) 
      * @id (optional) 
      * @return Success
      */
-    deleteNote(customerId: number | null | undefined, id: number | null | undefined): Observable<void> {
+    deleteNote(contactGroupId: number | null | undefined, id: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/DeleteNote?";
-        if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -20052,13 +20052,13 @@ export class TenancyServiceProxy {
     }
 
     /**
-     * @customerId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    getTenancies(customerId: number | null | undefined): Observable<PagedResultDtoOfTenancyListDto> {
+    getTenancies(contactGroupId: number | null | undefined): Observable<PagedResultDtoOfTenancyListDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
-        if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -20164,15 +20164,15 @@ export class TenancyServiceProxy {
 
     /**
      * @id (optional) 
-     * @customerId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    getTenancyForEdit(id: number | null | undefined, customerId: number | null | undefined): Observable<GetTenancyForEditOutput> {
+    getTenancyForEdit(id: number | null | undefined, contactGroupId: number | null | undefined): Observable<GetTenancyForEditOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -20274,15 +20274,15 @@ export class TenancyServiceProxy {
 
     /**
      * @id (optional) 
-     * @customerId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    deleteTenancy(id: number | null | undefined, customerId: number | null | undefined): Observable<void> {
+    deleteTenancy(id: number | null | undefined, contactGroupId: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
         if (id !== undefined)
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (customerId !== undefined)
-            url_ += "CustomerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -25996,7 +25996,7 @@ export class ActivityDto implements IActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
 
     constructor(data?: IActivityDto) {
         if (data) {
@@ -26023,7 +26023,7 @@ export class ActivityDto implements IActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
         }
     }
 
@@ -26050,7 +26050,7 @@ export class ActivityDto implements IActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         return data; 
     }
 }
@@ -26066,7 +26066,7 @@ export interface IActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
 }
 
 export class CreateActivityDto implements ICreateActivityDto {
@@ -26079,7 +26079,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
 
     constructor(data?: ICreateActivityDto) {
         if (data) {
@@ -26105,7 +26105,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
         }
     }
 
@@ -26131,7 +26131,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         return data; 
     }
 }
@@ -26146,7 +26146,7 @@ export interface ICreateActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
 }
 
 export class UpdateActivityDto implements IUpdateActivityDto {
@@ -26160,7 +26160,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
 
     constructor(data?: IUpdateActivityDto) {
         if (data) {
@@ -26187,7 +26187,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
         }
     }
 
@@ -26214,7 +26214,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         return data; 
     }
 }
@@ -26230,7 +26230,7 @@ export interface IUpdateActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
 }
 
 export class MoveActivityDto implements IMoveActivityDto {
@@ -36489,7 +36489,7 @@ export interface ICustomerListInfoDto {
 }
 
 export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     lists!: CustomerListInput[] | undefined;
 
     constructor(data?: IUpdateCustomerListsInput) {
@@ -36503,7 +36503,7 @@ export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
@@ -36521,7 +36521,7 @@ export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         if (this.lists && this.lists.constructor === Array) {
             data["lists"] = [];
             for (let item of this.lists)
@@ -36532,7 +36532,7 @@ export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
 }
 
 export interface IUpdateCustomerListsInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     lists: CustomerListInput[] | undefined;
 }
 
@@ -36709,7 +36709,7 @@ export interface ICustomerRatingInfoDto {
 }
 
 export class RateCustomerInput implements IRateCustomerInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     ratingId!: number | undefined;
 
     constructor(data?: IRateCustomerInput) {
@@ -36723,7 +36723,7 @@ export class RateCustomerInput implements IRateCustomerInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.ratingId = data["ratingId"];
         }
     }
@@ -36737,14 +36737,14 @@ export class RateCustomerInput implements IRateCustomerInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["ratingId"] = this.ratingId;
         return data; 
     }
 }
 
 export interface IRateCustomerInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     ratingId: number | undefined;
 }
 
@@ -37733,7 +37733,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     customerTypeId!: string | undefined;
-    partnerTypeId!: number | undefined;
+    partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -37794,7 +37794,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.customerTypeId = data["customerTypeId"];
-            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
         }
     }
 
@@ -37855,7 +37855,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["customerTypeId"] = this.customerTypeId;
-        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
 }
@@ -37885,7 +37885,7 @@ export interface ICreateCustomerInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     customerTypeId: string | undefined;
-    partnerTypeId: number | undefined;
+    partnerTypeName: string | undefined;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -38069,7 +38069,7 @@ export interface ISimilarCustomerOutput {
 }
 
 export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     statusId!: string;
 
     constructor(data?: IUpdateCustomerStatusInput) {
@@ -38083,7 +38083,7 @@ export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.statusId = data["statusId"];
         }
     }
@@ -38097,14 +38097,14 @@ export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["statusId"] = this.statusId;
         return data; 
     }
 }
 
 export interface IUpdateCustomerStatusInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     statusId: string;
 }
 
@@ -38472,7 +38472,7 @@ export interface ICustomerTypeDto {
 }
 
 export class MarkCustomerInput implements IMarkCustomerInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     starId!: number | undefined;
 
     constructor(data?: IMarkCustomerInput) {
@@ -38486,7 +38486,7 @@ export class MarkCustomerInput implements IMarkCustomerInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.starId = data["starId"];
         }
     }
@@ -38500,14 +38500,14 @@ export class MarkCustomerInput implements IMarkCustomerInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["starId"] = this.starId;
         return data; 
     }
 }
 
 export interface IMarkCustomerInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     starId: number | undefined;
 }
 
@@ -38560,7 +38560,7 @@ export interface IMarkCustomersInput {
 }
 
 export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     tags!: CustomerTagInput[] | undefined;
 
     constructor(data?: IUpdateCustomerTagsInput) {
@@ -38574,7 +38574,7 @@ export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -38592,7 +38592,7 @@ export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -38603,7 +38603,7 @@ export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
 }
 
 export interface IUpdateCustomerTagsInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     tags: CustomerTagInput[] | undefined;
 }
 
@@ -39241,7 +39241,7 @@ export interface IGetUrlOutput {
 
 export class UploadDocumentInput implements IUploadDocumentInput {
     typeId!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     fileName!: string;
     size!: number | undefined;
     fileBase64!: string;
@@ -39258,7 +39258,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
     init(data?: any) {
         if (data) {
             this.typeId = data["typeId"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.fileName = data["fileName"];
             this.size = data["size"];
             this.fileBase64 = data["fileBase64"];
@@ -39275,7 +39275,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["typeId"] = this.typeId;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["fileName"] = this.fileName;
         data["size"] = this.size;
         data["fileBase64"] = this.fileBase64;
@@ -39285,7 +39285,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
 
 export interface IUploadDocumentInput {
     typeId: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     fileName: string;
     size: number | undefined;
     fileBase64: string;
@@ -41139,7 +41139,7 @@ export class ImportInput implements IImportInput {
     starId!: number | undefined;
     leadStageId!: number | undefined;
     importType!: ImportInputImportType | undefined;
-    partnerTypeId!: number | undefined;
+    partnerTypeName!: string | undefined;
     fileName!: string;
     fileSize!: number | undefined;
     fileContent!: string;
@@ -41176,7 +41176,7 @@ export class ImportInput implements IImportInput {
             this.starId = data["starId"];
             this.leadStageId = data["leadStageId"];
             this.importType = data["importType"];
-            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
@@ -41213,7 +41213,7 @@ export class ImportInput implements IImportInput {
         data["starId"] = this.starId;
         data["leadStageId"] = this.leadStageId;
         data["importType"] = this.importType;
-        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
@@ -41231,7 +41231,7 @@ export interface IImportInput {
     starId: number | undefined;
     leadStageId: number | undefined;
     importType: ImportInputImportType | undefined;
-    partnerTypeId: number | undefined;
+    partnerTypeName: string | undefined;
     fileName: string;
     fileSize: number | undefined;
     fileContent: string;
@@ -42696,7 +42696,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     customerTypeId!: string | undefined;
-    partnerTypeId!: number | undefined;
+    partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -42759,7 +42759,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.customerTypeId = data["customerTypeId"];
-            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
         }
     }
 
@@ -42822,7 +42822,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["customerTypeId"] = this.customerTypeId;
-        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
 }
@@ -42854,12 +42854,12 @@ export interface ICreateLeadInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     customerTypeId: string | undefined;
-    partnerTypeId: number | undefined;
+    partnerTypeName: string | undefined;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
     id!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
 
     constructor(data?: ICreateLeadOutput) {
         if (data) {
@@ -42873,7 +42873,7 @@ export class CreateLeadOutput implements ICreateLeadOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
         }
     }
 
@@ -42887,14 +42887,14 @@ export class CreateLeadOutput implements ICreateLeadOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         return data; 
     }
 }
 
 export interface ICreateLeadOutput {
     id: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
 }
 
 export class CancelLeadInfo implements ICancelLeadInfo {
@@ -45105,7 +45105,7 @@ export interface IRegisterMemberRequest {
 }
 
 export class NoteInfoDto implements INoteInfoDto {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     id!: number | undefined;
     text!: string | undefined;
     dateTime!: moment.Moment | undefined;
@@ -45125,7 +45125,7 @@ export class NoteInfoDto implements INoteInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.id = data["id"];
             this.text = data["text"];
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -45145,7 +45145,7 @@ export class NoteInfoDto implements INoteInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["id"] = this.id;
         data["text"] = this.text;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -45158,7 +45158,7 @@ export class NoteInfoDto implements INoteInfoDto {
 }
 
 export interface INoteInfoDto {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     id: number | undefined;
     text: string | undefined;
     dateTime: moment.Moment | undefined;
@@ -45169,7 +45169,7 @@ export interface INoteInfoDto {
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     text!: string;
     contactId!: number | undefined;
     contactPhoneId!: number | undefined;
@@ -45189,7 +45189,7 @@ export class CreateNoteInput implements ICreateNoteInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.text = data["text"];
             this.contactId = data["contactId"];
             this.contactPhoneId = data["contactPhoneId"];
@@ -45209,7 +45209,7 @@ export class CreateNoteInput implements ICreateNoteInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["text"] = this.text;
         data["contactId"] = this.contactId;
         data["contactPhoneId"] = this.contactPhoneId;
@@ -45222,7 +45222,7 @@ export class CreateNoteInput implements ICreateNoteInput {
 }
 
 export interface ICreateNoteInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     text: string;
     contactId: number | undefined;
     contactPhoneId: number | undefined;
@@ -45270,7 +45270,7 @@ export interface ICreateNoteOutput {
 
 export class UpdateNoteInput implements IUpdateNoteInput {
     id!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     text!: string;
     contactId!: number | undefined;
     contactPhoneId!: number | undefined;
@@ -45291,7 +45291,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.text = data["text"];
             this.contactId = data["contactId"];
             this.contactPhoneId = data["contactPhoneId"];
@@ -45312,7 +45312,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["text"] = this.text;
         data["contactId"] = this.contactId;
         data["contactPhoneId"] = this.contactPhoneId;
@@ -45326,7 +45326,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
 
 export interface IUpdateNoteInput {
     id: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     text: string;
     contactId: number | undefined;
     contactPhoneId: number | undefined;
@@ -46177,7 +46177,7 @@ export interface IOrganizationShortInfoDto {
 }
 
 export class CreateOrganizationInput implements ICreateOrganizationInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     companyName!: string;
     shortname!: string | undefined;
     industry!: string | undefined;
@@ -46207,7 +46207,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.companyName = data["companyName"];
             this.shortname = data["shortname"];
             this.industry = data["industry"];
@@ -46237,7 +46237,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["companyName"] = this.companyName;
         data["shortname"] = this.shortname;
         data["industry"] = this.industry;
@@ -46260,7 +46260,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 }
 
 export interface ICreateOrganizationInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     companyName: string;
     shortname: string | undefined;
     industry: string | undefined;
@@ -49864,7 +49864,7 @@ export interface ITenancyListDto {
 }
 
 export class CreateTenancyInput implements ICreateTenancyInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     adminEmailAddress!: string;
     adminPassword!: string | undefined;
     shouldChangePasswordOnNextLogin!: boolean | undefined;
@@ -49891,7 +49891,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.adminEmailAddress = data["adminEmailAddress"];
             this.adminPassword = data["adminPassword"];
             this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
@@ -49918,7 +49918,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["adminEmailAddress"] = this.adminEmailAddress;
         data["adminPassword"] = this.adminPassword;
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
@@ -49938,7 +49938,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
 }
 
 export interface ICreateTenancyInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     adminEmailAddress: string;
     adminPassword: string | undefined;
     shouldChangePasswordOnNextLogin: boolean | undefined;
@@ -50025,7 +50025,7 @@ export interface IGetTenancyForEditOutput {
 
 export class UpdateTenancyInput implements IUpdateTenancyInput {
     id!: number | undefined;
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
@@ -50048,7 +50048,7 @@ export class UpdateTenancyInput implements IUpdateTenancyInput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
@@ -50071,7 +50071,7 @@ export class UpdateTenancyInput implements IUpdateTenancyInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -50087,7 +50087,7 @@ export class UpdateTenancyInput implements IUpdateTenancyInput {
 
 export interface IUpdateTenancyInput {
     id: number | undefined;
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
@@ -54088,7 +54088,7 @@ export interface IInviteUserInput {
 }
 
 export class AssignCustomerInput implements IAssignCustomerInput {
-    customerId!: number | undefined;
+    contactGroupId!: number | undefined;
     userId!: number | undefined;
 
     constructor(data?: IAssignCustomerInput) {
@@ -54102,7 +54102,7 @@ export class AssignCustomerInput implements IAssignCustomerInput {
 
     init(data?: any) {
         if (data) {
-            this.customerId = data["customerId"];
+            this.contactGroupId = data["contactGroupId"];
             this.userId = data["userId"];
         }
     }
@@ -54116,14 +54116,14 @@ export class AssignCustomerInput implements IAssignCustomerInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerId"] = this.customerId;
+        data["contactGroupId"] = this.contactGroupId;
         data["userId"] = this.userId;
         return data; 
     }
 }
 
 export interface IAssignCustomerInput {
-    customerId: number | undefined;
+    contactGroupId: number | undefined;
     userId: number | undefined;
 }
 

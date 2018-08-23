@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
+import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
@@ -12,8 +13,9 @@ import * as _ from 'underscore';
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
+import { AppConsts } from '@shared/AppConsts';
 import { ContactTypes, CustomerType } from '@shared/AppEnums';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
 CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
@@ -39,7 +41,6 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    //@ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -60,8 +61,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
-    //partnerTypes: any[] = [];
-    partnerTypeId: number;
+    partnerTypes: any[] = [];
+    partnerTypeName: string;
 
     saveButtonId: string = 'saveClientOptions';
     saveContextMenuItems = [];
@@ -153,9 +154,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _router: Router,
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
-        private _partnerService: PartnerServiceProxy,
-        private _partnerTypeService: PartnerTypeServiceProxy,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector);
 
@@ -176,9 +176,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode) {
             this.leadStagesLoad();
         }
-        // if (this.data.customerType == CustomerType.Partner ) {
-        //     this.loadPartnerTypes();
-        // }
         this.initToolbarConfig();
     }
 
@@ -333,7 +330,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             tags: tags,
             ratingId: ratingId,
             customerTypeId: this.data.customerType,
-            partnerTypeId: this.partnerTypeId
+            partnerTypeName: this.partnerTypeName
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -341,21 +338,20 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
-                .subscribe(result => this.afterSave(result.customerId, result.id));
+                .subscribe(result => this.afterSave(result.contactGroupId, result.id));
         else
             this._customersService.createCustomer(CreateCustomerInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(customerId: number, leadId?: number): void
-    {
+    private afterSave(contactGroupId: number, leadId?: number): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
-            this.redirectToClientDetails(customerId, leadId);
+            this.redirectToClientDetails(contactGroupId, leadId);
             this.data.refreshParent(true, this.stageId);
         } else {
             this.data.refreshParent(false, this.stageId);
@@ -805,7 +801,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.userAssignmentComponent.reset();
         this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
         this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
-        this.partnerTypeId = undefined;
+        this.partnerTypeName = undefined;
     }
 
     onSaveOptionSelectionChanged($event) {
@@ -849,21 +845,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.stageId = event.id;
     }
 
-    // loadPartnerTypes() {
-    //     this._partnerTypeService.getAll()
-    //         .subscribe(list => {
-    //             this.partnerTypes = list.map((item) => {
-    //                 return {
-    //                     id: item.id,
-    //                     name: item.name,
-    //                     text: item.name
-    //                 };
-    //             });
-    //         });
-    // }
+    partnerTypesLoad() {
+        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
+            partnerTypes => this.partnerTypes = partnerTypes
+        );
+    }
 
     onPartnerTypeChanged(event) {
-        this.partnerTypeId = event.selectedRowKeys[0];
+        this.partnerTypeName = event.selectedRowsData[0].name;
         this.partnerTypesComponent.apply();
     }
 }
