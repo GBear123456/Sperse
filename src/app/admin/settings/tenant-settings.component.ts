@@ -8,7 +8,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     DefaultTimezoneScope, SendTestEmailInput, TenantSettingsEditDto, TenantSettingsServiceProxy,
-    IdcsSettings, BaseCommercePaymentSettings, TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy
+    IdcsSettings, BaseCommercePaymentSettings, TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy, ACHWorksSettings
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin } from 'rxjs';
@@ -33,6 +33,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     settings: TenantSettingsEditDto = undefined;
     idcsSettings: IdcsSettings = new IdcsSettings();
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
+    achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('CreditReportFeature');
 
     logoUploader: FileUploader;
@@ -78,7 +79,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
         let requests: Observable<any>[] = [
             this._tenantSettingsService.getAllSettings(),
-            this._tenantPaymentSettingsService.getBaseCommercePaymentSettings()
+            this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
+            this._tenantPaymentSettingsService.getACHWorksSettings()
         ];
 
         if (this.isCreditReportFeatureEnabled)
@@ -94,6 +96,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 }
 
                 this.baseCommercePaymentSettings = result[1];
+                this.achWorksSettings = result[2];
 
                 if (this.isCreditReportFeatureEnabled)
                     this.idcsSettings = result[2];
@@ -172,7 +175,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     saveAll(): void {
         let requests: Observable<any>[] = [
             this._tenantSettingsService.updateAllSettings(this.settings),
-            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings)
+            this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
+            this._tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings)
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));

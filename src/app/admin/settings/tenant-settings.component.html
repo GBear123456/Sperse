@@ -272,28 +272,28 @@
                         </div>
                     </tab>
                     <tab heading="{{l('IDCS Link')}}" *ngIf="isCreditReportFeatureEnabled" customClass="m-tabs__item">
-                      <div>
-                        <div class="form-group">
-                          <label for="IdcsRequestSource">{{l("Request Source")}}</label>
-                          <input id="IdcsRequestSource" type="text" name="IdcsRequestSource" class="form-control" [(ngModel)]="idcsSettings.requestSource" maxlength="128">
+                        <div>
+                            <div class="form-group">
+                                <label for="IdcsRequestSource">{{l("Request Source")}}</label>
+                                <input id="IdcsRequestSource" type="text" name="IdcsRequestSource" class="form-control" [(ngModel)]="idcsSettings.requestSource" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IdcsPartnerCode">{{l("Partner Code")}}</label>
+                                <input id="IdcsPartnerCode" type="text" name="IdcsPartnerCode" class="form-control" [(ngModel)]="idcsSettings.partnerCode" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IdcsPartnerAccount">{{l("Partner Account")}}</label>
+                                <input id="IdcsPartnerAccount" type="text" name="IdcsPartnerAccount" class="form-control" [(ngModel)]="idcsSettings.partnerAccount" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IdcsPassword">{{l("Password")}}</label>
+                                <input id="IdcsPassword" type="password" name="IdcsPassword" class="form-control" [(ngModel)]="idcsSettings.password" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IdcsBranding">{{l("Branding")}}</label>
+                                <input id="IdcsBranding" type="text" name="IdcsBranding" class="form-control" [(ngModel)]="idcsSettings.branding" maxlength="128">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="IdcsPartnerCode">{{l("Partner Code")}}</label>
-                            <input id="IdcsPartnerCode" type="text" name="IdcsPartnerCode" class="form-control" [(ngModel)]="idcsSettings.partnerCode" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="IdcsPartnerAccount">{{l("Partner Account")}}</label>
-                            <input id="IdcsPartnerAccount" type="text" name="IdcsPartnerAccount" class="form-control" [(ngModel)]="idcsSettings.partnerAccount" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="IdcsPassword">{{l("Password")}}</label>
-                            <input id="IdcsPassword" type="password" name="IdcsPassword" class="form-control" [(ngModel)]="idcsSettings.password" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="IdcsBranding">{{l("Branding")}}</label>
-                            <input id="IdcsBranding" type="text" name="IdcsBranding" class="form-control" [(ngModel)]="idcsSettings.branding" maxlength="128">
-                        </div>
-                      </div>
                     </tab>
                     <tab heading="{{l('Base Commerce Link')}}" *ngIf="true" customClass="m-tabs__item">
                         <div>
@@ -316,6 +316,26 @@
                                     {{l("SandBox")}}
                                     <span></span>
                                 </label>
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="{{l('ACH Works')}}" *ngIf="true" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="achWorksSSS">{{l("SSS")}}</label>
+                                <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
+                            </div>
+                            <div class="form-group">
+                                <label for="achWorksLocID">{{l("LocID")}}</label>
+                                <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
+                                <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
+                                <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
                             </div>
                         </div>
                     </tab>
