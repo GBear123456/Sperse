@@ -82,7 +82,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
             });
         else
             this._ratingService.rateCustomer(RateCustomerInput.fromJS({
-                customerId: this.selectedKeys[0],
+                contactGroupId: this.selectedKeys[0],
                 ratingId: this.ratingValue
             })).pipe(finalize(() => {
                 if (!this.ratingValue)

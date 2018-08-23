@@ -104,7 +104,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         }
         else
             this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
-                customerId: customerIds[0],
+                contactGroupId: customerIds[0],
                 tags: tags
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomerTagsUpdated'));

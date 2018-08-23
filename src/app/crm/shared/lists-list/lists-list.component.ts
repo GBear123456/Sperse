@@ -103,7 +103,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
         else
             this._listsService.updateCustomerLists(UpdateCustomerListsInput.fromJS({
-                customerId: customerIds[0],
+                contactGroupId: customerIds[0],
                 lists: lists
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomerListsUpdated'));

@@ -81,7 +81,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
             });
         else
             this._starsService.markCustomer(MarkCustomerInput.fromJS({
-                customerId: this.selectedKeys[0],
+                contactGroupId: this.selectedKeys[0],
                 starId: this.selectedItemKey
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomersMarked'));

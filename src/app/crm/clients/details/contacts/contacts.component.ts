@@ -103,7 +103,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     createOrganization(field, data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            customerId: this.customerInfo.id,
+            contactGroupId: this.customerInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);

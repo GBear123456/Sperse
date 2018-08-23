@@ -67,8 +67,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._selectedLeads = leads;
         this.selectedClientKeys = [];
         leads.forEach((lead) => {
-            if (lead && lead.CustomerId)
-                this.selectedClientKeys.push(lead.CustomerId);
+            if (lead && lead.ContactGroupId)
+                this.selectedClientKeys.push(lead.ContactGroupId);
         });
         if (this._appService.toolbarConfig)
             this.initToolbarConfig();
@@ -695,7 +695,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     showLeadDetails(event) {
         let leadId = event.data && event.data.Id;
-        let clientId = event.data && event.data.CustomerId;
+        let clientId = event.data && event.data.ContactGroupId;
         if (!leadId || !clientId)
             return;
 
@@ -798,9 +798,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onCardClick(lead) {
-        if (lead && lead.CustomerId && lead.Id)
+        if (lead && lead.ContactGroupId && lead.Id)
             this._router.navigate(
-                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
+                ['app/crm/client', lead.ContactGroupId, 'lead', lead.Id, 'contact-information'], {
                     queryParams: {
                         referrer: 'app/crm/leads',
                         dataLayoutType: DataLayoutType.Pipeline
