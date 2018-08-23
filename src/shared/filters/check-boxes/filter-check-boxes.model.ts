@@ -47,8 +47,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
                 result.push(x);
-            }
-            else {
+            } else {
                 result.push(x);
             }
         });

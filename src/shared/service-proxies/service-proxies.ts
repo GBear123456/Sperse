@@ -37477,7 +37477,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     customerTypeId!: string | undefined;
-    partnerTypeId!: number | undefined;
+    partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateCustomerInput) {
         if (data) {
@@ -37538,7 +37538,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.customerTypeId = data["customerTypeId"];
-            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
         }
     }
 
@@ -37599,7 +37599,7 @@ export class CreateCustomerInput implements ICreateCustomerInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["customerTypeId"] = this.customerTypeId;
-        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
 }
@@ -37629,7 +37629,7 @@ export interface ICreateCustomerInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     customerTypeId: string | undefined;
-    partnerTypeId: number | undefined;
+    partnerTypeName: string | undefined;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -40883,7 +40883,7 @@ export class ImportInput implements IImportInput {
     starId!: number | undefined;
     leadStageId!: number | undefined;
     importType!: ImportInputImportType | undefined;
-    partnerTypeId!: number | undefined;
+    partnerTypeName!: string | undefined;
     fileName!: string;
     fileSize!: number | undefined;
     fileContent!: string;
@@ -40920,7 +40920,7 @@ export class ImportInput implements IImportInput {
             this.starId = data["starId"];
             this.leadStageId = data["leadStageId"];
             this.importType = data["importType"];
-            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
@@ -40957,7 +40957,7 @@ export class ImportInput implements IImportInput {
         data["starId"] = this.starId;
         data["leadStageId"] = this.leadStageId;
         data["importType"] = this.importType;
-        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
@@ -40975,7 +40975,7 @@ export interface IImportInput {
     starId: number | undefined;
     leadStageId: number | undefined;
     importType: ImportInputImportType | undefined;
-    partnerTypeId: number | undefined;
+    partnerTypeName: string | undefined;
     fileName: string;
     fileSize: number | undefined;
     fileContent: string;
@@ -42440,7 +42440,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     customerTypeId!: string | undefined;
-    partnerTypeId!: number | undefined;
+    partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
         if (data) {
@@ -42503,7 +42503,7 @@ export class CreateLeadInput implements ICreateLeadInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.customerTypeId = data["customerTypeId"];
-            this.partnerTypeId = data["partnerTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
         }
     }
 
@@ -42566,7 +42566,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["customerTypeId"] = this.customerTypeId;
-        data["partnerTypeId"] = this.partnerTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
 }
@@ -42598,7 +42598,7 @@ export interface ICreateLeadInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     customerTypeId: string | undefined;
-    partnerTypeId: number | undefined;
+    partnerTypeName: string | undefined;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
