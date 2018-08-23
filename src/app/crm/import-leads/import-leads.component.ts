@@ -178,7 +178,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     toolbarConfig = [];
     selectedClientKeys: any = [];
     selectedStageId: number;
-    selectedPartnerTypId: number;
+    selectedPartnerTypeName: string;
     defaultRating = 5;
     leadStages = [];
     partnerTypes = [];
@@ -239,7 +239,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.selectedStageId = null;
 
         if (this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX)
-            this.selectedPartnerTypId = null;
+            this.selectedPartnerTypeName = null;
 
         this.initToolbarConfig();
     }
@@ -392,7 +392,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             ratingId: this.ratingComponent.ratingValue || this.defaultRating,
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
-            partnerTypeId: this.selectedPartnerTypId,
+            partnerTypeName: this.selectedPartnerTypeName,
             ingoreInvalidValues: importAll
         });
         result.items = [];
@@ -538,7 +538,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     onPartnerTypeChanged(event) {
-        this.selectedPartnerTypId = event.selectedRowKeys[0];
+        this.selectedPartnerTypeName = event.selectedRowsData[0].name;
         this.initToolbarConfig();
     }
 
@@ -614,7 +614,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'partnerType',
                         action: () => this.partnerTypesComponent.toggle(),
                         attr: {
-                            'filter-selected': !!this.selectedPartnerTypId
+                            'filter-selected': !!this.selectedPartnerTypeName
                         },
                         disabled: this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX
                     },
@@ -657,7 +657,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     clearToolbarSelectedItems() {
         this.selectedStageId = null;
-        this.selectedPartnerTypId = null;
+        this.selectedPartnerTypeName = null;
         this.starsListComponent.selectedItemKey = undefined;
         this.userAssignmentComponent.selectedItemKey = this.userId;
         this.userAssignmentComponent.selectedKeys = [this.userId];

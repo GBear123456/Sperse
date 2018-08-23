@@ -88,7 +88,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     process(isRemove: boolean) {
         const partnerIds = this.selectedKeys;
         const selectedItem = this.selectedItems[0];
-        const typeName = isRemove ? null : selectedItem.name;
+        const typeName = isRemove || !selectedItem ? null : selectedItem.name;
         const notifyMessageKey = isRemove ? 'TypesUnassigned' : 'TypesAssigned';
         if (this.bulkUpdateMode) {
             this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
@@ -96,17 +96,17 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                 typeName: typeName
             })).pipe(finalize(() => {
                 this.listComponent.deselectAll();
-            })).subscribe((result) => {
+            })).subscribe(() => {
                 this.notify.success(this.l(notifyMessageKey));
             });
-        }
-        else
+        } else {
             this._partnerService.updateType(UpdatePartnerTypeInput.fromJS({
                 partnerId: partnerIds[0],
                 typeName: typeName ? typeName : null
-            })).subscribe((result) => {
-                this.notify.success(this.l(typeName ? 'PartnerTypesUpdated' : 'TypesUnassigned'));
+            })).subscribe(() => {
+                this.notify.success(this.l('PartnerTypesUpdated'));
             });
+        }
     }
 
     clear() {
@@ -274,8 +274,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            this.selectedTypes = this.listComponent.option('selectedRowKeys');
-            this.selectedTypes.push($event.key);
+            this.selectedTypes = $event.key;
         });
     }
 

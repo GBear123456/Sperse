@@ -60,8 +60,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
-    //partnerTypes: any[] = [];
-    partnerTypeId: number;
+    partnerTypeName: string;
 
     saveButtonId: string = 'saveClientOptions';
     saveContextMenuItems = [];
@@ -333,7 +332,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             tags: tags,
             ratingId: ratingId,
             customerTypeId: this.data.customerType,
-            partnerTypeId: this.partnerTypeId
+            partnerTypeName: this.partnerTypeName
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -348,8 +347,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(customerId: number, leadId?: number): void
-    {
+    private afterSave(customerId: number, leadId?: number): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
@@ -805,7 +803,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.userAssignmentComponent.reset();
         this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
         this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
-        this.partnerTypeId = undefined;
+        this.partnerTypeName = undefined;
     }
 
     onSaveOptionSelectionChanged($event) {
@@ -863,7 +861,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     // }
 
     onPartnerTypeChanged(event) {
-        this.partnerTypeId = event.selectedRowKeys[0];
+        this.partnerTypeName = event.selectedRowsData[0].name;
         this.partnerTypesComponent.apply();
     }
 }

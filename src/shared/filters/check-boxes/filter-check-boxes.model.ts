@@ -17,12 +17,12 @@ export class FilterCheckBoxesModel extends FilterItemModel {
         let result: DisplayElement[] = [];
         this.value && this.value.sort().forEach(x => {
             let data = _.find(this.dataSource, (val: any, i, arr) => val.id == x);
-            data && result.push(<DisplayElement>{ 
-                item: this, 
-                displayValue: data.name, 
-                args: x, 
-                parentCode: data[this.parentExpr], 
-                sortField: x 
+            data && result.push(<DisplayElement>{
+                item: this,
+                displayValue: data.name,
+                args: x,
+                parentCode: data[this.parentExpr],
+                sortField: x
             });
         });
 
@@ -40,8 +40,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
                 result.push(x);
-            }
-            else {
+            } else {
                 result.push(x);
             }
         });
