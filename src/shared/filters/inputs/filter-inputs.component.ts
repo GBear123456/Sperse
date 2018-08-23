@@ -3,17 +3,17 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../models/filter-component';
 
 @Component({
-  templateUrl: './filter-inputs.component.html',
-	styleUrls: ['./filter-inputs.component.less']
+    templateUrl: './filter-inputs.component.html',
+    styleUrls: ['./filter-inputs.component.less']
 })
 export class FilterInputsComponent extends AppComponentBase implements OnInit, FilterComponent {
-    items: {};   
+    items: {};
   	apply: (event) => void;
-    
+
     constructor(injector: Injector) {
       super(injector);
     }
-    
+
     getItems(): string[] {
       return Object.keys(this.items);
     }

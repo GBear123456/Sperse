@@ -1,21 +1,26 @@
-import {Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
+/** Core imports */
+import { Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { ActionsSubject, Store, select } from '@ngrx/store';
+import { ofType } from '@ngrx/effects';
+import { finalize, first } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { CrmStoreState, ListsStoreActions, ListsStoreSelectors } from '@app/crm/shared/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-
-import { CustomerListsServiceProxy, AddCustomersToListsInput, CustomerListInput,
-    UpdateCustomerListInput, UpdateCustomerListsInput} from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
+import { CustomerListsServiceProxy, CustomerListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { MatDialog } from '@angular/material';
-import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-lists-list',
   templateUrl: './lists-list.component.html',
   styleUrls: ['./lists-list.component.less'],
-  providers: [CustomerListsServiceProxy]
+  providers: [ CustomerListsServiceProxy ]
 })
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
@@ -46,7 +51,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _filterService: FiltersService,
-        private _listsService: CustomerListsServiceProxy
+        private _listsService: CustomerListsServiceProxy,
+        private store$: Store<CrmStoreState.CrmState>,
+        private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -91,31 +98,32 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 })).subscribe((result) => {
                     this.notify.success(this.l('ListsUnassigned'));
                 });
-            else
-                this._listsService.addCustomersToLists(AddCustomersToListsInput.fromJS({
-                    customerIds: customerIds,
-                    lists: lists
-                })).pipe(finalize(() => {
-                    this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('ListsAssigned'));
-                });
-        }
-        else
-            this._listsService.updateCustomerLists(UpdateCustomerListsInput.fromJS({
-                customerId: customerIds[0],
-                lists: lists
-            })).subscribe((result) => {
-                this.notify.success(this.l('CustomerListsUpdated'));
-            });
+            else {
+                this.store$.dispatch(new ListsStoreActions.AddList({
+                    customersIds: customerIds,
+                    lists: lists,
+                    successMessage: this.l('ListsAssigned'),
+                    serviceMethodName: 'addCustomersToLists'
+                }));
+
+                this.actions$.pipe(
+                    ofType(ListsStoreActions.ActionTypes.REMOVE_LIST_SUCCESS),
+                    first(),
+                    finalize(() => { this.listComponent.deselectAll(); })
+                ).subscribe();
+            }
+        } else
+            this.store$.dispatch(new ListsStoreActions.AddList({
+                customersIds: [customerIds[0]],
+                lists: lists,
+                successMessage: this.l('CustomerTagsUpdated'),
+                serviceMethodName: 'updateCustomersTags'
+            }));
     }
 
     refresh() {
-        this._listsService.getLists().subscribe((result) => {
-            this.list = result.map((obj, index) => {
-                obj['parent'] = 0;
-                return obj;
-            });
+        this.store$.pipe(select(ListsStoreSelectors.getListsWithParent)).subscribe(lists => {
+            this.list = lists;
         });
     }
 
@@ -148,7 +156,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -203,15 +211,25 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData
         }).afterClosed().subscribe((result) => {
-            if (result)
-                this._listsService
-                    .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
-                    .subscribe(() => {
-                        this.refresh();
-                        this.clearFilterIfSelected(itemId);
-                    });
-            else
+            if (result) {
+                /** Dispatch list remove event */
+                this.store$.dispatch(new ListsStoreActions.RemoveList({
+                    id: itemId,
+                    moveToListId: dialogData.reassignToItemId,
+                    deleteAllReferences: dialogData.deleteAllReferences
+                }));
+
+                /** Listen succes remove and clear filters if so */
+                this.actions$.pipe(
+                    ofType(ListsStoreActions.ActionTypes.REMOVE_LIST_SUCCESS),
+                    first()
+                ).subscribe(() => {
+                    this.clearFilterIfSelected(itemId);
+                });
+
+            } else {
                 this.tooltipVisible = true;
+            }
         });
     }
 
@@ -225,12 +243,18 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
         let id = $event.oldData.id;
         if (Number.isInteger(id)) {
-            this._listsService.rename(UpdateCustomerListInput.fromJS({
-                id: id,
-                name: listName
-            })).subscribe((res) => {
-                if (res)
-                    $event.cancel = true;
+            this.store$.dispatch(
+                new ListsStoreActions.RenameList({
+                    id: $event.oldData.id,
+                    name: listName
+                })
+            );
+
+            this.actions$.pipe(
+                ofType(ListsStoreActions.ActionTypes.RENAME_LIST_SUCCESS),
+                first()
+            ).subscribe(() => {
+                $event.cancel = true;
             });
         }
     }
@@ -257,7 +281,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 else {
                     $event.component.cancelEditData();
                     $event.component.getScrollable().scrollTo(0);
-                    this.addNewTimeout = setTimeout(()=> {
+                    this.addNewTimeout = setTimeout(() => {
                         $event.component.addRow();
                     });
                 }

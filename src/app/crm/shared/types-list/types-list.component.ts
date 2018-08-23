@@ -1,20 +1,23 @@
+/** Core imports */
 import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { ActionsSubject, Store } from '@ngrx/store';
+import { ofType } from '@ngrx/effects';
+import { first } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
+import { CrmStoreState, PartnerTypesStoreActions } from '@app/crm/shared/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-
 import {
-    BulkUpdatePartnerTypeInput,
     PartnerTypeServiceProxy,
-    PartnerServiceProxy,
-    RenamePartnerTypeInput,
-    UpdatePartnerTypeInput
+    PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
-import { MatDialog } from '@angular/material';
-import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'crm-types-list',
@@ -53,7 +56,9 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         public dialog: MatDialog,
         private _filterService: FiltersService,
         private _partnerService: PartnerServiceProxy,
-        private _partnerTypeService: PartnerTypeServiceProxy
+        private _partnerTypeService: PartnerTypeServiceProxy,
+        private store$: Store<CrmStoreState.CrmState>,
+        private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -90,24 +95,12 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         const partnerIds = this.selectedKeys;
         const selectedItem = this.selectedItems[0];
         const typeName = isRemove ? null : selectedItem.name;
-        const notifyMessageKey = isRemove ? 'TypesUnassigned' : 'TypesAssigned';
-        if (this.bulkUpdateMode) {
-            this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
-                partnerIds: partnerIds,
-                typeName: typeName
-            })).pipe(finalize(() => {
-                this.listComponent.deselectAll();
-            })).subscribe((result) => {
-                this.notify.success(this.l(notifyMessageKey));
-            });
-        }
-        else
-            this._partnerService.updateType(UpdatePartnerTypeInput.fromJS({
-                partnerId: partnerIds[0],
-                typeName: typeName ? typeName : null
-            })).subscribe((result) => {
-                this.notify.success(this.l(typeName ? 'PartnerTypesUpdated' : 'TypesUnassigned'));
-            });
+        const notifyMessageKey = isRemove ? 'PartnerTypesUpdated' : 'TypesAssigned';
+        this.store$.dispatch(new PartnerTypesStoreActions.AddPartnerType({
+            partnerIds: partnerIds,
+            typeName: typeName,
+            successMessage: this.l(notifyMessageKey)
+        }));
     }
 
     clear() {
@@ -189,9 +182,10 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowRemoving($event) {
+        const itemId = $event.key;
+        /** @todo fix bug - If type is added only on client - then don't do any deleting request to server */
         $event.cancel = true;
-        let itemId = $event.key,
-            dialogData = {
+        let dialogData = {
                 deleteAllReferences: false,
                 items: _.filter(this.list, (obj) => {
                     return (obj.id != itemId);
@@ -204,32 +198,43 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData
         }).afterClosed().subscribe((result) => {
-            if (result)
-                this._partnerTypeService
-                    .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
-                    .subscribe(() => {
-                        this.refresh();
-                        this.clearFilterIfSelected(itemId);
-                    });
-            else
+            if (result) {
+                this.store$.dispatch(new PartnerTypesStoreActions.RemovePartnerType({
+                    id: itemId,
+                    moveToPartnerTypeId: dialogData.reassignToItemId,
+                    deleteAllReferences: dialogData.deleteAllReferences
+                }));
+
+                this.actions$.pipe(
+                    ofType(PartnerTypesStoreActions.ActionTypes.REMOVE_PARTNER_TYPE_SUCCESS),
+                    first()
+                ).subscribe(() => {
+                    this.clearFilterIfSelected(itemId);
+                });
+            } else {
                 this.tooltipVisible = true;
+            }
         });
     }
 
     onRowUpdating($event) {
         let typeName = $event.newData.name.trim();
 
-        if (!typeName  || this.IsDuplicate(typeName )) {
+        if (!typeName || this.IsDuplicate(typeName)) {
             $event.cancel = true;
             return;
         }
 
-        this._partnerTypeService.rename(RenamePartnerTypeInput.fromJS({
+        this.store$.dispatch(new PartnerTypesStoreActions.RenamePartnerType({
             id: $event.oldData.id,
             name: typeName
-        })).subscribe((res) => {
-            if (res)
-                $event.cancel = true;
+        }));
+
+        this.actions$.pipe(
+            ofType(PartnerTypesStoreActions.ActionTypes.RENAME_PARTNER_TYPE_SUCCESS),
+            first()
+        ).subscribe(() => {
+            $event.cancel = true;
         });
     }
 
@@ -300,7 +305,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     onContentReady($event) {
-        //this.highlightSelectedFilters();
+        this.highlightSelectedFilters();
     }
 
     highlightSelectedFilters() {

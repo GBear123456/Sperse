@@ -15,14 +15,14 @@ import { finalize } from 'rxjs/operators';
   providers: [UserAssignmentServiceProxy]
 })
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
-    @Input() multiSelection: boolean = false;
+    @Input() multiSelection = false;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() targetSelector = "[aria-label='Assign']";
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() get selectedItemKey() {
-        return this.multiSelection ? this.selectedItemKeys : 
+        return this.multiSelection ? this.selectedItemKeys :
             (this.selectedItemKeys && this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined);
     }
     set selectedItemKey(value) {
@@ -49,7 +49,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             return;
 
         let items = this.listComponent.getDataSource().items();
-        if(items.some((el, i, a) => {
+        if (items.some((el, i, a) => {
             if (index > 0 && el.id == this.selectedItemKey)
                 return true;
             index++;
@@ -181,7 +181,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     onSelectionChange(event) {
         this.onSelectionChanged.emit(event);
         this.selectedItemKeyChange.emit(
-            this.multiSelection ? this.selectedItemKeys: event.addedItems[0]);
+            this.multiSelection ? this.selectedItemKeys : event.addedItems[0]);
     }
 
     checkPermissions() {

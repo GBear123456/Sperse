@@ -1,13 +1,17 @@
+/** Core imports */
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 
+/** Third party imports */
 import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+import { Store } from '@ngrx/store';
 
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 import { CustomerStarsServiceProxy, MarkCustomerInput, MarkCustomersInput } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
+import { CrmStoreState, StarsStoreSelectors } from '@app/crm/shared/store';
 
 @Component({
   selector: 'crm-stars-list',
@@ -38,7 +42,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _starsService: CustomerStarsServiceProxy
+        private _starsService: CustomerStarsServiceProxy,
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -56,7 +61,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
                     this.message.confirm(
                         this.l('BulkUpdateConfirmation', this.selectedKeys.length),
                         isConfirmed => {
-                            if (isConfirmed) 
+                            if (isConfirmed)
                                 this.process();
                             else
                                 this.listComponent.unselectAll();
@@ -141,7 +146,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._starsService.getStars().subscribe((result) => {
+        this.store$.select(StarsStoreSelectors.getStars).subscribe((result) => {
             this.list = result;
         });
     }
@@ -152,7 +157,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') && 
+        return this.permission.isGranted('Pages.CRM.Customers.ManageRatingAndStars') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

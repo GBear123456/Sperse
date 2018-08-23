@@ -16,7 +16,7 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
-import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component'
+import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 
 @Component({
     selector: 'user-details',

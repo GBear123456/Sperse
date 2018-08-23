@@ -76,6 +76,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!this.refreshTimeout) {
             !quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
+                /** @todo change for using pipelines store */
                 this._pipelineService
                     .getPipelineDefinitionObservable(this.pipelinePurposeId)
                     .subscribe((result: PipelineDto) => {

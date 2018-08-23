@@ -10,7 +10,7 @@
         [hideButtons]="true"
         [filterModel]="filterModelStatus"
         [targetSelector]="'[aria-label=Status]'"
-        [list]="[{id: 'A', name: l('Active')}, {id: 'I', name: l('Inactive')}]"
+        [list]="statuses"
         (onItemSelected)="updateClientStatuses($event)">
     </crm-static-list>
     <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>

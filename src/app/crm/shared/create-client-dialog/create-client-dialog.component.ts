@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
+import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
@@ -12,8 +13,9 @@ import * as _ from 'underscore';
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
+import { AppConsts } from '@shared/AppConsts';
 import { ContactTypes, CustomerType } from '@shared/AppEnums';
 import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
 CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
@@ -39,7 +41,6 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
-    //@ViewChild('partnerTypesList') partnerTypesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
@@ -60,7 +61,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
-    //partnerTypes: any[] = [];
+    partnerTypes: any[] = [];
     partnerTypeId: number;
 
     saveButtonId: string = 'saveClientOptions';
@@ -153,9 +154,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _router: Router,
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
-        private _partnerService: PartnerServiceProxy,
-        private _partnerTypeService: PartnerTypeServiceProxy,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector);
 
@@ -176,9 +176,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode) {
             this.leadStagesLoad();
         }
-        // if (this.data.customerType == CustomerType.Partner ) {
-        //     this.loadPartnerTypes();
-        // }
         this.initToolbarConfig();
     }
 
@@ -849,18 +846,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.stageId = event.id;
     }
 
-    // loadPartnerTypes() {
-    //     this._partnerTypeService.getAll()
-    //         .subscribe(list => {
-    //             this.partnerTypes = list.map((item) => {
-    //                 return {
-    //                     id: item.id,
-    //                     name: item.name,
-    //                     text: item.name
-    //                 };
-    //             });
-    //         });
-    // }
+    partnerTypesLoad() {
+        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
+            partnerTypes => this.partnerTypes = partnerTypes
+        );
+    }
 
     onPartnerTypeChanged(event) {
         this.partnerTypeId = event.selectedRowKeys[0];

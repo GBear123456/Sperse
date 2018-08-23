@@ -1,4 +1,18 @@
+/** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { CacheService } from 'ng2-cache-service';
+import { Store, select } from '@ngrx/store';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
 import { AppConsts } from '@shared/AppConsts';
 import { CustomerType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -9,21 +23,13 @@ import {
     LeadServiceProxy,
     LeadInfoDto,
     PartnerServiceProxy,
-    PartnerTypeServiceProxy,
     PartnerInfoDto,
     UpdatePartnerTypeInput
 } from '@shared/service-proxies/service-proxies';
-import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { ClientDetailsService } from './client-details.service';
-import { CacheService } from 'ng2-cache-service';
 
-import * as _ from 'underscore';
 
 @Component({
     selector: 'client-details',
@@ -49,7 +55,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     configMode: boolean;
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
-    partnerTypes = [];
+    partnerTypes: any[] = [];
 
     private initialData: string;
 
@@ -74,10 +80,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _cacheService: CacheService,
                 private _customerService: CustomersServiceProxy,
                 private _partnerService: PartnerServiceProxy,
-                private _partnerTypeService: PartnerTypeServiceProxy,
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
-                private _clientDetailsService: ClientDetailsService) {
+                private _clientDetailsService: ClientDetailsService,
+                private store$: Store<CrmStoreState.CrmState>) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
@@ -168,10 +174,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         if (customerId) {
             this.startLoading(true);
             this.customerId = customerId;
-            let customerInfoObservable = this._customerService.getCustomerInfo(this.customerId);
+            let customerInfo$ = this._customerService.getCustomerInfo(this.customerId);
             if (leadId) {
-                let leadData, leadInfoObservable = this._leadService.getLeadInfo(leadId);
-                forkJoin(customerInfoObservable, leadInfoObservable).pipe(finalize(() => {
+                let leadData, leadInfo$ = this._leadService.getLeadInfo(leadId);
+                forkJoin(customerInfo$, leadInfo$).pipe(finalize(() => {
                     this.finishLoading(true);
                     if (!leadData)
                         this.close(true);
@@ -184,8 +190,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             } else {
                 this.customerType = partnerId ? CustomerType.Partner : CustomerType.Client;
                 if (this.customerType == CustomerType.Partner) {
-                    let partnerInfoObservable = this._partnerService.get(partnerId);
-                    forkJoin(customerInfoObservable, partnerInfoObservable).pipe(finalize(() => {
+                    let partnerInfo$ = this._partnerService.get(partnerId);
+                    forkJoin(customerInfo$, partnerInfo$).pipe(finalize(() => {
                         this.finishLoading(true);
                         if (!this.partnerInfo)
                             this.close(true);
@@ -195,8 +201,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                         this.loadPartnerTypes();
                     });
                 } else {
-                    let lastLeadInfoObservable = this._leadService.getLast(customerId);
-                    forkJoin(customerInfoObservable, lastLeadInfoObservable).pipe(finalize(() => {
+                    let lastLeadInfo$ = this._leadService.getLast(customerId);
+                    forkJoin(customerInfo$, lastLeadInfo$).pipe(finalize(() => {
                         this.finishLoading(true);
                         if (!this.customerInfo)
                             this.close(true);
@@ -230,17 +236,16 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     private loadPartnerTypes() {
-        this._partnerTypeService.getAll()
-            .subscribe(list => {
-                this.partnerTypes = list.map((item) => {
-                    return {
-                        id: item.id,
-                        name: item.name,
-                        text: item.name,
-                        action: this.updatePartnerType.bind(this)
-                    };
-                });
-            });
+        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
+            (partnerTypes: any) => {
+                this.partnerTypes = partnerTypes && partnerTypes.length ?
+                                    partnerTypes.map(type => {
+                                        type['action'] = this.updatePartnerType.bind(this);
+                                        return type;
+                                    }) :
+                                    [];
+            }
+        );
     }
 
     private getCustomerName() {
