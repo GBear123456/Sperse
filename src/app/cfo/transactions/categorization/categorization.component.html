@@ -1,8 +1,7 @@
 <div [ngClass]="{'show-search':showSearch}">
     <div class="tree-header" *ngIf="showHeader">
         <h3 *ngIf="showTitle">
-            {{l('ClassifyTransactions')}}
-            <span class="close" (click)="close.emit(null)"></span>
+            &nbsp;
             <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection(true)">{{'Clear'}}</span>
         </h3>
         <app-toolbar [config]="toolbarConfig" [compact]="true" ></app-toolbar>
