@@ -16,11 +16,13 @@ import * as _s from 'underscore.string';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 
 @Component({
     selector: 'import-wizard',
     templateUrl: 'import-wizard.component.html',
-    styleUrls: ['import-wizard.component.less']
+    styleUrls: ['import-wizard.component.less'],
+    providers: [ PhoneNumberService ]
 })
 export class ImportWizardComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
@@ -100,7 +102,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         injector: Injector,
         private _parser: Papa,
         private _dialog: MatDialog,
-        private _formBuilder: FormBuilder
+        private _formBuilder: FormBuilder,
+        private _phoneNumberService: PhoneNumberService
     ) {
         super(injector);
         this.uploadFile = _formBuilder.group({
@@ -687,7 +690,10 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
     checkFieldValid(field, dataCell) {
         let value = dataCell.value;
-        return !value || AppConsts.regexPatterns[field].test(value);
+        if (field == 'phone')
+            return this._phoneNumberService.isPhoneNumberValid(value);
+        else
+            return !value || AppConsts.regexPatterns[field].test(value);
     }
 
     calculateDisplayValue(data) {
