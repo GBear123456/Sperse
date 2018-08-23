@@ -74,8 +74,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
-                        this.l(isRemove ? 'RemoveFromTypeBulkUpdateConfirmation' : 'AddToTypeUpdateConfirmation',
-                            this.selectedKeys.length),
+                        this.l(isRemove ? 'RemoveFromTypeBulkUpdateConfirmation' : 'AddToTypeUpdateConfirmation', this.selectedKeys.length, this.selectedItems[0].name),
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);
@@ -94,7 +93,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     process(isRemove: boolean) {
         const partnerIds = this.selectedKeys;
         const selectedItem = this.selectedItems[0];
-        const typeName = isRemove ? null : selectedItem.name;
+        const typeName = isRemove || !selectedItem ? null : selectedItem.name;
         const notifyMessageKey = isRemove ? 'PartnerTypesUpdated' : 'TypesAssigned';
         this.store$.dispatch(new PartnerTypesStoreActions.AddPartnerType({
             partnerIds: partnerIds,
@@ -280,8 +279,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     onRowInserted($event) {
         this.lastNewAdded = $event.data;
         setTimeout(() => {
-            this.selectedTypes = this.listComponent.option('selectedRowKeys');
-            this.selectedTypes.push($event.key);
+            this.selectedTypes = $event.key;
         });
     }
 
