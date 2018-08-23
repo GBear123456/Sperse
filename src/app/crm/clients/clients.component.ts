@@ -6,9 +6,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
+import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
+import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
+import { AssignedUsersStoreSelectors,
+    CrmStoreState,
+    TagsStoreSelectors,
+    ListsStoreSelectors,
+    StarsStoreSelectors,
+    StatusesStoreSelectors,
+    RatingsStoreSelectors
+} from '@app/crm/shared/store';
+import { ClientService } from '@app/crm/clients/clients.service';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -19,7 +33,6 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
-import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -30,12 +43,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { CustomersServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CustomersServiceProxy, CustomerStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ClientService } from '@app/crm/clients/clients.service';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -61,6 +70,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
+    statuses: CustomerStatusDto[];
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
@@ -90,7 +100,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _customersServiceProxy: CustomersServiceProxy,
-        private _clientService: ClientService
+        private _clientService: ClientService,
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -212,134 +223,133 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.filters) {
             this._filtersService.setup(this.filters);
             this._filtersService.checkIfAnySelected();
-        } else
-            this._customersServiceProxy.getFiltersInitialData().subscribe(result =>
-                this._filtersService.setup(
-                    this.filters = [
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            operator: 'startswith',
-                            caption: 'name',
-                            items: { Name: new FilterItemModel()}
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            caption: 'email',
-                            items: { Email: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterCalendarComponent,
-                            operator: {from: 'ge', to: 'le'},
-                            caption: 'creation',
-                            field: 'CreationTime',
-                            items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                            options: {method: 'getFilterByDate'}
-                        }),
-                        this.filterModelStatus = new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            caption: 'status',
-                            field: 'StatusId',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: result.statuses,
-                                        nameField: 'name',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            caption: 'phone',
-                            items: { Phone: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterStatesComponent,
-                            caption: 'states',
-                            items: {
-                                countryStates: new FilterStatesModel()
-                            }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            operator: 'startswith',
-                            caption: 'city',
-                            items: { City: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            operator: 'contains',
-                            caption: 'streetAddress',
-                            items: { StreetAddress: new FilterItemModel() }
-                        }),
-                        new FilterModel({
-                            component: FilterInputsComponent,
-                            operator: 'startswith',
-                            caption: 'zipCode',
-                            items: { ZipCode: new FilterItemModel() }
-                        }),
-                        this.filterModelAssignment = new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            caption: 'assignedUser',
-                            field: 'AssignedUserId',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: result.users,
-                                        nameField: 'name',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        this.filterModelLists = new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            caption: 'List',
-                            field: 'ListId',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: result.lists,
-                                        nameField: 'name',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        this.filterModelTags = new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Tag',
-                            field: 'TagId',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: result.tags,
-                                        nameField: 'name',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        }),
-                        this.filterModelRating = new FilterModel({
-                            component: FilterRangeComponent,
-                            operator: { from: 'ge', to: 'le' },
-                            caption: 'Rating',
-                            field: 'Rating',
-                            items: FilterHelpers.getRatingFilterItems(result.ratings)
-                        }),
-                        this.filterModelStar = new FilterModel({
-                            component: FilterCheckBoxesComponent,
-                            caption: 'Star',
-                            field: 'StarId',
-                            items: {
-                                element: new FilterCheckBoxesModel(
-                                    {
-                                        dataSource: result.stars,
-                                        nameField: 'name',
-                                        keyExpr: 'id'
-                                    })
-                            }
-                        })
-                    ]
-                )
+        } else {
+            this._filtersService.setup(
+                this.filters = [
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'name',
+                        items: { Name: new FilterItemModel()}
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        caption: 'email',
+                        items: { Email: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterCalendarComponent,
+                        operator: {from: 'ge', to: 'le'},
+                        caption: 'creation',
+                        field: 'CreationTime',
+                        items: {from: new FilterItemModel(), to: new FilterItemModel()},
+                        options: {method: 'getFilterByDate'}
+                    }),
+                    this.filterModelStatus = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'status',
+                        field: 'StatusId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getStatuses)),
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        caption: 'phone',
+                        items: { Phone: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterStatesComponent,
+                        caption: 'states',
+                        items: {
+                            countryStates: new FilterStatesModel()
+                        }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'city',
+                        items: { City: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'contains',
+                        caption: 'streetAddress',
+                        items: { StreetAddress: new FilterItemModel() }
+                    }),
+                    new FilterModel({
+                        component: FilterInputsComponent,
+                        operator: 'startswith',
+                        caption: 'zipCode',
+                        items: { ZipCode: new FilterItemModel() }
+                    }),
+                    this.filterModelAssignment = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'assignedUser',
+                        field: 'AssignedUserId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(AssignedUsersStoreSelectors.getAssignedUsers)),
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    this.filterModelLists = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'List',
+                        field: 'ListId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getLists)),
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    this.filterModelTags = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Tag',
+                        field: 'TagId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getTags)),
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    }),
+                    this.filterModelRating = new FilterModel({
+                        component: FilterRangeComponent,
+                        operator: { from: 'ge', to: 'le' },
+                        caption: 'Rating',
+                        field: 'Rating',
+                        items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
+                    }),
+                    this.filterModelStar = new FilterModel({
+                        component: FilterCheckBoxesComponent,
+                        caption: 'Star',
+                        field: 'StarId',
+                        items: {
+                            element: new FilterCheckBoxesModel(
+                                {
+                                    dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                                    nameField: 'name',
+                                    keyExpr: 'id'
+                                })
+                        }
+                    })
+                ]
             );
+        }
 
         this._filtersService.apply(() => {
             this.selectedClientKeys = [];
@@ -589,6 +599,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnInit() {
+        this.store$.pipe(select(StatusesStoreSelectors.getStatuses)).subscribe(
+            statuses => this.statuses = statuses
+        );
         this.activate();
     }
 
@@ -602,7 +615,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         this._filtersService.localizationSourceName = this.localizationSourceName;
-
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

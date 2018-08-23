@@ -1,4 +1,7 @@
 :host {
+  display: block;
+  min-width: 350px;
+
   position: relative;
   &:before {
     content: "";
@@ -14,6 +17,7 @@
 
   input {
     width: 240px;
+    height: 48px;
     &:disabled {
       opacity: 0.5;
       color: #333;
@@ -23,11 +27,14 @@
   label {
     right: -4px;
     width: 90px;
+    height: 48px;
     position: relative;
     color: #BDC6C7;
     line-height: 46px;
     vertical-align: top;
     border-bottom: 1px solid #dfdfdf;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
     font-size: 12px;
   }
 
@@ -46,6 +53,9 @@
   dx-text-box, 
   dx-number-box {
     display: inline-block;
+    /deep/ input {
+      height: 48px;
+    }
   }
 
   mat-dialog-actions {
@@ -54,7 +64,7 @@
 
   mat-dialog-content {
     min-height: 160px;
-  }
+  }  
 
   .type-item-wrapper {
     /deep/ input {

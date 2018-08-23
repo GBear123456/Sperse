@@ -76,7 +76,7 @@ export class NoteAddComponent extends AppComponentBase  {
     saveNote() {
         if (this.validator.validate().isValid)
             this._notesService.createNote(CreateNoteInput.fromJS({
-                customerId: this._customerInfo.id,
+                contactGroupId: this._customerInfo.id,
                 text: this.summary,
                 contactId: this.contact,
                 contactPhoneId: this.phone || undefined,

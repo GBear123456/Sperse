@@ -229,4 +229,5 @@ export abstract class AppComponentBase {
     getSearchFilter() {
         return this.oDataService.getSearchFilter(this.searchColumns, this.searchValue);
     }
+
 }

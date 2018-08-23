@@ -315,7 +315,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 Math.round(input.size / 10000)
             );
         this._documentService.upload(UploadDocumentInput.fromJS({
-            customerId: this.data.customerInfo.id,
+            contactGroupId: this.data.customerInfo.id,
             typeId: input.typeId,
             fileName: input.name,
             size: input.size,

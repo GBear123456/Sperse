@@ -76,6 +76,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!this.refreshTimeout) {
             !quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
+                /** @todo change for using pipelines store */
                 this._pipelineService
                     .getPipelineDefinitionObservable(this.pipelinePurposeId)
                     .subscribe((result: PipelineDto) => {
@@ -158,8 +159,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             .every(dataSource => dataSource.isLoaded());
     }
 
-    advancedODataFilter(grid: any, uri: string, query: any[]) {
-        this.queryWithSearch = query.concat(this.getSearchFilter());
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
+        this.queryWithSearch = filters.map((filter) => {
+            return getCheckCustom && getCheckCustom(filter) ||
+                filter.getODataFilterObject();
+        }).concat(this.getSearchFilter());
 
         this.startLoading();
         this.loadStagesLeads();

@@ -1,14 +1,21 @@
-import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular/core';
+/** Core imports */
+import { Component, Injector, Input, EventEmitter, Output, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+import { ActionsSubject, Store, select } from '@ngrx/store';
+import { ofType } from '@ngrx/effects';
+import { Subject } from 'rxjs';
+import { finalize, first } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { CrmStoreState, TagsStoreActions, TagsStoreSelectors } from '@app/crm/shared/store';
+import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-
-import { CustomerTagsServiceProxy, TagCustomersInput, CustomerTagInput, UpdateCustomerTagInput, UntagCustomersInput, UpdateCustomerTagsInput } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
-import { MatDialog } from '@angular/material';
-import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { finalize } from 'rxjs/operators';
+import { CustomerTagsServiceProxy, CustomerTagInfoDto, CustomerTagInput, UntagCustomersInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-tags-list',
@@ -18,8 +25,8 @@ import { finalize } from 'rxjs/operators';
 })
 export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
-    @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Tags']";
+    @Input() selectedKeys: number[];
+    @Input() targetSelector = '[aria-label="Tags"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() set selectedItems(value) {
@@ -46,7 +53,9 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _filterService: FiltersService,
-        private _tagsService: CustomerTagsServiceProxy
+        private _tagsService: CustomerTagsServiceProxy,
+        private store$: Store<CrmStoreState.CrmState>,
+        private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -92,23 +101,27 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 })).subscribe((result) => {
                     this.notify.success(this.l('TagsUnassigned'));
                 });
-            else
-                this._tagsService.tagCustomers(TagCustomersInput.fromJS({
-                    customerIds: customerIds,
-                    tags: tags
-                })).pipe(finalize(() => {
-                    this.listComponent.deselectAll();
-                })).subscribe((result) => {
-                    this.notify.success(this.l('TagsAssigned'));
-                });
-        }
-        else
-            this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
-                customerId: customerIds[0],
-                tags: tags
-            })).subscribe((result) => {
-                this.notify.success(this.l('CustomerTagsUpdated'));
-            });
+            else {
+                this.store$.dispatch(new TagsStoreActions.AddTag({
+                    customersIds: customerIds,
+                    tags: tags,
+                    successMessage: this.l('TagsAssigned'),
+                    serviceMethodName: 'tagCustomers'
+                }));
+
+                this.actions$.pipe(
+                    ofType(TagsStoreActions.ActionTypes.ADD_TAG_SUCCESS),
+                    first(),
+                    finalize(() => { this.listComponent.deselectAll(); })
+                ).subscribe();
+            }
+        } else
+            this.store$.dispatch(new TagsStoreActions.AddTag({
+                customersIds: [customerIds[0]],
+                tags: tags,
+                successMessage: this.l('CustomerTagsUpdated'),
+                serviceMethodName: 'updateCustomersTags'
+            }));
     }
 
     clear() {
@@ -125,11 +138,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this._tagsService.getTags().subscribe((result) => {
-            this.list = result.map((obj) => {
-                obj['parent'] = 0;
-                return obj;
-            });
+        this.store$.pipe(select(TagsStoreSelectors.getTagsWithParent)).subscribe((tags: CustomerTagInfoDto[]) => {
+            this.list = tags;
         });
     }
 
@@ -149,7 +159,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }
@@ -205,16 +215,24 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData
         }).afterClosed().subscribe((result) => {
-            if (result)
-                this._tagsService
-                    .delete(itemId, dialogData.reassignToItemId, dialogData.deleteAllReferences)
-                    .subscribe(() => {
-                        this.refresh();
-                        this.clearFilterIfSelected(itemId);
-                    });
-            else
+            if (result) {
+                this.store$.dispatch({
+                    type: TagsStoreActions.ActionTypes.REMOVE_TAG,
+                    payload: {
+                        id: itemId,
+                        reassignToItemId: dialogData.reassignToItemId,
+                        deleteAllReferences: dialogData.deleteAllReferences
+                    }
+                });
+
+                this.actions$.pipe(
+                    ofType(TagsStoreActions.ActionTypes.REMOVE_TAG_SUCCESS),
+                    first()
+                ).subscribe(() => { this.clearFilterIfSelected(itemId); });
+            } else {
                 this.tooltipVisible = true;
-            });
+            }
+        });
     }
 
     onRowUpdating($event) {
@@ -225,12 +243,18 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             return;
         }
 
-        this._tagsService.rename(UpdateCustomerTagInput.fromJS({
-            id: $event.oldData.id,
-            name: tagName
-        })).subscribe((res) => {
-            if (res)
-                $event.cancel = true;
+        this.store$.dispatch(
+            new TagsStoreActions.RenameTag({
+                id: $event.oldData.id,
+                name: tagName
+            })
+        );
+
+        this.actions$.pipe(
+            ofType(TagsStoreActions.ActionTypes.RENAME_TAG_SUCCESS),
+            first()
+        ).subscribe(() => {
+            $event.cancel = true;
         });
     }
 
@@ -331,4 +355,5 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
+
 }

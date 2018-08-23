@@ -1,4 +1,7 @@
 :host {
+  display: block;
+  min-width: 340px;
+
   label {
     right: -4px;
     width: 70px;
@@ -7,6 +10,9 @@
     line-height: 46px;
     vertical-align: top;
     border-bottom: 1px solid #dfdfdf;
+    height: 48px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
     font-size: 12px;
   }
 
@@ -25,6 +31,9 @@
   dx-text-box, 
   dx-number-box {
     display: inline-block;
+    /deep/ input {
+      height: 48px;
+    }
   }
 
   position: relative;
@@ -136,6 +145,10 @@
 
     /deep/ div.input-group {
       height: 100%;
+
+      input {
+          height: 47px;
+      }
 
       .dropdown {
         margin-top: 6px;
