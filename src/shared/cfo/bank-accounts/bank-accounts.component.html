@@ -29,7 +29,7 @@
         [allowUpdateAccount]="true"
         [showCreditInfo]="true"
         [height]="'100%'"
-        (selectionChanged)="selectedAccountsChange($event)"
+        (selectionChanged)="selectedAccountsChange()"
         (onUpdateAccount)="onUpdateAccount($event)"
         (reloadDataSource)="bankAccountsService.load()"
         (onDataChange)="bankAccountDataChanged()">
