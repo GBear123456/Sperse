@@ -138,7 +138,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: 'Order'}))),
+                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: AppConsts.PipelinePurposeIds.order}))),
                                 nameField: 'name',
                                 parentExpr: 'parentId',
                                 keyExpr: 'id'

@@ -32,6 +32,23 @@ export const getPipeline = (filter: Filter) => createSelector(
     }
 );
 
+export const getSortedPipeline = (filter: Filter) => createSelector(
+    getPipeline(filter),
+    (pipeline) => {
+        let result = null;
+        if (pipeline) {
+            pipeline.stages.sort((a, b) => {
+                return a.sortOrder > b.sortOrder ? 1 : -1;
+            }).forEach((item) => {
+                item['index'] = Math.abs(item.sortOrder);
+                item['dragAllowed'] = true;
+            });
+            result = pipeline;
+        }
+        return result;
+    }
+);
+
 export const getPipelineStages = (filter: Filter) => createSelector(
     getPipeline(filter),
     (pipeline: PipelineDto) => pipeline.stages

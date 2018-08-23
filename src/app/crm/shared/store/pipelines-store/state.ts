@@ -7,14 +7,14 @@ export const pipelinesAdapter: EntityAdapter<
 
 export interface State {
     pipelines: PipelineDto[];
-    isLoading: boolean;
     error: string;
+    loading: boolean;
     loaded: boolean;
 }
 
 export const initialState: State = {
     pipelines: null,
-    isLoading: false,
     error: null,
+    loading: false,
     loaded: false
 };

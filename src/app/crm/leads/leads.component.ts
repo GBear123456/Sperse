@@ -265,7 +265,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: 'Lead'}))),
+                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: AppConsts.PipelinePurposeIds.lead}))),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })

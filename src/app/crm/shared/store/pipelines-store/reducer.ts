@@ -7,7 +7,7 @@ export function pipelinesReducer(state: State = initialState, action) {
             const reload = action.payload;
             return {
                 ...state,
-                isLoading: true,
+                loading: true,
                 error: null,
                 loaded: reload ? false : state.loaded
             };
@@ -16,7 +16,7 @@ export function pipelinesReducer(state: State = initialState, action) {
             return {
                 ...state,
                 pipelines: action.payload,
-                isLoading: false,
+                loading: false,
                 error: null,
                 loaded: true
             };
@@ -24,7 +24,7 @@ export function pipelinesReducer(state: State = initialState, action) {
         case ActionTypes.LOAD_FAILURE: {
             return {
                 ...state,
-                isLoading: false,
+                loading: false,
                 error: action.payload
             };
         }
