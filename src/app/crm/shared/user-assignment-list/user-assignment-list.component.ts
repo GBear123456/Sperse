@@ -107,7 +107,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             });
         else
             this._userAssignmentService.assignCustomer(AssignCustomerInput.fromJS({
-                customerId: this.selectedKeys[0],
+                contactGroupId: this.selectedKeys[0],
                 userId: this.selectedItemKey
             })).subscribe((result) => {
                 this.moveSelectedItemsToTop();

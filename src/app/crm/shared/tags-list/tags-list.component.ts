@@ -48,7 +48,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     addNewTimeout: any;
     listComponent: any;
     tooltipVisible = false;
-    destroyed$ = new Subject<boolean>();
 
     constructor(
         injector: Injector,
@@ -59,7 +58,6 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
     }
 
     toggle() {
@@ -358,8 +356,4 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 
-    ngOnDestroy() {
-        this.destroyed$.next(true);
-        this.destroyed$.complete();
-    }
 }

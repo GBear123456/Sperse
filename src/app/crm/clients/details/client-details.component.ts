@@ -273,7 +273,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     private updateStatusInternal(statusId: string) {
         return this._customerService.updateCustomerStatus(new UpdateCustomerStatusInput({
-            customerId: this.customerId,
+            contactGroupId: this.customerId,
             statusId: statusId
         }));
     }

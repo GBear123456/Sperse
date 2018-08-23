@@ -338,21 +338,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
-                .subscribe(result => this.afterSave(result.customerId, result.id));
+                .subscribe(result => this.afterSave(result.contactGroupId, result.id));
         else
             this._customersService.createCustomer(CreateCustomerInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(customerId: number, leadId?: number): void
+    private afterSave(contactGroupId: number, leadId?: number): void
     {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
-            this.redirectToClientDetails(customerId, leadId);
+            this.redirectToClientDetails(contactGroupId, leadId);
             this.data.refreshParent(true, this.stageId);
         } else {
             this.data.refreshParent(false, this.stageId);
