@@ -78,6 +78,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     syncAccount: SyncAccountBankDto;
     popupVisible = false;
     bankAccountInfo: RenameSyncAccountInput = new RenameSyncAccountInput();
+    bankAccountsService: BankAccountsService;
 
     constructor(
         injector: Injector,
@@ -85,9 +86,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         private _businessEntityService: BusinessEntityServiceProxy,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private _syncServiceProxy: SyncServiceProxy,
-        private bankAccountsService: BankAccountsService
+        bankAccountsService: BankAccountsService
     ) {
         super(injector);
+        this.bankAccountsService = bankAccountsService;
         this.cfoService = injector.get(CFOService, null);
     }
 
