@@ -6,7 +6,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ApplicationInfoDto, CreateInvoiceDto, InvoiceServiceProxy, PaymentServiceProxy, TenantLoginInfoDto, UserLoginInfoDto,
-    TenantRegistrationServiceProxy
+    TenantRegistrationServiceProxy, PaymentRequestDto
 } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
@@ -110,9 +110,12 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
             return;
         }
 
-        let model = this.paymentInfo.bankCard;
-        model.billingCountryCode = this.paymentInfo.countryCode;
-        model.holderName = this.appSession.user.name + ' ' + this.appSession.user.surname;
+        let bankCard = this.paymentInfo.bankCard;
+        bankCard.billingCountryCode = this.paymentInfo.countryCode;
+        bankCard.holderName = this.appSession.user.name + ' ' + this.appSession.user.surname;
+
+        let model = new PaymentRequestDto();
+        model.bankCard = bankCard;
 
         this.startLoading(true);
         this._biilingSubscriptionService.setupBilling(model)
