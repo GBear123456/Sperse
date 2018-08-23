@@ -120,7 +120,7 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
                 this.finishLoading(true);
             }))
             .subscribe(() => {
-                abp.message.success('Billing was set up successfully');
-            });;
+                abp.message.success(this.l('AddBillingSuccessfully'));
+            });
     }
 }
