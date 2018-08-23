@@ -2,16 +2,17 @@
 import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
+import { Subject, of } from 'rxjs';
+import { delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 
 /** Application imports */
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
+import { CrmStoreState, PipelinesStoreActions } from '@app/crm/shared/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
 import { PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -36,6 +37,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private shiftStartLead: any;
     private firstStage: any;
     private lastStage: any;
+    private quiet: boolean;
+    private stageId: number;
+    private dataSource$: Subject<DataSource> = new Subject<DataSource>();
 
     @Output() selectedLeadsChange = new EventEmitter<any>();
     @Input() get selectedLeads() {
@@ -50,8 +54,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         this._dataSource = dataSource;
-        if (dataSource)
-            this.refresh();
+        if (dataSource) {
+            this.refresh(false, undefined, false);
+            this.dataSource$.next(dataSource);
+        }
     }
     @Input() pipelinePurposeId: string;
 
@@ -66,39 +72,124 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     constructor(injector: Injector,
         private _dragulaService: DragulaService,
         private _pipelineService: PipelineService,
-        private _router: Router
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    refresh(quiet = false, stageId = undefined) {
-        this.selectedLeads = [];
-        if (!this.refreshTimeout) {
-            !quiet && this.startLoading();
-            this.refreshTimeout = setTimeout(() => {
-                /** @todo change for using pipelines store */
-                this._pipelineService
-                    .getPipelineDefinitionObservable(this.pipelinePurposeId)
-                    .subscribe((result: PipelineDto) => {
-                        this.pipeline = result;
-                        if (!this.stages) {
-                            this.stages = result.stages.map((stage) => {
-                                _.extend(stage, {
-                                    leads: [],
-                                    full: true
-                                });
-                                return stage;
-                            });
-                            this.firstStage = this.stages[0];
-                            this.lastStage = this.stages[this.stages.length - 1];
-                            !quiet && this.onStagesLoaded.emit(result);
-                        }
-                        if (this._dataSource)
-                            this.loadStagesLeads(0, stageId && _.findIndex(this.stages,
-                                (obj) => {return obj.id == stageId}), Boolean(stageId));
+    ngOnInit() {
+        this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
+            let leadId = this.getAccessKey(value[1]),
+                newStage = this.getStageByElement(value[2]);
+            if (value[1].classList.contains('selected')) {
+                this.getSelectedLeads().forEach((lead) => {
+                    if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
+                        return false;
 
-                        this.refreshTimeout = null;
+                    let oldStage = _.find(this.stages, (stage) => {
+                        return stage.name == lead.Stage;
                     });
+
+                    if (lead && lead.Stage != newStage.name)
+                        this.updateLeadStage(lead.Id, newStage.name, lead.Stage, () => {
+                            if (lead.Id != leadId) {
+                                newStage['leads'].unshift(lead);
+                                oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
+                            }
+                        });
+                });
+                this.selectedLeads = [];
+            } else
+                this.updateLeadStage(leadId, newStage.name,
+                    this.getStageByElement(value[3]).name);
+
+        }));
+        this.subscribers.push(
+            this._dragulaService.dragend.subscribe((value) => {
+                    this.hideStageHighlighting();
+                }
+            ));
+        this.subscribers.push(
+            this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId).pipe(
+                map((pipeline) => {
+                    return this._dataSource ?
+                        of(pipeline) :
+                        of(pipeline).pipe(delayWhen(() => {
+                            return this.dataSource$;
+                        }));
+                }),
+                mergeMap(pipeline => pipeline)
+            ).subscribe((pipeline: PipelineDto) => {
+                this.pipeline = pipeline;
+                if (!this.stages) {
+                    this.stages = pipeline.stages.map((stage) => {
+                        _.extend(stage, {
+                            leads: [],
+                            full: true
+                        });
+                        return stage;
+                    });
+                    this.firstStage = this.stages[0];
+                    this.lastStage = this.stages[this.stages.length - 1];
+                    !this.quiet && this.onStagesLoaded.emit(pipeline);
+                }
+                this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+
+                this.refreshTimeout = null;
+            })
+        );
+        const bag: any = this._dragulaService.find(this.dragulaName);
+        if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
+        this._dragulaService.setOptions(this.dragulaName, {
+            ignoreInputTextSelection: false,
+            moves: (el, source) => {
+                if (el.classList.contains('selected')) {
+                    let cards = this.getSelectedCards();
+                    if (cards.length)
+                        el.setAttribute('count', [].filter.call(cards, (card) => {
+                            return [this.firstStage.name, this.lastStage.name]
+                                .indexOf(card.getAttribute('stage')) < 0;
+                        }).length);
+                }
+
+                let stage = this.getStageByElement(el);
+                setTimeout(() => {
+                    if (stage)
+                        stage.accessibleActions.forEach((action) => {
+                            if (action.targetStageId) {
+                                let target = _.find(this.stages, (stage) => {
+                                    return stage.id == action.targetStageId;
+                                }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
+                                targetElm && targetElm.classList.add('drop-area');
+                            }
+                        });
+                });
+
+                return stage && this.getLeadByElement(el, stage);
+            },
+            accepts: (el, target, source) => {
+                let stageSource = this.getStageByElement(source),
+                    stageTarget = this.getStageByElement(target);
+                if (stageSource && stageTarget) {
+                    return (stageSource.name == stageTarget.name) ||
+                        !stageSource.accessibleActions.every((action) => {
+                            return action.targetStageId != stageTarget.id;
+                        });
+                } else
+                    return false; // elements can't be dropped in any of the `containers` by default
+            }
+        });
+
+    }
+
+    refresh(quiet = false, stageId = undefined, skipAlreadyLoadedChecking = true) {
+        this.selectedLeads = [];
+        this.quiet = quiet;
+        this.stageId = stageId;
+        if (!this.refreshTimeout) {
+            !this.quiet && this.startLoading();
+            this.refreshTimeout = setTimeout(() => {
+                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(skipAlreadyLoadedChecking));
             });
         }
     }
@@ -196,83 +287,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 }
             );
         }
-    }
-
-    ngOnInit() {
-         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
-            let leadId = this.getAccessKey(value[1]),
-                newStage = this.getStageByElement(value[2]);
-            if (value[1].classList.contains('selected')) {
-                this.getSelectedLeads().forEach((lead) => {
-                    if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
-                        return false;
-
-                    let oldStage = _.find(this.stages, (stage) => {
-                        return stage.name == lead.Stage;
-                    });
-
-                    if (lead && lead.Stage != newStage.name)
-                        this.updateLeadStage(lead.Id, newStage.name, lead.Stage, () => {
-                            if (lead.Id != leadId) {
-                                newStage['leads'].unshift(lead);
-                                oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
-                            }
-                        });
-                });
-                this.selectedLeads = [];
-            } else
-                this.updateLeadStage(leadId, newStage.name,
-                    this.getStageByElement(value[3]).name);
-
-        }));
-        this.subscribers.push(
-            this._dragulaService.dragend.subscribe((value) => {
-                this.hideStageHighlighting();
-            }
-        ));
-
-        const bag: any = this._dragulaService.find(this.dragulaName);
-        if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
-        this._dragulaService.setOptions(this.dragulaName, {
-            ignoreInputTextSelection: false,
-            moves: (el, source) => {
-                if (el.classList.contains('selected')) {
-                    let cards = this.getSelectedCards();
-                    if (cards.length)
-                        el.setAttribute('count', [].filter.call(cards, (card) => {
-                            return [this.firstStage.name, this.lastStage.name]
-                                .indexOf(card.getAttribute('stage')) < 0;
-                        }).length);
-                }
-
-                let stage = this.getStageByElement(el);
-                setTimeout(() => {
-                    if (stage)
-                        stage.accessibleActions.forEach((action) => {
-                            if (action.targetStageId) {
-                                let target = _.find(this.stages, (stage) => {
-                                    return stage.id == action.targetStageId;
-                                }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
-                                targetElm && targetElm.classList.add('drop-area');
-                            }
-                        });
-                });
-
-                return stage && this.getLeadByElement(el, stage);
-            },
-            accepts: (el, target, source) => {
-                let stageSource = this.getStageByElement(source),
-                    stageTarget = this.getStageByElement(target);
-                if (stageSource && stageTarget) {
-                    return (stageSource.name == stageTarget.name) ||
-                        !stageSource.accessibleActions.every((action) => {
-                            return action.targetStageId != stageTarget.id;
-                        });
-                } else
-                    return false; // elements can't be dropped in any of the `containers` by default
-            }
-        });
-
     }
 
     ngOnDestroy() {
