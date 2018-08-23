@@ -6,7 +6,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ApplicationInfoDto, CreateInvoiceDto, InvoiceServiceProxy, PaymentServiceProxy, TenantLoginInfoDto, UserLoginInfoDto,
-    TenantRegistrationServiceProxy, PaymentRequestDto
+    TenantSubscriptionServiceProxy, PaymentRequestDto
 } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
@@ -17,7 +17,7 @@ import { finalize } from 'rxjs/operators';
 @Component({
     templateUrl: './subscription-management.component.html',
     animations: [appModuleAnimation()],
-    providers: [TenantRegistrationServiceProxy]
+    providers: [TenantSubscriptionServiceProxy]
 })
 
 export class SubscriptionManagementComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
@@ -41,7 +41,7 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
         private _appSessionService: AppSessionService,
         private _invoiceServiceProxy: InvoiceServiceProxy,
         private _activatedRoute: ActivatedRoute,
-        private _biilingSubscriptionService: TenantRegistrationServiceProxy
+        private _tenantSubscriptionService: TenantSubscriptionServiceProxy
     ) {
         super(injector);
         this.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
@@ -104,7 +104,7 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
         });
     }
 
-    setUpBilling() {
+    addPaymentInfo() {
         let validationResult = this.paymentInfo.validationGroup.validate();
         if (!validationResult.isValid) {
             return;
@@ -118,12 +118,12 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
         model.bankCard = bankCard;
 
         this.startLoading(true);
-        this._biilingSubscriptionService.setupBilling(model)
+        this._tenantSubscriptionService.addPaymentInfo(model)
             .pipe(finalize(() => {
                 this.finishLoading(true);
             }))
             .subscribe(() => {
-                abp.message.success('Billing was set up successfully');
-            });;
+                abp.message.success(this.l('AddBillingSuccessfully'));
+            });
     }
 }

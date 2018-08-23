@@ -62,6 +62,9 @@
         name="phoneExtension"
         [disabled]="!isEditAllowed"
         [(value)]="data.phoneExtension">
+        <dx-validator>
+          <dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}"></dxi-validation-rule>
+        </dx-validator>
       </dx-number-box><br>
     </div>
 

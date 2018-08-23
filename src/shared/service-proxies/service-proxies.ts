@@ -635,54 +635,6 @@ export class ActivityServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    paymentTest(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Activity/PaymentTest";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPaymentTest(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPaymentTest(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPaymentTest(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
      * @id (optional) 
      * @return Success
      */
@@ -21878,214 +21830,6 @@ export class TenantPaymentSettingsServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    getACHWorksSettings(): Observable<ACHWorksSettings> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetACHWorksSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetACHWorksSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetACHWorksSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<ACHWorksSettings>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ACHWorksSettings>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetACHWorksSettings(response: HttpResponseBase): Observable<ACHWorksSettings> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ACHWorksSettings.fromJS(resultData200) : new ACHWorksSettings();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ACHWorksSettings>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateACHWorksSettings(input: ACHWorksSettings | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateACHWorksSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateACHWorksSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateACHWorksSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateACHWorksSettings(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getRecurlyPaymentSettings(): Observable<RecurlyPaymentSettings> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetRecurlyPaymentSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetRecurlyPaymentSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetRecurlyPaymentSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<RecurlyPaymentSettings>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<RecurlyPaymentSettings>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetRecurlyPaymentSettings(response: HttpResponseBase): Observable<RecurlyPaymentSettings> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RecurlyPaymentSettings.fromJS(resultData200) : new RecurlyPaymentSettings();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<RecurlyPaymentSettings>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateRecurlyPaymentSettings(input: RecurlyPaymentSettings | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateRecurlyPaymentSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateRecurlyPaymentSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateRecurlyPaymentSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateRecurlyPaymentSettings(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -22153,58 +21897,6 @@ export class TenantRegistrationServiceProxy {
             }));
         }
         return _observableOf<CompleteTenantRegistrationOutput>(<any>null);
-    }
-
-    /**
-     * @paymentRequestDto (optional) 
-     * @return Success
-     */
-    setupBilling(paymentRequestDto: PaymentRequestDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantRegistration/SetupBilling";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(paymentRequestDto);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSetupBilling(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSetupBilling(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSetupBilling(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 }
 
@@ -22792,6 +22484,70 @@ export class TenantSslCertificateServiceProxy {
     }
 
     protected processDeleteTenantSslCertificate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class TenantSubscriptionServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @bankCardDto (optional) 
+     * @return Success
+     */
+    addPaymentInfo(bankCardDto: BankCardDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/AddPaymentInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(bankCardDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddPaymentInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddPaymentInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAddPaymentInfo(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -44747,8 +44503,7 @@ export interface ISubmitMemberInfoResultDto {
 export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorizeRequestDto {
     registrationId!: string;
     packageId!: number | undefined;
-    bankCard!: BankCardDto | undefined;
-    achCustomer!: ACHCustomerDto | undefined;
+    bankCard!: BankCardDto;
 
     constructor(data?: IMemberPaymentAuthorizeRequestDto) {
         if (data) {
@@ -44757,14 +44512,16 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.bankCard = new BankCardDto();
+        }
     }
 
     init(data?: any) {
         if (data) {
             this.registrationId = data["registrationId"];
             this.packageId = data["packageId"];
-            this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
-            this.achCustomer = data["achCustomer"] ? ACHCustomerDto.fromJS(data["achCustomer"]) : <any>undefined;
+            this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : new BankCardDto();
         }
     }
 
@@ -44780,7 +44537,6 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
         data["registrationId"] = this.registrationId;
         data["packageId"] = this.packageId;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
-        data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -44788,8 +44544,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
 export interface IMemberPaymentAuthorizeRequestDto {
     registrationId: string;
     packageId: number | undefined;
-    bankCard: BankCardDto | undefined;
-    achCustomer: ACHCustomerDto | undefined;
+    bankCard: BankCardDto;
 }
 
 export class BankCardDto implements IBankCardDto {
@@ -44870,102 +44625,6 @@ export interface IBankCardDto {
     billingState: string | undefined;
     billingCountryCode: string;
     billingCountry: string | undefined;
-}
-
-export class ACHCustomerDto implements IACHCustomerDto {
-    firstName!: string;
-    lastName!: string;
-    customerRoutingNo!: string;
-    customerAcctNo!: string;
-    customerAcctType!: string;
-    address1!: string | undefined;
-    address2!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    zipCode!: string | undefined;
-    dln!: string | undefined;
-    dlnState!: string | undefined;
-    ssn!: string | undefined;
-    dateOfBirth!: string | undefined;
-    originatorName!: string;
-    memo!: string | undefined;
-
-    constructor(data?: IACHCustomerDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            this.customerRoutingNo = data["customerRoutingNo"];
-            this.customerAcctNo = data["customerAcctNo"];
-            this.customerAcctType = data["customerAcctType"];
-            this.address1 = data["address1"];
-            this.address2 = data["address2"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zipCode = data["zipCode"];
-            this.dln = data["dln"];
-            this.dlnState = data["dlnState"];
-            this.ssn = data["ssn"];
-            this.dateOfBirth = data["dateOfBirth"];
-            this.originatorName = data["originatorName"];
-            this.memo = data["memo"];
-        }
-    }
-
-    static fromJS(data: any): ACHCustomerDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ACHCustomerDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["customerRoutingNo"] = this.customerRoutingNo;
-        data["customerAcctNo"] = this.customerAcctNo;
-        data["customerAcctType"] = this.customerAcctType;
-        data["address1"] = this.address1;
-        data["address2"] = this.address2;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zipCode"] = this.zipCode;
-        data["dln"] = this.dln;
-        data["dlnState"] = this.dlnState;
-        data["ssn"] = this.ssn;
-        data["dateOfBirth"] = this.dateOfBirth;
-        data["originatorName"] = this.originatorName;
-        data["memo"] = this.memo;
-        return data; 
-    }
-}
-
-export interface IACHCustomerDto {
-    firstName: string;
-    lastName: string;
-    customerRoutingNo: string;
-    customerAcctNo: string;
-    customerAcctType: string;
-    address1: string | undefined;
-    address2: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zipCode: string | undefined;
-    dln: string | undefined;
-    dlnState: string | undefined;
-    ssn: string | undefined;
-    dateOfBirth: string | undefined;
-    originatorName: string;
-    memo: string | undefined;
 }
 
 export class PaymentAuthorizeResponseDto implements IPaymentAuthorizeResponseDto {
@@ -51398,102 +51057,6 @@ export interface IBaseCommercePaymentSettings {
     sandBox: boolean | undefined;
 }
 
-export class ACHWorksSettings implements IACHWorksSettings {
-    sss!: string | undefined;
-    locID!: string | undefined;
-    soapUser!: string | undefined;
-    soapKey!: string | undefined;
-
-    constructor(data?: IACHWorksSettings) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.sss = data["sss"];
-            this.locID = data["locID"];
-            this.soapUser = data["soapUser"];
-            this.soapKey = data["soapKey"];
-        }
-    }
-
-    static fromJS(data: any): ACHWorksSettings {
-        data = typeof data === 'object' ? data : {};
-        let result = new ACHWorksSettings();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["sss"] = this.sss;
-        data["locID"] = this.locID;
-        data["soapUser"] = this.soapUser;
-        data["soapKey"] = this.soapKey;
-        return data; 
-    }
-}
-
-export interface IACHWorksSettings {
-    sss: string | undefined;
-    locID: string | undefined;
-    soapUser: string | undefined;
-    soapKey: string | undefined;
-}
-
-export class RecurlyPaymentSettings implements IRecurlyPaymentSettings {
-    apiKey!: string | undefined;
-    subdomain!: string | undefined;
-    privateKey!: string | undefined;
-    pageSize!: number | undefined;
-
-    constructor(data?: IRecurlyPaymentSettings) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.apiKey = data["apiKey"];
-            this.subdomain = data["subdomain"];
-            this.privateKey = data["privateKey"];
-            this.pageSize = data["pageSize"];
-        }
-    }
-
-    static fromJS(data: any): RecurlyPaymentSettings {
-        data = typeof data === 'object' ? data : {};
-        let result = new RecurlyPaymentSettings();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["apiKey"] = this.apiKey;
-        data["subdomain"] = this.subdomain;
-        data["privateKey"] = this.privateKey;
-        data["pageSize"] = this.pageSize;
-        return data; 
-    }
-}
-
-export interface IRecurlyPaymentSettings {
-    apiKey: string | undefined;
-    subdomain: string | undefined;
-    privateKey: string | undefined;
-    pageSize: number | undefined;
-}
-
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
     leadRequestXref!: string;
     tenantName!: string | undefined;
@@ -51624,46 +51187,6 @@ export interface ICompleteTenantRegistrationOutput {
     userName: string | undefined;
     emailAddress: string | undefined;
     isEmailConfirmationRequired: boolean | undefined;
-}
-
-export class PaymentRequestDto implements IPaymentRequestDto {
-    bankCard!: BankCardDto | undefined;
-    achCustomer!: ACHCustomerDto | undefined;
-
-    constructor(data?: IPaymentRequestDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
-            this.achCustomer = data["achCustomer"] ? ACHCustomerDto.fromJS(data["achCustomer"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): PaymentRequestDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaymentRequestDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
-        data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IPaymentRequestDto {
-    bankCard: BankCardDto | undefined;
-    achCustomer: ACHCustomerDto | undefined;
 }
 
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {
