@@ -380,7 +380,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             });
         }
 
-        var expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
+        let expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
         _.mapObject(this.categorization.categories, (item, key) => {
             if (!item.parentId) {
                 let method = this.categoryList.instance[

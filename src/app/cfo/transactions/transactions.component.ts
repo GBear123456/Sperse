@@ -409,9 +409,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.categorizationComponent.refreshCategories();
     }
 
-    searchValueChange(e: object) {
-        this.searchValue = e['value'];
-
+    searchValueChange(e) {
+        this.searchValue = e.text ? e.text : e['value'];
         this.processFilterInternal();
         this.initToolbarConfig();
     }

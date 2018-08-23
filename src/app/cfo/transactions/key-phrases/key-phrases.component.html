@@ -6,6 +6,7 @@
         [hoverStateEnabled]="true"
         [loadPanel]="{enabled: true}"
         dataStructure="tree"
+        (onCellClick)="onCellClick($event)"
         itemsExpr="groups">
         <dxi-column 
             dataField="keyPhrases"

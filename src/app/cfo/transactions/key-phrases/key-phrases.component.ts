@@ -15,6 +15,7 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxTreeListComponent) keyPhrasesList: DxTreeListComponent;
     @Input() width: string;
     @Input() height: string;
+    @Output() filterByKey: EventEmitter<any> = new EventEmitter();
 
     @Input('filterItems')
     set filterItems(value: any[]) {
@@ -56,5 +57,9 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.refreshkeyPhrasesCountDataSource();
+    }
+
+    onCellClick(event) {
+        this.filterByKey.emit(event);
     }
 }

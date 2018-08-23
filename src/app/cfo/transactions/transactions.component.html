@@ -44,6 +44,7 @@
                         [height]="'calc(100vh - 300px)'"
                         [filterItems]="filterItems"
                         [hidden]="toggleTabContent"
+                        (filterByKey)="searchValueChange($event)"
                         (close)="categoriesShowed = false">
                     </key-phrases>
                 </div>
