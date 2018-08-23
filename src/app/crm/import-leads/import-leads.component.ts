@@ -358,7 +358,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    let leadsInput = this.createLeadsInput(data);
+                    let leadsInput = this.createLeadsInput(data.records);
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
