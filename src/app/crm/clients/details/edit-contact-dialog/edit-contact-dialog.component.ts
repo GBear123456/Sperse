@@ -91,9 +91,7 @@ export class EditContactDialog extends AppComponentBase {
     }
 
     onSave(event) {
-        if ((this.data.field == 'phoneNumber' && this.countryPhoneNumber.isValid()) || 
-            (this.data.field != 'phoneNumber' && this.validator.validate().isValid)
-        )
+        if (this.validator.validate().isValid && (this.data.field != 'phoneNumber' || this.countryPhoneNumber.isValid()))
             this.dialogRef.close(true);
     }
 
