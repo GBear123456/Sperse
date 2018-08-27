@@ -17,7 +17,7 @@ import { PagesFooterComponent } from './pages-footer/pages-footer.component';
 import { SideBarComponent } from './side-bar.component';
 
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
-import { CreditReportsCommonModule } from '../../shared/common/credit-reports-common.module';
+import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 
 let COMPONENTS = [
     HeaderComponent,
@@ -34,7 +34,7 @@ let COMPONENTS = [
         RouterModule,
 
         LayoutCommonModule,
-        CreditReportsCommonModule,
+        PersonalFinanceCommonModule,
 
         ModalModule.forRoot(),
         TooltipModule.forRoot(),

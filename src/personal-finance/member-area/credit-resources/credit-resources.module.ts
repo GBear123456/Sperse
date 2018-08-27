@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CreditReportsCommonModule } from '../../shared/common/credit-reports-common.module';
+import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 import { LayoutModule } from '../../shared/layout/layout.module';
 
 import { CreditResourcesComponent } from './credit-resources.component';
@@ -11,7 +11,7 @@ import { PrivacyProtectionComponent } from './privacy-protection/privacy-protect
     imports: [
         CommonModule,
         LayoutModule,
-        CreditReportsCommonModule
+        PersonalFinanceCommonModule
     ],
     declarations: [
         CreditResourcesComponent,

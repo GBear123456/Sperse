@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalModule, TooltipModule } from 'ngx-bootstrap';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
-import { CreditReportsCommonModule } from './shared/common/credit-reports-common.module';
-import { CreditReportsRoutingModule } from './personal-finance-routing.module';
+import { PersonalFinanceCommonModule } from './shared/common/personal-finance-common.module';
+import { PersonalFinanceRoutingModule } from './personal-finance-routing.module';
 import { PersoanlFinanceComponent } from './personal-finance.component';
 import { LayoutModule } from './shared/layout/layout.module';
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
@@ -36,8 +36,8 @@ import { CacheMemoryStorage } from 'ng2-cache-service/dist/src/services/storage/
         CommonModule,
         KbaResultModule,
 
-        CreditReportsRoutingModule,
-        CreditReportsCommonModule.forRoot()
+        PersonalFinanceRoutingModule,
+        PersonalFinanceCommonModule.forRoot()
     ],
     providers: [
         PackageIdService,

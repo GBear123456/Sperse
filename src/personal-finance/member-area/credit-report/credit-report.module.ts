@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CreditReportsCommonModule } from '../../shared/common/credit-reports-common.module';
+import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 
 import { DxCircularGaugeModule, DxBarGaugeModule, DxTabsModule, DxDataGridModule, DxLoadPanelModule, DxTemplateModule, DxChartModule } from 'devextreme-angular';
 
@@ -39,7 +39,7 @@ import { LayoutModule } from '../../shared/layout/layout.module';
         DxLoadPanelModule,
         DxTemplateModule,
         DxChartModule,
-        CreditReportsCommonModule
+        PersonalFinanceCommonModule
     ],
     declarations: [
         CreditReportComponent,

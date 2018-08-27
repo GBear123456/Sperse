@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutModule } from '../shared/layout/layout.module';
-import { CreditReportsCommonModule } from '../shared/common/credit-reports-common.module';
+import { PersonalFinanceCommonModule } from '../shared/common/personal-finance-common.module';
 import { MatSliderModule, MatSidenavModule, MatGridListModule } from '@angular/material';
 
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
@@ -47,7 +47,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
         MatSidenavModule,
         CommonModule,
         LayoutModule,
-        CreditReportsCommonModule,
+        PersonalFinanceCommonModule,
         FormsModule,
         AngularGooglePlaceModule,
         ReactiveFormsModule,

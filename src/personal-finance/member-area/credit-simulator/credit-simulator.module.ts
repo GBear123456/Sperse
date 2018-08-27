@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CreditReportsCommonModule } from '../../shared/common/credit-reports-common.module';
+import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 import { CreditSimulatorComponent } from './credit-simulator.component';
 import { LayoutModule } from '../../shared/layout/layout.module';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
@@ -22,7 +22,7 @@ import { SimulationGroupComponent } from './simulation-group/simulation-group.co
     imports: [
         CommonModule,
         LayoutModule,
-        CreditReportsCommonModule,
+        PersonalFinanceCommonModule,
         FormsModule,
         ReactiveFormsModule,
         RoundProgressModule,

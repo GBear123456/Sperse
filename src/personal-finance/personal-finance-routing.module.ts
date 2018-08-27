@@ -58,4 +58,4 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
     ],
     exports: [RouterModule]
 })
-export class CreditReportsRoutingModule { }
+export class PersonalFinanceRoutingModule { }

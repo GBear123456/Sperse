@@ -32,10 +32,10 @@ import { PackageIdService } from './packages/package-id.service';
         AppLocalizationService
     ]
 })
-export class CreditReportsCommonModule {
+export class PersonalFinanceCommonModule {
     static forRoot(): ModuleWithProviders {
         return {
-            ngModule: CreditReportsCommonModule,
+            ngModule: PersonalFinanceCommonModule,
             providers: [
                 AppAuthService,
                 CreditReportsRouteGuard
