@@ -1,0 +1,79 @@
+<div class="wrapper">
+    <div *ngIf="creditReportResult">
+        <div *ngIf="!creditReportResult.memberExists; else creditReportBlock">
+            <div class="content-wrap select-package">
+                <h2 class="text-center">Select your package</h2>
+                <app-packages></app-packages>
+            </div>
+        </div>
+        <ng-template #creditReportBlock>
+            <div *ngIf="creditReportResult.isSubscriptionCancelled || creditReportResult.kbaPassed; else kbaBlock">
+                <div *ngIf="creditReportResult.creditReport; else refreshBtn">
+                    <div class="content-wrap" [@routerTransition]>
+                        <aside class="sidebar">
+                            <sticky [sticky-offset-top]="20">
+                                <ul class="left-navigation">
+                                    <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
+                                        <a pageScroll href="#{{item.name}}" class="left-navigation-link">
+                                            <span class="menu-icon {{item.class}} {{item.class}}-dims"></span> {{ l(item.name) }}
+                                        </a>
+                                    </li>
+                                </ul><!-- TODO: need something like waypoint for check which section is active -->
+                            </sticky>
+                        </aside>
+                        <div class="p-content">
+                            <h1>
+                                {{l('creditReportTitle')}}
+                                <!--<a href="/" class="button">{{l('upgrade')}} <img src="/assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon"></a>-->
+                                <a [attr.href]="pdfUrl" target="_blank" (click)="generatePdf($event.target)" class="button" download="Credit Report - {{creditReportResult.memberFullName}} - {{creditReportResult.providerCreatedDate | date: 'yyyyMMdd'}}.pdf" [ngClass]="{'disabled spinner': isPdfGenerating}">
+                                    {{l('generatePdf')}}
+                                    <span class="bounce1"></span>
+                                    <span class="bounce2"></span>
+                                    <span class="bounce3"></span>
+                                </a>
+                            </h1>
+                            <p class="warning subscription-cancelled" *ngIf="storage['showSCWarning'] == 'true'">
+                                <i class="fa fa-exclamation-triangle fa-3x"></i><span>{{l('SubscriptionCancelled')}}</span><i (click)="storage['showSCWarning'] = 'false'" class="fa fa-times"></i>
+                            </p>
+                            <p class="warning subscription-cancelled" *ngIf="storage['showPDWarning'] == 'true'">
+                                <i class="fa fa-exclamation-triangle fa-3x"></i><span>{{l('PaymentDelayedMessage')}}</span><i (click)="storage['showPDWarning'] = 'false'" class="fa fa-times"></i>
+                            </p>
+                            <app-credit-scores [creditReport]="creditReportResult.creditReport"></app-credit-scores>
+                            <app-credit-summary [creditReport]="creditReportResult.creditReport"></app-credit-summary>
+                            <app-personal-info [creditReport]="creditReportResult.creditReport"></app-personal-info>
+                            <app-accounts [creditReport]="creditReportResult.creditReport"></app-accounts>
+                            <app-alerts [creditReport]="creditReportResult.creditReport"></app-alerts>
+                            <app-recommendations [creditReport]="creditReportResult.creditReport"></app-recommendations>
+                            <app-inquiries [creditReport]="creditReportResult.creditReport"></app-inquiries>
+                            <app-creditor-contacts [creditReport]="creditReportResult.creditReport"></app-creditor-contacts>
+                            <app-score-factors [creditReport]="creditReportResult.creditReport"></app-score-factors>
+                            <app-consumer-statements [creditReport]="creditReportResult.creditReport"></app-consumer-statements>
+                            <app-public-info [creditReport]="creditReportResult.creditReport"></app-public-info>
+                            <app-credit-history [creditReport]="creditReportResult.creditReport"></app-credit-history>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #refreshBtn>
+                    <div class="content-wrap" [@routerTransition]>
+                        <div class="refresh-content">
+                            <div *ngIf="creditReportResult.updatable; else noreport">
+                                <h3 class="text-center">{{l("creditReportIsNotReady")}}</h3>
+                                <p class="text-center"><button class="refresh-button" type="button" (click)="getCreditReport()">{{l("refreshPage")}}</button></p>
+                                <ng-container *ngIf="creditReportResult.previousReportExists">
+                                    <p class="text-center">Previous report is<button class="btn-link" type="button" (click)="getCreditReport(today)">HERE</button></p>
+                                </ng-container>
+                            </div>
+                            <ng-template #noreport>
+                                <h3 class="text-center">Sorry, there is no credit report =(</h3>
+                            </ng-template>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+        </ng-template>
+
+        <ng-template #kbaBlock>
+            <app-kba [@routerTransition]></app-kba>
+        </ng-template>
+    </div>
+</div>

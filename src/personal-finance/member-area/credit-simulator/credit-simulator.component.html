@@ -1,0 +1,49 @@
+<div class="wrapper">
+    <div class="content-wrap" [@routerTransition]>
+        <div class="credit-simulator" *ngIf="simulatorInfo">
+            <ng-container *ngIf="simulatorInfo.accessStatus == scoreSimulatorInfoDtoAccessStatus.Ok; else accessDenied">
+                <div class="heading">
+                    <h1 class="heading-title">{{l("creditSimulatorLink")}}</h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <app-simulation-group [score]="score"
+                                              [actualCreditScore]="actualCreditScore"
+                                              (newScore)="getNewScore($event)">
+                        </app-simulation-group>
+                    </div>
+                    <div class="col-md-5">
+                        <app-score-preview [actualCreditScore]="actualCreditScore"
+                                           [calculatedCreditScore]="calculatedCreditScore">
+                        </app-score-preview>
+                        <hr>
+                        <app-history-log [historyItems]="historyItems"></app-history-log>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #accessDenied>
+                <div class="accessDenied">
+                    <p>{{l('Simulator' + simulatorInfo.accessStatus)}}</p>
+                    <ng-container [ngSwitch]="simulatorInfo.accessStatus">
+                        <ng-container *ngSwitchCase="scoreSimulatorInfoDtoAccessStatus.NoMember">
+                            <app-packages></app-packages>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="scoreSimulatorInfoDtoAccessStatus.MemberIsCancelled">
+                            <app-packages></app-packages>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="scoreSimulatorInfoDtoAccessStatus.UnsupportedPackage">
+                            <p>{{l('SimulatorPackageUpgradeAdvice')}}</p>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="scoreSimulatorInfoDtoAccessStatus.KbaIsNotPassed">
+                            <p>
+                                <a routerLink="/personal-finance/member-area" class="btn-update">{{l('PassKBA')}}</a>
+                            </p>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="scoreSimulatorInfoDtoAccessStatus.NoPayment">
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
