@@ -38,7 +38,9 @@ export class PipelineService {
             filter(pipelineDefinition => pipelineDefinition),
             map(pipelineDefinition => {
                 this.pipeline = pipelineDefinition;
-                this.stages = pipelineDefinition.stages;
+                this.stages = _.sortBy(pipelineDefinition.stages, (stage) => {
+                    return -stage.sortOrder;
+                });
                 return pipelineDefinition;
             })
         );

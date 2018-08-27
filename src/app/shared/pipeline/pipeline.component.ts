@@ -142,8 +142,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         const bag: any = this._dragulaService.find(this.dragulaName);
         if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
         this._dragulaService.setOptions(this.dragulaName, {
+            revertOnSpill: true,
+            copySortSource: false,
             ignoreInputTextSelection: false,
             moves: (el, source) => {
+                let stage = this.getStageByElement(el);
+                if (stage.id == this.firstStage.id || stage.id == this.lastStage.id)
+                    return false;
+
                 if (el.classList.contains('selected')) {
                     let cards = this.getSelectedCards();
                     if (cards.length)
@@ -153,7 +159,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         }).length);
                 }
 
-                let stage = this.getStageByElement(el);
                 setTimeout(() => {
                     if (stage)
                         stage.accessibleActions.forEach((action) => {
@@ -172,9 +177,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 let stageSource = this.getStageByElement(source),
                     stageTarget = this.getStageByElement(target);
                 if (stageSource && stageTarget) {
-                    return (stageSource.name == stageTarget.name) ||
-                        !stageSource.accessibleActions.every((action) => {
-                            return action.targetStageId != stageTarget.id;
+                    return (stageSource.name != stageTarget.name) &&
+                        stageSource.accessibleActions.some((action) => {
+                            return action.targetStageId == stageTarget.id;
                         });
                 } else
                     return false; // elements can't be dropped in any of the `containers` by default
