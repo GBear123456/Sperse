@@ -127,22 +127,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 paginate: false
             }
         };
-
-        this.pipelineDataSource = {
-            uri: this.dataSourceURI,
-//            customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
-            requireTotalCount: true,
-            store: {
-                key: 'Id',
-                type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
-                version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                },
-                paginate: true
-            }
-        };
     }
 
     parseODataURL(url) {
@@ -274,7 +258,23 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         let showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         if (this.showPipeline != showPipeline) {
             this.dataLayoutType = dataLayoutType;
-            this.showPipeline = showPipeline;
+            if ((this.showPipeline = showPipeline) && !this.pipelineDataSource)
+                this.pipelineDataSource = {
+                    uri: this.dataSourceURI,
+//                    customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
+                    requireTotalCount: true,
+                    store: {
+                        key: 'Id',
+                        type: 'odata',
+                        url: this.getODataUrl(this.dataSourceURI),
+                        version: AppConsts.ODataVersion,
+                        beforeSend: function (request) {
+                            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        },
+                        paginate: true
+                    }
+                };
+
             this.initToolbarConfig();
         }
     }
