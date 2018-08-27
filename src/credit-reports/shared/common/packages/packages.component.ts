@@ -35,6 +35,6 @@ export class PackagesComponent extends AppComponentBase implements OnInit {
 
     choosePackage(packageVal: number) {
         this.data.packageId = packageVal;
-        this._router.navigate(['credit-reports/signup']);
+        this._router.navigate(['personal-finance/signup']);
     }
 }

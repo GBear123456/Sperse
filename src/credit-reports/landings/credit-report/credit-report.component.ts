@@ -16,7 +16,7 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         super(injector);
 
         if (abp.session.userId) {
-            this._router.navigate(['credit-reports/member-area']);
+            this._router.navigate(['personal-finance/member-area']);
         }
     }
 

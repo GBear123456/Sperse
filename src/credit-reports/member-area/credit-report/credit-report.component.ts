@@ -66,7 +66,7 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
 
                 if (!result.memberExists && result.uncompletedPackageId) {
                     this._packageService.choosePackage(result.uncompletedPackageId);
-                    this._router.navigate(['credit-reports/signup']);
+                    this._router.navigate(['personal-finance/signup']);
                 }
                 this.creditReportResult = result;
                 abp.ui.clearBusy();

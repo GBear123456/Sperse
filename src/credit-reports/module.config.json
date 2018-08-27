@@ -1,9 +1,9 @@
 {
-  "code": "CR",
-  "name": "CreditReports",
+  "code": "PFM",
+  "name": "PersonalFinance",
   "search": false,
   "requiredFeature": "CreditReportFeature",
-  "defaultPath": "/credit-reports/member-area",
+  "defaultPath": "/personal-finance/member-area",
   "hostDisabled": true,
   "navigation": [
   ]

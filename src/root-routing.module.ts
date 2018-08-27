@@ -74,7 +74,7 @@ const routes: Routes = [{
             data: { preload: true }
         },
         {
-            path: 'credit-reports',
+            path: 'personal-finance',
             loadChildren: 'credit-reports/credit-reports.module#CreditReportsModule', //Lazy load account module
             data: { preload: true }
         },

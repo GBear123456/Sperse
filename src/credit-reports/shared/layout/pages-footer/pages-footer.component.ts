@@ -8,10 +8,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class PagesFooterComponent extends AppComponentBase implements OnInit {
     footerMenuItems = [
-        { url: '/credit-reports/about-us', name: 'AboutUs' },
-        { url: '/credit-reports/contact-us', name: 'ContactUs' },
+        { url: '/personal-finance/about-us', name: 'AboutUs' },
+        { url: '/personal-finance/contact-us', name: 'ContactUs' },
         { url: '/account/login', name: 'LoginBtn' },
-        { url: '/credit-reports/', name: 'GetStarted' }
+        { url: '/personal-finance/', name: 'GetStarted' }
     ];
     currentYear = new Date().getFullYear();
 

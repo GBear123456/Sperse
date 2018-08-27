@@ -14,11 +14,11 @@ export class TopBarComponent extends AppComponentBase implements OnInit {
     injector: Injector
   ) {
       super(injector);
-      this.addMenuItem({ url: '/credit-reports/loans', title: 'loans', img: '/assets/landing/loans-icon.svg', imgActive: '/assets/landing/loans-active-icon.svg' });
-      this.addMenuItem({ url: '/credit-reports/credit-cards', title: 'credit-cards', img: '/assets/landing/credit-card-icon.svg', imgActive: '/assets/landing/credit-cards-active-icon.svg' });
+      this.addMenuItem({ url: '/personal-finance/loans', title: 'loans', img: '/assets/landing/loans-icon.svg', imgActive: '/assets/landing/loans-active-icon.svg' });
+      this.addMenuItem({ url: '/personal-finance/credit-cards', title: 'credit-cards', img: '/assets/landing/credit-card-icon.svg', imgActive: '/assets/landing/credit-cards-active-icon.svg' });
 
-      var crUrl = abp.session.userId ? 'credit-reports/member-area' : '/credit-reports';
-      this.addMenuItem({ url: crUrl, title: 'credit-reports', img: '/assets/landing/credit-report-icon.svg', imgActive: '/assets/landing/credit-reports-active-icon.svg' },
+      var crUrl = abp.session.userId ? 'personal-finance/member-area' : '/personal-finance';
+      this.addMenuItem({ url: crUrl, title: 'personal-finance', img: '/assets/landing/credit-report-icon.svg', imgActive: '/assets/landing/credit-reports-active-icon.svg' },
                               'CreditReportFeature');
   }
 

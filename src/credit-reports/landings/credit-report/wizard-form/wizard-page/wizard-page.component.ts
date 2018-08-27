@@ -142,7 +142,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                 });
             this.getStates();
         } else
-            this._router.navigate(['credit-reports']);
+            this._router.navigate(['personal-finance']);
 
         this.passwordComplexitySetting.requireDigit = abp.setting.getBoolean('Abp.Zero.UserManagement.PasswordComplexity.RequireDigit');
         this.passwordComplexitySetting.requireLowercase = abp.setting.getBoolean('Abp.Zero.UserManagement.PasswordComplexity.RequireLowercase');
@@ -291,9 +291,9 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                 if (!this.isExistingUser) {
                     this.loginService.authenticateModel.userNameOrEmailAddress = this.model.email;
                     this.loginService.authenticateModel.password = this.model.password;
-                    this.loginService.authenticate(() => this.finalizeRegistering(), 'credit-reports/member-area');
+                    this.loginService.authenticate(() => this.finalizeRegistering(), 'personal-finance/member-area');
                 } else {
-                    this._router.navigate(['credit-reports/member-area']);
+                    this._router.navigate(['personal-finance/member-area']);
                 }
             }, () => {
                 if (this.isExistingUser)

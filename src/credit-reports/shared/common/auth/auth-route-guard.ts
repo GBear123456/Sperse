@@ -48,6 +48,6 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        return '/credit-reports';
+        return '/personal-finance';
     }
 }

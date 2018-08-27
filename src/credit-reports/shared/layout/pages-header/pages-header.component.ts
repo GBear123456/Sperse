@@ -9,8 +9,8 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class PagesHeaderComponent extends AppComponentBase implements OnInit {
     menuItems = [
-        { url: '/credit-reports/about-us', title: 'About us' },
-        { url: '/credit-reports/contact-us', title: 'Contact us' },
+        { url: '/personal-finance/about-us', title: 'About us' },
+        { url: '/personal-finance/contact-us', title: 'Contact us' },
         { url: '/account/login', title: 'Login' }
     ];
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;

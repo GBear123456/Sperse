@@ -22,7 +22,7 @@ export class KbaComponent extends AppComponentBase implements OnInit {
         private _KBAService: KBAServiceProxy
     ) {
         super(injector);
-        this.model.redirectUrl = window.location.protocol + '//' + window.location.host + '/credit-reports/member-area/kba-result';
+        this.model.redirectUrl = window.location.protocol + '//' + window.location.host + '/personal-finance/member-area/kba-result';
     }
 
     ngOnInit() {
