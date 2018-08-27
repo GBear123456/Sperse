@@ -13,7 +13,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 import {
-    CustomerInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
+    ContactGroupInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
@@ -26,7 +26,7 @@ import {
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() customerInfo: CustomerInfoDto;
+    @Input() customerInfo: ContactGroupInfoDto;
 
     types: Object = {};
     country: string;

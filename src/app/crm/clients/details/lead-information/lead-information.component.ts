@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
-import { LeadServiceProxy, LeadInfoDto, CustomersServiceProxy, UpdateLeadInfoInput } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, LeadInfoDto, ContactGroupServiceProxy, UpdateLeadInfoInput } from '@shared/service-proxies/service-proxies';
 
 import * as moment from 'moment';
 
@@ -59,7 +59,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
     constructor(injector: Injector,
                 private _route: ActivatedRoute,
-                private _customerService: CustomersServiceProxy,
+                private _customerService: ContactGroupServiceProxy,
                 private _leadService: LeadServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Leads.ManageLeads');

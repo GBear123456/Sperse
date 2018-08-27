@@ -9,12 +9,12 @@ import * as _ from 'underscore';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { CustomerStatus } from '@shared/AppEnums';
+import { ContactGroupStatus } from '@shared/AppEnums';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { CustomerInfoDto, UserServiceProxy, CreateContactPhotoInput,
+import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -28,7 +28,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     providers: [ AppService, ContactPhotoServiceProxy, DialogService, UserServiceProxy ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
-    @Input() data: CustomerInfoDto;
+    @Input() data: ContactGroupInfoDto;
     @Input() ratingId: number;
     canSendVerificationRequest = false;
 
@@ -162,6 +162,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     isClientProspective() {
-        return this.data ? this.data.statusId == CustomerStatus.Prospective : true;
+        return this.data ? this.data.statusId == ContactGroupStatus.Prospective : true;
     }
 }

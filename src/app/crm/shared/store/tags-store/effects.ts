@@ -9,14 +9,14 @@ import { Observable, of, empty } from 'rxjs';
 import { catchError, map, startWith, switchMap, withLatestFrom, finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { CustomerTagsServiceProxy, CustomerTagInfoDto, TagCustomersInput, UpdateCustomerTagInput, UpdateCustomerTagsInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupTagsServiceProxy, ContactGroupTagInfoDto, TagContactGroupsInput, UpdateContactGroupTagInput, UpdateContactGroupTagsInput } from '@shared/service-proxies/service-proxies';
 import * as tagsActions from './actions';
 import { State } from './state';
 import { getLoaded } from './selectors';
 
 @Injectable()
 export class TagsStoreEffects {
-    constructor(private _tagsService: CustomerTagsServiceProxy,
+    constructor(private _tagsService: ContactGroupTagsServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
                 private notifyService: NotifyService) {}
@@ -34,7 +34,7 @@ export class TagsStoreEffects {
 
             return this._tagsService.getTags()
                 .pipe(
-                    map((tags: CustomerTagInfoDto[]) => {
+                    map((tags: ContactGroupTagInfoDto[]) => {
                         return new tagsActions.LoadSuccessAction(tags);
                     }),
                     catchError(err => {
@@ -50,14 +50,14 @@ export class TagsStoreEffects {
         map(action => action.payload),
         switchMap(payload => {
             let request: Observable<any>;
-            if (payload.serviceMethodName === 'tagCustomers') {
-                request = this._tagsService[payload.serviceMethodName ](TagCustomersInput.fromJS({
-                             customerIds: payload.customersIds,
+            if (payload.serviceMethodName === 'tagContactGroups') {
+                request = this._tagsService[payload.serviceMethodName ](TagContactGroupsInput.fromJS({
+                             contactGroupIds: payload.contactGroupIds,
                              tags: payload.tags
                           }));
-            } else if (payload.serviceMethodName === 'tagCustomers') {
-                request = this._tagsService.updateCustomerTags(UpdateCustomerTagsInput.fromJS({
-                             customerId: payload.customersIds[0],
+            } else if (payload.serviceMethodName === 'updateContactGroupTags') {
+                request = this._tagsService.updateContactGroupTags(UpdateContactGroupTagsInput.fromJS({
+                             contactGroupId: payload.contactGroupIds[0],
                              tags: payload.tags
                           }));
             } else {
@@ -82,7 +82,7 @@ export class TagsStoreEffects {
         ofType<tagsActions.RenameTag>(tagsActions.ActionTypes.RENAME_TAG),
         map(action => action.payload),
         switchMap(payload => {
-            return this._tagsService.rename(UpdateCustomerTagInput.fromJS({
+            return this._tagsService.rename(UpdateContactGroupTagInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(

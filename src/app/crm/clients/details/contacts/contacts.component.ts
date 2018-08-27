@@ -6,7 +6,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 import {
-    CustomersServiceProxy, CustomerInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+    ContactGroupServiceProxy, ContactGroupInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
@@ -21,7 +21,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() customerInfo: CustomerInfoDto;
+    @Input() customerInfo: ContactGroupInfoDto;
 
     isEditAllowed = false;
 

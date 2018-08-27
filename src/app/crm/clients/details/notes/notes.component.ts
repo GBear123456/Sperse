@@ -10,7 +10,7 @@ import 'devextreme/data/odata/store';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CustomersServiceProxy, CustomerInfoDto, NotesServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, ContactGroupInfoDto, NotesServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './notes.component.html',
@@ -21,14 +21,14 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('drawer') drawer: MatSidenav;
     public data: {
-        customerInfo: CustomerInfoDto
+        customerInfo: ContactGroupInfoDto
     };
 
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
         private _notesService: NotesServiceProxy,
-        private _customerService: CustomersServiceProxy
+        private _customerService: ContactGroupServiceProxy
     ) {
         super(injector);
 

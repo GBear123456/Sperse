@@ -3,7 +3,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    CustomerInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
+    ContactGroupInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
@@ -19,7 +19,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 })
 export class SocialsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() customerInfo: CustomerInfoDto;
+    @Input() customerInfo: ContactGroupInfoDto;
 
     isEditAllowed = false;
 

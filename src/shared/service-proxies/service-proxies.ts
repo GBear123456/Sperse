@@ -7611,6 +7611,1606 @@ export class ContactEmploymentServiceProxy {
 }
 
 @Injectable()
+export class ContactGroupServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @contactGroupId (optional) 
+     * @return Success
+     */
+    getContactGroupInfo(contactGroupId: number | null | undefined): Observable<ContactGroupInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetContactGroupInfo?";
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactGroupInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactGroupInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupInfoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupInfoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactGroupInfo(response: HttpResponseBase): Observable<ContactGroupInfoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactGroupInfoDto.fromJS(resultData200) : new ContactGroupInfoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupInfoDto>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    createContactGroup(input: CreateContactGroupInput | null | undefined): Observable<CreateContactGroupOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/CreateContactGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateContactGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateContactGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateContactGroupOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateContactGroupOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateContactGroup(response: HttpResponseBase): Observable<CreateContactGroupOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateContactGroupOutput.fromJS(resultData200) : new CreateContactGroupOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateContactGroupOutput>(<any>null);
+    }
+
+    /**
+     * @namePrefix (optional) 
+     * @firstName (optional) 
+     * @middleName (optional) 
+     * @lastName (optional) 
+     * @nameSuffix (optional) 
+     * @companyName (optional) 
+     * @emailAddresses (optional) 
+     * @phoneNumbers (optional) 
+     * @streetAddress (optional) 
+     * @city (optional) 
+     * @stateId (optional) 
+     * @zip (optional) 
+     * @countryId (optional) 
+     * @return Success
+     */
+    getSimilarContactGroups(namePrefix: string | null | undefined, firstName: string | null | undefined, middleName: string | null | undefined, lastName: string | null | undefined, nameSuffix: string | null | undefined, companyName: string | null | undefined, emailAddresses: string[] | null | undefined, phoneNumbers: string[] | null | undefined, streetAddress: string | null | undefined, city: string | null | undefined, stateId: string | null | undefined, zip: string | null | undefined, countryId: string | null | undefined): Observable<SimilarContactGroupOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetSimilarContactGroups?";
+        if (namePrefix !== undefined)
+            url_ += "NamePrefix=" + encodeURIComponent("" + namePrefix) + "&"; 
+        if (firstName !== undefined)
+            url_ += "FirstName=" + encodeURIComponent("" + firstName) + "&"; 
+        if (middleName !== undefined)
+            url_ += "MiddleName=" + encodeURIComponent("" + middleName) + "&"; 
+        if (lastName !== undefined)
+            url_ += "LastName=" + encodeURIComponent("" + lastName) + "&"; 
+        if (nameSuffix !== undefined)
+            url_ += "NameSuffix=" + encodeURIComponent("" + nameSuffix) + "&"; 
+        if (companyName !== undefined)
+            url_ += "CompanyName=" + encodeURIComponent("" + companyName) + "&"; 
+        if (emailAddresses !== undefined)
+            emailAddresses && emailAddresses.forEach(item => { url_ += "EmailAddresses=" + encodeURIComponent("" + item) + "&"; });
+        if (phoneNumbers !== undefined)
+            phoneNumbers && phoneNumbers.forEach(item => { url_ += "PhoneNumbers=" + encodeURIComponent("" + item) + "&"; });
+        if (streetAddress !== undefined)
+            url_ += "StreetAddress=" + encodeURIComponent("" + streetAddress) + "&"; 
+        if (city !== undefined)
+            url_ += "City=" + encodeURIComponent("" + city) + "&"; 
+        if (stateId !== undefined)
+            url_ += "StateId=" + encodeURIComponent("" + stateId) + "&"; 
+        if (zip !== undefined)
+            url_ += "Zip=" + encodeURIComponent("" + zip) + "&"; 
+        if (countryId !== undefined)
+            url_ += "CountryId=" + encodeURIComponent("" + countryId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSimilarContactGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSimilarContactGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<SimilarContactGroupOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SimilarContactGroupOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSimilarContactGroups(response: HttpResponseBase): Observable<SimilarContactGroupOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SimilarContactGroupOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SimilarContactGroupOutput[]>(<any>null);
+    }
+
+    /**
+     * @contactGroupId (optional) 
+     * @return Success
+     */
+    deleteContactGroup(contactGroupId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/DeleteContactGroup?";
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteContactGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteContactGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteContactGroup(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @contactGroupIds (optional) 
+     * @return Success
+     */
+    deleteContactGroups(contactGroupIds: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/DeleteContactGroups?";
+        if (contactGroupIds !== undefined)
+            contactGroupIds && contactGroupIds.forEach(item => { url_ += "contactGroupIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteContactGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteContactGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteContactGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateContactGroupStatus(input: UpdateContactGroupStatusInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/UpdateContactGroupStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateContactGroupStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateContactGroupStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateContactGroupStatus(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateContactGroupStatuses(input: UpdateContactGroupStatusesInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/UpdateContactGroupStatuses";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateContactGroupStatuses(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateContactGroupStatuses(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateContactGroupStatuses(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getFiltersInitialData(): Observable<ContactGroupFiltersInitialData> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetFiltersInitialData";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFiltersInitialData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFiltersInitialData(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupFiltersInitialData>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupFiltersInitialData>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<ContactGroupFiltersInitialData> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ContactGroupFiltersInitialData.fromJS(resultData200) : new ContactGroupFiltersInitialData();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupFiltersInitialData>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactGroupTypes(): Observable<ContactGroupTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetContactGroupTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactGroupTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactGroupTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupTypeDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupTypeDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactGroupTypes(response: HttpResponseBase): Observable<ContactGroupTypeDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactGroupTypeDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupTypeDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getContactGroupStatuses(): Observable<ContactGroupStatusDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetContactGroupStatuses";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactGroupStatuses(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactGroupStatuses(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupStatusDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupStatusDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactGroupStatuses(response: HttpResponseBase): Observable<ContactGroupStatusDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactGroupStatusDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupStatusDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactGroupListsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getLists(): Observable<ContactGroupListInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/GetLists";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLists(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLists(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupListInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupListInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLists(response: HttpResponseBase): Observable<ContactGroupListInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactGroupListInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupListInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateContactGroupLists(input: UpdateContactGroupListsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/UpdateContactGroupLists";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateContactGroupLists(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateContactGroupLists(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateContactGroupLists(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    addContactGroupsToLists(input: AddContactGroupsToListsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/AddContactGroupsToLists";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddContactGroupsToLists(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddContactGroupsToLists(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAddContactGroupsToLists(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @contactGroupIds (optional) 
+     * @listIds (optional) 
+     * @return Success
+     */
+    removeContactGroupsFromLists(contactGroupIds: number[] | null | undefined, listIds: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/RemoveContactGroupsFromLists?";
+        if (contactGroupIds !== undefined)
+            contactGroupIds && contactGroupIds.forEach(item => { url_ += "ContactGroupIds=" + encodeURIComponent("" + item) + "&"; });
+        if (listIds !== undefined)
+            listIds && listIds.forEach(item => { url_ += "ListIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRemoveContactGroupsFromLists(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRemoveContactGroupsFromLists(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRemoveContactGroupsFromLists(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rename(input: UpdateContactGroupListInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/Rename";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRename(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRename(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRename(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @moveToListId (optional) 
+     * @deleteAllReferences (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined, moveToListId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/Delete?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (moveToListId !== undefined)
+            url_ += "MoveToListId=" + encodeURIComponent("" + moveToListId) + "&"; 
+        if (deleteAllReferences !== undefined)
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactGroupRatingsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getRatings(): Observable<ContactGroupRatingInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupRatings/GetRatings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRatings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRatings(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupRatingInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupRatingInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRatings(response: HttpResponseBase): Observable<ContactGroupRatingInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactGroupRatingInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupRatingInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rateContactGroup(input: RateContactGroupInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupRatings/RateContactGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRateContactGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRateContactGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRateContactGroup(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rateContactGroups(input: RateContactGroupsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupRatings/RateContactGroups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRateContactGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRateContactGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRateContactGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactGroupStarsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getStars(): Observable<ContactGroupStarInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupStars/GetStars";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStars(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStars(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupStarInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupStarInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStars(response: HttpResponseBase): Observable<ContactGroupStarInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactGroupStarInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupStarInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    markContactGroup(input: MarkContactGroupInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupStars/MarkContactGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMarkContactGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMarkContactGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMarkContactGroup(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    markContactGroups(input: MarkContactGroupsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupStars/MarkContactGroups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMarkContactGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMarkContactGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMarkContactGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
+export class ContactGroupTagsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getTags(): Observable<ContactGroupTagInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/GetTags";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTags(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTags(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactGroupTagInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactGroupTagInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTags(response: HttpResponseBase): Observable<ContactGroupTagInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactGroupTagInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactGroupTagInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateContactGroupTags(input: UpdateContactGroupTagsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/UpdateContactGroupTags";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateContactGroupTags(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateContactGroupTags(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateContactGroupTags(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    tagContactGroups(input: TagContactGroupsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/TagContactGroups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processTagContactGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTagContactGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTagContactGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    untagContactGroups(input: UntagContactGroupsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/UntagContactGroups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUntagContactGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUntagContactGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUntagContactGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rename(input: UpdateContactGroupTagInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/Rename";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRename(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRename(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRename(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @moveToTagId (optional) 
+     * @deleteAllReferences (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined, moveToTagId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/Delete?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (moveToTagId !== undefined)
+            url_ += "MoveToTagId=" + encodeURIComponent("" + moveToTagId) + "&"; 
+        if (deleteAllReferences !== undefined)
+            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ContactLinkServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -8676,1606 +10276,6 @@ export class CreditSimulatorServiceProxy {
             }));
         }
         return _observableOf<number>(<any>null);
-    }
-}
-
-@Injectable()
-export class CustomerListsServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getLists(): Observable<CustomerListInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/GetLists";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetLists(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetLists(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerListInfoDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerListInfoDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetLists(response: HttpResponseBase): Observable<CustomerListInfoDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CustomerListInfoDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerListInfoDto[]>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateCustomerLists(input: UpdateCustomerListsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/UpdateCustomerLists";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCustomerLists(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateCustomerLists(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateCustomerLists(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    addCustomersToLists(input: AddCustomersToListsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/AddCustomersToLists";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAddCustomersToLists(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAddCustomersToLists(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processAddCustomersToLists(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @customerIds (optional) 
-     * @listIds (optional) 
-     * @return Success
-     */
-    removeCustomersFromLists(customerIds: number[] | null | undefined, listIds: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/RemoveCustomersFromLists?";
-        if (customerIds !== undefined)
-            customerIds && customerIds.forEach(item => { url_ += "CustomerIds=" + encodeURIComponent("" + item) + "&"; });
-        if (listIds !== undefined)
-            listIds && listIds.forEach(item => { url_ += "ListIds=" + encodeURIComponent("" + item) + "&"; });
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRemoveCustomersFromLists(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRemoveCustomersFromLists(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRemoveCustomersFromLists(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    rename(input: UpdateCustomerListInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Rename";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRename(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRename(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRename(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @id (optional) 
-     * @moveToListId (optional) 
-     * @deleteAllReferences (optional) 
-     * @return Success
-     */
-    delete(id: number | null | undefined, moveToListId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerLists/Delete?";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (moveToListId !== undefined)
-            url_ += "MoveToListId=" + encodeURIComponent("" + moveToListId) + "&"; 
-        if (deleteAllReferences !== undefined)
-            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class CustomerRatingsServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getRatings(): Observable<CustomerRatingInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerRatings/GetRatings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetRatings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetRatings(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerRatingInfoDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerRatingInfoDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetRatings(response: HttpResponseBase): Observable<CustomerRatingInfoDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CustomerRatingInfoDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerRatingInfoDto[]>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    rateCustomer(input: RateCustomerInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerRatings/RateCustomer";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRateCustomer(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRateCustomer(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRateCustomer(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    rateCustomers(input: RateCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerRatings/RateCustomers";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRateCustomers(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRateCustomers(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRateCustomers(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class CustomersServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @customerId (optional) 
-     * @return Success
-     */
-    getCustomerInfo(customerId: number | null | undefined): Observable<CustomerInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetCustomerInfo?";
-        if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomerInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCustomerInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerInfoDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerInfoDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetCustomerInfo(response: HttpResponseBase): Observable<CustomerInfoDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CustomerInfoDto.fromJS(resultData200) : new CustomerInfoDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerInfoDto>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    createCustomer(input: CreateCustomerInput | null | undefined): Observable<CreateCustomerOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/CreateCustomer";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateCustomer(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateCustomer(<any>response_);
-                } catch (e) {
-                    return <Observable<CreateCustomerOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CreateCustomerOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateCustomer(response: HttpResponseBase): Observable<CreateCustomerOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateCustomerOutput.fromJS(resultData200) : new CreateCustomerOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CreateCustomerOutput>(<any>null);
-    }
-
-    /**
-     * @namePrefix (optional) 
-     * @firstName (optional) 
-     * @middleName (optional) 
-     * @lastName (optional) 
-     * @nameSuffix (optional) 
-     * @companyName (optional) 
-     * @emailAddresses (optional) 
-     * @phoneNumbers (optional) 
-     * @streetAddress (optional) 
-     * @city (optional) 
-     * @stateId (optional) 
-     * @zip (optional) 
-     * @countryId (optional) 
-     * @return Success
-     */
-    getSimilarCustomers(namePrefix: string | null | undefined, firstName: string | null | undefined, middleName: string | null | undefined, lastName: string | null | undefined, nameSuffix: string | null | undefined, companyName: string | null | undefined, emailAddresses: string[] | null | undefined, phoneNumbers: string[] | null | undefined, streetAddress: string | null | undefined, city: string | null | undefined, stateId: string | null | undefined, zip: string | null | undefined, countryId: string | null | undefined): Observable<SimilarCustomerOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetSimilarCustomers?";
-        if (namePrefix !== undefined)
-            url_ += "NamePrefix=" + encodeURIComponent("" + namePrefix) + "&"; 
-        if (firstName !== undefined)
-            url_ += "FirstName=" + encodeURIComponent("" + firstName) + "&"; 
-        if (middleName !== undefined)
-            url_ += "MiddleName=" + encodeURIComponent("" + middleName) + "&"; 
-        if (lastName !== undefined)
-            url_ += "LastName=" + encodeURIComponent("" + lastName) + "&"; 
-        if (nameSuffix !== undefined)
-            url_ += "NameSuffix=" + encodeURIComponent("" + nameSuffix) + "&"; 
-        if (companyName !== undefined)
-            url_ += "CompanyName=" + encodeURIComponent("" + companyName) + "&"; 
-        if (emailAddresses !== undefined)
-            emailAddresses && emailAddresses.forEach(item => { url_ += "EmailAddresses=" + encodeURIComponent("" + item) + "&"; });
-        if (phoneNumbers !== undefined)
-            phoneNumbers && phoneNumbers.forEach(item => { url_ += "PhoneNumbers=" + encodeURIComponent("" + item) + "&"; });
-        if (streetAddress !== undefined)
-            url_ += "StreetAddress=" + encodeURIComponent("" + streetAddress) + "&"; 
-        if (city !== undefined)
-            url_ += "City=" + encodeURIComponent("" + city) + "&"; 
-        if (stateId !== undefined)
-            url_ += "StateId=" + encodeURIComponent("" + stateId) + "&"; 
-        if (zip !== undefined)
-            url_ += "Zip=" + encodeURIComponent("" + zip) + "&"; 
-        if (countryId !== undefined)
-            url_ += "CountryId=" + encodeURIComponent("" + countryId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSimilarCustomers(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSimilarCustomers(<any>response_);
-                } catch (e) {
-                    return <Observable<SimilarCustomerOutput[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SimilarCustomerOutput[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSimilarCustomers(response: HttpResponseBase): Observable<SimilarCustomerOutput[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(SimilarCustomerOutput.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SimilarCustomerOutput[]>(<any>null);
-    }
-
-    /**
-     * @customerId (optional) 
-     * @return Success
-     */
-    deleteCustomer(customerId: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/DeleteCustomer?";
-        if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteCustomer(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteCustomer(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDeleteCustomer(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @customerIds (optional) 
-     * @return Success
-     */
-    deleteCustomers(customerIds: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/DeleteCustomers?";
-        if (customerIds !== undefined)
-            customerIds && customerIds.forEach(item => { url_ += "customerIds=" + encodeURIComponent("" + item) + "&"; });
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteCustomers(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteCustomers(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDeleteCustomers(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateCustomerStatus(input: UpdateCustomerStatusInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/UpdateCustomerStatus";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCustomerStatus(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateCustomerStatus(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateCustomerStatus(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateCustomerStatuses(input: UpdateCustomerStatusesInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/UpdateCustomerStatuses";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCustomerStatuses(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateCustomerStatuses(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateCustomerStatuses(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getFiltersInitialData(): Observable<CustomerFiltersInitialData> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetFiltersInitialData";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFiltersInitialData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFiltersInitialData(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerFiltersInitialData>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerFiltersInitialData>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<CustomerFiltersInitialData> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CustomerFiltersInitialData.fromJS(resultData200) : new CustomerFiltersInitialData();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerFiltersInitialData>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getCustomerTypes(): Observable<CustomerTypeDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetCustomerTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomerTypes(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCustomerTypes(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerTypeDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerTypeDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetCustomerTypes(response: HttpResponseBase): Observable<CustomerTypeDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CustomerTypeDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerTypeDto[]>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getCustomerStatuses(): Observable<CustomerStatusDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Customers/GetCustomerStatuses";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomerStatuses(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCustomerStatuses(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerStatusDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerStatusDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetCustomerStatuses(response: HttpResponseBase): Observable<CustomerStatusDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CustomerStatusDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerStatusDto[]>(<any>null);
-    }
-}
-
-@Injectable()
-export class CustomerStarsServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getStars(): Observable<CustomerStarInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerStars/GetStars";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetStars(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetStars(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerStarInfoDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerStarInfoDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetStars(response: HttpResponseBase): Observable<CustomerStarInfoDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CustomerStarInfoDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerStarInfoDto[]>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    markCustomer(input: MarkCustomerInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerStars/MarkCustomer";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMarkCustomer(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMarkCustomer(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMarkCustomer(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    markCustomers(input: MarkCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerStars/MarkCustomers";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMarkCustomers(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMarkCustomers(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMarkCustomers(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class CustomerTagsServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getTags(): Observable<CustomerTagInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/GetTags";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTags(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetTags(<any>response_);
-                } catch (e) {
-                    return <Observable<CustomerTagInfoDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CustomerTagInfoDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetTags(response: HttpResponseBase): Observable<CustomerTagInfoDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(CustomerTagInfoDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerTagInfoDto[]>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateCustomerTags(input: UpdateCustomerTagsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/UpdateCustomerTags";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateCustomerTags(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateCustomerTags(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateCustomerTags(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    tagCustomers(input: TagCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/TagCustomers";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processTagCustomers(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processTagCustomers(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processTagCustomers(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    untagCustomers(input: UntagCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/UntagCustomers";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUntagCustomers(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUntagCustomers(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUntagCustomers(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    rename(input: UpdateCustomerTagInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/Rename";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRename(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRename(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRename(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @id (optional) 
-     * @moveToTagId (optional) 
-     * @deleteAllReferences (optional) 
-     * @return Success
-     */
-    delete(id: number | null | undefined, moveToTagId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/CustomerTags/Delete?";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (moveToTagId !== undefined)
-            url_ += "MoveToTagId=" + encodeURIComponent("" + moveToTagId) + "&"; 
-        if (deleteAllReferences !== undefined)
-            url_ += "DeleteAllReferences=" + encodeURIComponent("" + deleteAllReferences) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 }
 
@@ -24417,8 +24417,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignCustomer(input: AssignCustomerInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignCustomer";
+    assignContactGroup(input: AssignContactGroupInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignContactGroup";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -24433,11 +24433,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignCustomer(response_);
+            return this.processAssignContactGroup(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignCustomer(<any>response_);
+                    return this.processAssignContactGroup(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -24446,7 +24446,7 @@ export class UserAssignmentServiceProxy {
         }));
     }
 
-    protected processAssignCustomer(response: HttpResponseBase): Observable<void> {
+    protected processAssignContactGroup(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -24469,8 +24469,8 @@ export class UserAssignmentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignCustomers(input: AssignCustomersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignCustomers";
+    assignContactGroups(input: AssignContactGroupsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/AssignContactGroups";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -24485,11 +24485,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignCustomers(response_);
+            return this.processAssignContactGroups(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignCustomers(<any>response_);
+                    return this.processAssignContactGroups(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -24498,7 +24498,7 @@ export class UserAssignmentServiceProxy {
         }));
     }
 
-    protected processAssignCustomers(response: HttpResponseBase): Observable<void> {
+    protected processAssignContactGroups(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25752,7 +25752,7 @@ export class ActivityDto implements IActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
-    contactGroupId!: number | undefined;
+    customerId!: number | undefined;
 
     constructor(data?: IActivityDto) {
         if (data) {
@@ -25779,7 +25779,7 @@ export class ActivityDto implements IActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
-            this.contactGroupId = data["contactGroupId"];
+            this.customerId = data["customerId"];
         }
     }
 
@@ -25806,7 +25806,7 @@ export class ActivityDto implements IActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
-        data["contactGroupId"] = this.contactGroupId;
+        data["customerId"] = this.customerId;
         return data; 
     }
 }
@@ -25822,7 +25822,7 @@ export interface IActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
-    contactGroupId: number | undefined;
+    customerId: number | undefined;
 }
 
 export class CreateActivityDto implements ICreateActivityDto {
@@ -25835,7 +25835,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
-    contactGroupId!: number | undefined;
+    customerId!: number | undefined;
 
     constructor(data?: ICreateActivityDto) {
         if (data) {
@@ -25861,7 +25861,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
-            this.contactGroupId = data["contactGroupId"];
+            this.customerId = data["customerId"];
         }
     }
 
@@ -25887,7 +25887,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
-        data["contactGroupId"] = this.contactGroupId;
+        data["customerId"] = this.customerId;
         return data; 
     }
 }
@@ -25902,7 +25902,7 @@ export interface ICreateActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
-    contactGroupId: number | undefined;
+    customerId: number | undefined;
 }
 
 export class UpdateActivityDto implements IUpdateActivityDto {
@@ -25916,7 +25916,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
-    contactGroupId!: number | undefined;
+    customerId!: number | undefined;
 
     constructor(data?: IUpdateActivityDto) {
         if (data) {
@@ -25943,7 +25943,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
-            this.contactGroupId = data["contactGroupId"];
+            this.customerId = data["customerId"];
         }
     }
 
@@ -25970,7 +25970,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
-        data["contactGroupId"] = this.contactGroupId;
+        data["customerId"] = this.customerId;
         return data; 
     }
 }
@@ -25986,7 +25986,7 @@ export interface IUpdateActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
-    contactGroupId: number | undefined;
+    customerId: number | undefined;
 }
 
 export class MoveActivityDto implements IMoveActivityDto {
@@ -34104,6 +34104,2377 @@ export interface IContactEmploymentEditInfo {
     comment: string | undefined;
 }
 
+export class ContactGroupInfoDto implements IContactGroupInfoDto {
+    id!: number | undefined;
+    statusId!: string | undefined;
+    status!: string | undefined;
+    assignedUserId!: number | undefined;
+    starId!: number | undefined;
+    ratingId!: number | undefined;
+    tags!: number[] | undefined;
+    lists!: number[] | undefined;
+    score!: number | undefined;
+    primaryContactInfo!: PersonContactInfoDto | undefined;
+    organizationContactInfo!: OrganizationContactInfoDto | undefined;
+    contactPersons!: PersonContactInfoDto[] | undefined;
+    creationDate!: moment.Moment | undefined;
+    userContextOrderId!: number | undefined;
+    userContextOrderType!: string | undefined;
+
+    constructor(data?: IContactGroupInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.statusId = data["statusId"];
+            this.status = data["status"];
+            this.assignedUserId = data["assignedUserId"];
+            this.starId = data["starId"];
+            this.ratingId = data["ratingId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(item);
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(item);
+            }
+            this.score = data["score"];
+            this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
+            this.organizationContactInfo = data["organizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["organizationContactInfo"]) : <any>undefined;
+            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
+                this.contactPersons = [];
+                for (let item of data["contactPersons"])
+                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
+            }
+            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
+            this.userContextOrderId = data["userContextOrderId"];
+            this.userContextOrderType = data["userContextOrderType"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["statusId"] = this.statusId;
+        data["status"] = this.status;
+        data["assignedUserId"] = this.assignedUserId;
+        data["starId"] = this.starId;
+        data["ratingId"] = this.ratingId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item);
+        }
+        data["score"] = this.score;
+        data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
+        data["organizationContactInfo"] = this.organizationContactInfo ? this.organizationContactInfo.toJSON() : <any>undefined;
+        if (this.contactPersons && this.contactPersons.constructor === Array) {
+            data["contactPersons"] = [];
+            for (let item of this.contactPersons)
+                data["contactPersons"].push(item.toJSON());
+        }
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
+        data["userContextOrderId"] = this.userContextOrderId;
+        data["userContextOrderType"] = this.userContextOrderType;
+        return data; 
+    }
+}
+
+export interface IContactGroupInfoDto {
+    id: number | undefined;
+    statusId: string | undefined;
+    status: string | undefined;
+    assignedUserId: number | undefined;
+    starId: number | undefined;
+    ratingId: number | undefined;
+    tags: number[] | undefined;
+    lists: number[] | undefined;
+    score: number | undefined;
+    primaryContactInfo: PersonContactInfoDto | undefined;
+    organizationContactInfo: OrganizationContactInfoDto | undefined;
+    contactPersons: PersonContactInfoDto[] | undefined;
+    creationDate: moment.Moment | undefined;
+    userContextOrderId: number | undefined;
+    userContextOrderType: string | undefined;
+}
+
+export class PersonContactInfoDto implements IPersonContactInfoDto {
+    person!: PersonInfoDto | undefined;
+    id!: number | undefined;
+    fullName!: string | undefined;
+    jobTitle!: string | undefined;
+    userId!: number | undefined;
+    primaryPhoto!: ContactPhotoDto | undefined;
+    primaryPhone!: ContactPhoneDto | undefined;
+    primaryAddress!: ContactAddressDto | undefined;
+    details!: ContactInfoDetailsDto | undefined;
+    comment!: string | undefined;
+
+    constructor(data?: IPersonContactInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
+            this.userId = data["userId"];
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): PersonContactInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonContactInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
+        data["userId"] = this.userId;
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IPersonContactInfoDto {
+    person: PersonInfoDto | undefined;
+    id: number | undefined;
+    fullName: string | undefined;
+    jobTitle: string | undefined;
+    userId: number | undefined;
+    primaryPhoto: ContactPhotoDto | undefined;
+    primaryPhone: ContactPhoneDto | undefined;
+    primaryAddress: ContactAddressDto | undefined;
+    details: ContactInfoDetailsDto | undefined;
+    comment: string | undefined;
+}
+
+export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
+    organization!: OrganizationInfoDto | undefined;
+    id!: number | undefined;
+    fullName!: string | undefined;
+    jobTitle!: string | undefined;
+    userId!: number | undefined;
+    primaryPhoto!: ContactPhotoDto | undefined;
+    primaryPhone!: ContactPhoneDto | undefined;
+    primaryAddress!: ContactAddressDto | undefined;
+    details!: ContactInfoDetailsDto | undefined;
+    comment!: string | undefined;
+
+    constructor(data?: IOrganizationContactInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
+            this.id = data["id"];
+            this.fullName = data["fullName"];
+            this.jobTitle = data["jobTitle"];
+            this.userId = data["userId"];
+            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
+            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
+            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationContactInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationContactInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        data["fullName"] = this.fullName;
+        data["jobTitle"] = this.jobTitle;
+        data["userId"] = this.userId;
+        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
+        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IOrganizationContactInfoDto {
+    organization: OrganizationInfoDto | undefined;
+    id: number | undefined;
+    fullName: string | undefined;
+    jobTitle: string | undefined;
+    userId: number | undefined;
+    primaryPhoto: ContactPhotoDto | undefined;
+    primaryPhone: ContactPhoneDto | undefined;
+    primaryAddress: ContactAddressDto | undefined;
+    details: ContactInfoDetailsDto | undefined;
+    comment: string | undefined;
+}
+
+export class PersonInfoDto implements IPersonInfoDto {
+    namePrefix!: string | undefined;
+    middleName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    dob!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    timeZone!: string | undefined;
+    identityConfirmationDate!: moment.Moment | undefined;
+    identityConfirmedByUser!: UserKeyInfoDto | undefined;
+    maritalStatus!: string | undefined;
+    marriageDate!: moment.Moment | undefined;
+    divorceDate!: moment.Moment | undefined;
+    gender!: string | undefined;
+    citizenship!: string | undefined;
+    isUSCitizen!: boolean | undefined;
+    contactId!: number | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+
+    constructor(data?: IPersonInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.namePrefix = data["namePrefix"];
+            this.middleName = data["middleName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.timeZone = data["timeZone"];
+            this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
+            this.identityConfirmedByUser = data["identityConfirmedByUser"] ? UserKeyInfoDto.fromJS(data["identityConfirmedByUser"]) : <any>undefined;
+            this.maritalStatus = data["maritalStatus"];
+            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
+            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
+            this.gender = data["gender"];
+            this.citizenship = data["citizenship"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.contactId = data["contactId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+        }
+    }
+
+    static fromJS(data: any): PersonInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["namePrefix"] = this.namePrefix;
+        data["middleName"] = this.middleName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["timeZone"] = this.timeZone;
+        data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
+        data["identityConfirmedByUser"] = this.identityConfirmedByUser ? this.identityConfirmedByUser.toJSON() : <any>undefined;
+        data["maritalStatus"] = this.maritalStatus;
+        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
+        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
+        data["gender"] = this.gender;
+        data["citizenship"] = this.citizenship;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["contactId"] = this.contactId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        return data; 
+    }
+}
+
+export interface IPersonInfoDto {
+    namePrefix: string | undefined;
+    middleName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    dob: moment.Moment | undefined;
+    ssn: string | undefined;
+    timeZone: string | undefined;
+    identityConfirmationDate: moment.Moment | undefined;
+    identityConfirmedByUser: UserKeyInfoDto | undefined;
+    maritalStatus: string | undefined;
+    marriageDate: moment.Moment | undefined;
+    divorceDate: moment.Moment | undefined;
+    gender: string | undefined;
+    citizenship: string | undefined;
+    isUSCitizen: boolean | undefined;
+    contactId: number | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+}
+
+export class ContactPhoneDto implements IContactPhoneDto {
+    usageTypeId!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+    contactId!: number | undefined;
+    id!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUser!: UserKeyInfoDto | undefined;
+
+    constructor(data?: IContactPhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactPhoneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactPhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactPhoneDto {
+    usageTypeId: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+    contactId: number | undefined;
+    id: number | undefined;
+    isConfirmed: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUser: UserKeyInfoDto | undefined;
+}
+
+export class ContactAddressDto implements IContactAddressDto {
+    usageTypeId!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    country!: string | undefined;
+    zip!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+    contactId!: number | undefined;
+    id!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUser!: UserKeyInfoDto | undefined;
+
+    constructor(data?: IContactAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.country = data["country"];
+            this.zip = data["zip"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactAddressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zip"] = this.zip;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactAddressDto {
+    usageTypeId: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    country: string | undefined;
+    zip: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+    contactId: number | undefined;
+    id: number | undefined;
+    isConfirmed: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUser: UserKeyInfoDto | undefined;
+}
+
+export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
+    contactId!: number | undefined;
+    emails!: ContactEmailDto[] | undefined;
+    phones!: ContactPhoneDto[] | undefined;
+    addresses!: ContactAddressDto[] | undefined;
+    links!: ContactLinkDto[] | undefined;
+
+    constructor(data?: IContactInfoDetailsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ContactEmailDto.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ContactPhoneDto.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ContactAddressDto.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ContactLinkDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactInfoDetailsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactInfoDetailsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IContactInfoDetailsDto {
+    contactId: number | undefined;
+    emails: ContactEmailDto[] | undefined;
+    phones: ContactPhoneDto[] | undefined;
+    addresses: ContactAddressDto[] | undefined;
+    links: ContactLinkDto[] | undefined;
+}
+
+export class OrganizationInfoDto implements IOrganizationInfoDto {
+    companyName!: string;
+    shortname!: string | undefined;
+    industry!: string | undefined;
+    annualRevenue!: number | undefined;
+    ein!: string | undefined;
+    businessSicCode!: number | undefined;
+    primaryFundingType!: string | undefined;
+    formedCountryId!: string | undefined;
+    formedStateId!: string | undefined;
+    description!: string | undefined;
+    formedDate!: moment.Moment | undefined;
+    relationship!: string | undefined;
+    sizeFrom!: number | undefined;
+    sizeTo!: number | undefined;
+    duns!: string | undefined;
+    ticker!: string | undefined;
+    productServicesSold!: number | undefined;
+
+    constructor(data?: IOrganizationInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.companyName = data["companyName"];
+            this.shortname = data["shortname"];
+            this.industry = data["industry"];
+            this.annualRevenue = data["annualRevenue"];
+            this.ein = data["ein"];
+            this.businessSicCode = data["businessSicCode"];
+            this.primaryFundingType = data["primaryFundingType"];
+            this.formedCountryId = data["formedCountryId"];
+            this.formedStateId = data["formedStateId"];
+            this.description = data["description"];
+            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
+            this.relationship = data["relationship"];
+            this.sizeFrom = data["sizeFrom"];
+            this.sizeTo = data["sizeTo"];
+            this.duns = data["duns"];
+            this.ticker = data["ticker"];
+            this.productServicesSold = data["productServicesSold"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["companyName"] = this.companyName;
+        data["shortname"] = this.shortname;
+        data["industry"] = this.industry;
+        data["annualRevenue"] = this.annualRevenue;
+        data["ein"] = this.ein;
+        data["businessSicCode"] = this.businessSicCode;
+        data["primaryFundingType"] = this.primaryFundingType;
+        data["formedCountryId"] = this.formedCountryId;
+        data["formedStateId"] = this.formedStateId;
+        data["description"] = this.description;
+        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
+        data["relationship"] = this.relationship;
+        data["sizeFrom"] = this.sizeFrom;
+        data["sizeTo"] = this.sizeTo;
+        data["duns"] = this.duns;
+        data["ticker"] = this.ticker;
+        data["productServicesSold"] = this.productServicesSold;
+        return data; 
+    }
+}
+
+export interface IOrganizationInfoDto {
+    companyName: string;
+    shortname: string | undefined;
+    industry: string | undefined;
+    annualRevenue: number | undefined;
+    ein: string | undefined;
+    businessSicCode: number | undefined;
+    primaryFundingType: string | undefined;
+    formedCountryId: string | undefined;
+    formedStateId: string | undefined;
+    description: string | undefined;
+    formedDate: moment.Moment | undefined;
+    relationship: string | undefined;
+    sizeFrom: number | undefined;
+    sizeTo: number | undefined;
+    duns: string | undefined;
+    ticker: string | undefined;
+    productServicesSold: number | undefined;
+}
+
+export class UserKeyInfoDto implements IUserKeyInfoDto {
+    id!: number | undefined;
+    userName!: string | undefined;
+    fullName!: string | undefined;
+
+    constructor(data?: IUserKeyInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.userName = data["userName"];
+            this.fullName = data["fullName"];
+        }
+    }
+
+    static fromJS(data: any): UserKeyInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserKeyInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["fullName"] = this.fullName;
+        return data; 
+    }
+}
+
+export interface IUserKeyInfoDto {
+    id: number | undefined;
+    userName: string | undefined;
+    fullName: string | undefined;
+}
+
+export class ContactEmailDto implements IContactEmailDto {
+    usageTypeId!: string | undefined;
+    emailAddress!: string | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+    contactId!: number | undefined;
+    id!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUser!: UserKeyInfoDto | undefined;
+
+    constructor(data?: IContactEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.usageTypeId = data["usageTypeId"];
+            this.emailAddress = data["emailAddress"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactEmailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["usageTypeId"] = this.usageTypeId;
+        data["emailAddress"] = this.emailAddress;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactEmailDto {
+    usageTypeId: string | undefined;
+    emailAddress: string | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+    contactId: number | undefined;
+    id: number | undefined;
+    isConfirmed: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUser: UserKeyInfoDto | undefined;
+}
+
+export class ContactLinkDto implements IContactLinkDto {
+    linkTypeId!: string | undefined;
+    url!: string | undefined;
+    isSocialNetwork!: boolean | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+    contactId!: number | undefined;
+    id!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUser!: UserKeyInfoDto | undefined;
+
+    constructor(data?: IContactLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+            this.isSocialNetwork = data["isSocialNetwork"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+            this.contactId = data["contactId"];
+            this.id = data["id"];
+            this.isConfirmed = data["isConfirmed"];
+            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = data["confirmedByUserId"];
+            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ContactLinkDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        data["isSocialNetwork"] = this.isSocialNetwork;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["contactId"] = this.contactId;
+        data["id"] = this.id;
+        data["isConfirmed"] = this.isConfirmed;
+        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IContactLinkDto {
+    linkTypeId: string | undefined;
+    url: string | undefined;
+    isSocialNetwork: boolean | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+    contactId: number | undefined;
+    id: number | undefined;
+    isConfirmed: boolean | undefined;
+    confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUser: UserKeyInfoDto | undefined;
+}
+
+export class CreateContactGroupInput implements ICreateContactGroupInput {
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    emailAddresses!: CreateContactEmailInput[] | undefined;
+    phoneNumbers!: CreateContactPhoneInput[] | undefined;
+    address!: CreateContactAddressInput | undefined;
+    companyName!: string | undefined;
+    organizationEmailAddresses!: CreateContactEmailInput[] | undefined;
+    organizationPhoneNumbers!: CreateContactPhoneInput[] | undefined;
+    organizationAddress!: CreateContactAddressInput | undefined;
+    photo!: ContactPhotoInput | undefined;
+    note!: string | undefined;
+    organizationNote!: string | undefined;
+    organizationUnitId!: number | undefined;
+    title!: string | undefined;
+    organizationWebSite!: string | undefined;
+    tags!: ContactGroupTagInput[] | undefined;
+    lists!: ContactGroupListInput[] | undefined;
+    assignedUserId!: number | undefined;
+    ratingId!: number | undefined;
+    contactGroupTypeId!: string | undefined;
+    partnerTypeName!: string | undefined;
+
+    constructor(data?: ICreateContactGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
+                this.phoneNumbers = [];
+                for (let item of data["phoneNumbers"])
+                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.companyName = data["companyName"];
+            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
+                this.organizationEmailAddresses = [];
+                for (let item of data["organizationEmailAddresses"])
+                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
+            }
+            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
+                this.organizationPhoneNumbers = [];
+                for (let item of data["organizationPhoneNumbers"])
+                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            }
+            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
+            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
+            this.note = data["note"];
+            this.organizationNote = data["organizationNote"];
+            this.organizationUnitId = data["organizationUnitId"];
+            this.title = data["title"];
+            this.organizationWebSite = data["organizationWebSite"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(ContactGroupTagInput.fromJS(item));
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(ContactGroupListInput.fromJS(item));
+            }
+            this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
+            this.contactGroupTypeId = data["contactGroupTypeId"];
+            this.partnerTypeName = data["partnerTypeName"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item.toJSON());
+        }
+        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
+            data["phoneNumbers"] = [];
+            for (let item of this.phoneNumbers)
+                data["phoneNumbers"].push(item.toJSON());
+        }
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["companyName"] = this.companyName;
+        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
+            data["organizationEmailAddresses"] = [];
+            for (let item of this.organizationEmailAddresses)
+                data["organizationEmailAddresses"].push(item.toJSON());
+        }
+        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
+            data["organizationPhoneNumbers"] = [];
+            for (let item of this.organizationPhoneNumbers)
+                data["organizationPhoneNumbers"].push(item.toJSON());
+        }
+        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        data["note"] = this.note;
+        data["organizationNote"] = this.organizationNote;
+        data["organizationUnitId"] = this.organizationUnitId;
+        data["title"] = this.title;
+        data["organizationWebSite"] = this.organizationWebSite;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
+        data["contactGroupTypeId"] = this.contactGroupTypeId;
+        data["partnerTypeName"] = this.partnerTypeName;
+        return data; 
+    }
+}
+
+export interface ICreateContactGroupInput {
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    emailAddresses: CreateContactEmailInput[] | undefined;
+    phoneNumbers: CreateContactPhoneInput[] | undefined;
+    address: CreateContactAddressInput | undefined;
+    companyName: string | undefined;
+    organizationEmailAddresses: CreateContactEmailInput[] | undefined;
+    organizationPhoneNumbers: CreateContactPhoneInput[] | undefined;
+    organizationAddress: CreateContactAddressInput | undefined;
+    photo: ContactPhotoInput | undefined;
+    note: string | undefined;
+    organizationNote: string | undefined;
+    organizationUnitId: number | undefined;
+    title: string | undefined;
+    organizationWebSite: string | undefined;
+    tags: ContactGroupTagInput[] | undefined;
+    lists: ContactGroupListInput[] | undefined;
+    assignedUserId: number | undefined;
+    ratingId: number | undefined;
+    contactGroupTypeId: string | undefined;
+    partnerTypeName: string | undefined;
+}
+
+export class CreateContactPhoneInput implements ICreateContactPhoneInput {
+    contactId!: number | undefined;
+    phoneNumber!: string;
+    phoneExtension!: string | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: ICreateContactPhoneInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactPhoneInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactPhoneInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateContactPhoneInput {
+    contactId: number | undefined;
+    phoneNumber: string;
+    phoneExtension: string | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class ContactPhotoInput implements IContactPhotoInput {
+    originalImage!: string;
+    thumbnail!: string;
+    photoSourceId!: string | undefined;
+    comment!: string | undefined;
+
+    constructor(data?: IContactPhotoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.originalImage = data["originalImage"];
+            this.thumbnail = data["thumbnail"];
+            this.photoSourceId = data["photoSourceId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactPhotoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["originalImage"] = this.originalImage;
+        data["thumbnail"] = this.thumbnail;
+        data["photoSourceId"] = this.photoSourceId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhotoInput {
+    originalImage: string;
+    thumbnail: string;
+    photoSourceId: string | undefined;
+    comment: string | undefined;
+}
+
+export class ContactGroupTagInput implements IContactGroupTagInput {
+    name!: string;
+
+    constructor(data?: IContactGroupTagInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupTagInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupTagInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupTagInput {
+    name: string;
+}
+
+export class ContactGroupListInput implements IContactGroupListInput {
+    name!: string;
+
+    constructor(data?: IContactGroupListInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupListInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupListInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupListInput {
+    name: string;
+}
+
+export class CreateContactGroupOutput implements ICreateContactGroupOutput {
+    id!: number | undefined;
+
+    constructor(data?: ICreateContactGroupOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactGroupOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactGroupOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateContactGroupOutput {
+    id: number | undefined;
+}
+
+export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
+    id!: number | undefined;
+    name!: string | undefined;
+    photo!: string | undefined;
+    companyName!: string | undefined;
+    jobTitle!: string | undefined;
+    ratingId!: number | undefined;
+    score!: number | undefined;
+
+    constructor(data?: ISimilarContactGroupOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.photo = data["photo"];
+            this.companyName = data["companyName"];
+            this.jobTitle = data["jobTitle"];
+            this.ratingId = data["ratingId"];
+            this.score = data["score"];
+        }
+    }
+
+    static fromJS(data: any): SimilarContactGroupOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SimilarContactGroupOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["photo"] = this.photo;
+        data["companyName"] = this.companyName;
+        data["jobTitle"] = this.jobTitle;
+        data["ratingId"] = this.ratingId;
+        data["score"] = this.score;
+        return data; 
+    }
+}
+
+export interface ISimilarContactGroupOutput {
+    id: number | undefined;
+    name: string | undefined;
+    photo: string | undefined;
+    companyName: string | undefined;
+    jobTitle: string | undefined;
+    ratingId: number | undefined;
+    score: number | undefined;
+}
+
+export class UpdateContactGroupStatusInput implements IUpdateContactGroupStatusInput {
+    contactGroupId!: number | undefined;
+    statusId!: string;
+
+    constructor(data?: IUpdateContactGroupStatusInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroupId = data["contactGroupId"];
+            this.statusId = data["statusId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactGroupStatusInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactGroupStatusInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
+        data["statusId"] = this.statusId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactGroupStatusInput {
+    contactGroupId: number | undefined;
+    statusId: string;
+}
+
+export class UpdateContactGroupStatusesInput implements IUpdateContactGroupStatusesInput {
+    contactGroupIds!: number[];
+    statusId!: string;
+
+    constructor(data?: IUpdateContactGroupStatusesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.contactGroupIds = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            this.statusId = data["statusId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactGroupStatusesInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactGroupStatusesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        data["statusId"] = this.statusId;
+        return data; 
+    }
+}
+
+export interface IUpdateContactGroupStatusesInput {
+    contactGroupIds: number[];
+    statusId: string;
+}
+
+export class ContactGroupFiltersInitialData implements IContactGroupFiltersInitialData {
+    statuses!: ContactGroupStatusDto[] | undefined;
+    users!: UserInfoDto[] | undefined;
+    lists!: ContactGroupListInfoDto[] | undefined;
+    tags!: ContactGroupTagInfoDto[] | undefined;
+    ratings!: ContactGroupRatingInfoDto[] | undefined;
+    stars!: ContactGroupStarInfoDto[] | undefined;
+
+    constructor(data?: IContactGroupFiltersInitialData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["statuses"] && data["statuses"].constructor === Array) {
+                this.statuses = [];
+                for (let item of data["statuses"])
+                    this.statuses.push(ContactGroupStatusDto.fromJS(item));
+            }
+            if (data["users"] && data["users"].constructor === Array) {
+                this.users = [];
+                for (let item of data["users"])
+                    this.users.push(UserInfoDto.fromJS(item));
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(ContactGroupListInfoDto.fromJS(item));
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(ContactGroupTagInfoDto.fromJS(item));
+            }
+            if (data["ratings"] && data["ratings"].constructor === Array) {
+                this.ratings = [];
+                for (let item of data["ratings"])
+                    this.ratings.push(ContactGroupRatingInfoDto.fromJS(item));
+            }
+            if (data["stars"] && data["stars"].constructor === Array) {
+                this.stars = [];
+                for (let item of data["stars"])
+                    this.stars.push(ContactGroupStarInfoDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactGroupFiltersInitialData {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupFiltersInitialData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.statuses && this.statuses.constructor === Array) {
+            data["statuses"] = [];
+            for (let item of this.statuses)
+                data["statuses"].push(item.toJSON());
+        }
+        if (this.users && this.users.constructor === Array) {
+            data["users"] = [];
+            for (let item of this.users)
+                data["users"].push(item.toJSON());
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        if (this.ratings && this.ratings.constructor === Array) {
+            data["ratings"] = [];
+            for (let item of this.ratings)
+                data["ratings"].push(item.toJSON());
+        }
+        if (this.stars && this.stars.constructor === Array) {
+            data["stars"] = [];
+            for (let item of this.stars)
+                data["stars"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IContactGroupFiltersInitialData {
+    statuses: ContactGroupStatusDto[] | undefined;
+    users: UserInfoDto[] | undefined;
+    lists: ContactGroupListInfoDto[] | undefined;
+    tags: ContactGroupTagInfoDto[] | undefined;
+    ratings: ContactGroupRatingInfoDto[] | undefined;
+    stars: ContactGroupStarInfoDto[] | undefined;
+}
+
+export class ContactGroupStatusDto implements IContactGroupStatusDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupStatusDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupStatusDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupStatusDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupStatusDto {
+    id: string | undefined;
+    name: string | undefined;
+}
+
+export class UserInfoDto implements IUserInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    isActive!: boolean | undefined;
+    profilePicture!: string | undefined;
+
+    constructor(data?: IUserInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+            this.profilePicture = data["profilePicture"];
+        }
+    }
+
+    static fromJS(data: any): UserInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        data["profilePicture"] = this.profilePicture;
+        return data; 
+    }
+}
+
+export interface IUserInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+    isActive: boolean | undefined;
+    profilePicture: string | undefined;
+}
+
+export class ContactGroupListInfoDto implements IContactGroupListInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupListInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupListInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupListInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupListInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+}
+
+export class ContactGroupTagInfoDto implements IContactGroupTagInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupTagInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupTagInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupTagInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupTagInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+}
+
+export class ContactGroupRatingInfoDto implements IContactGroupRatingInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupRatingInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupRatingInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupRatingInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupRatingInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+}
+
+export class ContactGroupStarInfoDto implements IContactGroupStarInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupStarInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupStarInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupStarInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupStarInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+}
+
+export class ContactGroupTypeDto implements IContactGroupTypeDto {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupTypeDto {
+    id: string | undefined;
+    name: string | undefined;
+}
+
+export class UpdateContactGroupListsInput implements IUpdateContactGroupListsInput {
+    contactGroupId!: number | undefined;
+    lists!: ContactGroupListInput[] | undefined;
+
+    constructor(data?: IUpdateContactGroupListsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroupId = data["contactGroupId"];
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(ContactGroupListInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateContactGroupListsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactGroupListsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateContactGroupListsInput {
+    contactGroupId: number | undefined;
+    lists: ContactGroupListInput[] | undefined;
+}
+
+export class AddContactGroupsToListsInput implements IAddContactGroupsToListsInput {
+    contactGroupIds!: number[] | undefined;
+    lists!: ContactGroupListInput[] | undefined;
+
+    constructor(data?: IAddContactGroupsToListsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(ContactGroupListInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AddContactGroupsToListsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddContactGroupsToListsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAddContactGroupsToListsInput {
+    contactGroupIds: number[] | undefined;
+    lists: ContactGroupListInput[] | undefined;
+}
+
+export class UpdateContactGroupListInput implements IUpdateContactGroupListInput {
+    id!: number | undefined;
+    name!: string;
+
+    constructor(data?: IUpdateContactGroupListInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactGroupListInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactGroupListInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUpdateContactGroupListInput {
+    id: number | undefined;
+    name: string;
+}
+
+export class RateContactGroupInput implements IRateContactGroupInput {
+    contactGroupId!: number | undefined;
+    ratingId!: number | undefined;
+
+    constructor(data?: IRateContactGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroupId = data["contactGroupId"];
+            this.ratingId = data["ratingId"];
+        }
+    }
+
+    static fromJS(data: any): RateContactGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RateContactGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
+        data["ratingId"] = this.ratingId;
+        return data; 
+    }
+}
+
+export interface IRateContactGroupInput {
+    contactGroupId: number | undefined;
+    ratingId: number | undefined;
+}
+
+export class RateContactGroupsInput implements IRateContactGroupsInput {
+    contactGroupIds!: number[] | undefined;
+    ratingId!: number | undefined;
+
+    constructor(data?: IRateContactGroupsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            this.ratingId = data["ratingId"];
+        }
+    }
+
+    static fromJS(data: any): RateContactGroupsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RateContactGroupsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        data["ratingId"] = this.ratingId;
+        return data; 
+    }
+}
+
+export interface IRateContactGroupsInput {
+    contactGroupIds: number[] | undefined;
+    ratingId: number | undefined;
+}
+
+export class MarkContactGroupInput implements IMarkContactGroupInput {
+    contactGroupId!: number | undefined;
+    starId!: number | undefined;
+
+    constructor(data?: IMarkContactGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroupId = data["contactGroupId"];
+            this.starId = data["starId"];
+        }
+    }
+
+    static fromJS(data: any): MarkContactGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MarkContactGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
+        data["starId"] = this.starId;
+        return data; 
+    }
+}
+
+export interface IMarkContactGroupInput {
+    contactGroupId: number | undefined;
+    starId: number | undefined;
+}
+
+export class MarkContactGroupsInput implements IMarkContactGroupsInput {
+    contactGroupIds!: number[] | undefined;
+    starId!: number | undefined;
+
+    constructor(data?: IMarkContactGroupsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            this.starId = data["starId"];
+        }
+    }
+
+    static fromJS(data: any): MarkContactGroupsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MarkContactGroupsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        data["starId"] = this.starId;
+        return data; 
+    }
+}
+
+export interface IMarkContactGroupsInput {
+    contactGroupIds: number[] | undefined;
+    starId: number | undefined;
+}
+
+export class UpdateContactGroupTagsInput implements IUpdateContactGroupTagsInput {
+    contactGroupId!: number | undefined;
+    tags!: ContactGroupTagInput[] | undefined;
+
+    constructor(data?: IUpdateContactGroupTagsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroupId = data["contactGroupId"];
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(ContactGroupTagInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateContactGroupTagsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactGroupTagsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateContactGroupTagsInput {
+    contactGroupId: number | undefined;
+    tags: ContactGroupTagInput[] | undefined;
+}
+
+export class TagContactGroupsInput implements ITagContactGroupsInput {
+    contactGroupIds!: number[] | undefined;
+    tags!: ContactGroupTagInput[] | undefined;
+
+    constructor(data?: ITagContactGroupsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(ContactGroupTagInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TagContactGroupsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new TagContactGroupsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ITagContactGroupsInput {
+    contactGroupIds: number[] | undefined;
+    tags: ContactGroupTagInput[] | undefined;
+}
+
+export class UntagContactGroupsInput implements IUntagContactGroupsInput {
+    contactGroupIds!: number[] | undefined;
+    tagIds!: number[] | undefined;
+
+    constructor(data?: IUntagContactGroupsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            if (data["tagIds"] && data["tagIds"].constructor === Array) {
+                this.tagIds = [];
+                for (let item of data["tagIds"])
+                    this.tagIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UntagContactGroupsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UntagContactGroupsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        if (this.tagIds && this.tagIds.constructor === Array) {
+            data["tagIds"] = [];
+            for (let item of this.tagIds)
+                data["tagIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUntagContactGroupsInput {
+    contactGroupIds: number[] | undefined;
+    tagIds: number[] | undefined;
+}
+
+export class UpdateContactGroupTagInput implements IUpdateContactGroupTagInput {
+    id!: number | undefined;
+    name!: string;
+
+    constructor(data?: IUpdateContactGroupTagInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): UpdateContactGroupTagInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateContactGroupTagInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IUpdateContactGroupTagInput {
+    id: number | undefined;
+    name: string;
+}
+
 export class CreateContactLinkInput implements ICreateContactLinkInput {
     contactId!: number | undefined;
     url!: string;
@@ -34342,66 +36713,6 @@ export interface IContactLinkTypeDto {
     id: string | undefined;
     name: string | undefined;
     isSocialNetwork: boolean | undefined;
-}
-
-export class CreateContactPhoneInput implements ICreateContactPhoneInput {
-    contactId!: number | undefined;
-    phoneNumber!: string;
-    phoneExtension!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
-    comment!: string | undefined;
-    usageTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactPhoneInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactPhoneInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhoneInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactPhoneInput {
-    contactId: number | undefined;
-    phoneNumber: string;
-    phoneExtension: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
-    comment: string | undefined;
-    usageTypeId: string | undefined;
 }
 
 export class CreateContactPhoneOutput implements ICreateContactPhoneOutput {
@@ -36202,2317 +38513,6 @@ export interface IScoreSimulatorDto {
     obtainAutoLoan: number | undefined;
     obtainPersonalLoan: number | undefined;
     transferCreditBalances: number | undefined;
-}
-
-export class CustomerListInfoDto implements ICustomerListInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ICustomerListInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerListInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerListInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerListInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class UpdateCustomerListsInput implements IUpdateCustomerListsInput {
-    contactGroupId!: number | undefined;
-    lists!: CustomerListInput[] | undefined;
-
-    constructor(data?: IUpdateCustomerListsInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactGroupId = data["contactGroupId"];
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(CustomerListInput.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): UpdateCustomerListsInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCustomerListsInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactGroupId"] = this.contactGroupId;
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IUpdateCustomerListsInput {
-    contactGroupId: number | undefined;
-    lists: CustomerListInput[] | undefined;
-}
-
-export class CustomerListInput implements ICustomerListInput {
-    name!: string;
-
-    constructor(data?: ICustomerListInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerListInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerListInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerListInput {
-    name: string;
-}
-
-export class AddCustomersToListsInput implements IAddCustomersToListsInput {
-    customerIds!: number[] | undefined;
-    lists!: CustomerListInput[] | undefined;
-
-    constructor(data?: IAddCustomersToListsInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(CustomerListInput.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): AddCustomersToListsInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddCustomersToListsInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IAddCustomersToListsInput {
-    customerIds: number[] | undefined;
-    lists: CustomerListInput[] | undefined;
-}
-
-export class UpdateCustomerListInput implements IUpdateCustomerListInput {
-    id!: number | undefined;
-    name!: string;
-
-    constructor(data?: IUpdateCustomerListInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCustomerListInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCustomerListInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IUpdateCustomerListInput {
-    id: number | undefined;
-    name: string;
-}
-
-export class CustomerRatingInfoDto implements ICustomerRatingInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ICustomerRatingInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerRatingInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerRatingInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerRatingInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class RateCustomerInput implements IRateCustomerInput {
-    contactGroupId!: number | undefined;
-    ratingId!: number | undefined;
-
-    constructor(data?: IRateCustomerInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactGroupId = data["contactGroupId"];
-            this.ratingId = data["ratingId"];
-        }
-    }
-
-    static fromJS(data: any): RateCustomerInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RateCustomerInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactGroupId"] = this.contactGroupId;
-        data["ratingId"] = this.ratingId;
-        return data; 
-    }
-}
-
-export interface IRateCustomerInput {
-    contactGroupId: number | undefined;
-    ratingId: number | undefined;
-}
-
-export class RateCustomersInput implements IRateCustomersInput {
-    customerIds!: number[] | undefined;
-    ratingId!: number | undefined;
-
-    constructor(data?: IRateCustomersInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
-            }
-            this.ratingId = data["ratingId"];
-        }
-    }
-
-    static fromJS(data: any): RateCustomersInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RateCustomersInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
-        }
-        data["ratingId"] = this.ratingId;
-        return data; 
-    }
-}
-
-export interface IRateCustomersInput {
-    customerIds: number[] | undefined;
-    ratingId: number | undefined;
-}
-
-export class CustomerInfoDto implements ICustomerInfoDto {
-    id!: number | undefined;
-    statusId!: string | undefined;
-    status!: string | undefined;
-    assignedUserId!: number | undefined;
-    starId!: number | undefined;
-    ratingId!: number | undefined;
-    tags!: number[] | undefined;
-    lists!: number[] | undefined;
-    score!: number | undefined;
-    primaryContactInfo!: PersonContactInfoDto | undefined;
-    organizationContactInfo!: OrganizationContactInfoDto | undefined;
-    contactPersons!: PersonContactInfoDto[] | undefined;
-    creationDate!: moment.Moment | undefined;
-    userContextOrderId!: number | undefined;
-    userContextOrderType!: string | undefined;
-
-    constructor(data?: ICustomerInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.statusId = data["statusId"];
-            this.status = data["status"];
-            this.assignedUserId = data["assignedUserId"];
-            this.starId = data["starId"];
-            this.ratingId = data["ratingId"];
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(item);
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(item);
-            }
-            this.score = data["score"];
-            this.primaryContactInfo = data["primaryContactInfo"] ? PersonContactInfoDto.fromJS(data["primaryContactInfo"]) : <any>undefined;
-            this.organizationContactInfo = data["organizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["organizationContactInfo"]) : <any>undefined;
-            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
-                this.contactPersons = [];
-                for (let item of data["contactPersons"])
-                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
-            }
-            this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
-            this.userContextOrderId = data["userContextOrderId"];
-            this.userContextOrderType = data["userContextOrderType"];
-        }
-    }
-
-    static fromJS(data: any): CustomerInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["statusId"] = this.statusId;
-        data["status"] = this.status;
-        data["assignedUserId"] = this.assignedUserId;
-        data["starId"] = this.starId;
-        data["ratingId"] = this.ratingId;
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item);
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item);
-        }
-        data["score"] = this.score;
-        data["primaryContactInfo"] = this.primaryContactInfo ? this.primaryContactInfo.toJSON() : <any>undefined;
-        data["organizationContactInfo"] = this.organizationContactInfo ? this.organizationContactInfo.toJSON() : <any>undefined;
-        if (this.contactPersons && this.contactPersons.constructor === Array) {
-            data["contactPersons"] = [];
-            for (let item of this.contactPersons)
-                data["contactPersons"].push(item.toJSON());
-        }
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["userContextOrderId"] = this.userContextOrderId;
-        data["userContextOrderType"] = this.userContextOrderType;
-        return data; 
-    }
-}
-
-export interface ICustomerInfoDto {
-    id: number | undefined;
-    statusId: string | undefined;
-    status: string | undefined;
-    assignedUserId: number | undefined;
-    starId: number | undefined;
-    ratingId: number | undefined;
-    tags: number[] | undefined;
-    lists: number[] | undefined;
-    score: number | undefined;
-    primaryContactInfo: PersonContactInfoDto | undefined;
-    organizationContactInfo: OrganizationContactInfoDto | undefined;
-    contactPersons: PersonContactInfoDto[] | undefined;
-    creationDate: moment.Moment | undefined;
-    userContextOrderId: number | undefined;
-    userContextOrderType: string | undefined;
-}
-
-export class PersonContactInfoDto implements IPersonContactInfoDto {
-    person!: PersonInfoDto | undefined;
-    id!: number | undefined;
-    fullName!: string | undefined;
-    jobTitle!: string | undefined;
-    userId!: number | undefined;
-    primaryPhoto!: ContactPhotoDto | undefined;
-    primaryPhone!: ContactPhoneDto | undefined;
-    primaryAddress!: ContactAddressDto | undefined;
-    details!: ContactInfoDetailsDto | undefined;
-    comment!: string | undefined;
-
-    constructor(data?: IPersonContactInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
-            this.id = data["id"];
-            this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
-            this.userId = data["userId"];
-            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
-            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
-            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
-            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): PersonContactInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PersonContactInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["person"] = this.person ? this.person.toJSON() : <any>undefined;
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
-        data["userId"] = this.userId;
-        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
-        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
-        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
-        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IPersonContactInfoDto {
-    person: PersonInfoDto | undefined;
-    id: number | undefined;
-    fullName: string | undefined;
-    jobTitle: string | undefined;
-    userId: number | undefined;
-    primaryPhoto: ContactPhotoDto | undefined;
-    primaryPhone: ContactPhoneDto | undefined;
-    primaryAddress: ContactAddressDto | undefined;
-    details: ContactInfoDetailsDto | undefined;
-    comment: string | undefined;
-}
-
-export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
-    organization!: OrganizationInfoDto | undefined;
-    id!: number | undefined;
-    fullName!: string | undefined;
-    jobTitle!: string | undefined;
-    userId!: number | undefined;
-    primaryPhoto!: ContactPhotoDto | undefined;
-    primaryPhone!: ContactPhoneDto | undefined;
-    primaryAddress!: ContactAddressDto | undefined;
-    details!: ContactInfoDetailsDto | undefined;
-    comment!: string | undefined;
-
-    constructor(data?: IOrganizationContactInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
-            this.id = data["id"];
-            this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
-            this.userId = data["userId"];
-            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
-            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
-            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
-            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationContactInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrganizationContactInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
-        data["userId"] = this.userId;
-        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
-        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
-        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
-        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IOrganizationContactInfoDto {
-    organization: OrganizationInfoDto | undefined;
-    id: number | undefined;
-    fullName: string | undefined;
-    jobTitle: string | undefined;
-    userId: number | undefined;
-    primaryPhoto: ContactPhotoDto | undefined;
-    primaryPhone: ContactPhoneDto | undefined;
-    primaryAddress: ContactAddressDto | undefined;
-    details: ContactInfoDetailsDto | undefined;
-    comment: string | undefined;
-}
-
-export class PersonInfoDto implements IPersonInfoDto {
-    namePrefix!: string | undefined;
-    middleName!: string | undefined;
-    nameSuffix!: string | undefined;
-    nickName!: string | undefined;
-    dob!: moment.Moment | undefined;
-    ssn!: string | undefined;
-    timeZone!: string | undefined;
-    identityConfirmationDate!: moment.Moment | undefined;
-    identityConfirmedByUser!: UserKeyInfoDto | undefined;
-    maritalStatus!: string | undefined;
-    marriageDate!: moment.Moment | undefined;
-    divorceDate!: moment.Moment | undefined;
-    gender!: string | undefined;
-    citizenship!: string | undefined;
-    isUSCitizen!: boolean | undefined;
-    contactId!: number | undefined;
-    firstName!: string | undefined;
-    lastName!: string | undefined;
-
-    constructor(data?: IPersonInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.namePrefix = data["namePrefix"];
-            this.middleName = data["middleName"];
-            this.nameSuffix = data["nameSuffix"];
-            this.nickName = data["nickName"];
-            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
-            this.ssn = data["ssn"];
-            this.timeZone = data["timeZone"];
-            this.identityConfirmationDate = data["identityConfirmationDate"] ? moment(data["identityConfirmationDate"].toString()) : <any>undefined;
-            this.identityConfirmedByUser = data["identityConfirmedByUser"] ? UserKeyInfoDto.fromJS(data["identityConfirmedByUser"]) : <any>undefined;
-            this.maritalStatus = data["maritalStatus"];
-            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
-            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
-            this.gender = data["gender"];
-            this.citizenship = data["citizenship"];
-            this.isUSCitizen = data["isUSCitizen"];
-            this.contactId = data["contactId"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-        }
-    }
-
-    static fromJS(data: any): PersonInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PersonInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["namePrefix"] = this.namePrefix;
-        data["middleName"] = this.middleName;
-        data["nameSuffix"] = this.nameSuffix;
-        data["nickName"] = this.nickName;
-        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
-        data["ssn"] = this.ssn;
-        data["timeZone"] = this.timeZone;
-        data["identityConfirmationDate"] = this.identityConfirmationDate ? this.identityConfirmationDate.toISOString() : <any>undefined;
-        data["identityConfirmedByUser"] = this.identityConfirmedByUser ? this.identityConfirmedByUser.toJSON() : <any>undefined;
-        data["maritalStatus"] = this.maritalStatus;
-        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
-        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
-        data["gender"] = this.gender;
-        data["citizenship"] = this.citizenship;
-        data["isUSCitizen"] = this.isUSCitizen;
-        data["contactId"] = this.contactId;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        return data; 
-    }
-}
-
-export interface IPersonInfoDto {
-    namePrefix: string | undefined;
-    middleName: string | undefined;
-    nameSuffix: string | undefined;
-    nickName: string | undefined;
-    dob: moment.Moment | undefined;
-    ssn: string | undefined;
-    timeZone: string | undefined;
-    identityConfirmationDate: moment.Moment | undefined;
-    identityConfirmedByUser: UserKeyInfoDto | undefined;
-    maritalStatus: string | undefined;
-    marriageDate: moment.Moment | undefined;
-    divorceDate: moment.Moment | undefined;
-    gender: string | undefined;
-    citizenship: string | undefined;
-    isUSCitizen: boolean | undefined;
-    contactId: number | undefined;
-    firstName: string | undefined;
-    lastName: string | undefined;
-}
-
-export class ContactPhoneDto implements IContactPhoneDto {
-    usageTypeId!: string | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    isActive!: boolean | undefined;
-    comment!: string | undefined;
-    contactId!: number | undefined;
-    id!: number | undefined;
-    isConfirmed!: boolean | undefined;
-    confirmationDate!: moment.Moment | undefined;
-    confirmedByUserId!: number | undefined;
-    confirmedByUser!: UserKeyInfoDto | undefined;
-
-    constructor(data?: IContactPhoneDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactPhoneDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactPhoneDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactPhoneDto {
-    usageTypeId: string | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    isActive: boolean | undefined;
-    comment: string | undefined;
-    contactId: number | undefined;
-    id: number | undefined;
-    isConfirmed: boolean | undefined;
-    confirmationDate: moment.Moment | undefined;
-    confirmedByUserId: number | undefined;
-    confirmedByUser: UserKeyInfoDto | undefined;
-}
-
-export class ContactAddressDto implements IContactAddressDto {
-    usageTypeId!: string | undefined;
-    streetAddress!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    country!: string | undefined;
-    zip!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    comment!: string | undefined;
-    contactId!: number | undefined;
-    id!: number | undefined;
-    isConfirmed!: boolean | undefined;
-    confirmationDate!: moment.Moment | undefined;
-    confirmedByUserId!: number | undefined;
-    confirmedByUser!: UserKeyInfoDto | undefined;
-
-    constructor(data?: IContactAddressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.streetAddress = data["streetAddress"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.country = data["country"];
-            this.zip = data["zip"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactAddressDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactAddressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["streetAddress"] = this.streetAddress;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["country"] = this.country;
-        data["zip"] = this.zip;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactAddressDto {
-    usageTypeId: string | undefined;
-    streetAddress: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    country: string | undefined;
-    zip: string | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    comment: string | undefined;
-    contactId: number | undefined;
-    id: number | undefined;
-    isConfirmed: boolean | undefined;
-    confirmationDate: moment.Moment | undefined;
-    confirmedByUserId: number | undefined;
-    confirmedByUser: UserKeyInfoDto | undefined;
-}
-
-export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
-    contactId!: number | undefined;
-    emails!: ContactEmailDto[] | undefined;
-    phones!: ContactPhoneDto[] | undefined;
-    addresses!: ContactAddressDto[] | undefined;
-    links!: ContactLinkDto[] | undefined;
-
-    constructor(data?: IContactInfoDetailsDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            if (data["emails"] && data["emails"].constructor === Array) {
-                this.emails = [];
-                for (let item of data["emails"])
-                    this.emails.push(ContactEmailDto.fromJS(item));
-            }
-            if (data["phones"] && data["phones"].constructor === Array) {
-                this.phones = [];
-                for (let item of data["phones"])
-                    this.phones.push(ContactPhoneDto.fromJS(item));
-            }
-            if (data["addresses"] && data["addresses"].constructor === Array) {
-                this.addresses = [];
-                for (let item of data["addresses"])
-                    this.addresses.push(ContactAddressDto.fromJS(item));
-            }
-            if (data["links"] && data["links"].constructor === Array) {
-                this.links = [];
-                for (let item of data["links"])
-                    this.links.push(ContactLinkDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ContactInfoDetailsDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactInfoDetailsDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        if (this.emails && this.emails.constructor === Array) {
-            data["emails"] = [];
-            for (let item of this.emails)
-                data["emails"].push(item.toJSON());
-        }
-        if (this.phones && this.phones.constructor === Array) {
-            data["phones"] = [];
-            for (let item of this.phones)
-                data["phones"].push(item.toJSON());
-        }
-        if (this.addresses && this.addresses.constructor === Array) {
-            data["addresses"] = [];
-            for (let item of this.addresses)
-                data["addresses"].push(item.toJSON());
-        }
-        if (this.links && this.links.constructor === Array) {
-            data["links"] = [];
-            for (let item of this.links)
-                data["links"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IContactInfoDetailsDto {
-    contactId: number | undefined;
-    emails: ContactEmailDto[] | undefined;
-    phones: ContactPhoneDto[] | undefined;
-    addresses: ContactAddressDto[] | undefined;
-    links: ContactLinkDto[] | undefined;
-}
-
-export class OrganizationInfoDto implements IOrganizationInfoDto {
-    companyName!: string;
-    shortname!: string | undefined;
-    industry!: string | undefined;
-    annualRevenue!: number | undefined;
-    ein!: string | undefined;
-    businessSicCode!: number | undefined;
-    primaryFundingType!: string | undefined;
-    formedCountryId!: string | undefined;
-    formedStateId!: string | undefined;
-    description!: string | undefined;
-    formedDate!: moment.Moment | undefined;
-    relationship!: string | undefined;
-    sizeFrom!: number | undefined;
-    sizeTo!: number | undefined;
-    duns!: string | undefined;
-    ticker!: string | undefined;
-    productServicesSold!: number | undefined;
-
-    constructor(data?: IOrganizationInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.companyName = data["companyName"];
-            this.shortname = data["shortname"];
-            this.industry = data["industry"];
-            this.annualRevenue = data["annualRevenue"];
-            this.ein = data["ein"];
-            this.businessSicCode = data["businessSicCode"];
-            this.primaryFundingType = data["primaryFundingType"];
-            this.formedCountryId = data["formedCountryId"];
-            this.formedStateId = data["formedStateId"];
-            this.description = data["description"];
-            this.formedDate = data["formedDate"] ? moment(data["formedDate"].toString()) : <any>undefined;
-            this.relationship = data["relationship"];
-            this.sizeFrom = data["sizeFrom"];
-            this.sizeTo = data["sizeTo"];
-            this.duns = data["duns"];
-            this.ticker = data["ticker"];
-            this.productServicesSold = data["productServicesSold"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrganizationInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["companyName"] = this.companyName;
-        data["shortname"] = this.shortname;
-        data["industry"] = this.industry;
-        data["annualRevenue"] = this.annualRevenue;
-        data["ein"] = this.ein;
-        data["businessSicCode"] = this.businessSicCode;
-        data["primaryFundingType"] = this.primaryFundingType;
-        data["formedCountryId"] = this.formedCountryId;
-        data["formedStateId"] = this.formedStateId;
-        data["description"] = this.description;
-        data["formedDate"] = this.formedDate ? this.formedDate.toISOString() : <any>undefined;
-        data["relationship"] = this.relationship;
-        data["sizeFrom"] = this.sizeFrom;
-        data["sizeTo"] = this.sizeTo;
-        data["duns"] = this.duns;
-        data["ticker"] = this.ticker;
-        data["productServicesSold"] = this.productServicesSold;
-        return data; 
-    }
-}
-
-export interface IOrganizationInfoDto {
-    companyName: string;
-    shortname: string | undefined;
-    industry: string | undefined;
-    annualRevenue: number | undefined;
-    ein: string | undefined;
-    businessSicCode: number | undefined;
-    primaryFundingType: string | undefined;
-    formedCountryId: string | undefined;
-    formedStateId: string | undefined;
-    description: string | undefined;
-    formedDate: moment.Moment | undefined;
-    relationship: string | undefined;
-    sizeFrom: number | undefined;
-    sizeTo: number | undefined;
-    duns: string | undefined;
-    ticker: string | undefined;
-    productServicesSold: number | undefined;
-}
-
-export class UserKeyInfoDto implements IUserKeyInfoDto {
-    id!: number | undefined;
-    userName!: string | undefined;
-    fullName!: string | undefined;
-
-    constructor(data?: IUserKeyInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.userName = data["userName"];
-            this.fullName = data["fullName"];
-        }
-    }
-
-    static fromJS(data: any): UserKeyInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserKeyInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["fullName"] = this.fullName;
-        return data; 
-    }
-}
-
-export interface IUserKeyInfoDto {
-    id: number | undefined;
-    userName: string | undefined;
-    fullName: string | undefined;
-}
-
-export class ContactEmailDto implements IContactEmailDto {
-    usageTypeId!: string | undefined;
-    emailAddress!: string | undefined;
-    isActive!: boolean | undefined;
-    comment!: string | undefined;
-    contactId!: number | undefined;
-    id!: number | undefined;
-    isConfirmed!: boolean | undefined;
-    confirmationDate!: moment.Moment | undefined;
-    confirmedByUserId!: number | undefined;
-    confirmedByUser!: UserKeyInfoDto | undefined;
-
-    constructor(data?: IContactEmailDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.usageTypeId = data["usageTypeId"];
-            this.emailAddress = data["emailAddress"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactEmailDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactEmailDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["usageTypeId"] = this.usageTypeId;
-        data["emailAddress"] = this.emailAddress;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactEmailDto {
-    usageTypeId: string | undefined;
-    emailAddress: string | undefined;
-    isActive: boolean | undefined;
-    comment: string | undefined;
-    contactId: number | undefined;
-    id: number | undefined;
-    isConfirmed: boolean | undefined;
-    confirmationDate: moment.Moment | undefined;
-    confirmedByUserId: number | undefined;
-    confirmedByUser: UserKeyInfoDto | undefined;
-}
-
-export class ContactLinkDto implements IContactLinkDto {
-    linkTypeId!: string | undefined;
-    url!: string | undefined;
-    isSocialNetwork!: boolean | undefined;
-    isActive!: boolean | undefined;
-    comment!: string | undefined;
-    contactId!: number | undefined;
-    id!: number | undefined;
-    isConfirmed!: boolean | undefined;
-    confirmationDate!: moment.Moment | undefined;
-    confirmedByUserId!: number | undefined;
-    confirmedByUser!: UserKeyInfoDto | undefined;
-
-    constructor(data?: IContactLinkDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.linkTypeId = data["linkTypeId"];
-            this.url = data["url"];
-            this.isSocialNetwork = data["isSocialNetwork"];
-            this.isActive = data["isActive"];
-            this.comment = data["comment"];
-            this.contactId = data["contactId"];
-            this.id = data["id"];
-            this.isConfirmed = data["isConfirmed"];
-            this.confirmationDate = data["confirmationDate"] ? moment(data["confirmationDate"].toString()) : <any>undefined;
-            this.confirmedByUserId = data["confirmedByUserId"];
-            this.confirmedByUser = data["confirmedByUser"] ? UserKeyInfoDto.fromJS(data["confirmedByUser"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ContactLinkDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactLinkDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["linkTypeId"] = this.linkTypeId;
-        data["url"] = this.url;
-        data["isSocialNetwork"] = this.isSocialNetwork;
-        data["isActive"] = this.isActive;
-        data["comment"] = this.comment;
-        data["contactId"] = this.contactId;
-        data["id"] = this.id;
-        data["isConfirmed"] = this.isConfirmed;
-        data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
-        data["confirmedByUserId"] = this.confirmedByUserId;
-        data["confirmedByUser"] = this.confirmedByUser ? this.confirmedByUser.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IContactLinkDto {
-    linkTypeId: string | undefined;
-    url: string | undefined;
-    isSocialNetwork: boolean | undefined;
-    isActive: boolean | undefined;
-    comment: string | undefined;
-    contactId: number | undefined;
-    id: number | undefined;
-    isConfirmed: boolean | undefined;
-    confirmationDate: moment.Moment | undefined;
-    confirmedByUserId: number | undefined;
-    confirmedByUser: UserKeyInfoDto | undefined;
-}
-
-export class CreateCustomerInput implements ICreateCustomerInput {
-    namePrefix!: string | undefined;
-    firstName!: string | undefined;
-    middleName!: string | undefined;
-    lastName!: string | undefined;
-    nameSuffix!: string | undefined;
-    nickName!: string | undefined;
-    emailAddresses!: CreateContactEmailInput[] | undefined;
-    phoneNumbers!: CreateContactPhoneInput[] | undefined;
-    address!: CreateContactAddressInput | undefined;
-    companyName!: string | undefined;
-    organizationEmailAddresses!: CreateContactEmailInput[] | undefined;
-    organizationPhoneNumbers!: CreateContactPhoneInput[] | undefined;
-    organizationAddress!: CreateContactAddressInput | undefined;
-    photo!: ContactPhotoInput | undefined;
-    note!: string | undefined;
-    organizationNote!: string | undefined;
-    organizationUnitId!: number | undefined;
-    title!: string | undefined;
-    organizationWebSite!: string | undefined;
-    tags!: CustomerTagInput[] | undefined;
-    lists!: CustomerListInput[] | undefined;
-    assignedUserId!: number | undefined;
-    ratingId!: number | undefined;
-    customerTypeId!: string | undefined;
-    partnerTypeName!: string | undefined;
-
-    constructor(data?: ICreateCustomerInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.namePrefix = data["namePrefix"];
-            this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
-            this.lastName = data["lastName"];
-            this.nameSuffix = data["nameSuffix"];
-            this.nickName = data["nickName"];
-            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
-                this.emailAddresses = [];
-                for (let item of data["emailAddresses"])
-                    this.emailAddresses.push(CreateContactEmailInput.fromJS(item));
-            }
-            if (data["phoneNumbers"] && data["phoneNumbers"].constructor === Array) {
-                this.phoneNumbers = [];
-                for (let item of data["phoneNumbers"])
-                    this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
-            }
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
-            this.companyName = data["companyName"];
-            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
-                this.organizationEmailAddresses = [];
-                for (let item of data["organizationEmailAddresses"])
-                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
-            }
-            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
-                this.organizationPhoneNumbers = [];
-                for (let item of data["organizationPhoneNumbers"])
-                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
-            }
-            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
-            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
-            this.note = data["note"];
-            this.organizationNote = data["organizationNote"];
-            this.organizationUnitId = data["organizationUnitId"];
-            this.title = data["title"];
-            this.organizationWebSite = data["organizationWebSite"];
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(CustomerTagInput.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(CustomerListInput.fromJS(item));
-            }
-            this.assignedUserId = data["assignedUserId"];
-            this.ratingId = data["ratingId"];
-            this.customerTypeId = data["customerTypeId"];
-            this.partnerTypeName = data["partnerTypeName"];
-        }
-    }
-
-    static fromJS(data: any): CreateCustomerInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateCustomerInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["namePrefix"] = this.namePrefix;
-        data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
-        data["lastName"] = this.lastName;
-        data["nameSuffix"] = this.nameSuffix;
-        data["nickName"] = this.nickName;
-        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
-            data["emailAddresses"] = [];
-            for (let item of this.emailAddresses)
-                data["emailAddresses"].push(item.toJSON());
-        }
-        if (this.phoneNumbers && this.phoneNumbers.constructor === Array) {
-            data["phoneNumbers"] = [];
-            for (let item of this.phoneNumbers)
-                data["phoneNumbers"].push(item.toJSON());
-        }
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["companyName"] = this.companyName;
-        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
-            data["organizationEmailAddresses"] = [];
-            for (let item of this.organizationEmailAddresses)
-                data["organizationEmailAddresses"].push(item.toJSON());
-        }
-        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
-            data["organizationPhoneNumbers"] = [];
-            for (let item of this.organizationPhoneNumbers)
-                data["organizationPhoneNumbers"].push(item.toJSON());
-        }
-        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
-        data["note"] = this.note;
-        data["organizationNote"] = this.organizationNote;
-        data["organizationUnitId"] = this.organizationUnitId;
-        data["title"] = this.title;
-        data["organizationWebSite"] = this.organizationWebSite;
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        data["assignedUserId"] = this.assignedUserId;
-        data["ratingId"] = this.ratingId;
-        data["customerTypeId"] = this.customerTypeId;
-        data["partnerTypeName"] = this.partnerTypeName;
-        return data; 
-    }
-}
-
-export interface ICreateCustomerInput {
-    namePrefix: string | undefined;
-    firstName: string | undefined;
-    middleName: string | undefined;
-    lastName: string | undefined;
-    nameSuffix: string | undefined;
-    nickName: string | undefined;
-    emailAddresses: CreateContactEmailInput[] | undefined;
-    phoneNumbers: CreateContactPhoneInput[] | undefined;
-    address: CreateContactAddressInput | undefined;
-    companyName: string | undefined;
-    organizationEmailAddresses: CreateContactEmailInput[] | undefined;
-    organizationPhoneNumbers: CreateContactPhoneInput[] | undefined;
-    organizationAddress: CreateContactAddressInput | undefined;
-    photo: ContactPhotoInput | undefined;
-    note: string | undefined;
-    organizationNote: string | undefined;
-    organizationUnitId: number | undefined;
-    title: string | undefined;
-    organizationWebSite: string | undefined;
-    tags: CustomerTagInput[] | undefined;
-    lists: CustomerListInput[] | undefined;
-    assignedUserId: number | undefined;
-    ratingId: number | undefined;
-    customerTypeId: string | undefined;
-    partnerTypeName: string | undefined;
-}
-
-export class ContactPhotoInput implements IContactPhotoInput {
-    originalImage!: string;
-    thumbnail!: string;
-    photoSourceId!: string | undefined;
-    comment!: string | undefined;
-
-    constructor(data?: IContactPhotoInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.originalImage = data["originalImage"];
-            this.thumbnail = data["thumbnail"];
-            this.photoSourceId = data["photoSourceId"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactPhotoInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactPhotoInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["originalImage"] = this.originalImage;
-        data["thumbnail"] = this.thumbnail;
-        data["photoSourceId"] = this.photoSourceId;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactPhotoInput {
-    originalImage: string;
-    thumbnail: string;
-    photoSourceId: string | undefined;
-    comment: string | undefined;
-}
-
-export class CustomerTagInput implements ICustomerTagInput {
-    name!: string;
-
-    constructor(data?: ICustomerTagInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerTagInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerTagInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerTagInput {
-    name: string;
-}
-
-export class CreateCustomerOutput implements ICreateCustomerOutput {
-    id!: number | undefined;
-
-    constructor(data?: ICreateCustomerOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateCustomerOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateCustomerOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateCustomerOutput {
-    id: number | undefined;
-}
-
-export class SimilarCustomerOutput implements ISimilarCustomerOutput {
-    id!: number | undefined;
-    name!: string | undefined;
-    photo!: string | undefined;
-    companyName!: string | undefined;
-    jobTitle!: string | undefined;
-    ratingId!: number | undefined;
-    score!: number | undefined;
-
-    constructor(data?: ISimilarCustomerOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.photo = data["photo"];
-            this.companyName = data["companyName"];
-            this.jobTitle = data["jobTitle"];
-            this.ratingId = data["ratingId"];
-            this.score = data["score"];
-        }
-    }
-
-    static fromJS(data: any): SimilarCustomerOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SimilarCustomerOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["photo"] = this.photo;
-        data["companyName"] = this.companyName;
-        data["jobTitle"] = this.jobTitle;
-        data["ratingId"] = this.ratingId;
-        data["score"] = this.score;
-        return data; 
-    }
-}
-
-export interface ISimilarCustomerOutput {
-    id: number | undefined;
-    name: string | undefined;
-    photo: string | undefined;
-    companyName: string | undefined;
-    jobTitle: string | undefined;
-    ratingId: number | undefined;
-    score: number | undefined;
-}
-
-export class UpdateCustomerStatusInput implements IUpdateCustomerStatusInput {
-    contactGroupId!: number | undefined;
-    statusId!: string;
-
-    constructor(data?: IUpdateCustomerStatusInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactGroupId = data["contactGroupId"];
-            this.statusId = data["statusId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCustomerStatusInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCustomerStatusInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactGroupId"] = this.contactGroupId;
-        data["statusId"] = this.statusId;
-        return data; 
-    }
-}
-
-export interface IUpdateCustomerStatusInput {
-    contactGroupId: number | undefined;
-    statusId: string;
-}
-
-export class UpdateCustomerStatusesInput implements IUpdateCustomerStatusesInput {
-    customerIds!: number[];
-    statusId!: string;
-
-    constructor(data?: IUpdateCustomerStatusesInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.customerIds = [];
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
-            }
-            this.statusId = data["statusId"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCustomerStatusesInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCustomerStatusesInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
-        }
-        data["statusId"] = this.statusId;
-        return data; 
-    }
-}
-
-export interface IUpdateCustomerStatusesInput {
-    customerIds: number[];
-    statusId: string;
-}
-
-export class CustomerFiltersInitialData implements ICustomerFiltersInitialData {
-    statuses!: CustomerStatusDto[] | undefined;
-    users!: UserInfoDto[] | undefined;
-    lists!: CustomerListInfoDto[] | undefined;
-    tags!: CustomerTagInfoDto[] | undefined;
-    ratings!: CustomerRatingInfoDto[] | undefined;
-    stars!: CustomerStarInfoDto[] | undefined;
-
-    constructor(data?: ICustomerFiltersInitialData) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["statuses"] && data["statuses"].constructor === Array) {
-                this.statuses = [];
-                for (let item of data["statuses"])
-                    this.statuses.push(CustomerStatusDto.fromJS(item));
-            }
-            if (data["users"] && data["users"].constructor === Array) {
-                this.users = [];
-                for (let item of data["users"])
-                    this.users.push(UserInfoDto.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(CustomerListInfoDto.fromJS(item));
-            }
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(CustomerTagInfoDto.fromJS(item));
-            }
-            if (data["ratings"] && data["ratings"].constructor === Array) {
-                this.ratings = [];
-                for (let item of data["ratings"])
-                    this.ratings.push(CustomerRatingInfoDto.fromJS(item));
-            }
-            if (data["stars"] && data["stars"].constructor === Array) {
-                this.stars = [];
-                for (let item of data["stars"])
-                    this.stars.push(CustomerStarInfoDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CustomerFiltersInitialData {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerFiltersInitialData();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.statuses && this.statuses.constructor === Array) {
-            data["statuses"] = [];
-            for (let item of this.statuses)
-                data["statuses"].push(item.toJSON());
-        }
-        if (this.users && this.users.constructor === Array) {
-            data["users"] = [];
-            for (let item of this.users)
-                data["users"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.ratings && this.ratings.constructor === Array) {
-            data["ratings"] = [];
-            for (let item of this.ratings)
-                data["ratings"].push(item.toJSON());
-        }
-        if (this.stars && this.stars.constructor === Array) {
-            data["stars"] = [];
-            for (let item of this.stars)
-                data["stars"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ICustomerFiltersInitialData {
-    statuses: CustomerStatusDto[] | undefined;
-    users: UserInfoDto[] | undefined;
-    lists: CustomerListInfoDto[] | undefined;
-    tags: CustomerTagInfoDto[] | undefined;
-    ratings: CustomerRatingInfoDto[] | undefined;
-    stars: CustomerStarInfoDto[] | undefined;
-}
-
-export class CustomerStatusDto implements ICustomerStatusDto {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ICustomerStatusDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerStatusDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerStatusDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerStatusDto {
-    id: string | undefined;
-    name: string | undefined;
-}
-
-export class UserInfoDto implements IUserInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-    isActive!: boolean | undefined;
-    profilePicture!: string | undefined;
-
-    constructor(data?: IUserInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-            this.profilePicture = data["profilePicture"];
-        }
-    }
-
-    static fromJS(data: any): UserInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        data["profilePicture"] = this.profilePicture;
-        return data; 
-    }
-}
-
-export interface IUserInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-    isActive: boolean | undefined;
-    profilePicture: string | undefined;
-}
-
-export class CustomerTagInfoDto implements ICustomerTagInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ICustomerTagInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerTagInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerTagInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerTagInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class CustomerStarInfoDto implements ICustomerStarInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ICustomerStarInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerStarInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerStarInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerStarInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class CustomerTypeDto implements ICustomerTypeDto {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ICustomerTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): CustomerTypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CustomerTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ICustomerTypeDto {
-    id: string | undefined;
-    name: string | undefined;
-}
-
-export class MarkCustomerInput implements IMarkCustomerInput {
-    contactGroupId!: number | undefined;
-    starId!: number | undefined;
-
-    constructor(data?: IMarkCustomerInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactGroupId = data["contactGroupId"];
-            this.starId = data["starId"];
-        }
-    }
-
-    static fromJS(data: any): MarkCustomerInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new MarkCustomerInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactGroupId"] = this.contactGroupId;
-        data["starId"] = this.starId;
-        return data; 
-    }
-}
-
-export interface IMarkCustomerInput {
-    contactGroupId: number | undefined;
-    starId: number | undefined;
-}
-
-export class MarkCustomersInput implements IMarkCustomersInput {
-    customerIds!: number[] | undefined;
-    starId!: number | undefined;
-
-    constructor(data?: IMarkCustomersInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
-            }
-            this.starId = data["starId"];
-        }
-    }
-
-    static fromJS(data: any): MarkCustomersInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new MarkCustomersInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
-        }
-        data["starId"] = this.starId;
-        return data; 
-    }
-}
-
-export interface IMarkCustomersInput {
-    customerIds: number[] | undefined;
-    starId: number | undefined;
-}
-
-export class UpdateCustomerTagsInput implements IUpdateCustomerTagsInput {
-    contactGroupId!: number | undefined;
-    tags!: CustomerTagInput[] | undefined;
-
-    constructor(data?: IUpdateCustomerTagsInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactGroupId = data["contactGroupId"];
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(CustomerTagInput.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): UpdateCustomerTagsInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCustomerTagsInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactGroupId"] = this.contactGroupId;
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IUpdateCustomerTagsInput {
-    contactGroupId: number | undefined;
-    tags: CustomerTagInput[] | undefined;
-}
-
-export class TagCustomersInput implements ITagCustomersInput {
-    customerIds!: number[] | undefined;
-    tags!: CustomerTagInput[] | undefined;
-
-    constructor(data?: ITagCustomersInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
-            }
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(CustomerTagInput.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): TagCustomersInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new TagCustomersInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
-        }
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ITagCustomersInput {
-    customerIds: number[] | undefined;
-    tags: CustomerTagInput[] | undefined;
-}
-
-export class UntagCustomersInput implements IUntagCustomersInput {
-    customerIds!: number[] | undefined;
-    tagIds!: number[] | undefined;
-
-    constructor(data?: IUntagCustomersInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
-            }
-            if (data["tagIds"] && data["tagIds"].constructor === Array) {
-                this.tagIds = [];
-                for (let item of data["tagIds"])
-                    this.tagIds.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): UntagCustomersInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UntagCustomersInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
-        }
-        if (this.tagIds && this.tagIds.constructor === Array) {
-            data["tagIds"] = [];
-            for (let item of this.tagIds)
-                data["tagIds"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface IUntagCustomersInput {
-    customerIds: number[] | undefined;
-    tagIds: number[] | undefined;
-}
-
-export class UpdateCustomerTagInput implements IUpdateCustomerTagInput {
-    id!: number | undefined;
-    name!: string;
-
-    constructor(data?: IUpdateCustomerTagInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCustomerTagInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCustomerTagInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IUpdateCustomerTagInput {
-    id: number | undefined;
-    name: string;
 }
 
 export class AccountTotals implements IAccountTotals {
@@ -40888,8 +40888,8 @@ export interface ISendTestEmailInput {
 
 export class ImportInput implements IImportInput {
     items!: ImportItemInput[] | undefined;
-    lists!: CustomerListInput[] | undefined;
-    tags!: CustomerTagInput[] | undefined;
+    lists!: ContactGroupListInput[] | undefined;
+    tags!: ContactGroupTagInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     starId!: number | undefined;
@@ -40920,12 +40920,12 @@ export class ImportInput implements IImportInput {
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
-                    this.lists.push(CustomerListInput.fromJS(item));
+                    this.lists.push(ContactGroupListInput.fromJS(item));
             }
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
-                    this.tags.push(CustomerTagInput.fromJS(item));
+                    this.tags.push(ContactGroupTagInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
@@ -40980,8 +40980,8 @@ export class ImportInput implements IImportInput {
 
 export interface IImportInput {
     items: ImportItemInput[] | undefined;
-    lists: CustomerListInput[] | undefined;
-    tags: CustomerTagInput[] | undefined;
+    lists: ContactGroupListInput[] | undefined;
+    tags: ContactGroupTagInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     starId: number | undefined;
@@ -42447,11 +42447,11 @@ export class CreateLeadInput implements ICreateLeadInput {
     organizationUnitId!: number | undefined;
     title!: string | undefined;
     organizationWebSite!: string | undefined;
-    tags!: CustomerTagInput[] | undefined;
-    lists!: CustomerListInput[] | undefined;
+    tags!: ContactGroupTagInput[] | undefined;
+    lists!: ContactGroupListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
-    customerTypeId!: string | undefined;
+    contactGroupTypeId!: string | undefined;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -42505,16 +42505,16 @@ export class CreateLeadInput implements ICreateLeadInput {
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
-                    this.tags.push(CustomerTagInput.fromJS(item));
+                    this.tags.push(ContactGroupTagInput.fromJS(item));
             }
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
-                    this.lists.push(CustomerListInput.fromJS(item));
+                    this.lists.push(ContactGroupListInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
-            this.customerTypeId = data["customerTypeId"];
+            this.contactGroupTypeId = data["contactGroupTypeId"];
             this.partnerTypeName = data["partnerTypeName"];
         }
     }
@@ -42577,7 +42577,7 @@ export class CreateLeadInput implements ICreateLeadInput {
         }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
-        data["customerTypeId"] = this.customerTypeId;
+        data["contactGroupTypeId"] = this.contactGroupTypeId;
         data["partnerTypeName"] = this.partnerTypeName;
         return data; 
     }
@@ -42605,11 +42605,11 @@ export interface ICreateLeadInput {
     organizationUnitId: number | undefined;
     title: string | undefined;
     organizationWebSite: string | undefined;
-    tags: CustomerTagInput[] | undefined;
-    lists: CustomerListInput[] | undefined;
+    tags: ContactGroupTagInput[] | undefined;
+    lists: ContactGroupListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
-    customerTypeId: string | undefined;
+    contactGroupTypeId: string | undefined;
     partnerTypeName: string | undefined;
 }
 
@@ -43708,10 +43708,10 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
     pipelines!: PipelineDto[] | undefined;
     leadTypes!: LeadTypeDto[] | undefined;
     users!: UserInfoDto[] | undefined;
-    lists!: CustomerListInfoDto[] | undefined;
-    tags!: CustomerTagInfoDto[] | undefined;
-    ratings!: CustomerRatingInfoDto[] | undefined;
-    stars!: CustomerStarInfoDto[] | undefined;
+    lists!: ContactGroupListInfoDto[] | undefined;
+    tags!: ContactGroupTagInfoDto[] | undefined;
+    ratings!: ContactGroupRatingInfoDto[] | undefined;
+    stars!: ContactGroupStarInfoDto[] | undefined;
 
     constructor(data?: ILeadFiltersInitialData) {
         if (data) {
@@ -43742,22 +43742,22 @@ export class LeadFiltersInitialData implements ILeadFiltersInitialData {
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
-                    this.lists.push(CustomerListInfoDto.fromJS(item));
+                    this.lists.push(ContactGroupListInfoDto.fromJS(item));
             }
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
-                    this.tags.push(CustomerTagInfoDto.fromJS(item));
+                    this.tags.push(ContactGroupTagInfoDto.fromJS(item));
             }
             if (data["ratings"] && data["ratings"].constructor === Array) {
                 this.ratings = [];
                 for (let item of data["ratings"])
-                    this.ratings.push(CustomerRatingInfoDto.fromJS(item));
+                    this.ratings.push(ContactGroupRatingInfoDto.fromJS(item));
             }
             if (data["stars"] && data["stars"].constructor === Array) {
                 this.stars = [];
                 for (let item of data["stars"])
-                    this.stars.push(CustomerStarInfoDto.fromJS(item));
+                    this.stars.push(ContactGroupStarInfoDto.fromJS(item));
             }
         }
     }
@@ -43814,10 +43814,10 @@ export interface ILeadFiltersInitialData {
     pipelines: PipelineDto[] | undefined;
     leadTypes: LeadTypeDto[] | undefined;
     users: UserInfoDto[] | undefined;
-    lists: CustomerListInfoDto[] | undefined;
-    tags: CustomerTagInfoDto[] | undefined;
-    ratings: CustomerRatingInfoDto[] | undefined;
-    stars: CustomerStarInfoDto[] | undefined;
+    lists: ContactGroupListInfoDto[] | undefined;
+    tags: ContactGroupTagInfoDto[] | undefined;
+    ratings: ContactGroupRatingInfoDto[] | undefined;
+    stars: ContactGroupStarInfoDto[] | undefined;
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -45592,9 +45592,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
-    productType!: string | undefined;
-    productId!: string | undefined;
     serviceType!: string | undefined;
+    serviceTypeName!: string | undefined;
+    systemType!: string | undefined;
+    orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
@@ -45615,9 +45616,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
-            this.productType = data["productType"];
-            this.productId = data["productId"];
             this.serviceType = data["serviceType"];
+            this.serviceTypeName = data["serviceTypeName"];
+            this.systemType = data["systemType"];
+            this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
             this.statusCode = data["statusCode"];
             this.status = data["status"];
@@ -45638,9 +45640,10 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
-        data["productType"] = this.productType;
-        data["productId"] = this.productId;
         data["serviceType"] = this.serviceType;
+        data["serviceTypeName"] = this.serviceTypeName;
+        data["systemType"] = this.systemType;
+        data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
@@ -45654,9 +45657,10 @@ export interface IOrderSubscriptionDto {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     fee: number | undefined;
-    productType: string | undefined;
-    productId: string | undefined;
     serviceType: string | undefined;
+    serviceTypeName: string | undefined;
+    systemType: string | undefined;
+    orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
     statusCode: string | undefined;
     status: string | undefined;
@@ -46828,12 +46832,12 @@ export interface IBulkUpdatePartnerTypeInput {
 
 export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
     types!: PartnerTypeDto[] | undefined;
-    statuses!: CustomerStatusDto[] | undefined;
+    statuses!: ContactGroupStatusDto[] | undefined;
     users!: UserInfoDto[] | undefined;
-    lists!: CustomerListInfoDto[] | undefined;
-    tags!: CustomerTagInfoDto[] | undefined;
-    ratings!: CustomerRatingInfoDto[] | undefined;
-    stars!: CustomerStarInfoDto[] | undefined;
+    lists!: ContactGroupListInfoDto[] | undefined;
+    tags!: ContactGroupTagInfoDto[] | undefined;
+    ratings!: ContactGroupRatingInfoDto[] | undefined;
+    stars!: ContactGroupStarInfoDto[] | undefined;
 
     constructor(data?: IPartnerFiltersInitialData) {
         if (data) {
@@ -46854,7 +46858,7 @@ export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
             if (data["statuses"] && data["statuses"].constructor === Array) {
                 this.statuses = [];
                 for (let item of data["statuses"])
-                    this.statuses.push(CustomerStatusDto.fromJS(item));
+                    this.statuses.push(ContactGroupStatusDto.fromJS(item));
             }
             if (data["users"] && data["users"].constructor === Array) {
                 this.users = [];
@@ -46864,22 +46868,22 @@ export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
-                    this.lists.push(CustomerListInfoDto.fromJS(item));
+                    this.lists.push(ContactGroupListInfoDto.fromJS(item));
             }
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
-                    this.tags.push(CustomerTagInfoDto.fromJS(item));
+                    this.tags.push(ContactGroupTagInfoDto.fromJS(item));
             }
             if (data["ratings"] && data["ratings"].constructor === Array) {
                 this.ratings = [];
                 for (let item of data["ratings"])
-                    this.ratings.push(CustomerRatingInfoDto.fromJS(item));
+                    this.ratings.push(ContactGroupRatingInfoDto.fromJS(item));
             }
             if (data["stars"] && data["stars"].constructor === Array) {
                 this.stars = [];
                 for (let item of data["stars"])
-                    this.stars.push(CustomerStarInfoDto.fromJS(item));
+                    this.stars.push(ContactGroupStarInfoDto.fromJS(item));
             }
         }
     }
@@ -46934,12 +46938,12 @@ export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
 
 export interface IPartnerFiltersInitialData {
     types: PartnerTypeDto[] | undefined;
-    statuses: CustomerStatusDto[] | undefined;
+    statuses: ContactGroupStatusDto[] | undefined;
     users: UserInfoDto[] | undefined;
-    lists: CustomerListInfoDto[] | undefined;
-    tags: CustomerTagInfoDto[] | undefined;
-    ratings: CustomerRatingInfoDto[] | undefined;
-    stars: CustomerStarInfoDto[] | undefined;
+    lists: ContactGroupListInfoDto[] | undefined;
+    tags: ContactGroupTagInfoDto[] | undefined;
+    ratings: ContactGroupRatingInfoDto[] | undefined;
+    stars: ContactGroupStarInfoDto[] | undefined;
 }
 
 export class PartnerTypeDto implements IPartnerTypeDto {
@@ -53610,11 +53614,11 @@ export interface IInviteUserInput {
     tenantHostType: InviteUserInputTenantHostType | undefined;
 }
 
-export class AssignCustomerInput implements IAssignCustomerInput {
+export class AssignContactGroupInput implements IAssignContactGroupInput {
     contactGroupId!: number | undefined;
     userId!: number | undefined;
 
-    constructor(data?: IAssignCustomerInput) {
+    constructor(data?: IAssignContactGroupInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -53630,9 +53634,9 @@ export class AssignCustomerInput implements IAssignCustomerInput {
         }
     }
 
-    static fromJS(data: any): AssignCustomerInput {
+    static fromJS(data: any): AssignContactGroupInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignCustomerInput();
+        let result = new AssignContactGroupInput();
         result.init(data);
         return result;
     }
@@ -53645,16 +53649,16 @@ export class AssignCustomerInput implements IAssignCustomerInput {
     }
 }
 
-export interface IAssignCustomerInput {
+export interface IAssignContactGroupInput {
     contactGroupId: number | undefined;
     userId: number | undefined;
 }
 
-export class AssignCustomersInput implements IAssignCustomersInput {
-    customerIds!: number[] | undefined;
+export class AssignContactGroupsInput implements IAssignContactGroupsInput {
+    contactGroupIds!: number[] | undefined;
     userId!: number | undefined;
 
-    constructor(data?: IAssignCustomersInput) {
+    constructor(data?: IAssignContactGroupsInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -53665,36 +53669,36 @@ export class AssignCustomersInput implements IAssignCustomersInput {
 
     init(data?: any) {
         if (data) {
-            if (data["customerIds"] && data["customerIds"].constructor === Array) {
-                this.customerIds = [];
-                for (let item of data["customerIds"])
-                    this.customerIds.push(item);
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
             }
             this.userId = data["userId"];
         }
     }
 
-    static fromJS(data: any): AssignCustomersInput {
+    static fromJS(data: any): AssignContactGroupsInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignCustomersInput();
+        let result = new AssignContactGroupsInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.customerIds && this.customerIds.constructor === Array) {
-            data["customerIds"] = [];
-            for (let item of this.customerIds)
-                data["customerIds"].push(item);
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
         }
         data["userId"] = this.userId;
         return data; 
     }
 }
 
-export interface IAssignCustomersInput {
-    customerIds: number[] | undefined;
+export interface IAssignContactGroupsInput {
+    contactGroupIds: number[] | undefined;
     userId: number | undefined;
 }
 

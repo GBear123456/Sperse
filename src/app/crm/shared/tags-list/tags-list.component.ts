@@ -15,13 +15,13 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-import { CustomerTagsServiceProxy, CustomerTagInfoDto, CustomerTagInput, UntagCustomersInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupTagsServiceProxy, ContactGroupTagInfoDto, ContactGroupTagInput, UntagContactGroupsInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-tags-list',
   templateUrl: './tags-list.component.html',
   styleUrls: ['./tags-list.component.less'],
-  providers: [ CustomerTagsServiceProxy ]
+  providers: [ ContactGroupTagsServiceProxy ]
 })
 export class TagsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
@@ -34,7 +34,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
     get selectedItems() {
         return this.selectedTags.map(item => {
-            return CustomerTagInput.fromJS(_.findWhere(this.list, {id: item}));
+            return ContactGroupTagInput.fromJS(_.findWhere(this.list, {id: item}));
         });
     }
     @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
@@ -53,7 +53,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _filterService: FiltersService,
-        private _tagsService: CustomerTagsServiceProxy,
+        private _tagsService: ContactGroupTagsServiceProxy,
         private store$: Store<CrmStoreState.CrmState>,
         private actions$: ActionsSubject
     ) {
@@ -89,12 +89,12 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     process(isRemove: boolean) {
-        let customerIds = this.selectedKeys;
+        let contactGroupIds = this.selectedKeys;
         let tags = this.selectedItems;
         if (this.bulkUpdateMode) {
             if (isRemove)
-                this._tagsService.untagCustomers(UntagCustomersInput.fromJS({
-                    customerIds: customerIds,
+                this._tagsService.untagContactGroups(UntagContactGroupsInput.fromJS({
+                    contactGroupIds: contactGroupIds,
                     tagIds: this.selectedTags
                 })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
@@ -103,10 +103,10 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 });
             else {
                 this.store$.dispatch(new TagsStoreActions.AddTag({
-                    customersIds: customerIds,
+                    contactGroupIds: contactGroupIds,
                     tags: tags,
                     successMessage: this.l('TagsAssigned'),
-                    serviceMethodName: 'tagCustomers'
+                    serviceMethodName: 'tagContactGroups'
                 }));
 
                 this.actions$.pipe(
@@ -117,10 +117,10 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             }
         } else
             this.store$.dispatch(new TagsStoreActions.AddTag({
-                customersIds: [customerIds[0]],
+                contactGroupIds: [contactGroupIds[0]],
                 tags: tags,
                 successMessage: this.l('CustomerTagsUpdated'),
-                serviceMethodName: 'updateCustomersTags'
+                serviceMethodName: 'updateContactGroupTags'
             }));
     }
 
@@ -138,7 +138,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this.store$.pipe(select(TagsStoreSelectors.getTagsWithParent)).subscribe((tags: CustomerTagInfoDto[]) => {
+        this.store$.pipe(select(TagsStoreSelectors.getTagsWithParent)).subscribe((tags: ContactGroupTagInfoDto[]) => {
             this.list = tags;
         });
     }

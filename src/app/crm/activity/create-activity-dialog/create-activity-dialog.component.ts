@@ -187,7 +187,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
             orderId: this.data.appointment.OrderId,
-            contactGroupId: this.data.appointment.ContactGroupId
+            customerId: this.data.appointment.CustomerId
         }
     }
 

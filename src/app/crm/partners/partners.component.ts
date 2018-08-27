@@ -28,7 +28,7 @@ import {
     TagsStoreSelectors
 } from '@app/crm/shared/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -50,7 +50,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { CustomerStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactGroupStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -80,7 +80,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
-    statuses: CustomerStatusDto[];
+    statuses: ContactGroupStatusDto[];
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelTypes: FilterModel;
@@ -202,7 +202,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             closeOnNavigation: false,
             data: {
                 refreshParent: this.refreshDataGrid.bind(this),
-                customerType: CustomerType.Partner
+                customerType: ContactGroupType.Partner
             }
         }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
@@ -618,9 +618,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     updatePartnerStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateCustomerStatuses(
+        this._clientService.updateContactGroupStatuses(
             selectedIds,
-            CustomerType.Partner,
+            ContactGroupType.Partner,
             status.id,
             () => {
                 this.refreshDataGrid();
