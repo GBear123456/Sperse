@@ -50,6 +50,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
 
+    @Input() totalsURI: string;
     @Input() selectFields: string[];
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
@@ -218,7 +219,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!dataSource)
             dataSource = this._dataSources[stage.name] =
                 new DataSource(_.extend(this._dataSource, {
-                    //requireTotalCount: false,
+                    requireTotalCount: !this.totalsURI,
                     select: this.selectFields
                 }));
 
@@ -235,14 +236,36 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         dataSource.load().done((leads) => {
             stage['leads'] = page && oneStageOnly ? _.uniqBy(
                 (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
-            stage['total'] = dataSource.totalCount();
-            stage['full'] = stage['total'] <= stage['leads'].length;
-            if (oneStageOnly || this.isAllStagesLoaded())
+            if (oneStageOnly || this.isAllStagesLoaded()) {
+                this.totalsURI && this.processTotalsRequest();
                 setTimeout(() => this.finishLoading(), 1000);
+            }
         });
 
         if (!oneStageOnly && stages[index + 1])
             this.loadStagesLeads(page, index + 1);
+    }
+
+    processTotalsRequest() {
+        (new DataSource({
+            requireTotalCount: false,
+            store: {
+                type: 'odata',
+                url: this.getODataUrl(this.totalsURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                paginate: false
+            }
+        })).load().done((res) => { 
+            let stages = res.pop();            
+            stages && this.stages.forEach((stage) => {
+                stage['total'] = stages[stage.id];
+                stage['full'] = stage['total'] 
+                    <= stage['leads'].length;
+            });
+        });
     }
 
     isAllStagesLoaded() {
