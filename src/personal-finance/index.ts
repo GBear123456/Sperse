@@ -1,2 +1,2 @@
-export * from './credit-reports.component';
-export * from './credit-reports.module';
+export * from './personal-finance.component';
+export * from './personal-finance.module';

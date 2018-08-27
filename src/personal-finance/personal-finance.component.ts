@@ -10,10 +10,10 @@ import * as moment from 'moment';
 declare const Typekit: any;
 
 @Component({
-    templateUrl: './credit-reports.component.html',
-    styleUrls: ['./credit-reports.component.less']
+    templateUrl: './personal-finance.component.html',
+    styleUrls: ['./personal-finance.component.less']
 })
-export class CreditReportsComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class PersoanlFinanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
     private viewContainerRef: ViewContainerRef;
     private router: Router;

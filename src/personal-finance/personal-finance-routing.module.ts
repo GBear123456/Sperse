@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { CreditReportsComponent } from './credit-reports.component';
+import { PersoanlFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
@@ -17,17 +17,17 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                 children: [
                     {
                         path: '',
-                        loadChildren: 'credit-reports/landings/landing.module#LandingModule',
+                        loadChildren: 'personal-finance/landings/landing.module#LandingModule',
                         data: { preload: true }
                     },
                     {
                         path: 'member-area',
-                        component: CreditReportsComponent,
+                        component: PersoanlFinanceComponent,
                         canActivateChild: [CreditReportsRouteGuard],
                         children: [
                             {
                                 path: '',
-                                loadChildren: 'credit-reports/member-area/member-area.module#MemberAreaModule', //Lazy load module
+                                loadChildren: 'personal-finance/member-area/member-area.module#MemberAreaModule', //Lazy load module
                                 data: { preload: true }
                             }
                         ]
