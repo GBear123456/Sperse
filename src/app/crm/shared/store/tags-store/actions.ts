@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { CustomerTagInfoDto, CustomerTagInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupTagInfoDto, ContactGroupTagInput } from '@shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
     LOAD_REQUEST       = '[Tags] Load Request',
@@ -28,14 +28,14 @@ export class LoadFailureAction implements Action {
 
 export class LoadSuccessAction implements Action {
     readonly type = ActionTypes.LOAD_SUCCESS;
-    constructor(public payload: CustomerTagInfoDto[]) {}
+    constructor(public payload: ContactGroupTagInfoDto[]) {}
 }
 
 export class AddTag implements Action {
     readonly type = ActionTypes.ADD_TAG;
     constructor(public payload: {
-        customersIds: number[],
-        tags: CustomerTagInput[],
+        contactGroupIds: number[],
+        tags: ContactGroupTagInput[],
         successMessage: string,
         serviceMethodName: string
     }) {}
@@ -44,8 +44,8 @@ export class AddTag implements Action {
 export class AddTagSuccess implements Action {
     readonly type = ActionTypes.ADD_TAG_SUCCESS;
     constructor(public payload: {
-        customersIds: number[],
-        tags: CustomerTagInput[],
+        contactGroupIds: number[],
+        tags: ContactGroupTagInput[],
         successMessage: string,
         serviceMethodName: string
     }) {}

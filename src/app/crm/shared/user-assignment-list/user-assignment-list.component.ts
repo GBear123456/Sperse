@@ -3,7 +3,7 @@ import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AssignCustomerInput, AssignCustomersInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AssignContactGroupInput, AssignContactGroupsInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { finalize } from 'rxjs/operators';
@@ -97,8 +97,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     process() {
         if (this.bulkUpdateMode)
-            this._userAssignmentService.assignCustomers(AssignCustomersInput.fromJS({
-                customerIds: this.selectedKeys,
+            this._userAssignmentService.assignContactGroups(AssignContactGroupsInput.fromJS({
+                contactGroupIds: this.selectedKeys,
                 userId: this.selectedItemKey
             })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
@@ -106,7 +106,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                 this.notify.success(this.l('UserAssigned'));
             });
         else
-            this._userAssignmentService.assignCustomer(AssignCustomerInput.fromJS({
+            this._userAssignmentService.assignContactGroup(AssignContactGroupInput.fromJS({
                 contactGroupId: this.selectedKeys[0],
                 userId: this.selectedItemKey
             })).subscribe((result) => {

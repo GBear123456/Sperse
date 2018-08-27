@@ -13,14 +13,14 @@ import { CrmStoreState, ListsStoreActions, ListsStoreSelectors } from '@app/crm/
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-import { CustomerListsServiceProxy, CustomerListInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupListsServiceProxy, ContactGroupListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 
 @Component({
   selector: 'crm-lists-list',
   templateUrl: './lists-list.component.html',
   styleUrls: ['./lists-list.component.less'],
-  providers: [ CustomerListsServiceProxy ]
+  providers: [ ContactGroupListsServiceProxy ]
 })
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
@@ -33,7 +33,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
     get selectedItems() {
         return this.selectedLists.map(item => {
-            return CustomerListInput.fromJS(_.findWhere(this.list, {id: item}));
+            return ContactGroupListInput.fromJS(_.findWhere(this.list, {id: item}));
         }).filter(Boolean);
     }
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -51,7 +51,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _filterService: FiltersService,
-        private _listsService: CustomerListsServiceProxy,
+        private _listsService: ContactGroupListsServiceProxy,
         private store$: Store<CrmStoreState.CrmState>,
         private actions$: ActionsSubject
     ) {
@@ -88,11 +88,11 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     process(isRemove: boolean) {
-        let customerIds = this.selectedKeys;
+        let contactGroupIds = this.selectedKeys;
         let lists = this.selectedItems;
         if (this.bulkUpdateMode) {
             if (isRemove)
-                this._listsService.removeCustomersFromLists(customerIds, this.selectedLists
+                this._listsService.removeContactGroupsFromLists(contactGroupIds, this.selectedLists
                 ).pipe(finalize(() => {
                     this.listComponent.deselectAll();
                 })).subscribe((result) => {
@@ -100,10 +100,10 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 });
             else {
                 this.store$.dispatch(new ListsStoreActions.AddList({
-                    customersIds: customerIds,
+                    contactGroupIds: contactGroupIds,
                     lists: lists,
                     successMessage: this.l('ListsAssigned'),
-                    serviceMethodName: 'addCustomersToLists'
+                    serviceMethodName: 'addContactGroupsToLists'
                 }));
 
                 this.actions$.pipe(
@@ -114,10 +114,10 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             }
         } else
             this.store$.dispatch(new ListsStoreActions.AddList({
-                customersIds: [customerIds[0]],
+                contactGroupIds: [contactGroupIds[0]],
                 lists: lists,
                 successMessage: this.l('CustomerTagsUpdated'),
-                serviceMethodName: 'updateCustomersTags'
+                serviceMethodName: 'updateContactGroupLists'
             }));
     }
 

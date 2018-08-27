@@ -119,13 +119,13 @@ export class ContactTypes {
     static Business = 'business';
 }
 
-export class CustomerStatus {
+export class ContactGroupStatus {
     static Prospective = 'P';
     static Active = 'A';
     static Inactive = 'I';
 }
 
-export class CustomerType {
+export class ContactGroupType {
     static Client = 'C';
     static Partner = 'P';
 }

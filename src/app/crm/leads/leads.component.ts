@@ -17,7 +17,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, CustomerType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     AssignedUsersStoreSelectors,
@@ -77,8 +77,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._selectedLeads = leads;
         this.selectedClientKeys = [];
         leads.forEach((lead) => {
-            if (lead && lead.ContactGroupId)
-                this.selectedClientKeys.push(lead.ContactGroupId);
+            if (lead && lead.CustomerId)
+                this.selectedClientKeys.push(lead.CustomerId);
         });
         if (this._appService.toolbarConfig)
             this.initToolbarConfig();
@@ -662,7 +662,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.refreshDataGrid(quite, stageId);
                 },
                 isInLeadMode: true,
-                customerType: CustomerType.Client
+                customerType: ContactGroupType.Client
             }
         });
     }
@@ -702,7 +702,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     showLeadDetails(event) {
         let leadId = event.data && event.data.Id;
-        let clientId = event.data && event.data.ContactGroupId;
+        let clientId = event.data && event.data.CustomerId;
         if (!leadId || !clientId)
             return;
 
@@ -805,9 +805,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onCardClick(lead) {
-        if (lead && lead.ContactGroupId && lead.Id)
+        if (lead && lead.CustomerId && lead.Id)
             this._router.navigate(
-                ['app/crm/client', lead.ContactGroupId, 'lead', lead.Id, 'contact-information'], {
+                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
                     queryParams: {
                         referrer: 'app/crm/leads',
                         dataLayoutType: DataLayoutType.Pipeline

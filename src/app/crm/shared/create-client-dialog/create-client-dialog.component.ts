@@ -16,10 +16,10 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes, CustomerType } from '@shared/AppEnums';
-import { CustomersServiceProxy, CreateCustomerInput, ContactAddressServiceProxy,  CreateContactEmailInput,
+import { ContactTypes, ContactGroupType } from '@shared/AppEnums';
+import { ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy,  CreateContactEmailInput,
 CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-ContactPhoneServiceProxy, CountryServiceProxy, SimilarCustomerOutput, ContactPhotoInput,
+ContactPhoneServiceProxy, CountryServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
 PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
@@ -36,7 +36,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ CustomersServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy,
+    providers: [ ContactGroupServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy,
         PartnerServiceProxy, PartnerTypeServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
@@ -134,7 +134,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }
     };
 
-    similarCustomers: SimilarCustomerOutput[];
+    similarCustomers: SimilarContactGroupOutput[];
     similarCustomersDialog: any;
     toolbarConfig = [];
 
@@ -146,7 +146,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         public dialog: MatDialog,
         private _cacheService: CacheService,
         private _countryService: CountryServiceProxy,
-        private _customersService: CustomersServiceProxy,
+        private _contactGroupService: ContactGroupServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -196,7 +196,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         options: {
                             accessKey: 'CreateLeadStage'
                         }
-                    } : this.data.customerType == CustomerType.Client ? {
+                    } : this.data.customerType == ContactGroupType.Client ? {
                         name: 'status',
                         widget: 'dxDropDownMenu',
                         disabled: true,
@@ -329,7 +329,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             lists: lists,
             tags: tags,
             ratingId: ratingId,
-            customerTypeId: this.data.customerType,
+            contactGroupTypeId: this.data.customerType,
             partnerTypeName: this.partnerTypeName
         };
 
@@ -340,7 +340,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.contactGroupId, result.id));
         else
-            this._customersService.createCustomer(CreateCustomerInput.fromJS(dataObj))
+            this._contactGroupService.createContactGroup(CreateContactGroupInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
@@ -465,7 +465,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     redirectToClientDetails(id: number, leadId?: number) {
         setTimeout(() => {
-            let path = this.data.customerType == CustomerType.Partner ?
+            let path = this.data.customerType == ContactGroupType.Partner ?
                 `app/crm/partner/${id}/contact-information` :
                 `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
             this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
@@ -519,7 +519,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkSimilarCustomers() {
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this._customersService.getSimilarCustomers(
+            this._contactGroupService.getSimilarContactGroups(
                 this.person.namePrefix,
                 this.person.firstName,
                 this.person.middleName,
