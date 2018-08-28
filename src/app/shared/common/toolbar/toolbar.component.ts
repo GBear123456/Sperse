@@ -311,7 +311,6 @@ export class ToolBarComponent extends AppComponentBase {
         if (this._config)
             this._config.forEach((group) => {
                 let count = group.items.length;
-                console.log(group);
                 group.items.forEach((item, index) => {
                     this.initDropDownMenu(item);
                     let isLast = count == index + 1;
