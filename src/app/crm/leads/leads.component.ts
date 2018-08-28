@@ -422,7 +422,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
@@ -468,7 +470,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'delete',
                         disabled: !this.selectedLeads.length,
@@ -477,7 +481,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -507,6 +513,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
@@ -514,19 +521,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
-/*
-                    {
-                        name: 'box',
-                        action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                        options: {
-                            checkPressed: () => {
-                                return (this.dataLayoutType == DataLayoutType.Box);
-                            },
-                        }
-                    },
-*/
                     {
                         name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
@@ -549,6 +546,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'fullscreen',

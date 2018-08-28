@@ -565,7 +565,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     initToolbarConfig() {
         this.toolbarConfig = [
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         text: '',
                         name: 'select-box',

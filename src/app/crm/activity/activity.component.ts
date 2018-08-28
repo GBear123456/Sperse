@@ -185,46 +185,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     }
                 ]
             },
-/*
-            {
-                location: 'before', items: [
-                    {
-                        widget: 'dxDateBox',
-                        visible: !this.showPipeline,
-                        options: {
-                            acceptCustomValue: false,
-                            adaptivityEnabled: true,
-                            value: this.currentDate,
-                            onValueChanged: (event) => {
-                                this.currentDate = event.value;
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after', items: [
-                    {
-                        name: 'select-box',
-                        visible: !this.showPipeline,
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            width: 120,
-                            selectedIndex: this.currentView.length - 3,
-                            onSelectionChanged: (event) => {
-                                this.currentView = event.itemData.text.toLowerCase();
-                            },
-                            items: [
-                                { text: this.l('Day') },
-                                { text: this.l('Week') },
-                                { text: this.l('Month') },
-                                { text: this.l('Agenda') }
-                            ]
-                        }
-                    }
-                ]
-            },
-*/
             {
                 location: 'after',
                 areItemsDependent: true,

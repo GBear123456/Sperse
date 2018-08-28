@@ -16,23 +16,19 @@ export class ToolBarComponent extends AppComponentBase {
     @Input()
     set config(config: ToolbarGroupModel[]) {
         this._config = config;
-        this.toogleToolbarMenu();
         this.initToolbarItems();
     }
     @HostBinding('style.display') display: string;
     public items = [];
     public responsiveItems = [];
     public options = {};
-    public showAdaptiveToolbar: boolean;
     private supportedButtons = {
         search: {
-            accessKey: 'search',
-            adaptive: false
+            accessKey: 'search'
         },
         filters: {
             hint: this.l('Filters'),
-            accessKey: 'filters',
-            adaptive: false
+            accessKey: 'filters'
         },
         expandTree: {
             text: this.l('Expand'),
@@ -227,7 +223,6 @@ export class ToolBarComponent extends AppComponentBase {
         super(injector);
     }
     @HostListener('window:resize') onResize() {
-        this.toogleToolbarMenu();
         this.initToolbarItems();
     }
 
@@ -251,7 +246,7 @@ export class ToolBarComponent extends AppComponentBase {
     getDropDownItemTemplate(link, width) {
         return {
             item: '<div class="toolbar-dropdown-item" ' + (width ? 'style="width:' + width + 'px;"' : '') + '>' +
-            (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
+                (link.icon ? '<img style="margin-right: 15px; position: relative; top: -2px;" src="' + this.getImgURI(link.icon) + '">' : '') + link.text + '</div>',
             option: '<div><input type="checkbox" id="' + link.name + '" class="dropdown-option-checkbox"' + (link.checked || link.checked == undefined ? ' checked' : '') + '><label for="' + link.name + '">' + link.text + '</label></div>',
             downloadOptions: '<div class="toolbar-download-options" onclick="event.stopPropagation()">' +
                 '<div><input type="radio" name="export" value="all" checked><label>' + this.l('Export all data') + '</label></div>' +
@@ -269,14 +264,14 @@ export class ToolBarComponent extends AppComponentBase {
 
     getElementAttr(item) {
         if (item.name == 'select-box') {
-            var items = item.options['items'];
+            let items = item.options['items'];
             return {
                 'select-caption': item.text ? item.text + ':' : '',
                 'select-value': items && items.length ? (
-                                    item.options.selectedIndex !== undefined ?
-                                    item.options['items'][item.options.selectedIndex].text :
-                                    item.options['items'][0].text
-                                ) : ''
+                    item.options.selectedIndex !== undefined ?
+                        item.options['items'][item.options.selectedIndex].text :
+                        item.options['items'][0].text
+                ) : ''
             };
         }
         return item.attr || {};
@@ -289,12 +284,6 @@ export class ToolBarComponent extends AppComponentBase {
         if ($event.itemData.options.mouseout)
             $($event.itemElement).on('mouseout',
                 $event.itemData.options.mouseout);
-    }
-
-    toogleToolbarMenu() {
-        this.showAdaptiveToolbar = this.adaptive && window.innerWidth < 1500;
-        if (this.showAdaptiveToolbar)
-            this.display = 'flex';
     }
 
     initDropDownMenu(item) {
@@ -319,17 +308,18 @@ export class ToolBarComponent extends AppComponentBase {
 
     initToolbarItems() {
         let items = [];
-        let responsiveItems = [];
-        this._config && this._config.forEach((group) => {
-            let count = group.items.length;
-            group.items.forEach((item, index) => {
-                this.initDropDownMenu(item);
-                let isLast = count == index + 1;
-                let internalConfig = this.supportedButtons[item.name];
-                let mergedConfig = _.extend(internalConfig || {}, item.options);
-                if (mergedConfig.adaptive === false || !this.showAdaptiveToolbar) {
+        if (this._config)
+            this._config.forEach((group) => {
+                let count = group.items.length;
+                console.log(group);
+                group.items.forEach((item, index) => {
+                    this.initDropDownMenu(item);
+                    let isLast = count == index + 1;
+                    let internalConfig = this.supportedButtons[item.name];
+                    let mergedConfig = _.extend(internalConfig || {}, item.options);
                     items.push({
                         location: group.location,
+                        locateInMenu: group.locateInMenu,
                         disabled: item.disabled,
                         visible: item.visible,
                         widget: (item.text !== undefined || item.html !== undefined) && !item.widget ? null : item.widget || 'dxButton',
@@ -347,28 +337,8 @@ export class ToolBarComponent extends AppComponentBase {
                             }, this.getElementAttr(item))
                         }, mergedConfig)
                     });
-                }
-                if (this.showAdaptiveToolbar && mergedConfig.adaptive !== false) {
-                    let responsiveSubitems;
-                    if (item.options && item.options.items) {
-                        /** clone array */
-                        responsiveSubitems = item.options.items.map(a => ({...a}));
-                        responsiveSubitems.forEach((responsiveSubitem, subitemIndex) => {
-                            responsiveSubitem.itemIndex = subitemIndex;
-                            if (responsiveSubitem.html)
-                                delete responsiveSubitem.text;
-                                delete responsiveSubitem.icon;
-                        });
-                    }
-                    responsiveItems.push({
-                        text: item.text || mergedConfig.text || mergedConfig.hint,
-                        items: responsiveSubitems,
-                        onClick: item.action
-                    });
-                }
+                });
             });
-        });
         this.items = items;
-        this.responsiveItems = responsiveItems;
     }
 }

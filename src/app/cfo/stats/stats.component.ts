@@ -204,12 +204,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                         }
                     ]
                 },
-                // {
-                //     location: 'before',
-                //     items: [
-                //         { name: 'back' }
-                //     ]
-                // },
                 {
                     location: 'before',
                     items: [
@@ -224,7 +218,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                 selectedIndex: this.forecastModelsObj.selectedItemIndex,
                                 height: 39,
                                 width: 243,
-                                adaptive: false,
                                 onSelectionChanged: (e) => {
                                     if (e) {
                                         this.changeSelectedForecastModel(e);
@@ -237,6 +230,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 },
                 {
                     location: 'before',
+                    locateInMenu: 'auto',
                     items: [
                         {
                             name: 'reportPeriod',
@@ -264,6 +258,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 },
                 {
                     location: 'after',
+                    locateInMenu: 'auto',
                     items: [
                         {
                             name: 'download',
@@ -304,6 +299,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 },
                 {
                     location: 'after',
+                    locateInMenu: 'auto',
                     items: [
                         {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
                     ]

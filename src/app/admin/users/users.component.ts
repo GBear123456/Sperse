@@ -202,7 +202,9 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -232,6 +234,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
@@ -239,6 +242,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'fullscreen',

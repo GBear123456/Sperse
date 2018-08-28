@@ -445,7 +445,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             },
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
@@ -498,7 +500,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -528,6 +532,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
@@ -535,6 +540,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'fullscreen',

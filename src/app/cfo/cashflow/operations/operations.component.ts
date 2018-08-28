@@ -105,6 +105,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 location: 'before',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'reportPeriod',
@@ -138,6 +139,7 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 location: 'before',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'bankAccountSelect',
@@ -157,88 +159,17 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 location: 'before',
+                locateInMenu: 'auto',
                 items: [
-                    //{
-                    //    name: 'expandRows',
-                    //    options: {
-                    //        hint: this.l('Expand rows'),
-                    //        items: [{
-                    //            action: this.toggleRows.bind(this),
-                    //            text: this.l('Level 1'),
-                    //        }, {
-                    //            action: this.toggleRows.bind(this),
-                    //            text: this.l('Level 2'),
-                    //        }, {
-                    //            action: this.toggleRows.bind(this),
-                    //            text: this.l('Level 3'),
-                    //        }, {
-                    //            action: this.toggleRows.bind(this),
-                    //            text: this.l('All'),
-                    //        }, {
-                    //            action: this.toggleRows.bind(this),
-                    //            text: this.l('None'),
-                    //        }]
-                    //    }
-                    //},
                     {
                         name: 'rules',
                         action: this.preferencesDialog.bind(this)
                     }
                 ]
             },
-            // {
-            //     location: 'after',
-            //     items: [
-            //         {
-            //             name: 'flag',
-            //             widget: 'dxDropDownMenu',
-            //             options: {
-            //                 width: 62,
-            //                 hint: this.l('Flags'),
-            //                 items: [{
-            //                     action: Function(),
-            //                     text: 'Item one'
-            //                 }, {
-            //                     action: Function(),
-            //                     text: 'Item two'
-            //                 }]
-            //             }
-            //         },
-            //         {
-            //             name: 'pen',
-            //             widget: 'dxDropDownMenu',
-            //             options: {
-            //                 width: 62,
-            //                 hint: this.l('Tags'),
-            //                 items: [{
-            //                     action: Function(),
-            //                     text: 'Item one'
-            //                 }, {
-            //                     action: Function(),
-            //                     text: 'Item two'
-            //                 }]
-            //             }
-            //         },
-            //         {
-            //             name: 'more',
-            //             widget: 'dxDropDownMenu',
-            //             text: this.l('More'),
-            //             options: {
-            //                 width: 66,
-            //                 hint: this.l('More'),
-            //                 items: [{
-            //                     action: Function(),
-            //                     text: 'Item one'
-            //                 }, {
-            //                     action: Function(),
-            //                     text: 'Item two'
-            //                 }]
-            //             }
-            //         }
-            //     ]
-            // },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'download',
@@ -277,10 +208,12 @@ export class OperationsComponent extends AppComponentBase implements OnDestroy {
                 ]
             },
             {
-                location: 'after', items: [
-                {name: 'comments'},
-                {name: 'fullscreen', action: this.fullscreen.bind(this)}
-            ]
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    { name: 'comments' },
+                    { name: 'fullscreen', action: this.fullscreen.bind(this) }
+                ]
             },
         ]);
     }

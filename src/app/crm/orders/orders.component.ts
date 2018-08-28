@@ -322,12 +322,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             },
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     { name: 'assign' }, { name: 'status' }, { name: 'delete' }
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -357,6 +361,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     // {
