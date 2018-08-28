@@ -10,7 +10,6 @@ import * as _ from 'underscore';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
-    @Input('adaptive') adaptive = false;
     @Input('compact') compact = false;
     private _config: ToolbarGroupModel[];
     @Input()
