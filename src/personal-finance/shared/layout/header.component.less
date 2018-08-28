@@ -1,9 +1,28 @@
 @import url(_settings);
 
+member-area-navigation {
+    flex-grow: 2;
+    flex-basis: unset;
+    order: 2;
+    width: calc(~"100% - 396px");
+}
+
 .page-header.navbar {
+    flex-wrap: nowrap;
 
     .page-top {
+        width: auto!important;
+        min-width: 150px;
+        clear: none!important;
+        background: none!important;
+        order: 3;
+
         #m_header_topbar {
+            width: auto!important;
+            height: auto!important;
+            margin-top: 0px!important;
+            box-shadow: none!important;
+
             .m-topbar__nav.m-nav {
                 margin: 0px !important;
                 padding-top: 6px;
@@ -62,11 +81,11 @@
     }
 
     .page-logo {
-        float: left;
         position: relative;
         max-width: 310px;
-        width: 220px;
+        min-width: 220px;
         height: 60px;
+        order: 1;
 
         a {
             max-width: 200px;
@@ -108,84 +127,5 @@
 
     .dropdown-language {
         display: none !important;
-    }
-}
-
-
-.center-nav {
-    .member-area-navigation {
-        padding-left: 0;
-        list-style-type: none;
-        text-align: center;
-        width: 100%;
-        display: block;
-        margin: 10px 0 14px;
-
-        li {
-            display: inline-block;
-            padding: 0 20px;
-
-            a {
-                display: block;
-                text-decoration: none;
-                font-family: @lato;
-                font-size: 18px;
-                font-weight: bold;
-                color: @font-color-lightGray;
-                padding: 12px 5px 12px 40px;
-                position: relative;
-
-                img {
-                    position: absolute;
-                    left: 10px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    transition: .2s;
-                    opacity: 1;
-
-                    &.active-img {
-                        opacity: 0;
-                    }
-                }
-
-
-                &::before {
-                    content: '';
-                    border-bottom: solid 4px @orange-color;
-                    transform: scaleX(0);
-                    transition: all 250ms ease-in-out 0s;
-                    position: absolute;
-                    left: 0;
-                    bottom: 0;
-                    width: 100%;
-                }
-
-                &.active,
-                &:hover {
-                    color: @font-color-darkGray;
-
-                    img {
-                        opacity: 0;
-
-                        &.active-img {
-                            opacity: 1;
-                        }
-                    }
-
-                    &::before {
-                        visibility: visible;
-                        transform: scaleX(1);
-                    }
-                }
-            }
-        }
-    }
-}
-
-@media (min-width: 768px) {
-    .navbar-collapse.center-nav {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
     }
 }

@@ -2,8 +2,55 @@
     <div *ngIf="creditReportResult">
         <div *ngIf="!creditReportResult.memberExists; else creditReportBlock">
             <div class="content-wrap select-package">
-                <h2 class="text-center">Select your package</h2>
-                <app-packages></app-packages>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2 class="land-form-title">
+                            <span class="number">1</span><span>{{l('WhatYouGet')}}
+                                <span class="cr-tooltip">
+                                    <img src="/assets/images/credit-report/rank-info-icon.svg" alt="info" width="16" height="16" class="tooltip-img">
+                                    <span class="tooltip-info">{{l('Vantage')}} <a href="javascript:;">{{l('LearnMore')}}</a> {{l('AboutCreditScores')}}
+                                        {{l('FicoScore')}}</span>
+                                </span>
+                            </span>
+                        </h2>
+                        <div class="bordered credit-score-list">
+                            <div class="legend">{{l('CreditScores')}}</div>
+                            <div class="credit-score-item">
+                                <figure>
+                                    <img src="/assets/landing/Experian_logo.png" alt="Experian">
+                                </figure>
+                            </div>
+                            <div class="credit-score-item">
+                                <figure>
+                                    <img src="/assets/landing/TransUnion-Logo.png" alt="TransUnion">
+                                </figure>
+                            </div>
+                            <div class="credit-score-item">
+                                <figure>
+                                    <img src="/assets/landing/equafix-logo.png" alt="Equafix">
+                                </figure>
+                            </div>
+                        </div>
+                        <div class="bordered features-list">
+                            <div class="legend">{{l('Features')}}</div>
+                            <div class="features-item" *ngFor="let item of imgList">
+                                <figure>
+                                    <img src="/assets/landing/{{item.img}}" alt="{{l(item.text)}}">
+                                </figure>
+                                <p>{{l(item.text)}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <h2 class="land-form-title">
+                            <span class="number">2</span>
+                            <span>{{l('SelectYourOption')}}</span>
+                        </h2>
+                        <div class="packages-list">
+                            <app-packages></app-packages>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <ng-template #creditReportBlock>

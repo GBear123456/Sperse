@@ -29,7 +29,7 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { EditionPaymentType } from "@shared/AppEnums";
+import { EditionPaymentType } from '@shared/AppEnums';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -89,6 +89,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             activeImgUrl: 'assets/images/icons/credit-resources-active-icon.svg',
             routerUrl: '/personal-finance/member-area/credit-resources'
         }
+    ];
+    imgList = [
+        {img: 'daily-reports-icon.svg', text: 'CreditMonitorAlerts'},
+        {img: 'interactive-tools-icon.svg', text: 'EducationalResources'},
+        {img: 'TUmonitoring-icon.svg', text: 'TransUnionMonitoring'}
     ];
 
     constructor(
@@ -175,10 +180,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this._sessionService.getCurrentLoginInformations()
-            .subscribe((result: GetCurrentLoginInformationsOutput) => {
-                this.tenant = result.tenant;
-            });
+        // this._sessionService.getCurrentLoginInformations()
+        //     .subscribe((result: GetCurrentLoginInformationsOutput) => {
+        //         this.tenant = result.tenant;
+        //     });
+        this.tenant = this.appSession.tenant;
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {

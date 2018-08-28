@@ -1,16 +1,13 @@
-<div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
+<div class="page-header navbar navbar-fixed-top navbar-light md-shadow-zero-light">
     <div class="page-logo">
         <a routerLink="/" target="_blank">
             <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/landing/green-logo.svg" alt="logo" class="logo-default" width="200" />
             <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-default" width="200" />
         </a>
     </div>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#header-menu" aria-expanded="false">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="page-top">
 
-        <div id="m_header_topbar" class="m-topbar  m-stack m-stack--ver m-stack--general">
+    <div class="page-top">
+        <div id="m_header_topbar" class="m-topbar m-stack m-stack--ver m-stack--general">
             <div class="m-stack__item m-topbar__nav-wrapper">
                 <ul class="m-topbar__nav m-nav m-nav--inline">
                     <li *ngIf="languages.length" class="m-nav__item m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--skin-light m-list-search m-list-search--skin-light m-dropdown--open dropdown-language">
@@ -177,18 +174,6 @@
                                                     </span>
                                                 </a>
                                             </li>
-                                            <!--<li class="m-nav__item" *ngIf="!isGranted('Pages.Administration.UiCustomization')">
-        <a routerLink="admin/ui-customization" class="m-nav__link">
-            <i class="m-nav__link-icon flaticon-medical"></i>
-            <span class="m-nav__link-title">
-                <span class="m-nav__link-wrap">
-                    <span class="m-nav__link-text">
-                        {{l("VisualSettings")}}
-                    </span>
-                </span>
-            </span>
-        </a>
-    </li>-->
                                             <li class="m-nav__item">
                                                 <a href={{helpLink}} target="_blank" class="m-nav__link">
                                                     <i class="m-nav__link-icon flaticon-info"></i>
@@ -215,17 +200,12 @@
             </div>
         </div>
     </div>
-    <div class="collapse navbar-collapse center-nav show" id="header-menu">
-        <ul class="member-area-navigation">
-            <li *ngFor="let item of memberAreaLinks">
-                <a [routerLink]="item.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-                    <img [src]="item.imgUrl" [alt]="l(item.name)">
-                    <img [src]="item.activeImgUrl" [alt]="l(item.name)" class="active-img">
-                    {{l(item.name)}}
-                </a>
-            </li>
-        </ul>
-    </div>
+
+    <member-area-navigation
+        id="header-menu"
+        [memberAreaLinks]="memberAreaLinks">
+    </member-area-navigation>
+
     <div *ngIf="subscriptionStatusBarVisible()"
          [ngClass]="{'hidden': !subscriptionStatusBarVisible()}" class="alert hidden subscription-info">
         <span *ngIf="tenant.isInTrialPeriod && !subscriptionIsExpiringSoon()" [innerHTML]="getTrialSubscriptionNotification()"></span>

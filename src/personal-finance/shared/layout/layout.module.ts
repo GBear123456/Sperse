@@ -14,6 +14,7 @@ import { HeaderComponent } from './header.component';
 import { FooterComponent } from './footer.component';
 import { PagesHeaderComponent } from './pages-header/pages-header.component';
 import { PagesFooterComponent } from './pages-footer/pages-footer.component';
+import { MemberAreaNavigationComponent } from './member-area-navigation/member-area-navigation.component';
 import { SideBarComponent } from './side-bar.component';
 
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
@@ -24,7 +25,8 @@ let COMPONENTS = [
     FooterComponent,
     PagesHeaderComponent,
     PagesFooterComponent,
-    SideBarComponent
+    SideBarComponent,
+    MemberAreaNavigationComponent
 ];
 
 @NgModule({
