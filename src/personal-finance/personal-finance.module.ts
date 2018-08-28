@@ -4,7 +4,7 @@ import { ModalModule, TooltipModule } from 'ngx-bootstrap';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { PersonalFinanceCommonModule } from './shared/common/personal-finance-common.module';
 import { PersonalFinanceRoutingModule } from './personal-finance-routing.module';
-import { PersoanlFinanceComponent } from './personal-finance.component';
+import { PersonalFinanceComponent } from './personal-finance.component';
 import { LayoutModule } from './shared/layout/layout.module';
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
@@ -21,7 +21,7 @@ import { CacheMemoryStorage } from 'ng2-cache-service/dist/src/services/storage/
 
 @NgModule({
     declarations: [
-        PersoanlFinanceComponent,
+        PersonalFinanceComponent,
         TermsOfServiceComponent,
         PrivacyPolicyComponent,
         ContactUsComponent,

@@ -13,7 +13,7 @@ declare const Typekit: any;
     templateUrl: './personal-finance.component.html',
     styleUrls: ['./personal-finance.component.less']
 })
-export class PersoanlFinanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class PersonalFinanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
     private viewContainerRef: ViewContainerRef;
     private router: Router;

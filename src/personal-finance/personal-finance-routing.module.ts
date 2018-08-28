@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PersoanlFinanceComponent } from './personal-finance.component';
+import { PersonalFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
@@ -22,7 +22,7 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                     },
                     {
                         path: 'member-area',
-                        component: PersoanlFinanceComponent,
+                        component: PersonalFinanceComponent,
                         canActivateChild: [CreditReportsRouteGuard],
                         children: [
                             {
