@@ -1,5 +1,4 @@
 ﻿import { Component, OnInit, Injector } from '@angular/core';
-import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -9,14 +8,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 
 export class CreditReportRegFromComponent extends AppComponentBase implements OnInit {
-  
   imgList = [
     {img: 'daily-reports-icon.svg', text: 'CreditMonitorAlerts'},
     {img: 'interactive-tools-icon.svg', text: 'EducationalResources'},
     {img: 'TUmonitoring-icon.svg', text: 'TransUnionMonitoring'}
   ];
   constructor(
-    injector: Injector    
+    injector: Injector
   ) {
     super(injector);
   }

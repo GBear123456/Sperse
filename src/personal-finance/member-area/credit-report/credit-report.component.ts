@@ -21,8 +21,8 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
     today: moment.Moment = moment();
     storage = sessionStorage;
     pdfUrl: SafeUrl;
-    isPdfGenerated: boolean = false;
-    isPdfGenerating: boolean = false;
+    isPdfGenerated = false;
+    isPdfGenerating = false;
 
     menuItems = [
         { name: 'creditScores', class: 'icon-credit-score-menu-icon'},
@@ -38,6 +38,11 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         { name: 'publicInfo', class: 'icon-credit-recommendation-menu-icon' },
         { name: 'creditHistory', class: 'icon-credit-tracker-menu-icon' },
         { name: 'disputeManagement', class: 'icon-dispute-management-menu-icon'},
+    ];
+    imgList = [
+        {img: 'daily-reports-icon.svg', text: 'CreditMonitorAlerts'},
+        {img: 'interactive-tools-icon.svg', text: 'EducationalResources'},
+        {img: 'TUmonitoring-icon.svg', text: 'TransUnionMonitoring'}
     ];
 
     constructor(
