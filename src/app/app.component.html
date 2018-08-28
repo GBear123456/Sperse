@@ -11,7 +11,6 @@
     <contact-info-panel *ngIf="appService.showContactInfoPanel" [data]="appService.contactInfo"></contact-info-panel>
     <app-toolbar
         [config]="appService.toolbarConfig"
-        [adaptive]="appService.toolbarIsAdaptive"
         [hidden]="!appService.toolbarConfig || appService.toolbarIsHidden">
     </app-toolbar>
     <div class="page-content"

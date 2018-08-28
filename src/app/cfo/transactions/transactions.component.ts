@@ -195,8 +195,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             name: 'searchAll',
                             action: this.searchAllClick.bind(this),
                             options: {
-                                text: this.l('Search All'),
-                                adaptive: false
+                                text: this.l('Search All')
                             },
                             attr: {
                                 'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
@@ -207,6 +206,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 },
                 {
                     location: 'before',
+                    locateInMenu: 'auto',
                     items: [
                         {
                             name: 'bankAccountSelect',
@@ -225,8 +225,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     ]
                 },
                 {
-                    location: 'after', items: [
-                        {name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this)},
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'showCompactRowsHeight',
+                            action: this.showCompactRowsHeight.bind(this)
+                        },
                         {
                             name: 'download',
                             widget: 'dxDropDownMenu',
@@ -251,7 +256,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 }, {type: 'downloadOptions'}]
                             }
                         },
-                        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
+                        {
+                            name: 'columnChooser',
+                            action: this.showColumnChooser.bind(this)
+                        }
                     ]
                 }
             ]);

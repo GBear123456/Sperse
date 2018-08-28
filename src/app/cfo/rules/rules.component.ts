@@ -63,7 +63,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                 items: [
                     {
                         name: 'filters',
-                        adaptive: false,
                         action: (event) => {
                             setTimeout(() => {
                                 this.treeList.instance.repaint();
@@ -91,8 +90,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
             },
             {
                 location: 'after', items: [
-                    { name: 'refresh', action: this.refreshList.bind(this), adaptive: false },
-                    { name: 'fullscreen', action: this.fullscreen.bind(this), adaptive: false }
+                    { name: 'refresh', action: this.refreshList.bind(this) },
+                    { name: 'fullscreen', action: this.fullscreen.bind(this) }
                 ]
             }
         ]);

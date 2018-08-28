@@ -407,7 +407,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             },
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
@@ -453,7 +455,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
@@ -483,6 +487,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
@@ -490,6 +495,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 items: [
                     {
                         name: 'fullscreen',

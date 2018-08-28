@@ -1,0 +1,76 @@
+@import "../../_member-area.settings.less";
+.description {
+    font-family: @lato;
+    font-size: 15px;
+    line-height: 1.47;
+    text-align: left;
+    color: #8a969b;
+    margin-top: 0;
+}
+
+.sources {
+    &-list {
+        list-style-type: none;
+        padding-left: 0;
+        
+        li {
+            &:first-child {
+                border-radius: 4px 4px 0 0;
+                border-top: 1px solid #dfdfdf;
+            }
+            &:last-child {
+                border-radius: 0 0 4px 4px;
+            }
+        }
+    }
+    
+    &-item {
+        border: 1px solid #dfdfdf;
+        border-top: 0;
+        padding: 20px 16px;
+    
+        @media all and (min-width: 768px) {
+            .row {
+                display: flex;
+            }
+        }
+        
+        .img {
+            align-self: center;
+            img {
+                margin: 0 auto;
+            }
+            @media all and (max-width: 767px) {
+                margin: 20px auto;
+            }
+        }
+        
+        .content {
+            .title-link {
+                font-family: @lato;
+                font-size: 16px;
+                font-weight: 500;
+                margin-top: 0;
+                
+                a {
+                    text-decoration: none;
+                    color: #3bafd9;
+                    transition: .2s;
+                    
+                    &:hover,
+                    &:focus {
+                        color: darken(#3bafd9, 10%);
+                    }
+                }
+            }
+            
+            .org-description {
+                font-family: @lato;
+                font-size: 15px;
+                line-height: 1.47;
+                color: #8a969b;
+                margin: 0;
+            }
+        }
+    }
+}
