@@ -15,6 +15,7 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
 #gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-header-panel .dx-toolbar {
     height: 25px;
     margin: 0;
+    padding: 0;
 }
 
 #gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel {
