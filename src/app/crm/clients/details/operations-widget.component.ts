@@ -8,10 +8,10 @@ import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
-import { CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { ContactGroupInfoDto } from '@shared/service-proxies/service-proxies';
 import { ClientDetailsService } from './client-details.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CustomerType } from '@shared/AppEnums';
+import { ContactGroupType } from '@shared/AppEnums';
 
 @Component({
     selector: 'operations-widget',
@@ -30,7 +30,7 @@ export class OperationsWidgetComponent implements OnInit {
 
     /*** @todo add localization service */
 
-    @Input() customerInfo: CustomerInfoDto;
+    @Input() customerInfo: ContactGroupInfoDto;
     @Input() clientId: number;
     @Input() customerType: string;
     @Input() leadId: number;
@@ -94,7 +94,7 @@ export class OperationsWidgetComponent implements OnInit {
                 action: this.toggleStatus.bind(this)
             }
         ];
-        if (this.customerType == CustomerType.Partner) {
+        if (this.customerType == ContactGroupType.Partner) {
             items.push({
                 name: 'partnerType',
                 action: this.togglePartnerTypes.bind(this)

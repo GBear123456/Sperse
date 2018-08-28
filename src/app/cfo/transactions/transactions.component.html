@@ -14,8 +14,11 @@
                         </li>
                         <li class="nav-item">
                             <a (click)="toggleTabContent = !toggleTabContent" class="nav-link" [ngClass]="{'active' : !toggleTabContent}">
-                                {{l('Key Phrases')}}
+                                {{l('Key phrases')}}
                             </a>
+                        </li>
+                        <li>
+                            <a class="nav-link close" (click)="categoriesShowed = false">&nbsp;</a>
                         </li>
                     </ul>
                     <categorization
@@ -41,6 +44,7 @@
                         [height]="'calc(100vh - 300px)'"
                         [filterItems]="filterItems"
                         [hidden]="toggleTabContent"
+                        (filterByKey)="searchValueChange($event)"
                         (close)="categoriesShowed = false">
                     </key-phrases>
                 </div>

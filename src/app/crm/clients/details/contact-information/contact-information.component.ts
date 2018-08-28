@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { CustomersServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, ContactGroupInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'contact-information',
@@ -8,14 +8,14 @@ import { CustomersServiceProxy, CustomerInfoDto } from '@shared/service-proxies/
 })
 export class ContactInformationComponent implements OnInit {
     public data: {
-        customerInfo: CustomerInfoDto
+        customerInfo: ContactGroupInfoDto
     };
 
     constructor(injector: Injector,
-                private _customerService: CustomersServiceProxy) {
+                private _contactGroupService: ContactGroupServiceProxy) {
     }
 
     ngOnInit() {
-        this.data = this._customerService['data'];
+        this.data = this._contactGroupService['data'];
     }
 }

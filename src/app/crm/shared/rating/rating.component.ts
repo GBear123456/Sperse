@@ -5,13 +5,13 @@ import { finalize } from 'rxjs/operators';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { CustomerRatingsServiceProxy, CustomerRatingInfoDto, RateCustomerInput, RateCustomersInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupRatingsServiceProxy, ContactGroupRatingInfoDto, RateContactGroupInput, RateContactGroupsInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-rating',
   templateUrl: './rating.component.html',
   styleUrls: ['./rating.component.less'],
-  providers: [CustomerRatingsServiceProxy]
+  providers: [ContactGroupRatingsServiceProxy]
 })
 export class RatingComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() filterModel: any;
@@ -40,7 +40,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _ratingService: CustomerRatingsServiceProxy
+        private _ratingService: ContactGroupRatingsServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -71,8 +71,8 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
 
     process() {
         if (this.bulkUpdateMode)
-            this._ratingService.rateCustomers(RateCustomersInput.fromJS({
-                customerIds: this.selectedKeys,
+            this._ratingService.rateContactGroups(RateContactGroupsInput.fromJS({
+                contactGroupIds: this.selectedKeys,
                 ratingId: this.ratingValue
             })).pipe(finalize(() => {
                 this.ratingValue = this.ratingMin;
@@ -81,7 +81,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
                 this.notify.success(this.l('CustomersRated'));
             });
         else
-            this._ratingService.rateCustomer(RateCustomerInput.fromJS({
+            this._ratingService.rateContactGroup(RateContactGroupInput.fromJS({
                 contactGroupId: this.selectedKeys[0],
                 ratingId: this.ratingValue
             })).pipe(finalize(() => {
@@ -137,7 +137,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
 
     ngOnInit() {
         /** @todo get from store */
-        this._ratingService.getRatings().subscribe((result: CustomerRatingInfoDto[]) => {
+        this._ratingService.getRatings().subscribe((result: ContactGroupRatingInfoDto[]) => {
             if (result.length) {
                 this.ratingMin = result[0].id;
                 this.ratingMax = result[result.length - 1].id;

@@ -292,6 +292,26 @@
                             </div>
                         </div>
                     </tab>
+                    <tab heading="{{l('Recurly Link')}}" *ngIf="true" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
+                                <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
+                                <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
+                                <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
+                                <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
+                            </div>
+                        </div>
+                    </tab>
                     <tab *ngIf="true" heading="{{l('Invoice')}}" customClass="m-tabs__item">
                         <!-- *ngIf="true" is a workaround for https://github.com/valor-software/ng2-bootstrap/issues/823 -->
                         <h5>{{l("InvoiceInformation")}}</h5>

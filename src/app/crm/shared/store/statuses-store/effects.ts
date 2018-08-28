@@ -9,13 +9,13 @@ import { catchError, map, startWith, switchMap, withLatestFrom } from 'rxjs/oper
 
 /** Application imports */
 import * as statusesActions from './actions';
-import { CustomersServiceProxy, CustomerStatusDto } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, ContactGroupStatusDto } from '@shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
 
 @Injectable()
 export class StatusesStoreEffects {
-    constructor(private customerStatusesService: CustomersServiceProxy,
+    constructor(private contactGroupStatusesService: ContactGroupServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -30,9 +30,9 @@ export class StatusesStoreEffects {
                 return empty();
             }
 
-            return this.customerStatusesService.getCustomerStatuses()
+            return this.contactGroupStatusesService.getContactGroupStatuses()
                 .pipe(
-                    map((statuses: CustomerStatusDto[]) => {
+                    map((statuses: ContactGroupStatusDto[]) => {
                         return new statusesActions.LoadSuccessAction(statuses);
                     }),
                     catchError(err => {

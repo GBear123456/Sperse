@@ -94,6 +94,7 @@
                 <div class="funnel-wrapper">
                     <!-- [selectFields]="['Id', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']" -->
                     <app-pipeline
+                        [totalsURI]="'LeadCount'"
                         [dataSource]="pipelineDataSource"                        
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"

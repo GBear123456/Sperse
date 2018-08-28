@@ -1,10 +1,4 @@
 <div>
-    <div class="tree-header">
-        <h3>
-            {{l('Key Phrases')}}
-            <span class="close" (click)="close.emit(null)"></span>
-        </h3>
-    </div>
     <dx-tree-list
         [width]="width"
         [height]="height"
@@ -12,12 +6,11 @@
         [hoverStateEnabled]="true"
         [loadPanel]="{enabled: true}"
         dataStructure="tree"
+        (onCellClick)="onCellClick($event)"
         itemsExpr="groups">
         <dxi-column 
             dataField="keyPhrases"
-            [allowSorting]="true"
-            [sortIndex]="0"
-            [sortOrder]="'asc'"
+            [allowSorting]="false"
             [cellTemplate]="'keyPhrasesTemplate'">
         </dxi-column>
         <dxi-column
@@ -28,8 +21,8 @@
         <div *dxTemplate="let cell of 'keyPhrasesTemplate'">
             <ng-container>
                 <div class="category-hover"></div>
-                <span> {{ cell.text }} </span>
-                <div class="category-drop-area">
+                <span title="{{ cell.text }}"> {{ cell.text }} </span>
+                <div class="category-drop-area" title="{{ cell.text }}">
                     <div *ngIf="isInstanceAdmin" class="category-drop-add-rule">{{l('Add Rule')}}</div>
                 </div>
             </ng-container>

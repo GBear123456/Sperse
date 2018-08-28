@@ -57,7 +57,7 @@ import { DocumentTypesListComponent } from './document-types-list/document-types
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 
-import { CustomersServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
+import { ContactGroupServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -191,7 +191,7 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     ContactEmailServiceProxy,
     ContactPhoneServiceProxy,
     ContactLinkServiceProxy,
-    CustomersServiceProxy,
+    ContactGroupServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,
     ContactEmploymentServiceProxy,

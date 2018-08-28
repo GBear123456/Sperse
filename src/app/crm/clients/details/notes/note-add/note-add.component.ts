@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
-UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, CustomerInfoDto } from '@shared/service-proxies/service-proxies';
+UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, ContactGroupInfoDto } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 
@@ -35,7 +35,7 @@ export class NoteAddComponent extends AppComponentBase  {
     }
 
     @Output() onAdded: EventEmitter<any> = new EventEmitter();
-    private _customerInfo: CustomerInfoDto;
+    private _customerInfo: ContactGroupInfoDto;
     private validator: any;
 
     masks = AppConsts.masks;
