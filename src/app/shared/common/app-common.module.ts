@@ -13,7 +13,7 @@ import {
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
     DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
-    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule
+    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule
 } from 'devextreme-angular';
 
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
@@ -50,6 +50,11 @@ import { AppNavigationService } from '@app/shared/layout/nav/app-navigation.serv
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { RatingBarComponent } from './rating-bar/rating-bar.component';
+import { PaymentWizardComponent } from './payment-wizard/payment-wizard.component';
+import { PaymentPlanCardComponent } from './payment-wizard/payment-plan-chooser/payment-plan-card/payment-plan-card.component';
+import { PaymentPlanChooserComponent } from './payment-wizard/payment-plan-chooser/payment-plan-chooser.component';
+import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
+import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';
 
 @NgModule({
     imports: [
@@ -101,7 +106,8 @@ import { RatingBarComponent } from './rating-bar/rating-bar.component';
         DxTagBoxModule,
         DxPopupModule,
         DxProgressBarModule,
-        DxTooltipModule
+        DxTooltipModule,
+        DxSwitchModule
     ],
     declarations: [
         TimeZoneComboComponent,
@@ -121,7 +127,12 @@ import { RatingBarComponent } from './rating-bar/rating-bar.component';
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         ModalDialogComponent,
-        RatingBarComponent
+        RatingBarComponent,
+        PaymentWizardComponent,
+        PaymentPlanCardComponent,
+        PaymentPlanChooserComponent,
+        PaymentStatusComponent,
+        PaymentOptionsComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -153,7 +164,8 @@ import { RatingBarComponent } from './rating-bar/rating-bar.component';
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent
+        ModalDialogComponent,
+        PaymentWizardComponent
     ]
 })
 export class AppCommonModule {

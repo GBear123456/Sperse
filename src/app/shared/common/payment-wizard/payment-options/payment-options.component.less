@@ -1,0 +1,183 @@
+:host {
+    display: flex;
+    .left {
+        padding: 35px 18px 31px 33px;
+        width: 234px;
+        background-color: #fbfbfb;
+        border-right: solid 1px #dee3e5;
+        .stepsList ul li {
+            display: flex;
+            .label {
+                width: 25px;
+                height: 25px;
+                border: solid 2px rgba(177, 231, 251, 0.53);
+                opacity: .4;
+                span {
+                    font-size: 12px;
+                    font-weight: 600;
+                    text-align: center;
+                    color: #00aeef;
+                }
+                &.completed {
+                    background: url('../../../../../assets/common/icons/payment-completed-step.svg');
+                    span {
+                        display: none;
+                    }
+                }
+            }
+
+            .stepName {
+                opacity: 0.4;
+                font-size: 14px;
+                font-weight: 500;
+                color: #424c56;
+                button {
+                    font-size: 10px;
+                    font-weight: 500;
+                    color: #00aeef;
+                }
+            }
+
+            &.active .label, .stepName {
+                opacity: 1;
+            }
+        }
+
+        .securedInfo {
+            text-align: center;
+            p {
+                font-size: 10px;
+                font-weight: 500;
+                text-align: center;
+                color: #424c56;
+            }
+        }
+        .orderSummary {
+            .orderSummary {
+                font-size: 12px;
+                letter-spacing: 0.6px;
+                color: #888d92;
+                position: relative;
+                &:after {
+                    content: '';
+                    position: absolute;
+                    display: block;
+                    width: 67.6px;
+                    border-bottom: solid 2px #dee3e5;
+                    right: 0;
+                }
+            }
+            .planName {
+                font-size: 18px;
+                font-weight: 700;
+                letter-spacing: -0.3px;
+                color: #424c56;
+            }
+            .planPrice {
+                color: #424c56;
+                .currency {
+                    font-size: 16px;
+                    font-weight: 500;
+                    letter-spacing: -0.2px;
+                }
+                .pricePerMonth {
+                    font-size: 26px;
+                    font-weight: 700;
+                    letter-spacing: -0.4px;
+                }
+                .perMonthText {
+                    font-size: 16px;
+                    letter-spacing: -0.2px;
+                }
+            }
+            .usersAmountAndBilledInfo {
+                font-size: 10px;
+                letter-spacing: -0.2px;
+                color: #424c56;
+            }
+            .calculations {
+                div {
+                    span:first-child {
+                        font-size: 10px;
+                        letter-spacing: 0.5px;
+                        color: #888d92;
+                    }
+                    span:last-child {
+                        font-size: 12px;
+                        letter-spacing: 0.4px;
+                        text-align: right;
+                        color: #424c56;
+                    }
+                    &.total {
+                        border-top: solid 1px #dee3e5;
+                        span {
+                            font-size: 14px;
+                            font-weight: 700;
+                            color: #424c56;
+                            &:first-child {
+                                letter-spacing: 0.6px;
+                            }
+                            &:last-child {
+                                letter-spacing: 0.4px;
+                                text-align: right;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .right {
+        .header {
+            display: flex;
+            position: relative;
+            padding-right: 36px;
+            h2 {
+                font-size: 22px;
+                font-weight: 600;
+                color: #424c56;
+            }
+            .phoneBlock {
+                display: flex;
+                .tip {
+                    font-size: 10px;
+                    font-weight: 500;
+                    letter-spacing: 0.4px;
+                    text-align: right;
+                    color: #424c56;
+                }
+                .phoneNumber {
+                    font-size: 14px;
+                }
+            }
+            button {
+                border: none;
+                position: absolute;
+                right: 0;
+                width: 15px;
+                height: 15px;
+                cursor: pointer;
+                background: url('../../../../../assets/common/icons/payment-close.svg');
+                background-size: cover;
+            }
+        }
+        .paymentMethods .mat-tab-labels {
+            justify-content: space-between;
+            .mat-tab-label {
+                font-size: 16px;
+                font-weight: 300;
+                letter-spacing: 0.4px;
+                border-radius: 5px;
+                color: #686f76;
+                border: solid 1px #979797;
+                &[area-selected="true"] {
+                    color: #ffffff;
+                    background-color: #00aeef;
+                }
+            }
+            mat-ink-bar {
+                display: none;
+            }
+        }
+    }
+}

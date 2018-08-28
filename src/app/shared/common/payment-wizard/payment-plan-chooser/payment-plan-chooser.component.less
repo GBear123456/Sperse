@@ -1,0 +1,117 @@
+:host {
+    background: url('../../../../../assets/common/icons/payment-chooser-background.png') no-repeat bottom;
+    display: block;
+    padding: 34px 52px 33px 54px;
+    height: 100%;
+    .header {
+        text-align: center;
+        .title {
+            font-size: 36px;
+            font-weight: 600;
+            color: #424c56;
+        }
+        .subtitle {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            color: #888d92;
+        }
+        .billingPeriod {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 27px 0 40px 0;
+            div {
+                font-size: 14px;
+                font-weight: 500;
+                color: #919aa3;
+                position: relative;
+                &.active {
+                    font-weight: 500;
+                    color: #171c34;
+                }
+                span.year-discount {
+                    position: absolute;
+                    right: -71px;
+                    top: -19px;
+                    color: #60d956;
+                    font-weight: 700;
+                    &:before {
+                        content: '';
+                        display: block;
+                        width: 11px;
+                        height: 11px;
+                        border-radius: 0 0 11px 0;
+                        border-right: solid 1.5px #60d956;
+                        border-bottom: solid 1.5px #60d956;
+                        position: absolute;
+                        bottom: -15px;
+                        left: 2px;
+                    }
+                }
+            }
+            /deep/ .dx-switch {
+                margin: 0 18px;
+                .dx-switch-container {
+                    border-color: #9a9a9a;
+                    background-color: #fff;
+                    border-radius: 13px;
+
+                    .dx-switch-inner {
+                        .dx-switch-on,
+                        .dx-switch-off {
+                            color: transparent;
+                        }
+
+                        .dx-switch-handle {
+                            width: 18px;
+                            height: 18px;
+                            margin-left: -18px;
+                            &::before {
+                                background-color: #00aeef;
+                                border-radius: 18px;
+                                height: 18px;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
+    .paymentPlans {
+        display: flex;
+        justify-content: center;
+    }
+    .footer {
+        text-align: center;
+        padding: 0 210px;
+        position: relative;
+        .downgrade {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #ffffff;
+        }
+        .pricesAreShown {
+            font-weight: 500;
+        }
+
+        button {
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            color: #00aeef;
+            border-radius: 100px;
+            background-color: #ffffff;
+            line-height: normal;
+            position: absolute;
+            right: 0;
+            top: -7px;
+            border: none;
+            cursor: pointer;
+        }
+    }
+}

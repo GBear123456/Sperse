@@ -15,6 +15,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -95,6 +96,16 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         dialogRef.afterClosed().subscribe(result => {
             // if (result && result.isGetStartedButtonClicked) this.onStart();
         });
+    }
+
+    openPaymentWizardDialog() {
+        const dialogRef = this.dialog.open(PaymentWizardComponent, {
+            height: '655px',
+            width: '980px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+        });
+        dialogRef.afterClosed().subscribe(result => {});
     }
 
 }

@@ -47,6 +47,7 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component.ts';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { CrmStoreModule } from '@app/crm/shared/store/crm-store.module';
@@ -142,6 +143,7 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
       DeleteAndReassignDialogComponent,
       CreateActivityDialogComponent,
       CrmIntroComponent,
+      // PaymentWizardComponent,
       ActivityComponent
     ],
     providers: [
@@ -153,7 +155,8 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
         CreateClientDialogComponent,
         CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
-        CrmIntroComponent
+        CrmIntroComponent/*,
+        PaymentWizardComponent*/
     ]
 })
 export class CrmModule {

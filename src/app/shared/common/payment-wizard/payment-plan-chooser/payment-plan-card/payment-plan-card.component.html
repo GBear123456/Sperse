@@ -1,0 +1,28 @@
+<div class="isBestValue" *ngIf="isBestValue"><span>{{ l('BestValue') }}</span></div>
+<div class="header">
+    <div class="left">
+        <h3 class="title">{{ name }}</h3>
+        <div class="usersAmount">
+            <button class="usersDecreaseButton" (click)="decreaseAdditionalUsersAmount()"></button>
+            <span>{{ additionalUsersAmount }} {{ additionalUsersAmount  === 1 ? l('User_single') : l('User_plural') }}</span>
+            <button class="usersIncreaseButton" (click)="increaseAdditionalUsersAmount()"></button>
+        </div>
+    </div>
+    <div class="right">
+        <p>
+            <span class="currency">{{ currencySymbol }}</span>
+            <span class="price">{{ pricePerMonth }}</span>
+        </p>
+        <p class="perUserPerMonth">{{ l('PerUser/mo')}}</p>
+    </div>
+</div>
+<div class="includesUsers">{{ l('PlanIncludesUsersAmountPerMonth', usersAmount, currencySymbol, pricePerMonth) }}</div>
+<div class="planFeatures">
+    <ul>
+        <li *ngFor="let feature of features">
+            <img [src]="'assets/common/icons/' + getFeatureStatusIconName(feature.status) + '.svg'">
+            {{ feature.name }}
+        </li>
+    </ul>
+</div>
+

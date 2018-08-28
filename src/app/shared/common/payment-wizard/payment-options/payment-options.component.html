@@ -1,0 +1,78 @@
+<div class="left" *ngIf="plan">
+    <div class="stepsList">
+        <ul>
+            <li *ngFor="let step of steps; let i = index">
+                <ng-template [ngClass]="{ 'active': step.active }">
+                    <div class="label" [ngClass]="{ 'completed': step.completed }"><span>{{ i + 1 }}</span></div>
+                    <div class="stepName">
+                        <p>{{ step.name }}</p>
+                        <button *ngIf="step.editable" (click)="goToStep(i)">{{ l('Change') }}</button>
+                    </div>
+                </ng-template>
+            </li>
+        </ul>
+    </div>
+    <div class="securedInfo">
+        <img [src]="'assets/common/icons/secured-shield.svg'" />
+        <p>{{ l('SecuredAndEncryptedPaymentMessage') }}</p>
+    </div>
+    <div class="orderSummary">
+        <h3 class="orderSummary">{{ l('PaymentOrderSummary').toUpperCase() }}</h3>
+        <h4 class="planName">{{ plan.name }}</h4>
+        <div class="planPrice">
+            <span class="currency">{{ plan.currency }}</span>
+            <span class="pricePerMonth">{{ plan.pricePerMonth }}</span>
+            <span class="perMonthText">{{ l('UserPerMonth') }}</span>
+        </div>
+        <div class="usersAmountAndBilledInfo">{{ l('usersAmountAndBilledInfo', plan.usersAmount, getBillingTerm(plan.billingPeriod)) }}</div>
+        <div class="calculations">
+            <div>
+                <span>{{ l('Subtotal') }}</span>
+                <span>{{ plan.subtotal }}</span>
+            </div>
+            <div *ngIf="plan?.discount">
+                <span>{{ l('Discount') }}</span>
+                <span>{{ plan.discount }}</span>
+            </div>
+            <div class="total">
+                <span>{{ l('Total') }}</span>
+                <span>{{ plan.total }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="right">
+    <div class="header">
+        <h2>{{ l('ChoosePaymentOption') }}</h2>
+        <div class="phoneBlock">
+            <img [src]="'assets/common/icons/talking.svg'" />
+            <div>
+                <p class="tip">{{ l('HaveAQuestionCall') }}</p>
+                <p class="phoneNumber">{{ phoneNumber }}</p>
+            </div>
+        </div>
+        <button (click)="close()"></button>
+    </div>
+    <div class="paymentMethods">
+        <mat-tab-group>
+            <mat-tab [label]="l('eCheck')">
+                eCheck component
+            </mat-tab>
+            <mat-tab [label]="l('CreditCard')">
+                credit card component
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label="">
+                    <img [src]="'assets/common/icons/paypal-logo.png'">
+                </ng-template>
+                paypal component
+            </mat-tab>
+            <mat-tab label="BankTransfer">
+                bank transfer component
+            </mat-tab>
+            <mat-tab label="Bitcoin">
+                bitcoin component
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

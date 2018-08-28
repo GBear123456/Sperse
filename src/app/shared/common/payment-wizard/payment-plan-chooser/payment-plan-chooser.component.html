@@ -1,0 +1,40 @@
+<div class="header">
+    <h2 class="title">{{ title }}</h2>
+    <h3 class="subtitle">{{ subtitle }}</h3>
+    <div class="billingPeriod">
+        <div [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('BilledMonthly') }}</div>
+        <dx-switch
+            [width]="'60px'"
+            [height]="'26px'"
+            [onText]=""
+            [offText]=""
+            [value]="true"
+            (onValueChanged)="billingPeriodChanged($event)"
+            #billingPeriodSwitcher>
+        </dx-switch>
+        <div [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('BilledYearly') }}
+            <span class="year-discount">{{ yearDiscount + '% ' + l('Off').toUpperCase() }}</span>
+        </div>
+    </div>
+</div>
+<div class="paymentPlans">
+    <ng-container *ngFor="let paymentPlan of paymentPlans; let i = index;">
+        <payment-plan-card
+            [name]="paymentPlan.name"
+            [monthlyBillingPrice]="paymentPlan.monthlyBillingPrice"
+            [yearlyBillingPricePerMonth]="paymentPlan.yearlyBillingPricePerMonth"
+            [features]="paymentPlan.features"
+            [usersAmount]="paymentPlan.usersAmount"
+            [maxUsersAmount]="paymentPlan.maxUsersAmount"
+            [isBestValue]="paymentPlan.isBestValue"
+            [ngClass]="{ 'selected': selectedPaymentPlanIndex === i }"
+            (click)="selectPaymentPlan(i)"
+        >
+        </payment-plan-card>
+    </ng-container>
+</div>
+<div class="footer">
+    <p class="downgrade">{{ l('DowngradeToFree') }}</p>
+    <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
+    <button [disabled]="!this.selectedPaymentPlanIndex" (click)="goToNextStep()">{{ l('Next') }}</button>
+</div>

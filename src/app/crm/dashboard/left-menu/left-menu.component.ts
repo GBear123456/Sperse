@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-
 @Component({
     templateUrl: './left-menu.component.html',
     styleUrls: ['./left-menu.component.less'],
@@ -16,11 +15,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class DashboardMenuComponent extends AppComponentBase {
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
+    @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     items = [
         { caption: 'ManageClients', component: '/clients', showPlus: true },
         { caption: 'ManageLeads', component: '/leads', showPlus: true },
         { caption: 'ImportYourList', component: '/import-list', disabled: false },
-        { caption: 'CustomizeSettings', component: '/editions', disabled: true }
+        { caption: 'CustomizeSettings', component: '/editions', disabled: true },
+        { caption: 'PaymentWizard', component: '/payment-wizard', disabled: false }
     ];
 
     constructor(injector: Injector,
@@ -30,6 +31,12 @@ export class DashboardMenuComponent extends AppComponentBase {
     }
 
     onClick(event, elem, i) {
+
+        if (elem.caption === 'PaymentWizard') {
+            this.openPaymentWizard.emit();
+            return;
+        }
+
         if (elem.disabled)
             return ;
 
