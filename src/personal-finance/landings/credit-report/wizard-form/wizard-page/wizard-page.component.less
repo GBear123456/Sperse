@@ -1,4 +1,4 @@
-.wizard-wrap {
+/deep/ .wizard-wrap {
     position: relative;
     min-height: 100vh;
     height: 100%;
@@ -29,7 +29,7 @@
         }
         p {
             float: right;
-            font-family: "lato", sans-serif;
+            font-family: "lato", sans-serif !important;
             font-size: 16px;
             letter-spacing: 0.3px;
             text-align: center;
@@ -54,8 +54,8 @@
     color: #000;
 }
 
-.step-title {
-    font-family: "roboto-slab", serif;
+#wizard .step-title {
+    font-family: "roboto-slab", serif !important;
     font-size: 34px;
     letter-spacing: 0.3px;
     text-align: center;
@@ -82,13 +82,14 @@ form {
     right: 63.5px;
     background-color: rgb(245, 128, 35);
     box-shadow: 0 3px 10px 0 rgba(245, 128, 35, 0.35);
-    font-family: "lato", sans-serif;
+    font-family: "lato", sans-serif !important;
     font-size: 17px;
     font-weight: 600;
     letter-spacing: 0.1px;
     text-align: center;
     color: #ffffff;
     z-index: 5;
+    -webkit-appearance: inherit;
     &:hover {
         background: lighten(rgb(245, 128, 35), 10%);
     }
@@ -134,7 +135,7 @@ select {
 }
 
 p {
-    font-family: "lato", sans-serif;
+    font-family: "lato", sans-serif !important;
     font-size: 17px;
     font-weight: 500;
     letter-spacing: 0.3px;
@@ -149,7 +150,7 @@ p {
     p {
         margin: 0;
         font-size: 14px;
-        font-family: "lato", sans-serif;
+        font-family: "lato", sans-serif !important;
     }
     &::before {
         content: '';
@@ -214,7 +215,7 @@ p {
 }
 
 .dx-placeholder::before {
-    font-family: "lato", sans-serif;
+    font-family: "lato", sans-serif !important;
     font-size: 18px;
     font-weight: 600;
     color: #171c1d;
@@ -230,7 +231,7 @@ p {
 
 .lastName, .firstName {
     float: left;
-    
+
     /deep/ input {
         text-transform: capitalize !important;
     }
@@ -238,7 +239,7 @@ p {
 
 .dx-field-label,
 label {
-    font-family: "lato", sans-serif;
+    font-family: "lato", sans-serif !important;
     padding: 12px 15px 12px 0;
     font-size: 17px;
     font-weight: 500;
@@ -287,7 +288,7 @@ label {
     }
 }
 /deep/ .dx-widget {
-    font-family: "lato", sans-serif;
+    font-family: "lato", sans-serif !important;
 }
 .base-commerce-validation + .summary {
     padding-top: 0;
