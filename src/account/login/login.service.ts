@@ -172,8 +172,7 @@ export class LoginService {
 
         } else if (authenticateResult.requiresTwoFactorVerification) {
             // Two factor authentication
-            let tenantId = authenticateResult.detectedTenancies[0].id;
-            abp.multiTenancy.setTenantIdCookie(tenantId);
+
             this._router.navigate(['account/send-code']);
 
         } else if (authenticateResult.accessToken) {
