@@ -10,7 +10,6 @@ import * as _ from 'underscore';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
-    @Input('adaptive') adaptive = false;
     @Input('compact') compact = false;
     private _config: ToolbarGroupModel[];
     @Input()
@@ -311,7 +310,6 @@ export class ToolBarComponent extends AppComponentBase {
         if (this._config)
             this._config.forEach((group) => {
                 let count = group.items.length;
-                console.log(group);
                 group.items.forEach((item, index) => {
                     this.initDropDownMenu(item);
                     let isLast = count == index + 1;

@@ -17,7 +17,6 @@ export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
 
     public toolbarConfig: any = null;
-    public toolbarIsAdaptive = true;
     public toolbarIsHidden  = false;
     public narrowingPageContentWhenFixedFilter = true;
     public showContactInfoPanel = false;
