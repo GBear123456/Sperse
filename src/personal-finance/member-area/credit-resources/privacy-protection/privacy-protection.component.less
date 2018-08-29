@@ -1,0 +1,36 @@
+@import "../../_member-area.settings.less";
+.description {
+    font-family: @lato;
+    font-size: 15px;
+    line-height: 1.47;
+    text-align: left;
+    color: #8a969b;
+    margin-top: 0;
+}
+
+.privacy {
+    &-list {
+        padding-left: 0;
+        list-style-position: inside;
+    }
+    
+    &-item {
+        line-height: 1.8;
+        color: #3bafd9;
+        transition: .2s;
+        &:hover {
+            color: darken(#3bafd9, 10%);
+        }
+        a {
+            font-family: @lato;
+            font-size: 15px;
+            font-weight: 500;
+            color: #3bafd9;
+            text-decoration: none;
+            &:hover,
+            &:focus {
+                color: darken(#3bafd9, 10%);
+            }
+        }
+    }
+}

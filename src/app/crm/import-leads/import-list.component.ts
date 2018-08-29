@@ -80,7 +80,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     initToolbarConfig() {
         this.toolbarConfig = [
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'back',
                         action: this.navigateToDashboard.bind(this)
@@ -88,7 +90,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 ]
             },
             {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'cancel',
                         action: this.cancelImport.bind(this),
@@ -101,7 +105,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 ]
             },
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',

@@ -182,7 +182,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     initToolbarConfig() {
         this.toolbarConfig = [
             {
-                location: 'after', items: [
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'assign',
                         action: this.toggleUserAssignmen.bind(this),
@@ -245,6 +247,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     {

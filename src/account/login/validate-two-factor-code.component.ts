@@ -57,6 +57,6 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
 
     submit(): void {
         this.loginService.authenticateModel.twoFactorVerificationCode = this.code;
-        this.loginService.authenticate();
+        this.loginService.authenticate(() => { }, undefined, false);
     }
 }

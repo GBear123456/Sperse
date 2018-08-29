@@ -1,0 +1,10 @@
+{
+  "code": "PFM",
+  "name": "PersonalFinance",
+  "search": false,
+  "requiredFeature": "CreditReportFeature",
+  "defaultPath": "/personal-finance/member-area",
+  "hostDisabled": true,
+  "navigation": [
+  ]
+}
