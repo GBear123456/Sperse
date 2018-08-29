@@ -107,6 +107,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             undefined,
             'Pages.CFO.MainInstanceAccess',
             undefined,
+            false,
             undefined,
             100,
             0
