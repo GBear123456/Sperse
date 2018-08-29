@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Input, Injector, Output, ViewChildren, QueryList } from '@angular/core';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PaymentPlanModel } from '@app/shared/common/payment-wizard/models/payment-plan.model';
 import { FeatureStatus } from '@app/shared/common/payment-wizard/models/feature-status.enum';
@@ -16,7 +17,8 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
     @Input() title = this.l('TrialExpired');
     @Input() subtitle = this.l('ChoosePlan');
     @Input() yearDiscount = 20;
-    @Output() moveToNextStep: EventEmitter<OptionsPaymentPlan> = new EventEmitter(true);
+    @Output() onPlanChosen: EventEmitter<OptionsPaymentPlan> = new EventEmitter();
+    @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     selectedBillingPeriod = BillingPeriod.Yearly;
     selectedPaymentPlanIndex: number;
     paymentPlans: PaymentPlanModel[] = [
@@ -90,7 +92,8 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
                     name: 'Tasks Calendar & 2 Way Sync',
                     status: FeatureStatus.Enabled
                 }
-            ]
+            ],
+            isBestValue: true
         },
         {
             name: 'Ultimate',
@@ -148,7 +151,7 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
     }
 
     goToNextStep() {
-        const selectedPlanCardComponent = this.paymentPlanCardComponents[this.selectedPaymentPlanIndex];
+        const selectedPlanCardComponent = this.paymentPlanCardComponents.toArray()[this.selectedPaymentPlanIndex];
         const wholePrice = selectedPlanCardComponent.pricePerMonth * selectedPlanCardComponent.usersAmount;
         const plan: OptionsPaymentPlan = {
             name: selectedPlanCardComponent.name,
@@ -158,7 +161,8 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
             total: wholePrice,
             usersAmount: selectedPlanCardComponent.usersAmount + selectedPlanCardComponent.additionalUsersAmount
         };
-        this.moveToNextStep.next(plan);
+        this.onPlanChosen.emit(plan);
+        this.moveToNextStep.next();
     }
 
 }

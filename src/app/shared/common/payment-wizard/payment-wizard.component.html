@@ -3,20 +3,21 @@
         <mat-horizontal-stepper #stepper>
             <mat-step>
                 <payment-plan-chooser
-                    (moveToNextStep)="moveToPaymentOptionsStep($event)"
-                ></payment-plan-chooser>
+                    (onPlanChosen)="changePlan($event)"
+                    (moveToNextStep)="moveToPaymentOptionsStep($event)">
+                </payment-plan-chooser>
             </mat-step>
             <mat-step>
-                <payment-options
-                    [plan]="plan | async"
-                    (onChangeStep)="stepper.selectedIndex = $event"
-                    (onClose)="close()"
-                ></payment-options>
+                <ng-container *ngIf="(plan$ | async) as plan">
+                    <payment-options
+                        [plan]="plan"
+                        (onChangeStep)="stepper.selectedIndex = $event"
+                        (onClose)="close()">
+                    </payment-options>
+                </ng-container>
             </mat-step>
             <mat-step>
-                <payment-status
-
-                ></payment-status>
+                <payment-status></payment-status>
             </mat-step>
         </mat-horizontal-stepper>
     </mat-dialog-content>

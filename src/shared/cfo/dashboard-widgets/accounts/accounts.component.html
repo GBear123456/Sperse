@@ -27,7 +27,7 @@
                          {{ dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}
                      </div>
                  </dx-tooltip>
-                <div class="value" id="valueDaily">{{ dailyStatsAmountInteger | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>{{ dailyStatsAmountFloat }}</span></div>
+                <div class="value" id="valueDaily">{{ dailyStatsAmount | customNumber : '1.0-0' | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>.{{ dailyStatsAmount | customNumber : '0.2-2' }}</span></div>
                 <div class="name">{{dailyStatsText}}</div>
             </div>
             <div class="col-4">

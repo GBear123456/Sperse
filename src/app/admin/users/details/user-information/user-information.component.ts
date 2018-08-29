@@ -1,8 +1,7 @@
-import { Injector, Component, OnInit, Input } from '@angular/core';
+import { Injector, Component, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { UserEditDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, PasswordComplexitySetting } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
@@ -27,7 +26,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: "pattern", pattern: AppConsts.regexPatterns.phone }]
-    }
+    };
 
     passwordErrorsMessages = {
         'requireDigit': this.l('PasswordComplexity_RequireDigit_Hint'),
@@ -35,7 +34,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         'requireLowercase': this.l('PasswordComplexity_RequireLowercase_Hint'),
         'requireNonAlphanumeric': this.l('PasswordComplexity_RequireNonAlphanumeric_Hint'),
         'requireUppercase': this.l('PasswordComplexity_RequireUppercase_Hint')
-    }
+    };
 
     constructor(injector: Injector,
         private _userService: UserServiceProxy,
@@ -98,7 +97,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     validatePassword = (e) => {
         let result = this.passwordValidator.validate(<any>{ value: e.value });
         e.rule.isValid = true;
-        var message = '';
+        let message = '';
 
         if (result) {
             message = '<ul class="validation-error-list">';

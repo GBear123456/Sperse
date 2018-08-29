@@ -33,8 +33,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     endDate: moment.Moment;
     dailyStatsData: GetDailyBalanceStatsOutput;
     dailyStatsAmount: number;
-    dailyStatsAmountFloat: string;
-    dailyStatsAmountInteger: number;
     dailyStatsText: string;
     dailyStatsSliderSelected = 1;
     isActive = null;
@@ -132,7 +130,5 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         }
 
         this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
-        this.dailyStatsAmountInteger = (this.dailyStatsAmount < 0 ? -1 : 1) * Math.floor(Math.abs(this.dailyStatsAmount));
-        this.dailyStatsAmountFloat = '.' + this.dailyStatsAmount.toFixed(2).split('.')[1];
     }
 }

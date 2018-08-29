@@ -22,7 +22,7 @@ export class PaymentPlanCardComponent extends AppComponentBase implements OnInit
     @HostBinding('class.isBestValue') @Input() isBestValue = false;
     additionalUsersAmount = 0;
 
-    get pricePerMonth() {
+    get pricePerMonth(): number {
         return this.billingPeriod === BillingPeriod.Monthly ? this.monthlyBillingPrice : this.yearlyBillingPricePerMonth;
     }
 

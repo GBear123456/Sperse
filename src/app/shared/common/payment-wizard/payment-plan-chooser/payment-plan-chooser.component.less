@@ -1,8 +1,10 @@
 :host {
     background: url('../../../../../assets/common/icons/payment-chooser-background.png') no-repeat bottom;
-    display: block;
-    padding: 34px 52px 33px 54px;
+    padding: 34px 42px 33px 44px;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .header {
         text-align: center;
         .title {
@@ -108,10 +110,15 @@
             background-color: #ffffff;
             line-height: normal;
             position: absolute;
-            right: 0;
+            right: 10px;
             top: -7px;
             border: none;
             cursor: pointer;
+            &[disabled] {
+                color: grey;
+                pointer-events: none;
+                cursor: default;
+            }
         }
     }
 }

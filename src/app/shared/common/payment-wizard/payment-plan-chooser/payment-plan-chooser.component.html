@@ -27,7 +27,11 @@
             [usersAmount]="paymentPlan.usersAmount"
             [maxUsersAmount]="paymentPlan.maxUsersAmount"
             [isBestValue]="paymentPlan.isBestValue"
-            [ngClass]="{ 'selected': selectedPaymentPlanIndex === i }"
+            [ngClass]="{
+                'selected': selectedPaymentPlanIndex === i,
+                'large': paymentPlans.length < 3 || paymentPlan.isBestValue,
+                'heightFitContent' : paymentPlans.length > 2
+            }"
             (click)="selectPaymentPlan(i)"
         >
         </payment-plan-card>
