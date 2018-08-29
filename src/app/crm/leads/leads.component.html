@@ -92,10 +92,10 @@
         <div class="portlet-body">
             <div>
                 <div class="funnel-wrapper">
-                    <!-- [selectFields]="['Id', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']" -->
                     <app-pipeline
                         [totalsURI]="'LeadCount'"
-                        [dataSource]="pipelineDataSource"                        
+                        [dataSource]="pipelineDataSource"
+                        [selectFields]="['Id', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
                         (onStagesLoaded)="onStagesLoaded($event)"

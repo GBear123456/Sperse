@@ -8476,14 +8476,15 @@ export class ContactGroupListsServiceProxy {
     }
 
     /**
-     * @id (optional) 
      * @moveToListId (optional) 
      * @deleteAllReferences (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined, moveToListId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
+    delete(id: number, moveToListId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactGroupLists/Delete?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (moveToListId !== undefined)
             url_ += "MoveToListId=" + encodeURIComponent("" + moveToListId) + "&"; 
@@ -9153,14 +9154,15 @@ export class ContactGroupTagsServiceProxy {
     }
 
     /**
-     * @id (optional) 
      * @moveToTagId (optional) 
      * @deleteAllReferences (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined, moveToTagId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
+    delete(id: number, moveToTagId: number | null | undefined, deleteAllReferences: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactGroupTags/Delete?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (moveToTagId !== undefined)
             url_ += "MoveToTagId=" + encodeURIComponent("" + moveToTagId) + "&"; 
@@ -12662,6 +12664,62 @@ export class ImportServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    importContactGroup(input: ImportContactGroupInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/Import/ImportContactGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImportContactGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImportContactGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processImportContactGroup(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
 }
 
 @Injectable()
@@ -14829,15 +14887,17 @@ export class NotesServiceProxy {
     }
 
     /**
-     * @contactGroupId (optional) 
-     * @id (optional) 
      * @return Success
      */
-    deleteNote(contactGroupId: number | null | undefined, id: number | null | undefined): Observable<void> {
+    deleteNote(contactGroupId: number, id: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/DeleteNote?";
-        if (contactGroupId !== undefined)
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -16907,6 +16967,58 @@ export class PaymentServiceProxy {
             }));
         }
         return _observableOf<any>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    cancelPayment(input: CancelPaymentDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Payment/CancelPayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -20004,12 +20116,13 @@ export class TenancyServiceProxy {
     }
 
     /**
-     * @contactGroupId (optional) 
      * @return Success
      */
-    getTenancies(contactGroupId: number | null | undefined): Observable<PagedResultDtoOfTenancyListDto> {
+    getTenancies(contactGroupId: number): Observable<PagedResultDtoOfTenancyListDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
-        if (contactGroupId !== undefined)
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -20115,15 +20228,17 @@ export class TenancyServiceProxy {
     }
 
     /**
-     * @id (optional) 
-     * @contactGroupId (optional) 
      * @return Success
      */
-    getTenancyForEdit(id: number | null | undefined, contactGroupId: number | null | undefined): Observable<GetTenancyForEditOutput> {
+    getTenancyForEdit(id: number, contactGroupId: number): Observable<GetTenancyForEditOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (contactGroupId !== undefined)
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -20225,15 +20340,17 @@ export class TenancyServiceProxy {
     }
 
     /**
-     * @id (optional) 
-     * @contactGroupId (optional) 
      * @return Success
      */
-    deleteTenancy(id: number | null | undefined, contactGroupId: number | null | undefined): Observable<void> {
+    deleteTenancy(id: number, contactGroupId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (contactGroupId !== undefined)
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -21214,12 +21331,13 @@ export class TenantHostServiceProxy {
     }
 
     /**
-     * @tenantHostType (optional) 
      * @return Success
      */
-    getTenantApiHost(tenantHostType: TenantHostType | null | undefined): Observable<TenantApiHostOutput> {
+    getTenantApiHost(tenantHostType: TenantHostType): Observable<TenantApiHostOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetTenantApiHost?";
-        if (tenantHostType !== undefined)
+        if (tenantHostType === undefined || tenantHostType === null)
+            throw new Error("The parameter 'tenantHostType' must be defined and cannot be null.");
+        else
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22660,12 +22778,13 @@ export class TenantSslCertificateServiceProxy {
     }
 
     /**
-     * @sslCertificateId (optional) 
      * @return Success
      */
-    deleteTenantSslCertificate(sslCertificateId: number | null | undefined): Observable<void> {
+    deleteTenantSslCertificate(sslCertificateId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSslCertificate/DeleteTenantSslCertificate?";
-        if (sslCertificateId !== undefined)
+        if (sslCertificateId === undefined || sslCertificateId === null)
+            throw new Error("The parameter 'sslCertificateId' must be defined and cannot be null.");
+        else
             url_ += "SslCertificateId=" + encodeURIComponent("" + sslCertificateId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
@@ -23096,6 +23215,54 @@ export class TokenAuthServiceProxy {
             }));
         }
         return _observableOf<AuthenticateResultModel>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    logOut(): Observable<void> {
+        let url_ = this.baseUrl + "/api/TokenAuth/LogOut";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLogOut(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLogOut(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processLogOut(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -23957,12 +24124,13 @@ export class UserServiceProxy {
      * @filter (optional) 
      * @permission (optional) 
      * @role (optional) 
+     * @onlyLockedUsers (optional) 
      * @sorting (optional) 
      * @maxResultCount (optional) 
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(includePhotos: boolean | null | undefined, filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(includePhotos: boolean | null | undefined, filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (includePhotos !== undefined)
             url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
@@ -23972,6 +24140,8 @@ export class UserServiceProxy {
             url_ += "Permission=" + encodeURIComponent("" + permission) + "&"; 
         if (role !== undefined)
             url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
+        if (onlyLockedUsers !== undefined)
+            url_ += "OnlyLockedUsers=" + encodeURIComponent("" + onlyLockedUsers) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -27430,7 +27600,7 @@ export interface ICreateBusinessEntityDto {
 }
 
 export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
-    id!: number | undefined;
+    id!: number;
     statusId!: string | undefined;
     name!: string;
     industry!: string | undefined;
@@ -27510,7 +27680,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
 }
 
 export interface IUpdateBusinessEntityDto {
-    id: number | undefined;
+    id: number;
     statusId: string | undefined;
     name: string;
     industry: string | undefined;
@@ -27586,9 +27756,9 @@ export interface IBusinessEntityBankAccountDto {
 }
 
 export class BusinessEntityUpdateBankAccountsInput implements IBusinessEntityUpdateBankAccountsInput {
-    businessEntityId!: number | undefined;
+    businessEntityId!: number;
     bankAccountIds!: number[];
-    isLinked!: boolean | undefined;
+    isLinked!: boolean;
 
     constructor(data?: IBusinessEntityUpdateBankAccountsInput) {
         if (data) {
@@ -27635,9 +27805,9 @@ export class BusinessEntityUpdateBankAccountsInput implements IBusinessEntityUpd
 }
 
 export interface IBusinessEntityUpdateBankAccountsInput {
-    businessEntityId: number | undefined;
+    businessEntityId: number;
     bankAccountIds: number[];
-    isLinked: boolean | undefined;
+    isLinked: boolean;
 }
 
 export class ListResultDtoOfCacheDto implements IListResultDtoOfCacheDto {
@@ -28759,16 +28929,16 @@ export interface IForecastModelDto {
 }
 
 export class AddForecastInput implements IAddForecastInput {
-    forecastModelId!: number | undefined;
-    bankAccountId!: number | undefined;
-    date!: moment.Moment | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
+    forecastModelId!: number;
+    bankAccountId!: number;
+    date!: moment.Moment;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment;
     cashFlowTypeId!: string;
     categoryId!: number | undefined;
     transactionDescriptor!: string | undefined;
     currencyId!: string;
-    amount!: number | undefined;
+    amount!: number;
 
     constructor(data?: IAddForecastInput) {
         if (data) {
@@ -28818,16 +28988,16 @@ export class AddForecastInput implements IAddForecastInput {
 }
 
 export interface IAddForecastInput {
-    forecastModelId: number | undefined;
-    bankAccountId: number | undefined;
-    date: moment.Moment | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
+    forecastModelId: number;
+    bankAccountId: number;
+    date: moment.Moment;
+    startDate: moment.Moment;
+    endDate: moment.Moment;
     cashFlowTypeId: string;
     categoryId: number | undefined;
     transactionDescriptor: string | undefined;
     currencyId: string;
-    amount: number | undefined;
+    amount: number;
 }
 
 export class CreateForecastsInput implements ICreateForecastsInput {
@@ -28878,7 +29048,7 @@ export interface ICreateForecastsInput {
 }
 
 export class UpdateForecastInput implements IUpdateForecastInput {
-    id!: number | undefined;
+    id!: number;
     date!: moment.Moment | undefined;
     amount!: number | undefined;
     bankAccountId!: number | undefined;
@@ -28925,7 +29095,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
 }
 
 export interface IUpdateForecastInput {
-    id: number | undefined;
+    id: number;
     date: moment.Moment | undefined;
     amount: number | undefined;
     bankAccountId: number | undefined;
@@ -29571,7 +29741,7 @@ export interface ICategoryDto {
 }
 
 export class CreateCategoryInput implements ICreateCategoryInput {
-    accountingTypeId!: number | undefined;
+    accountingTypeId!: number;
     parentId!: number | undefined;
     coAID!: number | undefined;
     name!: string;
@@ -29612,14 +29782,14 @@ export class CreateCategoryInput implements ICreateCategoryInput {
 }
 
 export interface ICreateCategoryInput {
-    accountingTypeId: number | undefined;
+    accountingTypeId: number;
     parentId: number | undefined;
     coAID: number | undefined;
     name: string;
 }
 
 export class UpdateCategoryInput implements IUpdateCategoryInput {
-    id!: number | undefined;
+    id!: number;
     coAID!: number | undefined;
     name!: string;
     accountingTypeId!: number;
@@ -29663,7 +29833,7 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
 }
 
 export interface IUpdateCategoryInput {
-    id: number | undefined;
+    id: number;
     coAID: number | undefined;
     name: string;
     accountingTypeId: number;
@@ -29755,7 +29925,7 @@ export interface ICreateAccountingTypeInput {
 }
 
 export class UpdateAccountingTypeInput implements IUpdateAccountingTypeInput {
-    id!: number | undefined;
+    id!: number;
     name!: string;
     cashflowTypeId!: string | undefined;
 
@@ -29793,7 +29963,7 @@ export class UpdateAccountingTypeInput implements IUpdateAccountingTypeInput {
 }
 
 export interface IUpdateAccountingTypeInput {
-    id: number | undefined;
+    id: number;
     name: string;
     cashflowTypeId: string | undefined;
 }
@@ -30229,7 +30399,7 @@ export interface IRuleDto {
 export class CreateRuleDto implements ICreateRuleDto {
     parentId!: number | undefined;
     name!: string;
-    categoryId!: number | undefined;
+    categoryId!: number;
     transactionDescriptor!: string | undefined;
     transactionDescriptorAttributeTypeId!: string | undefined;
     condition!: ConditionDto;
@@ -30293,7 +30463,7 @@ export class CreateRuleDto implements ICreateRuleDto {
 export interface ICreateRuleDto {
     parentId: number | undefined;
     name: string;
-    categoryId: number | undefined;
+    categoryId: number;
     transactionDescriptor: string | undefined;
     transactionDescriptorAttributeTypeId: string | undefined;
     condition: ConditionDto;
@@ -30391,7 +30561,7 @@ export interface IConditionDto {
 
 export class ConditionAttributeDto implements IConditionAttributeDto {
     attributeTypeId!: string;
-    conditionTypeId!: ConditionAttributeDtoConditionTypeId | undefined;
+    conditionTypeId!: ConditionAttributeDtoConditionTypeId;
     conditionValue!: string | undefined;
 
     constructor(data?: IConditionAttributeDto) {
@@ -30429,14 +30599,14 @@ export class ConditionAttributeDto implements IConditionAttributeDto {
 
 export interface IConditionAttributeDto {
     attributeTypeId: string;
-    conditionTypeId: ConditionAttributeDtoConditionTypeId | undefined;
+    conditionTypeId: ConditionAttributeDtoConditionTypeId;
     conditionValue: string | undefined;
 }
 
 export class EditRuleDto implements IEditRuleDto {
-    id!: number | undefined;
+    id!: number;
     name!: string;
-    categoryId!: number | undefined;
+    categoryId!: number;
     transactionDescriptor!: string | undefined;
     transactionDescriptorAttributeTypeId!: string | undefined;
     condition!: ConditionDto;
@@ -30498,9 +30668,9 @@ export class EditRuleDto implements IEditRuleDto {
 }
 
 export interface IEditRuleDto {
-    id: number | undefined;
+    id: number;
     name: string;
-    categoryId: number | undefined;
+    categoryId: number;
     transactionDescriptor: string | undefined;
     transactionDescriptorAttributeTypeId: string | undefined;
     condition: ConditionDto;
@@ -31521,7 +31691,7 @@ export interface IUpdateCommentInput {
 }
 
 export class CreateTransactionCommentThreadInput implements ICreateTransactionCommentThreadInput {
-    transactionId!: number | undefined;
+    transactionId!: number;
     comment!: string;
 
     constructor(data?: ICreateTransactionCommentThreadInput) {
@@ -31556,7 +31726,7 @@ export class CreateTransactionCommentThreadInput implements ICreateTransactionCo
 }
 
 export interface ICreateTransactionCommentThreadInput {
-    transactionId: number | undefined;
+    transactionId: number;
     comment: string;
 }
 
@@ -31737,8 +31907,8 @@ export interface ICreateCashFlowCommentThreadOutput {
 }
 
 export class SetResolvedInput implements ISetResolvedInput {
-    threadId!: number | undefined;
-    isResolved!: boolean | undefined;
+    threadId!: number;
+    isResolved!: boolean;
 
     constructor(data?: ISetResolvedInput) {
         if (data) {
@@ -31772,8 +31942,8 @@ export class SetResolvedInput implements ISetResolvedInput {
 }
 
 export interface ISetResolvedInput {
-    threadId: number | undefined;
-    isResolved: boolean | undefined;
+    threadId: number;
+    isResolved: boolean;
 }
 
 export class ListResultDtoOfSubscribableEditionComboboxItemDto implements IListResultDtoOfSubscribableEditionComboboxItemDto {
@@ -32093,7 +32263,7 @@ export interface IContactPhotoDto {
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
-    contactId!: number | undefined;
+    contactId!: number;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -32101,8 +32271,8 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
@@ -32161,7 +32331,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
 }
 
 export interface ICreateContactAddressInput {
-    contactId: number | undefined;
+    contactId: number;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -32169,8 +32339,8 @@ export interface ICreateContactAddressInput {
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
     ownershipTypeId: string | undefined;
@@ -32213,8 +32383,8 @@ export interface ICreateContactAddressOutput {
 }
 
 export class UpdateContactAddressInput implements IUpdateContactAddressInput {
-    id!: number | undefined;
-    contactId!: number | undefined;
+    id!: number;
+    contactId!: number;
     streetAddress!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -32222,8 +32392,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     countryId!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
     ownershipTypeId!: string | undefined;
@@ -32284,8 +32454,8 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
 }
 
 export interface IUpdateContactAddressInput {
-    id: number | undefined;
-    contactId: number | undefined;
+    id: number;
+    contactId: number;
     streetAddress: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -32293,8 +32463,8 @@ export interface IUpdateContactAddressInput {
     countryId: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
     ownershipTypeId: string | undefined;
@@ -33539,10 +33709,10 @@ export interface IPersonOrgRelationTypeDto {
 }
 
 export class CreateContactEmailInput implements ICreateContactEmailInput {
-    contactId!: number | undefined;
+    contactId!: number;
     emailAddress!: string;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -33586,10 +33756,10 @@ export class CreateContactEmailInput implements ICreateContactEmailInput {
 }
 
 export interface ICreateContactEmailInput {
-    contactId: number | undefined;
+    contactId: number;
     emailAddress: string;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -33631,11 +33801,11 @@ export interface ICreateContactEmailOutput {
 }
 
 export class UpdateContactEmailInput implements IUpdateContactEmailInput {
-    id!: number | undefined;
-    contactId!: number | undefined;
+    id!: number;
+    contactId!: number;
     emailAddress!: string;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -33681,11 +33851,11 @@ export class UpdateContactEmailInput implements IUpdateContactEmailInput {
 }
 
 export interface IUpdateContactEmailInput {
-    id: number | undefined;
-    contactId: number | undefined;
+    id: number;
+    contactId: number;
     emailAddress: string;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -35405,11 +35575,11 @@ export interface ICreateContactGroupInput {
 }
 
 export class CreateContactPhoneInput implements ICreateContactPhoneInput {
-    contactId!: number | undefined;
+    contactId!: number;
     phoneNumber!: string;
     phoneExtension!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -35455,11 +35625,11 @@ export class CreateContactPhoneInput implements ICreateContactPhoneInput {
 }
 
 export interface ICreateContactPhoneInput {
-    contactId: number | undefined;
+    contactId: number;
     phoneNumber: string;
     phoneExtension: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -35681,7 +35851,7 @@ export interface ISimilarContactGroupOutput {
 }
 
 export class UpdateContactGroupStatusInput implements IUpdateContactGroupStatusInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     statusId!: string;
 
     constructor(data?: IUpdateContactGroupStatusInput) {
@@ -35716,7 +35886,7 @@ export class UpdateContactGroupStatusInput implements IUpdateContactGroupStatusI
 }
 
 export interface IUpdateContactGroupStatusInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     statusId: string;
 }
 
@@ -36164,7 +36334,7 @@ export interface IContactGroupTypeDto {
 }
 
 export class UpdateContactGroupListsInput implements IUpdateContactGroupListsInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     lists!: ContactGroupListInput[] | undefined;
 
     constructor(data?: IUpdateContactGroupListsInput) {
@@ -36207,7 +36377,7 @@ export class UpdateContactGroupListsInput implements IUpdateContactGroupListsInp
 }
 
 export interface IUpdateContactGroupListsInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     lists: ContactGroupListInput[] | undefined;
 }
 
@@ -36268,7 +36438,7 @@ export interface IAddContactGroupsToListsInput {
 }
 
 export class UpdateContactGroupListInput implements IUpdateContactGroupListInput {
-    id!: number | undefined;
+    id!: number;
     name!: string;
 
     constructor(data?: IUpdateContactGroupListInput) {
@@ -36303,12 +36473,12 @@ export class UpdateContactGroupListInput implements IUpdateContactGroupListInput
 }
 
 export interface IUpdateContactGroupListInput {
-    id: number | undefined;
+    id: number;
     name: string;
 }
 
 export class RateContactGroupInput implements IRateContactGroupInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     ratingId!: number | undefined;
 
     constructor(data?: IRateContactGroupInput) {
@@ -36343,7 +36513,7 @@ export class RateContactGroupInput implements IRateContactGroupInput {
 }
 
 export interface IRateContactGroupInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     ratingId: number | undefined;
 }
 
@@ -36396,7 +36566,7 @@ export interface IRateContactGroupsInput {
 }
 
 export class MarkContactGroupInput implements IMarkContactGroupInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     starId!: number | undefined;
 
     constructor(data?: IMarkContactGroupInput) {
@@ -36431,7 +36601,7 @@ export class MarkContactGroupInput implements IMarkContactGroupInput {
 }
 
 export interface IMarkContactGroupInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     starId: number | undefined;
 }
 
@@ -36484,7 +36654,7 @@ export interface IMarkContactGroupsInput {
 }
 
 export class UpdateContactGroupTagsInput implements IUpdateContactGroupTagsInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     tags!: ContactGroupTagInput[] | undefined;
 
     constructor(data?: IUpdateContactGroupTagsInput) {
@@ -36527,7 +36697,7 @@ export class UpdateContactGroupTagsInput implements IUpdateContactGroupTagsInput
 }
 
 export interface IUpdateContactGroupTagsInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     tags: ContactGroupTagInput[] | undefined;
 }
 
@@ -36644,7 +36814,7 @@ export interface IUntagContactGroupsInput {
 }
 
 export class UpdateContactGroupTagInput implements IUpdateContactGroupTagInput {
-    id!: number | undefined;
+    id!: number;
     name!: string;
 
     constructor(data?: IUpdateContactGroupTagInput) {
@@ -36679,15 +36849,15 @@ export class UpdateContactGroupTagInput implements IUpdateContactGroupTagInput {
 }
 
 export interface IUpdateContactGroupTagInput {
-    id: number | undefined;
+    id: number;
     name: string;
 }
 
 export class CreateContactLinkInput implements ICreateContactLinkInput {
-    contactId!: number | undefined;
+    contactId!: number;
     url!: string;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
 
@@ -36731,10 +36901,10 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
 }
 
 export interface ICreateContactLinkInput {
-    contactId: number | undefined;
+    contactId: number;
     url: string;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     linkTypeId: string | undefined;
 }
@@ -36776,11 +36946,11 @@ export interface ICreateContactLinkOutput {
 }
 
 export class UpdateContactLinkInput implements IUpdateContactLinkInput {
-    id!: number | undefined;
-    contactId!: number | undefined;
+    id!: number;
+    contactId!: number;
     url!: string;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
 
@@ -36826,11 +36996,11 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
 }
 
 export interface IUpdateContactLinkInput {
-    id: number | undefined;
-    contactId: number | undefined;
+    id: number;
+    contactId: number;
     url: string;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     linkTypeId: string | undefined;
 }
@@ -36960,12 +37130,12 @@ export interface ICreateContactPhoneOutput {
 }
 
 export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
-    id!: number | undefined;
-    contactId!: number | undefined;
+    id!: number;
+    contactId!: number;
     phoneNumber!: string;
     phoneExtension!: string | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
+    isActive!: boolean;
+    isConfirmed!: boolean;
     comment!: string | undefined;
     usageTypeId!: string | undefined;
 
@@ -37013,12 +37183,12 @@ export class UpdateContactPhoneInput implements IUpdateContactPhoneInput {
 }
 
 export interface IUpdateContactPhoneInput {
-    id: number | undefined;
-    contactId: number | undefined;
+    id: number;
+    contactId: number;
     phoneNumber: string;
     phoneExtension: string | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
+    isActive: boolean;
+    isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
 }
@@ -37108,7 +37278,7 @@ export interface IPhoneUsageTypeDto {
 }
 
 export class CreateContactPhotoInput implements ICreateContactPhotoInput {
-    contactId!: number | undefined;
+    contactId!: number;
     originalImage!: string;
     thumbnail!: string;
     photoSourceId!: string | undefined;
@@ -37152,7 +37322,7 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
 }
 
 export interface ICreateContactPhotoInput {
-    contactId: number | undefined;
+    contactId: number;
     originalImage: string;
     thumbnail: string;
     photoSourceId: string | undefined;
@@ -39205,9 +39375,9 @@ export interface IGetUrlOutput {
 
 export class UploadDocumentInput implements IUploadDocumentInput {
     typeId!: number | undefined;
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     fileName!: string;
-    size!: number | undefined;
+    size!: number;
     fileBase64!: string;
 
     constructor(data?: IUploadDocumentInput) {
@@ -39249,14 +39419,14 @@ export class UploadDocumentInput implements IUploadDocumentInput {
 
 export interface IUploadDocumentInput {
     typeId: number | undefined;
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     fileName: string;
-    size: number | undefined;
+    size: number;
     fileBase64: string;
 }
 
 export class UpdateTypeInput implements IUpdateTypeInput {
-    documentId!: string | undefined;
+    documentId!: string;
     typeId!: number | undefined;
 
     constructor(data?: IUpdateTypeInput) {
@@ -39291,7 +39461,7 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 }
 
 export interface IUpdateTypeInput {
-    documentId: string | undefined;
+    documentId: string;
     typeId: number | undefined;
 }
 
@@ -39420,7 +39590,7 @@ export interface ICreateDocumentTypeInput {
 }
 
 export class UpdateDocumentTypeInput implements IUpdateDocumentTypeInput {
-    id!: number | undefined;
+    id!: number;
     name!: string;
 
     constructor(data?: IUpdateDocumentTypeInput) {
@@ -39455,7 +39625,7 @@ export class UpdateDocumentTypeInput implements IUpdateDocumentTypeInput {
 }
 
 export interface IUpdateDocumentTypeInput {
-    id: number | undefined;
+    id: number;
     name: string;
 }
 
@@ -41105,7 +41275,7 @@ export class ImportInput implements IImportInput {
     importType!: ImportInputImportType | undefined;
     partnerTypeName!: string | undefined;
     fileName!: string;
-    fileSize!: number | undefined;
+    fileSize!: number;
     fileContent!: string;
     ingoreInvalidValues!: boolean | undefined;
 
@@ -41197,7 +41367,7 @@ export interface IImportInput {
     importType: ImportInputImportType | undefined;
     partnerTypeName: string | undefined;
     fileName: string;
-    fileSize: number | undefined;
+    fileSize: number;
     fileContent: string;
     ingoreInvalidValues: boolean | undefined;
 }
@@ -41730,6 +41900,94 @@ export interface IGetFileUrlOutput {
     validityPeriod: string | undefined;
 }
 
+export class ImportContactGroupInput implements IImportContactGroupInput {
+    contactGroup!: ImportItemInput | undefined;
+    lists!: string[] | undefined;
+    tags!: string[] | undefined;
+    assignedUserId!: number | undefined;
+    ratingId!: number | undefined;
+    starId!: number | undefined;
+    leadStageName!: string | undefined;
+    importType!: ImportContactGroupInputImportType | undefined;
+    partnerTypeName!: string | undefined;
+    ingoreInvalidValues!: boolean | undefined;
+
+    constructor(data?: IImportContactGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroup = data["contactGroup"] ? ImportItemInput.fromJS(data["contactGroup"]) : <any>undefined;
+            if (data["lists"] && data["lists"].constructor === Array) {
+                this.lists = [];
+                for (let item of data["lists"])
+                    this.lists.push(item);
+            }
+            if (data["tags"] && data["tags"].constructor === Array) {
+                this.tags = [];
+                for (let item of data["tags"])
+                    this.tags.push(item);
+            }
+            this.assignedUserId = data["assignedUserId"];
+            this.ratingId = data["ratingId"];
+            this.starId = data["starId"];
+            this.leadStageName = data["leadStageName"];
+            this.importType = data["importType"];
+            this.partnerTypeName = data["partnerTypeName"];
+            this.ingoreInvalidValues = data["ingoreInvalidValues"];
+        }
+    }
+
+    static fromJS(data: any): ImportContactGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportContactGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroup"] = this.contactGroup ? this.contactGroup.toJSON() : <any>undefined;
+        if (this.lists && this.lists.constructor === Array) {
+            data["lists"] = [];
+            for (let item of this.lists)
+                data["lists"].push(item);
+        }
+        if (this.tags && this.tags.constructor === Array) {
+            data["tags"] = [];
+            for (let item of this.tags)
+                data["tags"].push(item);
+        }
+        data["assignedUserId"] = this.assignedUserId;
+        data["ratingId"] = this.ratingId;
+        data["starId"] = this.starId;
+        data["leadStageName"] = this.leadStageName;
+        data["importType"] = this.importType;
+        data["partnerTypeName"] = this.partnerTypeName;
+        data["ingoreInvalidValues"] = this.ingoreInvalidValues;
+        return data; 
+    }
+}
+
+export interface IImportContactGroupInput {
+    contactGroup: ImportItemInput | undefined;
+    lists: string[] | undefined;
+    tags: string[] | undefined;
+    assignedUserId: number | undefined;
+    ratingId: number | undefined;
+    starId: number | undefined;
+    leadStageName: string | undefined;
+    importType: ImportContactGroupInputImportType | undefined;
+    partnerTypeName: string | undefined;
+    ingoreInvalidValues: boolean | undefined;
+}
+
 export class GetStatusOutput implements IGetStatusOutput {
     status!: GetStatusOutputStatus | undefined;
     userId!: number | undefined;
@@ -42092,7 +42350,7 @@ export interface IRequestKBAOutput {
 
 export class KBAResult implements IKBAResult {
     memberId!: string;
-    passed!: boolean | undefined;
+    passed!: boolean;
     error!: string | undefined;
 
     constructor(data?: IKBAResult) {
@@ -42130,7 +42388,7 @@ export class KBAResult implements IKBAResult {
 
 export interface IKBAResult {
     memberId: string;
-    passed: boolean | undefined;
+    passed: boolean;
     error: string | undefined;
 }
 
@@ -42862,7 +43120,7 @@ export interface ICreateLeadOutput {
 }
 
 export class CancelLeadInfo implements ICancelLeadInfo {
-    leadId!: number | undefined;
+    leadId!: number;
     cancellationReasonId!: string;
     comment!: string | undefined;
 
@@ -42900,7 +43158,7 @@ export class CancelLeadInfo implements ICancelLeadInfo {
 }
 
 export interface ICancelLeadInfo {
-    leadId: number | undefined;
+    leadId: number;
     cancellationReasonId: string;
     comment: string | undefined;
 }
@@ -44233,8 +44491,8 @@ export interface IActionDto {
 }
 
 export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
-    leadId!: number | undefined;
-    stageId!: number | undefined;
+    leadId!: number;
+    stageId!: number;
 
     constructor(data?: IUpdateLeadStageInfo) {
         if (data) {
@@ -44268,12 +44526,12 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
 }
 
 export interface IUpdateLeadStageInfo {
-    leadId: number | undefined;
-    stageId: number | undefined;
+    leadId: number;
+    stageId: number;
 }
 
 export class ProcessLeadInput implements IProcessLeadInput {
-    leadId!: number | undefined;
+    leadId!: number;
 
     constructor(data?: IProcessLeadInput) {
         if (data) {
@@ -44305,7 +44563,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
 }
 
 export interface IProcessLeadInput {
-    leadId: number | undefined;
+    leadId: number;
 }
 
 export class LeadInfoDto implements ILeadInfoDto {
@@ -44381,7 +44639,7 @@ export interface ILeadInfoDto {
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
-    id!: number | undefined;
+    id!: number;
     sourceCode!: string | undefined;
     campaignCode!: string | undefined;
     affiliateCode!: string | undefined;
@@ -44428,7 +44686,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
 }
 
 export interface IUpdateLeadInfoInput {
-    id: number | undefined;
+    id: number;
     sourceCode: string | undefined;
     campaignCode: string | undefined;
     affiliateCode: string | undefined;
@@ -44491,7 +44749,7 @@ export class MemberInfoDto implements IMemberInfoDto {
     ssn!: string;
     gender!: MemberInfoDtoGender;
     isUSCitizen!: boolean;
-    packageId!: number | undefined;
+    packageId!: number;
     utmParameter!: UTMParameterInfo | undefined;
 
     constructor(data?: IMemberInfoDto) {
@@ -44556,7 +44814,7 @@ export interface IMemberInfoDto {
     ssn: string;
     gender: MemberInfoDtoGender;
     isUSCitizen: boolean;
-    packageId: number | undefined;
+    packageId: number;
     utmParameter: UTMParameterInfo | undefined;
 }
 
@@ -44993,7 +45251,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     ssn!: string;
     gender!: RegisterMemberRequestGender;
     isUSCitizen!: boolean;
-    packageId!: number | undefined;
+    packageId!: number;
     utmParameter!: UTMParameterInfo | undefined;
 
     constructor(data?: IRegisterMemberRequest) {
@@ -45064,7 +45322,7 @@ export interface IRegisterMemberRequest {
     ssn: string;
     gender: RegisterMemberRequestGender;
     isUSCitizen: boolean;
-    packageId: number | undefined;
+    packageId: number;
     utmParameter: UTMParameterInfo | undefined;
 }
 
@@ -45133,7 +45391,7 @@ export interface INoteInfoDto {
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     text!: string;
     contactId!: number | undefined;
     contactPhoneId!: number | undefined;
@@ -45186,7 +45444,7 @@ export class CreateNoteInput implements ICreateNoteInput {
 }
 
 export interface ICreateNoteInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     text: string;
     contactId: number | undefined;
     contactPhoneId: number | undefined;
@@ -45233,8 +45491,8 @@ export interface ICreateNoteOutput {
 }
 
 export class UpdateNoteInput implements IUpdateNoteInput {
-    id!: number | undefined;
-    contactGroupId!: number | undefined;
+    id!: number;
+    contactGroupId!: number;
     text!: string;
     contactId!: number | undefined;
     contactPhoneId!: number | undefined;
@@ -45289,8 +45547,8 @@ export class UpdateNoteInput implements IUpdateNoteInput {
 }
 
 export interface IUpdateNoteInput {
-    id: number | undefined;
-    contactGroupId: number | undefined;
+    id: number;
+    contactGroupId: number;
     text: string;
     contactId: number | undefined;
     contactPhoneId: number | undefined;
@@ -45897,6 +46155,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
+    tenantId!: string | undefined;
     serviceType!: string | undefined;
     serviceTypeName!: string | undefined;
     systemType!: string | undefined;
@@ -45921,6 +46180,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
+            this.tenantId = data["tenantId"];
             this.serviceType = data["serviceType"];
             this.serviceTypeName = data["serviceTypeName"];
             this.systemType = data["systemType"];
@@ -45945,6 +46205,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
+        data["tenantId"] = this.tenantId;
         data["serviceType"] = this.serviceType;
         data["serviceTypeName"] = this.serviceTypeName;
         data["systemType"] = this.systemType;
@@ -45962,6 +46223,7 @@ export interface IOrderSubscriptionDto {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     fee: number | undefined;
+    tenantId: string | undefined;
     serviceType: string | undefined;
     serviceTypeName: string | undefined;
     systemType: string | undefined;
@@ -46145,7 +46407,7 @@ export interface IOrganizationShortInfoDto {
 }
 
 export class CreateOrganizationInput implements ICreateOrganizationInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     companyName!: string;
     shortname!: string | undefined;
     industry!: string | undefined;
@@ -46228,7 +46490,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 }
 
 export interface ICreateOrganizationInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     companyName: string;
     shortname: string | undefined;
     industry: string | undefined;
@@ -46285,7 +46547,7 @@ export interface ICreateOrganizationOutput {
 }
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
-    id!: number | undefined;
+    id!: number;
     companyName!: string;
     shortname!: string | undefined;
     industry!: string | undefined;
@@ -46368,7 +46630,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
 }
 
 export interface IUpdateOrganizationInfoInput {
-    id: number | undefined;
+    id: number;
     companyName: string;
     shortname: string | undefined;
     industry: string | undefined;
@@ -47045,7 +47307,7 @@ export interface IPartnerInfoDto {
 }
 
 export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
-    partnerId!: number | undefined;
+    partnerId!: number;
     typeName!: string | undefined;
 
     constructor(data?: IUpdatePartnerTypeInput) {
@@ -47080,7 +47342,7 @@ export class UpdatePartnerTypeInput implements IUpdatePartnerTypeInput {
 }
 
 export interface IUpdatePartnerTypeInput {
-    partnerId: number | undefined;
+    partnerId: number;
     typeName: string | undefined;
 }
 
@@ -47292,7 +47554,7 @@ export interface IPartnerTypeDto {
 }
 
 export class RenamePartnerTypeInput implements IRenamePartnerTypeInput {
-    id!: number | undefined;
+    id!: number;
     name!: string;
 
     constructor(data?: IRenamePartnerTypeInput) {
@@ -47327,7 +47589,7 @@ export class RenamePartnerTypeInput implements IRenamePartnerTypeInput {
 }
 
 export interface IRenamePartnerTypeInput {
-    id: number | undefined;
+    id: number;
     name: string;
 }
 
@@ -47489,6 +47751,46 @@ export interface ICreatePaymentDto {
     editionPaymentType: CreatePaymentDtoEditionPaymentType | undefined;
     paymentPeriodType: CreatePaymentDtoPaymentPeriodType | undefined;
     subscriptionPaymentGatewayType: CreatePaymentDtoSubscriptionPaymentGatewayType | undefined;
+}
+
+export class CancelPaymentDto implements ICancelPaymentDto {
+    paymentId!: string | undefined;
+    gateway!: CancelPaymentDtoGateway | undefined;
+
+    constructor(data?: ICancelPaymentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.paymentId = data["paymentId"];
+            this.gateway = data["gateway"];
+        }
+    }
+
+    static fromJS(data: any): CancelPaymentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelPaymentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["paymentId"] = this.paymentId;
+        data["gateway"] = this.gateway;
+        return data; 
+    }
+}
+
+export interface ICancelPaymentDto {
+    paymentId: string | undefined;
+    gateway: CancelPaymentDtoGateway | undefined;
 }
 
 export class ExecutePaymentDto implements IExecutePaymentDto {
@@ -47800,7 +48102,7 @@ export interface IFlatPermissionWithLevelDto {
 }
 
 export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
-    id!: number | undefined;
+    id!: number;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -47850,7 +48152,7 @@ export class UpdatePersonInfoInput implements IUpdatePersonInfoInput {
 }
 
 export interface IUpdatePersonInfoInput {
-    id: number | undefined;
+    id: number;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
@@ -49832,7 +50134,7 @@ export interface ITenancyListDto {
 }
 
 export class CreateTenancyInput implements ICreateTenancyInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     adminEmailAddress!: string;
     adminPassword!: string | undefined;
     shouldChangePasswordOnNextLogin!: boolean | undefined;
@@ -49906,7 +50208,7 @@ export class CreateTenancyInput implements ICreateTenancyInput {
 }
 
 export interface ICreateTenancyInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     adminEmailAddress: string;
     adminPassword: string | undefined;
     shouldChangePasswordOnNextLogin: boolean | undefined;
@@ -49992,8 +50294,8 @@ export interface IGetTenancyForEditOutput {
 }
 
 export class UpdateTenancyInput implements IUpdateTenancyInput {
-    id!: number | undefined;
-    contactGroupId!: number | undefined;
+    id!: number;
+    contactGroupId!: number;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
@@ -50054,8 +50356,8 @@ export class UpdateTenancyInput implements IUpdateTenancyInput {
 }
 
 export interface IUpdateTenancyInput {
-    id: number | undefined;
-    contactGroupId: number | undefined;
+    id: number;
+    contactGroupId: number;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
@@ -51159,7 +51461,7 @@ export interface ITenantSslBindingInfo {
 }
 
 export class AddSslBindingInput implements IAddSslBindingInput {
-    tenantHostType!: AddSslBindingInputTenantHostType | undefined;
+    tenantHostType!: AddSslBindingInputTenantHostType;
     domainName!: string | undefined;
     sslCertificateId!: number | undefined;
 
@@ -51197,13 +51499,13 @@ export class AddSslBindingInput implements IAddSslBindingInput {
 }
 
 export interface IAddSslBindingInput {
-    tenantHostType: AddSslBindingInputTenantHostType | undefined;
+    tenantHostType: AddSslBindingInputTenantHostType;
     domainName: string | undefined;
     sslCertificateId: number | undefined;
 }
 
 export class UpdateSslBindingCertificateInput implements IUpdateSslBindingCertificateInput {
-    tenantHostType!: UpdateSslBindingCertificateInputTenantHostType | undefined;
+    tenantHostType!: UpdateSslBindingCertificateInputTenantHostType;
     sslCertificateId!: number | undefined;
 
     constructor(data?: IUpdateSslBindingCertificateInput) {
@@ -51238,13 +51540,13 @@ export class UpdateSslBindingCertificateInput implements IUpdateSslBindingCertif
 }
 
 export interface IUpdateSslBindingCertificateInput {
-    tenantHostType: UpdateSslBindingCertificateInputTenantHostType | undefined;
+    tenantHostType: UpdateSslBindingCertificateInputTenantHostType;
     sslCertificateId: number | undefined;
 }
 
 export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveInput {
-    tenantHostType!: UpdateSslBindingIsActiveInputTenantHostType | undefined;
-    isActive!: boolean | undefined;
+    tenantHostType!: UpdateSslBindingIsActiveInputTenantHostType;
+    isActive!: boolean;
 
     constructor(data?: IUpdateSslBindingIsActiveInput) {
         if (data) {
@@ -51278,8 +51580,8 @@ export class UpdateSslBindingIsActiveInput implements IUpdateSslBindingIsActiveI
 }
 
 export interface IUpdateSslBindingIsActiveInput {
-    tenantHostType: UpdateSslBindingIsActiveInputTenantHostType | undefined;
-    isActive: boolean | undefined;
+    tenantHostType: UpdateSslBindingIsActiveInputTenantHostType;
+    isActive: boolean;
 }
 
 export class IntegrationsSettings implements IIntegrationsSettings {
@@ -52324,6 +52626,7 @@ export interface ISwitchedAccountAuthenticateResultModel {
 export class ExternalLoginProviderInfoModel implements IExternalLoginProviderInfoModel {
     name!: string | undefined;
     clientId!: string | undefined;
+    additionalParams!: { [key: string] : string; } | undefined;
 
     constructor(data?: IExternalLoginProviderInfoModel) {
         if (data) {
@@ -52338,6 +52641,13 @@ export class ExternalLoginProviderInfoModel implements IExternalLoginProviderInf
         if (data) {
             this.name = data["name"];
             this.clientId = data["clientId"];
+            if (data["additionalParams"]) {
+                this.additionalParams = {};
+                for (let key in data["additionalParams"]) {
+                    if (data["additionalParams"].hasOwnProperty(key))
+                        this.additionalParams[key] = data["additionalParams"][key];
+                }
+            }
         }
     }
 
@@ -52352,6 +52662,13 @@ export class ExternalLoginProviderInfoModel implements IExternalLoginProviderInf
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["clientId"] = this.clientId;
+        if (this.additionalParams) {
+            data["additionalParams"] = {};
+            for (let key in this.additionalParams) {
+                if (this.additionalParams.hasOwnProperty(key))
+                    data["additionalParams"][key] = this.additionalParams[key];
+            }
+        }
         return data; 
     }
 }
@@ -52359,6 +52676,7 @@ export class ExternalLoginProviderInfoModel implements IExternalLoginProviderInf
 export interface IExternalLoginProviderInfoModel {
     name: string | undefined;
     clientId: string | undefined;
+    additionalParams: { [key: string] : string; } | undefined;
 }
 
 export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
@@ -53274,7 +53592,7 @@ export interface IUiCustomizationFooterSettingsEditDto {
 }
 
 export class ActivateUserForContactInput implements IActivateUserForContactInput {
-    contactId!: number | undefined;
+    contactId!: number;
     tenantHostType!: ActivateUserForContactInputTenantHostType | undefined;
 
     constructor(data?: IActivateUserForContactInput) {
@@ -53309,7 +53627,7 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
 }
 
 export interface IActivateUserForContactInput {
-    contactId: number | undefined;
+    contactId: number;
     tenantHostType: ActivateUserForContactInputTenantHostType | undefined;
 }
 
@@ -54056,7 +54374,7 @@ export interface IInviteUserInput {
 }
 
 export class AssignContactGroupInput implements IAssignContactGroupInput {
-    contactGroupId!: number | undefined;
+    contactGroupId!: number;
     userId!: number | undefined;
 
     constructor(data?: IAssignContactGroupInput) {
@@ -54091,7 +54409,7 @@ export class AssignContactGroupInput implements IAssignContactGroupInput {
 }
 
 export interface IAssignContactGroupInput {
-    contactGroupId: number | undefined;
+    contactGroupId: number;
     userId: number | undefined;
 }
 
@@ -55299,6 +55617,13 @@ export enum ImportInputImportType {
     Order = "Order", 
 }
 
+export enum ImportContactGroupInputImportType {
+    Lead = "Lead", 
+    Client = "Client", 
+    Partner = "Partner", 
+    Order = "Order", 
+}
+
 export enum GetStatusOutputStatus {
     NotInitialized = "NotInitialized", 
     Active = "Active", 
@@ -55411,6 +55736,10 @@ export enum CreatePaymentDtoPaymentPeriodType {
 }
 
 export enum CreatePaymentDtoSubscriptionPaymentGatewayType {
+    _1 = 1, 
+}
+
+export enum CancelPaymentDtoGateway {
     _1 = 1, 
 }
 
