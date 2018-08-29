@@ -13,7 +13,7 @@
                         class="form-control"
                         [(ngModel)]="selectedTwoFactorProvider"
                         name="selectedTwoFactorProvider">
-                    <option *ngFor="let provider of loginService.authenticateResult.twoFactorAuthProviders" [value]="provider">{{provider}}</option>
+                    <option *ngFor="let provider of loginService.authenticateResult.twoFactorAuthProviders" [value]="provider">{{l(provider)}}</option>
                 </select>
             </div>
 
