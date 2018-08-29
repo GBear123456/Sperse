@@ -120,8 +120,14 @@ export class OperationsWidgetComponent implements OnInit {
         ]);
         this.toolbarConfig = config || [
             {
-                location: 'before', items: items}, {
-                location: 'before', items: [
+                location: 'before',
+                locateInMenu: 'auto',
+                items: items
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'print',
                         action: this.print.emit.bind(this.print)

@@ -10,13 +10,13 @@ export class ToolbarGroupModelItem {
     responsiveText?: string;
     visible?: boolean;
     html?: string;
-    adaptive?: boolean;
     attr?: object;
 }
 
 export class ToolbarGroupModel {
     areItemsDependent: boolean = false;
     location: string;
+    locateInMenu: string;
     itemTemplate?: string;
     items: ToolbarGroupModelItem[];
 }

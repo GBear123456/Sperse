@@ -1,0 +1,350 @@
+<div class="wizard-wrap">
+    <div class="top-bar">
+        <div class="content-wrap">
+            <div class="logo">
+                <a routerLink="/" target="_self">
+                    <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/landing/green-logo.svg" alt="logo" width="200" />
+                    <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="200" />
+                </a>
+            </div>
+            <p>Need help? <a href="/contact-us">Let us know</a></p>
+        </div>
+    </div>
+    <wizard id="wizard">
+        <wizard-step>
+            <wizard-step-tab></wizard-step-tab>
+            <img src="/assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
+            <h2 class="step-title">{{l('TellUsAboutYourself')}}</h2>
+            <div class="form">
+                <form id="memberInfo">
+                    <dx-validation-group>
+                        <div class="row">
+                            <div class="dx-fieldset col-md-6">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{l('WhatIsYourFullName')}}</div>
+                                    <div class="firstName">
+                                        <dx-text-box name="firstName"
+                                                     placeholder="{{l('FirstName')}}"
+                                                     [(value)]="model.name"
+                                                     (keydown)="validateName($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required"
+                                                                     message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                    <div class="lastName">
+                                        <dx-text-box name="lastName"
+                                                     placeholder="{{l('LastName')}}"
+                                                     [(value)]="model.surname"
+                                                     (keydown)="validateName($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required"
+                                                                     message="{{l('SurnameIsRequired')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field email">
+                                    <div class="dx-field-label">{{l('YourEmailAddress')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box name="email"
+                                                     placeholder="{{l('Email')}}"
+                                                     [(value)]="model.email"
+                                                     [readOnly]="isExistingUser">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required"
+                                                                     message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="email"
+                                                                     message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{l('YourPhone')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box name="phone"
+                                                     placeholder="{{l('Phone')}}"
+                                                     maskInvalidMessage="{{l('PhoneValidationError')}}."
+                                                     [(value)]="model.phone"
+                                                     (onFocusOut)="blurInput($event)"
+                                                     (onFocusIn)="focusInput($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{l('PhoneIsRequired')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dx-fieldset col-md-6">
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{l('WhatIsYourGender')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-radio-group [dataSource]="gender"
+                                                        displayExpr="text"
+                                                        valueExpr="value"
+                                                        layout="horizontal"
+                                                        name="gender"
+                                                        [(value)]="model.gender">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{l('GenderIsRequired')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-radio-group>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">{{l('DateOfBirth')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-date-box invalidDateMessage="{{l('InvalidDateOfBirth')}}"
+                                                     name="dob"
+                                                     type="date"
+                                                     placeholder="mm/dd/yyyy"
+                                                     [max]="minDate"
+                                                     [min]="maxDate"
+                                                     [(value)]="model.doB"
+                                                     (onKeyDown)="validateDateBirth($event)"
+                                                     (onFocusIn)="focusDateBirth($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required"
+                                                                     message="{{l('DateOfBirthIsRequired')}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="range" [max]="minAge"
+                                                                     message="{{l('DateOfBirth18YearsError')}}."></dxi-validation-rule>
+                                                <dxi-validation-rule type="range" [min]="maxAge"
+                                                                     message="{{l('DateOfBirth99YearsError')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-date-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field">
+                                    <div class="dx-field-label">SSN</div>
+                                    <div class="dx-field-value">
+                                        <dx-text-box name="ssn"
+                                                     placeholder="{{l('SSN')}}"
+                                                     maskInvalidMessage="{{l('SSNFormatError')}}"
+                                                     [(value)]="model.ssn"
+                                                     (onFocusIn)="focusInput($event)"
+                                                     (onFocusOut)="blurInput($event)">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="required" message="{{l('SSNIsRequired')}}."></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                    </div>
+                                </div>
+                                <div class="dx-field custom-radio-2-btn">
+                                    <div class="dx-field-label">{{l('AreYouUsCitizen')}}</div>
+                                    <div class="dx-field-value">
+                                        <dx-radio-group [dataSource]="radioGroupCitizen"
+                                                        displayExpr="text"
+                                                        valueExpr="status"
+                                                        layout="horizontal"
+                                                        name="isUSCitizen"
+                                                        [(value)]="model.isUSCitizen">
+                                        </dx-radio-group>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <dx-validation-summary class="summary"></dx-validation-summary>
+                        <dx-button class="button"
+                                   text="{{l('Next')}}"
+                                   icon="/assets/landing/right-arrow.svg"
+                                   type="submit"
+                                   rtlEnabled="true"
+                                   [disabled]="checkButtonDisabled('memberInfo')"
+                                   (onClick)="memberInfoSubmit($event)">
+                        </dx-button>
+                    </dx-validation-group>
+                </form>
+            </div>
+        </wizard-step>
+        <wizard-step>
+            <wizard-step-tab></wizard-step-tab>
+            <form id="billingInfo">
+                <payment-info [paymentAuthorizationRequired]="paymentAuthorizationRequired"></payment-info>
+                <div *ngIf="paymentResult" class="base-commerce-validation">
+                    <ng-container *ngFor="let item of paymentResult.errors">
+                        <div class="dx-validationsummary-item">
+                            <div class="dx-item-content dx-validationsummary-item-content">{{ item }}</div>
+                        </div>
+                    </ng-container>
+                </div>
+                <button class="button btn-back" (click)="previousStep()" type="button">
+                    <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                </button>
+                <dx-button class="button"
+                           text="{{l('Next')}}"
+                           icon="/assets/landing/right-arrow.svg"
+                           [rtlEnabled]="true"
+                           [disabled]="checkButtonDisabled('billingInfo')"
+                           (onClick)="billingInfoSubmit($event)">
+                </dx-button>
+            </form>
+        </wizard-step>
+        <wizard-step>
+            <wizard-step-tab></wizard-step-tab>
+            <img src="/assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
+            <h2 class="step-title">{{l('AddressInfo')}}</h2>
+            <div class="form">
+                <form id="addressInfo">
+                    <dx-validation-group name="addressValidationGroup">
+                        <div class="dx-fieldset with-bg">
+                            <div class="row dx-field">
+                                <div class="col-sm-12 with-icon fullAddress">
+                                    <input *ngIf="!googleAutoComplete" type="text"
+                                           name="Address"
+                                           placeholder="{{l('AddressPlaceholder')}}"
+                                           [(ngModel)]="model.address.streetAddress"
+                                           class="dx-texteditor-input" />
+                                    <input *ngIf="googleAutoComplete" type="text"
+                                           name="Address"
+                                           placeholder="{{l('AddressPlaceholder')}}"
+                                           [(ngModel)]="model.address.streetAddress"
+                                           class="dx-texteditor-input"
+                                           [options]="option"
+                                           (country)="country=$event"
+                                           (street_number)='street_number=$event'
+                                           (street)='street_name=$event'
+                                           (city)='model.address.city=$event'
+                                           (state)='model.address.stateId = getStateCodeFromName($event)'
+                                           (postal_code)='model.address.zip=$event'
+                                           (setAddress)="onAddressChanged($event)"
+                                           angularGooglePlace />
+                                </div>
+                            </div>
+                            <div class="dx-field row">
+                                <div class="col-sm-5">
+                                    <dx-text-box name="city"
+                                                 maxLength="50"
+                                                 placeholder="{{l('City')}}"
+                                                 [(value)]="model.address.city">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"
+                                                                 message="{{l('CityRequired')}}"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                                <div class="col-sm-3">
+                                    <dx-select-box [dataSource]="states"
+                                                   displayExpr="code"
+                                                   valueExpr="code"
+                                                   name="billingStateCode"
+                                                   [searchEnabled]="true"
+                                                   [(value)]="model.address.stateId"
+                                                   fieldTemplate="field">
+                                        <div *dxTemplate="let data of 'field'">
+                                            <div class="custom-item">
+                                                <dx-text-box class="state"
+                                                             [value]="data?.code"
+                                                             placeholder="State"
+                                                             [readOnly]="true">
+                                                </dx-text-box>
+                                            </div>
+                                        </div>
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"
+                                                                 message="{{l('StateRequired')}}"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-select-box>
+                                </div>
+                                <div class="col-sm-4">
+                                    <dx-text-box name="zipCode"
+                                                 class="with-icon zipCode"
+                                                 maxLength="5"
+                                                 placeholder="{{l('Zipcode')}}"
+                                                 [(value)]="model.address.zip"
+                                                 (onFocusIn)="focusInput($event)"
+                                                 (onFocusOut)="blurInput($event)">
+                                        <dx-validator>
+                                            <dxi-validation-rule type="required"
+                                                                 message="{{l('ZipIsRequired')}}"></dxi-validation-rule>
+                                        </dx-validator>
+                                    </dx-text-box>
+                                </div>
+                            </div>
+                        </div>
+                        <dx-validation-summary class="summary"></dx-validation-summary>
+                        <button class="button btn-back" (click)="previousStep()" type="button">
+                            <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                        </button>
+                        <dx-button class="button"
+                                   text="{{l('Next')}}"
+                                   icon="/assets/landing/right-arrow.svg"
+                                   [rtlEnabled]="true"
+                                   [disabled]="checkButtonDisabled('addressInfo')"
+                                   (onClick)="addressInfoSubmit($event)">
+                        </dx-button>
+                    </dx-validation-group>
+                </form>
+            </div>
+        </wizard-step>
+        <wizard-step>
+            <wizard-step-tab></wizard-step-tab>
+            <img src="/assets/landing/confirm-reg-icon.svg" alt="Payment" class="step-icon" width="116">
+            <h2 class="step-title">Confirm your login settings</h2>
+            <form novalidate (ngSubmit)="registerMemberSubmit()" #registerMember="ngForm" autocomplete="off" class="last-step">
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2">Current email address</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="email" name="email" email [(ngModel)]="model.email">
+                        <div class="layout-checkbox">
+                            <label class="t-checkbox">
+                                <input class="form-control" [(ngModel)]="loginService.rememberMe" type="checkbox" name="rememberMe" id="rememberMe" />
+                                {{l("RememberMe")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 info-card">
+                        <p>
+                            Please be sure this is your correct email address. You will receive the verification link
+                            within 24 hours to have continued access your account.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="password" class="col-sm-2">Choose your account password</label>
+                    <div class="col-sm-5">
+                        <input type="{{showPassword ? 'text' : 'password'}}" class="form-control" #passwordInput="ngModel" name="passwordInput" [(ngModel)]="model.password" (ngModelChange)="UpdatePasswordStrength($event)"
+                               [requireDigit]="passwordComplexitySetting.requireDigit" [requireLowercase]="passwordComplexitySetting.requireLowercase"
+                               [requireUppercase]="passwordComplexitySetting.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting.requireNonAlphanumeric"
+                               [requiredLength]="passwordComplexitySetting.requiredLength"
+                               required>
+                        <a class="toggle-password" (click)="toggleShowPassword($event)">{{l('ShowPassword')}}</a>
+                        <span class="password-strength pull-right">Password strenght: <span class="{{passwordComplexityWord}}">{{l(passwordComplexityWord)}}</span></span>
+                    </div>
+                    <div class="col-sm-5 info-card">
+                        <p>
+                            Choose a password to access your account. The password must be at least {{passwordComplexitySetting.requiredLength}} characters. It
+                            should be something you’ll remember, but difficult for someone else to guess
+                        </p>
+                        <ul *ngIf="!passwordInput.valid && !passwordInput.pristine" class="fa-ul help-block password-Complexity-Block">
+                            <li [hidden]="!passwordComplexitySetting.requireDigit" [ngClass]="checkPasswordRule(passwordInput, 'requireDigit')">
+                                {{l("PasswordComplexity_RequireDigit_Hint")}}
+                            </li>
+                            <li [hidden]="!passwordComplexitySetting.requireLowercase" [ngClass]="checkPasswordRule(passwordInput, 'requireLowercase')">
+                                {{l("PasswordComplexity_RequireLowercase_Hint")}}
+                            </li>
+                            <li [hidden]="!passwordComplexitySetting.requireUppercase" [ngClass]="checkPasswordRule(passwordInput, 'requireUppercase')">
+                                {{l("PasswordComplexity_RequireUppercase_Hint")}}
+                            </li>
+                            <li [hidden]="!passwordComplexitySetting.requireNonAlphanumeric" [ngClass]="checkPasswordRule(passwordInput, 'requireNonAlphanumeric')">
+                                {{l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}
+                            </li>
+                            <li [ngClass]="checkPasswordRule(passwordInput, 'requiredLength')">
+                                {{l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting.requiredLength)}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="button btn-back" (click)="previousStep()" type="button">
+                    <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                </button>
+                <button class="button" type="submit" [disabled]="!registerMember.valid || registrationInProgress">
+                    {{l("Next")}} <img src="/assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon">
+                </button>
+            </form>
+        </wizard-step>
+    </wizard>
+    <footer></footer>
+</div>

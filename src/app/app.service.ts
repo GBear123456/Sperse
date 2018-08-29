@@ -17,7 +17,6 @@ export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
 
     public toolbarConfig: any = null;
-    public toolbarIsAdaptive = true;
     public toolbarIsHidden  = false;
     public narrowingPageContentWhenFixedFilter = true;
     public showContactInfoPanel = false;
@@ -40,7 +39,7 @@ export class AppService extends AppServiceBase {
                 'API',
                 'CFO',
                 'CRM',
-                'CreditReports',
+                'PersonalFinance',
                 'Cloud',
                 'Forms',
                 'HR',
@@ -53,7 +52,7 @@ export class AppService extends AppServiceBase {
                 api: require('./api/module.config.json'),
                 crm: require('./crm/module.config.json'),
                 cfo: require('./cfo/module.config.json'),
-                creditreports: require('../credit-reports/module.config.json')
+                personalfinance: require('../personal-finance/module.config.json')
             },
         );
 
