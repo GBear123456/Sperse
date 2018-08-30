@@ -9,7 +9,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentStatusComponent extends AppComponentBase implements OnInit {
-    @Input() paymentStatus: PaymentStatusEnum;
+    @Input() paymentStatus: PaymentStatusEnum = PaymentStatusEnum.Pending;
     @Input() text = '';
     get title() {
         switch (this.paymentStatus) {
