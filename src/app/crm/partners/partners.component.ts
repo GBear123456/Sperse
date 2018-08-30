@@ -682,6 +682,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     activate() {
         this._filtersService.localizationSourceName = this.localizationSourceName;
 
+        if (this.searchValue)
+            this.searchValueChange({value: ''});
+
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

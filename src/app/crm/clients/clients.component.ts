@@ -620,7 +620,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     activate() {
-        this._filtersService.localizationSourceName = this.localizationSourceName;
+        this._filtersService.localizationSourceName = 
+            this.localizationSourceName;
+
+        if (this.searchValue)
+            this.searchValueChange({value: ''});
+
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();

@@ -615,8 +615,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     searchValueChange(e: object) {
-        this.searchValue = e['value'];
-        this.processFilterInternal();
+        if (this.filterChanged = (this.searchValue != e['value'])) {
+            this.searchValue = e['value'];
+            this.processFilterInternal();
+        }
     }
 
     processFilterInternal() {
@@ -774,6 +776,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     activate() {
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
+
+        if (this.searchValue)
+            this.searchValueChange({value: ''});
 
         this.paramsSubscribe();
         this.initFilterConfig();
