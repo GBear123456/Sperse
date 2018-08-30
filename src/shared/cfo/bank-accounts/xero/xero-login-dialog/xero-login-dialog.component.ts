@@ -1,4 +1,4 @@
-import { Component, Injector, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Injector, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType,
@@ -13,7 +13,7 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./xero-login-dialog.component.less'],
     providers: [SyncAccountServiceProxy]
 })
-export class XeroLoginDialogComponent extends CFOComponentBase {
+export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit {
     @Input() operationType: 'add' | 'update' = 'add';
     @Output() onComplete = new EventEmitter();
     showForm = false;
@@ -23,6 +23,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     isSyncBankAccountsEnabled = true;
     getXeroCertificateUrl: string;
     accountId: number;
+    overlayElement;
 
     constructor(
         injector: Injector,
@@ -30,6 +31,10 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     ) {
         super(injector);
         this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + '/Xero/GetCertificate';
+    }
+
+    ngOnInit() {
+        this.overlayElement = document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content');
     }
 
     show(data: {id: number} = null): void {
@@ -55,7 +60,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     }
 
     connectToXero(e) {
-        abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'));
+        abp.ui.setBusy(this.overlayElement);
         this._syncAccountServiceProxy.create(InstanceType[this.instanceType], this.instanceId,
             new CreateSyncAccountInput({
                 typeId: 'X',
@@ -71,7 +76,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
 
     updateSyncAccount() {
         if (this.accountId) {
-            abp.ui.setBusy(document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content'));
+            abp.ui.setBusy(this.overlayElement);
             this._syncAccountServiceProxy.update(InstanceType[this.instanceType], this.instanceId,
                 new UpdateSyncAccountInput({
                     id: this.accountId,
@@ -86,7 +91,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase {
     }
 
     finalize = () => {
-        abp.ui.clearBusy();
+        abp.ui.clearBusy(this.overlayElement);
         this.hide();
         this.consumerKey = null;
         this.consumerSecret = null;
