@@ -3,7 +3,7 @@
     height: 100%;
     .left {
         padding: 35px 18px 31px 33px;
-        min-width: 24%; //234px
+        flex-basis: 24%; //234px
         background-color: #fbfbfb;
         border-right: solid 1px #dee3e5;
         display: flex;
@@ -83,13 +83,15 @@
             }
         }
         .orderSummary {
-            .orderSummary {
+            .orderSummaryTitle {
                 display: flex;
-                font-size: 12px;
-                letter-spacing: 0.6px;
-                color: #888d92;
                 position: relative;
                 margin-bottom: 20px;
+                h3 {
+                    letter-spacing: 0.6px;
+                    color: #888d92;
+                    font-size: 12px;
+                }
                 hr {
                     margin-bottom: 1rem;
                     border: 0;
@@ -188,7 +190,7 @@
     }
     .right {
         padding: 38px 52px 33px 47px;
-        max-width: 76%; //744px
+        flex-basis: 76%; //744px
         .header {
             display: flex;
             position: relative;
@@ -237,26 +239,29 @@
         }
         .paymentMethods /deep/ .mat-tab-header {
             margin-bottom: 25px;
+            border: none;
             .mat-tab-labels {
                 justify-content: space-between;
                 .mat-tab-label {
                     font-size: 16px;
-                    font-weight: 300;
+                    font-weight: 500;
                     letter-spacing: 0.4px;
                     border-radius: 5px;
                     color: #686f76;
                     border: solid 1px #979797;
-                    padding: 0 22px;
+                    padding: 0 19px;
                     min-width: 0;
                     height: 50px;
-                    &[area-selected="true"] {
+                    opacity: 1;
+                    &.mat-tab-label-active {
                         color: #ffffff;
                         background-color: #00aeef;
+                        border: none;
                     }
                 }
-                mat-ink-bar {
-                    display: none;
-                }
+            }
+            mat-ink-bar {
+                display: none;
             }
         }
     }

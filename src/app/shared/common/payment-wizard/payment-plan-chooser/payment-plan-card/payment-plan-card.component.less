@@ -7,6 +7,7 @@
     position: relative;
     background: #fff;
     margin: 25px 10px;
+    cursor: pointer;
     &.heightFitContent {
         height: fit-content;
     }
@@ -14,6 +15,19 @@
         border-radius: 5px;
         box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
         border: solid 3px #60d956;
+    }
+    &.selected {
+        background: #fcfafb;
+        box-shadow: 0 0 10px #00aeef;
+        &:after {
+            content: url('../../../../../../assets/common/icons/check.svg');
+            display: block;
+            width: 13px;
+            height: 9px;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+        }
     }
     /** Best Value Triangle */
     .isBestValue {

@@ -40,5 +40,5 @@
 <div class="footer">
     <p class="downgrade">{{ l('DowngradeToFree') }}</p>
     <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
-    <button [disabled]="!this.selectedPaymentPlanIndex" (click)="goToNextStep()">{{ l('Next') }}</button>
+    <button [disabled]="this.selectedPaymentPlanIndex === undefined" (click)="goToNextStep()">{{ l('Next') }}</button>
 </div>

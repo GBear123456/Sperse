@@ -15,7 +15,7 @@
         <p>{{ l('SecuredAndEncryptedPaymentMessage') }}</p>
     </div>
     <div class="orderSummary">
-        <div class="orderSummary">
+        <div class="orderSummaryTitle">
             <h3 >{{ l('PaymentOrderSummary').toUpperCase() }}</h3>
             <hr>
         </div>
@@ -42,7 +42,7 @@
         </div>
         <div class="total">
             <span>{{ l('Total') }}</span>
-            <span>{{ plan.total | number : '1.2-2' }}</span>
+            <span>{{ (plan.currencySymbol || '$') + (plan.total | number : '1.2-2') }}</span>
         </div>
     </div>
 </div>
