@@ -42,6 +42,10 @@ export class RootComponent implements AfterViewInit {
     }
 
     public addScriptLink(src: String, type: String = 'text/javascript', callback = null): void {
+        if (Array.prototype.some.call(this.document.scripts, (script) => {
+            return script.src == src;
+        })) return ;
+
         let script = this.document.createElement('script');
         script.type = type;
         script.src = src;
@@ -80,7 +84,7 @@ export class RootComponent implements AfterViewInit {
 */
 @Component({
     selector: 'app-root',
-    template: `<router-outlet></router-outlet>`
+    template: '<router-outlet></router-outlet>'
 })
 export class AppRootComponent implements OnInit {
     constructor(@Inject(AppSessionService) private SS,
