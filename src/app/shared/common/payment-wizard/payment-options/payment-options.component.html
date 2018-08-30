@@ -72,10 +72,10 @@
                 </ng-template>
                 <pay-pal></pay-pal>
             </mat-tab>
-            <mat-tab label="BankTransfer">
+            <mat-tab [label]="l('BankTransfer')">
                 <bank-transfer></bank-transfer>
             </mat-tab>
-            <mat-tab label="Bitcoin">
+            <mat-tab [label]="l('Bitcoin')">
                 bitcoin component
             </mat-tab>
         </mat-tab-group>
