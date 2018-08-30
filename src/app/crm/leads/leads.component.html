@@ -95,7 +95,7 @@
                     <app-pipeline
                         [totalsURI]="'LeadCount'"
                         [dataSource]="pipelineDataSource"
-                        [selectFields]="['Id', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']"
+                        [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
                         (onStagesLoaded)="onStagesLoaded($event)"
