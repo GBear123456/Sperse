@@ -23,7 +23,7 @@
         <h4 class="planName">{{ plan.name }}</h4>
         <div class="planPrice">
             <div>
-                <span class="currency">{{ plan.currency || '$' }}</span>
+                <span class="currency">{{ plan.currencySymbol || '$' }}</span>
                 <span class="numberPrice">{{ plan.pricePerMonth | customNumber : '1.0-0' }}</span>
                 <span class="decimalsPrice">{{ plan.pricePerMonth | customNumber : '0.2-2' }}</span>
             </div>
