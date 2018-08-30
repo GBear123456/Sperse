@@ -32,6 +32,6 @@
                   </div>
             </ng-container>
         </div>
-        <span class="load-more" [hidden]="stage.full" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
+        <span class="load-more" [hidden]="stage.full || !stage?.leads?.length" (click)="loadMore(i)"><img src="/assets/common/icons/arrow-down.svg"></span>
     </div>
 </div>
