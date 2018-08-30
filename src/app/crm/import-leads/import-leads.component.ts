@@ -354,7 +354,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     complete(data) {
         this.totalCount = data.records.length;
         this.message.confirm(
-            this.l('LeadsImportComfirmation', [this.totalCount]),
+            this.l('LeadsImportComfirmation', this.totalCount, this.importType),
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
