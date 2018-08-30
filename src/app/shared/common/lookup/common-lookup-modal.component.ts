@@ -21,6 +21,7 @@ export interface ICommonLookupModalOptions {
 
 @Component({
     selector: 'commonLookupModal',
+    styleUrls: ['./common-lookup-modal.component.less'],
     templateUrl: './common-lookup-modal.component.html'
 })
 export class CommonLookupModalComponent extends AppComponentBase {
@@ -31,10 +32,9 @@ export class CommonLookupModalComponent extends AppComponentBase {
         isFilterEnabled: true,
         pageSize: AppConsts.grid.defaultPageSize
     };
-
+    popupVisible = false;
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
-
-    @ViewChild('modal') modal: ModalDirective;
+    
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
 
@@ -66,8 +66,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
         if (!this.options) {
             throw Error('Should call CommonLookupModalComponent.configure once before CommonLookupModalComponent.show!');
         }
-
-        this.modal.show();
+        this.popupVisible = true;
     }
 
     refreshTable(): void {
@@ -75,7 +74,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.modal.hide();
+        this.popupVisible = false;
     }
 
     shown(): void {
