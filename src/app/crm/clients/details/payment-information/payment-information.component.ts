@@ -73,8 +73,6 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     }
 
     showUserImpersonateLookUpModal(record: any): void {
-        console.log(record);
-        console.log(record.tenantId);
         this.impersonateUserLookupModal.tenantId = record.tenantId;
         this.impersonateUserLookupModal.show();
     }
