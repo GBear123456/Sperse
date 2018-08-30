@@ -1,0 +1,69 @@
+<form class="credit-card-form">
+  <div class="row">
+    <mat-form-field class="col-8">
+      <input matInput placeholder="CARD NUMBER" value="1234 5678 9873 4322" type="tel">
+    </mat-form-field>
+  
+    <mat-form-field class="col-4">
+      <input matInput placeholder="EXPIRY DATE" type="tel">
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <mat-form-field class="col-8">
+      <input matInput placeholder="NAME ON CARD" value="Claudiu Cosmin Constantin">
+    </mat-form-field>
+  
+    <mat-form-field class="col-4">
+      <input matInput placeholder="CVV CODE" type="tel">
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-8">
+      <input matInput placeholder="ADDRESS" value="428 Jenkins Villages Apt. 902">
+    </mat-form-field>
+  
+    <mat-form-field class="col-4">
+      <input matInput placeholder="CITY" value="Los Angeles">
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-4">
+      <mat-select disableOptionCentering placeholder="STATE OR PROVINCE">
+        <mat-option *ngFor="let state of states" [value]="state">
+          {{state}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field class="col-4">
+      <input matInput placeholder="ZIP CODE" value="12345" type="tel" maxlength="5">
+    </mat-form-field>
+
+    <mat-form-field class="col-4">
+      <mat-select disableOptionCentering placeholder="COUNTRY">
+        <mat-option *ngFor="let country of countries" [value]="country">
+          {{country}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <div class="col-8">
+      <div class="terms-block row align-items-center">
+        <div class="col-1">
+          <i class="fa fa-info blue-icon"></i>
+        </div>
+        <div class="col-11 terms-text">
+          By continuing and pressing the “Purchase” button you hereby accept our <a href="javascript:;">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-4 text-right">
+      <button mat-raised-button class="btn btn-layout">Purchase</button>
+    </div>
+  </div>
+</form>
