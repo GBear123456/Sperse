@@ -20,7 +20,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     public headlineConfig;
     isDisabled = false;
     dialogConfig = new MatDialogConfig();
-
+    xeroButtonVisible = false;
     quovoHandler: any;
 
     constructor(injector: Injector,
@@ -48,7 +48,11 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
             if (this.loading) {
                 this.finishLoading(true);
             }
-            this.quovoHandler.open(e => this.onQuovoHandlerClose(e));
+            this.quovoHandler.open(e => {
+                this.xeroButtonVisible = false;
+                this.onQuovoHandlerClose(e);
+            });
+            this.xeroButtonVisible = true;
             return;
         } else {
             if (!this.loading) {
@@ -124,5 +128,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.isGetStartedButtonClicked) this.onStart();
         });
+    }
+
+    xeroButtonClick() {
+        this.quovoHandler.close();
     }
 }

@@ -6,7 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /** Third party imports */
 import {
     MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule
+    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule,
+    MatSelectModule
 } from '@angular/material';
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
@@ -55,6 +56,7 @@ import { PaymentPlanCardComponent } from './payment-wizard/payment-plan-chooser/
 import { PaymentPlanChooserComponent } from './payment-wizard/payment-plan-chooser/payment-plan-chooser.component';
 import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
 import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';
+import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
 
 @NgModule({
     imports: [
@@ -74,6 +76,8 @@ import { PaymentOptionsComponent } from './payment-wizard/payment-options/paymen
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
+        MatButtonModule,
+        MatSelectModule,
         ReactiveFormsModule,
         FileDropModule,
         PapaParseModule,
@@ -132,7 +136,8 @@ import { PaymentOptionsComponent } from './payment-wizard/payment-options/paymen
         PaymentPlanCardComponent,
         PaymentPlanChooserComponent,
         PaymentStatusComponent,
-        PaymentOptionsComponent
+        PaymentOptionsComponent,
+        CreditCardComponent
     ],
     exports: [
         TimeZoneComboComponent,

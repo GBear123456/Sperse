@@ -44,7 +44,7 @@
                     <img src="assets/common/images/xero/blue-arrow-right.svg" alt="Arrow right" class="img-arrow-right">
                 </header>
                 <div class="content">
-                    <div class="first-step-content" [hidden]="showForm">
+                    <div class="first-step-content" *ngIf="!showForm">
                         <div class="row title-col">
                             <div class="col text-right">
                                 <h3 class="xero-logo-text">
@@ -96,7 +96,7 @@
                         <button class="btn-black" (click)="showForm = !showForm">Click here to connect</button>
                     </div>
 
-                    <div class="second-step-content" [hidden]="!showForm">
+                    <div class="second-step-content" *ngIf="showForm">
                         <div class="form">
                             <div class="field">
                                 <div class="field-label">{{l('ConsumerKey')}}</div>
@@ -120,7 +120,7 @@
                             </div>
                             <div class="text-center">
                                 <dx-validation-summary id="summary"></dx-validation-summary>
-                                <dx-button 
+                                <dx-button
                                     type="success"
                                     [text]="operationType === 'add' ? l('Connect') : l('Update')"
                                     (onClick)="onClick($event)"
@@ -142,7 +142,6 @@
                             </div>
                         </footer>
                     </div>
-                    
                 </div>
             </div>
         </div>
