@@ -352,9 +352,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     complete(data) {
+        let uri = (this.importType + 's').toLowerCase();
         this.totalCount = data.records.length;
         this.message.confirm(
-            this.l('LeadsImportComfirmation', this.totalCount, this.importType),
+            this.l('LeadsImportComfirmation', this.totalCount, uri),
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
@@ -371,7 +372,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     if (<ImportStatus>res.statusId == ImportStatus.InProgress)
                                         this._importLeadsService.setupImportCheck(importId, (res) => {
                                             this.updateImportStatus(res);
-                                        });
+                                        }, uri);
                                 });
                             this.clearToolbarSelectedItems();
                         });

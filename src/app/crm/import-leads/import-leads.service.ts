@@ -7,7 +7,7 @@ export class ImportLeadsService {
         private _importWizardService: ImportWizardService
     ) {    }
 
-    setupImportCheck(importId, method = undefined) {
-        this._importWizardService.setupStatusCheck(importId, method, 'leads');
+    setupImportCheck(importId, method = undefined, uri = 'leads') {
+        this._importWizardService.setupStatusCheck(importId, method, uri);
     }
 }
