@@ -57,6 +57,7 @@ import { PaymentPlanChooserComponent } from './payment-wizard/payment-plan-choos
 import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
 import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';
 import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
+import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 
 @NgModule({
     imports: [
@@ -137,7 +138,8 @@ import { CreditCardComponent } from './payment-wizard/payment-options/credit-car
         PaymentPlanChooserComponent,
         PaymentStatusComponent,
         PaymentOptionsComponent,
-        CreditCardComponent
+        CreditCardComponent,
+        PayPalComponent
     ],
     exports: [
         TimeZoneComboComponent,
