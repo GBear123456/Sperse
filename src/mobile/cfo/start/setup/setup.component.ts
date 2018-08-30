@@ -35,7 +35,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
         });
     }
-    
+
     ngOnDestroy() {
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');

@@ -63,3 +63,30 @@
         }
     }
 }
+
+/deep/ .dx-overlay-wrapper.addXeroAccount {
+    width: 180px;
+    height: 40px;
+    margin: auto;
+    border: none;
+    top: 45em;
+    right: 45em;
+
+    _:-moz-tree-row(hover), .selector {
+        top: 36em;
+        right: 38em;
+    }
+
+    .dx-overlay-content {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        -webkit-transform: initial !important;
+        transform: initial !important;
+        transition: initial !important;
+        opacity: 1 !important;
+        .dx-popover-arrow {
+            display: none;
+        }
+    }
+}
