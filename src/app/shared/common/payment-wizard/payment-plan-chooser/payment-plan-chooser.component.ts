@@ -155,6 +155,7 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
         const wholePrice = selectedPlanCardComponent.pricePerMonth * selectedPlanCardComponent.usersAmount;
         const plan: OptionsPaymentPlan = {
             name: selectedPlanCardComponent.name,
+            billingPeriod: selectedPlanCardComponent.billingPeriod,
             pricePerMonth: selectedPlanCardComponent.pricePerMonth,
             subtotal: wholePrice,
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : null,
