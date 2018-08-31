@@ -109,7 +109,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this._dragulaService.dragend.subscribe((value) => {
                     this.hideStageHighlighting();
                 }
-            ));
+            )
+        );
         this.subscribers.push(
             this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId).pipe(
                 map((pipeline) => {
@@ -122,18 +123,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 mergeMap(pipeline => pipeline)
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
-                if (!this.stages) {
-                    this.stages = pipeline.stages.map((stage) => {
-                        _.extend(stage, {
-                            leads: [],
-                            full: true
-                        });
-                        return stage;
+
+                if (!this.stages && !this.quiet)
+                    this.onStagesLoaded.emit(pipeline);
+                
+                this.stages = pipeline.stages.map((stage) => {
+                    _.extend(stage, {
+                        leads: [],
+                        full: true
                     });
-                    this.firstStage = this.stages[0];
-                    this.lastStage = this.stages[this.stages.length - 1];
-                    !this.quiet && this.onStagesLoaded.emit(pipeline);
-                }
+                    return stage;
+                });
+                this.firstStage = this.stages[0];
+                this.lastStage = this.stages[this.stages.length - 1];
+                
                 this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
                 this.refreshTimeout = null;
@@ -275,7 +278,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     isAllStagesLoaded() {
         return Object['values'](this._dataSources)
-            .every(dataSource => dataSource.isLoaded());
+            .every(dataSource => (dataSource.isLoaded() && !dataSource.isLoading()));
     }
 
     processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
