@@ -523,15 +523,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
             this._contactGroupService.getSimilarContactGroups(
-                this.person.namePrefix,
-                this.person.firstName,
-                this.person.middleName,
-                this.person.lastName,
-                this.person.nameSuffix,
-                this.company,
-                this.getCurrentEmails(),
-                this.getCurrentPhones(),
-                null, null, null, null, null)
+                this.person.namePrefix || undefined,
+                this.person.firstName || undefined,
+                this.person.middleName || undefined,
+                this.person.lastName || undefined,
+                this.person.nameSuffix || undefined,
+                this.company || undefined,
+                this.getCurrentEmails() || undefined,
+                this.getCurrentPhones() || undefined,
+                undefined, undefined, undefined, undefined, undefined)
             .subscribe(response => {
                 if (response)
                     this.similarCustomers = response;
