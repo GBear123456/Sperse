@@ -2,19 +2,18 @@ import { Component, OnInit, Injector, ChangeDetectionStrategy } from '@angular/c
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-
 @Component({
-  selector: 'bank-transfer',
-  templateUrl: './bank-transfer.component.html',
-  styleUrls: ['./bank-transfer.component.less']
+    selector: 'bank-transfer',
+    templateUrl: './bank-transfer.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankTransferComponent extends AppComponentBase implements OnInit {
 
-  constructor(injector: Injector) {
-    super(injector);
-  }
+    constructor(injector: Injector) {
+        super(injector);
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
 }

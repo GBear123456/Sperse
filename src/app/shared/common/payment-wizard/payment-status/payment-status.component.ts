@@ -11,14 +11,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class PaymentStatusComponent extends AppComponentBase implements OnInit {
     @Input() paymentStatus: PaymentStatusEnum = PaymentStatusEnum.Pending;
     @Input() text = '';
-    get title() {
-        switch (this.paymentStatus) {
-            case PaymentStatusEnum.BeingConfirmed: return this.l('PaymentIsBeingConfirmedStatusTitle');
-            case PaymentStatusEnum.Pending: return this.l('PaymentPendingStatusTitle');
-            case PaymentStatusEnum.Confirmed: return this.l('PaymentConfirmedStatusTitle');
-            case PaymentStatusEnum.Failed: return this.l('PaymentFailedStatusTitle');
-        }
-    }
 
     constructor(injector: Injector) {
         super(injector);
