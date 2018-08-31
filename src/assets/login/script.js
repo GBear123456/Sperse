@@ -118,11 +118,12 @@
             navigate('account/send-code');
         } else if (authenticateResult.accessToken) {
             // Successfully logged in
+            var form = window['loginForm'];
             login(
                 authenticateResult.accessToken,
                 authenticateResult.encryptedAccessToken,
                 authenticateResult.expireInSeconds,
-                loginForm.elements['rememberMe'].checked,
+                form && form.elements['rememberMe'].checked,
                 authenticateResult.twoFactorRememberClientToken,
                 authenticateResult.returnUrl
             );
@@ -172,59 +173,71 @@
         }
     }
 
-    if (loginForm) {
-        loginForm.onsubmit = function() {      
-            var params = queryString(document.location.search.substr(1), '&');
-            var cookie = queryString(document.cookie, ';');
-            var authenticateModel = JSON.stringify({
-                userNameOrEmailAddress: loginForm.elements['userNameOrEmailAddress'].value,
-                password: loginForm.elements['password'].value,
-                twoFactorRememberClientToken: cookie[TwoFactorRememberClientToken],
-                singleSignIn: params.ss,
-                returnUrl: params.returnUrl,
-                autoDetectTenancy: true
-            });
-            
-            abp.ui.setBusy();
-            $.ajax({
-                url: remoteServiceUrl + '/api/TokenAuth/Authenticate',
-                data: authenticateModel,
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json", 
-                    "Accept": "application/json"                
-                },
-                error: function(request) {
+    if (window['loginForm']) {
+        var form = window['loginForm'];
+        form.onsubmit = function() {      
+            if (checkIsValid()) {
+                var params = queryString(document.location.search.substr(1), '&');
+                var cookie = queryString(document.cookie, ';');
+                var authenticateModel = JSON.stringify({
+                    userNameOrEmailAddress: form.elements['userNameOrEmailAddress'].value,
+                    password: form.elements['password'].value,
+                    twoFactorRememberClientToken: cookie[TwoFactorRememberClientToken],
+                    singleSignIn: params.ss,
+                    returnUrl: params.returnUrl,
+                    autoDetectTenancy: true
+                });
+                
+                abp.ui.setBusy();
+                $.ajax({
+                    url: remoteServiceUrl + '/api/TokenAuth/Authenticate',
+                    data: authenticateModel,
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json", 
+                        "Accept": "application/json"                
+                    },
+                    error: function(request) {
+                        abp.ui.clearBusy();
+                        var response = JSON.parse(request.responseText);
+                        if (response.error)
+                            abp.message.error(response.error.details, response.error.message);
+                    }
+                }).done((response) => {
                     abp.ui.clearBusy();
-                    var response = JSON.parse(request.responseText);
-                    if (response.error)
-                        abp.message.error(response.error.details, response.error.message);
-                }
-            }).done((response) => {
-                abp.ui.clearBusy();
-                if (response.result) {
-                    handleAuthResult(response.result);
-                    sessionStorage.setItem('authenticateResult',  
-                        JSON.stringify(response.result));
-                    sessionStorage.setItem('authenticateModel', 
-                        authenticateModel);
-                }
-            });
+                    if (response.result) {
+                        handleAuthResult(response.result);
+                        sessionStorage.setItem('authenticateResult',  
+                            JSON.stringify(response.result));
+                        sessionStorage.setItem('authenticateModel', 
+                            authenticateModel);
+                    }
+                });
+            }
 
             return false;
         }
 
-        loginForm.onkeypress = loginForm.onchange = function() {
-            var login = loginForm.elements['userNameOrEmailAddress'];
-            var password = loginForm.elements['password'];
-            var button = loginForm.elements['submit'];
-            if (login.value && password.value)
+        function checkIsValid() {
+            var login = form.elements['userNameOrEmailAddress'];
+            var password = form.elements['password'];
+            var button = form.elements['submit'];
+            var result = login.value && password.value;
+            if (result)
                 button.removeAttribute('disabled');
             else
                 button.setAttribute('disabled', '');
+
+            return result;
         }
 
-        window.addEventListener('load', function() {
+        var inputCheckTimeout;
+        form.onkeypress = form.onchange = function() {
+            clearTimeout(inputCheckTimeout);
+            inputCheckTimeout = setTimeout(checkIsValid, 300);
+        }
+        
+        window.addEventListener('load', function() {                        
             $( document ).ready( function() {
                 $('.agree-rights').show();
 
