@@ -391,7 +391,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
             partnerTypeName: this.selectedPartnerTypeName,
-            ingoreInvalidValues: importAll
+            ignoreInvalidValues: importAll
         });
         result.items = [];
         result.lists = this.listsComponent.selectedItems;
