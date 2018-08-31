@@ -191,6 +191,8 @@
     .right {
         padding: 38px 52px 33px 47px;
         flex-basis: 76%; //744px
+        display: flex;
+        flex-direction: column;
         .header {
             display: flex;
             position: relative;
@@ -237,36 +239,83 @@
                 background-size: cover;
             }
         }
-        .paymentMethods /deep/ .mat-tab-header {
-            margin-bottom: 25px;
-            border: none;
-            .mat-tab-labels {
-                justify-content: space-between;
-                .mat-tab-label {
-                    font-size: 16px;
-                    font-weight: 500;
-                    letter-spacing: 0.4px;
-                    border-radius: 5px;
-                    color: #686f76;
-                    border: solid 1px #979797;
-                    padding: 0 19px;
-                    min-width: 0;
-                    height: 50px;
-                    opacity: 1;
-                    &.mat-tab-label-active {
-                        color: #ffffff;
-                        background-color: #00aeef;
-                        border: none;
+        .paymentMethods {
+            height: 100%;
+
+            /deep/ .mat-tab-header {
+                margin-bottom: 25px;
+                border: none;
+                .mat-tab-labels {
+                    justify-content: space-between;
+                    .mat-tab-label {
+                        font-size: 16px;
+                        font-weight: 500;
+                        letter-spacing: 0.4px;
+                        border-radius: 5px;
+                        color: #686f76;
+                        border: solid 1px #979797;
+                        padding: 0 19px;
+                        min-width: 0;
+                        height: 50px;
+                        opacity: 1;
+                        &.mat-tab-label-active {
+                            color: #ffffff;
+                            background-color: #00aeef;
+                            border: none;
+
+                            img {
+                                filter: brightness(0) invert(1);
+                            }
+                        }
                     }
                 }
+                mat-ink-bar {
+                    display: none;
+                }
             }
-            mat-ink-bar {
-                display: none;
+
+            /deep/ .mat-tab-body-content {
+                padding: 0 15px;
+                margin: 0 -15px;
+            }
+
+            /deep/ .mat-tab-group,
+            /deep/ .mat-tab-body-wrapper {
+                height: 100%;
+            }
+        } 
+    }
+
+    // global styles
+    /deep/ .step-footer {
+        .terms-text {
+            font-size: 12px;
+            font-weight: 400;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+            color: rgb(104, 111, 118);
+
+            a {
+                font-weight: 500;
+                color: rgb(0, 174, 239);
+                text-decoration: none;
+
+                &:hover {
+                    color: darken(rgb(0, 174, 239), 10%);
+                }
             }
         }
-        .paymentMethods /deep/ .mat-tab-body-content {
-            padding: 0 15px;
-            margin: 0 -15px;
+
+        .btn-layout {
+            padding: 18px 44px;
+            font-family: Montserrat !important;
+            font-size: 17px !important;
+            font-weight: 600 !important;
+            line-height: 1.25 !important;
+            border-radius: 32px !important;
+            height: auto !important;
         }
     }
 }
