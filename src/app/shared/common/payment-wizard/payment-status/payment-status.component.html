@@ -1,5 +1,3 @@
-<ng-container *ngIf="paymentStatus">
-    <img [src]="'assets/common/icons/' + paymentStatus + '.svg'">
-    <h2>{{ title }}</h2>
-    <p *ngIf="text">{{ text }}</p>
-</ng-container>
+<img [ngClass]="paymentStatus" [src]="'assets/common/icons/' + paymentStatus + '.svg'">
+<h2>{{ l('PaymentStatus_' + paymentStatus ) }}</h2>
+<p *ngIf="text">{{ text }}</p>

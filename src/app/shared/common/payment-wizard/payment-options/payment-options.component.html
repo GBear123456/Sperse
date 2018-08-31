@@ -61,7 +61,7 @@
     <div class="paymentMethods">
         <mat-tab-group>
             <mat-tab [label]="l('eCheck')">
-                eCheck component
+                <e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check>
             </mat-tab>
             <mat-tab [label]="l('CreditCard')">
                 <credit-card></credit-card>

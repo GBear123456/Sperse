@@ -1,0 +1,53 @@
+<div class="description">
+    <img [src]="'assets/common/icons/information-button.svg'">
+    <p>{{ descriptionText }}</p>
+</div>
+<form id="echeckForm" [formGroup]="echeckForm" (ngSubmit)="submit()">
+    <div class="paymentDetails">
+        <div class="shortDetails">
+            <mat-form-field floatLabel="always">
+                <mat-label>{{ l('PayToTheOrderOf') }}</mat-label>
+                <input matInput disabled formControlName="paymentReceiver">
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>{{ l('Amount').toUpperCase() }}</mat-label>
+                <input matInput disabled [value]="capitalize(price | customNumber : '1.0-0' | numberToWords) + ' ' + l('And') + ' ' + (price | customNumber : '0.2-2') + ' ' + l('Cents')">
+            </mat-form-field>
+        </div>
+        <div>
+            <div class="date">{{ currentDate.format('MMMM D, YYYY') }}</div>
+            <div class="price">{{ currencySymbol + (price | number : '1.2-2')}}</div>
+        </div>
+    </div>
+    <div class="memo">
+        <mat-form-field floatLabel="always">
+            <mat-label>{{ l('echeckMemo') }}</mat-label>
+            <input matInput formControlName="paymentDescription">
+        </mat-form-field>
+    </div>
+    <div class="paymentsNumbers">
+        <mat-form-field floatLabel="always">
+            <mat-label>
+                <span>{{ l('routingNumberTitle') }}</span>
+                <img [src]="'assets/common/icons/information-button.svg'" [matTooltip]="l('routingNumberDescription')" >
+            </mat-label>
+            <input matInput formControlName="routingNumber" minlength="9" maxlength="9">
+            <mat-error *ngIf="echeckForm.get('routingNumber')?.invalid">{{ l('routingNumberValidationMessage') }}</mat-error>
+        </mat-form-field>
+        <mat-form-field floatLabel="always">
+            <mat-label>
+                <span>{{ l('bankAccountNumberTitle') }}</span>
+                <img [matTooltip]="l('bankAccountNumberDescription')" [src]="'assets/common/icons/information-button.svg'">
+            </mat-label>
+            <input matInput formControlName="bankAccountNumber" minlength="4" maxlength="17">
+            <mat-error *ngIf="echeckForm.get('bankAccountNumber')?.invalid">{{ l('bankAccountNumberValidationMessage') }}</mat-error>
+        </mat-form-field>
+    </div>
+</form>
+<div class="footer">
+    <div class="info">
+        <img [src]="'assets/common/icons/information-button.svg'">
+        <p>{{ l('ECheckTermsAndConditionText') }} <a href="#">{{ l('TermsConditions') }}</a></p>
+    </div>
+    <button [disabled]="!echeckForm.valid" class="sendCheck" form="echeckForm">{{ l('SendCheck') }}</button>
+</div>

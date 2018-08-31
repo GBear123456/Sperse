@@ -5771,6 +5771,10 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
 
+number-to-words@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/number-to-words/-/number-to-words-1.2.4.tgz#e0f124de9628f8d86c4eeb89bac6c07699264501"
+
 oauth-sign@~0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"

@@ -6,8 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /** Third party imports */
 import {
     MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule,
-    MatSelectModule
+    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule, MatSelectModule, MatTooltipModule
 } from '@angular/material';
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
@@ -59,6 +58,7 @@ import { PaymentOptionsComponent } from './payment-wizard/payment-options/paymen
 import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
 import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
+import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
 
 @NgModule({
     imports: [
@@ -80,6 +80,7 @@ import { BankTransferComponent } from './payment-wizard/payment-options/bank-tra
         MatStepperModule,
         MatButtonModule,
         MatSelectModule,
+        MatTooltipModule,
         ReactiveFormsModule,
         FileDropModule,
         PapaParseModule,
@@ -141,7 +142,8 @@ import { BankTransferComponent } from './payment-wizard/payment-options/bank-tra
         PaymentOptionsComponent,
         CreditCardComponent,
         PayPalComponent,
-        BankTransferComponent
+        BankTransferComponent,
+        ECheckComponent
     ],
     exports: [
         TimeZoneComboComponent,
