@@ -1,4 +1,4 @@
-export class ECheckDataModel {
+export interface ECheckDataModel {
     routingNumber: number;
     bankAccountNumber: number;
     receiver: string;

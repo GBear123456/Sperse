@@ -59,9 +59,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     submitData(data: any, paymentMethod: PaymentMethods) {
         /** Go to the third step */
-        this.onStatusChange.emit(PaymentStatusEnum.Pending);
+        this.onStatusChange.emit(PaymentStatusEnum.BeingConfirmed);
         this.onChangeStep.emit(2);
-        if (paymentMethod === PaymentMethods.eCheck && data instanceof ECheckDataModel) {
+        if (paymentMethod === PaymentMethods.eCheck) {
             const eCheckData = data as ECheckDataModel;
             const paymentInfo = PaymentRequestDto.fromJS({
                 achCustomer: ACHCustomerDto.fromJS({
@@ -74,7 +74,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             this.tenantSubscriptionServiceProxy.addPaymentInfo(paymentInfo).subscribe(
                 res => {
                     /** @todo change for getting of the status from the server */
-                    this.onStatusChange.emit(res ? PaymentStatusEnum.BeingConfirmed : PaymentStatusEnum.Failed);
+                    this.onStatusChange.emit(res && res['success'] ? PaymentStatusEnum.Pending : PaymentStatusEnum.Failed);
 
                 },
                 () => this.onStatusChange.emit(PaymentStatusEnum.Failed)

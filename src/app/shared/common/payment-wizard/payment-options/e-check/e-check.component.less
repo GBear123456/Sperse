@@ -5,6 +5,7 @@
     height: 100%;
     .description {
         display: flex;
+        align-items: flex-start;
         img {
             margin-right: 15px;
         }
@@ -15,6 +16,7 @@
             letter-spacing: normal;
             text-align: justify;
             color: #686f76;
+            margin-bottom: 0;
         }
     }
     #echeckForm {
@@ -55,7 +57,7 @@
                 color: #424c56;
             }
             .price {
-                margin-top: 26px;
+                margin-top: 28px;
                 font-size: 16px;
                 font-weight: 500;
                 line-height: normal;
@@ -64,6 +66,8 @@
                 border-radius: 5px;
                 border: solid 1px #00aeef;
                 padding: 11px 25px 10px 26px;
+                width: fit-content;
+                float: right;
             }
         }
         .memo {
@@ -88,6 +92,12 @@
             justify-content: space-between;
             /deep/ .mat-form-field-infix {
                 width: 245px;
+                img {
+                    float: right;
+                    position: absolute;
+                    right: 0;
+                    top: -1.1em;
+                }
                 .mat-input-element {
                     background: #fff;
                     font-size: 16px;
@@ -98,6 +108,7 @@
                     letter-spacing: 0.4px;
                     color: #00aeef;
                     padding: 7px 12px;
+                    margin-top: 2px;
                     &::-webkit-inner-spin-button,
                     &::-webkit-outer-spin-button {
                         -webkit-appearance: none;
@@ -167,6 +178,11 @@
             border: none;
             min-width: 180px;
             margin-left: 113px;
+            cursor: pointer;
+            &[disabled] {
+                background: #ccc;
+                cursor: default;
+            }
         }
     }
 }

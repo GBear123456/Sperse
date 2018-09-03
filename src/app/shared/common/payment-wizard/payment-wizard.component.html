@@ -20,7 +20,7 @@
             </mat-step>
             <mat-step>
                 <ng-container *ngIf="paymentStatus">
-                    <payment-status></payment-status>
+                    <payment-status [paymentStatus]="paymentStatus"></payment-status>
                 </ng-container>
             </mat-step>
         </mat-horizontal-stepper>
