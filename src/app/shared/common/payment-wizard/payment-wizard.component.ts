@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { MatDialogRef, MatStepper } from '@angular/material';
 import { OptionsPaymentPlan } from '@app/shared/common/payment-wizard/models/options-payment-plan.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
+import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 
 @Component({
     selector: 'payment-wizard',
@@ -16,6 +17,7 @@ import { PaymentService } from '@app/shared/common/payment-wizard/payment.servic
 export class PaymentWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
     plan$: Observable<OptionsPaymentPlan>;
+    paymentStatus: PaymentStatusEnum;
     constructor(private dialogRef: MatDialogRef<PaymentWizardComponent>,
                 private paymentService: PaymentService) { }
 
@@ -32,6 +34,10 @@ export class PaymentWizardComponent implements OnInit {
 
     changePlan(e) {
         this.paymentService._plan.next(e);
+    }
+
+    changeStatus(status: PaymentStatusEnum) {
+        this.paymentStatus = status;
     }
 
     close() {

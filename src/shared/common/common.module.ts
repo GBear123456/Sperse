@@ -19,6 +19,7 @@ import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
 import { PhoneFormatPipe } from './pipes/phone-format/phone-format.pipe';
 import { CustomNumberPipe } from './pipes/custom-number/custom-number.pipe';
+import { NumberToWordsPipe } from './pipes/number-to-words/number-to-words.pipe';
 import { AddressFormatPipe } from './pipes/address-format.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -31,6 +32,7 @@ import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
         CalendarComponent,
         NoDataComponent,
         CustomNumberPipe,
+        NumberToWordsPipe,
         PhoneFormatPipe,
         AddressFormatPipe,
         FileSizePipe,
@@ -43,6 +45,7 @@ import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
         CalendarComponent,
         NoDataComponent,
         CustomNumberPipe,
+        NumberToWordsPipe,
         PhoneFormatPipe,
         AddressFormatPipe,
         FileSizePipe,

@@ -12,12 +12,16 @@
                     <payment-options
                         [plan]="plan"
                         (onChangeStep)="stepper.selectedIndex = $event"
-                        (onClose)="close()">
+                        (onClose)="close()"
+                        (onStatusChange)="changeStatus($event)"
+                    >
                     </payment-options>
                 </ng-container>
             </mat-step>
             <mat-step>
-                <payment-status></payment-status>
+                <ng-container *ngIf="paymentStatus">
+                    <payment-status [paymentStatus]="paymentStatus"></payment-status>
+                </ng-container>
             </mat-step>
         </mat-horizontal-stepper>
     </mat-dialog-content>
