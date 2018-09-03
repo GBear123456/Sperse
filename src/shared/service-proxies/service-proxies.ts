@@ -41628,7 +41628,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
     organizationType!: string | undefined;
     jobTitle!: string | undefined;
     employeeCount!: number | undefined;
-    yearFounded!: number | undefined;
+    dateFounded!: moment.Moment | undefined;
     ein!: string | undefined;
     revenue!: number | undefined;
     companyPhone!: string | undefined;
@@ -41669,7 +41669,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.organizationType = data["organizationType"];
             this.jobTitle = data["jobTitle"];
             this.employeeCount = data["employeeCount"];
-            this.yearFounded = data["yearFounded"];
+            this.dateFounded = data["dateFounded"] ? moment(data["dateFounded"].toString()) : <any>undefined;
             this.ein = data["ein"];
             this.revenue = data["revenue"];
             this.companyPhone = data["companyPhone"];
@@ -41710,7 +41710,7 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["organizationType"] = this.organizationType;
         data["jobTitle"] = this.jobTitle;
         data["employeeCount"] = this.employeeCount;
-        data["yearFounded"] = this.yearFounded;
+        data["dateFounded"] = this.dateFounded ? this.dateFounded.toISOString() : <any>undefined;
         data["ein"] = this.ein;
         data["revenue"] = this.revenue;
         data["companyPhone"] = this.companyPhone;
@@ -41744,7 +41744,7 @@ export interface IImportBusinessInput {
     organizationType: string | undefined;
     jobTitle: string | undefined;
     employeeCount: number | undefined;
-    yearFounded: number | undefined;
+    dateFounded: moment.Moment | undefined;
     ein: string | undefined;
     revenue: number | undefined;
     companyPhone: string | undefined;
