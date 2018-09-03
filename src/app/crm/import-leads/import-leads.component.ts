@@ -365,13 +365,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             finalize(() => this.finishLoading(true))
                         ).subscribe((importId) => {
                             if (importId && !isNaN(importId))
-                                this._importProxy.getStatus(importId).subscribe((res) => {
-                                    this.updateImportStatus(res);
+                                this._importProxy.getStatuses(importId).subscribe((res) => {
+                                    let importStatus  = res[0];
+                                    this.updateImportStatus(importStatus);
                                     if (!this.showedFinishStep())
                                          this.wizard.showFinishStep();
-                                    if (<ImportStatus>res.statusId == ImportStatus.InProgress)
-                                        this._importLeadsService.setupImportCheck(importId, (res) => {
-                                            this.updateImportStatus(res);
+                                    if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
+                                        this._importLeadsService.setupImportCheck(importId, (importStatus) => {
+                                            this.updateImportStatus(importStatus);
                                         }, uri);
                                 });
                             this.clearToolbarSelectedItems();

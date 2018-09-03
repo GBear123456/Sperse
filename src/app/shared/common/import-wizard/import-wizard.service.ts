@@ -46,23 +46,24 @@ export class ImportWizardService {
 
     setupStatusCheck(importId, method = undefined, invalUri = undefined) {
         this.setupCheckTimeout((callback) => {
-            this._importProxy.getStatus(importId).subscribe((res) => {
-                method && method(res);
+            this._importProxy.getStatuses(importId).subscribe((res) => {
+                let importStatus = res[0];
+                method && method(importStatus);
                 let data = {
-                     totalCount: res.totalCount,
-                     importedCount: res.importedCount,
-                     failedCount: res.failedCount
+                     totalCount: importStatus.totalCount,
+                     importedCount: importStatus.importedCount,
+                     failedCount: importStatus.failedCount
                  };
-                if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>res.statusId) >= 0) {
+                if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
                     invalUri && (<any>this._reuseService).invalidate(invalUri);
                     callback(_.extend(data, {progress: 100}));
                     this.activeImportId = undefined;
                 }
-                if (<ImportStatus>res.statusId == ImportStatus.InProgress) {
+                if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
                     this.activeImportId = importId;
                     callback(_.extend(data, {
-                        progress: Math.round(((res.importedCount || 0) +
-                            (res.failedCount || 0)) / res.totalCount * 100)
+                        progress: Math.round(((importStatus.importedCount || 0) +
+                            (importStatus.failedCount || 0)) / importStatus.totalCount * 100)
                     }));
                 }
             })

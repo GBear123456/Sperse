@@ -12457,8 +12457,8 @@ export class ImportServiceProxy {
      * @id (optional) 
      * @return Success
      */
-    getStatus(id: number | null | undefined): Observable<GetImportStatusOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Import/GetStatus?";
+    getStatuses(id: number | null | undefined): Observable<GetImportStatusOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Import/GetStatuses?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -12473,20 +12473,20 @@ export class ImportServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetStatus(response_);
+            return this.processGetStatuses(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetStatus(<any>response_);
+                    return this.processGetStatuses(<any>response_);
                 } catch (e) {
-                    return <Observable<GetImportStatusOutput>><any>_observableThrow(e);
+                    return <Observable<GetImportStatusOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetImportStatusOutput>><any>_observableThrow(response_);
+                return <Observable<GetImportStatusOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetStatus(response: HttpResponseBase): Observable<GetImportStatusOutput> {
+    protected processGetStatuses(response: HttpResponseBase): Observable<GetImportStatusOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -12497,7 +12497,11 @@ export class ImportServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetImportStatusOutput.fromJS(resultData200) : new GetImportStatusOutput();
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetImportStatusOutput.fromJS(item));
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -12505,7 +12509,7 @@ export class ImportServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetImportStatusOutput>(<any>null);
+        return _observableOf<GetImportStatusOutput[]>(<any>null);
     }
 
     /**
@@ -41888,7 +41892,9 @@ export interface IImportAddressInput {
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
+    id!: number | undefined;
     statusId!: string | undefined;
+    fileName!: string | undefined;
     totalCount!: number | undefined;
     importedCount!: number | undefined;
     failedCount!: number | undefined;
@@ -41904,7 +41910,9 @@ export class GetImportStatusOutput implements IGetImportStatusOutput {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.statusId = data["statusId"];
+            this.fileName = data["fileName"];
             this.totalCount = data["totalCount"];
             this.importedCount = data["importedCount"];
             this.failedCount = data["failedCount"];
@@ -41920,7 +41928,9 @@ export class GetImportStatusOutput implements IGetImportStatusOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["statusId"] = this.statusId;
+        data["fileName"] = this.fileName;
         data["totalCount"] = this.totalCount;
         data["importedCount"] = this.importedCount;
         data["failedCount"] = this.failedCount;
@@ -41929,7 +41939,9 @@ export class GetImportStatusOutput implements IGetImportStatusOutput {
 }
 
 export interface IGetImportStatusOutput {
+    id: number | undefined;
     statusId: string | undefined;
+    fileName: string | undefined;
     totalCount: number | undefined;
     importedCount: number | undefined;
     failedCount: number | undefined;
@@ -47485,7 +47497,7 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     monthlyPrice!: number | undefined;
     annualPrice!: number | undefined;
     trialDayCount!: number | undefined;
-    features!: NameValue[] | undefined;
+    features!: { [key: string] : string; } | undefined;
 
     constructor(data?: IPackageEditionConfigDto) {
         if (data) {
@@ -47505,10 +47517,12 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
             this.monthlyPrice = data["monthlyPrice"];
             this.annualPrice = data["annualPrice"];
             this.trialDayCount = data["trialDayCount"];
-            if (data["features"] && data["features"].constructor === Array) {
-                this.features = [];
-                for (let item of data["features"])
-                    this.features.push(NameValue.fromJS(item));
+            if (data["features"]) {
+                this.features = {};
+                for (let key in data["features"]) {
+                    if (data["features"].hasOwnProperty(key))
+                        this.features[key] = data["features"][key];
+                }
             }
         }
     }
@@ -47529,10 +47543,12 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
         data["monthlyPrice"] = this.monthlyPrice;
         data["annualPrice"] = this.annualPrice;
         data["trialDayCount"] = this.trialDayCount;
-        if (this.features && this.features.constructor === Array) {
-            data["features"] = [];
-            for (let item of this.features)
-                data["features"].push(item.toJSON());
+        if (this.features) {
+            data["features"] = {};
+            for (let key in this.features) {
+                if (this.features.hasOwnProperty(key))
+                    data["features"][key] = this.features[key];
+            }
         }
         return data; 
     }
@@ -47546,47 +47562,7 @@ export interface IPackageEditionConfigDto {
     monthlyPrice: number | undefined;
     annualPrice: number | undefined;
     trialDayCount: number | undefined;
-    features: NameValue[] | undefined;
-}
-
-export class NameValue implements INameValue {
-    name!: string | undefined;
-    value!: string | undefined;
-
-    constructor(data?: INameValue) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): NameValue {
-        data = typeof data === 'object' ? data : {};
-        let result = new NameValue();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface INameValue {
-    name: string | undefined;
-    value: string | undefined;
+    features: { [key: string] : string; } | undefined;
 }
 
 export class PartnerInfoDto implements IPartnerInfoDto {
