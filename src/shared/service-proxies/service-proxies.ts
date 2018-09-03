@@ -16439,6 +16439,65 @@ export class PackageServiceProxy {
         }
         return _observableOf<ListResultDtoOfPackageDto>(<any>null);
     }
+
+    /**
+     * @module (optional) 
+     * @return Success
+     */
+    getPackagesConfig(module: Module | null | undefined): Observable<PackageConfigDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Package/GetPackagesConfig?";
+        if (module !== undefined)
+            url_ += "Module=" + encodeURIComponent("" + module) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPackagesConfig(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPackagesConfig(<any>response_);
+                } catch (e) {
+                    return <Observable<PackageConfigDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PackageConfigDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPackagesConfig(response: HttpResponseBase): Observable<PackageConfigDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PackageConfigDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PackageConfigDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -41277,7 +41336,7 @@ export class ImportInput implements IImportInput {
     fileName!: string;
     fileSize!: number;
     fileContent!: string;
-    ingoreInvalidValues!: boolean | undefined;
+    ignoreInvalidValues!: boolean | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -41314,7 +41373,7 @@ export class ImportInput implements IImportInput {
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.fileContent = data["fileContent"];
-            this.ingoreInvalidValues = data["ingoreInvalidValues"];
+            this.ignoreInvalidValues = data["ignoreInvalidValues"];
         }
     }
 
@@ -41351,7 +41410,7 @@ export class ImportInput implements IImportInput {
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["fileContent"] = this.fileContent;
-        data["ingoreInvalidValues"] = this.ingoreInvalidValues;
+        data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         return data; 
     }
 }
@@ -41369,7 +41428,7 @@ export interface IImportInput {
     fileName: string;
     fileSize: number;
     fileContent: string;
-    ingoreInvalidValues: boolean | undefined;
+    ignoreInvalidValues: boolean | undefined;
 }
 
 export class ImportItemInput implements IImportItemInput {
@@ -41381,6 +41440,7 @@ export class ImportItemInput implements IImportItemInput {
     affiliateId!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
+    referrerURL!: string | undefined;
     utmSource!: string | undefined;
     utmMedium!: string | undefined;
     utmCampaign!: string | undefined;
@@ -41406,6 +41466,7 @@ export class ImportItemInput implements IImportItemInput {
             this.affiliateId = data["affiliateId"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
+            this.referrerURL = data["referrerURL"];
             this.utmSource = data["utmSource"];
             this.utmMedium = data["utmMedium"];
             this.utmCampaign = data["utmCampaign"];
@@ -41431,6 +41492,7 @@ export class ImportItemInput implements IImportItemInput {
         data["affiliateId"] = this.affiliateId;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
+        data["referrerURL"] = this.referrerURL;
         data["utmSource"] = this.utmSource;
         data["utmMedium"] = this.utmMedium;
         data["utmCampaign"] = this.utmCampaign;
@@ -41449,6 +41511,7 @@ export interface IImportItemInput {
     affiliateId: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
+    referrerURL: string | undefined;
     utmSource: string | undefined;
     utmMedium: string | undefined;
     utmCampaign: string | undefined;
@@ -41458,6 +41521,7 @@ export interface IImportItemInput {
 
 export class ImportPersonalInput implements IImportPersonalInput {
     fullName!: ImportFullName | undefined;
+    doB!: moment.Moment | undefined;
     mobilePhone!: string | undefined;
     mobilePhoneExt!: string | undefined;
     homePhone!: string | undefined;
@@ -41487,6 +41551,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     init(data?: any) {
         if (data) {
             this.fullName = data["fullName"] ? ImportFullName.fromJS(data["fullName"]) : <any>undefined;
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.mobilePhone = data["mobilePhone"];
             this.mobilePhoneExt = data["mobilePhoneExt"];
             this.homePhone = data["homePhone"];
@@ -41516,6 +41581,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["fullName"] = this.fullName ? this.fullName.toJSON() : <any>undefined;
+        data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["mobilePhone"] = this.mobilePhone;
         data["mobilePhoneExt"] = this.mobilePhoneExt;
         data["homePhone"] = this.homePhone;
@@ -41538,6 +41604,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
 
 export interface IImportPersonalInput {
     fullName: ImportFullName | undefined;
+    doB: moment.Moment | undefined;
     mobilePhone: string | undefined;
     mobilePhoneExt: string | undefined;
     homePhone: string | undefined;
@@ -41562,6 +41629,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
     jobTitle!: string | undefined;
     employeeCount!: number | undefined;
     yearFounded!: number | undefined;
+    ein!: string | undefined;
+    revenue!: number | undefined;
     companyPhone!: string | undefined;
     companyPhoneExt!: string | undefined;
     companyFaxNumber!: string | undefined;
@@ -41601,6 +41670,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.jobTitle = data["jobTitle"];
             this.employeeCount = data["employeeCount"];
             this.yearFounded = data["yearFounded"];
+            this.ein = data["ein"];
+            this.revenue = data["revenue"];
             this.companyPhone = data["companyPhone"];
             this.companyPhoneExt = data["companyPhoneExt"];
             this.companyFaxNumber = data["companyFaxNumber"];
@@ -41640,6 +41711,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["jobTitle"] = this.jobTitle;
         data["employeeCount"] = this.employeeCount;
         data["yearFounded"] = this.yearFounded;
+        data["ein"] = this.ein;
+        data["revenue"] = this.revenue;
         data["companyPhone"] = this.companyPhone;
         data["companyPhoneExt"] = this.companyPhoneExt;
         data["companyFaxNumber"] = this.companyFaxNumber;
@@ -41672,6 +41745,8 @@ export interface IImportBusinessInput {
     jobTitle: string | undefined;
     employeeCount: number | undefined;
     yearFounded: number | undefined;
+    ein: string | undefined;
+    revenue: number | undefined;
     companyPhone: string | undefined;
     companyPhoneExt: string | undefined;
     companyFaxNumber: string | undefined;
@@ -41901,7 +41976,8 @@ export interface IGetFileUrlOutput {
 }
 
 export class ImportContactGroupInput implements IImportContactGroupInput {
-    contactGroup!: ImportItemInput | undefined;
+    contactGroupId!: number | undefined;
+    contactGroupXref!: string | undefined;
     lists!: string[] | undefined;
     tags!: string[] | undefined;
     assignedUserId!: number | undefined;
@@ -41910,7 +41986,22 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
     leadStageName!: string | undefined;
     importType!: ImportContactGroupInputImportType | undefined;
     partnerTypeName!: string | undefined;
-    ingoreInvalidValues!: boolean | undefined;
+    ignoreInvalidValues!: boolean | undefined;
+    overrideLists!: boolean | undefined;
+    personalInfo!: ImportPersonalInput | undefined;
+    businessInfo!: ImportBusinessInput | undefined;
+    notes!: string | undefined;
+    dateCreated!: moment.Moment | undefined;
+    leadSource!: string | undefined;
+    affiliateId!: string | undefined;
+    campaignId!: string | undefined;
+    channelId!: string | undefined;
+    referrerURL!: string | undefined;
+    utmSource!: string | undefined;
+    utmMedium!: string | undefined;
+    utmCampaign!: string | undefined;
+    utmTerm!: string | undefined;
+    utmContent!: string | undefined;
 
     constructor(data?: IImportContactGroupInput) {
         if (data) {
@@ -41923,7 +42014,8 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
 
     init(data?: any) {
         if (data) {
-            this.contactGroup = data["contactGroup"] ? ImportItemInput.fromJS(data["contactGroup"]) : <any>undefined;
+            this.contactGroupId = data["contactGroupId"];
+            this.contactGroupXref = data["contactGroupXref"];
             if (data["lists"] && data["lists"].constructor === Array) {
                 this.lists = [];
                 for (let item of data["lists"])
@@ -41940,7 +42032,22 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
             this.leadStageName = data["leadStageName"];
             this.importType = data["importType"];
             this.partnerTypeName = data["partnerTypeName"];
-            this.ingoreInvalidValues = data["ingoreInvalidValues"];
+            this.ignoreInvalidValues = data["ignoreInvalidValues"];
+            this.overrideLists = data["overrideLists"];
+            this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
+            this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.notes = data["notes"];
+            this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
+            this.leadSource = data["leadSource"];
+            this.affiliateId = data["affiliateId"];
+            this.campaignId = data["campaignId"];
+            this.channelId = data["channelId"];
+            this.referrerURL = data["referrerURL"];
+            this.utmSource = data["utmSource"];
+            this.utmMedium = data["utmMedium"];
+            this.utmCampaign = data["utmCampaign"];
+            this.utmTerm = data["utmTerm"];
+            this.utmContent = data["utmContent"];
         }
     }
 
@@ -41953,7 +42060,8 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactGroup"] = this.contactGroup ? this.contactGroup.toJSON() : <any>undefined;
+        data["contactGroupId"] = this.contactGroupId;
+        data["contactGroupXref"] = this.contactGroupXref;
         if (this.lists && this.lists.constructor === Array) {
             data["lists"] = [];
             for (let item of this.lists)
@@ -41970,13 +42078,29 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
         data["leadStageName"] = this.leadStageName;
         data["importType"] = this.importType;
         data["partnerTypeName"] = this.partnerTypeName;
-        data["ingoreInvalidValues"] = this.ingoreInvalidValues;
+        data["ignoreInvalidValues"] = this.ignoreInvalidValues;
+        data["overrideLists"] = this.overrideLists;
+        data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
+        data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["notes"] = this.notes;
+        data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
+        data["leadSource"] = this.leadSource;
+        data["affiliateId"] = this.affiliateId;
+        data["campaignId"] = this.campaignId;
+        data["channelId"] = this.channelId;
+        data["referrerURL"] = this.referrerURL;
+        data["utmSource"] = this.utmSource;
+        data["utmMedium"] = this.utmMedium;
+        data["utmCampaign"] = this.utmCampaign;
+        data["utmTerm"] = this.utmTerm;
+        data["utmContent"] = this.utmContent;
         return data; 
     }
 }
 
 export interface IImportContactGroupInput {
-    contactGroup: ImportItemInput | undefined;
+    contactGroupId: number | undefined;
+    contactGroupXref: string | undefined;
     lists: string[] | undefined;
     tags: string[] | undefined;
     assignedUserId: number | undefined;
@@ -41985,7 +42109,22 @@ export interface IImportContactGroupInput {
     leadStageName: string | undefined;
     importType: ImportContactGroupInputImportType | undefined;
     partnerTypeName: string | undefined;
-    ingoreInvalidValues: boolean | undefined;
+    ignoreInvalidValues: boolean | undefined;
+    overrideLists: boolean | undefined;
+    personalInfo: ImportPersonalInput | undefined;
+    businessInfo: ImportBusinessInput | undefined;
+    notes: string | undefined;
+    dateCreated: moment.Moment | undefined;
+    leadSource: string | undefined;
+    affiliateId: string | undefined;
+    campaignId: string | undefined;
+    channelId: string | undefined;
+    referrerURL: string | undefined;
+    utmSource: string | undefined;
+    utmMedium: string | undefined;
+    utmCampaign: string | undefined;
+    utmTerm: string | undefined;
+    utmContent: string | undefined;
 }
 
 export class GetStatusOutput implements IGetStatusOutput {
@@ -47270,6 +47409,186 @@ export interface IPackageDto {
     id: number | undefined;
 }
 
+export class PackageConfigDto implements IPackageConfigDto {
+    id!: number | undefined;
+    module!: PackageConfigDtoModule | undefined;
+    moduleName!: string | undefined;
+    name!: string | undefined;
+    bestValue!: boolean | undefined;
+    sortOrder!: number | undefined;
+    editions!: PackageEditionConfigDto[] | undefined;
+
+    constructor(data?: IPackageConfigDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.module = data["module"];
+            this.moduleName = data["moduleName"];
+            this.name = data["name"];
+            this.bestValue = data["bestValue"];
+            this.sortOrder = data["sortOrder"];
+            if (data["editions"] && data["editions"].constructor === Array) {
+                this.editions = [];
+                for (let item of data["editions"])
+                    this.editions.push(PackageEditionConfigDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PackageConfigDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PackageConfigDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["module"] = this.module;
+        data["moduleName"] = this.moduleName;
+        data["name"] = this.name;
+        data["bestValue"] = this.bestValue;
+        data["sortOrder"] = this.sortOrder;
+        if (this.editions && this.editions.constructor === Array) {
+            data["editions"] = [];
+            for (let item of this.editions)
+                data["editions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPackageConfigDto {
+    id: number | undefined;
+    module: PackageConfigDtoModule | undefined;
+    moduleName: string | undefined;
+    name: string | undefined;
+    bestValue: boolean | undefined;
+    sortOrder: number | undefined;
+    editions: PackageEditionConfigDto[] | undefined;
+}
+
+export class PackageEditionConfigDto implements IPackageEditionConfigDto {
+    id!: number | undefined;
+    packageId!: number | undefined;
+    name!: string | undefined;
+    displayName!: string | undefined;
+    monthlyPrice!: number | undefined;
+    annualPrice!: number | undefined;
+    trialDayCount!: number | undefined;
+    features!: NameValue[] | undefined;
+
+    constructor(data?: IPackageEditionConfigDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.packageId = data["packageId"];
+            this.name = data["name"];
+            this.displayName = data["displayName"];
+            this.monthlyPrice = data["monthlyPrice"];
+            this.annualPrice = data["annualPrice"];
+            this.trialDayCount = data["trialDayCount"];
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(NameValue.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PackageEditionConfigDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PackageEditionConfigDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["packageId"] = this.packageId;
+        data["name"] = this.name;
+        data["displayName"] = this.displayName;
+        data["monthlyPrice"] = this.monthlyPrice;
+        data["annualPrice"] = this.annualPrice;
+        data["trialDayCount"] = this.trialDayCount;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPackageEditionConfigDto {
+    id: number | undefined;
+    packageId: number | undefined;
+    name: string | undefined;
+    displayName: string | undefined;
+    monthlyPrice: number | undefined;
+    annualPrice: number | undefined;
+    trialDayCount: number | undefined;
+    features: NameValue[] | undefined;
+}
+
+export class NameValue implements INameValue {
+    name!: string | undefined;
+    value!: string | undefined;
+
+    constructor(data?: INameValue) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): NameValue {
+        data = typeof data === 'object' ? data : {};
+        let result = new NameValue();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface INameValue {
+    name: string | undefined;
+    value: string | undefined;
+}
+
 export class PartnerInfoDto implements IPartnerInfoDto {
     typeId!: number | undefined;
 
@@ -52101,11 +52420,11 @@ export interface ITenantBillingSettingsEditDto {
 }
 
 export class IdcsSettings implements IIdcsSettings {
-    requestSource!: string;
-    partnerCode!: string;
-    partnerAccount!: string;
-    password!: string;
-    branding!: string;
+    requestSource!: string | undefined;
+    partnerCode!: string | undefined;
+    partnerAccount!: string | undefined;
+    password!: string | undefined;
+    branding!: string | undefined;
 
     constructor(data?: IIdcsSettings) {
         if (data) {
@@ -52145,11 +52464,11 @@ export class IdcsSettings implements IIdcsSettings {
 }
 
 export interface IIdcsSettings {
-    requestSource: string;
-    partnerCode: string;
-    partnerAccount: string;
-    password: string;
-    branding: string;
+    requestSource: string | undefined;
+    partnerCode: string | undefined;
+    partnerAccount: string | undefined;
+    password: string | undefined;
+    branding: string | undefined;
 }
 
 export class TenantSslCertificateInfo implements ITenantSslCertificateInfo {
@@ -55237,6 +55556,12 @@ export enum State {
     _1 = 1, 
 }
 
+export enum Module {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
+}
+
 export enum InstanceType73 {
     User = "User", 
     Main = "Main", 
@@ -55673,6 +55998,12 @@ export enum TenantNotificationSeverity {
     _2 = 2, 
     _3 = 3, 
     _4 = 4, 
+}
+
+export enum PackageConfigDtoModule {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
 }
 
 export class AdditionalData implements IAdditionalData {
