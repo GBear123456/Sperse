@@ -65,7 +65,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     minDate: Date = new Date();
     minAge: number;
     maxAge: number;
-    payment: MemberPaymentAuthorizeRequestDto = new MemberPaymentAuthorizeRequestDto();
+    payment: MemberPaymentAuthorizeRequestDto = MemberPaymentAuthorizeRequestDto.fromJS({});
     isExistingUser: boolean = !!abp.session.userId;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     passwordComplexityWord: string = 'empty';
@@ -102,7 +102,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     ngOnInit() {
-        this.paymentInfo.bankCard = this.payment.bankCard;
+        this.payment.bankCard = this.paymentInfo.bankCard;
+
         if (this.isExistingUser)
             this.mWizard.addDisabledSteps(this.WIZARD_CONFIRM_STEP_INDEX);
 

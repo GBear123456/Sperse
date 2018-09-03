@@ -25,7 +25,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     validationGroup: any;
 
     expirationDate: string;
-    bankCard: BankCardDto = new BankCardDto();
+    bankCard: BankCardDto = BankCardDto.fromJS({}); 
     states: CountryStateDto[];
 
     googleAutoComplete: Boolean;
