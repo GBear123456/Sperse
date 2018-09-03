@@ -226,10 +226,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
         if (!dataSource)
             dataSource = this._dataSources[stage.name] =
-                new DataSource(_.extend({
+                new DataSource(_.extend(_.clone(this._dataSource), {
                     requireTotalCount: !this.totalsURI,
                     select: this.selectFields
-                }, this._dataSource));
+                }));
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
