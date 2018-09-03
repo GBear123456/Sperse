@@ -42,13 +42,13 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return false && this._appSessionService.tenantId > 0 &&
+        return this._appSessionService.tenantId > 0 &&
             (this._appSessionService.tenant.isInTrialPeriod ||
                 this.subscriptionIsExpiringSoon());
     }
 
     subscriptionIsExpiringSoon(): boolean {
-        if (this._appSessionService.tenant.subscriptionEndDateUtc) {
+        if (this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc) {
             return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') 
                 >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
@@ -60,10 +60,10 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
             return;
         }
 
-//        this._ngZone.runOutsideAngular(() => {
+        this._ngZone.runOutsideAngular(() => {
             mApp.init();
             mLayout.init();
             mApp.initialized = true;
-//        });
+        });
     }
 }

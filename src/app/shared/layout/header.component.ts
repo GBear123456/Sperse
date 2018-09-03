@@ -20,6 +20,9 @@ import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
+import { PaymentWizardComponent } from '../common/payment-wizard/payment-wizard.component';
+
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './header.component.html',
@@ -63,6 +66,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        private _dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
@@ -194,12 +198,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return false;
-        //return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
+        return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
     }
 
     subscriptionIsExpiringSoon(): boolean {
-        if (this._appSessionService.tenant.subscriptionEndDateUtc) {
+        if (this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc) {
             return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
 
@@ -207,7 +210,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getSubscriptionExpiringDayCount(): number {
-        if (!this._appSessionService.tenant.subscriptionEndDateUtc) {
+        if (!(this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc)) {
             return 0;
         }
 
@@ -222,5 +225,14 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     getExpireNotification(localizationKey: string): string {
         return this.l(localizationKey, this.getSubscriptionExpiringDayCount());
+    }
+
+    openPaymentWizardDialog() {
+        this._dialog.open(PaymentWizardComponent, {
+            height: '655px',
+            width: '980px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+        }).afterClosed().subscribe(result => {});
     }
 }
