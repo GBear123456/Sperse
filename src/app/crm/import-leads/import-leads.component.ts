@@ -222,13 +222,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
-
-        importWizardService.cancelListen(() => {
-            if (importWizardService.activeImportId)
-                _importProxy.cancel(importWizardService.activeImportId).subscribe(() => {
-                    importWizardService.activeImportId = undefined;
-                });
-        });
     }
 
     private importTypeChanged(event) {
@@ -484,6 +477,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     deactivate() {
         this.rootComponent.overflowHidden();
+        this._importLeadsService.setupImportCheck();
     }
 
     preProcessFieldBeforeReview = (field, sourceValue, reviewDataSource) => {

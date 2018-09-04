@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 @Injectable()
 export class ImportWizardService {
     private subjectProgress: Subject<any>;
-    private subjectCancel: Subject<undefined>;
+    private subjectCancel: Subject<any>;
     private subscribers: Array<Subscription> = [];
     private statusCheckTimeout: any;
 
@@ -22,7 +22,7 @@ export class ImportWizardService {
         private _importProxy: ImportServiceProxy
     ) {
         this.subjectProgress = new Subject<any>();
-        this.subjectCancel = new Subject<undefined>();
+        this.subjectCancel = new Subject<any>();
     }
 
     progressListen(callback: (progress: any) => any) {
@@ -36,38 +36,42 @@ export class ImportWizardService {
         this.subjectProgress.next(data);
     }
 
-    cancelListen(callback: () => any) {
+    cancelListen(callback: (importIds) => any) {
         this.subjectCancel.asObservable().subscribe(callback);
     }
 
-    cancelImport() {
-        this.subjectCancel.next();
+    cancelImport(importIds = undefined) {
+        this.subjectCancel.next(importIds);
     }
 
-    setupStatusCheck(importId, method = undefined, invalUri = undefined) {
+    startStatusCheck(importId = undefined, method = undefined, invalUri = undefined) {
         this.setupCheckTimeout((callback) => {
             this._importProxy.getStatuses(importId).subscribe((res) => {
-                let importStatus = res[0];
-                method && method(importStatus);
-                let data = {
-                     totalCount: importStatus.totalCount,
-                     importedCount: importStatus.importedCount,
-                     failedCount: importStatus.failedCount
-                 };
-                if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
-                    invalUri && (<any>this._reuseService).invalidate(invalUri);
-                    callback(_.extend(data, {progress: 100}));
-                    this.activeImportId = undefined;
-                }
-                if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
-                    this.activeImportId = importId;
-                    callback(_.extend(data, {
-                        progress: Math.round(((importStatus.importedCount || 0) +
-                            (importStatus.failedCount || 0)) / importStatus.totalCount * 100)
-                    }));
+                if (res && res.length) {
+                    if (res.length > 1) {
+                        this.activeImportId = undefined;
+                        callback(res);
+                    } else {
+                        let importStatus = res[0];
+                        method && method(importStatus);                                
+                        if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
+                            invalUri && (<any>this._reuseService).invalidate(invalUri);
+                            this.activeImportId = undefined;
+                            callback(res);
+                        }
+                        if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
+                            this.activeImportId = importId;
+                            callback(res);
+                        }
+                    }
                 }
             })
         });
+    }
+
+    finishStatusCheck() {
+        this.activeImportId = undefined;
+        clearTimeout(this.statusCheckTimeout);
     }
 
     setupCheckTimeout(method: (callback: any) => void, initial = true) {
@@ -75,8 +79,7 @@ export class ImportWizardService {
         this.statusCheckTimeout = setTimeout(() => {
             method((data) => {
                 this.progressChanged(data);
-                if (data.progress < 100)
-                    this.setupCheckTimeout(method, false);
+                this.setupCheckTimeout(method, false);
             });
         }, initial ? 0: 5000);
     }

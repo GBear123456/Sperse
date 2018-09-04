@@ -7,6 +7,7 @@ import { DxProgressBarComponent } from 'devextreme-angular';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { ImportStatus } from '@shared/AppEnums';
 
 import { ImportWizardService } from '../import-wizard.service';
 
@@ -20,6 +21,8 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
              
     @Input() summaryTooltip: boolean = true;
 
+    importStatuses = ImportStatus;
+
     progress: number = 100;
     tooltipVisible: boolean;
     tooltipTimeout: any; 
@@ -27,6 +30,8 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
     totalCount: number = 0;
     importedCount: number = 0;
     failedCount: number = 0;
+    
+    list: any = [];
   
     private subscription: any;
 
@@ -37,10 +42,21 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
         super(injector);
 
         this.subscription = _importService.progressListen((data) => {
-            this.progress = data.progress;
-            this.totalCount = data.totalCount;
-            this.importedCount = data.importedCount;
-            this.failedCount = data.failedCount;
+            if (data) {
+                this.progress = 0;
+                this.list = data;
+                data.forEach((entity) => {
+                    entity.progress = Math.round((entity.importedCount 
+                        + entity.failedCount) / entity.totalCount * 100);
+                    this.progress += entity.progress;
+                });
+                this.progress = Math.round(this.progress / data.length);
+                if (this.progress >= 100)
+                    _importService.finishStatusCheck();
+            } else {
+                this.progress = 100;
+                _importService.finishStatusCheck();
+            }
         });
     }
 
@@ -48,8 +64,17 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
         return this.progress + '% ' + this.l('ImportProgress');
     }
 
-    cancelImport() {
-        this._importService.cancelImport();
+    cancelImport(importId = undefined) {
+        this.tooltipVisible = false;
+        this.message.confirm(
+            this.l('ImportCancelConfirmation'),
+            this.l(importId ? 'CancelImport': 'CancelAllImports'),
+            isConfirmed => {
+                if (isConfirmed)
+                    this._importService.cancelImport(importId ? 
+                        [importId]: this.list.map((item) => item.id));
+            }
+        );
     }
 
     toggleTooltip(visible) {

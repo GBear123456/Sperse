@@ -22,10 +22,24 @@
             <div class="header">
                 <h3>{{l('Import_Summary')}}:</h3>
             </div>
-            <p>{{l('Total')}}: {{totalCount}}</p>
-            <p>{{l('Imported')}}: {{importedCount}}</p>
-            <p>{{l('Failed')}}: {{failedCount}}</p>
-            <button class="btn btn-layout button-primary" (click)="cancelImport()">{{l('CancelImport')}}</button>
+            <div class="datagrid">
+                <div *ngFor="let import of list; let i = index">
+                    <div class="import-row"><span class="file-name">{{import?.fileName}}</span><span class="import-progress" [attr.key]="import.id">{{import?.statusId == importStatuses.InProgress ? import?.progress + '%': l('Pending')}}</span><button class="cancel-import" (click)="cancelImport(import.id)">{{l('Cancel')}}</button></div>
+                    <dx-tooltip
+                        [width]="130"
+                        [height]=""
+                        target=".import-progress[key='{{import.id}}']"
+                        [hideEvent]="'dxhoverend'"
+                        [showEvent]="'mouseenter'">
+                        <div *dxTemplate="let data = data of 'content'">
+                            <p>{{l('Total')}}: {{import?.totalCount}}</p>
+                            <p>{{l('Imported')}}: {{import?.importedCount}}</p>
+                            <p>{{l('Failed')}}: {{import?.failedCount}}</p> 
+                        </div>
+                    </dx-tooltip>                    
+                </div>
+            </div>
+            <button class="btn btn-layout button-primary cancel-all-imports" (click)="cancelImport()">{{l('CancelAllImports')}}</button>
         </div>
     </div>
 </dx-tooltip>
