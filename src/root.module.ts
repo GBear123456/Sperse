@@ -1,5 +1,6 @@
 /** Core imports */
 import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule } from '@angular/core';
+import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlatformLocation, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -8,6 +9,7 @@ import { RouteReuseStrategy } from '@angular/router';
 /** Third party imports */
 import { AbpModule } from '@abp/abp.module';
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
+import { GestureConfig } from '@angular/material';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -156,6 +158,10 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: RouteReuseStrategy,
             useClass: CustomReuseStrategy
+        },
+        {
+            provide: HAMMER_GESTURE_CONFIG,
+            useClass: GestureConfig
         }
     ],
     bootstrap: [RootComponent]

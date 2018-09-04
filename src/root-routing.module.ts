@@ -86,7 +86,7 @@ const routes: Routes = [{
         {
             path: 'desktop',
             loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-            data: { preload: true } 
+            data: { preload: true }
         }
     ]
 }];

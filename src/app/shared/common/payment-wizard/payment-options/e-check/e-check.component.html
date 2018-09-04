@@ -11,7 +11,7 @@
             </mat-form-field>
             <mat-form-field floatLabel="always">
                 <mat-label>{{ l('Amount').toUpperCase() }}</mat-label>
-                <input matInput disabled [value]="capitalize(price | customNumber : '1.0-0' | numberToWords) + ' ' + l('And') + ' ' + (price | customNumber : '0.2-2') + ' ' + l('Cents')">
+                <input matInput disabled [value]="getTextPrice(price)">
             </mat-form-field>
         </div>
         <div>
@@ -32,7 +32,7 @@
             </mat-label>
             <img [src]="'assets/common/icons/information-button.svg'" [matTooltip]="l('routingNumberDescription')" >
             <input matInput formControlName="routingNumber" (keypress)="onKeyPress($event)" minlength="9" maxlength="9">
-            <mat-error *ngIf="echeckForm.get('routingNumber')?.invalid">{{ l('routingNumberValidationMessage') }}</mat-error>
+            <mat-error *ngIf="echeckForm.controls['routingNumber'].touched && echeckForm.controls['routingNumber']?.invalid">{{ l('routingNumberValidationMessage') }}</mat-error>
         </mat-form-field>
         <mat-form-field floatLabel="always">
             <mat-label>
@@ -40,7 +40,7 @@
             </mat-label>
             <img [matTooltip]="l('bankAccountNumberDescription')" [src]="'assets/common/icons/information-button.svg'">
             <input matInput formControlName="bankAccountNumber" (keypress)="onKeyPress($event)" minlength="4" maxlength="17">
-            <mat-error *ngIf="echeckForm.get('bankAccountNumber')?.invalid">{{ l('bankAccountNumberValidationMessage') }}</mat-error>
+            <mat-error *ngIf="echeckForm.controls['bankAccountNumber'].touched && echeckForm.controls['bankAccountNumber']?.invalid">{{ l('bankAccountNumberValidationMessage') }}</mat-error>
         </mat-form-field>
     </div>
 </form>

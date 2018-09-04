@@ -3,6 +3,8 @@
         <mat-horizontal-stepper #stepper>
             <mat-step>
                 <payment-plan-chooser
+                    [paymentPlansMaxUsersAmount]="paymentPlansMaxUsersAmount$ | async"
+                    [paymentPlans]="paymentPlans$ | async"
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
                 </payment-plan-chooser>
@@ -13,8 +15,7 @@
                         [plan]="plan"
                         (onChangeStep)="stepper.selectedIndex = $event"
                         (onClose)="close()"
-                        (onStatusChange)="changeStatus($event)"
-                    >
+                        (onStatusChange)="changeStatus($event)">
                     </payment-options>
                 </ng-container>
             </mat-step>
