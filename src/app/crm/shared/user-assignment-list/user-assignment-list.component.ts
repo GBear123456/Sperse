@@ -125,6 +125,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
+        /** @todo change for store selecting */
         this._userAssignmentService.getUsers(true).subscribe((result) => {
             this.list = result;
         });
