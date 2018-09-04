@@ -16,24 +16,26 @@
             <span class="year-discount">{{ yearDiscount + '% ' + l('Off').toUpperCase() }}</span>
         </div>
     </div>
+    <div class="slider">
+        <i class="minus fa fa-minus" name="minus" role="button" (click)="decreaseUserCount()"></i>
+        <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)"></mat-slider>
+        <i class="plus fa fa-plus" name="plus" role="button" (click)="increaseUserCount()"></i>
+    </div>
 </div>
 <div class="paymentPlans">
     <ng-container *ngFor="let paymentPlan of paymentPlans; let i = index;">
         <payment-plan-card
             [name]="paymentPlan.name"
-            [monthlyBillingPrice]="paymentPlan.monthlyBillingPrice"
-            [yearlyBillingPricePerMonth]="paymentPlan.yearlyBillingPricePerMonth"
-            [features]="paymentPlan.features"
-            [usersAmount]="paymentPlan.usersAmount"
-            [maxUsersAmount]="paymentPlan.maxUsersAmount"
-            [isBestValue]="paymentPlan.isBestValue"
+            [bestValue]="paymentPlan.bestValue"
+            [billingPeriod]="selectedBillingPeriod"
+            [usersAmount]="usersAmount"
+            [editions]="paymentPlan.editions"
             [ngClass]="{
                 'selected': selectedPaymentPlanIndex === i,
-                'large': paymentPlans.length < 3 || paymentPlan.isBestValue,
+                'large': paymentPlans.length < 3 || paymentPlan.bestValue,
                 'heightFitContent' : paymentPlans.length > 2
             }"
-            (click)="selectPaymentPlan(i)"
-        >
+            (click)="selectPaymentPlan(i)">
         </payment-plan-card>
     </ng-container>
 </div>

@@ -8,12 +8,15 @@ import * as moment from 'moment';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
+import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
+import { NumberToWordsPipe } from '@shared/common/pipes/number-to-words/number-to-words.pipe';
 
 @Component({
     selector: 'e-check',
     templateUrl: './e-check.component.html',
     styleUrls: ['./e-check.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ CustomNumberPipe, NumberToWordsPipe ]
 })
 export class ECheckComponent extends AppComponentBase implements OnInit {
     @Input() descriptionText = this.l('eCheckDescription');
@@ -48,7 +51,9 @@ export class ECheckComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private customNumberPipe: CustomNumberPipe,
+        private numberToWordsPipe: NumberToWordsPipe
     ) {
         super(injector);
     }
@@ -59,6 +64,13 @@ export class ECheckComponent extends AppComponentBase implements OnInit {
         if (e.which < 48 || e.which > 57) {
             e.preventDefault();
         }
+    }
+
+    getTextPrice(price) {
+        const dollars = this.numberToWordsPipe.transform(+this.customNumberPipe.transform(price, '1.0-0')).replace(/\b\w/g, l => l.toUpperCase());
+        const cents = this.customNumberPipe.transform(price, '0.2-2');
+        const centsText = !cents || cents === '00' ? '' : `${this.l('And')} ${cents} ${this.l('Cents')}`;
+        return `${dollars} ${this.l('Dollars')} ${centsText}`;
     }
 
     submit() {

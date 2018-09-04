@@ -6,6 +6,7 @@ import { environment } from './environments/environment';
 import { hmrBootstrap } from './hmr';
 import './polyfills.ts';
 import { RootModule } from './root.module';
+import 'hammerjs';
 
 if (environment.production) {
     enableProdMode();

@@ -1,8 +1,13 @@
-import { Component, ChangeDetectionStrategy, OnInit, Input, Injector, HostBinding } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    Input,
+    Injector,
+    HostBinding
+} from '@angular/core';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { Feature } from '@app/shared/common/payment-wizard/models/feature.model';
-import { FeatureStatus } from '@app/shared/common/payment-wizard/models/feature-status.enum';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { PackageEditionConfigDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'payment-plan-card',
@@ -10,41 +15,65 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     styleUrls: ['./payment-plan-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentPlanCardComponent extends AppComponentBase implements OnInit {
+export class PaymentPlanCardComponent extends AppComponentBase {
     @Input() name: string;
     @Input() billingPeriod: BillingPeriod;
     @Input() currencySymbol = '$';
-    @Input() monthlyBillingPrice: number;
-    @Input() yearlyBillingPricePerMonth: number;
-    @Input() features: Feature[];
-    @Input() maxUsersAmount: number;
     @Input() usersAmount: number;
-    @HostBinding('class.isBestValue') @Input() isBestValue = false;
-    additionalUsersAmount = 0;
+    @Input() editions: PackageEditionConfigDto[];
+
+    get selectedEdition(): PackageEditionConfigDto {
+        return this.editions.find(edition => {
+            const maxUsersCount = +edition.features['CRM.MaxUserCount'];
+            return this.usersAmount <= maxUsersCount;
+        });
+    }
+
+    get selectedEditionUsersAmount(): number {
+        return +this.selectedEdition.features['CRM.MaxUserCount'];
+    }
+
+    get features() {
+        return [
+            {
+                name: 'Contacts',
+                value: this.l('FeaturesContacts') + ': ' + this.selectedEdition.features['CRM.MaxActiveContactCount']
+            },
+            {
+                name: 'File Storage',
+                value: this.l('FeaturesFileStorage') + ': ' + this.selectedEdition.features['Admin.MaxSpaceGB']
+            },
+            {
+                name: 'Lead Management Pipeline Funnel',
+                value: this.l('LeadManagementPipelineFunnel')
+            },
+            {
+                name: 'Team Permission Management',
+                value: this.l('Team Permission Management')
+            }
+        ];
+    }
 
     get pricePerMonth(): number {
-        return this.billingPeriod === BillingPeriod.Monthly ? this.monthlyBillingPrice : this.yearlyBillingPricePerMonth;
+        return this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : +(this.selectedEdition.annualPrice / 12).toFixed(2);
     }
+
+    get monthlyPricePerYear(): number {
+        return this.selectedEdition.monthlyPrice * 12;
+    }
+
+    get totalPrice(): number {
+        return this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : this.selectedEdition.annualPrice;
+    }
+
+    get pricePerUserPerMonth(): number {
+        return +(this.pricePerMonth / this.selectedEditionUsersAmount).toFixed(2);
+    }
+
+    @HostBinding('class.bestValue') @Input() bestValue = false;
 
     constructor(injector: Injector) {
         super(injector);
     }
 
-    ngOnInit() {}
-
-    increaseAdditionalUsersAmount() {
-        if (this.additionalUsersAmount < (this.maxUsersAmount - this.usersAmount)) {
-            this.additionalUsersAmount++;
-        }
-    }
-
-    decreaseAdditionalUsersAmount() {
-        if (this.additionalUsersAmount > 0) {
-            this.additionalUsersAmount--;
-        }
-    }
-
-    getFeatureStatusIconName(featureStatus: FeatureStatus) {
-        return featureStatus;
-    }
 }

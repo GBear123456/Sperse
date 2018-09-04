@@ -4,9 +4,10 @@ export interface OptionsPaymentPlan {
     name: string;
     billingPeriod: BillingPeriod;
     currencySymbol?: string;
-    pricePerMonth: number;
+    pricePerUserPerMonth: number;
     subtotal: number;
     discount?: number;
     usersAmount: number;
     total: number;
+    selectedEditionId: number;
 }

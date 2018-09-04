@@ -5,7 +5,12 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    ApplicationInfoDto, CreateInvoiceDto, InvoiceServiceProxy, PaymentServiceProxy, TenantLoginInfoDto, UserLoginInfoDto,
+    ApplicationInfoDto,
+    CreateInvoiceDto,
+    InvoiceServiceProxy,
+    PaymentServiceProxy,
+    TenantLoginInfoDto,
+    UserLoginInfoDto,
     TenantSubscriptionServiceProxy,
     PaymentRequestDto
 } from '@shared/service-proxies/service-proxies';

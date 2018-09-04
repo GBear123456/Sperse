@@ -24,8 +24,8 @@
         <div class="planPrice">
             <div>
                 <span class="currency">{{ plan.currencySymbol || '$' }}</span>
-                <span class="numberPrice">{{ plan.pricePerMonth | customNumber : '1.0-0' }}</span>
-                <span class="decimalsPrice">{{ plan.pricePerMonth | customNumber : '0.2-2' }}</span>
+                <span class="numberPrice">{{ plan.pricePerUserPerMonth | customNumber : '1.0-0' }}</span>
+                <span class="decimalsPrice">{{ plan.pricePerUserPerMonth | customNumber : '0.2-2' }}</span>
             </div>
             <span class="perMonthText">{{ l('UserPerMonth') }}</span>
         </div>

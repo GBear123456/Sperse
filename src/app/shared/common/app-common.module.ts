@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /** Third party imports */
 import {
     MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule, MatSelectModule, MatTooltipModule
+    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule, MatSelectModule, MatTooltipModule, MatSliderModule
 } from '@angular/material';
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
@@ -81,6 +81,7 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         MatButtonModule,
         MatSelectModule,
         MatTooltipModule,
+        MatSliderModule,
         ReactiveFormsModule,
         FileDropModule,
         PapaParseModule,

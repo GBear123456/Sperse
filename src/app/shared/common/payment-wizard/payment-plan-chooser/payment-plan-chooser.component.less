@@ -1,10 +1,29 @@
+@heading-color: #424c56;
+@slider-box-shadow: fade(@heading-color, 78%);
+@white: #fff;
+@blue: #00aeef;
+@scrollbar-color: #dee3e5;
+
 :host {
-    background: url('../../../../../assets/common/icons/payment-chooser-background.png') no-repeat bottom;
+    background: linear-gradient(111deg, #c86dd7, #3023ae) no-repeat 100% 360px;
     padding: 34px 42px 33px 44px;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
+    /** white triangle to correspond to design */
+    &:before {
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 115px 980px 0 0;
+        border-color: #ffffff transparent transparent transparent;
+        bottom: 180px;
+        left: 0;
+        position: absolute;
+    }
     .header {
         text-align: center;
         .title {
@@ -22,7 +41,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 27px 0 40px 0;
+            margin: 27px 0 10px 0;
             div {
                 font-size: 14px;
                 font-weight: 500;
@@ -81,10 +100,116 @@
             }
 
         }
+        .slider {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 480px;
+            margin: auto;
+            .minus,
+            .plus {
+                margin-top: 2px;
+                font-family: 'FontAwesome';
+                font-size: 11px;
+                font-weight: 100;
+                color: #00aeef;
+                cursor: pointer;
+            }
+
+            .minus {
+                color: #888d92 !important;
+            }
+            .plus {
+                color: #00aeef;
+            }
+        }
+        .mat-slider-horizontal {
+            //@media @{@smaller-phone} {
+            //    min-width: 0 !important;
+            //}
+        }
+
+        /deep/ mat-slider.mat-slider:not(.mat-slider-disabled).mat-slider-horizontal {
+            width: calc(100% - 83px);
+
+            &.cdk-focused {
+                .mat-slider-thumb-label {
+                    border-radius: 100px;
+                }
+            }
+
+            .mat-slider-ticks-container,
+            .mat-slider-track-background,
+            .mat-slider-track-fill,
+            .mat-slider-track-wrapper,
+            .mat-slider-wrapper {
+                height: 4px;
+            }
+
+            .mat-slider-track-wrapper {
+                width: calc(100% + 56px);
+                left: -28px;
+                .mat-slider-track-background {
+                    background-color: @scrollbar-color;
+                }
+
+                .mat-slider-track-fill {
+                    background-color: @blue;
+                }
+            }
+
+            .mat-slider-thumb {
+                transform: scale(0);
+            }
+
+            .mat-slider-thumb-label {
+                top: -16px;
+                right: -35px;
+                width: 69px;
+                height: 32px;
+                background-color: @white;
+                border-radius: 100px;
+                transform: none;
+                box-shadow: 0 3px 10px 0 @slider-box-shadow;
+
+                .mat-slider-thumb-label-text {
+                    position: relative;
+                    min-width: 28px;
+                    font-family: Montserrat;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: @heading-color;
+                    text-align: center;
+                    opacity: 1;
+                    transform: none;
+
+                    &::after,
+                    &::before {
+                        position: absolute;
+                        font-family: FontAwesome;
+                        font-size: 8px;
+                        font-weight: 100;
+                        color: @heading-color;
+                        opacity: .5;
+                    }
+
+                    &::before {
+                        content: '\f053';
+                        left: -12px;
+                    }
+
+                    &::after {
+                        content: '\f054';
+                        right: -12px;
+                    }
+                }
+            }
+        }
     }
     .paymentPlans {
         display: flex;
         justify-content: center;
+        margin-bottom: 35px;
     }
     .footer {
         text-align: center;

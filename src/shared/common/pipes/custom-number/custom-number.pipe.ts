@@ -9,14 +9,15 @@ import { DecimalPipe } from '@angular/common';
  * See spec for usage examples
  */
 export class CustomNumberPipe extends DecimalPipe implements PipeTransform {
-    transform(value: any, digitsInfo?: string): any {
+    transform(value: any, digitsInfo?: string): string | null {
         if (value && digitsInfo) {
             const [minIntegerDigits, minFractionDigits, maxFractionDigits] = digitsInfo.split(/[.-]+/).map(digit => +digit);
             value = +value;
             if (minFractionDigits === 0 && maxFractionDigits === 0) {
                 return ((value < 0 ? -1 : 1) * Math.floor(Math.abs(value))).toString();
             } else if (minIntegerDigits === 0) {
-                const actualFractionDigits = value.toString().split('.')[1].length;
+                const valueArr = value.toString().split('.');
+                const actualFractionDigits = valueArr[1] ? valueArr[1].length : 0;
                 let amountOfZeroes = 0;
                 let fractionDigits = minFractionDigits;
                 if (minFractionDigits < actualFractionDigits && actualFractionDigits < maxFractionDigits) {
@@ -27,7 +28,7 @@ export class CustomNumberPipe extends DecimalPipe implements PipeTransform {
                         amountOfZeroes = minFractionDigits - actualFractionDigits;
                     }
                 }
-                return value.toString().split('.')[1].slice(0, fractionDigits) + '0'.repeat(amountOfZeroes);
+                return (valueArr[1] ? valueArr[1].slice(0, fractionDigits) : '') + '0'.repeat(amountOfZeroes);
             }
         }
         return super.transform(value, digitsInfo);

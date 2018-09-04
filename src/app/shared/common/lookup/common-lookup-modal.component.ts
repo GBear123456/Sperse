@@ -34,7 +34,7 @@ export class CommonLookupModalComponent extends AppComponentBase {
     };
     popupVisible = false;
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
-    
+
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
 

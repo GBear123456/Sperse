@@ -1,6 +1,6 @@
 import { CustomNumberPipe } from './custom-number.pipe';
 
-describe('PhoneFormatPipe', () => {
+describe('Custom number pipe', () => {
     it('custom number parsing', () => {
         const pipe = new CustomNumberPipe('en');
         expect(pipe).toBeTruthy();
@@ -9,6 +9,7 @@ describe('PhoneFormatPipe', () => {
         expect(pipe.transform(1568.4, '0.1-2')).toBe('4');
         expect(pipe.transform(1568.4, '0.2-2')).toBe('40');
         expect(pipe.transform(1568.433, '0.2-5')).toBe('433');
+        expect(pipe.transform(1568, '0.2-2')).toBe('00');
         expect(pipe.transform(1568.433457457, '0.3-5')).toBe('43345');
         expect(pipe.transform(1568.433457457, '0.3-10')).toBe('433457457');
         expect(pipe.transform(252036.04, '0.2-2')).toBe('04');
