@@ -31,6 +31,7 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
     sliderInitialStep = 5;
     sliderInitialMaxValue = 100;
     sliderStep = 5;
+    private enableSliderScalingChange = false;
 
     constructor(injector: Injector) {
         super(injector);
@@ -56,18 +57,24 @@ export class PaymentPlanChooserComponent extends AppComponentBase implements OnI
     }
 
     decreaseUserCount() {
-        if (this.usersAmount < this.sliderInitialMinValue) return;
-        if (this.sliderStep !== this.sliderInitialStep && this.usersAmount === this.sliderInitialMaxValue) {
-            this.repaintSlider(this.sliderInitialMinValue, this.sliderInitialMaxValue, this.sliderInitialStep);
+        if (this.usersAmount <= this.sliderInitialMinValue) return;
+        if (this.enableSliderScalingChange) {
+            if (this.sliderStep !== this.sliderInitialStep && this.usersAmount === this.sliderInitialMaxValue) {
+                this.repaintSlider(this.sliderInitialMinValue, this.sliderInitialMaxValue, this.sliderInitialStep);
+            }
         }
         this.usersAmount = this.usersAmount - this.sliderStep;
     }
 
     increaseUserCount() {
-        if (this.usersAmount >= this.paymentPlansMaxUsersAmount) return;
-        if (this.usersAmount > ( this.sliderInitialMaxValue - this.sliderStep ) && this.paymentPlansMaxUsersAmount > this.sliderInitialMaxValue ) {
-            const step = (this.paymentPlansMaxUsersAmount - this.sliderInitialMaxValue) / 8;
-            this.repaintSlider(this.sliderInitialMaxValue, this.paymentPlansMaxUsersAmount, step);
+        if (this.enableSliderScalingChange) {
+            if (this.usersAmount >= this.paymentPlansMaxUsersAmount) return;
+            if (this.usersAmount > ( this.sliderInitialMaxValue - this.sliderStep ) && this.paymentPlansMaxUsersAmount > this.sliderInitialMaxValue ) {
+                const step = (this.paymentPlansMaxUsersAmount - this.sliderInitialMaxValue) / 8;
+                this.repaintSlider(this.sliderInitialMaxValue, this.paymentPlansMaxUsersAmount, step);
+            }
+        } else {
+            if (this.usersAmount >= this.sliderInitialMaxValue) return;
         }
         this.usersAmount = this.usersAmount + this.sliderStep;
     }

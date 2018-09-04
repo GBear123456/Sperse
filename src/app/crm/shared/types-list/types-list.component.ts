@@ -116,6 +116,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
+        /** @todo change to store selecting */
         this._partnerTypeService.getAll().subscribe((result) => {
             this.list = result.map((obj) => {
                 obj['parent'] = 0;
