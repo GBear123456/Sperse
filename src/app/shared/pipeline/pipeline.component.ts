@@ -191,14 +191,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     }
 
-    refresh(quiet = false, stageId = undefined, skipAlreadyLoadedChecking = true) {
+    refresh(quiet = false, stageId = undefined, skipAlreadyLoadedChecking = false) {
         this.selectedLeads = [];
         this.quiet = quiet;
         this.stageId = stageId;
         if (!this.refreshTimeout) {
             !this.quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
-                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(skipAlreadyLoadedChecking));
+                if (this.pipeline) {
+                    this.loadStagesLeads(0, stageId && 
+                        _.findIndex(this.stages, obj => obj.id == stageId), Boolean(stageId));
+                    this.refreshTimeout = null;
+                } else 
+                    this.store$.dispatch(new PipelinesStoreActions  
+                        .LoadRequestAction(skipAlreadyLoadedChecking));
             });
         }
     }
