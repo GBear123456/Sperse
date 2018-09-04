@@ -143,22 +143,12 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         if (!event.component.totalCount())
             return this.navigateToWizard();
 
-        this.updateActiveImport();
         this.setGridDataLoaded();
         setTimeout(() =>
             event.component.option('visible', true));
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
-        });
-    }
-
-    updateActiveImport() {
-        this.dataGrid.instance.getVisibleRows().some((row) => {
-            if (row.data.StatusId == ImportStatus.InProgress) {
-                this._importLeadsService.setupImportCheck(row.data.Id);
-                return true;
-            }
         });
     }
 

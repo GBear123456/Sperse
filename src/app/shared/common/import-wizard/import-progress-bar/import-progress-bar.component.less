@@ -1,3 +1,32 @@
+/deep/ .dx-popup-content {
+    .tooltip-container {
+        width: 380px;
+        .import-row {
+            display: flex;
+            padding: 5px 20px 5px 0px;
+            justify-content: space-between;    
+
+            .file-name {  
+                width: 150px;
+                font-weight: 600;
+                overflow: hidden;
+                text-align: left;
+                text-overflow: ellipsis;
+                white-space: nowrap; 
+            }
+            .cancel-import {
+                border-radius: 5px;
+                background: #FFF;  
+                border: solid 1px #ddd;
+                cursor: pointer;
+            }
+        }
+        .cancel-all-imports {
+            margin-top: 30px;
+        }
+    }
+}
+
 :host {
     display: inline-block;
     background: transparent;

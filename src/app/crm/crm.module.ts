@@ -47,6 +47,8 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
+
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component.ts';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
@@ -160,5 +162,17 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
     ]
 })
 export class CrmModule {
+    private readonly name = 'CRM';
 
+    constructor(
+        private _appService: AppService,
+        private _importLeadsService: ImportLeadsService    
+    ) {        
+        _appService.subscribeModuleChange((config) => {
+            if (config['name'] == this.name)
+                _importLeadsService.setupImportCheck();
+            else 
+                _importLeadsService.stopImportCheck();
+        });
+    }
 }
