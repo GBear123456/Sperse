@@ -41387,6 +41387,7 @@ export class ImportInput implements IImportInput {
     items!: ImportItemInput[] | undefined;
     lists!: ContactGroupListInput[] | undefined;
     tags!: ContactGroupTagInput[] | undefined;
+    fields!: ImportFieldInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     starId!: number | undefined;
@@ -41423,6 +41424,11 @@ export class ImportInput implements IImportInput {
                 this.tags = [];
                 for (let item of data["tags"])
                     this.tags.push(ContactGroupTagInput.fromJS(item));
+            }
+            if (data["fields"] && data["fields"].constructor === Array) {
+                this.fields = [];
+                for (let item of data["fields"])
+                    this.fields.push(ImportFieldInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
@@ -41461,6 +41467,11 @@ export class ImportInput implements IImportInput {
             for (let item of this.tags)
                 data["tags"].push(item.toJSON());
         }
+        if (this.fields && this.fields.constructor === Array) {
+            data["fields"] = [];
+            for (let item of this.fields)
+                data["fields"].push(item.toJSON());
+        }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["starId"] = this.starId;
@@ -41479,6 +41490,7 @@ export interface IImportInput {
     items: ImportItemInput[] | undefined;
     lists: ContactGroupListInput[] | undefined;
     tags: ContactGroupTagInput[] | undefined;
+    fields: ImportFieldInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     starId: number | undefined;
@@ -41577,6 +41589,46 @@ export interface IImportItemInput {
     utmCampaign: string | undefined;
     utmTerm: string | undefined;
     utmContent: string | undefined;
+}
+
+export class ImportFieldInput implements IImportFieldInput {
+    inputFieldName!: string;
+    outputFieldName!: string;
+
+    constructor(data?: IImportFieldInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.inputFieldName = data["inputFieldName"];
+            this.outputFieldName = data["outputFieldName"];
+        }
+    }
+
+    static fromJS(data: any): ImportFieldInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportFieldInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["inputFieldName"] = this.inputFieldName;
+        data["outputFieldName"] = this.outputFieldName;
+        return data; 
+    }
+}
+
+export interface IImportFieldInput {
+    inputFieldName: string;
+    outputFieldName: string;
 }
 
 export class ImportPersonalInput implements IImportPersonalInput {
