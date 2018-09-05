@@ -22955,6 +22955,62 @@ export class TenantSubscriptionServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getModuleSubscriptions(): Observable<ModuleSubscriptionInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/GetModuleSubscriptions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetModuleSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetModuleSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<ModuleSubscriptionInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ModuleSubscriptionInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetModuleSubscriptions(response: HttpResponseBase): Observable<ModuleSubscriptionInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ModuleSubscriptionInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ModuleSubscriptionInfo[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -41331,6 +41387,7 @@ export class ImportInput implements IImportInput {
     items!: ImportItemInput[] | undefined;
     lists!: ContactGroupListInput[] | undefined;
     tags!: ContactGroupTagInput[] | undefined;
+    fields!: ImportFieldInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     starId!: number | undefined;
@@ -41367,6 +41424,11 @@ export class ImportInput implements IImportInput {
                 this.tags = [];
                 for (let item of data["tags"])
                     this.tags.push(ContactGroupTagInput.fromJS(item));
+            }
+            if (data["fields"] && data["fields"].constructor === Array) {
+                this.fields = [];
+                for (let item of data["fields"])
+                    this.fields.push(ImportFieldInput.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
@@ -41405,6 +41467,11 @@ export class ImportInput implements IImportInput {
             for (let item of this.tags)
                 data["tags"].push(item.toJSON());
         }
+        if (this.fields && this.fields.constructor === Array) {
+            data["fields"] = [];
+            for (let item of this.fields)
+                data["fields"].push(item.toJSON());
+        }
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["starId"] = this.starId;
@@ -41423,6 +41490,7 @@ export interface IImportInput {
     items: ImportItemInput[] | undefined;
     lists: ContactGroupListInput[] | undefined;
     tags: ContactGroupTagInput[] | undefined;
+    fields: ImportFieldInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     starId: number | undefined;
@@ -41521,6 +41589,46 @@ export interface IImportItemInput {
     utmCampaign: string | undefined;
     utmTerm: string | undefined;
     utmContent: string | undefined;
+}
+
+export class ImportFieldInput implements IImportFieldInput {
+    inputFieldName!: string;
+    outputFieldName!: string;
+
+    constructor(data?: IImportFieldInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.inputFieldName = data["inputFieldName"];
+            this.outputFieldName = data["outputFieldName"];
+        }
+    }
+
+    static fromJS(data: any): ImportFieldInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportFieldInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["inputFieldName"] = this.inputFieldName;
+        data["outputFieldName"] = this.outputFieldName;
+        return data; 
+    }
+}
+
+export interface IImportFieldInput {
+    inputFieldName: string;
+    outputFieldName: string;
 }
 
 export class ImportPersonalInput implements IImportPersonalInput {
@@ -52573,6 +52681,46 @@ export class PaymentRequestDto implements IPaymentRequestDto {
 export interface IPaymentRequestDto {
     bankCard: BankCardDto | undefined;
     achCustomer: ACHCustomerDto | undefined;
+}
+
+export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
+    serviceTypeId!: number | undefined;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IModuleSubscriptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.serviceTypeId = data["serviceTypeId"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ModuleSubscriptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ModuleSubscriptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IModuleSubscriptionInfo {
+    serviceTypeId: number | undefined;
+    endDate: moment.Moment | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
