@@ -31,12 +31,14 @@
                                             <date-range-picker id="StartEndRange" [(startDate)]="startDate" [(endDate)]="endDate"></date-range-picker>
                                         </div>
                                     </div>
+                                    <!--
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="UsernameAuditLog" class="control-label">{{l("UserName")}}</label>
                                             <input id="UsernameAuditLog" type="text" name="UsernameAuditLog" class="form-control" [(ngModel)]="usernameAuditLog">
                                         </div>
                                     </div>
+                                    -->
                                 </div>
 
                                 <div *ngIf="advancedFiltersAreShown" class="row">
@@ -113,9 +115,8 @@
                                                 {{l('Time')}}
                                                 <p-sortIcon field="executionTime"></p-sortIcon>
                                             </th>
-                                            <th style="width: 150px" pSortableColumn="userName">
+                                            <th style="width: 150px">
                                                 {{l('UserName')}}
-                                                <p-sortIcon field="userName"></p-sortIcon>
                                             </th>
                                             <th style="width: 250px">
                                                 {{l('Service')}}
