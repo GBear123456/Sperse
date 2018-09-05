@@ -82,7 +82,7 @@ export class PayPalComponent extends AppComponentBase implements OnInit {
                 color: 'blue'           // gold | blue | silver | black
             },
             env: 'sandbox', //!!VP shoud be some strategy
-            commit: true,
+//            commit: true, //!!VP if used server side integration
             client: {
                 sandbox:    'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
                 production: '<insert production client id>'
