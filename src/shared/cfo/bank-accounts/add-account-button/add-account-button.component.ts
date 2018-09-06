@@ -3,12 +3,14 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService, QuovoHandler } from '../quovo/QuovoService';
 import { SyncAccountServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { MatDialog } from '@angular/material';
+import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 
 @Component({
     selector: 'add-account-button',
     templateUrl: './add-account-button.component.html',
     styleUrls: ['./add-account-button.component.less'],
-    providers: [SyncAccountServiceProxy]
+    providers: [ SyncAccountServiceProxy ]
 })
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
@@ -19,7 +21,8 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
         injector: Injector,
         private quovoService: QuovoService,
         private cfoService: CFOService,
-        private _syncAccountServiceProxy: SyncAccountServiceProxy
+        private _syncAccountServiceProxy: SyncAccountServiceProxy,
+        private dialog: MatDialog
     ) {
         super(injector);
         this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
@@ -39,24 +42,7 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
         if (!this.createAccountAvailable)
             return;
 
-        if (this.quovoHandler.isLoaded) {
-            if (this.loading) {
-                this.finishLoading(true);
-            }
-            this.quovoHandler.open((e) => {
-                this.tooltipVisible = false;
-                this.onClose.emit(e);
-            });
-            this.tooltipVisible = true;
-        } else {
-            if (!this.loading) {
-                this.startLoading(true);
-            }
-            setTimeout(() => this.openAddAccountDialog(), 100);
-        }
+        this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
     }
 
-    xeroButtonClick() {
-        this.quovoHandler.close();
-    }
 }

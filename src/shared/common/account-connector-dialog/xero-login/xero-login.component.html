@@ -1,0 +1,124 @@
+<div class="row modal-wrapper">
+    <div class="col xero-side">
+        <header>
+            <img
+                src="assets/common/images/xero/xero.png"
+                srcset="assets/common/images/xero/xero@2x.png 2x, assets/common/images/xero/xero@3x.png 3x"
+                alt="Xero"
+                class="hero-image">
+        </header>
+        <div class="content">
+            <h2>Sync your Xero account to</h2>
+            <ul class="xero-list fa-ul">
+                <li class="xero-item"><i class="fa fa-check"></i> Import your chart of accounts</li>
+                <li class="xero-item"><i class="fa fa-check"></i> View historical & forecast reports</li>
+                <li class="xero-item"><i class="fa fa-check"></i> Avoid clasifying transactons twice</li>
+                <li class="xero-item"><i class="fa fa-check"></i> Generate custom reports with data</li>
+                <li class="xero-item"><i class="fa fa-check"></i> Update invoices, bills & Payments</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col sperse-side">
+        <header>
+            <img
+                src="assets/common/images/xero/sperse-logo.png"
+                srcset="assets/common/images/xero/sperse-logo@2x.png 2x, assets/common/images/xero/sperse-logo@3x.png 3x"
+                alt="Sperse"
+                class="sperse-logo">
+            <h2 class="sperse-title">Sperse integration with Xero</h2>
+        </header>
+        <div class="content">
+            <div class="first-step-content" *ngIf="!showForm">
+                <div class="row title-col">
+                    <div class="col text-right">
+                        <img src="assets/common/images/xero/xero-medium-logo.svg" alt="xero">
+                    </div>
+                    <div class="col text-center">&nbsp;</div>
+                    <div class="col text-left">
+                        <img src="assets/common/images/xero/sperse-medium-logo.svg" alt="sperse">
+                    </div>
+                </div>
+                <ul class="xero-integration-list">
+                    <li class="row item-row align-items-center">
+                        <span class="col text-right">Chart of accounts</span>
+                        <span class="col text-center"><img src="assets/common/images/xero/small-blue-arrow.svg" alt="Chart of accounts" class="small-blue-arrow"></span>
+                        <span class="col text-left">Chart of accounts</span>
+                    </li>
+                    <li class="row item-row align-items-center">
+                        <span class="col text-right">Bank accounts</span>
+                        <span class="col text-center"><img src="assets/common/images/xero/small-blue-arrow.svg" alt="Bank accounts" class="small-blue-arrow"></span>
+                        <span class="col text-left">Bank accounts</span>
+                    </li>
+                    <li class="row item-row align-items-center">
+                        <span class="col text-right">Xero transactions</span>
+                        <span class="col text-center"><img src="assets/common/images/xero/small-blue-arrow.svg" alt="Transactions" class="small-blue-arrow"></span>
+                        <span class="col text-left">Transactions</span>
+                    </li>
+                    <li class="row item-row align-items-center">
+                        <span class="col text-right">Customer contacts</span>
+                        <span class="col text-center">
+                            <img src="assets/common/images/xero/small-blue-arrow.svg" alt="Contacts" class="small-blue-arrow">
+                            <img src="assets/common/images/xero/small-orange-arrow.svg" alt="Contacts" class="small-orange-arrow">
+                        </span>
+                        <span class="col text-left">CRM contacts</span>
+                    </li>
+                    <li class="row item-row align-items-center">
+                        <span class="col text-right">Invoices & bills</span>
+                        <span class="col text-center">
+                            <img src="assets/common/images/xero/small-blue-arrow.svg" alt="Invoices & bills" class="small-blue-arrow">
+                            <img src="assets/common/images/xero/small-orange-arrow.svg" alt="Invoices & bills" class="small-orange-arrow">
+                        </span>
+                        <span class="col text-left">Invoices & bills</span>
+                    </li>
+                </ul>
+                <button class="btn-blue" (click)="showForm = !showForm">Click here to connect</button>
+            </div>
+            <div class="second-step-content" *ngIf="showForm">
+                <div class="form">
+                    <div class="field">
+                        <div class="field-label">{{l('ConsumerKey')}}</div>
+                        <div class="field-value">
+                            <dx-text-box [(value)]="consumerKey">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="{{l('ConsumerKey')}} is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">{{l('ConsumerSecret')}}</div>
+                        <div class="field-value">
+                            <dx-text-box [(value)]="consumerSecret">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="{{l('ConsumerSecret')}} is required"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <dx-validation-summary id="summary"></dx-validation-summary>
+                        <dx-button
+                            type="success"
+                            [text]="operationType === 'add' ? l('Connect') : l('Update')"
+                            (onClick)="onClick($event)"
+                            class="btn-blue">
+                        </dx-button>
+                    </div>
+                </div>
+
+                <footer>
+                    <div class="footer-links">
+                        <a href="{{getXeroCertificateUrl}}" target="_blank" class="link get-cert">
+                            <img src="assets/common/images/xero/icon-download.svg" alt="download" class="download-icon">
+                            {{l('DownloadCertificate')}}
+                        </a>
+                        <a href="https://support.sperse.com/hc/en-us/articles/360008220714-Sperse-integration-with-Xero" target="_blank" class="link link-info">
+                            <img src="assets/common/images/xero/icon-info.svg" alt="info" class="info-icon">
+                            {{l('Info')}}
+                        </a>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,18 +1,20 @@
 /** Core imports */
-import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { finalize, first } from 'rxjs/operators';
 
 /** Application imports */
+import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { InstanceType, SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
-import { XeroLoginDialogComponent } from '@shared/cfo/bank-accounts/xero/xero-login-dialog/xero-login-dialog.component';
+import { AccountConnectors } from '@shared/AppEnums';
 
 @Component({
     selector: 'bank-accounts-component',
@@ -20,7 +22,6 @@ import { XeroLoginDialogComponent } from '@shared/cfo/bank-accounts/xero/xero-lo
     styleUrls: ['./bank-accounts.component.less']
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(XeroLoginDialogComponent) xeroLoginDialog: XeroLoginDialogComponent;
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
     quovoHandler: any;
@@ -32,7 +33,8 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         bankAccountsService: BankAccountsService,
         private _quovoService: QuovoService,
         private _synchProgress: SynchProgressService,
-        private _bankAccountsGeneralService: BankAccountsGeneralService
+        private _bankAccountsGeneralService: BankAccountsGeneralService,
+        private dialog: MatDialog
     ) {
         super(injector);
         this.bankAccountsService = bankAccountsService;
@@ -87,21 +89,15 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         if (!this.isInstanceAdmin)
             return;
 
-        if (syncAccount.syncTypeId === 'Q') {
-            if (this.quovoHandler.isLoaded) {
-                if (this.loading) {
-                    this.finishLoading(true);
+        const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
+                data: {
+                    connector: syncAccount.syncTypeId === 'Q' ? AccountConnectors.Quovo : AccountConnectors.Xero,
+                    config: {
+                        accountId: syncAccount.syncAccountId
+                    }
                 }
-                this.quovoHandler.open(null, syncAccount.syncRef);
-            } else {
-                if (!this.loading) {
-                    this.startLoading(true);
-                }
-                setTimeout(() => this.onUpdateAccount(syncAccount), 100);
-            }
-        } else {
-            this.xeroLoginDialog.show({id: syncAccount.syncAccountId});
-        }
+            }};
+        this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
     }
 
     addAccountClose(event) {

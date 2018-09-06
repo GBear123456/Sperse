@@ -15,8 +15,6 @@ import {
     DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule
 } from 'devextreme-angular';
 
-import { RouterModule, Routes } from '@angular/router';
-
 import { UserDetailsComponent } from './user-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -24,8 +22,8 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { UserInformationComponent } from './user-information/user-information.component';
 import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
-import { PermissionTreeComponent } from './permission-tree/permission-tree.component'
-import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component'
+import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
+import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { ImageCropperModule } from 'ng2-img-cropper';
 
 import { UserDetailsRoutingModule } from './user-details-routing.module';
