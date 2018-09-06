@@ -28,7 +28,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
                 private dialogRef: MatDialogRef<PaymentWizardComponent>,
                 private paymentService: PaymentService,
                 private packageServiceProxy: PackageServiceProxy
-    ) { 
+    ) {
         super(injector);
     }
 
@@ -49,9 +49,9 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     }
 
     moveToPaymentOptionsStep() {
-        if (this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement'))      
+        if (this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement'))
             this.stepper.next();
-        else 
+        else
             this.message.info('SubscriptionManagmentPermissionRequired');
     }
 

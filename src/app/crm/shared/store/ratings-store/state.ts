@@ -1,20 +1,23 @@
-import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
-import { ContactGroupRatingInfoDto } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
-export const ratingsAdapter: EntityAdapter<
-    ContactGroupRatingInfoDto
-> = createEntityAdapter<ContactGroupRatingInfoDto>({});
+class Rating {
+    id: number;
+    name: string;
+    constructor(id: number, name: string) {
+        this.id = id;
+        this.name = name;
+    }
+}
 
 export interface State {
-    ratings: ContactGroupRatingInfoDto[];
-    isLoading: boolean;
-    error: string;
-    loaded: boolean;
+    ratings: Rating[];
+}
+
+let ratings = [];
+for (let i = 1; i <= AppConsts.maxRatingValue; i++) {
+    ratings.push(new Rating(i, i.toString()));
 }
 
 export const initialState: State = {
-    ratings: null,
-    isLoading: false,
-    error: null,
-    loaded: false
+    ratings: ratings
 };

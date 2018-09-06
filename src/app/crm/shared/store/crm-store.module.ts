@@ -3,9 +3,8 @@ import { NgModule } from '@angular/core';
 
 /** Third party imports */
 import { EffectsModule } from '@ngrx/effects';
-import { ActionReducer, MetaReducer, StoreModule } from '@ngrx/store';
+import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { localStorageSync } from 'ngrx-store-localstorage';
 
 /** Application imports */
 import { AssignedUsersStoreModule } from '@app/crm/shared/store/assigned-users-store';
@@ -23,19 +22,6 @@ export function instrumentOptions() {
     };
 }
 
-/** For storing some entities in local storage */
-export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-    return localStorageSync({
-        /** entities keys for storing */
-        keys: [
-            'ratings'
-        ],
-        /** to load entities states from storage instead of their initial state */
-        rehydrate: true
-    })(reducer);
-}
-const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
-
 @NgModule({
     imports: [
         AssignedUsersStoreModule,
@@ -46,7 +32,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
         StarsStoreModule,
         StatusesStoreModule,
         TagsStoreModule,
-        StoreModule.forRoot({}, {metaReducers}),
+        StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
         StoreDevtoolsModule.instrument(instrumentOptions)
     ],

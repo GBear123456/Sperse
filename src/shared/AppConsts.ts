@@ -92,5 +92,7 @@ export class AppConsts {
     static readonly defaultCountry = 'US';
     static readonly defaultCountryCode = '+1';
     static readonly ODataVersion = 4;
+
+    static readonly maxRatingValue = 10;
 }
 
