@@ -40,6 +40,7 @@
     "@types/lodash": "^4.14.110",
     "abp-ng2-module": "^3.0.0",
     "abp-web-resources": "^3.7.0",
+    "angular-cc-library": "^1.2.4",
     "angular-google-place": "lujakob/angular-google-place-package",
     "angular2-counto": "^1.2.5",
     "angular2-csv": "^0.2.5",
@@ -160,10 +161,7 @@
     "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
     "xlsx": "^0.13.2",
-    "zone.js": "^0.8.26",
-
-    "payment": "^2.3.0",
-    "qj": "~2.0.0"
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.0-rc.0",

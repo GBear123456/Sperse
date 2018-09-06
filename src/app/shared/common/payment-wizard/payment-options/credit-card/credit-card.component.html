@@ -1,7 +1,7 @@
-<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit(formData)">
+<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="onSubmit()">
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="CARD NUMBER" type="tel" required formControlName="cardNumber" ccNum>
+            <input matInput placeholder="CARD NUMBER" type="tel" required formControlName="cardNumber" ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
                 {{ l(creditCardData.controls.cardNumber.errors.error) }}
             </mat-error>
@@ -23,7 +23,7 @@
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CVV CODE" type="tel" required formControlName="cvvCode" ccCvc>
+            <input matInput placeholder="CVV CODE" type="tel" required formControlName="cvvCode" ccCVC>
             <mat-error *ngIf="creditCardData.controls.cvvCode.touched && creditCardData.controls.cvvCode.invalid">
                 {{ l(creditCardData.controls.cvvCode.errors.error) }}
             </mat-error>

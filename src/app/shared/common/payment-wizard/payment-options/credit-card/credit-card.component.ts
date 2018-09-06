@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
 import { FormBuilder, Validators, NgForm } from '@angular/forms';
 
-import { CreditCardValidator } from 'ngx-credit-cards';
+import { CreditCardValidator } from 'angular-cc-library';
 import * as _ from 'underscore';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -25,9 +25,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     };
 
     creditCardData = this.formBuilder.group({
-        cardNumber: ['', [CreditCardValidator.validateCardNumber]],
-        cardExpDate: ['', [CreditCardValidator.validateCardExpiry]],
-        cvvCode: ['', [CreditCardValidator.validateCardCvc]],
+        cardNumber: ['', [<any>CreditCardValidator.validateCCNumber]],
+        cardExpDate: ['', [<any>CreditCardValidator.validateExpDate]],
+        cvvCode: ['', [<any>Validators.required, <any>Validators.minLength(3), <any>Validators.maxLength(4)]],
         cardHolderName: [''],
         address: [''],
         city: [''],
@@ -46,13 +46,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.getCountries();
     }
 
-    ngOnInit() {
-        //console.log(this.creditCardForm);
-    }
+    ngOnInit() {}
 
-    onSubmit(formData: NgForm) {
-        console.log('Submitted');
-        console.log(this.creditCardData);
+    onSubmit() {
     }
 
     getStates(): void {
