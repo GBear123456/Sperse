@@ -30,8 +30,3 @@ export const getRatingItems = createSelector(
         return result;
     }
 );
-
-export const getLoaded = createSelector(
-    getRatingsState,
-    (state: State) => state.loaded
-);

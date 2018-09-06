@@ -117,7 +117,6 @@
     "ng2-sticky-kit": "^5.3.0",
     "ng2modules-easypiechart": "^0.0.4",
     "ng2modules-flot": "^0.0.1",
-    "ngrx-store-localstorage": "^5.0.1",
     "ngx-bootstrap": "^3.0.0",
     "ngx-file-drop": "4.0.0",
     "ngx-page-scroll": "^5.0.0",
@@ -161,7 +160,10 @@
     "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
     "xlsx": "^0.13.2",
-    "zone.js": "^0.8.26"
+    "zone.js": "^0.8.26",
+
+    "payment": "^2.3.0",
+    "qj": "~2.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.0-rc.0",

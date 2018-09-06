@@ -1,28 +1,27 @@
 import { Component, Injector, Output, EventEmitter, Input, OnInit } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 import {
     SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType,
     UpdateSyncAccountInput
 } from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from 'shared/AppConsts';
 
 @Component({
-    selector: 'xero-login-dialog',
-    templateUrl: './xero-login-dialog.component.html',
-    styleUrls: ['./xero-login-dialog.component.less'],
-    providers: [SyncAccountServiceProxy]
+    selector: 'xero-login',
+    templateUrl: './xero-login.component.html',
+    styleUrls: ['./xero-login.component.less'],
+    providers: [ SyncAccountServiceProxy ]
 })
-export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit {
-    @Input() operationType: 'add' | 'update' = 'add';
-    @Output() onComplete = new EventEmitter();
+export class XeroLoginComponent extends CFOComponentBase implements OnInit {
+    @Output() onComplete: EventEmitter<null> = new EventEmitter();
+    @Output() onClose: EventEmitter<null> = new EventEmitter();
+    @Input() accountId: number;
+    @Input() isSyncBankAccountsEnabled = true;
     showForm = false;
-    popupVisible = false;
     consumerKey: string;
     consumerSecret: string;
-    isSyncBankAccountsEnabled = true;
     getXeroCertificateUrl: string;
-    accountId: number;
     overlayElement;
 
     constructor(
@@ -37,25 +36,13 @@ export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit
         this.overlayElement = document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content');
     }
 
-    show(data: {id: number} = null): void {
-        if (data && data.id) {
-            this.accountId = data.id;
-        }
-        this.popupVisible = true;
-    }
-
-    hide(): void {
-        this.showForm = false;
-        this.popupVisible = false;
-    }
-
     onClick(event) {
         let result = event.validationGroup.validate();
         if (result.isValid) {
-            if (this.operationType === 'add')
-                this.connectToXero(event);
-            else
+            if (this.accountId)
                 this.updateSyncAccount();
+            else
+                this.connectToXero(event);
         }
     }
 
@@ -75,24 +62,22 @@ export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit
     }
 
     updateSyncAccount() {
-        if (this.accountId) {
-            abp.ui.setBusy(this.overlayElement);
-            this._syncAccountServiceProxy.update(InstanceType[this.instanceType], this.instanceId,
-                new UpdateSyncAccountInput({
-                    id: this.accountId,
-                    consumerKey: this.consumerKey,
-                    consumerSecret: this.consumerSecret
-                }))
-                .pipe(finalize(this.finalize))
-                .subscribe((res) => {
-                    this.onComplete.emit();
-                });
-        }
+        abp.ui.setBusy(this.overlayElement);
+        this._syncAccountServiceProxy.update(InstanceType[this.instanceType], this.instanceId,
+            new UpdateSyncAccountInput({
+                id: this.accountId,
+                consumerKey: this.consumerKey,
+                consumerSecret: this.consumerSecret
+            }))
+            .pipe(finalize(this.finalize))
+            .subscribe((res) => {
+                this.onComplete.emit();
+            });
     }
 
     finalize = () => {
         abp.ui.clearBusy(this.overlayElement);
-        this.hide();
+        this.onClose.emit();
         this.consumerKey = null;
         this.consumerSecret = null;
     }

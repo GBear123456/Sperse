@@ -142,3 +142,8 @@ export enum ImportStatus {
     InProgress = 'I',
     New = 'N'
 }
+
+export enum AccountConnectors {
+    Quovo = 'Quovo',
+    Xero = 'Xero'
+}

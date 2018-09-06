@@ -1,0 +1,42 @@
+#account-connector-dialog {
+    height: 100%;
+    border-radius: 15px;
+    padding: 0;
+    position: relative;
+    .mat-dialog-content {
+        padding: 0;
+        margin: 0;
+        max-height: initial;
+        height: 100%;
+        line-height: 100%;
+        overflow: hidden;
+        .mat-stepper-horizontal {
+            height: 100%;
+            .mat-horizontal-stepper-header-container {
+                display: none;
+            }
+
+            .mat-horizontal-content-container {
+                padding: 0;
+                height: 100%;
+                .mat-horizontal-stepper-content[aria-expanded=true] {
+                    height: 100%;
+                }
+            }
+        }
+    }
+    button.close {
+        border: none;
+        position: absolute;
+        right: 35px;
+        top: 35px;
+        width: 12px;
+        height: 15px;
+        cursor: pointer;
+        background: url(../../../assets/common/images/xero/close.svg) no-repeat;
+        background-size: 100%;
+        cursor: pointer;
+        z-index: 1;
+    }
+}
+

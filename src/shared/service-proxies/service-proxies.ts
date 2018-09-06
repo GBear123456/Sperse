@@ -10798,13 +10798,13 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @customerId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    getAll(customerId: number | null | undefined): Observable<DocumentInfo[]> {
+    getAll(contactGroupId: number | null | undefined): Observable<DocumentInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetAll?";
-        if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

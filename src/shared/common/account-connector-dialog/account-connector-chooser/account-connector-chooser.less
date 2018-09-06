@@ -1,0 +1,92 @@
+:host {
+    display: flex;
+    padding: 55px 117px 51px 117px;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    height: 100%;
+    .header {
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: normal;
+            text-align: center;
+            color: #424c56;
+            margin-bottom: 11px;
+        }
+        h3 {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+            letter-spacing: 0.4px;
+            text-align: center;
+            color: #888d92;
+        }
+        button {
+            border: none;
+            position: absolute;
+            right: 0;
+            top: 0px;
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            background: url('../../../../assets/common/icons/payment-close.svg');
+            background-size: cover;
+        }
+    }
+    ul {
+        padding-left: 0;
+        li {
+            border-radius: 6px;
+            background-color: #ffffff;
+            border: solid 1px #dadee1;
+            cursor: pointer;
+            display: flex;
+            padding: 29px 28px 26px 30px;
+            &.disabled {
+                cursor: default;
+                background-color: #dadee1;
+                opacity: .6;
+            }
+            &.selected {
+                background-color: #f4fcff;
+                border: solid 1px #00aeef;
+            }
+            &:not(:last-child) {
+                margin-bottom: 25px;
+            }
+            img {
+                margin-right: 32px;
+            }
+            h2 {
+                font-size: 18px;
+                font-weight: 600;
+                line-height: 1.22;
+                color: #424c56;
+                text-align: left;
+            }
+            h3 {
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.57;
+                color: #424c56;
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+    }
+    button {
+        font-size: 15px;
+        color: #ffffff;
+        background: #00aeef;
+        padding: 13px 58px;
+        cursor: pointer;
+        border: none;
+        border-radius: 23px;
+        float: right;
+        &[disabled] {
+            background: #f0f0f0;
+            cursor: default;
+        }
+    }
+}

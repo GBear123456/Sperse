@@ -1,7 +1,12 @@
+/** Application imports */
 import { Component, Injector, OnInit, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
 
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 
+/** Application imports */
+import { CrmStoreState, RatingsStoreSelectors } from '@app/crm/shared/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -40,7 +45,8 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _ratingService: ContactGroupRatingsServiceProxy
+        private _ratingService: ContactGroupRatingsServiceProxy,
+        private store$: Store<CrmStoreState.CrmState>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -119,8 +125,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
         let modelItems = this.filterModel.items;
         if (modelItems.from.value == filterValue && modelItems.to.value == filterValue) {
             modelItems.from.value = modelItems.to.value = null;
-        }
-        else {
+        } else {
             modelItems.from.value = modelItems.to.value = filterValue;
             this.filtered = true;
         }
@@ -136,8 +141,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnInit() {
-        /** @todo get from store */
-        this._ratingService.getRatings().subscribe((result: ContactGroupRatingInfoDto[]) => {
+        this.store$.pipe(select(RatingsStoreSelectors.getRatings)).subscribe((result: ContactGroupRatingInfoDto[]) => {
             if (result.length) {
                 this.ratingMin = result[0].id;
                 this.ratingMax = result[result.length - 1].id;

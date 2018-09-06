@@ -8,6 +8,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
 import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
+import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 
 @Component({
     selector: 'setup',
@@ -20,7 +21,6 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     public headlineConfig;
     isDisabled = false;
     dialogConfig = new MatDialogConfig();
-    xeroButtonVisible = false;
     quovoHandler: any;
 
     constructor(injector: Injector,
@@ -44,22 +44,10 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         if (!this.quovoHandler) {
             this.initQuovoHandler();
         }
-        if (this.quovoHandler.isLoaded) {
-            if (this.loading) {
-                this.finishLoading(true);
-            }
-            this.quovoHandler.open(e => {
-                this.xeroButtonVisible = false;
-                this.onQuovoHandlerClose(e);
-            });
-            this.xeroButtonVisible = true;
-            return;
-        } else {
-            if (!this.loading) {
-                this.startLoading(true);
-            }
-            setTimeout(() => this.addAccount(), 100);
-        }
+
+        this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig).afterClosed().subscribe(e => {
+            this.onQuovoHandlerClose(e);
+        });
     }
 
     ngOnInit(): void {
@@ -96,7 +84,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     }
 
     onQuovoHandlerClose(e) {
-        if (e.addedIds.length) {
+        if (e && e.addedIds.length) {
             this.startLoading(true);
             this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
                 .pipe(finalize(() => {

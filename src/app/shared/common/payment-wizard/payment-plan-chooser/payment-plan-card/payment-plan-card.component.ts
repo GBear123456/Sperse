@@ -34,14 +34,16 @@ export class PaymentPlanCardComponent extends AppComponentBase {
     }
 
     get features() {
+        const maxActiveContactCount = +this.selectedEdition.features['CRM.MaxActiveContactCount'] ? this.selectedEdition.features['CRM.MaxActiveContactCount'] : this.l('Unlimited');
+        const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ? this.selectedEdition.features['Admin.MaxSpaceGB'] : this.l('Unlimited');
         return [
             {
                 name: 'Contacts',
-                value: this.l('FeaturesContacts') + ': ' + this.selectedEdition.features['CRM.MaxActiveContactCount']
+                value: this.l('FeaturesContacts') + ': ' + maxActiveContactCount
             },
             {
                 name: 'File Storage',
-                value: this.l('FeaturesFileStorage') + ': ' + this.selectedEdition.features['Admin.MaxSpaceGB']
+                value: this.l('FeaturesFileStorage') + ': ' + maxSpaceGB
             },
             {
                 name: 'Lead Management Pipeline Funnel',

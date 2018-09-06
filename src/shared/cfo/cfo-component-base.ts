@@ -1,5 +1,5 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OnInit, OnDestroy, Injector, HostBinding } from '@angular/core';
+import { OnInit, OnDestroy, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { InstanceType } from '@shared/service-proxies/service-proxies';

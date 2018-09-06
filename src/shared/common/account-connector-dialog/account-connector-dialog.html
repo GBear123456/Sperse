@@ -1,0 +1,19 @@
+<mat-dialog-content>
+    <button (click)="closeDialog()" class="close"></button>
+
+    <account-connector-chooser *ngIf="!selectedConnector" [disabledConnectors]="data?.disabledConnectorsNames" (onConnectorChosen)="openConnector($event)"></account-connector-chooser>
+
+    <ng-template [ngIf]="selectedConnector === accountConnectors.Quovo">
+        <quovo-login (onClose)="closeDialog($event)"></quovo-login>
+    </ng-template>
+    <ng-template [ngIf]="selectedConnector === accountConnectors.Xero">
+        <button (click)="closeDialog()" class="close"></button>
+        <xero-login
+            [accountId]="data?.config?.accountId"
+            [isSyncBankAccountsEnabled]="(data?.config?.isSyncBankAccountsEnabled !== null) ? data?.config?.isSyncBankAccountsEnabled : xeroLogin.isSyncBankAccountsEnabled"
+            (onClose)="closeDialog()"
+            (onComplete)="complete()" #xeroLogin>
+        </xero-login>
+    </ng-template>
+
+</mat-dialog-content>
