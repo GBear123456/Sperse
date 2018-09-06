@@ -1,67 +1,104 @@
-<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="onSubmit()">
+<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit(creditCardData)">
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="CARD NUMBER" type="tel" required formControlName="cardNumber" ccNumber>
+            <input matInput placeholder="CARD NUMBER" type="tel" formControlName="cardNumber" ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
                 {{ l(creditCardData.controls.cardNumber.errors.error) }}
             </mat-error>
         </mat-form-field>
 
-        <mat-form-field class="col-4">
-            <input matInput placeholder="EXPIRY DATE" type="tel" required formControlName="cardExpDate" ccExp>
-            <mat-error *ngIf="creditCardData.controls.cardExpDate.touched && creditCardData.controls.cardExpDate.invalid">
-                {{ l(creditCardData.controls.cardExpDate.errors.error) }}
-            </mat-error>
-        </mat-form-field>
+        <div class="col-4">
+            <div class="row">
+                <mat-form-field class="col-4">
+                    <input matInput placeholder="MM" type="tel" formControlName="expirationMonth">
+                </mat-form-field>
+                <div class="col-2 align-self-center">/</div>
+                <mat-form-field class="col-6">
+                    <input matInput placeholder="YYYY" type="tel" formControlName="expirationYear">
+                </mat-form-field>
+            </div>
+        </div>
     </div>
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="NAME ON CARD" required formControlName="cardHolderName">
-            <mat-error *ngIf="creditCardData.controls.cardHolderName.touched && creditCardData.controls.cardHolderName.invalid">
-                {{ l(creditCardData.controls.cardHolderName.errors.error) }}
+            <input matInput placeholder="NAME ON CARD" formControlName="holderName">
+            <mat-error *ngIf="creditCardData.controls.holderName.touched && creditCardData.controls.holderName.invalid">
+                {{ l(creditCardData.controls.holderName.errors.error) }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CVV CODE" type="tel" required formControlName="cvvCode" ccCVC>
-            <mat-error *ngIf="creditCardData.controls.cvvCode.touched && creditCardData.controls.cvvCode.invalid">
-                {{ l(creditCardData.controls.cvvCode.errors.error) }}
+            <input matInput placeholder="CVV CODE" type="tel" autocomplete="off" formControlName="cvv" ccCVC>
+            <mat-error *ngIf="creditCardData.controls.cvv.touched && creditCardData.controls.cvv.invalid">
+                {{ l(creditCardData.controls.cvv.errors.error) }}
             </mat-error>
         </mat-form-field>
     </div>
 
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="ADDRESS" formControlName="address" required>
-            <mat-error *ngIf="creditCardData.controls.address.touched && creditCardData.controls.address.invalid">
-                {{ l(creditCardData.controls.address.errors.error) }}
+            <input matInput
+                placeholder="ADDRESS"
+                formControlName="billingAddress">
+            <!-- <input *ngIf="!googleAutoComplete" type="text"
+                name="Address"
+                placeholder="{{l('Address')}}"
+                [(ngModel)]="creditCardData.billingAddress"
+                class="dx-texteditor-input"/>
+            <input *ngIf="googleAutoComplete" type="text"
+                name="Address"
+                placeholder="{{l('Street')}}"
+                [(ngModel)]="contacts.addresses[type].address"
+                class="dx-texteditor-input"
+                (country)="contacts.addresses[type].country=$event"
+                (street_number)='contacts.addresses[type].streetNumber=$event'
+                (street)='contacts.addresses[type].streetAddress=$event'
+                (city)='contacts.addresses[type].city=$event'
+                (state)='contacts.addresses[type].state=$event'
+                (postal_code)='contacts.addresses[type].zip=$event'
+                (setAddress)="onAddressChanged($event, type)"
+                angularGooglePlace/> -->
+            <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">
+                {{ l(creditCardData.controls.billingAddress.errors.error) }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CITY" formControlName="city">
+            <input matInput placeholder="CITY" formControlName="billingCity">
+            <mat-error *ngIf="creditCardData.controls.billingCity.touched && creditCardData.controls.billingCity.invalid">
+                {{ l(creditCardData.controls.billingCity.errors.error) }}
+            </mat-error>
         </mat-form-field>
     </div>
 
     <div class="row">
         <mat-form-field class="col-4">
-            <mat-select disableOptionCentering placeholder="STATE OR PROVINCE" formControlName="stateOrProvince">
+            <mat-select disableOptionCentering placeholder="STATE OR PROVINCE" formControlName="billingStateCode">
                 <mat-option *ngFor="let state of states" [value]="state.code">
                     {{state.name}}
                 </mat-option>
             </mat-select>
+            <mat-error *ngIf="creditCardData.controls.billingStateCode.touched && creditCardData.controls.billingStateCode.invalid">
+                {{ l(creditCardData.controls.billingStateCode.errors.error) }}
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="ZIP CODE" type="tel" maxlength="5" formControlName="zipCode">
+            <input matInput placeholder="ZIP CODE" type="tel" maxlength="5" formControlName="billingZip">
+            <mat-error *ngIf="creditCardData.controls.billingZip.touched && creditCardData.controls.billingZip.invalid">
+                {{ l(creditCardData.controls.billingZip.errors.error) }}
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <mat-select disableOptionCentering placeholder="COUNTRY" (selectionChange)="onCountryChange($event)" formControlName="country">
+            <mat-select disableOptionCentering placeholder="COUNTRY" (selectionChange)="onCountryChange($event)" formControlName="billingCountryCode">
                 <mat-option *ngFor="let country of countries" [value]="country.code">
                     {{country.name}}
                 </mat-option>
             </mat-select>
+            <mat-error *ngIf="creditCardData.controls.billingCountryCode.touched && creditCardData.controls.billingCountryCode.invalid">
+                {{ l(creditCardData.controls.billingCountryCode.errors.error) }}
+            </mat-error>
         </mat-form-field>
     </div>
 
@@ -79,7 +116,7 @@
         </div>
 
         <div class="col-4 text-right">
-            <button mat-raised-button class="btn btn-layout" [disabled]="!creditCardData.touched || !creditCardData.valid">Purchase</button>
+            <button mat-raised-button class="btn btn-layout">Purchase</button>
         </div>
     </footer>
 </form>
