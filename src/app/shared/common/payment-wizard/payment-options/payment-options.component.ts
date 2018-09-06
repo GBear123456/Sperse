@@ -12,6 +12,8 @@ import {
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 
+import { EditionPaymentType } from '@shared/AppEnums';
+
 @Component({
     selector: 'payment-options',
     templateUrl: './payment-options.component.html',
@@ -39,6 +41,14 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     @Output() onChangeStep: EventEmitter<number> = new EventEmitter<number>();
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     @Output() onStatusChange: EventEmitter<PaymentStatusEnum> = new EventEmitter();
+
+    readonly GATEWAY_ECHECK = 0;
+    readonly GATEWAY_C_CARD = 1;
+    readonly GATEWAY_PAYPAL = 2;
+
+    selectedGateway: number = this.GATEWAY_ECHECK;
+    editionPaymentType = EditionPaymentType.NewRegistration;
+
     paymentMethods = PaymentMethods;
     constructor(
         injector: Injector,

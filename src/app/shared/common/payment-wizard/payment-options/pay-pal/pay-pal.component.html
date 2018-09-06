@@ -2,7 +2,9 @@
     <p class="pay-pal-text">
         {{ descriptionText }}
     </p>
-    <a href="javascript:;" class="pay-pal-logo">
-        <img src="/assets/common/images/payments/paypal-logo.png" alt="PayPal">
-    </a>
+
+    <input type="hidden" name="PaymentId" value="" />
+    <input type="hidden" name="PayerId" value="" />
+
+    <div id="paypal-button"></div>
 </div>

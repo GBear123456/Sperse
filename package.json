@@ -161,7 +161,10 @@
     "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
     "xlsx": "^0.13.2",
-    "zone.js": "^0.8.26"
+    "zone.js": "^0.8.26",
+
+    "payment": "^2.3.0",
+    "qj": "~2.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.7.0-rc.0",

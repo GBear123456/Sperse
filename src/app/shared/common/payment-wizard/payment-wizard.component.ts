@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, Injector } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { concatAll, map, max } from 'rxjs/operators';
@@ -9,6 +9,8 @@ import { PaymentService } from '@app/shared/common/payment-wizard/payment.servic
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { Module, PackageConfigDto, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
 
+import { AppComponentBase } from 'shared/common/app-component-base';
+
 @Component({
     selector: 'payment-wizard',
     templateUrl: './payment-wizard.component.html',
@@ -16,15 +18,20 @@ import { Module, PackageConfigDto, PackageServiceProxy } from '@shared/service-p
     encapsulation: ViewEncapsulation.None,
     providers: [ PaymentService, PackageServiceProxy ]
 })
-export class PaymentWizardComponent implements OnInit {
+export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
     plan$: Observable<OptionsPaymentPlan>;
     paymentPlans$: Observable<PackageConfigDto[]>;
     paymentPlansMaxUsersAmount$: Observable<number>;
     paymentStatus: PaymentStatusEnum;
-    constructor(private dialogRef: MatDialogRef<PaymentWizardComponent>,
+    constructor(private injector: Injector,
+                private dialogRef: MatDialogRef<PaymentWizardComponent>,
                 private paymentService: PaymentService,
-                private packageServiceProxy: PackageServiceProxy) { }
+                private packageServiceProxy: PackageServiceProxy
+    ) { 
+        super(injector);
+    }
+
 
     ngOnInit() {
         this.plan$ = this.paymentService.plan$;
@@ -42,7 +49,10 @@ export class PaymentWizardComponent implements OnInit {
     }
 
     moveToPaymentOptionsStep() {
-        this.stepper.next();
+        if (this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement'))      
+            this.stepper.next();
+        else 
+            this.message.info('SubscriptionManagmentPermissionRequired');
     }
 
     changePlan(e) {

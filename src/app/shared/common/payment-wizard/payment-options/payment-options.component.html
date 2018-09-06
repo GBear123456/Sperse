@@ -59,7 +59,7 @@
         <button (click)="close()"></button>
     </div>
     <div class="paymentMethods">
-        <mat-tab-group>
+        <mat-tab-group [(selectedIndex)]="selectedGateway">
             <mat-tab [label]="l('eCheck')">
                 <e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check>
             </mat-tab>
@@ -70,7 +70,7 @@
                 <ng-template mat-tab-label="">
                     <img [src]="'assets/common/icons/paypal-logo.png'">
                 </ng-template>
-                <pay-pal></pay-pal>
+                <pay-pal *ngIf="selectedGateway == GATEWAY_PAYPAL" [editionPaymentType]="editionPaymentType"></pay-pal>
             </mat-tab>
             <mat-tab [label]="l('BankTransfer')">
                 <bank-transfer></bank-transfer>
