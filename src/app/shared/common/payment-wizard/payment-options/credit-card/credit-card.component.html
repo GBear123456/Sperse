@@ -1,50 +1,65 @@
-<form class="credit-card-form">
+<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit(formData)">
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="CARD NUMBER" value="1234 5678 9873 4322" type="tel">
+            <input matInput placeholder="CARD NUMBER" type="tel" required formControlName="cardNumber" ccNum>
+            <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
+                {{ l(creditCardData.controls.cardNumber.errors.error) }}
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="EXPIRY DATE" type="tel">
+            <input matInput placeholder="EXPIRY DATE" type="tel" required formControlName="cardExpDate" ccExp>
+            <mat-error *ngIf="creditCardData.controls.cardExpDate.touched && creditCardData.controls.cardExpDate.invalid">
+                {{ l(creditCardData.controls.cardExpDate.errors.error) }}
+            </mat-error>
         </mat-form-field>
     </div>
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="NAME ON CARD" value="Claudiu Cosmin Constantin">
+            <input matInput placeholder="NAME ON CARD" required formControlName="cardHolderName">
+            <mat-error *ngIf="creditCardData.controls.cardHolderName.touched && creditCardData.controls.cardHolderName.invalid">
+                {{ l(creditCardData.controls.cardHolderName.errors.error) }}
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CVV CODE" type="tel">
+            <input matInput placeholder="CVV CODE" type="tel" required formControlName="cvvCode" ccCvc>
+            <mat-error *ngIf="creditCardData.controls.cvvCode.touched && creditCardData.controls.cvvCode.invalid">
+                {{ l(creditCardData.controls.cvvCode.errors.error) }}
+            </mat-error>
         </mat-form-field>
     </div>
 
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="ADDRESS" value="428 Jenkins Villages Apt. 902">
+            <input matInput placeholder="ADDRESS" formControlName="address" required>
+            <mat-error *ngIf="creditCardData.controls.address.touched && creditCardData.controls.address.invalid">
+                {{ l(creditCardData.controls.address.errors.error) }}
+            </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CITY" value="Los Angeles">
+            <input matInput placeholder="CITY" formControlName="city">
         </mat-form-field>
     </div>
 
     <div class="row">
         <mat-form-field class="col-4">
-            <mat-select disableOptionCentering placeholder="STATE OR PROVINCE">
-                <mat-option *ngFor="let state of states" [value]="state">
-                    {{state}}
+            <mat-select disableOptionCentering placeholder="STATE OR PROVINCE" formControlName="stateOrProvince">
+                <mat-option *ngFor="let state of states" [value]="state.code">
+                    {{state.name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="ZIP CODE" value="12345" type="tel" maxlength="5">
+            <input matInput placeholder="ZIP CODE" type="tel" maxlength="5" formControlName="zipCode">
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <mat-select disableOptionCentering placeholder="COUNTRY">
-                <mat-option *ngFor="let country of countries" [value]="country">
-                    {{country}}
+            <mat-select disableOptionCentering placeholder="COUNTRY" (selectionChange)="onCountryChange($event)" formControlName="country">
+                <mat-option *ngFor="let country of countries" [value]="country.code">
+                    {{country.name}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -64,7 +79,7 @@
         </div>
 
         <div class="col-4 text-right">
-            <button mat-raised-button class="btn btn-layout">Purchase</button>
+            <button mat-raised-button class="btn btn-layout" [disabled]="!creditCardData.touched || !creditCardData.valid">Purchase</button>
         </div>
     </footer>
 </form>

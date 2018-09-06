@@ -1,33 +1,88 @@
-import { Component, OnInit, Injector, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
+import { FormBuilder, Validators, NgForm } from '@angular/forms';
+
+import { CreditCardValidator } from 'ngx-credit-cards';
+import * as _ from 'underscore';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { CountryStateDto, CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
-  selector: 'credit-card',
-  templateUrl: './credit-card.component.html',
-  styleUrls: ['./credit-card.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'credit-card',
+    templateUrl: './credit-card.component.html',
+    styleUrls: ['./credit-card.component.less'],
+    providers: [ CountryServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreditCardComponent extends AppComponentBase implements OnInit {
-  countries: string[] = [
-    'USA', 'Canada', 'Afghanistan', 'Albania', 'Algeria', 'American Samoa', 'Andorra', 'Angola', 'Anguilla', 'Antarctica', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bosnia and Herzegowina', 'Botswana', 'Bouvet Island', 'Brazil', 'British Indian Ocean Territory', 'Brunei Darussalam', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cape Verde'
-  ];
+    countryCode = 'US';
+    countries = [];
+    states: CountryStateDto[];
+    address = {
+        state: null,
+        country: null,
+        address: null
+    };
 
-  states: string[] = [
-    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
-    'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-    'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-    'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico',
-    'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania',
-    'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-    'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-  ];
+    creditCardData = this.formBuilder.group({
+        cardNumber: ['', [CreditCardValidator.validateCardNumber]],
+        cardExpDate: ['', [CreditCardValidator.validateCardExpiry]],
+        cvvCode: ['', [CreditCardValidator.validateCardCvc]],
+        cardHolderName: [''],
+        address: [''],
+        city: [''],
+        stateOrProvince: [{value: '', disabled: true}],
+        zipCode: [''],
+        country: [''],
+    });
 
-  constructor(injector: Injector) {
-    super(injector);
-  }
+    constructor(
+        injector: Injector,
+        private formBuilder: FormBuilder,
+        private _countryService: CountryServiceProxy
+    ) {
+        super(injector);
+        this.getStates();
+        this.getCountries();
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+        //console.log(this.creditCardForm);
+    }
 
+    onSubmit(formData: NgForm) {
+        console.log('Submitted');
+        console.log(this.creditCardData);
+    }
+
+    getStates(): void {
+        this._countryService
+            .getCountryStates(this.countryCode)
+            .subscribe(result => {
+                this.states = result;
+            });
+    }
+
+    getCountries(): void {
+        this._countryService.getCountries()
+            .subscribe(result => {
+                this.countries = result;
+            });
+    }
+
+    onCountryChange(event) {
+        let countryCode = event.value;
+        if (countryCode) {
+            this._countryService
+                .getCountryStates(countryCode)
+                .subscribe(result => {
+                    this.states = result;
+                    if (!this.states.length) {
+                        this.creditCardData.get('stateOrProvince').disable();
+                    } else {
+                        this.creditCardData.get('stateOrProvince').enable();
+                    }
+                });
+        }
+    }
 }
