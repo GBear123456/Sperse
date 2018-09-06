@@ -16,22 +16,26 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class DashboardMenuComponent extends AppComponentBase {
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
-    items = [
-        { caption: 'ManageClients', component: '/clients', showPlus: true },
-        { caption: 'ManageLeads', component: '/leads', showPlus: true },
-        { caption: 'ImportYourList', component: '/import-list', disabled: false },
-        { caption: 'CustomizeSettings', component: '/editions', disabled: true },
-        { caption: 'PaymentWizard', component: '/payment-wizard', disabled: false }
-    ];
+    items = [];
 
     constructor(injector: Injector,
         private _router: Router
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+        this.items = [
+            { caption: 'ManageClients', component: '/clients', showPlus: true },
+            { caption: 'ManageLeads', component: '/leads', showPlus: true },
+            { caption: 'ImportYourList', component: '/import-list', disabled: false },
+            { caption: 'CustomizeSettings', component: '/editions', disabled: true },
+            { 
+              caption: 'PaymentWizard', component: '/payment-wizard', 
+              disabled: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT 
+            }
+        ];
     }
 
     onClick(event, elem, i) {
-
         if (elem.caption === 'PaymentWizard') {
             this.openPaymentWizard.emit();
             return;

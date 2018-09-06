@@ -228,7 +228,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     loadStagesLeads(page = 0, stageIndex = undefined, oneStageOnly = false) {
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
-            dataSource = this._dataSources[stage.name];
+            dataSource = this._dataSources[stage.name],
+            filter = {StageId: stage.id};
 
         if (!dataSource)
             dataSource = this._dataSources[stage.name] =
@@ -237,21 +238,33 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     select: this.selectFields
                 }));
 
+        if (!isNaN(stage['lastLeadId']))
+            filter['Id'] = {lt: stage['lastLeadId']};
+
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
             this.getODataUrl(this._dataSource.uri,
                 this.queryWithSearch.concat({and: [
-                    _.extend({StageId: stage.id}, this._dataSource.customFilter)
+                    _.extend(filter, this._dataSource.customFilter)
                 ]}
             )
         );
         dataSource.sort({getter: 'Id', desc: true});
         dataSource.pageIndex(page);
-        dataSource.load().done((leads) => {
-            stage['leads'] = page && oneStageOnly ? _.uniqBy(
-                (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads;
+        dataSource.load().done((leads) => {              
+            if (leads.length)
+                stage['leads'] = (page && oneStageOnly ? _.uniqBy(
+                    (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
+                        stage['lastLeadId'] = Math.min(stage['lastLeadId'] || Infinity, lead['Id']);
+                        return lead;
+                    });
+            else  {
+                stage['total'] = stage['leads'].length || 0;
+                stage['full'] = true;
+            }
             if (oneStageOnly || this.isAllStagesLoaded()) {
-                this.totalsURI && this.processTotalsRequest();
+                if (!oneStageOnly && this.totalsURI) 
+                    this.processTotalsRequest();
                 setTimeout(() => this.finishLoading(), 1000);
             }
         });
