@@ -3,19 +3,36 @@
         <mat-form-field class="col-8">
             <input matInput placeholder="CARD NUMBER" type="tel" formControlName="cardNumber" ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
-                {{ l(creditCardData.controls.cardNumber.errors.error) }}
+                {{ l('CardNumberValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
         <div class="col-4">
+            <!--  @TODO add exp date validation -->
             <div class="row">
                 <mat-form-field class="col-4">
-                    <input matInput placeholder="MM" type="tel" formControlName="expirationMonth">
+                    <input matInput placeholder="MM"
+                        type="tel"
+                        formControlName="expirationMonth"
+                        minlength="1" maxlength="2"
+                        (keypress)="onKeyPress($event)">
                 </mat-form-field>
                 <div class="col-2 align-self-center">/</div>
                 <mat-form-field class="col-6">
-                    <input matInput placeholder="YYYY" type="tel" formControlName="expirationYear">
+                    <input matInput placeholder="YYYY"
+                        type="tel"
+                        formControlName="expirationYear"
+                        minlength="4" maxlength="4"
+                        (keypress)="onKeyPress($event)">
                 </mat-form-field>
+
+                <mat-error class="exp-date-errors col-12"
+                            *ngIf="creditCardData.controls.expirationMonth.touched &&
+                            creditCardData.controls.expirationMonth.invalid ||
+                            creditCardData.controls.expirationYear.touched &&
+                            creditCardData.controls.expirationYear.invalid">
+                    {{ l('CardExpDateValidationMessage') }}
+                </mat-error>
             </div>
         </div>
     </div>
@@ -23,14 +40,14 @@
         <mat-form-field class="col-8">
             <input matInput placeholder="NAME ON CARD" formControlName="holderName">
             <mat-error *ngIf="creditCardData.controls.holderName.touched && creditCardData.controls.holderName.invalid">
-                {{ l(creditCardData.controls.holderName.errors.error) }}
+                {{ l('HolderNameValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CVV CODE" type="tel" autocomplete="off" formControlName="cvv" ccCVC>
+            <input matInput placeholder="CVV CODE" type="tel" autocomplete="off" formControlName="cvv" minlength="3" maxlength="4" ccCVC>
             <mat-error *ngIf="creditCardData.controls.cvv.touched && creditCardData.controls.cvv.invalid">
-                {{ l(creditCardData.controls.cvv.errors.error) }}
+                {{ l('CvvValidationMessage') }}
             </mat-error>
         </mat-form-field>
     </div>
@@ -59,14 +76,14 @@
                 (setAddress)="onAddressChanged($event, type)"
                 angularGooglePlace/> -->
             <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">
-                {{ l(creditCardData.controls.billingAddress.errors.error) }}
+                {{ l('BillingAddressValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
             <input matInput placeholder="CITY" formControlName="billingCity">
             <mat-error *ngIf="creditCardData.controls.billingCity.touched && creditCardData.controls.billingCity.invalid">
-                {{ l(creditCardData.controls.billingCity.errors.error) }}
+                {{ l('BillingCityValidationMessage') }}
             </mat-error>
         </mat-form-field>
     </div>
@@ -79,14 +96,14 @@
                 </mat-option>
             </mat-select>
             <mat-error *ngIf="creditCardData.controls.billingStateCode.touched && creditCardData.controls.billingStateCode.invalid">
-                {{ l(creditCardData.controls.billingStateCode.errors.error) }}
+                {{ l('BillingStateValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field class="col-4">
             <input matInput placeholder="ZIP CODE" type="tel" maxlength="5" formControlName="billingZip">
             <mat-error *ngIf="creditCardData.controls.billingZip.touched && creditCardData.controls.billingZip.invalid">
-                {{ l(creditCardData.controls.billingZip.errors.error) }}
+                {{ l('BillingZipValidationMessage') }}
             </mat-error>
         </mat-form-field>
 
@@ -97,7 +114,7 @@
                 </mat-option>
             </mat-select>
             <mat-error *ngIf="creditCardData.controls.billingCountryCode.touched && creditCardData.controls.billingCountryCode.invalid">
-                {{ l(creditCardData.controls.billingCountryCode.errors.error) }}
+                {{ l('BillingCountryValidationMessage') }}
             </mat-error>
         </mat-form-field>
     </div>
@@ -109,14 +126,13 @@
                     <img src="/assets/common/images/payments/icons/information-button.svg" alt="info">
                 </div>
                 <div class="col-11 terms-text">
-                    By continuing and pressing the “Purchase” button you hereby accept our <a href="javascript:;">Terms
-                    & Conditions</a>
+                    <p>{{ l('CreditCardTermsAndConditionText') }} <a href="javascript:;">{{ l('TermsConditions') }}</a></p>
                 </div>
             </div>
         </div>
 
         <div class="col-4 text-right">
-            <button mat-raised-button class="btn btn-layout">Purchase</button>
+            <button mat-raised-button class="btn btn-layout" [disabled]="!creditCardData.touched || !creditCardData.valid">{{l('Purchase')}}</button>
         </div>
     </footer>
 </form>
