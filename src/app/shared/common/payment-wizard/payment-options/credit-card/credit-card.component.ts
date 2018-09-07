@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, Validators, NgForm } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 import { CreditCardValidator } from 'angular-cc-library';
 import * as _ from 'underscore';
@@ -55,7 +55,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {}
 
-    submit(data: NgForm) {
+    submit(data) {
         if (this.creditCardData.valid) {
             this.onSubmit.next(data.value);
         }
