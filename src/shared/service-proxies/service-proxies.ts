@@ -42204,9 +42204,8 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
     contactGroupXref!: string | undefined;
     lists!: string[] | undefined;
     tags!: string[] | undefined;
-    assignedUserId!: number | undefined;
-    ratingId!: number | undefined;
-    starId!: number | undefined;
+    rating!: number | undefined;
+    star!: string | undefined;
     leadStageName!: string | undefined;
     importType!: ImportContactGroupInputImportType | undefined;
     partnerTypeName!: string | undefined;
@@ -42250,9 +42249,8 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
                 for (let item of data["tags"])
                     this.tags.push(item);
             }
-            this.assignedUserId = data["assignedUserId"];
-            this.ratingId = data["ratingId"];
-            this.starId = data["starId"];
+            this.rating = data["rating"];
+            this.star = data["star"];
             this.leadStageName = data["leadStageName"];
             this.importType = data["importType"];
             this.partnerTypeName = data["partnerTypeName"];
@@ -42296,9 +42294,8 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
             for (let item of this.tags)
                 data["tags"].push(item);
         }
-        data["assignedUserId"] = this.assignedUserId;
-        data["ratingId"] = this.ratingId;
-        data["starId"] = this.starId;
+        data["rating"] = this.rating;
+        data["star"] = this.star;
         data["leadStageName"] = this.leadStageName;
         data["importType"] = this.importType;
         data["partnerTypeName"] = this.partnerTypeName;
@@ -42327,9 +42324,8 @@ export interface IImportContactGroupInput {
     contactGroupXref: string | undefined;
     lists: string[] | undefined;
     tags: string[] | undefined;
-    assignedUserId: number | undefined;
-    ratingId: number | undefined;
-    starId: number | undefined;
+    rating: number | undefined;
+    star: string | undefined;
     leadStageName: string | undefined;
     importType: ImportContactGroupInputImportType | undefined;
     partnerTypeName: string | undefined;
