@@ -25,7 +25,7 @@ import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
-import { NgXCreditCardsModule } from 'ngx-credit-cards';
+import { CreditCardDirectivesModule } from 'angular-cc-library';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';
@@ -118,7 +118,7 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         DxTooltipModule,
         DxSwitchModule,
 
-        NgXCreditCardsModule
+        CreditCardDirectivesModule
     ],
     declarations: [
         TimeZoneComboComponent,

@@ -6,10 +6,12 @@ import { Step } from '@app/shared/common/payment-wizard/models/step.model';
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerDto,
+    BankCardDto,
     PaymentRequestDto,
     TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
+import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 
 import { EditionPaymentType } from '@shared/AppEnums';
@@ -41,6 +43,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     @Output() onChangeStep: EventEmitter<number> = new EventEmitter<number>();
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     @Output() onStatusChange: EventEmitter<PaymentStatusEnum> = new EventEmitter();
+    paymentInfo: PaymentRequestDto;
 
     readonly GATEWAY_ECHECK = 0;
     readonly GATEWAY_C_CARD = 1;
@@ -71,24 +74,56 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         /** Go to the third step */
         this.onStatusChange.emit(PaymentStatusEnum.BeingConfirmed);
         this.onChangeStep.emit(2);
-        if (paymentMethod === PaymentMethods.eCheck) {
-            const eCheckData = data as ECheckDataModel;
-            const paymentInfo = PaymentRequestDto.fromJS({
-                achCustomer: ACHCustomerDto.fromJS({
-                    customerRoutingNo: eCheckData.routingNumber,
-                    customerAcctNo: eCheckData.bankAccountNumber,
-                    memo: eCheckData.paymentDescription
-                })
-            });
-            /** Start submitting data and change status in a case of error or success */
-            this.tenantSubscriptionServiceProxy.addPaymentInfo(paymentInfo).subscribe(
-                res => {
-                    /** @todo change for getting of the status from the server */
-                    this.onStatusChange.emit(res && res['success'] ? PaymentStatusEnum.Pending : PaymentStatusEnum.Failed);
+        switch (paymentMethod) {
+            case PaymentMethods.eCheck:
+                const eCheckData = data as ECheckDataModel;
+                this.paymentInfo = PaymentRequestDto.fromJS({
+                    achCustomer: ACHCustomerDto.fromJS({
+                        customerRoutingNo: eCheckData.routingNumber,
+                        customerAcctNo: eCheckData.bankAccountNumber,
+                        memo: eCheckData.paymentDescription
+                    })
+                });
+                /** Start submitting data and change status in a case of error or success */
+                this.tenantSubscriptionServiceProxy.addPaymentInfo(this.paymentInfo).subscribe(
+                    res => {
+                        /** @todo change for getting of the status from the server */
+                        this.onStatusChange.emit(res && res['success'] ? PaymentStatusEnum.Pending : PaymentStatusEnum.Failed);
 
-                },
-                () => this.onStatusChange.emit(PaymentStatusEnum.Failed)
-            );
+                    },
+                    () => this.onStatusChange.emit(PaymentStatusEnum.Failed)
+                );
+                break;
+            case PaymentMethods.CreditCard:
+                const creditCardData = data as BankCardDataModel;
+                this.paymentInfo = PaymentRequestDto.fromJS({
+                    bankCard: BankCardDto.fromJS({
+                        holderName: creditCardData.holderName,
+                        cardNumber: creditCardData.cardNumber.replace(/\s/g, ''),
+                        expirationMonth: creditCardData.expirationMonth,
+                        expirationYear: creditCardData.expirationYear,
+                        cvv: creditCardData.cvv,
+                        billingAddress: creditCardData.billingAddress,
+                        billingZip: creditCardData.billingZip,
+                        billingCity: creditCardData.billingCity,
+                        billingStateCode: creditCardData.billingStateCode,
+                        billingState: creditCardData.billingState,
+                        billingCountryCode: creditCardData.billingCountryCode,
+                        billingCountry: creditCardData.billingCountry,
+                    })
+                });
+                this.tenantSubscriptionServiceProxy.addPaymentInfo(this.paymentInfo).subscribe(
+                    res => { this.onStatusChange.emit(PaymentStatusEnum.Confirmed); }
+                );
+                break;
+            case PaymentMethods.PayPal:
+                break;
+            case PaymentMethods.BankTransfer:
+                break;
+            case PaymentMethods.Bitcoin:
+                break;
+            default:
+                break;
         }
     }
 

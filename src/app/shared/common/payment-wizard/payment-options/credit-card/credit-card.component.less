@@ -19,7 +19,7 @@
                         width: 70px;
                         height: 35px;
                         transform: translateY(-50%);
-                        background: url('../../../../../../assets/common/images/payments/card-logo/visa.svg') center center no-repeat;
+                        //background: url('../../../../../../assets/common/images/payments/card-logo/visa.svg') center center no-repeat;
                         background-size: cover;
                     }
                 }
@@ -62,10 +62,18 @@
             &.dankort {
                 + .mat-form-field-label-wrapper {
                     &::after {
-                        background: url('../../../../../../assets/common/images/payments/card-logo/visa.svg') no-repeat;
+                        background: url('../../../../../../assets/common/images/payments/card-logo/dankort.svg') no-repeat;
                     }
                 }
             }
+            &.dinersclub {
+                + .mat-form-field-label-wrapper {
+                    &::after {
+                        background: url('../../../../../../assets/common/images/payments/card-logo/diners.svg') no-repeat;
+                    }
+                }
+            }
+
         }
 
         .mat-input-element,

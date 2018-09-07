@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -9,6 +9,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankTransferComponent extends AppComponentBase implements OnInit {
+    @Input() titleText = this.l('BankTransferTitleText');
 
     constructor(injector: Injector) {
         super(injector);
