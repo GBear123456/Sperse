@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { ClientDetailsComponent } from './client-details.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
+import { UserInformationComponent } from './user-information/user-information.component';
+import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { ApplicationStatusComponent } from './application-status/application-status.component';
@@ -11,6 +13,8 @@ import { ReferralHistoryComponent } from './referral-history/referral-history.co
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
+
+import { RP_USER_INFO_ID } from './client-details.const';
 
 @NgModule({
     imports: [
@@ -21,6 +25,8 @@ import { NotesComponent } from './notes/notes.component';
                 children: [
                     {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     {path: 'lead-information', component: LeadInformationComponent },
                     {path: 'questionnaire', component: QuestionnaireComponent },
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
@@ -37,6 +43,8 @@ import { NotesComponent } from './notes/notes.component';
                 children: [
                     {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     {path: 'lead-information', component: LeadInformationComponent },
                     {path: 'questionnaire', component: QuestionnaireComponent },
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
@@ -53,6 +61,8 @@ import { NotesComponent } from './notes/notes.component';
                 children: [
                     {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
                     {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
                     {path: 'lead-information', component: LeadInformationComponent },
                     {path: 'questionnaire', component: QuestionnaireComponent },
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },

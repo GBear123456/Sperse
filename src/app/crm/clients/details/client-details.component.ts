@@ -24,12 +24,14 @@ import {
     LeadInfoDto,
     PartnerServiceProxy,
     PartnerInfoDto,
-    UpdatePartnerTypeInput
+    UpdatePartnerTypeInput,
+    UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from '@app/crm/clients/details/verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { ClientDetailsService } from './client-details.service';
 
+import { RP_DEFAULT_ID, RP_USER_INFO_ID } from './client-details.const';
 
 @Component({
     selector: 'client-details',
@@ -41,6 +43,9 @@ import { ClientDetailsService } from './client-details.service';
 })
 export class ClientDetailsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+
+    readonly RP_DEFAULT_ID = RP_DEFAULT_ID;
+    readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
 
     customerId: number;
     customerType: string;
@@ -56,12 +61,13 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
-
+    
     private initialData: string;
 
     navLinks = [];
 
     rightPanelSetting: any = {
+        id: RP_DEFAULT_ID,
         clientScores: true,
         totalApproved: true,
         verification: true,
@@ -78,6 +84,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _dialog: MatDialog,
                 private _route: ActivatedRoute,
                 private _cacheService: CacheService,
+                private _userService: UserServiceProxy,
                 private _contactGroupService: ContactGroupServiceProxy,
                 private _partnerService: PartnerServiceProxy,
                 private _leadService: LeadServiceProxy,
@@ -90,7 +97,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         _contactGroupService['data'] = {
             customerInfo: null,
             leadInfo: null,
-            partnerInfo: null
+            partnerInfo: null  
         };
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
@@ -99,15 +106,18 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     partnerId = params['partnerId'],
                     customerId = clientId || partnerId,
                     leadId = params['leadId'];
+
+                _userService['data'] = { 
+                    userId: null, user: null, roles: null 
+                };
                 _contactGroupService['data'].customerInfo = {
                     id: customerId
                 };
 
-                if (leadId) {
+                if (leadId)
                     this.leadId = leadId;
-                }
+
                 this.loadData(customerId, leadId, partnerId);
-                this.InitNavLinks();
             }));
 
         this.paramsSubscribe.push(this._route.queryParams
@@ -123,23 +133,33 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 optionTimeout = setTimeout(() => {
                     optionTimeout = null;
                     let data = event.snapshot.data;
-                    this.rightPanelSetting.opened = data.hasOwnProperty(
-                        'rightPanelOpened') ? data.rightPanelOpened : true;
+                    this.rightPanelSetting.id = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
+                    this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened', 
+                        this.rightPanelSetting.id != RP_USER_INFO_ID || this._userService['data'].userId);                        
                 });
         });
     }
 
-    private InitNavLinks() {
+    private getCheckPropertyValue(obj, prop, def) {
+        return obj.hasOwnProperty(prop) ? obj[prop] : def;
+    }
+
+    private InitNavLinks(contact) {
         this.navLinks = [
-            {'label': 'Contact Information', 'route': 'contact-information'},
-            {'label': 'Lead Information', 'route': 'lead-information', 'hidden': this.customerType == ContactGroupType.Partner},
-            {'label': 'Questionnaire', 'route': 'questionnaire'},
-            {'label': 'Documents', 'route': 'documents'},
-            {'label': 'Application Status', 'route': 'application-status', 'hidden': !!this.leadId},
-            {'label': 'Referral History', 'route': 'referral-history'},
-            {'label': 'Payment Information', 'route': 'payment-information', 'hidden': !!this.leadId},
-            {'label': 'Activity Logs', 'route': 'activity-logs'},
-            {'label': 'Notes', 'route': 'notes'}
+            {label: 'Contact Information', route: 'contact-information'},
+            {
+                label: contact.userId ? 'User Information': 'Invaite User', 
+                hidden: !this.permission.isGranted('Pages.Administration.Users'),
+                route: 'user-information'                
+            },
+            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
+            {label: 'Questionnaire', route: 'questionnaire'},
+            {label: 'Documents', route: 'documents'},
+            {label: 'Application Status', route: 'application-status', hidden: !!this.leadId},
+            {label: 'Referral History', route: 'referral-history'},
+            {label: 'Payment Information', route: 'payment-information', hidden: !!this.leadId},
+            {label: 'Activity Logs', route: 'activity-logs'},
+            {label: 'Notes', route: 'notes'}
         ];
     }
 
@@ -148,7 +168,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         result.contactPersons.every((contact) => {
             let isPrimaryContact = (contact.id == result.primaryContactInfo.id);
             if (isPrimaryContact)
-            result.primaryContactInfo = contact;
+                result.primaryContactInfo = contact;
             return !isPrimaryContact;
         });
 
@@ -156,6 +176,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.primaryContact = result.primaryContactInfo;
         this.customerInfo = result;
         this.initVerificationChecklist();
+      
+        this._clientDetailsService.userUpdate(
+            this._userService['data'].userId = this.primaryContact.userId
+        );
+        this.InitNavLinks(this.primaryContact);
     }
 
     private fillLeadDetails(result) {
@@ -447,5 +472,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.rightPanelSetting[section] = event.target.checked;
         this._cacheService.set(this.getCacheKey(
             abp.session.userId), this.rightPanelSetting);
+    }
+
+    onContactSelected(contact) {
+        this.InitNavLinks(contact);
+        this._clientDetailsService.userUpdate(
+            this._userService['data'].userId = contact.userId);
     }
 }

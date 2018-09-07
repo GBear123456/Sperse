@@ -4,6 +4,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { PersonContactInfoDto, ContactGroupInfoDto } from 'shared/service-proxies/service-proxies';
 
+import * as _ from 'underscore';
+
 @Component({
     selector: 'contact-persons-dialog',
     templateUrl: './contact-persons-dialog.component.html',
@@ -23,18 +25,7 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
     }
 
     selectContactPerson(contactPerson): void {
-        let primaryContactInfo = this.data.primaryContactInfo;
-        primaryContactInfo.fullName = contactPerson.fullName;
-        primaryContactInfo.id = contactPerson.id;
-        primaryContactInfo.primaryPhoto = contactPerson.photo;
-
-        let primaryContactDetails = primaryContactInfo.details;
-        let contactPersonDetails = contactPerson.details;
-        primaryContactDetails.contactId = contactPerson.id;
-        primaryContactDetails.emails = contactPersonDetails.emails;
-        primaryContactDetails.phones = contactPersonDetails.phones;
-        primaryContactDetails.addresses = contactPersonDetails.addresses;
-        primaryContactDetails.links = contactPersonDetails.links;
+        _.extend(this.data.primaryContactInfo, contactPerson);
 
         this.dialogRef.close();
     }

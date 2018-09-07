@@ -9,7 +9,7 @@ import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
     DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
     DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
-    DxRadioGroupModule, DxDropDownBoxModule } from 'devextreme-angular';
+    DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { ClientDetailsService } from './client-details.service';
@@ -40,6 +40,8 @@ import { CreditLinesComponent } from './credit-lines/credit-lines.component';
 import { RequiredDocumentsComponent } from './required-documents/required-documents.component';
 import { VerificationChecklistComponent } from './verification-checklist/verification-checklist.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
+import { UserInformationComponent } from './user-information/user-information.component';
+import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { ApplicationStatusComponent } from './application-status/application-status.component';
@@ -52,7 +54,8 @@ import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-custome
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
-
+import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
+import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
@@ -90,6 +93,8 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     TotalApprovedComponent,
     CreditLinesComponent,
     ContactInformationComponent,
+    UserInformationComponent,
+    LoginAttempsComponent,
     LeadInformationComponent,
     QuestionnaireComponent,
     RequiredDocumentsComponent,
@@ -114,7 +119,9 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     AdvancedListComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
-    DocumentTypesListComponent
+    DocumentTypesListComponent,
+    OrganizationUnitsTreeComponent,
+    PermissionTreeComponent
   ],
   imports: [
     FormsModule,
@@ -144,6 +151,7 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     DxListModule,
     DxSliderModule,
     DxTreeListModule,
+    DxTreeViewModule,
     RoundProgressModule,
     DxValidationGroupModule,
     PipelineModule,

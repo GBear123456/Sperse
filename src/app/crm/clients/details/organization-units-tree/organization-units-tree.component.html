@@ -1,0 +1,10 @@
+<app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+<dx-tree-view dataStructure="plain"
+              [dataSource]="oranizationUnitsDataSource"
+              parentIdExpr="parentId"
+              keyExpr="id"
+              displayExpr="displayName"
+              showCheckBoxesMode="normal"
+              [selectNodesRecursive]="false"
+              [searchEnabled]="searchEnabled">
+</dx-tree-view>

@@ -10,7 +10,7 @@
         cursor: pointer;
         position: absolute;
         right: 20px;
-        top: 13px;
+        top: 0px;
         background: url("../../../../assets/common/icons/gear-icon.svg") no-repeat center;
     }
 
@@ -183,6 +183,11 @@
 
     /deep/ .mat-tab-links {
         flex-direction: column;
+
+        .mat-tab-disabled {
+            opacity: 0.3!important;
+            pointer-events: none;
+        }
     }
 
     .mat-tab-link {

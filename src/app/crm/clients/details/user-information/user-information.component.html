@@ -1,0 +1,78 @@
+<div class="invite-user-form" *ngIf="showInviteUserForm">
+    Invite user form will be here soon
+</div>
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="data.userId">
+    <mat-tab label="General">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="user-info row">
+                <div class="col-md-6">
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("EmailAddress")}}:</div>
+                        <div>{{data?.user?.emailAddress}}</div>
+                    </div>
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
+                        <inplace-edit [data]="getPhoneNumberPropData()" [mask]="masks.phone" [maskInvalidMessage]="l('PhoneValidationError')" (valueChanged)="updateValue($event, 'phoneNumber')"></inplace-edit>
+                    </div>
+                    <div class="section-item">
+                        <div class="item-edit-label">{{l("UserName")}}:</div>
+                        <div>{{data?.user?.userName}}</div>
+                    </div>
+                    <ng-container *ngIf="data && data?.user && !data.user['setRandomPassword']">
+                        <div class="section-item">
+                            <div class="item-edit-label">{{l("Password")}}:</div>
+
+                            <div *ngIf="data && data?.user">
+                                <div *ngIf="!passwordObject.passwordInplaceEdit" class="inplace-edit-view-mode">
+                                    <span [ngClass]="{ 'placeholder': !data.user.password }" (click)="startPasswordEdit()">{{showPassword(data.user.password) || l('EditValuePlaceholder')}}</span>
+                                </div>
+                                <div *ngIf="passwordObject.passwordInplaceEdit" class="inplace-edit-edit-mode">
+                                    <dx-validation-group>
+                                        <dx-text-box [placeholder]="l('EditValuePlaceholder')" [(value)]="passwordObject.value">
+                                            <dx-validator>
+                                                <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
+                                                <dxi-validation-rule type="custom" [validationCallback]="validatePassword"></dxi-validation-rule>
+                                            </dx-validator>
+                                        </dx-text-box>
+                                        <dx-button class="button-update" icon="todo" (onClick)="updatePassword($event)"></dx-button>
+                                        <dx-button class="button-exit" icon="refresh" (onClick)="closePasswordEdit()"></dx-button>
+                                    </dx-validation-group>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ul *ngIf="data && data?.user" class="items-list">
+                        <li>
+                            <dx-check-box [(value)]="data.user.setRandomPassword" [text]="l('SetRandomPassword')"></dx-check-box>
+                        </li>
+                        <li>
+                            <dx-check-box [(value)]="data.user.shouldChangePasswordOnNextLogin" [text]="l('ShouldChangePasswordOnNextLogin')"></dx-check-box>
+                        </li>
+                        <li>
+                            <dx-check-box [(value)]="data.user.sendActivationEmail" [text]="l('SendActivationEmail')"></dx-check-box>
+                        </li>
+                        <li>
+                            <dx-check-box [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')"></dx-check-box>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <div class="title">
+                        {{l('Roles')}}
+                    </div>
+                    <ul class="items-list">
+                        <li *ngFor="let role of data?.roles">
+                            <dx-check-box [(value)]="role.isAssigned" text="{{role.roleDisplayName}}"></dx-check-box>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </mat-tab>
+    <mat-tab label="Permissions">
+        <permission-tree *ngIf="selectedTabIndex == PERMISSIONS_TAB_INDEX"></permission-tree>
+    </mat-tab>
+    <mat-tab label="Login Attempts">
+        <login-attemps *ngIf="selectedTabIndex == LOGIN_ATTEMPTS_TAB_INDEX"></login-attemps>
+    </mat-tab>
+</mat-tab-group>

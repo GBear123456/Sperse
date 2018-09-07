@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
 
 /** Third party import */
 import { MatDialog } from '@angular/material';
@@ -31,6 +31,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input() data: ContactGroupInfoDto;
     @Input() ratingId: number;
     canSendVerificationRequest = false;
+
+    @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
 
     constructor(
         injector: Injector,
@@ -78,6 +80,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             data: this.data,
             hasBackdrop: false,
             position: this.getDialogPossition(event, 170)
+        }).afterClosed().subscribe(result => {
+            this.onContactSelected.emit(this.data.primaryContactInfo);
         });
         event.stopPropagation();
     }
