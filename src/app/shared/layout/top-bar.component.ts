@@ -116,7 +116,7 @@ export class TopBarComponent extends AppComponentBase {
     private checkMenuItemPermission(item): boolean {
         //!!VP Should be considered on module configuration level
         if (this.config['name'] == 'CRM') {
-            if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
+            if (this._appService.isNotHostTenant()) {
                 if (['Editions'].indexOf(item.text) >= 0)
                     return false;
             } else if (['Products'].indexOf(item.text) >= 0)

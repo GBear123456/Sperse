@@ -48,13 +48,7 @@ export abstract class AppServiceBase {
     }
 
     getDefaultModule() {
-        let defaultModule = '';
-        this._modules.forEach((module, i) => {
-            if (!defaultModule && this.isModuleActive(module)) {
-                defaultModule = module;
-            }
-        });
-        return defaultModule;
+        return this.MODULE_DEFAULT.toLowerCase();
     }
 
     getModuleConfig(name: string) {

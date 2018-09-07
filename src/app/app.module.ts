@@ -20,7 +20,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, 
+    BusinessEntityServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
@@ -58,7 +59,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,
-        BankAccountsService
+        BankAccountsService,
+        TenantSubscriptionServiceProxy
     ]
 })
 export class AppModule {}

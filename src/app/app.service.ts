@@ -9,7 +9,11 @@ import { PanelMenu } from 'app/shared/layout/panel-menu';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InstanceServiceProxy, UserServiceProxy, ActivateUserForContactInput, SetupInput, TenantHostType,
-    GetUserInstanceInfoOutputStatus } from '@shared/service-proxies/service-proxies';
+    GetUserInstanceInfoOutputStatus, TenantSubscriptionServiceProxy, ModuleSubscriptionInfoDtoModule } from '@shared/service-proxies/service-proxies';
+
+import { Subscription, Subject } from 'rxjs';
+import * as moment from 'moment';
+
 declare let require: any;
 
 @Injectable()
@@ -22,6 +26,8 @@ export class AppService extends AppServiceBase {
     public showContactInfoPanel = false;
     public contactInfo: any;
 
+    private expiredModule: Subject<string>;
+    private moduleSubscriptions: any;
     private permission: PermissionCheckerService;
     private feature: FeatureCheckerService;
     private instanceServiceProxy: InstanceServiceProxy;
@@ -29,11 +35,12 @@ export class AppService extends AppServiceBase {
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
     private _setToolbarTimeout: number;
+    private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
 
     constructor(injector: Injector) {
         super(
             injector,
-            'CRM',
+            'Admin',
             [
                 'Admin',
                 'API',
@@ -62,6 +69,54 @@ export class AppService extends AppServiceBase {
         this.userServiceProxy = injector.get(UserServiceProxy);
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
+        this._tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
+
+        if (this.isNotHostTenant()) {
+            this.expiredModule = new Subject<string>();
+            this.loadModeuleSubscriptions();
+        }
+    }
+
+    loadModeuleSubscriptions() {
+        this._tenantSubscriptionProxy.getModuleSubscriptions().subscribe((res) => {
+            this.moduleSubscriptions = res;
+            this.checkModuleExpired();
+        });
+    }
+
+    isNotHostTenant() {
+        return abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT;
+    }
+
+    hasModuleSubscription(name) {
+        let module = (name || this.getModule()).toUpperCase();
+        return !this.isNotHostTenant() || !ModuleSubscriptionInfoDtoModule[module] || 
+            !this.moduleSubscriptions || this.moduleSubscriptions.some((sub) => {
+                if (sub.module == <ModuleSubscriptionInfoDtoModule>module)
+                    return sub.endDate > moment().utc();
+            });
+    }
+
+    checkModuleExpired(name = undefined) {
+        name = name || this.getModule();
+        let expired = !this.hasModuleSubscription(name);
+        if (expired)
+            this.expiredModule.next(name);
+        return expired;
+    }
+
+    switchModule(name: string, params: {}) {
+        if (this.isNotHostTenant() && this.checkModuleExpired(name)) {  
+            let module = this.getModule();
+            name = ModuleSubscriptionInfoDtoModule[module] ? this.getDefaultModule(): module;
+            params = {};
+        }
+
+        super.switchModule(name, params);
+    }
+
+    expiredModuleSubscribe(callback) {
+        this.expiredModule.asObservable().subscribe(callback);
     }
 
     updateToolbar(config) {
@@ -85,7 +140,7 @@ export class AppService extends AppServiceBase {
             (isConfirmed) => {
                 if (isConfirmed) {
                     let request = new ActivateUserForContactInput();
-                    request.contactId = contactId;
+                    request.contactId = contactId;                                                             
                     request.tenantHostType = <any>TenantHostType.PlatformUi;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                         let setupInput = new SetupInput({ userId: result.userId });
@@ -114,5 +169,4 @@ export class AppService extends AppServiceBase {
     private checkCFOClientAccessPermission() {
         return this.permission.isGranted('Pages.CFO.ClientInstanceAdmin');
     }
-
 }

@@ -11,6 +11,8 @@ import { Module, PackageConfigDto, PackageServiceProxy } from '@shared/service-p
 
 import { AppComponentBase } from 'shared/common/app-component-base';
 
+import { AppService } from '@app/app.service';
+
 @Component({
     selector: 'payment-wizard',
     templateUrl: './payment-wizard.component.html',
@@ -25,6 +27,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     paymentPlansMaxUsersAmount$: Observable<number>;
     paymentStatus: PaymentStatusEnum;
     constructor(private injector: Injector,
+                private appService: AppService,
                 private dialogRef: MatDialogRef<PaymentWizardComponent>,
                 private paymentService: PaymentService,
                 private packageServiceProxy: PackageServiceProxy
@@ -60,6 +63,8 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     }
 
     changeStatus(status: PaymentStatusEnum) {
+        if (status == PaymentStatusEnum.Confirmed)
+            this.appService.loadModeuleSubscriptions();
         this.paymentStatus = status;
     }
 
