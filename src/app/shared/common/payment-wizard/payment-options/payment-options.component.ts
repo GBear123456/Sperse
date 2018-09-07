@@ -118,7 +118,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     })
                 });
                 this.tenantSubscriptionServiceProxy.setupSubscriptionWithBankCard(cardPaymentInfo).subscribe(
-                    res => { this.onStatusChange.emit(PaymentStatusEnum.Confirmed); }
+                    res => { this.onStatusChange.emit(PaymentStatusEnum.Confirmed); },
+                    () => this.onStatusChange.emit(PaymentStatusEnum.Failed)
                 );
                 break;
             case PaymentMethods.PayPal:

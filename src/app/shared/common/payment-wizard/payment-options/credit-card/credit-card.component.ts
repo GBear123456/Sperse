@@ -2,7 +2,6 @@ import { Component, OnInit, Injector, ChangeDetectionStrategy, Output, EventEmit
 import { FormBuilder, Validators } from '@angular/forms';
 
 import { CreditCardValidator } from 'angular-cc-library';
-import * as _ from 'underscore';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto, CountryServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -21,11 +20,6 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     countryCode: string;
     countries = [];
     states: CountryStateDto[];
-    address = {
-        state: null,
-        country: null,
-        address: null
-    };
 
     creditCardData = this.formBuilder.group({
         holderName: ['', [<any>Validators.required]],
