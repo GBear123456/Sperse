@@ -38,15 +38,13 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     }
 
     private addAccount() {
+        this.finishLoading(true);
+
         if (!this.isInstanceAdmin)
             return;
 
-        if (!this.quovoHandler) {
-            this.initQuovoHandler();
-        }
-
         this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig).afterClosed().subscribe(e => {
-            this.onQuovoHandlerClose(e);
+            this.isDisabled = false;
         });
     }
 
