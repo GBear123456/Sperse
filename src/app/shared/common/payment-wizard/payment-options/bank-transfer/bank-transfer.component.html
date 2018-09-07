@@ -26,18 +26,18 @@
         <h4 class="small-title">
             {{ l('BankAccountNumber') }}
         </h4>
-        <p class="text-color-blue">457014124486</p>
+        <p class="text-color-blue">{{ bankTransferData.bankAccountNumber }}</p>
         <h4 class="small-title">
             {{ l('BankRoutingNumberForACHTransfers') }}
         </h4>
-        <p class="text-color-blue">122101706</p>
+        <p class="text-color-blue">{{ bankTransferData.bankRoutingNumberForACHTransfers }}</p>
         <h4 class="small-title">
             {{ l('IfSendingAsWireUseTheFollowingCodes') }}
         </h4>
         <p>
-            {{ l('BankRoutingNumber') }} <span class="text-color-blue">026009593</span><br />
-            {{ l('SWIFT_CodeForUSDollar') }} <span class="text-color-blue">BOFAUS3N</span><br />
-            {{ l('SWIFT_Code') }} <span class="text-color-blue">BOFAUS6S</span>
+            {{ l('BankRoutingNumber') }} <span class="text-color-blue">{{ bankTransferData.bankRoutingNumber }}</span><br />
+            {{ l('SWIFT_CodeForUSDollar') }} <span class="text-color-blue">{{ bankTransferData.SWIFT_CodeForUSDollar }}</span><br />
+            {{ l('SWIFT_Code') }} <span class="text-color-blue">{{ bankTransferData.SWIFT_Code }}</span>
         </p>
     </div>
 </section>
