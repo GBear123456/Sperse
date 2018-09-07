@@ -6,8 +6,10 @@ import { Step } from '@app/shared/common/payment-wizard/models/step.model';
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerDto,
+    SetupSubscriptionWithBankCardInfoDto,
+    SetupSubscriptionWithBankCardInfoDtoFrequency,
     BankCardDto,
-    PaymentRequestDto,
+    PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
@@ -43,7 +45,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     @Output() onChangeStep: EventEmitter<number> = new EventEmitter<number>();
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     @Output() onStatusChange: EventEmitter<PaymentStatusEnum> = new EventEmitter();
-    paymentInfo: PaymentRequestDto;
 
     readonly GATEWAY_ECHECK = 0;
     readonly GATEWAY_C_CARD = 1;
@@ -77,7 +78,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
-                this.paymentInfo = PaymentRequestDto.fromJS({
+                const paymentInfo = PaymentRequestInfoDto.fromJS({
                     achCustomer: ACHCustomerDto.fromJS({
                         customerRoutingNo: eCheckData.routingNumber,
                         customerAcctNo: eCheckData.bankAccountNumber,
@@ -85,7 +86,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     })
                 });
                 /** Start submitting data and change status in a case of error or success */
-                this.tenantSubscriptionServiceProxy.addPaymentInfo(this.paymentInfo).subscribe(
+                this.tenantSubscriptionServiceProxy.addPaymentInfo(paymentInfo).subscribe(
                     res => {
                         /** @todo change for getting of the status from the server */
                         this.onStatusChange.emit(res && res['success'] ? PaymentStatusEnum.Pending : PaymentStatusEnum.Failed);
@@ -96,7 +97,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
-                this.paymentInfo = PaymentRequestDto.fromJS({
+                const cardPaymentInfo = SetupSubscriptionWithBankCardInfoDto.fromJS({
+                    editionId: this.plan.selectedEditionId,
+                    frequency: this.plan.billingPeriod == BillingPeriod.Monthly
+                        ? SetupSubscriptionWithBankCardInfoDtoFrequency._30
+                        : SetupSubscriptionWithBankCardInfoDtoFrequency._365,
                     bankCard: BankCardDto.fromJS({
                         holderName: creditCardData.holderName,
                         cardNumber: creditCardData.cardNumber.replace(/\s/g, ''),
@@ -112,7 +117,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         billingCountry: creditCardData.billingCountry,
                     })
                 });
-                this.tenantSubscriptionServiceProxy.addPaymentInfo(this.paymentInfo).subscribe(
+                this.tenantSubscriptionServiceProxy.setupSubscriptionWithBankCard(cardPaymentInfo).subscribe(
                     res => { this.onStatusChange.emit(PaymentStatusEnum.Confirmed); }
                 );
                 break;

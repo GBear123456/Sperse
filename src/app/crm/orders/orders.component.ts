@@ -146,19 +146,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }),
                 new FilterModel({
-                    component: FilterCheckBoxesComponent,
-                    field: 'BillingSubscriptionStatusId',
-                    caption: 'BillingSubscriptionStatus',
-                    items: {
-                        element: new FilterCheckBoxesModel({
-                            dataSource: result.subscriptionStatuses,
-                            nameField: 'name',
-                            parentExpr: 'parentId',
-                            keyExpr: 'id'
-                        })
-                    }
-                }),
-                new FilterModel({
                     component: FilterDropDownComponent,
                     caption: 'paymentType',
                     items: {
@@ -403,23 +390,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         let data = {};
         if (filter.items.element) {
             let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
-    }
-
-    filterByBillingSubscriptionStatus(filter: FilterModel) {
-        let data = {};
-        if (filter.items.element && filter.items.element.value) {
-            let filterData = _.map(filter.items.element.value, x => {
-                let el = {};
-                el[filter.field] = x;
-                return el;
-            });
-
             data = {
                 or: filterData
             };
