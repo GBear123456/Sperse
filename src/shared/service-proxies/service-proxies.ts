@@ -53052,7 +53052,7 @@ export interface ISetupSubscriptionInfoDto {
 }
 
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
-    serviceTypeId!: number | undefined;
+    module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
@@ -53066,7 +53066,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.serviceTypeId = data["serviceTypeId"];
+            this.module = data["module"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
         }
     }
@@ -53080,14 +53080,14 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["serviceTypeId"] = this.serviceTypeId;
+        data["module"] = this.module;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface IModuleSubscriptionInfoDto {
-    serviceTypeId: number | undefined;
+    module: ModuleSubscriptionInfoDtoModule | undefined;
     endDate: moment.Moment | undefined;
 }
 
@@ -56660,6 +56660,12 @@ export enum SetupSubscriptionWithBankCardInfoDtoFrequency {
 export enum SetupSubscriptionInfoDtoFrequency {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum ModuleSubscriptionInfoDtoModule {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
