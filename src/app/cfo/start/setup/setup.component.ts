@@ -3,7 +3,6 @@ import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 
-import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType, SyncServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -21,11 +20,9 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     public headlineConfig;
     isDisabled = false;
     dialogConfig = new MatDialogConfig();
-    quovoHandler: any;
 
     constructor(injector: Injector,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private _quovoService: QuovoService,
         private _syncService: SyncServiceProxy,
         public dialog: MatDialog
     ) {
@@ -81,28 +78,6 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.rootComponent.overflowHidden();
     }
 
-    onQuovoHandlerClose(e) {
-        if (e && e.addedIds.length) {
-            this.startLoading(true);
-            this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
-                .pipe(finalize(() => {
-                    this.isDisabled = false;
-                }))
-                .subscribe(() => {
-                    this.finishLoading(true);
-                    this._cfoService.instanceChangeProcess(() => this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']));
-                });
-        } else {
-            this.isDisabled = false;
-        }
-    }
-
-    initQuovoHandler() {
-        if (!this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
-        }
-    }
-
     openDialog() {
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';
@@ -114,9 +89,5 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.isGetStartedButtonClicked) this.onStart();
         });
-    }
-
-    xeroButtonClick() {
-        this.quovoHandler.close();
     }
 }
