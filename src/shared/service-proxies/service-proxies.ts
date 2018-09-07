@@ -22957,6 +22957,110 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    setupSubscriptionWithBankCard(input: SetupSubscriptionWithBankCardDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/SetupSubscriptionWithBankCard";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetupSubscriptionWithBankCard(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetupSubscriptionWithBankCard(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetupSubscriptionWithBankCard(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    setupSubscription(input: SetupSubscriptionDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/SetupSubscription";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetupSubscription(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetupSubscription(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetupSubscription(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getModuleSubscriptions(): Observable<ModuleSubscriptionInfo[]> {
@@ -45282,7 +45386,7 @@ export class BankCardDto implements IBankCardDto {
     billingAddress!: string;
     billingZip!: string;
     billingCity!: string;
-    billingStateCode!: string;
+    billingStateCode!: string | undefined;
     billingState!: string | undefined;
     billingCountryCode!: string;
     billingCountry!: string | undefined;
@@ -45347,7 +45451,7 @@ export interface IBankCardDto {
     billingAddress: string;
     billingZip: string;
     billingCity: string;
-    billingStateCode: string;
+    billingStateCode: string | undefined;
     billingState: string | undefined;
     billingCountryCode: string;
     billingCountry: string | undefined;
@@ -52683,6 +52787,94 @@ export interface IPaymentRequestDto {
     achCustomer: ACHCustomerDto | undefined;
 }
 
+export class SetupSubscriptionWithBankCardDto implements ISetupSubscriptionWithBankCardDto {
+    editionId!: number;
+    frequency!: SetupSubscriptionWithBankCardDtoFrequency | undefined;
+    bankCard!: BankCardDto | undefined;
+
+    constructor(data?: ISetupSubscriptionWithBankCardDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.frequency = data["frequency"];
+            this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SetupSubscriptionWithBankCardDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetupSubscriptionWithBankCardDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["frequency"] = this.frequency;
+        data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISetupSubscriptionWithBankCardDto {
+    editionId: number;
+    frequency: SetupSubscriptionWithBankCardDtoFrequency | undefined;
+    bankCard: BankCardDto | undefined;
+}
+
+export class SetupSubscriptionDto implements ISetupSubscriptionDto {
+    editionId!: number | undefined;
+    frequency!: SetupSubscriptionDtoFrequency | undefined;
+    billingInfo!: PaymentRequestDto | undefined;
+
+    constructor(data?: ISetupSubscriptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.frequency = data["frequency"];
+            this.billingInfo = data["billingInfo"] ? PaymentRequestDto.fromJS(data["billingInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SetupSubscriptionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetupSubscriptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["frequency"] = this.frequency;
+        data["billingInfo"] = this.billingInfo ? this.billingInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISetupSubscriptionDto {
+    editionId: number | undefined;
+    frequency: SetupSubscriptionDtoFrequency | undefined;
+    billingInfo: PaymentRequestDto | undefined;
+}
+
 export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
     serviceTypeId!: number | undefined;
     endDate!: moment.Moment | undefined;
@@ -56282,6 +56474,16 @@ export enum CompleteTenantRegistrationInputTenantHostType {
     PlatformApi = "PlatformApi", 
     PlatformUi = "PlatformUi", 
     FundingUi = "FundingUi", 
+}
+
+export enum SetupSubscriptionWithBankCardDtoFrequency {
+    _30 = 30, 
+    _365 = 365, 
+}
+
+export enum SetupSubscriptionDtoFrequency {
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
