@@ -6,10 +6,10 @@ import { Step } from '@app/shared/common/payment-wizard/models/step.model';
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerDto,
-    SetupSubscriptionWithBankCardDto,
-    SetupSubscriptionWithBankCardDtoFrequency,
+    SetupSubscriptionWithBankCardInfoDto,
+    SetupSubscriptionWithBankCardInfoDtoFrequency,
     BankCardDto,
-    PaymentRequestDto,
+    PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
@@ -78,7 +78,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
-                const paymentInfo = PaymentRequestDto.fromJS({
+                const paymentInfo = PaymentRequestInfoDto.fromJS({
                     achCustomer: ACHCustomerDto.fromJS({
                         customerRoutingNo: eCheckData.routingNumber,
                         customerAcctNo: eCheckData.bankAccountNumber,
@@ -97,11 +97,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
-                const cardPaymentInfo = SetupSubscriptionWithBankCardDto.fromJS({
+                const cardPaymentInfo = SetupSubscriptionWithBankCardInfoDto.fromJS({
                     editionId: this.plan.selectedEditionId,
                     frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                        ? SetupSubscriptionWithBankCardDtoFrequency._30
-                        : SetupSubscriptionWithBankCardDtoFrequency._365,
+                        ? SetupSubscriptionWithBankCardInfoDtoFrequency._30
+                        : SetupSubscriptionWithBankCardInfoDtoFrequency._365,
                     bankCard: BankCardDto.fromJS({
                         holderName: creditCardData.holderName,
                         cardNumber: creditCardData.cardNumber.replace(/\s/g, ''),
