@@ -238,16 +238,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     select: this.selectFields
                 }));
 
-        if (!isNaN(stage['lastLeadId']))
+        if (!isNaN(stage['lastLeadId']) && page)
             filter['Id'] = {lt: stage['lastLeadId']};
 
         dataSource.pageSize(this.STAGE_PAGE_COUNT);
         dataSource['_store']['_url'] =
-            this.getODataUrl(this._dataSource.uri,
+            this.getODataUrl(this._dataSource.uri, 
                 this.queryWithSearch.concat({and: [
                     _.extend(filter, this._dataSource.customFilter)
-                ]}
-            )
+                ]})
         );
         dataSource.sort({getter: 'Id', desc: true});
         dataSource.pageIndex(page);
@@ -259,26 +258,28 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         return lead;
                     });
             else  {
+                stage['leads'] = [];
                 stage['total'] = stage['leads'].length || 0;
                 stage['full'] = true;
             }
-            if (oneStageOnly || this.isAllStagesLoaded()) {
-                if (!oneStageOnly && this.totalsURI) 
-                    this.processTotalsRequest();
+      
+            let allStagesLoaded = this.isAllStagesLoaded();
+            if (oneStageOnly || allStagesLoaded)
                 setTimeout(() => this.finishLoading(), 1000);
-            }
+            if (this.totalsURI && !oneStageOnly && allStagesLoaded) 
+                this.processTotalsRequest(this.queryWithSearch);
         });
 
         if (!oneStageOnly && stages[index + 1])
             this.loadStagesLeads(page, index + 1);
     }
 
-    processTotalsRequest() {
+    processTotalsRequest(filter = undefined) {
         (new DataSource({
             requireTotalCount: false,
             store: {
                 type: 'odata',
-                url: this.getODataUrl(this.totalsURI),
+                url: this.getODataUrl(this.totalsURI, filter),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();

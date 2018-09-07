@@ -36,7 +36,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         billingAddress: ['', [<any>Validators.required]],
         billingZip: ['', [<any>Validators.required, <any>Validators.minLength(5)]],
         billingCity: ['', [<any>Validators.required]],
-        billingStateCode: ['', [<any>Validators.required]],
+        billingStateCode: [''],
         billingState: [''],
         billingCountryCode: ['', [<any>Validators.required]],
         billingCountry: [''],
@@ -58,6 +58,12 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     submit(data: NgForm) {
         if (this.creditCardData.valid) {
             this.onSubmit.next(data.value);
+        }
+    }
+
+    onKeyPress(e) {
+        if (e.which < 48 || e.which > 57) {
+            e.preventDefault();
         }
     }
 
