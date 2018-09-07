@@ -22905,14 +22905,14 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
-     * @paymentRequestDto (optional) 
+     * @input (optional) 
      * @return Success
      */
-    addPaymentInfo(paymentRequestDto: PaymentRequestDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/AddPaymentInfo";
+    addPaymentInfo(input: PaymentRequestInfoDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/AddPaymentInfo";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(paymentRequestDto);
+        const content_ = JSON.stringify(input);
 
         let options_ : any = {
             body: content_,
@@ -22960,8 +22960,8 @@ export class TenantSubscriptionServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setupSubscriptionWithBankCard(input: SetupSubscriptionWithBankCardDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/SetupSubscriptionWithBankCard";
+    setupSubscriptionWithBankCard(input: SetupSubscriptionWithBankCardInfoDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscriptionWithBankCard";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -23012,8 +23012,8 @@ export class TenantSubscriptionServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setupSubscription(input: SetupSubscriptionDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/SetupSubscription";
+    setupSubscription(input: SetupSubscriptionInfoDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscription";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -23063,8 +23063,8 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    getModuleSubscriptions(): Observable<ModuleSubscriptionInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantSubscription/GetModuleSubscriptions";
+    getModuleSubscriptions(): Observable<ModuleSubscriptionInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetModuleSubscriptions";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23083,14 +23083,14 @@ export class TenantSubscriptionServiceProxy {
                 try {
                     return this.processGetModuleSubscriptions(<any>response_);
                 } catch (e) {
-                    return <Observable<ModuleSubscriptionInfo[]>><any>_observableThrow(e);
+                    return <Observable<ModuleSubscriptionInfoDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ModuleSubscriptionInfo[]>><any>_observableThrow(response_);
+                return <Observable<ModuleSubscriptionInfoDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetModuleSubscriptions(response: HttpResponseBase): Observable<ModuleSubscriptionInfo[]> {
+    protected processGetModuleSubscriptions(response: HttpResponseBase): Observable<ModuleSubscriptionInfoDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -23104,7 +23104,7 @@ export class TenantSubscriptionServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(ModuleSubscriptionInfo.fromJS(item));
+                    result200.push(ModuleSubscriptionInfoDto.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -23113,7 +23113,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ModuleSubscriptionInfo[]>(<any>null);
+        return _observableOf<ModuleSubscriptionInfoDto[]>(<any>null);
     }
 }
 
@@ -52747,11 +52747,11 @@ export interface IAddTenantSslCertificateInput {
     password: string | undefined;
 }
 
-export class PaymentRequestDto implements IPaymentRequestDto {
-    bankCard!: BankCardDto | undefined;
-    achCustomer!: ACHCustomerDto | undefined;
+export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
+    bankCard!: BankCardInfoDto | undefined;
+    achCustomer!: ACHCustomerInfoDto | undefined;
 
-    constructor(data?: IPaymentRequestDto) {
+    constructor(data?: IPaymentRequestInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -52762,14 +52762,14 @@ export class PaymentRequestDto implements IPaymentRequestDto {
 
     init(data?: any) {
         if (data) {
-            this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
-            this.achCustomer = data["achCustomer"] ? ACHCustomerDto.fromJS(data["achCustomer"]) : <any>undefined;
+            this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : <any>undefined;
+            this.achCustomer = data["achCustomer"] ? ACHCustomerInfoDto.fromJS(data["achCustomer"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): PaymentRequestDto {
+    static fromJS(data: any): PaymentRequestInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PaymentRequestDto();
+        let result = new PaymentRequestInfoDto();
         result.init(data);
         return result;
     }
@@ -52782,17 +52782,193 @@ export class PaymentRequestDto implements IPaymentRequestDto {
     }
 }
 
-export interface IPaymentRequestDto {
-    bankCard: BankCardDto | undefined;
-    achCustomer: ACHCustomerDto | undefined;
+export interface IPaymentRequestInfoDto {
+    bankCard: BankCardInfoDto | undefined;
+    achCustomer: ACHCustomerInfoDto | undefined;
 }
 
-export class SetupSubscriptionWithBankCardDto implements ISetupSubscriptionWithBankCardDto {
-    editionId!: number;
-    frequency!: SetupSubscriptionWithBankCardDtoFrequency | undefined;
-    bankCard!: BankCardDto | undefined;
+export class BankCardInfoDto implements IBankCardInfoDto {
+    holderName!: string | undefined;
+    cardNumber!: string | undefined;
+    expirationMonth!: string | undefined;
+    expirationYear!: string | undefined;
+    cvv!: string | undefined;
+    billingAddress!: string | undefined;
+    billingZip!: string | undefined;
+    billingCity!: string | undefined;
+    billingStateCode!: string | undefined;
+    billingState!: string | undefined;
+    billingCountryCode!: string | undefined;
+    billingCountry!: string | undefined;
 
-    constructor(data?: ISetupSubscriptionWithBankCardDto) {
+    constructor(data?: IBankCardInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.holderName = data["holderName"];
+            this.cardNumber = data["cardNumber"];
+            this.expirationMonth = data["expirationMonth"];
+            this.expirationYear = data["expirationYear"];
+            this.cvv = data["cvv"];
+            this.billingAddress = data["billingAddress"];
+            this.billingZip = data["billingZip"];
+            this.billingCity = data["billingCity"];
+            this.billingStateCode = data["billingStateCode"];
+            this.billingState = data["billingState"];
+            this.billingCountryCode = data["billingCountryCode"];
+            this.billingCountry = data["billingCountry"];
+        }
+    }
+
+    static fromJS(data: any): BankCardInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankCardInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["holderName"] = this.holderName;
+        data["cardNumber"] = this.cardNumber;
+        data["expirationMonth"] = this.expirationMonth;
+        data["expirationYear"] = this.expirationYear;
+        data["cvv"] = this.cvv;
+        data["billingAddress"] = this.billingAddress;
+        data["billingZip"] = this.billingZip;
+        data["billingCity"] = this.billingCity;
+        data["billingStateCode"] = this.billingStateCode;
+        data["billingState"] = this.billingState;
+        data["billingCountryCode"] = this.billingCountryCode;
+        data["billingCountry"] = this.billingCountry;
+        return data; 
+    }
+}
+
+export interface IBankCardInfoDto {
+    holderName: string | undefined;
+    cardNumber: string | undefined;
+    expirationMonth: string | undefined;
+    expirationYear: string | undefined;
+    cvv: string | undefined;
+    billingAddress: string | undefined;
+    billingZip: string | undefined;
+    billingCity: string | undefined;
+    billingStateCode: string | undefined;
+    billingState: string | undefined;
+    billingCountryCode: string | undefined;
+    billingCountry: string | undefined;
+}
+
+export class ACHCustomerInfoDto implements IACHCustomerInfoDto {
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    customerRoutingNo!: string | undefined;
+    customerAcctNo!: string | undefined;
+    customerAcctType!: string | undefined;
+    address1!: string | undefined;
+    address2!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    zipCode!: string | undefined;
+    dln!: string | undefined;
+    dlnState!: string | undefined;
+    ssn!: string | undefined;
+    dateOfBirth!: string | undefined;
+    originatorName!: string | undefined;
+    memo!: string | undefined;
+
+    constructor(data?: IACHCustomerInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.customerRoutingNo = data["customerRoutingNo"];
+            this.customerAcctNo = data["customerAcctNo"];
+            this.customerAcctType = data["customerAcctType"];
+            this.address1 = data["address1"];
+            this.address2 = data["address2"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.zipCode = data["zipCode"];
+            this.dln = data["dln"];
+            this.dlnState = data["dlnState"];
+            this.ssn = data["ssn"];
+            this.dateOfBirth = data["dateOfBirth"];
+            this.originatorName = data["originatorName"];
+            this.memo = data["memo"];
+        }
+    }
+
+    static fromJS(data: any): ACHCustomerInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ACHCustomerInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["customerRoutingNo"] = this.customerRoutingNo;
+        data["customerAcctNo"] = this.customerAcctNo;
+        data["customerAcctType"] = this.customerAcctType;
+        data["address1"] = this.address1;
+        data["address2"] = this.address2;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["zipCode"] = this.zipCode;
+        data["dln"] = this.dln;
+        data["dlnState"] = this.dlnState;
+        data["ssn"] = this.ssn;
+        data["dateOfBirth"] = this.dateOfBirth;
+        data["originatorName"] = this.originatorName;
+        data["memo"] = this.memo;
+        return data; 
+    }
+}
+
+export interface IACHCustomerInfoDto {
+    firstName: string | undefined;
+    lastName: string | undefined;
+    customerRoutingNo: string | undefined;
+    customerAcctNo: string | undefined;
+    customerAcctType: string | undefined;
+    address1: string | undefined;
+    address2: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    zipCode: string | undefined;
+    dln: string | undefined;
+    dlnState: string | undefined;
+    ssn: string | undefined;
+    dateOfBirth: string | undefined;
+    originatorName: string | undefined;
+    memo: string | undefined;
+}
+
+export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionWithBankCardInfoDto {
+    editionId!: number;
+    frequency!: SetupSubscriptionWithBankCardInfoDtoFrequency | undefined;
+    bankCard!: BankCardInfoDto | undefined;
+
+    constructor(data?: ISetupSubscriptionWithBankCardInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -52805,13 +52981,13 @@ export class SetupSubscriptionWithBankCardDto implements ISetupSubscriptionWithB
         if (data) {
             this.editionId = data["editionId"];
             this.frequency = data["frequency"];
-            this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
+            this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): SetupSubscriptionWithBankCardDto {
+    static fromJS(data: any): SetupSubscriptionWithBankCardInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new SetupSubscriptionWithBankCardDto();
+        let result = new SetupSubscriptionWithBankCardInfoDto();
         result.init(data);
         return result;
     }
@@ -52825,18 +53001,18 @@ export class SetupSubscriptionWithBankCardDto implements ISetupSubscriptionWithB
     }
 }
 
-export interface ISetupSubscriptionWithBankCardDto {
+export interface ISetupSubscriptionWithBankCardInfoDto {
     editionId: number;
-    frequency: SetupSubscriptionWithBankCardDtoFrequency | undefined;
-    bankCard: BankCardDto | undefined;
+    frequency: SetupSubscriptionWithBankCardInfoDtoFrequency | undefined;
+    bankCard: BankCardInfoDto | undefined;
 }
 
-export class SetupSubscriptionDto implements ISetupSubscriptionDto {
+export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
     editionId!: number | undefined;
-    frequency!: SetupSubscriptionDtoFrequency | undefined;
-    billingInfo!: PaymentRequestDto | undefined;
+    frequency!: SetupSubscriptionInfoDtoFrequency | undefined;
+    billingInfo!: PaymentRequestInfoDto | undefined;
 
-    constructor(data?: ISetupSubscriptionDto) {
+    constructor(data?: ISetupSubscriptionInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -52849,13 +53025,13 @@ export class SetupSubscriptionDto implements ISetupSubscriptionDto {
         if (data) {
             this.editionId = data["editionId"];
             this.frequency = data["frequency"];
-            this.billingInfo = data["billingInfo"] ? PaymentRequestDto.fromJS(data["billingInfo"]) : <any>undefined;
+            this.billingInfo = data["billingInfo"] ? PaymentRequestInfoDto.fromJS(data["billingInfo"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): SetupSubscriptionDto {
+    static fromJS(data: any): SetupSubscriptionInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new SetupSubscriptionDto();
+        let result = new SetupSubscriptionInfoDto();
         result.init(data);
         return result;
     }
@@ -52869,17 +53045,17 @@ export class SetupSubscriptionDto implements ISetupSubscriptionDto {
     }
 }
 
-export interface ISetupSubscriptionDto {
+export interface ISetupSubscriptionInfoDto {
     editionId: number | undefined;
-    frequency: SetupSubscriptionDtoFrequency | undefined;
-    billingInfo: PaymentRequestDto | undefined;
+    frequency: SetupSubscriptionInfoDtoFrequency | undefined;
+    billingInfo: PaymentRequestInfoDto | undefined;
 }
 
-export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
+export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     serviceTypeId!: number | undefined;
     endDate!: moment.Moment | undefined;
 
-    constructor(data?: IModuleSubscriptionInfo) {
+    constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -52895,9 +53071,9 @@ export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
         }
     }
 
-    static fromJS(data: any): ModuleSubscriptionInfo {
+    static fromJS(data: any): ModuleSubscriptionInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ModuleSubscriptionInfo();
+        let result = new ModuleSubscriptionInfoDto();
         result.init(data);
         return result;
     }
@@ -52910,7 +53086,7 @@ export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
     }
 }
 
-export interface IModuleSubscriptionInfo {
+export interface IModuleSubscriptionInfoDto {
     serviceTypeId: number | undefined;
     endDate: moment.Moment | undefined;
 }
@@ -56476,12 +56652,12 @@ export enum CompleteTenantRegistrationInputTenantHostType {
     FundingUi = "FundingUi", 
 }
 
-export enum SetupSubscriptionWithBankCardDtoFrequency {
+export enum SetupSubscriptionWithBankCardInfoDtoFrequency {
     _30 = 30, 
     _365 = 365, 
 }
 
-export enum SetupSubscriptionDtoFrequency {
+export enum SetupSubscriptionInfoDtoFrequency {
     _30 = 30, 
     _365 = 365, 
 }
