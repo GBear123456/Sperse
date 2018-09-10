@@ -23,6 +23,7 @@ import { MySettingsModalComponent } from './profile/my-settings-modal.component'
 import { PaymentWizardComponent } from '../common/payment-wizard/payment-wizard.component';
 
 import { MatDialog } from '@angular/material';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -67,6 +68,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _dialog: MatDialog,
+        private _appService: AppService,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
@@ -198,33 +200,25 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
+        return this.subscriptionIsExpiringSoon() || 
+            this._appService.subscriptionInGracePeriod();
     }
 
-    subscriptionIsExpiringSoon(): boolean {
-        if (this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
-        }
-
-        return false;
+    subscriptionIsExpiringSoon() {
+        return this._appService.subscriptionIsExpiringSoon();
     }
 
-    getSubscriptionExpiringDayCount(): number {
-        if (!(this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc)) {
-            return 0;
-        }
+    subscriptionInGracePeriod() {
+        return this._appService.subscriptionInGracePeriod();
+    }           
 
-        return Math.round(moment(this._appSessionService.tenant.subscriptionEndDateUtc).diff(moment().utc(), 'days', true));
+    getSubscriptionExpiringDayCount(gracePeriod): number {
+        return gracePeriod ? this._appService.getGracePeriodDayCount(): 
+            this._appService.getSubscriptionExpiringDayCount();
     }
 
-    getTrialSubscriptionNotification(): string {
-        return this.l('TrialSubscriptionNotification',
-            '<strong>' + this._appSessionService.tenant.edition.displayName + '</strong>',
-            '<a href=\'/account/buy?editionId=' + this._appSessionService.tenant.edition.id + '&editionPaymentType=' + this.editionPaymentType.BuyNow + '\'>' + this.l('ClickHere') + '</a>');
-    }
-
-    getExpireNotification(localizationKey: string): string {
-        return this.l(localizationKey, this.getSubscriptionExpiringDayCount());
+    getExpireNotification(localizationKey: string, grace = false): string {
+        return this.l(localizationKey, this.getSubscriptionExpiringDayCount(grace));
     }
 
     openPaymentWizardDialog() {

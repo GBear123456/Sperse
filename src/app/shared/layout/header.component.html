@@ -209,12 +209,10 @@
         </div>
     		<top-bar></top-bar>
     </div>
-    <div *ngIf="subscriptionStatusBarVisible()"
-         [ngClass]="{'hidden': !subscriptionStatusBarVisible()}" class="alert hidden subscription-info" (click)="openPaymentWizardDialog()">
-        <span *ngIf="tenant?.isInTrialPeriod && !subscriptionIsExpiringSoon()" [innerHTML]="getTrialSubscriptionNotification()"></span>
-        <a *ngIf="subscriptionIsExpiringSoon()">
-            <span *ngIf="subscriptionIsExpiringSoon() && tenant?.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("TrialExpireNotification")}}</span>
-            <span *ngIf="subscriptionIsExpiringSoon() && !tenant?.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("SubscriptionExpireNotification")}}</span>
+    <div *ngIf="subscriptionStatusBarVisible()" class="alert hidden subscription-info" (click)="openPaymentWizardDialog()">
+        <a>
+            <span *ngIf="subscriptionInGracePeriod()"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("GracePeriodNotification", true)}}</span>
+            <span *ngIf="subscriptionIsExpiringSoon()"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("SubscriptionExpireNotification")}}</span>
         </a>
     </div>
 

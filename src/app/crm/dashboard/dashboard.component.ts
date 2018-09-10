@@ -28,6 +28,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
     private selectedPeriod: any;
+    private openDialogTimeout: any;
     public dataEmpty: boolean;
     public headlineConfig = {
       names: [this.l('Dashboard')],
@@ -57,7 +58,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {
         this.dataEmpty = !data.length;
-        if (this.dataEmpty) this.openDialog();
+        if (this.dataEmpty) { 
+            clearTimeout(this.openDialogTimeout);
+            this.openDialogTimeout = setTimeout(() => {
+                if (!this._appService.subscriptionIsExpiringSoon() 
+                    && !this._appService.subscriptionInGracePeriod()
+                ) this.openDialog();
+            }, 500);
+        }
     }
 
     addClient() {

@@ -41,18 +41,20 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
                 if (name != appService.getDefaultModule()) {
-                    if (ModuleSubscriptionInfoDtoModule[appService.getModule().toUpperCase()])
-                        this._router.navigate(['app/admin']);
+                    if (ModuleSubscriptionInfoDtoModule[name.toUpperCase()] 
+                        && !appService.subscriptionInGracePeriod(name)
+                    ) this._router.navigate(['app/admin']);
                     clearTimeout(paymentDialogTimeout);
                     paymentDialogTimeout = setTimeout(() => {
-                        if (!this.dialog.getDialogById('payment-wizard'))
+                        if (!this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '655px',
                                 width: '980px',
                                 id: 'payment-wizard',
                                 panelClass: ['payment-wizard', 'setup'],
-                            }).afterClosed().subscribe(result => {});                
-                    }, 500);
+                            }).afterClosed().subscribe(result => {});                 
+                        }
+                    });
                 }
             });
         }
@@ -69,17 +71,8 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appSessionService.tenantId > 0 &&
-            (this._appSessionService.tenant.isInTrialPeriod ||
-                this.subscriptionIsExpiringSoon());
-    }
-
-    subscriptionIsExpiringSoon(): boolean {
-        if (this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') 
-                >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
-        }
-        return false;
+        return this.appService.subscriptionIsExpiringSoon() || 
+            this.appService.subscriptionInGracePeriod();
     }
 
     ngAfterViewInit(): void {

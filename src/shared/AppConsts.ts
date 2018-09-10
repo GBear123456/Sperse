@@ -18,6 +18,7 @@ export class AppConsts {
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
     static subscriptionExpireNootifyDayCount: number;
+    static subscriptionGracePeriod = 7; /* Days */
 
     static localeMappings: any = [];
 

@@ -14,6 +14,8 @@ import { InstanceServiceProxy, UserServiceProxy, ActivateUserForContactInput, Se
 import { Subscription, Subject } from 'rxjs';
 import * as moment from 'moment';
 
+import * as _ from 'underscore' ;
+
 declare let require: any;
 
 @Injectable()
@@ -84,17 +86,54 @@ export class AppService extends AppServiceBase {
         });
     }
 
+    getModuleSubscription(name = undefined) {
+        let module = (name || this.getModule()).toUpperCase();
+        if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module]) {
+            let subscription = {module: module};
+            return _.find(this.moduleSubscriptions, 
+                subscription) || subscription;
+        }
+    }
+
+    subscriptionIsExpiringSoon(name = undefined): boolean {
+        let sub = this.getModuleSubscription(name);
+        if (this.isNotHostTenant() && sub && sub.endDate) {
+            let diff = sub.endDate.diff(moment().utc(), 'days', true);
+            return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
+        }
+        return false;
+    }
+
+    subscriptionInGracePeriod(name = undefined): boolean {
+        let sub = this.getModuleSubscription(name);
+        if (this.isNotHostTenant() && sub && sub.endDate) {
+            let diff = moment().utc().diff(sub.endDate, 'days', true);
+            return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
+        }
+        return false;            
+    }
+
+    getSubscriptionExpiringDayCount(): number {
+        let sub = this.getModuleSubscription(); 
+        return sub && sub.endDate && Math.round(moment(
+            sub.endDate).diff(moment().utc(), 'days', true));
+    }
+
+    getGracePeriodDayCount() {
+        let sub = this.getModuleSubscription(); 
+        return sub && sub.endDate && Math.round(moment().utc().diff(
+            moment(sub.endDate).add(AppConsts.subscriptionGracePeriod, 'days'), 'days', true));
+    }
+
     isNotHostTenant() {
         return abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT;
     }
 
-    hasModuleSubscription(name) {
-        let module = (name || this.getModule()).toUpperCase();
-        return !this.isNotHostTenant() || !ModuleSubscriptionInfoDtoModule[module] || 
-            !this.moduleSubscriptions || this.moduleSubscriptions.some((sub) => {
-                if (sub.module == <ModuleSubscriptionInfoDtoModule>module)
-                    return sub.endDate > moment().utc();
-            });
+    hasModuleSubscription(name = undefined) {
+        name = (name || this.getModule()).toUpperCase();
+        let module = this.getModuleSubscription(name);
+        return !this.isNotHostTenant() || !module ||            
+            module.endDate > moment().utc();
     }
 
     checkModuleExpired(name = undefined) {
@@ -106,7 +145,10 @@ export class AppService extends AppServiceBase {
     }
 
     switchModule(name: string, params: {}) {
-        if (this.isNotHostTenant() && this.checkModuleExpired(name)) {  
+        if (this.isNotHostTenant()
+            && this.checkModuleExpired(name)
+            && !this.subscriptionInGracePeriod(name)
+        ) {  
             let module = this.getModule();
             name = ModuleSubscriptionInfoDtoModule[module] ? this.getDefaultModule(): module;
             params = {};
