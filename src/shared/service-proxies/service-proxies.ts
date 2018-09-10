@@ -45330,6 +45330,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
     packageId!: number | undefined;
     bankCard!: BankCardDto | undefined;
     achCustomer!: ACHCustomerDto | undefined;
+    paymentType!: MemberPaymentAuthorizeRequestDtoPaymentType | undefined;
 
     constructor(data?: IMemberPaymentAuthorizeRequestDto) {
         if (data) {
@@ -45346,6 +45347,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
             this.packageId = data["packageId"];
             this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
             this.achCustomer = data["achCustomer"] ? ACHCustomerDto.fromJS(data["achCustomer"]) : <any>undefined;
+            this.paymentType = data["paymentType"];
         }
     }
 
@@ -45362,6 +45364,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
         data["packageId"] = this.packageId;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
         data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
+        data["paymentType"] = this.paymentType;
         return data; 
     }
 }
@@ -45371,6 +45374,7 @@ export interface IMemberPaymentAuthorizeRequestDto {
     packageId: number | undefined;
     bankCard: BankCardDto | undefined;
     achCustomer: ACHCustomerDto | undefined;
+    paymentType: MemberPaymentAuthorizeRequestDtoPaymentType | undefined;
 }
 
 export class BankCardDto implements IBankCardDto {
@@ -45454,22 +45458,8 @@ export interface IBankCardDto {
 }
 
 export class ACHCustomerDto implements IACHCustomerDto {
-    firstName!: string;
-    lastName!: string;
     customerRoutingNo!: string;
     customerAcctNo!: string;
-    customerAcctType!: string;
-    address1!: string | undefined;
-    address2!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    zipCode!: string | undefined;
-    dln!: string | undefined;
-    dlnState!: string | undefined;
-    ssn!: string | undefined;
-    dateOfBirth!: string | undefined;
-    originatorName!: string;
-    memo!: string | undefined;
 
     constructor(data?: IACHCustomerDto) {
         if (data) {
@@ -45482,22 +45472,8 @@ export class ACHCustomerDto implements IACHCustomerDto {
 
     init(data?: any) {
         if (data) {
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
             this.customerRoutingNo = data["customerRoutingNo"];
             this.customerAcctNo = data["customerAcctNo"];
-            this.customerAcctType = data["customerAcctType"];
-            this.address1 = data["address1"];
-            this.address2 = data["address2"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zipCode = data["zipCode"];
-            this.dln = data["dln"];
-            this.dlnState = data["dlnState"];
-            this.ssn = data["ssn"];
-            this.dateOfBirth = data["dateOfBirth"];
-            this.originatorName = data["originatorName"];
-            this.memo = data["memo"];
         }
     }
 
@@ -45510,43 +45486,15 @@ export class ACHCustomerDto implements IACHCustomerDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
         data["customerRoutingNo"] = this.customerRoutingNo;
         data["customerAcctNo"] = this.customerAcctNo;
-        data["customerAcctType"] = this.customerAcctType;
-        data["address1"] = this.address1;
-        data["address2"] = this.address2;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zipCode"] = this.zipCode;
-        data["dln"] = this.dln;
-        data["dlnState"] = this.dlnState;
-        data["ssn"] = this.ssn;
-        data["dateOfBirth"] = this.dateOfBirth;
-        data["originatorName"] = this.originatorName;
-        data["memo"] = this.memo;
         return data; 
     }
 }
 
 export interface IACHCustomerDto {
-    firstName: string;
-    lastName: string;
     customerRoutingNo: string;
     customerAcctNo: string;
-    customerAcctType: string;
-    address1: string | undefined;
-    address2: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zipCode: string | undefined;
-    dln: string | undefined;
-    dlnState: string | undefined;
-    ssn: string | undefined;
-    dateOfBirth: string | undefined;
-    originatorName: string;
-    memo: string | undefined;
 }
 
 export class PaymentAuthorizeResponseDto implements IPaymentAuthorizeResponseDto {
@@ -53046,6 +52994,7 @@ export interface ISetupSubscriptionInfoDto {
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
+    editionName!: string | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -53060,6 +53009,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         if (data) {
             this.module = data["module"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.editionName = data["editionName"];
         }
     }
 
@@ -53074,6 +53024,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data = typeof data === 'object' ? data : {};
         data["module"] = this.module;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["editionName"] = this.editionName;
         return data; 
     }
 }
@@ -53081,6 +53032,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 export interface IModuleSubscriptionInfoDto {
     module: ModuleSubscriptionInfoDtoModule | undefined;
     endDate: moment.Moment | undefined;
+    editionName: string | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
@@ -56456,6 +56408,11 @@ export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
 }
 
 export enum MemberInfoDtoGender {
+    _0 = 0, 
+    _1 = 1, 
+}
+
+export enum MemberPaymentAuthorizeRequestDtoPaymentType {
     _0 = 0, 
     _1 = 1, 
 }
