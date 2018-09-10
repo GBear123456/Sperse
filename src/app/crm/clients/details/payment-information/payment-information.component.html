@@ -28,17 +28,16 @@
         <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
     </div>
 
-    <div *dxTemplate="let billingSubscription of 'detail'">
-        <div class="master-detail-caption">{{'Billing info'}}</div>
-        <dx-data-grid [dataSource]="[billingSubscription.data.billingSubscription]"
+    <div *dxTemplate="let payment of 'detail'">
+        <div class="master-detail-caption">{{'Payments info'}}</div>
+        <dx-data-grid [dataSource]="payment.data.orderSubscriptionPayments"
                       [showBorders]="true"
                       [columnAutoWidth]="true">
 
-            <dxi-column dataField="frequency" caption="{{l('Frequency')}}"></dxi-column>
-            <dxi-column dataField="payerType" caption="{{l('Type')}}"></dxi-column>
+            <dxi-column dataField="status" [width]="120" caption="{{l('Status')}}"></dxi-column>
             <dxi-column dataField="fee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
-            <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
-            <dxi-column dataField="paymentMethod"></dxi-column>
+            <dxi-column dataField="startDate" dataType="date"></dxi-column>
+            <dxi-column dataField="endDate" dataType="date"></dxi-column>
 
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>

@@ -46522,7 +46522,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     trialEndDate!: moment.Moment | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
-    billingSubscription!: BillingSubscriptionDto | undefined;
+    orderSubscriptionPayments!: OrderSbuscriptionPaymentDto[] | undefined;
 
     constructor(data?: IOrderSubscriptionDto) {
         if (data) {
@@ -46547,7 +46547,11 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
             this.statusCode = data["statusCode"];
             this.status = data["status"];
-            this.billingSubscription = data["billingSubscription"] ? BillingSubscriptionDto.fromJS(data["billingSubscription"]) : <any>undefined;
+            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
+                this.orderSubscriptionPayments = [];
+                for (let item of data["orderSubscriptionPayments"])
+                    this.orderSubscriptionPayments.push(OrderSbuscriptionPaymentDto.fromJS(item));
+            }
         }
     }
 
@@ -46572,7 +46576,11 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
-        data["billingSubscription"] = this.billingSubscription ? this.billingSubscription.toJSON() : <any>undefined;
+        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
+            data["orderSubscriptionPayments"] = [];
+            for (let item of this.orderSubscriptionPayments)
+                data["orderSubscriptionPayments"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -46590,20 +46598,18 @@ export interface IOrderSubscriptionDto {
     trialEndDate: moment.Moment | undefined;
     statusCode: string | undefined;
     status: string | undefined;
-    billingSubscription: BillingSubscriptionDto | undefined;
+    orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
 }
 
-export class BillingSubscriptionDto implements IBillingSubscriptionDto {
+export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto {
     id!: number | undefined;
-    frequency!: string | undefined;
-    payerId!: string | undefined;
-    payerType!: string | undefined;
-    statusCode!: string | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
     status!: string | undefined;
     fee!: number | undefined;
-    paymentMethod!: string | undefined;
+    isSubscription!: boolean | undefined;
 
-    constructor(data?: IBillingSubscriptionDto) {
+    constructor(data?: IOrderSbuscriptionPaymentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46615,19 +46621,17 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.frequency = data["frequency"];
-            this.payerId = data["payerId"];
-            this.payerType = data["payerType"];
-            this.statusCode = data["statusCode"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.status = data["status"];
             this.fee = data["fee"];
-            this.paymentMethod = data["paymentMethod"];
+            this.isSubscription = data["isSubscription"];
         }
     }
 
-    static fromJS(data: any): BillingSubscriptionDto {
+    static fromJS(data: any): OrderSbuscriptionPaymentDto {
         data = typeof data === 'object' ? data : {};
-        let result = new BillingSubscriptionDto();
+        let result = new OrderSbuscriptionPaymentDto();
         result.init(data);
         return result;
     }
@@ -46635,26 +46639,22 @@ export class BillingSubscriptionDto implements IBillingSubscriptionDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["frequency"] = this.frequency;
-        data["payerId"] = this.payerId;
-        data["payerType"] = this.payerType;
-        data["statusCode"] = this.statusCode;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["fee"] = this.fee;
-        data["paymentMethod"] = this.paymentMethod;
+        data["isSubscription"] = this.isSubscription;
         return data; 
     }
 }
 
-export interface IBillingSubscriptionDto {
+export interface IOrderSbuscriptionPaymentDto {
     id: number | undefined;
-    frequency: string | undefined;
-    payerId: string | undefined;
-    payerType: string | undefined;
-    statusCode: string | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
     status: string | undefined;
     fee: number | undefined;
-    paymentMethod: string | undefined;
+    isSubscription: boolean | undefined;
 }
 
 export class ContactInfoBaseDto implements IContactInfoBaseDto {
