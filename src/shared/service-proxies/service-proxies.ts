@@ -47699,7 +47699,6 @@ export interface IPackageConfigDto {
 
 export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     id!: number | undefined;
-    packageId!: number | undefined;
     name!: string | undefined;
     displayName!: string | undefined;
     monthlyPrice!: number | undefined;
@@ -47719,7 +47718,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.packageId = data["packageId"];
             this.name = data["name"];
             this.displayName = data["displayName"];
             this.monthlyPrice = data["monthlyPrice"];
@@ -47745,7 +47743,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["packageId"] = this.packageId;
         data["name"] = this.name;
         data["displayName"] = this.displayName;
         data["monthlyPrice"] = this.monthlyPrice;
@@ -47764,7 +47761,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
 
 export interface IPackageEditionConfigDto {
     id: number | undefined;
-    packageId: number | undefined;
     name: string | undefined;
     displayName: string | undefined;
     monthlyPrice: number | undefined;
