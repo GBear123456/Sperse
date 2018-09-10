@@ -249,7 +249,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 ]})
         );
         dataSource.sort({getter: 'Id', desc: true});
-        dataSource.pageIndex(page);
+//        dataSource.pageIndex(page);
         dataSource.load().done((leads) => {              
             if (leads.length)
                 stage['leads'] = (page && oneStageOnly ? _.uniqBy(
@@ -258,7 +258,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         return lead;
                     });
             else  {
-                stage['leads'] = [];
+                if (!page)
+                    stage['leads'] = [];
                 stage['total'] = stage['leads'].length || 0;
                 stage['full'] = true;
             }
