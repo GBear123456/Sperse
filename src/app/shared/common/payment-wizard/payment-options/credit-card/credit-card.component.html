@@ -1,7 +1,12 @@
 <form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit()">
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="CARD NUMBER" type="tel" formControlName="cardNumber" ccNumber>
+            <input matInput
+                placeholder="CARD NUMBER"
+                type="tel"
+                formControlName="cardNumber"
+                (keypress)="checkCreditCardNumber($event)"
+                ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
                 {{ l('CardNumberValidationMessage') }}
             </mat-error>
@@ -44,7 +49,15 @@
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <input matInput placeholder="CVV CODE" type="tel" autocomplete="off" formControlName="cvv" minlength="3" maxlength="4" ccCVC>
+            <input matInput
+                placeholder="CVV CODE"
+                type="password"
+                autocomplete="off"
+                formControlName="cvv"
+                minlength="3"
+                [attr.maxlength]="cvvMaxLength"
+                id="cvvCode"
+                ccCVC>
             <mat-error *ngIf="creditCardData.controls.cvv.touched && creditCardData.controls.cvv.invalid">
                 {{ l('CvvValidationMessage') }}
             </mat-error>

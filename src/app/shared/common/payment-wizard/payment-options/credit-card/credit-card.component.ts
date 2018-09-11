@@ -34,6 +34,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     countries: Country[] = [];
     filteredCountries: Observable<Country[]>;
     billingCountryCodes: any;
+    cvvMaxLength = 3;
 
     creditCardData = this.formBuilder.group({
         holderName: ['', [<any>Validators.required]],
@@ -110,6 +111,13 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         if (e.which < 48 || e.which > 57) {
             e.preventDefault();
         }
+    }
+
+    checkCreditCardNumber(event) {
+        console.log(this.creditCardData);
+        event.target.classList.contains('amex') ?
+            this.cvvMaxLength = 4 :
+            this.cvvMaxLength = 3;
     }
 
     getStates(callback: () => any): void {
