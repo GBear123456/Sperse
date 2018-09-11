@@ -6,5 +6,6 @@
               displayExpr="displayName"
               showCheckBoxesMode="normal"
               [selectNodesRecursive]="false"
-              [searchEnabled]="searchEnabled">
+              [searchEnabled]="searchEnabled"
+              (onSelectionChanged)="onChange()">
 </dx-tree-view>

@@ -27,7 +27,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
     ) {
         super(injector);
 
-        _clientDetailsService.organizationUnitsSubscribe((userData) => {            
+        _clientDetailsService.orgUnitsSubscribe((userData) => {            
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         });
     }
@@ -71,6 +71,11 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
                 this.foreachNodes(item.children, expandLevel, currentLevel + 1);
             }
         }
+    }
+
+    onChange() {
+        this._clientDetailsService.orgUnitsSave(
+            this.getSelectedOrganizationUnits());
     }
 
     toolbarConfig = [

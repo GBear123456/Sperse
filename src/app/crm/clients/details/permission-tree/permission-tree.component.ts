@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild, OnInit } from '@angular/core';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
 import { ClientDetailsService } from '../client-details.service';
 import { finalize } from 'rxjs/operators';
 
@@ -33,7 +33,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
         _clientDetailsService.userSubscribe((userId) => {            
             if (this.data.userId = userId)
                 this.loadData();
-        })
+        });
     }
 
     ngOnInit() {        
@@ -44,11 +44,20 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
     loadData() {
         this.startLoading();
         this._userService.getUserPermissionsForEdit(this.data.userId)
-            .pipe(finalize(() => this.finishLoading(true)))
+            .pipe(finalize(() => this.finishLoading()))
             .subscribe((res) => {
                 this.setPermissionsData(res);   
             }
         );
+    }
+
+    update() {
+        this._userService.updateUserPermissions(UpdateUserPermissionsInput.fromJS({
+            id: this.data.userId,
+            grantedPermissionNames: this.getGrantedPermissionNames()
+        })).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
     }
 
     setPermissionsData(val: PermissionTreeEditModel) {
