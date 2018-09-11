@@ -28,8 +28,7 @@ import { AppService } from '@app/app.service';
 @Component({
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.less'],
-    selector: 'app-header',
-    encapsulation: ViewEncapsulation.None
+    selector: 'app-header'
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
