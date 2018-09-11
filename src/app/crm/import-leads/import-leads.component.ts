@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, PartnerTypesStoreSelectors } from '@app/crm/store';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
@@ -215,7 +215,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _partnerService: PartnerServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
         public importWizardService: ImportWizardService,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportItemInput.fromJS({}));

@@ -1,12 +1,18 @@
+/** Core imports */
 import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
 
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { AssignedUsersStoreSelectors, CrmStore} from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AssignContactGroupInput, AssignContactGroupsInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
 
-import * as _ from 'underscore';
-import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-user-assignment-list',
@@ -18,7 +24,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     @Input() multiSelection = false;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Assign']";
+    @Input() targetSelector = '[aria-label="Assign"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() get selectedItemKey() {
@@ -26,7 +32,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
             (this.selectedItemKeys && this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined);
     }
     set selectedItemKey(value) {
-        this.selectedItemKeys = this.multiSelection ? value: [value];
+        this.selectedItemKeys = this.multiSelection ? value : [value];
     }
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -38,7 +44,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _userAssignmentService: UserAssignmentServiceProxy
+        private _userAssignmentService: UserAssignmentServiceProxy,
+        private store$: Store<CrmStore.State>,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -125,8 +132,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
-        /** @todo change for store selecting */
-        this._userAssignmentService.getUsers(true).subscribe((result) => {
+        this.store$.pipe(select(AssignedUsersStoreSelectors.getAssignedUsers)).subscribe((result) => {
             this.list = result;
         });
     }

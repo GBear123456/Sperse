@@ -35,7 +35,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
             SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
         }
 
-        this.getRootComponent().addScriptLink("https://use.typekit.net/ocj2gqu.js", 'text/javascript', () => {
+        this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
             try { Typekit.load({ async: true }); } catch (e) { }
         });
     }

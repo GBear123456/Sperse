@@ -6,7 +6,16 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, finalize, map, startWith, switchMap, withLatestFrom, tap } from 'rxjs/operators';
+import {
+    catchError,
+    finalize,
+    map,
+    startWith,
+    switchMap,
+    withLatestFrom,
+    exhaustMap,
+    mergeMap
+} from 'rxjs/operators';
 
 /** Application imports */
 import * as partnerTypesActions from './actions';
@@ -33,7 +42,7 @@ export class PartnerTypesStoreEffects {
         startWith(new partnerTypesActions.LoadRequestAction(false)),
         ofType<partnerTypesActions.LoadRequestAction>(partnerTypesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
-        switchMap(([action, loaded]) => {
+        exhaustMap(([action, loaded]) => {
 
             if (loaded) {
                 return empty();
@@ -55,7 +64,7 @@ export class PartnerTypesStoreEffects {
     addPartnerTypeRequest$: Observable<Action> = this.actions$.pipe(
         ofType<partnerTypesActions.AddPartnerType>(partnerTypesActions.ActionTypes.ADD_PARTNER_TYPE),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             const request = this.partnersService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
                 partnerIds: payload.partnerIds,
                 typeName: payload.typeName
@@ -78,7 +87,7 @@ export class PartnerTypesStoreEffects {
     renamePartnerTypeRequest$: Observable<Action> = this.actions$.pipe(
         ofType<partnerTypesActions.RenamePartnerType>(partnerTypesActions.ActionTypes.RENAME_PARTNER_TYPE),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             return this.partnerTypeServiceProxy.rename(RenamePartnerTypeInput.fromJS({
                 id: payload.id,
                 name: payload.name
@@ -100,7 +109,7 @@ export class PartnerTypesStoreEffects {
     removePartnerTypeRequest$: Observable<Action> = this.actions$.pipe(
         ofType<partnerTypesActions.RemovePartnerType>(partnerTypesActions.ActionTypes.REMOVE_PARTNER_TYPE),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             return this.partnerTypeServiceProxy.delete(payload.id, payload.moveToPartnerTypeId, payload.deleteAllReferences).pipe(
                 finalize(() => {
                     this.store$.dispatch(new partnerTypesActions.LoadRequestAction(true));

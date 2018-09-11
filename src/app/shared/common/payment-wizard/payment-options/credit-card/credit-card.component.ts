@@ -1,9 +1,14 @@
-import { Component, OnInit, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
-import { FormBuilder, Validators, NgForm } from '@angular/forms';
+/** Core imports */
+import { Component, OnInit, Injector, ChangeDetectionStrategy } from '@angular/core';
+import { FormBuilder, NgForm } from '@angular/forms';
 
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { CreditCardValidator } from 'ngx-credit-cards';
-import * as _ from 'underscore';
 
+/** Application imports */
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto, CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 
@@ -39,7 +44,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private formBuilder: FormBuilder,
-        private _countryService: CountryServiceProxy
+        private _countryService: CountryServiceProxy,
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
         this.getStates();
@@ -56,25 +62,25 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     getStates(): void {
-        this._countryService
-            .getCountryStates(this.countryCode)
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
             });
     }
 
     getCountries(): void {
-        this._countryService.getCountries()
-            .subscribe(result => {
-                this.countries = result;
-            });
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
+            this.countries = result;
+        });
     }
 
     onCountryChange(event) {
         let countryCode = event.value;
         if (countryCode) {
-            this._countryService
-                .getCountryStates(countryCode)
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
                 .subscribe(result => {
                     this.states = result;
                     if (!this.states.length) {

@@ -19,14 +19,14 @@ import * as _ from 'underscore';
 import { AppService } from '@app/app.service';
 import {
     AssignedUsersStoreSelectors,
-    CrmStoreState,
+    CrmStore,
     ListsStoreSelectors,
     PartnerTypesStoreSelectors,
     RatingsStoreSelectors,
     StarsStoreSelectors,
     StatusesStoreSelectors,
     TagsStoreSelectors
-} from '@app/crm/shared/store';
+} from '@app/crm/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -115,7 +115,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _clientService: ClientService,
         private _partnerService: PartnerServiceProxy,
         private _partnerTypeService: PartnerTypeServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 

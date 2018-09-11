@@ -1,14 +1,14 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { State } from './state';
 
-export const getAddressUsageTypesState = createFeatureSelector<State>('addressUsageTypes');
+export const getEmailUsageTypesState = createFeatureSelector<State>('emailUsageTypes');
 
-export const getAddressUsageTypes = createSelector(
-    getAddressUsageTypesState,
-    (state: State) => state.addressUsageTypes
+export const getEmailUsageTypes = createSelector(
+    getEmailUsageTypesState,
+    (state: State) => state.emailUsageTypes
 );
 
 export const getLoaded = createSelector(
-    getAddressUsageTypesState,
+    getEmailUsageTypesState,
     (state: State) => state.loaded
 );

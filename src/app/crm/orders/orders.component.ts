@@ -14,7 +14,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CrmStoreState, PipelinesStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
@@ -71,7 +71,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 private _filtersService: FiltersService,
                 private _orderService: OrderServiceProxy,
                 private _appService: AppService,
-                private store$: Store<CrmStoreState.CrmState>
+                private store$: Store<CrmStore.State>
                 ) {
         super(injector);
 

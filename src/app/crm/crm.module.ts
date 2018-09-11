@@ -48,11 +48,10 @@ import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component.ts';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { CrmStoreModule } from '@app/crm/shared/store/crm-store.module';
+import { CrmStoreModule } from '@app/crm/store/crm-store.module';
 import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
@@ -166,12 +165,12 @@ export class CrmModule {
 
     constructor(
         private _appService: AppService,
-        private _importLeadsService: ImportLeadsService    
-    ) {        
+        private _importLeadsService: ImportLeadsService
+    ) {
         _appService.subscribeModuleChange((config) => {
             if (config['name'] == this.name)
                 _importLeadsService.setupImportCheck();
-            else 
+            else
                 _importLeadsService.stopImportCheck();
         });
     }

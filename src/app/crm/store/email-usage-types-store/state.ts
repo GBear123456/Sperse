@@ -1,14 +1,14 @@
-import { AddressUsageTypeDto } from 'shared/service-proxies/service-proxies';
+import { EmailUsageTypeDto } from 'shared/service-proxies/service-proxies';
 
 export interface State {
-    addressUsageTypes: AddressUsageTypeDto[];
+    emailUsageTypes: EmailUsageTypeDto[];
     isLoading: boolean;
     error: string;
     loaded: boolean;
 }
 
 export const initialState: State = {
-    addressUsageTypes: null,
+    emailUsageTypes: null,
     isLoading: false,
     error: null,
     loaded: false

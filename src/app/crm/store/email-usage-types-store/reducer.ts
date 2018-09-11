@@ -1,7 +1,7 @@
 import { ActionTypes } from './actions';
 import { State, initialState } from './state';
 
-export function addressUsageTypesReducer(state: State = initialState, action) {
+export function emailUsageTypesReducer(state: State = initialState, action) {
     switch (action.type) {
         case ActionTypes.LOAD_REQUEST: {
             const reload = action.payload;
@@ -15,7 +15,7 @@ export function addressUsageTypesReducer(state: State = initialState, action) {
         case ActionTypes.LOAD_SUCCESS: {
             return {
                 ...state,
-                addressUsageTypes: action.payload,
+                emailUsageTypes: action.payload,
                 isLoading: false,
                 error: null,
                 loaded: true

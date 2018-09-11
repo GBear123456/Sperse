@@ -6,7 +6,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, finalize, map, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, exhaustMap, finalize, map, mergeMap, startWith, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactGroupListsServiceProxy, ContactGroupListInfoDto, AddContactGroupsToListsInput, UpdateContactGroupListInput, UpdateContactGroupListsInput } from 'shared/service-proxies/service-proxies';
@@ -26,7 +26,7 @@ export class ListsStoreEffects {
         startWith(new listsActions.LoadRequestAction(false)),
         ofType<listsActions.LoadRequestAction>(listsActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
-        switchMap(([action, loaded]) => {
+        exhaustMap(([action, loaded]) => {
 
             if (loaded) {
                 return empty();
@@ -48,7 +48,7 @@ export class ListsStoreEffects {
     addListRequest$: Observable<Action> = this.actions$.pipe(
         ofType<listsActions.AddList>(listsActions.ActionTypes.ADD_LIST),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             let request: Observable<any>;
             if (payload.serviceMethodName === 'addContactGroupsToLists') {
                 request = this._listsService[payload.serviceMethodName ](AddContactGroupsToListsInput.fromJS({
@@ -81,7 +81,7 @@ export class ListsStoreEffects {
     renameListRequest$: Observable<Action> = this.actions$.pipe(
         ofType<listsActions.RenameList>(listsActions.ActionTypes.RENAME_LIST),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             return this._listsService.rename(UpdateContactGroupListInput.fromJS({
                 id: payload.id,
                 name: payload.name
@@ -103,7 +103,7 @@ export class ListsStoreEffects {
     removeListRequest$: Observable<Action> = this.actions$.pipe(
         ofType<listsActions.RemoveList>(listsActions.ActionTypes.REMOVE_LIST),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             return this._listsService.delete(payload.id, payload.moveToListId, payload.deleteAllReferences).pipe(
                 finalize(() => {
                     this.store$.dispatch(new listsActions.LoadRequestAction(true));

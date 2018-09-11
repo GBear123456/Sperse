@@ -28,17 +28,6 @@ export function tagsReducer(state: State = initialState, action) {
                 error: action.payload
             };
         }
-        // case ActionTypes.ADD_TAG_SUCCESS: {
-        //     const stateTagsNames = state.tags.map(tag => tag.name);
-        //     const assignedTagsNames = action.payload.tags.map(tag => tag.name);
-        //     const newTags = assignedTagsNames.filter(assignedTagName => stateTagsNames.indexOf(assignedTagName) === -1);
-        //     /** @todo chekc how to modify state with new tags */
-        //     state.tags.concat(newTags);
-        //     return {
-        //         ...state,
-        //         tags: [ ...state.tags ]
-        //     };
-        // }
         case ActionTypes.RENAME_TAG: {
             const tagId = action.payload.id;
             const newName = action.payload.name;

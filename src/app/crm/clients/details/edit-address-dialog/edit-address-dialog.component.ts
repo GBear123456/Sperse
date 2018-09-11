@@ -1,15 +1,18 @@
-import { AppConsts } from '@shared/AppConsts';
+/** Application imports */
 import { Component, Inject, Injector, ElementRef } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import {
-    ContactAddressServiceProxy,
-    CountryServiceProxy,
-    CountryStateDto, CountryDto
-} from '@shared/service-proxies/service-proxies';
-
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
+import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/crm/store';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -26,7 +29,7 @@ export class EditAddressDialog extends AppComponentBase {
     action: string;
     address: any;
     movePos: any;
-    isEditAllowed: boolean = false;
+    isEditAllowed = false;
     states: CountryStateDto[];
     countries: CountryDto[];
 
@@ -36,8 +39,8 @@ export class EditAddressDialog extends AppComponentBase {
                 private elementRef: ElementRef,
                 @Inject(MAT_DIALOG_DATA) public data: any,
                 public dialogRef: MatDialogRef<EditAddressDialog>,
-                private _contactAddressService: ContactAddressServiceProxy,
-                private _countryService: CountryServiceProxy) {
+                private store$: Store<RootStore.State>
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
         if (this.validateAddress(data)) {
@@ -59,19 +62,20 @@ export class EditAddressDialog extends AppComponentBase {
     }
 
     countriesStateLoad(): void {
-        this._countryService.getCountries()
-            .subscribe(result => {
-                this.countries = result;
-                if (this.data.country)
-                    this.onCountryChange({
-                        value: this.data.country
-                    });
-            });
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
+            this.countries = result;
+            if (this.data.country)
+                this.onCountryChange({
+                    value: this.data.country
+                });
+        });
     }
 
     onCountryChange(event) {
-        this._countryService
-            .getCountryStates(_.findWhere(this.countries, {name: event.value})['code'])
+        const countryCode = _.findWhere(this.countries, {name: event.value})['code'];
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
             .subscribe(result => {
                 this.states = result;
             });
@@ -85,9 +89,12 @@ export class EditAddressDialog extends AppComponentBase {
     }
 
     addressTypesLoad() {
-        this._contactAddressService.getAddressUsageTypes().subscribe(result => {
-            this.types = result.items;
-        });
+        this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(AddressUsageTypesStoreSelectors.getAddressUsageTypes))
+            .subscribe(result => {
+                if (result)
+                    this.types = result;
+            });
     }
 
     onSave(event) {

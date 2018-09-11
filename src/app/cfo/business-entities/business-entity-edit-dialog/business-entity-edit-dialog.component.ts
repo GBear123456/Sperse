@@ -1,7 +1,16 @@
+/** Core imports */
 import { Component, OnInit, Injector } from '@angular/core';
+
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { RootStore, StatesStoreSelectors, StatesStoreActions } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-
 import {
     InstanceType,
     BusinessEntityServiceProxy,
@@ -10,13 +19,11 @@ import {
     BusinessEntityInfoDto,
     CountryServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { finalize } from 'rxjs/operators';
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
     styleUrls: ['business-entity-edit-dialog.component.less'],
-    providers: [BusinessEntityServiceProxy, CountryServiceProxy]
+    providers: [ BusinessEntityServiceProxy, CountryServiceProxy ]
 })
 export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent implements OnInit {
 
@@ -44,7 +51,8 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     constructor(
         injector: Injector,
         private _countryService: CountryServiceProxy,
-        private _businessEntityService: BusinessEntityServiceProxy
+        private _businessEntityService: BusinessEntityServiceProxy,
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
 
@@ -85,7 +93,6 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
     ngOnInit() {
         super.ngOnInit();
-
         this.initHeader();
     }
 
@@ -117,21 +124,22 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     }
 
     countriesStateLoad(): void {
-        this._countryService.getCountries()
-            .subscribe(result => {
-                this.countries = result;
-                if (this.address['country']) {
-                    this.onCountryChange({ value: this.address['country'] });
-                }
-            });
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
+            this.countries = result;
+            if (this.address['country']) {
+                this.onCountryChange({ value: this.address['country'] });
+            }
+        });
     }
 
     onCountryChange(event) {
         let countryCode = this.getCountryCode(event.value);
         if (countryCode) {
-            this._countryService
-                .getCountryStates(countryCode)
-                .subscribe(result => {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+            this.store$.pipe(select(StatesStoreSelectors.getState, {
+                countryCode: countryCode
+            })).subscribe(result => {
                     this.states = result;
                     if (this.businessEntity.stateId && !this.address['state']) {
                         let state = _.findWhere(this.states, { code: this.businessEntity.stateId });

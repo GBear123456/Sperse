@@ -1,6 +1,12 @@
-import { AppConsts } from '@shared/AppConsts';
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+/** Core imports */
 import { Component, OnInit, Injector, Input } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+
+/** Application imports */
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactGroupInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
@@ -8,7 +14,6 @@ import {
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
-import { MatDialog } from '@angular/material';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
@@ -55,7 +60,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
     }
 
-    getDialogPossition(event) {
+    getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('li');
         return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
@@ -92,7 +97,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
         this.dialog.open(EditContactDialog, {
             data: dialogData,
             hasBackdrop: false,
-            position: this.getDialogPossition(event)
+            position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
             if (result) {
                 if (dialogData.contactId) {

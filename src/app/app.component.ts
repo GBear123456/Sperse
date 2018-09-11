@@ -49,7 +49,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
     subscriptionIsExpiringSoon(): boolean {
         if (this._appSessionService.tenant && this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') 
+            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days')
                 >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
         }
         return false;

@@ -13,13 +13,13 @@ import * as _ from 'underscore';
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { AssignedUsersStoreSelectors,
-    CrmStoreState,
+    CrmStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
     StatusesStoreSelectors,
     RatingsStoreSelectors
-} from '@app/crm/shared/store';
+} from '@app/crm/store';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -101,7 +101,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _activatedRoute: ActivatedRoute,
         private _contactGroupServiceProxy: ContactGroupServiceProxy,
         private _clientService: ClientService,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -620,7 +620,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     activate() {
-        this._filtersService.localizationSourceName = 
+        this._filtersService.localizationSourceName =
             this.localizationSourceName;
 
         if (this.searchValue)

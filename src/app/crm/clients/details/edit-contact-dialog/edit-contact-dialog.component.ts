@@ -1,8 +1,14 @@
+/** Core imports */
 import { Component, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
+/** Application imports */
+import { CrmStore, ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors, EmailUsageTypesStoreActions, EmailUsageTypesStoreSelectors, PhoneUsageTypesStoreActions, PhoneUsageTypesStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import {
@@ -23,13 +29,13 @@ import {
 export class EditContactDialog extends AppComponentBase {
     @ViewChild('countryPhoneNumber') countryPhoneNumber;
 
-    isValid: boolean = false;
+    isValid = false;
     action: string;
     types: any[] = [];
     validator: any;
     movePos: any;
 
-    isEditAllowed: boolean = false;
+    isEditAllowed = false;
 
     masks = AppConsts.masks;
     urlRegEx = AppConsts.regexPatterns.url;
@@ -40,7 +46,8 @@ export class EditContactDialog extends AppComponentBase {
                 public dialogRef: MatDialogRef<EditContactDialog>,
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
-                private _contactLinkService: ContactLinkServiceProxy) {
+                private _contactLinkService: ContactLinkServiceProxy,
+                private store$: Store<CrmStore.State>) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
@@ -50,21 +57,32 @@ export class EditContactDialog extends AppComponentBase {
     }
 
     urlTypesLoad() {
-        this._contactLinkService.getContactLinkTypes().subscribe(result => {
-            this.types = result.items;
-            this.types.unshift({id: AppConsts.otherLinkTypeId, name: this.l('Other Link')});
+        this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            this.types = types;
         });
     }
 
     emailAddressTypesLoad() {
-        this._contactEmailService.getEmailUsageTypes().subscribe(result => {
-            this.types = result.items;
+        this.store$.dispatch(new EmailUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(EmailUsageTypesStoreSelectors.getEmailUsageTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            this.types = types;
         });
     }
 
     phoneNumberTypesLoad() {
-        this._contactPhoneService.getPhoneUsageTypes().subscribe(result => {
-            this.types = result.items;
+        this.store$.dispatch(new PhoneUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            this.types = types;
         });
     }
 
@@ -124,5 +142,9 @@ export class EditContactDialog extends AppComponentBase {
 
             this.mouseDown(event);
         }
+    }
+
+    ngOnDestroy() {
+
     }
 }

@@ -6,7 +6,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, map, startWith, switchMap, withLatestFrom, finalize } from 'rxjs/operators';
+import { catchError, map, startWith, withLatestFrom, finalize, exhaustMap, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactGroupTagsServiceProxy, ContactGroupTagInfoDto, TagContactGroupsInput, UpdateContactGroupTagInput, UpdateContactGroupTagsInput } from 'shared/service-proxies/service-proxies';
@@ -26,7 +26,7 @@ export class TagsStoreEffects {
         startWith(new tagsActions.LoadRequestAction(false)),
         ofType<tagsActions.LoadRequestAction>(tagsActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
-        switchMap(([action, loaded]) => {
+        exhaustMap(([action, loaded]) => {
 
             if (loaded) {
                 return empty();
@@ -48,7 +48,7 @@ export class TagsStoreEffects {
     addTagRequest$: Observable<Action> = this.actions$.pipe(
         ofType<tagsActions.AddTag>(tagsActions.ActionTypes.ADD_TAG),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             let request: Observable<any>;
             if (payload.serviceMethodName === 'tagContactGroups') {
                 request = this._tagsService[payload.serviceMethodName ](TagContactGroupsInput.fromJS({
@@ -81,7 +81,7 @@ export class TagsStoreEffects {
     renameTagRequest$: Observable<Action> = this.actions$.pipe(
         ofType<tagsActions.RenameTag>(tagsActions.ActionTypes.RENAME_TAG),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             return this._tagsService.rename(UpdateContactGroupTagInput.fromJS({
                 id: payload.id,
                 name: payload.name
@@ -104,7 +104,7 @@ export class TagsStoreEffects {
     removeTagRequest$: Observable<Action> = this.actions$.pipe(
         ofType<tagsActions.RemoveTag>(tagsActions.ActionTypes.REMOVE_TAG),
         map(action => action.payload),
-        switchMap(payload => {
+        mergeMap(payload => {
             return this._tagsService.delete(payload.id, payload.moveToTagId, payload.deleteAllReferences).pipe(
                 finalize(() => {
                     /** Reload data from server */

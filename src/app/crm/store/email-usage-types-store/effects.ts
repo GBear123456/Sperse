@@ -5,23 +5,24 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
+import { finalize, catchError, exhaustMap, map, mergeMap, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
-import * as addressUsageTypesActions from './actions';
-import { AddressUsageTypeDto, ContactAddressServiceProxy } from 'shared/service-proxies/service-proxies';
+import * as emailUsageTypesActions from '@app/crm/store/email-usage-types-store/actions';
+import { ContactEmailServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
+import { ListResultDtoOfEmailUsageTypeDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
-export class AddressUsageTypesStoreEffects {
-    constructor(private contactAddressServiceProxy: ContactAddressServiceProxy,
+export class EmailUsageTypesStoreEffects {
+    constructor(private contactEmailServiceProxy: ContactEmailServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
-        ofType<addressUsageTypesActions.LoadRequestAction>(addressUsageTypesActions.ActionTypes.LOAD_REQUEST),
+        ofType<emailUsageTypesActions.LoadRequestAction>(emailUsageTypesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {
 
@@ -29,13 +30,13 @@ export class AddressUsageTypesStoreEffects {
                 return empty();
             }
 
-            return this.contactAddressServiceProxy.getAddressUsageTypes()
+            return this.contactEmailServiceProxy.getEmailUsageTypes()
                 .pipe(
-                    map((addressUsageTypes: AddressUsageTypeDto[]) => {
-                        return new addressUsageTypesActions.LoadSuccessAction(addressUsageTypes);
+                    map((emailUsageTypes: ListResultDtoOfEmailUsageTypeDto) => {
+                        return new emailUsageTypesActions.LoadSuccessAction(emailUsageTypes.items);
                     }),
                     catchError(err => {
-                        return of(new addressUsageTypesActions.LoadFailureAction(err));
+                        return of(new emailUsageTypesActions.LoadFailureAction(err));
                     })
                 );
         })

@@ -1,12 +1,12 @@
-import * as AddressUsageTypesStoreActions from './actions';
-import * as AddressUsageTypesStoreSelectors from './selectors';
-import * as AddressUsageTypesStoreState from './state';
+import * as EmailUsageTypesStoreActions from './actions';
+import * as EmailUsageTypesStoreSelectors from './selectors';
+import * as EmailUsageTypesStoreState from './state';
 
-export { AddressUsageTypesStoreModule } from './address-usage-types-store.module';
+export { EmailUsageTypesStoreModule } from './email-usage-types-store.module';
 
 export {
-    AddressUsageTypesStoreActions,
-    AddressUsageTypesStoreSelectors,
-    AddressUsageTypesStoreState
+    EmailUsageTypesStoreActions,
+    EmailUsageTypesStoreSelectors,
+    EmailUsageTypesStoreState
 };
 

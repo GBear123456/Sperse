@@ -13,12 +13,12 @@ import { GestureConfig } from '@angular/material';
 import * as _ from 'lodash';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CommonModule } from '@shared/common/common.module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
+import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
@@ -26,7 +26,7 @@ import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
-
+import { RootStoreModule } from '@root/store';
 
 export function appInitializerFactory(
     injector: Injector,
@@ -130,11 +130,11 @@ function handleLogoutRequest(authService: AppAuthService) {
 
 @NgModule({
     imports: [
-        CommonModule.forRoot(),
         AbpModule,
         ServiceProxyModule,
         HttpClientModule,
         RootRoutingModule,
+        RootStoreModule,
         BrowserAnimationsModule
     ],
     declarations: [
@@ -142,13 +142,17 @@ function handleLogoutRequest(authService: AppAuthService) {
     ],
     providers: [
         AppLocalizationService,
+        AppUiCustomizationService,
+        AppAuthService,
+        AppRouteGuard,
+        AppSessionService,
         httpConfiguration,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         {
             provide: APP_INITIALIZER,
             useFactory: appInitializerFactory,
-            deps: [Injector, PlatformLocation],
+            deps: [ Injector, PlatformLocation ],
             multi: true
         },
         {
@@ -164,7 +168,7 @@ function handleLogoutRequest(authService: AppAuthService) {
             useClass: GestureConfig
         }
     ],
-    bootstrap: [RootComponent]
+    bootstrap: [ RootComponent ]
 })
 export class RootModule {
 

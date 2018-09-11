@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { catchError, map, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, exhaustMap, map, startWith, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as starsActions from './actions';
@@ -24,7 +24,7 @@ export class StarsStoreEffects {
         startWith(new starsActions.LoadRequestAction(false)),
         ofType<starsActions.LoadRequestAction>(starsActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
-        switchMap(([action, loaded]) => {
+        exhaustMap(([action, loaded]) => {
 
             if (loaded) {
                 return empty();
