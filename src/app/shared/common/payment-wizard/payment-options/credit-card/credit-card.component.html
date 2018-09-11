@@ -1,4 +1,4 @@
-<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit(creditCardData)">
+<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit()">
     <div class="row">
         <mat-form-field class="col-8">
             <input matInput placeholder="CARD NUMBER" type="tel" formControlName="cardNumber" ccNumber>
@@ -8,7 +8,6 @@
         </mat-form-field>
 
         <div class="col-4">
-            <!--  @TODO add exp date validation -->
             <div class="row">
                 <mat-form-field class="col-4">
                     <input matInput placeholder="MM"
@@ -55,26 +54,13 @@
     <div class="row">
         <mat-form-field class="col-8">
             <input matInput
+                type="text"
                 placeholder="ADDRESS"
-                formControlName="billingAddress">
-            <!-- <input *ngIf="!googleAutoComplete" type="text"
-                name="Address"
-                placeholder="{{l('Address')}}"
-                [(ngModel)]="creditCardData.billingAddress"
-                class="dx-texteditor-input"/>
-            <input *ngIf="googleAutoComplete" type="text"
-                name="Address"
-                placeholder="{{l('Street')}}"
-                [(ngModel)]="contacts.addresses[type].address"
-                class="dx-texteditor-input"
-                (country)="contacts.addresses[type].country=$event"
-                (street_number)='contacts.addresses[type].streetNumber=$event'
-                (street)='contacts.addresses[type].streetAddress=$event'
-                (city)='contacts.addresses[type].city=$event'
-                (state)='contacts.addresses[type].state=$event'
-                (postal_code)='contacts.addresses[type].zip=$event'
-                (setAddress)="onAddressChanged($event, type)"
-                angularGooglePlace/> -->
+                formControlName="billingAddress"
+                (postal_code)="creditCardData.controls.billingZip.setValue($event)"
+                (city)="creditCardData.controls.billingCity.setValue($event)"
+                (setAddress)="setBillingAddress($event)"
+                angularGooglePlace>
             <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">
                 {{ l('BillingAddressValidationMessage') }}
             </mat-error>
@@ -89,17 +75,17 @@
     </div>
 
     <div class="row">
-        <mat-form-field class="col-4">
-            <mat-select disableOptionCentering placeholder="STATE OR PROVINCE" formControlName="billingStateCode">
-                <mat-option *ngFor="let state of states" [value]="state.code">
-                    {{state.name}}
+        <mat-form-field class="col-4 field">
+            <input type="text" placeholder="STATE OR PROVINCE" aria-label="State" matInput formControlName="billingState" [matAutocomplete]="state">
+            <mat-autocomplete #state="matAutocomplete" [displayWith]="displayName">
+                <mat-option *ngFor="let state of states" [value]="state">
+                    {{ state.name }}
                 </mat-option>
-            </mat-select>
-            <mat-error *ngIf="creditCardData.controls.billingStateCode.touched && creditCardData.controls.billingStateCode.invalid">
+            </mat-autocomplete>
+            <mat-error *ngIf="creditCardData.controls.billingState.touched && creditCardData.controls.billingState.invalid">
                 {{ l('BillingStateValidationMessage') }}
             </mat-error>
         </mat-form-field>
-
         <mat-form-field class="col-4">
             <input matInput placeholder="ZIP CODE" type="tel" maxlength="5" formControlName="billingZip">
             <mat-error *ngIf="creditCardData.controls.billingZip.touched && creditCardData.controls.billingZip.invalid">
@@ -108,12 +94,18 @@
         </mat-form-field>
 
         <mat-form-field class="col-4">
-            <mat-select disableOptionCentering placeholder="COUNTRY" (selectionChange)="onCountryChange($event)" formControlName="billingCountryCode">
-                <mat-option *ngFor="let country of countries" [value]="country.code">
-                    {{country.name}}
+            <input type="text" placeholder="COUNTRY" aria-label="Country" matInput formControlName="billingCountry" [matAutocomplete]="country">
+            <mat-autocomplete
+                #country="matAutocomplete"
+                autoActiveFirstOption
+                (optionSelected)="onCountryChange($event)"
+                [displayWith]="displayName">
+                <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
+                    {{ country.name }}
                 </mat-option>
-            </mat-select>
-            <mat-error *ngIf="creditCardData.controls.billingCountryCode.touched && creditCardData.controls.billingCountryCode.invalid">
+            </mat-autocomplete>
+
+            <mat-error *ngIf="creditCardData.controls.billingCountry.touched && creditCardData.controls.billingCountry.invalid">
                 {{ l('BillingCountryValidationMessage') }}
             </mat-error>
         </mat-form-field>
