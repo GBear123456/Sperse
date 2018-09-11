@@ -7,20 +7,30 @@ import { MatDialog } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
-import { finalize } from 'rxjs/operators';
+import { finalize, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import {
+    AddressUsageTypesStoreActions,
+    AddressUsageTypesStoreSelectors,
+    EmailUsageTypesStoreActions,
+    EmailUsageTypesStoreSelectors,
+    PhoneUsageTypesStoreSelectors
+} from '@app/crm/store';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactTypes, ContactGroupType } from '@shared/AppEnums';
-import { ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy,  CreateContactEmailInput,
-CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-ContactPhoneServiceProxy, CountryServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
-PersonInfoDto, LeadServiceProxy, CreateLeadInput, PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy, CreateContactEmailInput,
+    CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
+    ContactPhoneServiceProxy, CountryServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
+    PersonInfoDto, LeadServiceProxy, CreateLeadInput
+} from '@shared/service-proxies/service-proxies';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
@@ -36,8 +46,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ ContactGroupServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy,
-        PartnerServiceProxy, PartnerTypeServiceProxy ]
+    providers: [ContactGroupServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -56,7 +65,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phonesPersonal: any;
     phonesBusiness: any;
 
-    private readonly SAVE_OPTION_DEFAULT   = 1;
+    private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersTimeout: any;
     stages: any[] = [];
@@ -64,7 +73,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     partnerTypes: any[] = [];
     partnerTypeName: string;
 
-    saveButtonId: string = 'saveClientOptions';
+    saveButtonId = 'saveClientOptions';
     saveContextMenuItems = [];
 
     masks = AppConsts.masks;
@@ -117,7 +126,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     clearButtonVisible = {
         personal: {},
         business: {}
-    }
+    };
 
     contacts: any = {
         emails: {
@@ -155,7 +164,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
         private dialogService: DialogService,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
 
@@ -199,29 +208,29 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                             accessKey: 'CreateLeadStage'
                         }
                     } : this.data.customerType == ContactGroupType.Client ? {
-                        name: 'status',
-                        widget: 'dxDropDownMenu',
-                        disabled: true,
-                        options: {
-                            hint: 'Status',
-                            items: [
-                                {
-                                    action: Function(),
-                                    text: 'Active',
-                                }, {
-                                    action: Function(),
-                                    text: 'Inactive',
-                                }
-                            ]
-                        }
-                    } :
-                    {
-                        name: 'partnerType',
-                        action: this.togglePartnerTypes.bind(this),
-                        options: {
-                            accessKey: 'PartnerTypesList'
-                        }
-                    },
+                            name: 'status',
+                            widget: 'dxDropDownMenu',
+                            disabled: true,
+                            options: {
+                                hint: 'Status',
+                                items: [
+                                    {
+                                        action: Function(),
+                                        text: 'Active',
+                                    }, {
+                                        action: Function(),
+                                        text: 'Inactive',
+                                    }
+                                ]
+                            }
+                        } :
+                        {
+                            name: 'partnerType',
+                            action: this.togglePartnerTypes.bind(this),
+                            options: {
+                                accessKey: 'PartnerTypesList'
+                            }
+                        },
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
@@ -380,18 +389,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (!this.validateMultiple(this.emailValidators) ||
             !this.validateMultiple(this.phoneValidators)
         )
-            return ;
+            return;
 
         this.checkAddContactByField('emails');
         this.checkAddContactByField('phones');
 
         if (!this.validateBusinessTab())
-            return ;
+            return;
 
         this.createEntity();
     }
 
-    private validateMultiple(validators): boolean{
+    private validateMultiple(validators): boolean {
         let result = true;
         validators.forEach((v) => { result = result && v.validate().isValid; });
         return result;
@@ -402,7 +411,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             || this.contacts.phones.business.length
             || this.contacts.addresses.business.streetAddress
             || this.contacts.addresses.business.streetNumber
-          ) && !this.company
+        ) && !this.company
         )
             return this.notify.error(this.l('CompanyNameIsRequired'));
 
@@ -412,7 +421,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkAddContactByField(field) {
         _.mapObject(this.addButtonVisible,
             (obj, type) => {
-              obj[field] && this.addContact(field, type);
+                obj[field] && this.addContact(field, type);
             }
         );
     }
@@ -441,10 +450,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     getAddressContactInput(type) {
         let address = this.contacts.addresses[type];
         let streetAddressParts = [];
-          if (address.streetAddress)
-              streetAddressParts.push(address.streetAddress);
-          if (address.streetNumber)
-              streetAddressParts.push(address.streetNumber);
+        if (address.streetAddress)
+            streetAddressParts.push(address.streetAddress);
+        if (address.streetNumber)
+            streetAddressParts.push(address.streetNumber);
         let streetAddress = streetAddressParts.length ? streetAddressParts.join(' ') : address.address;
         if (streetAddress ||
             address.city ||
@@ -471,7 +480,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             let path = this.data.customerType == ContactGroupType.Partner ?
                 `app/crm/partner/${id}/contact-information` :
                 `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
-            this._router.navigate([path], { queryParams: { referrer: this._router.url.split('?').shift() } });
+            this._router.navigate([path], {queryParams: {referrer: this._router.url.split('?').shift()}});
         }, 1000);
         this.close();
     }
@@ -481,12 +490,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.similarCustomersDialog.close();
 
         this.similarCustomersDialog = this.dialog.open(SimilarCustomersDialogComponent, {
-          data: {
-              similarCustomers: this.similarCustomers,
-              componentRef: this
-          },
-          hasBackdrop: false,
-          position: this.getDialogPossition(event, 300)
+            data: {
+                similarCustomers: this.similarCustomers,
+                componentRef: this
+            },
+            hasBackdrop: false,
+            position: this.getDialogPossition(event, 300)
         });
         event.stopPropagation();
     }
@@ -532,14 +541,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 this.getCurrentEmails() || undefined,
                 this.getCurrentPhones() || undefined,
                 undefined, undefined, undefined, undefined, undefined)
-            .subscribe(response => {
-                if (response)
-                    this.similarCustomers = response;
-            });
+                .subscribe(response => {
+                    if (response)
+                        this.similarCustomers = response;
+                });
         }, 1000);
     }
 
-   getCurrentEmails() {
+    getCurrentEmails() {
         let emails = [];
         _.mapObject(this.contacts.emails, (fields, type) => {
             emails = emails.concat(fields.map(obj => obj.email));
@@ -587,7 +596,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     blurInput(event) {
         if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: '', value: '', isValid: true });
+            event.component.option({mask: '', value: '', isValid: true});
     }
 
     onAddressChanged(event, type) {
@@ -598,10 +607,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     countriesStateLoad(): void {
-        this._countryService.getCountries()
-            .subscribe(result => {
-                this.countries = result;
-            });
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries))
+        .subscribe(result => {
+            this.countries = result;
+        });
     }
 
     setDefaultTypeValue(obj, list, field = null) {
@@ -615,34 +625,47 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     addressTypesLoad() {
-        this._contactAddressService.getAddressUsageTypes().subscribe(result => {
-            this.addressTypes = result.items;
+        this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            this.addressTypes = types;
             this.contacts.addresses.personal.addressType = this.addressTypePersonalDefault;
             this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
     }
 
     phoneTypesLoad() {
-        this._contactPhoneService.getPhoneUsageTypes().subscribe(result => {
-            this.phoneTypes = result.items;
-            this.setDefaultTypeValue(this.phoneType, result.items);
+        this.store$.pipe(
+            select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            this.phoneTypes = types;
+            this.setDefaultTypeValue(this.phoneType, types);
         });
     }
 
     emailTypesLoad() {
-        this._contactEmailService.getEmailUsageTypes().subscribe(result => {
-            this.emailTypes = result.items;
-            this.setDefaultTypeValue(this.emailType, result.items);
+        this.store$.dispatch(new EmailUsageTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(EmailUsageTypesStoreSelectors.getEmailUsageTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            this.emailTypes = types;
+            this.setDefaultTypeValue(this.emailType, types);
         });
     }
 
     onCountryChange(event) {
         let country = _.findWhere(this.countries, {name: event.value});
-        country && this._countryService
-            .getCountryStates(country['code'])
-            .subscribe(result => {
-                this.states = result;
-            });
+        if (country) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country['code']));
+            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: country['code'] }))
+                .subscribe(result => {
+                    this.states = result;
+                });
+        }
     }
 
     addContact(field, type) {
@@ -846,12 +869,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onStagesChanged(event) {
         this.stageId = event.id;
-    }
-
-    partnerTypesLoad() {
-        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
-            partnerTypes => this.partnerTypes = partnerTypes
-        );
     }
 
     onPartnerTypeChanged(event) {

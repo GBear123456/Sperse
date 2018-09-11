@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
+import { Store } from '@ngrx/store';
 
 /** Application imports */
+import { RootStore, StatesStoreActions } from '@root/store';
 import { AppService } from '@app/app.service';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
@@ -21,7 +23,7 @@ import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/paymen
     templateUrl: './dashboard.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
-    providers: [DashboardWidgetsService]
+    providers: [ DashboardWidgetsService ]
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
@@ -45,10 +47,12 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private zendeskService: ZendeskService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.rootComponent = this.getRootComponent();
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 
     refresh() {

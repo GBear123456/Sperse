@@ -12,7 +12,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { CrmStoreState, PartnerTypesStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, PartnerTypesStoreSelectors } from '@app/crm/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroupType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -90,7 +90,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
                 private _clientDetailsService: ClientDetailsService,
-                private store$: Store<CrmStoreState.CrmState>) {
+                private store$: Store<CrmStore.State>) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);

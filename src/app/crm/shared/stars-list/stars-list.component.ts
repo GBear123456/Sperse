@@ -11,7 +11,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 import { ContactGroupStarsServiceProxy, MarkContactGroupInput, MarkContactGroupsInput } from '@shared/service-proxies/service-proxies';
-import { CrmStoreState, StarsStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, StarsStoreSelectors } from '@app/crm/store';
 
 @Component({
   selector: 'crm-stars-list',
@@ -43,7 +43,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _filtersService: FiltersService,
         private _starsService: ContactGroupStarsServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }

@@ -21,13 +21,13 @@ import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     AssignedUsersStoreSelectors,
-    CrmStoreState,
+    CrmStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
     RatingsStoreSelectors,
     PipelinesStoreSelectors
-} from '@app/crm/shared/store';
+} from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -132,7 +132,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
         private _leadService: LeadServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 

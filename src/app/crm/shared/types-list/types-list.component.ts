@@ -3,14 +3,14 @@ import {Component, Injector, Input, EventEmitter, Output, OnInit} from '@angular
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { ActionsSubject, Store } from '@ngrx/store';
+import { ActionsSubject, Store, select } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
 import { first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { CrmStoreState, PartnerTypesStoreActions } from '@app/crm/shared/store';
+import { CrmStore, PartnerTypesStoreActions, PartnerTypesStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -57,7 +57,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         private _filterService: FiltersService,
         private _partnerService: PartnerServiceProxy,
         private _partnerTypeService: PartnerTypeServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>,
+        private store$: Store<CrmStore.State>,
         private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -116,13 +116,15 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        /** @todo change to store selecting */
-        this._partnerTypeService.getAll().subscribe((result) => {
-            this.list = result.map((obj) => {
-                obj['parent'] = 0;
-                return obj;
+        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes))
+            .subscribe((result: any) => {
+                if (result) {
+                    this.list = result.map((obj) => {
+                        obj['parent'] = 0;
+                        return obj;
+                    });
+                }
             });
-        });
     }
 
     reset() {

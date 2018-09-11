@@ -1,12 +1,19 @@
+/** Core imports */
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { filter } from 'rxjs/operators';
+import { CacheService } from 'ng2-cache-service';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FilterComponent } from '../models/filter-component';
 import { FilterStatesModel } from './filter-states.model';
-
-import { CacheService } from 'ng2-cache-service';
-
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './filter-states.component.html',
@@ -26,7 +33,8 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
 
     constructor(injector: Injector,
         private _countryService: CountryServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
     }
@@ -37,7 +45,10 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
                 _.findIndex(this.countryStates, { parent: $event.key }), 1);
             this.preloadIndex[$event.key] = 0;
             this.component.beginCustomLoading();
-            this._countryService.getCountryStates($event.key)
+
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction($event.key));
+            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: $event.key }))
+                .pipe(filter(data => !!data))
                 .subscribe((data) => {
                     data.forEach((state) => {
                         this.countryStates.push({
@@ -66,17 +77,17 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
 
     applySelectedRowKeys() {
         this.component.option(
-            "selectedRowKeys", this.items.countryStates.value
+            'selectedRowKeys', this.items.countryStates.value
         );
     }
 
     ngOnInit() {
-       if (this._cacheService.exists('countryStates_preloadIndex')) {
-            this.items.countryStates.list =
-            this.countryStates = this._cacheService.get('countryStates');
+        if (this._cacheService.exists('countryStates_preloadIndex')) {
+            this.items.countryStates.list = this.countryStates = this._cacheService.get('countryStates');
             this.preloadIndex = this._cacheService.get('countryStates_preloadIndex');
-       } else
-            this._countryService.getCountries().subscribe((data) => {
+        } else {
+            this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+            this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((data) => {
                 this.countryStates = data;
                 data.forEach((country, index) => {
                     this.preloadIndex[country.code] =
@@ -85,9 +96,9 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
                             parent: country.code
                         });
                 });
-
                 this.items.countryStates.list = data;
             });
+        }
     }
 
     ngOnDestroy() {

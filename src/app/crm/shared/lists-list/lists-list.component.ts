@@ -9,7 +9,7 @@ import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CrmStoreState, ListsStoreActions, ListsStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, ListsStoreActions, ListsStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -52,7 +52,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         public dialog: MatDialog,
         private _filterService: FiltersService,
         private _listsService: ContactGroupListsServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>,
+        private store$: Store<CrmStore.State>,
         private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);

@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import * as _ from 'lodash';
 
 /** Application imports */
-import { CrmStoreState, PipelinesStoreActions } from '@app/crm/shared/store';
+import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -73,7 +73,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     constructor(injector: Injector,
         private _dragulaService: DragulaService,
         private _pipelineService: PipelineService,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -126,7 +126,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                 if (!this.stages && !this.quiet)
                     this.onStagesLoaded.emit(pipeline);
-                
+
                 this.stages = pipeline.stages.map((stage) => {
                     _.extend(stage, {
                         leads: [],
@@ -136,7 +136,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 });
                 this.firstStage = this.stages[0];
                 this.lastStage = this.stages[this.stages.length - 1];
-                
+
                 this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
                 this.refreshTimeout = null;
@@ -199,11 +199,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             !this.quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
                 if (this.pipeline) {
-                    this.loadStagesLeads(0, stageId && 
+                    this.loadStagesLeads(0, stageId &&
                         _.findIndex(this.stages, obj => obj.id == stageId), Boolean(stageId));
                     this.refreshTimeout = null;
-                } else 
-                    this.store$.dispatch(new PipelinesStoreActions  
+                } else
+                    this.store$.dispatch(new PipelinesStoreActions
                         .LoadRequestAction(skipAlreadyLoadedChecking));
             });
         }
@@ -287,11 +287,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 },
                 paginate: false
             }
-        })).load().done((res) => { 
-            let stages = res.pop();            
+        })).load().done((res) => {
+            let stages = res.pop();
             stages && this.stages.forEach((stage) => {
                 stage['total'] = stages[stage.id];
-                stage['full'] = stage['total'] 
+                stage['full'] = stage['total']
                     <= stage['leads'].length;
             });
         });

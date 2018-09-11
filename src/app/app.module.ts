@@ -9,6 +9,7 @@ import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/
 import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
 
 /** Application imports */
+import { AppStoreModule } from '@app/store/app-store.module';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { AppComponent} from './app.component';
@@ -43,7 +44,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
         ngCommon.CommonModule,
         AppRoutingModule,
-        FiltersModule.forRoot()
+        FiltersModule.forRoot(),
+        AppStoreModule
     ],
     providers: [
         AppService,

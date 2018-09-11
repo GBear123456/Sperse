@@ -1,17 +1,22 @@
-import { AppConsts } from '@shared/AppConsts';
+/** Core imports */
 import { Component, OnInit, Injector, Input } from '@angular/core';
+
+/** Third party imports  */
 import { MatDialog } from '@angular/material';
+
+/** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
-import { ClientDetailsService } from '../client-details.service';
 import {
-    ContactGroupServiceProxy, ContactGroupInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+    ContactGroupInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
+import { ClientDetailsService } from '../client-details.service';
 
 @Component({
     selector: 'contacts',

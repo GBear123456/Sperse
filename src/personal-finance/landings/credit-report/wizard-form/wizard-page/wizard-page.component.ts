@@ -1,12 +1,17 @@
+/** Core imports */
 import { Component, ViewChild, OnInit, Injector } from '@angular/core';
-import { WizardComponent } from '../wizard.component';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Router } from '@angular/router';
+
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import { finalize } from 'rxjs/operators';
+import * as moment from 'moment';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
-import { LoginService } from '../../../../../account/login/login.service';
-import { RegisterModel } from './register.model';
-import { v4 as UUID } from 'uuid';
-import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
-import { PaymentInfoComponent } from '@shared/common/widgets/payment-info/payment-info.component';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CountryStateDto,
     MemberServiceProxy,
@@ -14,12 +19,14 @@ import {
     RegisterMemberRequestGender,
     MemberPaymentAuthorizeRequestDto,
     MemberInfoDto, MemberInfoDtoGender, MemberAddressDto,
-    ProfileServiceProxy, PasswordComplexitySetting
+    PasswordComplexitySetting
 } from '@shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
-import * as moment from 'moment';
-import * as _ from 'underscore';
+import { PaymentInfoComponent } from '@shared/common/widgets/payment-info/payment-info.component';
+import { WizardComponent } from '../wizard.component';
+import { LoginService } from '../../../../../account/login/login.service';
+import { RegisterModel } from './register.model';
+import { v4 as UUID } from 'uuid';
+import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
 
 @Component({
     selector: 'app-wizard-page',
@@ -37,13 +44,13 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     private readonly WIZARD_CONFIRM_STEP_INDEX = 3;
 
     private readonly INPUT_MASK = {
-        ssn: "000-00-0000",
-        phone: "(000) 000-0000",
-        zipCode: "00000"
-    }
+        ssn: '000-00-0000',
+        phone: '(000) 000-0000',
+        zipCode: '00000'
+    };
 
-    registrationInProgress: boolean = false;
-    paymentAuthorizationRequired: boolean = true;
+    registrationInProgress = false;
+    paymentAuthorizationRequired = true;
     countryCode = 'US';
     packageId: number;
     paymentResult: any;
@@ -68,8 +75,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     payment: MemberPaymentAuthorizeRequestDto = MemberPaymentAuthorizeRequestDto.fromJS({});
     isExistingUser: boolean = !!abp.session.userId;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
-    passwordComplexityWord: string = 'empty';
-    showPassword: boolean = false;
+    passwordComplexityWord = 'empty';
+    showPassword = false;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
     googleAutoComplete: Boolean;
@@ -87,7 +94,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         private _memberService: MemberServiceProxy,
         private _coutryService: CountryServiceProxy,
         private _router: Router,
-        private _profileService: ProfileServiceProxy
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
         this.minAge = this.minDate.setFullYear(this.minDate.getFullYear() - 18);
@@ -153,10 +160,11 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     getStates(): void {
-        this._coutryService
-            .getCountryStates(this.countryCode)
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
-                this.states = result;
+                if (result)
+                    this.states = result;
             });
     }
 
@@ -164,7 +172,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         return !this.states ||
             !Array.prototype.slice.call(top[formId].elements)
                 .every(function (input) {
-                    return (input.type != "text") || (Boolean(input.value)
+                    return (input.type != 'text') || (Boolean(input.value)
                         && !input.getAttribute('aria-invalid'));
                 }
                 );
@@ -185,7 +193,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         this.model.name = this.capitalize(this.model.name);
         this.model.surname = this.capitalize(this.model.surname);
 
-        var date = new Date(this.model.doB.toString()),
+        let date = new Date(this.model.doB.toString()),
             month = date.getMonth() + 1,
             day = date.getDate();
 
@@ -194,7 +202,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                 date.getFullYear() + '-' +
                 this.twoDigitsFormat(month) + '-' +
                 this.twoDigitsFormat(day) +
-                "T00:00:00.000Z"
+                'T00:00:00.000Z'
             )
         );
 
@@ -214,7 +222,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                     this.mWizard.currentStep = this.WIZARD_ADDRESS_STEP_INDEX;
                 }
             });
-    };
+    }
 
     billingInfoSubmit(event) {
 
@@ -238,8 +246,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                     if (this.isExistingUser) {
                         this.model.password = 'stub';
                         this.registerMemberSubmit();
-                    }
-                    else
+                    } else
                         this.mWizard.currentStep = this.WIZARD_CONFIRM_STEP_INDEX;
                 } else
                     this.paymentResult = result;
@@ -310,11 +317,11 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     twoDigitsFormat(value) {
-        return ("0" + value).slice(-2);
+        return ('0' + value).slice(-2);
     }
 
     convertToMemberInfo(model: RegisterModel): MemberInfoDto {
-        var memberInfo = new MemberInfoDto();
+        let memberInfo = new MemberInfoDto();
         memberInfo.name = model.name;
         memberInfo.surname = model.surname;
 
@@ -362,7 +369,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
-            var input = event.event.target;
+            let input = event.event.target;
             event.component.option({
                 mask: this.INPUT_MASK[input.name],
                 maskRules: { 'D': /\d?/ },
@@ -370,8 +377,8 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
             });
             setTimeout(function () {
                 if (input.createTextRange) {
-                    var part = input.createTextRange();
-                    part.move("character", 0);
+                    let part = input.createTextRange();
+                    part.move('character', 0);
                     part.select();
                 } else if (input.setSelectionRange)
                     input.setSelectionRange(0, 0);
@@ -383,27 +390,27 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
     blurInput(event) {
         if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: "", value: "" });
+            event.component.option({ mask: '', value: '' });
     }
 
     toggleShowPassword(event) {
         this.showPassword = !this.showPassword;
-        event.currentTarget.text = this.l((this.showPassword ? "Hide" : "Show") + "Password");
+        event.currentTarget.text = this.l((this.showPassword ? 'Hide' : 'Show') + 'Password');
     }
 
     UpdatePasswordStrength(newPassword) {
         let passwordComplexityScore = this.GetPasswordStrength(newPassword);
 
         if (passwordComplexityScore == -1) {
-            this.passwordComplexityWord = "empty";
+            this.passwordComplexityWord = 'empty';
         } else if (passwordComplexityScore == 0) {
-            this.passwordComplexityWord = "tooshort";
+            this.passwordComplexityWord = 'tooshort';
         } else if (passwordComplexityScore <= 0.25) {
-            this.passwordComplexityWord = "weak";
+            this.passwordComplexityWord = 'weak';
         } else if (passwordComplexityScore <= 0.5) {
-            this.passwordComplexityWord = "fair";
+            this.passwordComplexityWord = 'fair';
         } else {
-            this.passwordComplexityWord = "strong";
+            this.passwordComplexityWord = 'strong';
         }
     }
 
@@ -411,11 +418,11 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         if (password.length == 0) return -1;
         if (password.length < this.passwordComplexitySetting.requiredLength) return 0;
 
-        var rate = 0;
-        var hasDigit = password.match(/[0-9]/);
-        var hasLower = password.match(/[a-z]/);
-        var hasUpper = password.match(/[A-Z]/);
-        var hasNonAlfa = password.match(/[!,@,#,$,%,^,&,*,?,_,~,\-,(,),\s,\[,\],+,=,\,,<,>,:,;]/);
+        let rate = 0;
+        let hasDigit = password.match(/[0-9]/);
+        let hasLower = password.match(/[a-z]/);
+        let hasUpper = password.match(/[A-Z]/);
+        let hasNonAlfa = password.match(/[!,@,#,$,%,^,&,*,?,_,~,\-,(,),\s,\[,\],+,=,\,,<,>,:,;]/);
 
         if ((this.passwordComplexitySetting.requireDigit && !hasDigit) ||
             (this.passwordComplexitySetting.requireLowercase && !hasLower) ||

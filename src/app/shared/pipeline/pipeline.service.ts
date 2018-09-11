@@ -9,7 +9,7 @@ import { filter, map, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CrmStoreState, PipelinesStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy, PipelineDto } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
@@ -25,7 +25,7 @@ export class PipelineService {
         private _dialog: MatDialog,
         private _leadService: LeadServiceProxy,
         private _pipelineServiceProxy: PipelineServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         this.stageChange = new Subject<any>();
     }
@@ -38,7 +38,7 @@ export class PipelineService {
             filter(pipelineDefinition => pipelineDefinition),
             map(pipelineDefinition => {
                 this.pipeline = pipelineDefinition;
-                pipelineDefinition.stages = this.stages = 
+                pipelineDefinition.stages = this.stages =
                     _.sortBy(pipelineDefinition.stages, (stage) => {
                         return stage.sortOrder;
                     });

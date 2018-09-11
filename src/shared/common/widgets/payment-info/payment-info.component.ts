@@ -1,7 +1,13 @@
+/** Core imports */
 import { Component, OnInit, Injector, Input } from '@angular/core';
-import { AppComponentBase } from 'shared/common/app-component-base';
+
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
+/** Application imports */
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { AppComponentBase } from 'shared/common/app-component-base';
 import {
     BankCardDto,
     CountryStateDto,
@@ -14,18 +20,18 @@ import {
     styleUrls: ['./payment-info.component.less']
 })
 export class PaymentInfoComponent extends AppComponentBase implements OnInit {
-    @Input() paymentAuthorizationRequired: boolean = true;
+    @Input() paymentAuthorizationRequired = true;
 
     private readonly INPUT_MASK = {
-        creditCardNumber: "0000-0000-0000-0099",
-        expirationDate: "00/0000",
-        zipCode: "00000",
-        cvvCode: "0009"
-    }
+        creditCardNumber: '0000-0000-0000-0099',
+        expirationDate: '00/0000',
+        zipCode: '00000',
+        cvvCode: '0009'
+    };
     validationGroup: any;
 
     expirationDate: string;
-    bankCard: BankCardDto = BankCardDto.fromJS({}); 
+    bankCard: BankCardDto = BankCardDto.fromJS({});
     states: CountryStateDto[];
 
     googleAutoComplete: Boolean;
@@ -38,7 +44,9 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     };
 
     constructor(injector: Injector,
-        private _coutryService: CountryServiceProxy) {
+        private _coutryService: CountryServiceProxy,
+        private store$: Store<RootStore.State>
+    ) {
         super(injector);
 
         this.googleAutoComplete = Boolean(window['google']);
@@ -52,10 +60,11 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     }
 
     getStates(): void {
-        this._coutryService
-            .getCountryStates(this.countryCode)
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
-                this.states = result;
+                if (result)
+                    this.states = result;
             });
     }
 
@@ -72,7 +81,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     }
 
     validateExpirationDate = (options) => {
-        var year = parseInt(options.value.substring(2, 6)),
+        let year = parseInt(options.value.substring(2, 6)),
             month = parseInt(options.value.substring(0, 2));
 
         let isValid = (month < 13) && (year < ((new Date()).getFullYear() + 10))
@@ -81,8 +90,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
         if (isValid) {
             this.bankCard.expirationMonth = month.toString();
             this.bankCard.expirationYear = year.toString();
-        }
-        else {
+        } else {
             this.bankCard.expirationMonth = null;
             this.bankCard.expirationYear = null;
         }
@@ -92,7 +100,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
 
     focusInput(event) {
         if (!(event.component._value && event.component._value.trim())) {
-            var input = event.event.target;
+            let input = event.event.target;
             event.component.option({
                 mask: this.INPUT_MASK[input.name],
                 maskRules: { 'D': /\d?/ },
@@ -100,8 +108,8 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
             });
             setTimeout(function () {
                 if (input.createTextRange) {
-                    var part = input.createTextRange();
-                    part.move("character", 0);
+                    let part = input.createTextRange();
+                    part.move('character', 0);
                     part.select();
                 } else if (input.setSelectionRange)
                     input.setSelectionRange(0, 0);
@@ -113,6 +121,6 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
 
     blurInput(event) {
         if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: "", value: "" });
+            event.component.option({ mask: '', value: '' });
     }
 }

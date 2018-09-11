@@ -1,9 +1,5 @@
 import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-
-import * as moment from 'moment';
-
-import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
@@ -41,7 +37,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
                 if (name != appService.getDefaultModule()) {
-                    if (ModuleSubscriptionInfoDtoModule[name.toUpperCase()] 
+                    if (ModuleSubscriptionInfoDtoModule[name.toUpperCase()]
                         && !appService.subscriptionInGracePeriod(name)
                     ) this._router.navigate(['app/admin']);
                     clearTimeout(paymentDialogTimeout);
@@ -52,7 +48,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                                 width: '980px',
                                 id: 'payment-wizard',
                                 panelClass: ['payment-wizard', 'setup'],
-                            }).afterClosed().subscribe(result => {});                 
+                            }).afterClosed().subscribe(result => {});
                         }
                     });
                 }
@@ -71,7 +67,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this.appService.subscriptionIsExpiringSoon() || 
+        return this.appService.subscriptionIsExpiringSoon() ||
             this.appService.subscriptionInGracePeriod();
     }
 

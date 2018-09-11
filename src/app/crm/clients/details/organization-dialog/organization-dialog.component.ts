@@ -1,40 +1,45 @@
-import { Component, Inject, Injector, Input } from '@angular/core';
+/** Core imports */
+import { Component, Inject, Injector } from '@angular/core';
+
+/** Third party imports */
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
-import { InplaceEditModel } from 'app/shared/common/inplace-edit/inplace-edit.model';
-import { InplaceSelectBoxModel, InplaceSelectBoxOption } from '@app/shared/common/inplace-select-box/inplace-select-box.model';
-import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
-    CountryServiceProxy, CountryDto, CountryStateDto, OrganizationTypeServiceProxy,
-    ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
-
-import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
-
+import { Store, select } from '@ngrx/store';
 import * as moment from 'moment';
 import * as _ from 'underscore';
+
+/** Application imports */
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { AppConsts } from '@shared/AppConsts';
+import { InplaceSelectBoxModel } from '@app/shared/common/inplace-select-box/inplace-select-box.model';
+import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
+    CountryServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
+
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 
 @Component({
     selector: 'organization-dialog',
     templateUrl: './organization-dialog.component.html',
     styleUrls: ['./organization-dialog.component.less'],
-    providers: [ContactPhotoServiceProxy]
+    providers: [ ContactPhotoServiceProxy ]
 })
 export class OrganizationDialogComponent extends AppComponentBase {
-    isEditAllowed: boolean = false;
+    isEditAllowed = false;
 
     countries: InplaceSelectBoxModel = {
-        name: "contries",
+        name: 'contries',
         options: []
     } as InplaceSelectBoxModel;
     states: InplaceSelectBoxModel = {
-        name: "states",
-        options: []        
+        name: 'states',
+        options: []
     } as InplaceSelectBoxModel;
     companySizeList: any = [
-        {id: 0, name: '10 - 25'}, 
-        {id: 1, name: '25 - 50'}, 
-        {id: 2, name: '50 - 100'}, 
+        {id: 0, name: '10 - 25'},
+        {id: 1, name: '25 - 50'},
+        {id: 2, name: '50 - 100'},
         {id: 3, name: '100 - 1000'}
     ];
 
@@ -51,9 +56,9 @@ export class OrganizationDialogComponent extends AppComponentBase {
                 ['shortname', 'formedDate'],
                 ['industry', 'relationship'],
                 [
-                    'annualRevenue', 
+                    'annualRevenue',
                     {
-                        name: 'size', 
+                        name: 'size',
                         data: {
                             name: 'size',
                             options: this.companySizeList,
@@ -75,12 +80,12 @@ export class OrganizationDialogComponent extends AppComponentBase {
                 ['businessSicCode', 'ticker'],
                 [
                     {
-                        name: 'formedCountryId', 
-                        data: this.countries, 
+                        name: 'formedCountryId',
+                        data: this.countries,
                         onChange: this.countryChanged.bind(this)
-                    }, 
+                    },
                     {
-                        name: 'formedStateId', 
+                        name: 'formedStateId',
                         data: this.states,
                         onChange: this.stateChanged.bind(this)
                     }
@@ -96,63 +101,66 @@ export class OrganizationDialogComponent extends AppComponentBase {
         public dialogRef: MatDialogRef<OrganizationDialogComponent>,
         private _orgContactService: OrganizationContactServiceProxy,
         private _countryService: CountryServiceProxy,
-        private _contactPhotoServiceProxy: ContactPhotoServiceProxy
+        private _contactPhotoServiceProxy: ContactPhotoServiceProxy,
+        private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
         this.loadCountries();
     }
 
     loadCountries() {
-        this._countryService.getCountries().subscribe(result => {
-            this.countries.options = result.map((v, i, a) => { return { id: v.code, name: v.name } });
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
+            this.countries.options = result.map((v, i, a) => { return { id: v.code, name: v.name }; });
             let currentCountry = this.data.organization.formedCountryId;
             if (currentCountry) {
                 this.countries.value = currentCountry;
                 this.loadStates(currentCountry);
             }
-        });    
+        });
     }
 
     loadStates(countryCode) {
-        this._countryService.getCountryStates(countryCode).subscribe(result => {
-            this.states.options = result.map((v, i, a) => { return { id: v.code, name: v.name } });
-            let currentState = this.data.organization.formedStateId;
-            if (currentState) {
-                this.states.value = currentState;
-            }
-        });
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
+            .subscribe(result => {
+                this.states.options = result.map((v, i, a) => { return {id: v.code, name: v.name}; });
+                let currentState = this.data.organization.formedStateId;
+                if (currentState) {
+                    this.states.value = currentState;
+                }
+            });
     }
-    
+
     countryChanged(countryCode) {
         if (countryCode != this.data.organization.formedCountryId) {
             this.data.organization.formedStateId = null;
-            this.updateValue(countryCode, "formedCountryId");
+            this.updateValue(countryCode, 'formedCountryId');
             this.loadStates(countryCode);
         }
     }
 
     stateChanged(stateCode) {
         if (stateCode != this.data.organization.formedStateId) {
-            this.updateValue(stateCode, "formedStateId");
+            this.updateValue(stateCode, 'formedStateId');
         }
     }
-    
+
     getPropData(item) {
         let field = item.name || item,
             value = this.data.organization[field] || '';
 
         //MB: need to include validation rules into item
         let validationRules = [];
-        if (field == "ein"  || field == "productServicesSold" || field == 'businessSicCode')
+        if (field == 'ein'  || field == 'productServicesSold' || field == 'businessSicCode')
             validationRules.push({type: 'numeric', message: this.l('ValueShouldBeNumeric')});
-        if (field == "ein")
-            validationRules.push({type: 'stringLength', max: 9, message: this.l('ValueMaxLength', 9)});        
+        if (field == 'ein')
+            validationRules.push({type: 'stringLength', max: 9, message: this.l('ValueMaxLength', 9)});
         return {
             id: this.data.id,
-            value: value instanceof moment ? 
-                value.format('MMM YYYY'): value,
+            value: value instanceof moment ?
+                value.format('MMM YYYY') : value,
             validationRules: validationRules,
             isEditDialogEnabled: false,
             lEntityName: field,
@@ -161,7 +169,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
     }
 
     getCompanySize() {
-        let companySizeStr = this.data.organization['sizeFrom'] + ' - ' + 
+        let companySizeStr = this.data.organization['sizeFrom'] + ' - ' +
             this.data.organization['sizeTo'];
         let item = this.companySizeList.find(x => x.name == companySizeStr);
         return item ? item.id : null;

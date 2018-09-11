@@ -6,7 +6,7 @@ import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { CrmStoreState, RatingsStoreSelectors } from '@app/crm/shared/store';
+import { CrmStore, RatingsStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -46,7 +46,7 @@ export class RatingComponent extends AppComponentBase implements OnInit, AfterVi
         injector: Injector,
         private _filtersService: FiltersService,
         private _ratingService: ContactGroupRatingsServiceProxy,
-        private store$: Store<CrmStoreState.CrmState>
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
