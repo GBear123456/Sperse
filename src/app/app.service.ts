@@ -90,7 +90,7 @@ export class AppService extends AppServiceBase {
         let module = (name || this.getModule()).toUpperCase();
         if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module]) {
             let subscription = {module: module};
-            return _.find(this.moduleSubscriptions, 
+            return _.find(this.moduleSubscriptions,
                 subscription) || subscription;
         }
     }
@@ -110,17 +110,17 @@ export class AppService extends AppServiceBase {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
         }
-        return false;            
+        return false;
     }
 
     getSubscriptionExpiringDayCount(): number {
-        let sub = this.getModuleSubscription(); 
+        let sub = this.getModuleSubscription();
         return sub && sub.endDate && Math.round(moment(
             sub.endDate).diff(moment().utc(), 'days', true));
     }
 
     getGracePeriodDayCount() {
-        let sub = this.getModuleSubscription(); 
+        let sub = this.getModuleSubscription();
         return sub && sub.endDate && Math.round(moment(sub.endDate)
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
@@ -132,7 +132,7 @@ export class AppService extends AppServiceBase {
     hasModuleSubscription(name = undefined) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module ||            
+        return !this.isNotHostTenant() || !module ||
             module.endDate > moment().utc();
     }
 
@@ -148,7 +148,7 @@ export class AppService extends AppServiceBase {
         if (this.isNotHostTenant()
             && this.checkModuleExpired(name)
             && !this.subscriptionInGracePeriod(name)
-        ) {  
+        ) {
             let module = this.getModule();
             name = ModuleSubscriptionInfoDtoModule[module] ? this.getDefaultModule(): module;
             params = {};
@@ -182,7 +182,7 @@ export class AppService extends AppServiceBase {
             (isConfirmed) => {
                 if (isConfirmed) {
                     let request = new ActivateUserForContactInput();
-                    request.contactId = contactId;                                                             
+                    request.contactId = contactId;
                     request.tenantHostType = <any>TenantHostType.PlatformUi;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                         let setupInput = new SetupInput({ userId: result.userId });

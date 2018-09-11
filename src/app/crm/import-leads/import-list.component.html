@@ -1,6 +1,6 @@
 <div [@routerTransition] [hidden]="!isDataLoaded || !totalRowCount">
     <left-menu></left-menu>
-    <div class="margin-left">        
+    <div class="margin-left">
         <app-headline [config]="headlineConfig">
             <import-progress-bar></import-progress-bar>
         </app-headline>
@@ -20,7 +20,7 @@
                                (onCellClick)="onCellClick($event)"
                                (onContentReady)="onContentReady($event)"
                                (onSelectionChanged)="initToolbarConfig()"
-                               (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                               (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                      <dxo-selection selectAllMode="page"
                                     showCheckBoxesMode="always"
                                     mode="multiple">

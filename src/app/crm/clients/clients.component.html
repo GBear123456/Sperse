@@ -34,7 +34,7 @@
                                   (onCellClick)="onCellClick($event)"
                                   (onEditingStart)="showClientDetails($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
-                                  (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="multiple">

@@ -27,7 +27,7 @@
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="editUser($event)"
                                   (onEditingStart)="showActionsMenu($event)"
-                                  (onDataErrorOccurred)="httpConfig.handleError($event.error)">
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="none">

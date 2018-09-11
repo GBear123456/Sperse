@@ -6,7 +6,7 @@
     <div class="grid-wrapper" [hidden]="isDataLoaded && !totalRowCount">
         <dx-data-grid id="gridContainer" class="grid-compact-view"
                       [dataSource]="dataSource"
-                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                       (onCellClick)="onCellClick($event)">
             <dxi-column dataField="name" caption="{{l('Customer.Name')}}"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>

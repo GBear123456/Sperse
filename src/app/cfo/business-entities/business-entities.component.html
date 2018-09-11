@@ -11,7 +11,7 @@
                             [allowColumnResizing]="true"
                             [hoverStateEnabled]="true"
                             [columnResizingMode]="'widget'"
-                            (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                             (onToolbarPreparing)="onToolbarPreparing($event)"
                             (onCellClick)="onCellClick($event)"
                             (onCellPrepared)="onCellPrepared($event)">

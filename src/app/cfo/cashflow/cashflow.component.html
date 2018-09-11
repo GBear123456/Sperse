@@ -37,7 +37,7 @@
                       [rowAlternationEnabled]="true"
                       [allowColumnResizing]="true"
                       [(dataSource)]="statsDetailResult"
-                      (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                       (onCellPrepared)="onDetailsCellPrepared($event)"
                       (onCellClick)="onDetailsCellClick($event)"
                       (onEditingStart)="onDetailsEditingStart($event)"

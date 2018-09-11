@@ -20,8 +20,8 @@
                 </ng-container>
             </mat-step>
             <mat-step>
-                <ng-container *ngIf="paymentStatus">
-                    <payment-status [paymentStatus]="paymentStatus"></payment-status>
+                <ng-container *ngIf="paymentStatus && paymentStatusText">
+                    <payment-status [paymentStatus]="paymentStatus" [text]="paymentStatusText"></payment-status>
                 </ng-container>
             </mat-step>
         </mat-horizontal-stepper>

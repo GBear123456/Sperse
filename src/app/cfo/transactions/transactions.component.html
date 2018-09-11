@@ -57,7 +57,7 @@
                                   [pager]="defaultGridPagerConfig"
                                   [columnResizingMode]="'widget'"
                                   (onContentReady)="onContentReady($event)"
-                                  (onDataErrorOccurred)="httpConfig.handleError($event.error)"
+                                  (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onCellClick)="onCellClick($event)"
                                   (onCellPrepared)="onCellPrepared($event)"

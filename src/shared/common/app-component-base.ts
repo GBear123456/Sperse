@@ -16,12 +16,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
-import { httpConfiguration } from '@shared/http/httpConfiguration';
 import { ScreenHelper } from '@shared/helpers/ScreenHelper';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ODataService } from '@shared/common/odata/odata.service';
+import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 
 declare let require: any;
 
@@ -40,7 +40,7 @@ export abstract class AppComponentBase {
     message: MessageService;
     multiTenancy: AbpMultiTenancyService;
     appSession: AppSessionService;
-    httpConfig: httpConfiguration;
+    httpInterceptor: AppHttpInterceptor;
     primengTableHelper: PrimengTableHelper;
     ui: AppUiCustomizationService;
     loading: boolean;
@@ -75,7 +75,7 @@ export abstract class AppComponentBase {
         this.multiTenancy = _injector.get(AbpMultiTenancyService);
         this.appSession = _injector.get(AppSessionService);
         this.ui = _injector.get(AppUiCustomizationService);
-        this.httpConfig = _injector.get(httpConfiguration);
+        this.httpInterceptor = _injector.get(AppHttpInterceptor);
         this._applicationRef = _injector.get(ApplicationRef);
         this._exportService = _injector.get(ExportService);
         this.primengTableHelper = new PrimengTableHelper();

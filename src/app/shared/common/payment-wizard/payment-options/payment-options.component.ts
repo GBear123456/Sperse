@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { OptionsPaymentPlan } from '@app/shared/common/payment-wizard/models/options-payment-plan.model';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { Step } from '@app/shared/common/payment-wizard/models/step.model';
+import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info';
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerDto,
@@ -17,6 +18,8 @@ import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 
 import { EditionPaymentType } from '@shared/AppEnums';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     selector: 'payment-options',
@@ -44,7 +47,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     @Input() phoneNumber = '1-844-773-7739';
     @Output() onChangeStep: EventEmitter<number> = new EventEmitter<number>();
     @Output() onClose: EventEmitter<null> = new EventEmitter();
-    @Output() onStatusChange: EventEmitter<PaymentStatusEnum> = new EventEmitter();
+    @Output() onStatusChange: EventEmitter<StatusInfo> = new EventEmitter();
 
     readonly GATEWAY_ECHECK = 0;
     readonly GATEWAY_C_CARD = 1;
@@ -55,7 +58,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     paymentMethods = PaymentMethods;
     constructor(
-        injector: Injector,
+        private injector: Injector,
+        private appHttpConfiguration: AppHttpConfiguration,
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
     ) {
         super(injector);
@@ -73,8 +77,10 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     submitData(data: any, paymentMethod: PaymentMethods) {
         /** Go to the third step */
-        this.onStatusChange.emit(PaymentStatusEnum.BeingConfirmed);
+        this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
+        this.appHttpConfiguration.avoidErrorHandling = true;
+        this.injector.get(HTTP_INTERCEPTORS)['avoidErrorHandling'] = true;
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
@@ -88,11 +94,16 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 /** Start submitting data and change status in a case of error or success */
                 this.tenantSubscriptionServiceProxy.addPaymentInfo(paymentInfo).subscribe(
                     res => {
-                        /** @todo change for getting of the status from the server */
-                        this.onStatusChange.emit(res && res['success'] ? PaymentStatusEnum.Pending : PaymentStatusEnum.Failed);
-
+                        console.log('result', res);
+                        this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
                     },
-                    () => this.onStatusChange.emit(PaymentStatusEnum.Failed)
+                    error => {
+                        this.appHttpConfiguration.avoidErrorHandling = false;
+                        this.onStatusChange.emit({
+                            status: PaymentStatusEnum.Failed,
+                            statusText: error.message
+                        });
+                    }
                 );
                 break;
             case PaymentMethods.CreditCard:
@@ -119,8 +130,14 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     })
                 });
                 this.tenantSubscriptionServiceProxy.setupSubscriptionWithBankCard(cardPaymentInfo).subscribe(
-                    res => { this.onStatusChange.emit(PaymentStatusEnum.Confirmed); },
-                    () => this.onStatusChange.emit(PaymentStatusEnum.Failed)
+                    res => { this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed }); },
+                    err => {
+                        this.appHttpConfiguration.avoidErrorHandling = false;
+                        this.onStatusChange.emit({
+                            status: PaymentStatusEnum.Failed,
+                            statusText: err.message
+                        });
+                    }
                 );
                 break;
             case PaymentMethods.PayPal:
