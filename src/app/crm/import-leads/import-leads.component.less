@@ -1,3 +1,14 @@
+:host-context(.subscription-bar-visible) {
+    left-menu {
+        top: 193px!important;
+    }
+    /deep/ import-wizard {
+        .mat-horizontal-content-container {
+            margin-top: 50px!important;
+        }
+    }
+}
+
 :host {
     .import-wrapper {
         height: 100%;
@@ -43,6 +54,8 @@
         margin: 0;
         height: 100%;
         max-width: 100% !important;
+        position: absolute;
+        top: 75px;
 
         /deep/ h1 {
             i {

@@ -121,8 +121,8 @@ export class AppService extends AppServiceBase {
 
     getGracePeriodDayCount() {
         let sub = this.getModuleSubscription(); 
-        return sub && sub.endDate && Math.round(moment().utc().diff(
-            moment(sub.endDate).add(AppConsts.subscriptionGracePeriod, 'days'), 'days', true));
+        return sub && sub.endDate && Math.round(moment(sub.endDate)
+            .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
     isNotHostTenant() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -27,7 +27,7 @@ class UploadCategoryModel {
     providers: [ClassificationServiceProxy, CategoryTreeServiceProxy],
     animations: [appModuleAnimation()]
 })
-export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit {
+export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
@@ -40,6 +40,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     ngOnInit() {
         super.ngOnInit();
 
+        this.getRootComponent().overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],
             iconSrc: 'assets/common/icons/magic-stick-icon.svg'
@@ -117,5 +118,9 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
 
     refresh() {
         this.categorizationComponent.refreshCategories();
+    }
+
+    ngOnDestroy() {
+        this.getRootComponent().overflowHidden();
     }
 }
