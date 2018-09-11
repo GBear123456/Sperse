@@ -104,7 +104,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         : SetupSubscriptionWithBankCardInfoDtoFrequency._365,
                     bankCard: BankCardDto.fromJS({
                         holderName: creditCardData.holderName,
-                        cardNumber: creditCardData.cardNumber.replace(/\s/g, ''),
+                        cardNumber: creditCardData.cardNumber.replace(/-|\s/g, ''),
                         expirationMonth: creditCardData.expirationMonth,
                         expirationYear: creditCardData.expirationYear,
                         cvv: creditCardData.cvv,
