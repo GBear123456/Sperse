@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /** Third party imports */
 import {
     MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule, MatSelectModule, MatTooltipModule, MatSliderModule
+    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule, MatSelectModule, MatTooltipModule, MatSliderModule, MatAutocompleteModule
 } from '@angular/material';
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
@@ -26,6 +26,7 @@ import { ImageCropperModule } from 'ng2-img-cropper';
 import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 
 /** Application imports */
 import { AbpModule } from '@abp/abp.module';
@@ -83,6 +84,7 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         MatSelectModule,
         MatTooltipModule,
         MatSliderModule,
+        MatAutocompleteModule,
         ReactiveFormsModule,
         FileDropModule,
         PapaParseModule,
@@ -118,7 +120,8 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         DxTooltipModule,
         DxSwitchModule,
 
-        CreditCardDirectivesModule
+        CreditCardDirectivesModule,
+        AngularGooglePlaceModule
     ],
     declarations: [
         TimeZoneComboComponent,

@@ -97,6 +97,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
+                console.log(creditCardData);
                 const cardPaymentInfo = SetupSubscriptionWithBankCardInfoDto.fromJS({
                     editionId: this.plan.selectedEditionId,
                     frequency: this.plan.billingPeriod == BillingPeriod.Monthly
@@ -112,9 +113,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         billingZip: creditCardData.billingZip,
                         billingCity: creditCardData.billingCity,
                         billingStateCode: creditCardData.billingStateCode,
-                        billingState: creditCardData.billingState,
+                        billingState: creditCardData.billingState['name'],
                         billingCountryCode: creditCardData.billingCountryCode,
-                        billingCountry: creditCardData.billingCountry,
+                        billingCountry: creditCardData.billingCountry['name'],
                     })
                 });
                 this.tenantSubscriptionServiceProxy.setupSubscriptionWithBankCard(cardPaymentInfo).subscribe(

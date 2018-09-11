@@ -254,7 +254,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                         if (row.length == columnCount) {
                             let data = {};
                             mappedFields.forEach((field) => {
-                                let value = row[columnsIndex[field.sourceField]].trim();
+                                let value = (row[columnsIndex[field.sourceField]] || '').trim();
                                 if (!(this.preProcessFieldBeforeReview && this.preProcessFieldBeforeReview(field, value, data))
                                     && !data[field.mappedField]) data[field.mappedField] = value;
                             });
