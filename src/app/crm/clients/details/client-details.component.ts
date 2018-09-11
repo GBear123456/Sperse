@@ -138,6 +138,10 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                         this.rightPanelSetting.id != RP_USER_INFO_ID || this._userService['data'].userId);                        
                 });
         });
+        _clientDetailsService.userSubscribe((userId) => {            
+            if (this.rightPanelSetting.id == RP_USER_INFO_ID)
+                this.rightPanelSetting.opened = Boolean(userId);
+        });
     }
 
     private getCheckPropertyValue(obj, prop, def) {

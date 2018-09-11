@@ -1,7 +1,7 @@
 import { Injector, Component, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
@@ -29,15 +29,16 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     showInviteUserForm = false;
     passwordObject = { passwordInplaceEdit: false, originalValue: '', value: '' };
     passwordValidator: PasswordComplexityValidator = new PasswordComplexityValidator();
-
     userData: GetUserForEditOutput = new GetUserForEditOutput();
+    selectedOrgUnits: number[] = [];
 
     masks = AppConsts.masks;
 
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
-        'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: "pattern", pattern: AppConsts.regexPatterns.phone }]
+        'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: "pattern", pattern: AppConsts.regexPatterns.phone }],
+        'emailAddress': [{ type: 'email', message: this.l('InvalidEmailAddress') }]
     };
 
     passwordErrorsMessages = {
@@ -61,6 +62,11 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 this.loadData();
         });
 
+        _clientDetailsService.orgUnitsSaveSubscribe((data) => {            
+            this.selectedOrgUnits = data;
+            this.update();
+        });
+
         this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
             this.passwordValidator.requireDigit = passwordComplexityResult.setting.requireDigit;
             this.passwordValidator.requiredLength = passwordComplexityResult.setting.requiredLength;
@@ -82,16 +88,17 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         this._userService.getUserForEdit(this.data.userId)
             .pipe(finalize(() => this.finishLoading()))
             .subscribe((userEditOutput) => {
-                //user
                 this._userService['data'].user = userEditOutput.user;
                 userEditOutput.user['setRandomPassword'] = false;
                 userEditOutput.user['sendActivationEmail'] = false;
 
                 this._userService['data'].roles = userEditOutput.roles;
-                this._clientDetailsService.organizationUnitsUpdate(
+                this._clientDetailsService.orgUnitsUpdate(
                     this.userData = userEditOutput);
 
-                //this.setProfilePicture(userEditOutput.profilePictureId);
+                userEditOutput.memberedOrganizationUnits.forEach((item) => {
+                    this.selectedOrgUnits.push(_.find(userEditOutput.allOrganizationUnits, {code: item}).id)
+                });
             });
     }
 
@@ -115,7 +122,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     updateValue(value, fieldName) {
-        this.data.user[fieldName] = value;
+        this.data.user[fieldName] = value
+        this.update();
     }
 
     startPasswordEdit() {
@@ -128,6 +136,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         if (event.validationGroup.validate().isValid) {
             this.data.user.password = this.passwordObject.value;
             this.passwordObject.passwordInplaceEdit = false;
+            this.update();
         }
     }
 
@@ -159,5 +168,19 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     closePasswordEdit() {
         this.passwordObject.passwordInplaceEdit = false;
         this.passwordObject.value = this.data.user.password;
+    }
+
+    update() {
+        this.startLoading();
+        this._userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({ 
+            user: this.userData.user,
+            setRandomPassword: this.userData.user['setRandomPassword'],
+            sendActivationEmail: this.userData.user['sendActivationEmail'],
+            assignedRoleNames: _.map(_.filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
+            tenantHostType: <any>TenantHostType.PlatformUi,
+            organizationUnits: this.selectedOrgUnits
+        })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
     }
 }

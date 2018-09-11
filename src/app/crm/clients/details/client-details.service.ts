@@ -7,12 +7,14 @@ export class ClientDetailsService {
     private toolbarSubject: Subject<any>;
     private userSubject: Subject<number>;
     private organizationUnits: Subject<any>;
+    private organizationUnitsSave: Subject<any>;
 
     constructor(injector: Injector) {
         this.verificationSubject = new Subject<any>();
         this.toolbarSubject = new Subject<any>();
         this.userSubject = new Subject<any>();
         this.organizationUnits = new Subject<any>();
+        this.organizationUnitsSave = new Subject<any>();
     }
 
     verificationSubscribe(callback) {
@@ -39,11 +41,19 @@ export class ClientDetailsService {
         this.userSubject.next(userId);
     }
 
-    organizationUnitsSubscribe(callback) {
+    orgUnitsSubscribe(callback) {
         this.organizationUnits.asObservable().subscribe(callback);
     }
 
-    organizationUnitsUpdate(userData) {
+    orgUnitsUpdate(userData) {
         this.organizationUnits.next(userData);
+    }
+
+    orgUnitsSaveSubscribe(callback) {
+        this.organizationUnitsSave.asObservable().subscribe(callback);
+    }
+
+    orgUnitsSave(data) {
+        this.organizationUnitsSave.next(data);
     }
 }

@@ -32,6 +32,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     ngOnInit() {
         this._authService.logout(false);
+        abp.multiTenancy.setTenantIdCookie(null);
         this.model.leadRequestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
         this.registerTenant();
     }

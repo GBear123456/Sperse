@@ -1,6 +1,6 @@
 import { Injector, Component, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
+import { ClientDetailsService } from '../client-details.service';
 import { UserServiceProxy, UserLoginServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 
@@ -14,13 +14,22 @@ export class LoginAttempsComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector,
         private _userService: UserServiceProxy,
-        private _userLoginService: UserLoginServiceProxy) {
+        private _userLoginService: UserLoginServiceProxy,
+        private _clientDetailsService: ClientDetailsService
+    ) {
         super(injector);
+
+        _clientDetailsService.userSubscribe((userId) => {            
+            if (userId) this.loadData(userId);
+        });
     }
 
     ngOnInit() {
-        let userId = this._userService['data'].userId;
+        if (this._userService['data'].userId)
+            this.loadData(this._userService['data'].userId);
+    }
 
+    loadData(userId) {
         this._userLoginService.getRecentLoginAttemptsForOtherUser(userId).subscribe(result => {
             this.userLoginAttempts = result.items;
             result.items.forEach(v => {
