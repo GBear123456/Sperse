@@ -26,7 +26,7 @@ export class BankAccountsService {
     businessEntitiesAmount$: Observable<number>;
     selectedBusinessEntities$: Observable<BusinessEntityDto[]>;
     selectedBusinessEntitiesIds$: Observable<number[]>;
-    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}`;
+    bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${this.cfoService.instanceType}`;
     state: BankAccountsState = {
         selectedBankAccountIds: [],
         isActive: true,
