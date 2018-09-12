@@ -32,6 +32,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
 
     private masks = AppConsts.masks;
 
+    private _clickTimeout;
+    private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
 
@@ -165,22 +167,26 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             dataItem[field] = dataItem.original;
         });
     }
-
+    
     inPlaceEdit(field, item, event, index) {
-        if (this.isEditAllowed) {
+        this._clickCounter++;
+        clearTimeout(this._clickTimeout);
+        this._clickTimeout = setTimeout(() => {
+            if (this.isEditAllowed && this._clickCounter > 1) {
+                if (!this._isInPlaceEditAllowed)
+                    return;
 
-            if (!this._isInPlaceEditAllowed)
-                return;
+                item.inplaceEdit = true;
+                item.original = item[field];
 
-            item.inplaceEdit = true;
-            item.original = item[field];
+                if (this._itemInEditMode && this._itemInEditMode != item)
+                    this._itemInEditMode.inplaceEdit = false;
 
-            if (this._itemInEditMode && this._itemInEditMode != item)
-                this._itemInEditMode.inplaceEdit = false;
-
-            this._itemInEditMode = item;
-        } else
-            this.showDialog(field, item, event, index);
+                this._itemInEditMode = item;
+            } else
+                this.showDialog(field, item, event, index);
+            this._clickCounter = 0;
+        }, 250);
     }
 
     closeInPlaceEdit(field, item) {
