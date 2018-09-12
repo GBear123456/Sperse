@@ -54,11 +54,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input() selectFields: string[];
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
-        this._dataSource = dataSource;
-        if (dataSource) {
-            this.refresh(false, undefined, false);
+        if (this._dataSource = dataSource)
             this.dataSource$.next(dataSource);
-        }
     }
     @Input() pipelinePurposeId: string;
 

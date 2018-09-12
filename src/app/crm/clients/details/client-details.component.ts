@@ -152,7 +152,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.navLinks = [
             {label: 'Contact Information', route: 'contact-information'},
             {
-                label: contact.userId ? 'User Information' : 'Invaite User',
+                label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !this.permission.isGranted('Pages.Administration.Users'),
                 route: 'user-information'
             },
