@@ -48,23 +48,20 @@ export class ImportWizardService {
         this.setupCheckTimeout((callback) => {
             this._importProxy.getStatuses(importId).subscribe((res) => {
                 if (res && res.length) {
-                    if (res.length > 1) {
+                    if (res.length > 1)
                         this.activeImportId = undefined;
-                        callback(res);
-                    } else {
+                    else {
                         let importStatus = res[0];
                         method && method(importStatus);                                
                         if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
                             invalUri && (<any>this._reuseService).invalidate(invalUri);
                             this.activeImportId = undefined;
-                            callback(res);
                         }
-                        if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress) {
+                        if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
                             this.activeImportId = importId;
-                            callback(res);
-                        }
                     }
                 }
+                callback(res);
             })
         });
     }

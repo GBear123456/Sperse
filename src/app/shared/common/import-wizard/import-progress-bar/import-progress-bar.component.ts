@@ -42,7 +42,7 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
         super(injector);
 
         this.subscription = _importService.progressListen((data) => {
-            if (data) {
+            if (data && data.length) {
                 this.progress = 0;
                 this.list = data;
                 data.forEach((entity) => {
