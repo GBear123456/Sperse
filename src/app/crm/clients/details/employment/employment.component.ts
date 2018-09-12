@@ -28,8 +28,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     private get contactId() {
         return this._contactInfoBehaviorSubject.getValue();
     }
-    // public contactEmploymentInfo: ContactEmploymentInfo;
-    public contactEmploymentInfo: any;
+
+    public contactEmploymentInfo: any = {};
     private organizations: OrganizationShortInfoDto[];
     private organizationAddress: ContactAddressDto;
     private organizationWebsiteUrl: string;
@@ -51,7 +51,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _сontactEmploymentService: ContactEmploymentServiceProxy,
+        private _contactEmploymentService: ContactEmploymentServiceProxy,
         private _organizationContactServiceProxy: OrganizationContactServiceProxy,
         private dialog: MatDialog,
         private dialogService: DialogService) {
@@ -69,14 +69,11 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         .subscribe(r => {
             let contactId = this.contactId;
             if (contactId) {
-                this._сontactEmploymentService.get(contactId).subscribe(response => {
-                    this.contactEmploymentInfo = response.contactEmploymentInfo;
+                this._contactEmploymentService.get(contactId).subscribe(response => {
+                    this.contactEmploymentInfo = response.contactEmploymentInfo || {};
                     if (this.contactEmploymentInfo) {
-                        let orgId = this.contactEmploymentInfo.orgId;
-                        this.isEditOrgDetailsAllowed = orgId == null;
-                        if (orgId) {
-                            this.setOrganizationContactInfo(orgId);
-                        }
+                        if (this.isEditOrgDetailsAllowed = Boolean(this.contactEmploymentInfo['orgId']))
+                            this.setOrganizationContactInfo(this.contactEmploymentInfo.orgId);
                     }
                 });
             }
@@ -214,11 +211,10 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     updateContactEmployment(contactEmploymentData) {
-        let contactEmploymentInputData = new UpdateContactEmploymentInput();
-        contactEmploymentInputData.contactEmploymentEditInfo = contactEmploymentData;
-        contactEmploymentInputData.id = contactEmploymentData.id;
-
-        this._сontactEmploymentService.update(contactEmploymentInputData).subscribe(response => {});
+        this._contactEmploymentService.update(UpdateContactEmploymentInput.fromJS({
+            id: contactEmploymentData.id,
+            contactEmploymentEditInfo: contactEmploymentData
+        })).subscribe(response => {});
     }
 
     showEditAddressDialog(contactEmploymentInfo, event) {
