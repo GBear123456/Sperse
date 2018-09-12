@@ -74,6 +74,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
         this._auditLogService.getAuditLogs(
             this.startDate,
             this.endDate,
+            undefined,
             this.usernameAuditLog,
             this.serviceName,
             this.methodName,
@@ -125,6 +126,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
         self._auditLogService.getAuditLogsToExcel(
             self.startDate,
             self.endDate,
+            undefined,
             self.usernameAuditLog,
             self.serviceName,
             self.methodName,
