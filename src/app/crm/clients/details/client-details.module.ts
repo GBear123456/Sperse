@@ -60,7 +60,7 @@ import { PermissionTreeComponent } from './permission-tree/permission-tree.compo
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 
-import { ContactGroupServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy, CountryServiceProxy,
+import { ContactGroupServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -194,7 +194,6 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
   ],
   providers: [
     ClientDetailsService,
-    CountryServiceProxy,
     ContactAddressServiceProxy,
     ContactEmailServiceProxy,
     ContactPhoneServiceProxy,

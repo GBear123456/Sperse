@@ -15,7 +15,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CountryStateDto,
     MemberServiceProxy,
-    CountryServiceProxy,
     RegisterMemberRequestGender,
     MemberPaymentAuthorizeRequestDto,
     MemberInfoDto, MemberInfoDtoGender, MemberAddressDto,
@@ -32,7 +31,7 @@ import { PackageIdService } from '../../../../shared/common/packages/package-id.
     selector: 'app-wizard-page',
     templateUrl: 'wizard-page.component.html',
     styleUrls: ['wizard-page.component.less'],
-    providers: [MemberServiceProxy, CountryServiceProxy, LoginService]
+    providers: [MemberServiceProxy, LoginService]
 })
 export class CreditWizardPageComponent extends AppComponentBase implements OnInit {
     @ViewChild(WizardComponent) mWizard: WizardComponent;
@@ -92,7 +91,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         public loginService: LoginService,
         private data: PackageIdService,
         private _memberService: MemberServiceProxy,
-        private _coutryService: CountryServiceProxy,
         private _router: Router,
         private store$: Store<RootStore.State>
     ) {

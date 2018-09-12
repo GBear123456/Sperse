@@ -16,14 +16,13 @@ import {
     BusinessEntityServiceProxy,
     CreateBusinessEntityDto,
     UpdateBusinessEntityDto,
-    BusinessEntityInfoDto,
-    CountryServiceProxy
+    BusinessEntityInfoDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
     styleUrls: ['business-entity-edit-dialog.component.less'],
-    providers: [ BusinessEntityServiceProxy, CountryServiceProxy ]
+    providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent implements OnInit {
 
@@ -50,7 +49,6 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
     constructor(
         injector: Injector,
-        private _countryService: CountryServiceProxy,
         private _businessEntityService: BusinessEntityServiceProxy,
         private store$: Store<RootStore.State>
     ) {

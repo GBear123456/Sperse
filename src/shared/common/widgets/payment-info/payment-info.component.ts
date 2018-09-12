@@ -10,8 +10,7 @@ import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store
 import { AppComponentBase } from 'shared/common/app-component-base';
 import {
     BankCardDto,
-    CountryStateDto,
-    CountryServiceProxy
+    CountryStateDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -44,7 +43,6 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     };
 
     constructor(injector: Injector,
-        private _coutryService: CountryServiceProxy,
         private store$: Store<RootStore.State>
     ) {
         super(injector);
