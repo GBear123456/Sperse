@@ -17,10 +17,10 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
                     {
                         path: '',
                         children: [
-                            { path: '', redirectTo: '/app/crm/start', pathMatch: 'full' },
                             { path: 'notifications', component: NotificationsComponent },
                             { path: 'access-denied', component: AccessDeniedComponent }
-                        ]
+                        ],
+                        data: { permission: 'Pages.Detect.Route' }
                     },
                     {
                         path: 'admin',
