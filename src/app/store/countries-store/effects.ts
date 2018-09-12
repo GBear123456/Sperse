@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Actions, Effect, ofType } from '@ngrx/effects';
@@ -15,7 +15,7 @@ import { getLoaded } from './selectors';
 
 @Injectable()
 export class CountriesStoreEffects {
-    constructor(private countriesService: CountryServiceProxy,
+    constructor(private injector: Injector,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -29,7 +29,7 @@ export class CountriesStoreEffects {
                 return empty();
             }
 
-            return this.countriesService.getCountries()
+            return this.injector.get(CountryServiceProxy).getCountries()
                 .pipe(
                     map((countries: CountryDto[]) => {
                         return new countriesActions.LoadSuccessAction(countries);

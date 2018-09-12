@@ -11,14 +11,13 @@ import * as _ from 'underscore';
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FilterComponent } from '../models/filter-component';
 import { FilterStatesModel } from './filter-states.model';
 
 @Component({
     templateUrl: './filter-states.component.html',
     styleUrls: ['./filter-states.component.less'],
-    providers: [CountryServiceProxy, CacheService]
+    providers: [ CacheService ]
 })
 export class FilterStatesComponent extends AppComponentBase implements FilterComponent, OnDestroy, OnInit {
     items: {
@@ -32,7 +31,6 @@ export class FilterStatesComponent extends AppComponentBase implements FilterCom
     } = {};
 
     constructor(injector: Injector,
-        private _countryService: CountryServiceProxy,
         private _cacheService: CacheService,
         private store$: Store<RootStore.State>
     ) {

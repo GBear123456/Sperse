@@ -1,14 +1,20 @@
+/** Core imports */
 import { Component, OnInit, Injector, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
 import { CreditCardValidator } from 'angular-cc-library';
+import { AngularGooglePlaceService } from 'angular-google-place';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import * as _ from 'underscore';
-import { AngularGooglePlaceService } from 'angular-google-place';
 
+/** Application imports */
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CountryStateDto, CountryServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 
 export interface Country {
@@ -23,7 +29,6 @@ export interface State {
     selector: 'credit-card',
     templateUrl: './credit-card.component.html',
     styleUrls: ['./credit-card.component.less'],
-    providers: [ CountryServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreditCardComponent extends AppComponentBase implements OnInit {
@@ -54,8 +59,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private formBuilder: FormBuilder,
-        private _countryService: CountryServiceProxy,
-        private _angularGooglePlaceService: AngularGooglePlaceService
+        private _angularGooglePlaceService: AngularGooglePlaceService,
+        private store$: Store<RootStore.State>
     ) {
         super(injector);
         this.creditCardData.get('billingStateCode').disable();
@@ -120,8 +125,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     getStates(callback: () => any): void {
-        this._countryService
-            .getCountryStates(this.countryCode)
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode))
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
                 if (callback) callback();
@@ -129,7 +134,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     getCountries(): void {
-        this._countryService.getCountries()
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries))
             .subscribe(result => {
                 this.countries = result;
             });
@@ -138,8 +144,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     onCountryChange(event) {
         this.creditCardData.controls.billingState.setValue(undefined);
         this.countryCode = event.option.value.code;
-        this._countryService
-            .getCountryStates(this.countryCode)
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode))
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
             });

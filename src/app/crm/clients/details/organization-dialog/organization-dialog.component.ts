@@ -14,8 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { InplaceSelectBoxModel } from '@app/shared/common/inplace-select-box/inplace-select-box.model';
-import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
-    CountryServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
+import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
 
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 
@@ -100,7 +99,6 @@ export class OrganizationDialogComponent extends AppComponentBase {
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<OrganizationDialogComponent>,
         private _orgContactService: OrganizationContactServiceProxy,
-        private _countryService: CountryServiceProxy,
         private _contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private store$: Store<RootStore.State>
     ) {

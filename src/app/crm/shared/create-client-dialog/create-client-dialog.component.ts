@@ -28,7 +28,7 @@ import { ContactTypes, ContactGroupType } from '@shared/AppEnums';
 import {
     ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, CountryServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
+    ContactPhoneServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput
 } from '@shared/service-proxies/service-proxies';
 import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
@@ -154,7 +154,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         injector: Injector,
         public dialog: MatDialog,
         private _cacheService: CacheService,
-        private _countryService: CountryServiceProxy,
         private _contactGroupService: ContactGroupServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,

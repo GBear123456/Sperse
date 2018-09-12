@@ -61,7 +61,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
-    
+
     private initialData: string;
 
     navLinks = [];
@@ -97,7 +97,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         _contactGroupService['data'] = {
             customerInfo: null,
             leadInfo: null,
-            partnerInfo: null  
+            partnerInfo: null
         };
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
@@ -107,8 +107,8 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     customerId = clientId || partnerId,
                     leadId = params['leadId'];
 
-                _userService['data'] = { 
-                    userId: null, user: null, roles: null 
+                _userService['data'] = {
+                    userId: null, user: null, roles: null
                 };
                 _contactGroupService['data'].customerInfo = {
                     id: customerId
@@ -134,11 +134,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                     optionTimeout = null;
                     let data = event.snapshot.data;
                     this.rightPanelSetting.id = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
-                    this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened', 
-                        this.rightPanelSetting.id != RP_USER_INFO_ID || this._userService['data'].userId);                        
+                    this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened',
+                        this.rightPanelSetting.id != RP_USER_INFO_ID || this._userService['data'].userId);
                 });
         });
-        _clientDetailsService.userSubscribe((userId) => {            
+        _clientDetailsService.userSubscribe((userId) => {
             if (this.rightPanelSetting.id == RP_USER_INFO_ID)
                 this.rightPanelSetting.opened = Boolean(userId);
         });
@@ -152,9 +152,9 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.navLinks = [
             {label: 'Contact Information', route: 'contact-information'},
             {
-                label: contact.userId ? 'User Information': 'Invaite User', 
+                label: contact.userId ? 'User Information' : 'Invaite User',
                 hidden: !this.permission.isGranted('Pages.Administration.Users'),
-                route: 'user-information'                
+                route: 'user-information'
             },
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
             {label: 'Questionnaire', route: 'questionnaire'},
@@ -180,7 +180,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.primaryContact = result.primaryContactInfo;
         this.customerInfo = result;
         this.initVerificationChecklist();
-      
+
         this._clientDetailsService.userUpdate(
             this._userService['data'].userId = this.primaryContact.userId
         );

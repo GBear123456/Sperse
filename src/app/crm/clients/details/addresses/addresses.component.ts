@@ -18,7 +18,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ClientDetailsService } from '../client-details.service';
 import {
-    ContactGroupInfoDto, ContactAddressServiceProxy, CountryDto, CountryServiceProxy,
+    ContactGroupInfoDto, ContactAddressServiceProxy, CountryDto,
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
@@ -52,7 +52,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 public dialog: MatDialog,
                 private _clientDetailsService: ClientDetailsService,
                 private _addressService: ContactAddressServiceProxy,
-                private _countryService: CountryServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService,
                 private store$: Store<RootStore.State>

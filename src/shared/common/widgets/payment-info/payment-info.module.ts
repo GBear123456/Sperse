@@ -15,8 +15,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { CountryServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PaymentInfoComponent } from './payment-info.component'
+import { PaymentInfoComponent } from './payment-info.component';
 
 @NgModule({
     imports: [
@@ -40,9 +39,6 @@ import { PaymentInfoComponent } from './payment-info.component'
     ],
     exports: [
         PaymentInfoComponent
-    ],
-    providers: [
-        CountryServiceProxy
     ]
 })
 export class PaymentInfoModule {
