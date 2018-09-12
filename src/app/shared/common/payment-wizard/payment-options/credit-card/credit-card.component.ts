@@ -21,10 +21,6 @@ export interface Country {
     code: string;
     name: string;
 }
-export interface State {
-    code: string;
-    name: string;
-}
 @Component({
     selector: 'credit-card',
     templateUrl: './credit-card.component.html',
@@ -38,8 +34,13 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     states: CountryStateDto[];
     countries: Country[] = [];
     filteredCountries: Observable<Country[]>;
+    filteredStates: Observable<CountryStateDto[]>;
     billingCountryCodes: any;
     cvvMaxLength = 3;
+    patterns = {
+        monthPattern: '^(?:0?[1-9]|1[0-2])$',
+        yearPattern: '^(2018|201[8-9]|202[0-9]|2030)$'
+    };
 
     creditCardData = this.formBuilder.group({
         holderName: ['', [<any>Validators.required]],
@@ -66,12 +67,14 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.creditCardData.get('billingStateCode').disable();
         this.googleAutoComplete = Boolean(window['google']);
         this.getCountries();
-        this.filteredCountries = this.creditCardData.get('billingCountry').valueChanges
-            .pipe(
-                startWith<string | Country>(''),
-                map(value => typeof value === 'string' ? value : value.name),
-                map(name => name ? this._filterCountry(name) : this.countries.slice())
-            );
+        if (this.countries) {
+            this.filteredCountries = this.creditCardData.get('billingCountry').valueChanges
+                .pipe(
+                    startWith<string | Country>(''),
+                    map(value => typeof value === 'string' ? value : value.name),
+                    map(name => name ? this._filterCountry(name) : this.countries.slice())
+                );
+        }
     }
 
     ngOnInit() {}
@@ -81,22 +84,38 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         return this.countries.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
     }
 
+    private _filterStates(name: string): CountryStateDto[] {
+        const filterValue = name.toLowerCase();
+        return this.states.filter(option => option.name.toLowerCase().indexOf(filterValue) === 0);
+    }
+
     updateCountryInfo(countryName: string) {
         let country = _.findWhere(this.countries, { name: countryName });
         this.creditCardData.controls.billingCountry.setValue(country);
         this.creditCardData.controls.billingCountryCode.setValue(country.code);
-        this.countryCode = country.code;
+        if (this.countryCode != country.code) {
+            this.filteredStates = this.creditCardData.get('billingState').valueChanges
+                .pipe(
+                    startWith<string | CountryStateDto>(''),
+                    map(value => typeof value === 'string' ? value : value.name),
+                    map(name => name ? this._filterStates(name) : this.states.slice())
+                );
+
+            this.countryCode = country.code;
+        }
     }
 
     updateStatesInfo(stateName: string) {
         let state;
         if (this.states.length) {
             state = _.findWhere(this.states, { name: stateName });
-            this.creditCardData.controls.billingState.setValue(state);
-            this.creditCardData.controls.billingStateCode.setValue(state.code);
+            setTimeout(() => {
+                this.creditCardData.controls.billingState.setValue(state);
+                this.creditCardData.controls.billingStateCode.setValue(state.code);
+            }, 100);
         } else {
-            this.creditCardData.controls.billingState.setValue(undefined);
-            this.creditCardData.controls.billingStateCode.setValue(undefined);
+            this.creditCardData.controls.billingState.setValue('');
+            this.creditCardData.controls.billingStateCode.setValue('');
         }
     }
 
@@ -112,7 +131,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.getStates(() => this.updateStatesInfo(state));
     }
 
-    onKeyPress(e) {
+    checkIfNumber(e) {
         if (e.which < 48 || e.which > 57) {
             e.preventDefault();
         }
@@ -142,9 +161,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     onCountryChange(event) {
-        this.creditCardData.controls.billingState.setValue(undefined);
+        this.creditCardData.controls.billingState.setValue('');
         this.countryCode = event.option.value.code;
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode))
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
