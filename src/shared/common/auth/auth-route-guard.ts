@@ -79,7 +79,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
                 return '/app/admin/hostDashboard';
             }
         }
-        
+
         if ((abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('CRM'))
             && this._permissionChecker.isGranted('Pages.CRM')) {
             return '/app/crm/dashboard';
