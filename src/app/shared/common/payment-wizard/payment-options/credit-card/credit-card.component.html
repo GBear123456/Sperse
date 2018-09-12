@@ -17,17 +17,19 @@
                 <mat-form-field class="col-4">
                     <input matInput placeholder="MM"
                         type="tel"
+                        [pattern]='patterns.monthPattern'
                         formControlName="expirationMonth"
                         minlength="1" maxlength="2"
-                        (keypress)="onKeyPress($event)">
+                        (keypress)="checkIfNumber($event)">
                 </mat-form-field>
                 <div class="col-2 align-self-center">/</div>
                 <mat-form-field class="col-6">
                     <input matInput placeholder="YYYY"
                         type="tel"
                         formControlName="expirationYear"
+                        [pattern]='patterns.yearPattern'
                         minlength="4" maxlength="4"
-                        (keypress)="onKeyPress($event)">
+                        (keypress)="checkIfNumber($event)">
                 </mat-form-field>
 
                 <mat-error class="exp-date-errors col-12"
@@ -90,8 +92,11 @@
     <div class="row">
         <mat-form-field class="col-4 field">
             <input type="text" placeholder="STATE OR PROVINCE" aria-label="State" matInput formControlName="billingState" [matAutocomplete]="state">
-            <mat-autocomplete #state="matAutocomplete" [displayWith]="displayName">
-                <mat-option *ngFor="let state of states" [value]="state">
+            <mat-autocomplete
+                #state="matAutocomplete"
+                autoActiveFirstOption
+                [displayWith]="displayName">
+                <mat-option *ngFor="let state of filteredStates | async" [value]="state">
                     {{ state.name }}
                 </mat-option>
             </mat-autocomplete>

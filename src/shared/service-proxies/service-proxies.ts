@@ -7683,6 +7683,61 @@ export class ContactGroupServiceProxy {
     }
 
     /**
+     * @userId (optional) 
+     * @return Success
+     */
+    getContactGroupForUser(userId: number | null | undefined): Observable<UserContactGroupInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetContactGroupForUser?";
+        if (userId !== undefined)
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactGroupForUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactGroupForUser(<any>response_);
+                } catch (e) {
+                    return <Observable<UserContactGroupInfo>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserContactGroupInfo>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactGroupForUser(response: HttpResponseBase): Observable<UserContactGroupInfo> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UserContactGroupInfo.fromJS(resultData200) : new UserContactGroupInfo();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserContactGroupInfo>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -35673,6 +35728,46 @@ export interface IContactLinkDto {
     confirmationDate: moment.Moment | undefined;
     confirmedByUserId: number | undefined;
     confirmedByUser: UserKeyInfoDto | undefined;
+}
+
+export class UserContactGroupInfo implements IUserContactGroupInfo {
+    userContactId!: number | undefined;
+    contactGroupInfo!: ContactGroupInfoDto | undefined;
+
+    constructor(data?: IUserContactGroupInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userContactId = data["userContactId"];
+            this.contactGroupInfo = data["contactGroupInfo"] ? ContactGroupInfoDto.fromJS(data["contactGroupInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UserContactGroupInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserContactGroupInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userContactId"] = this.userContactId;
+        data["contactGroupInfo"] = this.contactGroupInfo ? this.contactGroupInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUserContactGroupInfo {
+    userContactId: number | undefined;
+    contactGroupInfo: ContactGroupInfoDto | undefined;
 }
 
 export class CreateContactGroupInput implements ICreateContactGroupInput {
