@@ -1391,6 +1391,7 @@ export class AuditLogServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @userId (optional) 
      * @userName (optional) 
      * @serviceName (optional) 
      * @methodName (optional) 
@@ -1403,12 +1404,14 @@ export class AuditLogServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getAuditLogs(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAuditLogListDto> {
+    getAuditLogs(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userId: number | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfAuditLogListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogs?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (userName !== undefined)
             url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
         if (serviceName !== undefined)
@@ -1479,6 +1482,7 @@ export class AuditLogServiceProxy {
     /**
      * @startDate (optional) 
      * @endDate (optional) 
+     * @userId (optional) 
      * @userName (optional) 
      * @serviceName (optional) 
      * @methodName (optional) 
@@ -1491,12 +1495,14 @@ export class AuditLogServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getAuditLogsToExcel(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<FileDto> {
+    getAuditLogsToExcel(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, userId: number | null | undefined, userName: string | null | undefined, serviceName: string | null | undefined, methodName: string | null | undefined, browserInfo: string | null | undefined, hasException: boolean | null | undefined, minExecutionDuration: number | null | undefined, maxExecutionDuration: number | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<FileDto> {
         let url_ = this.baseUrl + "/api/services/Platform/AuditLog/GetAuditLogsToExcel?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (userId !== undefined)
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&"; 
         if (userName !== undefined)
             url_ += "UserName=" + encodeURIComponent("" + userName) + "&"; 
         if (serviceName !== undefined)
@@ -14776,13 +14782,13 @@ export class NotesServiceProxy {
     }
 
     /**
-     * @customerId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    getNotes(customerId: number | null | undefined): Observable<NoteInfoDto[]> {
+    getNotes(contactGroupId: number | null | undefined): Observable<NoteInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
-        if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -22219,6 +22225,110 @@ export class TenantPaymentSettingsServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getPayPalSettings(): Observable<PayPalSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetPayPalSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPayPalSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPayPalSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<PayPalSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PayPalSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPayPalSettings(response: HttpResponseBase): Observable<PayPalSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PayPalSettings.fromJS(resultData200) : new PayPalSettings();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PayPalSettings>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updatePayPalSettings(input: PayPalSettings | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdatePayPalSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePayPalSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePayPalSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePayPalSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -22990,58 +23100,6 @@ export class TenantSubscriptionServiceProxy {
     }
 
     protected processSetupSubscriptionWithBankCard(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    setupSubscription(input: SetupSubscriptionInfoDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscription";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSetupSubscription(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSetupSubscription(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSetupSubscription(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -42233,6 +42291,9 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.overrideLists = false;
+        }
     }
 
     init(data?: any) {
@@ -42255,7 +42316,7 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
             this.importType = data["importType"];
             this.partnerTypeName = data["partnerTypeName"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
-            this.overrideLists = data["overrideLists"];
+            this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
             this.notes = data["notes"];
@@ -52211,6 +52272,54 @@ export interface IRecurlyPaymentSettings {
     pageSize: number | undefined;
 }
 
+export class PayPalSettings implements IPayPalSettings {
+    environment!: string | undefined;
+    baseUrl!: string | undefined;
+    clientId!: string | undefined;
+    clientSecret!: string | undefined;
+
+    constructor(data?: IPayPalSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.environment = data["environment"];
+            this.baseUrl = data["baseUrl"];
+            this.clientId = data["clientId"];
+            this.clientSecret = data["clientSecret"];
+        }
+    }
+
+    static fromJS(data: any): PayPalSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["environment"] = this.environment;
+        data["baseUrl"] = this.baseUrl;
+        data["clientId"] = this.clientId;
+        data["clientSecret"] = this.clientSecret;
+        return data; 
+    }
+}
+
+export interface IPayPalSettings {
+    environment: string | undefined;
+    baseUrl: string | undefined;
+    clientId: string | undefined;
+    clientSecret: string | undefined;
+}
+
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
     leadRequestXref!: string;
     tenantName!: string | undefined;
@@ -52905,8 +53014,8 @@ export interface IACHCustomerInfoDto {
 
 export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionWithBankCardInfoDto {
     editionId!: number;
-    frequency!: SetupSubscriptionWithBankCardInfoDtoFrequency | undefined;
-    bankCard!: BankCardInfoDto | undefined;
+    frequency!: SetupSubscriptionWithBankCardInfoDtoFrequency;
+    bankCard!: BankCardInfoDto;
 
     constructor(data?: ISetupSubscriptionWithBankCardInfoDto) {
         if (data) {
@@ -52915,13 +53024,16 @@ export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionW
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.bankCard = new BankCardInfoDto();
+        }
     }
 
     init(data?: any) {
         if (data) {
             this.editionId = data["editionId"];
             this.frequency = data["frequency"];
-            this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : <any>undefined;
+            this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : new BankCardInfoDto();
         }
     }
 
@@ -52943,52 +53055,8 @@ export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionW
 
 export interface ISetupSubscriptionWithBankCardInfoDto {
     editionId: number;
-    frequency: SetupSubscriptionWithBankCardInfoDtoFrequency | undefined;
-    bankCard: BankCardInfoDto | undefined;
-}
-
-export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
-    editionId!: number | undefined;
-    frequency!: SetupSubscriptionInfoDtoFrequency | undefined;
-    billingInfo!: PaymentRequestInfoDto | undefined;
-
-    constructor(data?: ISetupSubscriptionInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.editionId = data["editionId"];
-            this.frequency = data["frequency"];
-            this.billingInfo = data["billingInfo"] ? PaymentRequestInfoDto.fromJS(data["billingInfo"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SetupSubscriptionInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SetupSubscriptionInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["frequency"] = this.frequency;
-        data["billingInfo"] = this.billingInfo ? this.billingInfo.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISetupSubscriptionInfoDto {
-    editionId: number | undefined;
-    frequency: SetupSubscriptionInfoDtoFrequency | undefined;
-    billingInfo: PaymentRequestInfoDto | undefined;
+    frequency: SetupSubscriptionWithBankCardInfoDtoFrequency;
+    bankCard: BankCardInfoDto;
 }
 
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
@@ -56602,11 +56670,6 @@ export enum CompleteTenantRegistrationInputTenantHostType {
 }
 
 export enum SetupSubscriptionWithBankCardInfoDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
-}
-
-export enum SetupSubscriptionInfoDtoFrequency {
     _30 = 30, 
     _365 = 365, 
 }

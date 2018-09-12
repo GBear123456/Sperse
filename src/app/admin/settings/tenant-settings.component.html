@@ -319,6 +319,26 @@
                             </div>
                         </div>
                     </tab>
+                    <tab heading="{{l('PayPal')}}" *ngIf="true" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                                <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                            </div>
+                            <div class="form-group">
+                                <label for="PayPalBaseUrl">{{l("PayPal base URL")}}</label>
+                                <input id="PayPalBaseUrl" type="text" name="PayPalBaseUrl" class="form-control" [(ngModel)]="payPalPaymentSettings.baseUrl">
+                            </div>
+                            <div class="form-group">
+                                <label for="PayPalClientId">{{l("Client ID")}}</label>
+                                <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
+                            </div>
+                            <div class="form-group">
+                                <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                                <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
+                            </div>
+                        </div>
+                    </tab>
                     <tab heading="{{l('ACH Works')}}" *ngIf="true" customClass="m-tabs__item">
                         <div>
                             <div class="form-group">

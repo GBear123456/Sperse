@@ -4,7 +4,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput,
+    ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
     BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
 } from '@shared/service-proxies/service-proxies';
 import { Observable, forkJoin } from 'rxjs';
@@ -24,6 +24,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Application;
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
+    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
 
@@ -47,14 +48,16 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         forkJoin(
             this._hostSettingService.getAllSettings(),
             this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
+            this._tenantPaymentSettingsService.getPayPalSettings(),
             this._tenantPaymentSettingsService.getACHWorksSettings(),
             this._tenantPaymentSettingsService.getRecurlyPaymentSettings()
-        ).subscribe(([allSettings, baseCommerceSettings, achWorksSettings, recurlySettings]) => {
+        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings]) => {
             this.hostSettings = allSettings;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
 
             this.baseCommercePaymentSettings = baseCommerceSettings;
+            this.payPalPaymentSettings = payPalSettings;
             this.achWorksSettings = achWorksSettings;
             this.recurlySettings = recurlySettings;
         });
@@ -109,6 +112,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         forkJoin(
             this._hostSettingService.updateAllSettings(this.hostSettings),
             this._tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
+            this._tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this._tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
             this._tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings)
         ).subscribe(result => {
