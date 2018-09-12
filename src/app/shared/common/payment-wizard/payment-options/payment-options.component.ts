@@ -106,7 +106,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
-                console.log(creditCardData);
                 const cardPaymentInfo = SetupSubscriptionWithBankCardInfoDto.fromJS({
                     editionId: this.plan.selectedEditionId,
                     frequency: this.plan.billingPeriod == BillingPeriod.Monthly
