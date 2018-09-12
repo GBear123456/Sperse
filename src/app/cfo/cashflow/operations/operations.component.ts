@@ -55,7 +55,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     ngOnInit() {
         this._bankAccountsService.accountsAmount$.subscribe( amount => {
             this.bankAccountCount = amount;
-            this.initToolbarConfig();
         });
     }
 

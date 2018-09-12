@@ -150,7 +150,7 @@ export class AppService extends AppServiceBase {
             && !this.subscriptionInGracePeriod(name)
         ) {
             let module = this.getModule();
-            name = ModuleSubscriptionInfoDtoModule[module] ? this.getDefaultModule(): module;
+            name = ModuleSubscriptionInfoDtoModule[module] ? this.getDefaultModule() : module;
             params = {};
         }
 
