@@ -1,72 +1,83 @@
-<details-header [data]="customerInfo" [ratingId]="ratingId" (onContactSelected)="onContactSelected($event)"></details-header>
+<details-header [data]="customerInfo" [ratingId]="ratingId"
+                (onContactSelected)="onContactSelected($event)"></details-header>
 <div class="close-details" (click)="close()"></div>
 <div class="box-shadow-wrapper">
-  <div class="under-header">
-    <div class="general-links">
-      <i class="fa fa-envelope-o" aria-hidden="true"></i>
-      <i class="fa fa-phone" aria-hidden="true"></i>
-      <a [routerLink]="'notes'"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-    </div>
-    <operations-widget
-        [clientId]="customerId"
-        [customerType]="customerType"
-        [leadId]="leadId"
-        [customerInfo]="customerInfo"
-        [stages]="leadStages"
-        [selectedStageId]="clientStageId"
-        [partnerTypes]="partnerTypes"
-        [selectedPartnerTypeId]="partnerTypeId"
-        (print)="printMainArea()"
-        (onUpdateStatus)="updateStatus($event)"
-        (onUpdateRating)="updateRating($event)"
-        (onDelete)="delete()"
-    ></operations-widget>
-  </div>
-  <mat-sidenav-container>
-    <mat-sidenav mode="side" opened="true" position="start">
-      <div class="short-contact">
-        <div class="small-phones">
-          <div class="phone" *ngFor="let phone of primaryContact?.phones">
-            <i class="icons phone type-{{phone.usageTypeId || 'P'}}"></i>{{phone.phoneNumber | phone}}
-          </div>
+    <div class="under-header">
+        <div class="general-links">
+            <i class="fa fa-envelope-o" aria-hidden="true"></i>
+            <i class="fa fa-phone" aria-hidden="true"></i>
+            <a [routerLink]="'notes'"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
         </div>
-      </div>
-      <dx-scroll-view showScrollbar="onHover">
-        <nav mat-tab-nav-bar>
-            <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [disabled]="link.disabled" [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams">
-                {{link.label}}
-            </a>
-        </nav>
-      </dx-scroll-view>
-    </mat-sidenav>
-    <div class="main-content">
-      <router-outlet></router-outlet>
+        <operations-widget
+            [clientId]="customerId"
+            [customerType]="customerType"
+            [leadId]="leadId"
+            [customerInfo]="customerInfo"
+            [stages]="leadStages"
+            [selectedStageId]="clientStageId"
+            [partnerTypes]="partnerTypes"
+            [selectedPartnerTypeId]="partnerTypeId"
+            (print)="printMainArea()"
+            (onUpdateStatus)="updateStatus($event)"
+            (onUpdateRating)="updateRating($event)"
+            (onDelete)="delete()"
+        ></operations-widget>
     </div>
-    <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightPanelSetting.opened">      
-      <mat-tab-group>
-        <mat-tab label="{{l('Overview')}}" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
-          <span class="gear-icon" (click)="toggleConfigMode()"></span>
-          <dx-scroll-view showScrollbar="onHover">
-            <div class="right-content" [ngClass]="{'config-mode': configMode}">
-              <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.clientScores">
-                  <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'clientScores')" class="cb-visible-section" [checked]="rightPanelSetting?.clientScores"><client-scores></client-scores>
-              </div>
-              <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.totalApproved">
-                  <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'totalApproved')" class="cb-visible-section" [checked]="rightPanelSetting?.totalApproved"><total-approved></total-approved>
-              </div>
-              <!-- credit-lines></credit-lines -->
-              <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.verification">
-                  <input *ngIf="configMode" type="checkbox" (click)="toggleSectionVisibility($event, 'verification')" class="cb-visible-section" [checked]="rightPanelSetting?.verification"><verification-checklist [data]="verificationChecklist"></verification-checklist>
-              </div>
-              <!-- required-documents></required-documents -->
+    <mat-sidenav-container>
+        <mat-sidenav mode="side" opened="true" position="start">
+            <div class="short-contact">
+                <div class="small-phones">
+                    <div class="phone" *ngFor="let phone of primaryContact?.phones">
+                        <i class="icons phone type-{{phone.usageTypeId || 'P'}}"></i>{{phone.phoneNumber | phone}}
+                    </div>
+                </div>
             </div>
-          </dx-scroll-view>
-        </mat-tab>
-        <mat-tab label="Activity" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">Activity</mat-tab>
-        <mat-tab label="Organization Units" *ngIf="rightPanelSetting.id == RP_USER_INFO_ID">
-            <oranization-units-tree></oranization-units-tree>
-        </mat-tab>
-      </mat-tab-group>
-    </mat-sidenav>
-  </mat-sidenav-container>
+            <dx-scroll-view showScrollbar="onHover">
+                <nav mat-tab-nav-bar>
+                    <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [disabled]="link.disabled"
+                       [routerLink]="link.route" [routerLinkActive]="'active'" [queryParams]="referrerParams">
+                        {{link.label}}
+                    </a>
+                </nav>
+            </dx-scroll-view>
+        </mat-sidenav>
+        <div class="main-content">
+            <router-outlet></router-outlet>
+        </div>
+        <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightPanelSetting.opened">
+            <mat-tab-group>
+                <mat-tab label="{{l('Overview')}}" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">
+                    <span class="gear-icon" (click)="toggleConfigMode()"></span>
+                    <dx-scroll-view showScrollbar="onHover">
+                        <div class="right-content" [ngClass]="{'config-mode': configMode}">
+                            <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.clientScores">
+                                <input *ngIf="configMode" type="checkbox"
+                                       (click)="toggleSectionVisibility($event, 'clientScores')"
+                                       class="cb-visible-section" [checked]="rightPanelSetting?.clientScores">
+                                <client-scores></client-scores>
+                            </div>
+                            <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.totalApproved">
+                                <input *ngIf="configMode" type="checkbox"
+                                       (click)="toggleSectionVisibility($event, 'totalApproved')"
+                                       class="cb-visible-section" [checked]="rightPanelSetting?.totalApproved">
+                                <total-approved></total-approved>
+                            </div>
+                            <!-- credit-lines></credit-lines -->
+                            <div class="right-panel-block" [hidden]="!configMode && !rightPanelSetting?.verification">
+                                <input *ngIf="configMode" type="checkbox"
+                                       (click)="toggleSectionVisibility($event, 'verification')"
+                                       class="cb-visible-section" [checked]="rightPanelSetting?.verification">
+                                <verification-checklist [data]="verificationChecklist"></verification-checklist>
+                            </div>
+                            <!-- required-documents></required-documents -->
+                        </div>
+                    </dx-scroll-view>
+                </mat-tab>
+                <mat-tab label="Activity" *ngIf="rightPanelSetting.id == RP_DEFAULT_ID">Activity</mat-tab>
+                <mat-tab label="Organization Units" *ngIf="rightPanelSetting.id == RP_USER_INFO_ID">
+                    <oranization-units-tree></oranization-units-tree>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-sidenav>
+    </mat-sidenav-container>
 </div>

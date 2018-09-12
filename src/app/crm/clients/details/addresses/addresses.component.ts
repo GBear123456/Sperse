@@ -4,7 +4,7 @@ import { Component, OnInit, Injector, Input } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Store, select } from '@ngrx/store';
-import { filter } from 'rxjs/operators';
+import { filter, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -43,8 +43,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     isEditAllowed = false;
 
-    countries: CountryDto[];
-
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
 
@@ -57,10 +55,14 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+    }
 
-        this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(AddressUsageTypesStoreSelectors.getAddressUsageTypes))
-            .pipe(filter(types => !!types))
+    ngOnInit() {
+        /** Load addressTypes only if they are needed */
+        if (this.contactInfoData && this.contactInfoData.addresses) {
+            this.loadAddressTypes();
+        }
+        this.getAddressTypes()
             .subscribe(types => {
                 types.reduce(function (obj, type) {
                     obj[type.id] = type.name;
@@ -68,12 +70,26 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 }, this.types);
             });
 
-        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
-            this.countries = result;
-        });
-
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+    }
+
+    loadAddressTypes() {
+        this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
+    }
+
+    getAddressTypes() {
+        return this.store$.pipe(
+            select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
+            filter(types => !!types)
+        );
+    }
+
+    loadCountries() {
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+    }
+
+    getCountries() {
+        return this.store$.pipe(select(CountriesStoreSelectors.getCountries), filter(countries => !!countries));
     }
 
     getDialogPossition(event) {
@@ -151,24 +167,23 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             [(address ? 'update' : 'create') + 'ContactAddress'](
             (address ? UpdateContactAddressInput : CreateContactAddressInput).fromJS(data)
         ).subscribe(result => {
-                if (!result && address) {
-                    address.city = data.city;
-                    address.country = data.country;
-                    address.isActive = data.isActive;
-                    address.isConfirmed = data.isConfirmed;
-                    address.state = data.state;
-                    address.streetAddress = data.streetAddress;
-                    address.comment = data.comment;
-                    address.usageTypeId = data.usageTypeId;
-                    address.zip = data.zip;
-                } else if (result.id) {
-                    data.id = result.id;
-                    this.contactInfoData.addresses
-                        .push(ContactAddressDto.fromJS(data));
-                }
-                this._clientDetailsService.verificationUpdate();
+            if (!result && address) {
+                address.city = data.city;
+                address.country = data.country;
+                address.isActive = data.isActive;
+                address.isConfirmed = data.isConfirmed;
+                address.state = data.state;
+                address.streetAddress = data.streetAddress;
+                address.comment = data.comment;
+                address.usageTypeId = data.usageTypeId;
+                address.zip = data.zip;
+            } else if (result.id) {
+                data.id = result.id;
+                this.contactInfoData.addresses
+                    .push(ContactAddressDto.fromJS(data));
             }
-        );
+            this._clientDetailsService.verificationUpdate();
+        });
     }
 
     deleteAddress(address, event, index) {
@@ -225,42 +240,47 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     updateItem(address, event) {
-        let country = _.findWhere(this.countries, {name: this.country}),
-            countryId = country && country['code'];
-        if (countryId) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
-            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryId }))
-                .pipe(filter(states => !!states))
-                .subscribe(states => {
-                    if (this.country && this.streetNumber && this.state &&
-                        this.streetAddress && this.city &&
-                        ((this.country != address.country) ||
-                            (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
-                            (this.city != address.city) ||
-                            (this.state != address.state))
-                    ) {
-                        let state = _.findWhere(states, {name: this.state});
-                        this.updateDataField(address, {
-                            id: address.id,
-                            contactId: this.contactInfoData.contactId,
-                            city: this.city,
-                            country: this.country,
-                            isActive: address.isActive,
-                            isConfirmed: address.isConfirmed,
-                            state: this.state,
-                            streetAddress: this.streetAddress + ' ' + this.streetNumber,
-                            comment: address.comment,
-                            usageTypeId: address.usageTypeId,
-                            countryId: countryId,
-                            stateId: state && state['code']
-                        });
-                        this.clearInplaceData();
-                    }
-            });
-        }
-        address.inplaceEdit = false;
-        this._isInPlaceEditAllowed = true;
-        event.event.stopPropagation();
+        this.loadCountries();
+        this.getCountries().pipe(
+            first()
+        ).subscribe(countries => {
+            let country = _.findWhere(countries, { name: this.country }),
+                countryId = country && country['code'];
+            if (countryId) {
+                this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
+                this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryId }))
+                    .pipe(filter(states => !!states), first())
+                    .subscribe(states => {
+                        if (this.country && this.streetNumber && this.state &&
+                            this.streetAddress && this.city &&
+                            ((this.country != address.country) ||
+                                (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
+                                (this.city != address.city) ||
+                                (this.state != address.state))
+                        ) {
+                            let state = _.findWhere(states, {name: this.state});
+                            this.updateDataField(address, {
+                                id: address.id,
+                                contactId: this.contactInfoData.contactId,
+                                city: this.city,
+                                country: this.country,
+                                isActive: address.isActive,
+                                isConfirmed: address.isConfirmed,
+                                state: this.state,
+                                streetAddress: this.streetAddress + ' ' + this.streetNumber,
+                                comment: address.comment,
+                                usageTypeId: address.usageTypeId,
+                                countryId: countryId,
+                                stateId: state && state['code']
+                            });
+                            this.clearInplaceData();
+                        }
+                    });
+            }
+            address.inplaceEdit = false;
+            this._isInPlaceEditAllowed = true;
+            event.event.stopPropagation();
+        });
     }
 
     aggregateAddress(address: ContactAddressDto) {
@@ -277,6 +297,4 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this._isInPlaceEditAllowed = address.autoComplete == event.formatted_address;
     }
 
-    ngOnInit() {
-    }
 }

@@ -1,30 +1,34 @@
 <div class="addresses">
-  <h3 class="lab">{{l('Addresses')}}</h3>
-  <div *ngIf="isEditAllowed" class="add-address" (click)="showDialog(null, $event)">+</div>
-  <div *ngFor="let address of contactInfoData?.addresses; let i = index" class="address-wrapper" (click)="inPlaceEdit(address, $event, i)">
-    <div *ngIf="isEditAllowed" class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog(address, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteAddress(address, $event, i)"></i></div>
-    <i class="icons type-{{address.usageTypeId || 'H'}}"></i>
-    <div class="address">
-      <h4>{{types[address.usageTypeId] || l("Undefined")}}</h4>
-      <p *ngIf="!address.inplaceEdit">{{address | address: address.streetAddress:address.city:address.state:address.zip:address.country}}</p>
-      <div *ngIf="address.inplaceEdit">
-        <input type="text"
-          name="Address"
-          placeholder=""
-          [(ngModel)]="address.autoComplete"
-          [disabled]="false"
-          class="dx-texteditor-input"
-          (country)="country=$event"
-          (street_number)='streetNumber=$event'
-          (street)='streetAddress=$event'
-          (city)='city=$event'
-          (state)='state=$event'
-          (postal_code)='zip=$event'
-          (setAddress)='addressChanged(address, $event)'
-          angularGooglePlace/>
-        <dx-button class="update" icon="todo" (onClick)="updateItem(address, $event)"></dx-button>
-        <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit(address, $event)"></dx-button>
-      </div>
+    <h3 class="lab">{{l('Addresses')}}</h3>
+    <div *ngIf="isEditAllowed" class="add-address" (click)="showDialog(null, $event)">+</div>
+    <div *ngFor="let address of contactInfoData?.addresses; let i = index" class="address-wrapper"
+         (click)="inPlaceEdit(address, $event, i)">
+        <div *ngIf="isEditAllowed" class="actions"><i class="edit fa fa-pencil" aria-hidden="true"
+                                                      (click)="showDialog(address, $event, i)"></i><i
+            class="delete fa fa-times" aria-hidden="true" (click)="deleteAddress(address, $event, i)"></i></div>
+        <i class="icons type-{{address.usageTypeId || 'H'}}"></i>
+        <div class="address">
+            <h4>{{types[address.usageTypeId] || l("Undefined")}}</h4>
+            <p *ngIf="!address.inplaceEdit">{{address | address:
+                address.streetAddress:address.city:address.state:address.zip:address.country}}</p>
+            <div *ngIf="address.inplaceEdit">
+                <input type="text"
+                       name="Address"
+                       placeholder=""
+                       [(ngModel)]="address.autoComplete"
+                       [disabled]="false"
+                       class="dx-texteditor-input"
+                       (country)="country=$event"
+                       (street_number)='streetNumber=$event'
+                       (street)='streetAddress=$event'
+                       (city)='city=$event'
+                       (state)='state=$event'
+                       (postal_code)='zip=$event'
+                       (setAddress)='addressChanged(address, $event)'
+                       angularGooglePlace/>
+                <dx-button class="update" icon="todo" (onClick)="updateItem(address, $event)"></dx-button>
+                <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit(address, $event)"></dx-button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
