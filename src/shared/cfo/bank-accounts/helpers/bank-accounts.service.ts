@@ -511,11 +511,13 @@ export class BankAccountsService {
     }
 
     changeActiveFilter(value: boolean) {
-        this.changeState({
-            isActive: value,
-            selectedBankAccountIds: null
-        });
-        this._activeStatus.next(value);
+        if (this.state.isActive !== value) {
+            this.changeState({
+                isActive: value,
+                selectedBankAccountIds: null
+            });
+            this._activeStatus.next(value);
+        }
     }
 
     changeAndGetBankAccountFilter(accountFilter: FilterModel, data: BankAccountsState, initialDataSource: SyncAccountBankDto[]) {
