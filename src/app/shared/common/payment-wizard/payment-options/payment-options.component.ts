@@ -80,7 +80,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.injector.get(HTTP_INTERCEPTORS)['avoidErrorHandling'] = true;
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
@@ -94,7 +93,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 /** Start submitting data and change status in a case of error or success */
                 this.tenantSubscriptionServiceProxy.addPaymentInfo(paymentInfo).subscribe(
                     res => {
-                        console.log('result', res);
                         this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
                     },
                     error => {

@@ -114,7 +114,6 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     checkCreditCardNumber(event) {
-        console.log(this.creditCardData);
         event.target.classList.contains('amex') ?
             this.cvvMaxLength = 4 :
             this.cvvMaxLength = 3;
