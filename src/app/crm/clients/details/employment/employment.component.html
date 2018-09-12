@@ -108,7 +108,7 @@
                     <div class="col-md-4 caption">
                         <p>{{l('JobTitle')}}</p>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8" *ngIf="contactEmploymentInfo?.id">
                         <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'jobTitle'" (click)="inPlaceEdit('jobTitle', contactEmploymentInfo)">
                             <span *ngIf="contactEmploymentInfo?.jobTitle">{{contactEmploymentInfo?.jobTitle}}</span>
                             <i *ngIf="!contactEmploymentInfo?.jobTitle"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('jobTitle', contactEmploymentInfo)"></i>
@@ -131,7 +131,7 @@
                     <div class="col-md-4 caption">
                         <p>{{l(capitalize(propertyName))}}</p>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8" *ngIf="contactEmploymentInfo?.id">
                         <p *ngIf="contactEmploymentInfo?.inplaceEditField != propertyName" (click)="inPlaceEdit(propertyName, contactEmploymentInfo)">
                             <span *ngIf="contactEmploymentInfo && contactEmploymentInfo[propertyName]">{{contactEmploymentInfo[propertyName]}}</span>
                             <i *ngIf="contactEmploymentInfo && !contactEmploymentInfo[propertyName]"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit(propertyName, contactEmploymentInfo)"></i>
@@ -147,7 +147,7 @@
                     <div class="col-md-4 caption">
                         <p>{{l('WorkEmail')}}</p>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8" *ngIf="contactEmploymentInfo?.id">
                         <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'workEmail'" (click)="inPlaceEdit('workEmail', contactEmploymentInfo)">
                             <span *ngIf="contactEmploymentInfo?.workEmail">{{contactEmploymentInfo?.workEmail}}</span>
                             <i *ngIf="!contactEmploymentInfo?.workEmail"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('workEmail', contactEmploymentInfo)"></i>
@@ -173,7 +173,7 @@
                     <div class="col-md-4 caption">
                         <p>{{l('MonthlyIncome')}}</p>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-8" *ngIf="contactEmploymentInfo?.id">
                         <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'monthlyIncome'" (click)="inPlaceEdit('monthlyIncome', contactEmploymentInfo)">
                             <span *ngIf="contactEmploymentInfo?.monthlyIncome">${{contactEmploymentInfo?.monthlyIncome}}</span>
                             <i *ngIf="!contactEmploymentInfo?.monthlyIncome"class="edit fa fa-pencil" aria-hidden="true" (click)="inPlaceEdit('monthlyIncome', contactEmploymentInfo)"></i>
