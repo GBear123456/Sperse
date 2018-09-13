@@ -6,7 +6,7 @@ import { concatAll, first, pluck, map } from 'rxjs/operators';
 import * as moment from 'moment';
 
 class Transaction {
-    date: moment;
+    date: any;
     amount: number;
 }
 
