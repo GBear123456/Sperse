@@ -1,48 +1,66 @@
-<h2>Payment Information</h2>
-
-<dx-data-grid id="gridContainer"
-              [dataSource]="dataSource"
-              keyExpr="id"
-              [allowColumnReordering]="true"
-              [columnAutoWidth]="true"
-              [allowColumnResizing]="true"
-              [masterDetail]="{ enabled: true, template: 'detail' }">
-
-    <dxi-column dataField="serviceType"></dxi-column>
-    <dxi-column dataField="startDate" dataType="date"></dxi-column>
-    <dxi-column dataField="endDate" dataType="date"></dxi-column>
-    <dxi-column dataField="trialEndDate" dataType="date"></dxi-column>
-    <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
-    <dxi-column dataField="systemType"></dxi-column>
-    <dxi-column dataField="orderType"></dxi-column>
-    <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
-    <dxi-column caption="" [width]="220" cellTemplate="actionsTemplate"></dxi-column>
-
-    <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
-        <a *ngIf="cell.data.tenantId && permission.isGranted('Pages.Tenants.Impersonation')"
-           (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal(cell.data)">{{l('LoginAsThisTenant')}}</a>
-        <br />
-        <a *ngIf="cell.data.statusCode != 'C'" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
+<div class="warning" *ngIf="warningMessage$ | async">
+    <div>
+        <img src="assets/common/icons/warning-icon.svg" />
+        <span>{{ warningMessage$ | async }}</span>
     </div>
-    <div *dxTemplate="let cell of 'amountTemplate'">
-        <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
+    <button (click)="updateCard()">{{ l('Update') }}</button>
+</div>
+<div class="main">
+    <div class="balance">
+        <div class="balanceAmount">
+            <h4>{{ l('Balance') }}</h4>
+            {{ amountCurrency + (balanceAmount$ | async | number : '1.2-2') }}
+        </div>
+        <ul class="balanceInfo">
+            <li>
+                <img src="assets/common/icons/automatic-payments.svg">
+                {{ l('AutomaticPayments') }}
+            </li>
+            <li>
+                <img src="assets/common/icons/last-payment.svg">
+                {{ l('LastPayment', lastPaymentDate, amountCurrency, lastPaymentAmount) }}
+            </li>
+        </ul>
     </div>
-
-    <div *dxTemplate="let payment of 'detail'">
-        <div class="master-detail-caption">{{'Payments info'}}</div>
-        <dx-data-grid [dataSource]="payment.data.orderSubscriptionPayments"
-                      [showBorders]="true"
-                      [columnAutoWidth]="true">
-
-            <dxi-column dataField="status" [width]="120" caption="{{l('Status')}}"></dxi-column>
-            <dxi-column dataField="fee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
-            <dxi-column dataField="startDate" dataType="date"></dxi-column>
-            <dxi-column dataField="endDate" dataType="date"></dxi-column>
-
-            <div *dxTemplate="let cell of 'amountTemplate'">
-                <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
+    <div class="details">
+        <div class="transactions">
+            <h3>{{ l('Transactions') }}</h3>
+            <div>
+                <ul>
+                    <li *ngFor="let transaction of transactions$ | async">
+                        <span class="date">{{ transaction.date.format('MMM  M, YYYY') }}</span>
+                        <span class="amount">{{ amountCurrency + transaction.amount }}</span>
+                    </li>
+                </ul>
+                <button class="viewAllTransactions" *ngIf="!allTransactionsAreShowen" (click)="viewAllTransactions()">{{ l('ViewAllTransactions') }}</button>
             </div>
-        </dx-data-grid>
+        </div>
+        <div class="paymentMethods">
+            <div class="title">
+                <h3>{{ l('PaymentMethods') }}</h3>
+                <button class="addNewPaymentMethod" (click)="addNewPaymentMethod()">+{{ l('AddNew') }}</button>
+            </div>
+            <ul class="paymentMethodsList">
+                <li *ngFor="let paymentMethod of paymentMethods$ | async">
+                    <div>
+                        <div [ngClass]="{'active': paymentMethod.active}" class="paymentMethodIcon" >
+                            <img [src]="'assets/common/icons/' + paymentMethod.iconName + '-payment-method.svg'">
+                        </div>
+                        <div>
+                            <p class="paymentName">{{ paymentMethod.name }}</p>
+                            <p class="paymentExpiration">{{ paymentMethod.expiration }}</p>
+                        </div>
+                    </div>
+                    <div class="issue" *ngIf="paymentMethod?.issues">
+                        <img src="assets/common/icons/red-warning-icon.svg">
+                        {{ paymentMethod.issues.length + ' ' + l('Issue') }}
+                    </div>
+                    <div class="actions">
+                        <button (click)="editPaymentMethod()"><img src="assets/common/icons/edit-pencil-icon.svg"></button>
+                        <button (click)="removePaymentMethod()"><img src="assets/common/icons/delete-icon.svg"></button>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
-</dx-data-grid>
-<commonLookupModal #impersonateUserLookupModal (itemSelected)="impersonateUser($event)"></commonLookupModal>
+</div>

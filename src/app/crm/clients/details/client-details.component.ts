@@ -161,10 +161,15 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
             {label: 'Documents', route: 'documents'},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId},
             {label: 'Referral History', route: 'referral-history'},
-            {label: 'Payment Information', route: 'payment-information', hidden: !!this.leadId},
+            {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
+            {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
             {label: 'Activity Logs', route: 'activity-logs'},
             {label: 'Notes', route: 'notes'}
         ];
+    }
+
+    isClientDetailPage() {
+        return this.customerType !== ContactGroupType.Partner && !this.partnerTypeId && !this.leadId;
     }
 
     private fillCustomerDetails(result) {

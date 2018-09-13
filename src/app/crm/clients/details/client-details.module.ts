@@ -1,22 +1,30 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 
+/** Thirds party imports */
 import { MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule, MatProgressSpinnerModule, MatSelectModule } from '@angular/material';
-
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
-    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
-    DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
+import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
+         DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
+         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
+         DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
+import { FileDropModule } from 'ngx-file-drop';
+import { ImageViewerModule } from 'ng2-image-viewer';
+import { VgCoreModule } from 'videogular2/core';
+import { VgControlsModule } from 'videogular2/controls';
+import { VgOverlayPlayModule } from 'videogular2/overlay-play';
+import { VgBufferingModule } from 'videogular2/buffering';
 
+/** Application imports */
 import { ClientDetailsService } from './client-details.service';
 import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
-
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
@@ -24,7 +32,6 @@ import { TypesListComponent } from '../../shared/types-list/types-list.component
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../../shared/rating/rating.component';
 import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
-
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddComponent } from './notes/note-add/note-add.component';
@@ -47,6 +54,7 @@ import { QuestionnaireComponent } from './questionnaire/questionnaire.component'
 import { ApplicationStatusComponent } from './application-status/application-status.component';
 import { ReferralHistoryComponent } from './referral-history/referral-history.component';
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
@@ -56,25 +64,14 @@ import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-d
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
-
 import { ClientDetailsRoutingModule } from './client-details-routing.module';
-import { AngularGooglePlaceModule } from 'angular-google-place';
-
 import { ContactGroupServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy,
     ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
-
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
-
-import { FileDropModule } from 'ngx-file-drop';
-import { ImageViewerModule } from 'ng2-image-viewer';
-import { VgCoreModule } from 'videogular2/core';
-import { VgControlsModule } from 'videogular2/controls';
-import { VgOverlayPlayModule } from 'videogular2/overlay-play';
-import { VgBufferingModule } from 'videogular2/buffering';
 import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-list.component';
 
 @NgModule({
@@ -101,6 +98,7 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     ApplicationStatusComponent,
     ReferralHistoryComponent,
     PaymentInformationComponent,
+    SubscriptionsComponent,
     ActivityLogsComponent,
     VerificationChecklistComponent,
     OperationsWidgetComponent,

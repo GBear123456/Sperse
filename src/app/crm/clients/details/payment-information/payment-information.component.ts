@@ -1,87 +1,96 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-
+import { Component, ChangeDetectionStrategy, OnInit, Injector } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import {
-    ContactGroupServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactGroupInfoDto,
-    NameValueDto,
-    FindUsersInput,
-    CommonLookupServiceProxy} from 'shared/service-proxies/service-proxies';
-import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
-import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { Observable, of } from 'rxjs';
+import { concatAll, first, pluck, map } from 'rxjs/operators';
+import * as moment from 'moment';
+
+class Transaction {
+    date: moment;
+    amount: number;
+}
+
+class PaymentMethod {
+    iconName: string;
+    name: string;
+    expiration: string;
+    active?: boolean;
+    issues?: string[];
+}
 
 @Component({
     selector: 'payment-information',
     templateUrl: './payment-information.component.html',
     styleUrls: ['./payment-information.component.less'],
-    providers: [OrderSubscriptionServiceProxy]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentInformationComponent extends AppComponentBase implements OnInit {
-    @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
-
-    public data: {
-        customerInfo: ContactGroupInfoDto
-    };
-    public dataSource: OrderSubscriptionDto[] = [];
-
+    warningMessage$: Observable<string>;
+    lastPaymentDate: string;
+    lastPaymentAmount: number;
+    amountCurrency = '$';
+    balanceAmount$: Observable<number>;
+    transactions$: Observable<Transaction[]>;
+    paymentMethods$: Observable<PaymentMethod[]>;
+    allTransactionsAreShowen = false;
     constructor(
-        injector: Injector,
-        private _customerService: ContactGroupServiceProxy,
-        private _orderSubscriptionService: OrderSubscriptionServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService
+        injector: Injector
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit() {
-        this.data = this._customerService['data'];
-        this.refreshData();
-
-        this.impersonateUserLookupModal.configure({
-            title: this.l('SelectAUser'),
-            dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-                let input = new FindUsersInput();
-                input.filter = filter;
-                input.maxResultCount = maxResultCount;
-                input.skipCount = skipCount;
-                input.tenantId = tenantId;
-                return this._commonLookupService.findUsers(input);
+        this.balanceAmount$ = of(0);
+        this.transactions$ = of([
+            {
+                date: moment('2017-07-01'),
+                amount: 0
+            },
+            {
+                date: moment('2017-06-01'),
+                amount: 100
+            },
+            {
+                date: moment('2017-06-01'),
+                amount: 97.40
             }
-        });
-    }
-
-    refreshData() {
-        this._orderSubscriptionService
-            .getSubscriptionHistory(this.data.customerInfo.id)
-            .subscribe(result => {
-                this.dataSource = result;
-            });
-    }
-
-    cancelSubscription(id: number) {
-        abp.message.confirm('', this.l('CancelBillingConfirm'), result => {
-            if (result) {
-                this._orderSubscriptionService
-                    .cancel(id)
-                    .subscribe(() => {
-                        abp.notify.success(this.l('Cancelled'));
-                        this.refreshData();
-                    });
+        ]);
+        this.paymentMethods$ = of([
+            {
+                iconName: 'visa',
+                name: 'Visa ****2342',
+                expiration: 'Expires 09/19',
+                active: true,
+                issues: [
+                    'We are unable to process your Visa***2432 because the account has been closed.  Try adding a new card.'
+                ]
+            },
+            {
+                iconName: 'mastercard',
+                name: 'Visa ****2036',
+                expiration: 'Expires 11/21'
+            },
+            {
+                iconName: 'visa',
+                name: 'Visa ****2036',
+                expiration: 'Expires 11/21'
             }
-        });
+        ]);
+        this.warningMessage$ = this.paymentMethods$.pipe(
+            concatAll(),
+            pluck('issues'),
+            map(issues => issues[0]),
+            first()
+        );
     }
 
-    showUserImpersonateLookUpModal(record: any): void {
-        this.impersonateUserLookupModal.tenantId = record.tenantId;
-        this.impersonateUserLookupModal.show();
-    }
+    updateCard() {}
 
-    impersonateUser(item: NameValueDto): void {
-        this._impersonationService
-            .impersonate(
-                parseInt(item.value),
-                this.impersonateUserLookupModal.tenantId
-            );
-    }
+    viewAllTransactions() {}
+
+    addNewPaymentMethod() {}
+
+    editPaymentMethod() {}
+
+    removePaymentMethod() {}
 }

@@ -11,6 +11,7 @@ import { QuestionnaireComponent } from './questionnaire/questionnaire.component'
 import { ApplicationStatusComponent } from './application-status/application-status.component';
 import { ReferralHistoryComponent } from './referral-history/referral-history.component';
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 
@@ -32,7 +33,8 @@ import { RP_USER_INFO_ID } from './client-details.const';
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
                     {path: 'application-status', component: ApplicationStatusComponent },
                     {path: 'referral-history', component: ReferralHistoryComponent },
-                    {path: 'payment-information', component: PaymentInformationComponent },
+                    {path: 'subscriptions', component: SubscriptionsComponent },
+                    {path: 'payment-information', component: PaymentInformationComponent, data: {rightPanelOpened: false} },
                     {path: 'activity-logs', component: ActivityLogsComponent },
                     {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
                 ]
@@ -50,7 +52,6 @@ import { RP_USER_INFO_ID } from './client-details.const';
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
                     {path: 'application-status', component: ApplicationStatusComponent },
                     {path: 'referral-history', component: ReferralHistoryComponent },
-                    {path: 'payment-information', component: PaymentInformationComponent },
                     {path: 'activity-logs', component: ActivityLogsComponent },
                     {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
                 ]
