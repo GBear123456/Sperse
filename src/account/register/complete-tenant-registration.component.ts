@@ -59,7 +59,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
         this.loginService.authenticateModel.password = this.model.adminPassword;
 
         abp.multiTenancy.setTenantIdCookie(registrationResult.tenantId);
-        this.loginService.authenticate(() => { });
+        this.loginService.authenticate(() => { }, undefined, false);
     }
 
     generatePassword(): string {
