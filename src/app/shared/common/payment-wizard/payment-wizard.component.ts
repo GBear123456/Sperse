@@ -66,6 +66,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     }
 
     changeStatus(statusInfo: StatusInfo) {
+        this.dialogRef.disableClose = statusInfo.status == PaymentStatusEnum.BeingConfirmed;
         if (statusInfo.status == PaymentStatusEnum.Confirmed)
             this.appService.loadModeuleSubscriptions();
         this.paymentStatus = statusInfo.status;
