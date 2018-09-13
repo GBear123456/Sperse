@@ -69,6 +69,7 @@ export class ImportWizardService {
     finishStatusCheck() {
         this.activeImportId = undefined;
         clearTimeout(this.statusCheckTimeout);
+        this.statusCheckTimeout = null;
     }
 
     setupCheckTimeout(method: (callback: any) => void, initial = true) {
@@ -76,7 +77,8 @@ export class ImportWizardService {
         this.statusCheckTimeout = setTimeout(() => {
             method((data) => {
                 this.progressChanged(data);
-                this.setupCheckTimeout(method, false);
+                if (this.statusCheckTimeout)
+                    this.setupCheckTimeout(method, false);
             });
         }, initial ? 0: 5000);
     }
