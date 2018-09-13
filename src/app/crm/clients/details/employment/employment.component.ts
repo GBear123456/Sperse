@@ -228,6 +228,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
+            scrollTo(0, 0);
             if (result) {
                 this.updateAddressFields(contactEmploymentInfo, dialogData);
                 this.updateContactEmployment(contactEmploymentInfo);
