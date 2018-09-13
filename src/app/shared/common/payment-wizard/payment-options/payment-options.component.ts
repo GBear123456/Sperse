@@ -7,15 +7,21 @@ import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerDto,
+    PayPalDto,
+    PaymentRequestInfoDtoRequestPaymentType,
     SetupSubscriptionWithBankCardInfoDto,
     SetupSubscriptionWithBankCardInfoDtoFrequency,
     BankCardDto,
     PaymentRequestInfoDto,
-    TenantSubscriptionServiceProxy
+    TenantSubscriptionServiceProxy,
+    SetupSubscriptionInfoDto,
+    PayPalInfoDto,
+    SetupSubscriptionInfoDtoFrequency
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
+import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 
 import { EditionPaymentType } from '@shared/AppEnums';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -84,6 +90,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
                 const paymentInfo = PaymentRequestInfoDto.fromJS({
+                    requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
                     achCustomer: ACHCustomerDto.fromJS({
                         customerRoutingNo: eCheckData.routingNumber,
                         customerAcctNo: eCheckData.bankAccountNumber,
@@ -107,6 +114,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
                 const cardPaymentInfo = SetupSubscriptionWithBankCardInfoDto.fromJS({
+                    requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
                     editionId: this.plan.selectedEditionId,
                     frequency: this.plan.billingPeriod == BillingPeriod.Monthly
                         ? SetupSubscriptionWithBankCardInfoDtoFrequency._30
@@ -138,6 +146,33 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 );
                 break;
             case PaymentMethods.PayPal:
+                const payPalData = data as PayPalDataModel;
+                const payPalPaymentInfo = SetupSubscriptionInfoDto.fromJS({
+                    editionId: this.plan.selectedEditionId,
+                    frequency: this.plan.billingPeriod == BillingPeriod.Monthly
+                        ? SetupSubscriptionInfoDtoFrequency._30
+                        : SetupSubscriptionInfoDtoFrequency._365,
+                    billingInfo: PaymentRequestInfoDto.fromJS({
+                        requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Capture,
+                        payPal: PayPalInfoDto.fromJS({
+                            paymentId: payPalData.paymentId,
+                            payerId: payPalData.payerId
+                        })
+                    })
+                });
+
+                this.tenantSubscriptionServiceProxy.executePayment(payPalPaymentInfo).subscribe(
+                    res => {
+                        this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
+                    },
+                    error => {
+                        this.appHttpConfiguration.avoidErrorHandling = false;
+                        this.onStatusChange.emit({
+                            status: PaymentStatusEnum.Failed,
+                            statusText: error.message
+                        });
+                    }
+                );
                 break;
             case PaymentMethods.BankTransfer:
                 break;

@@ -23174,6 +23174,117 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
+     * @editionId (optional) 
+     * @frequency (optional) 
+     * @return Success
+     */
+    requestPayment(editionId: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment?";
+        if (editionId !== undefined)
+            url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(frequency);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRequestPayment(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    executePayment(input: SetupSubscriptionInfoDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/ExecutePayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExecutePayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExecutePayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExecutePayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getModuleSubscriptions(): Observable<ModuleSubscriptionInfoDto[]> {
@@ -45486,7 +45597,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
     packageId!: number | undefined;
     bankCard!: BankCardDto | undefined;
     achCustomer!: ACHCustomerDto | undefined;
-    paymentType!: MemberPaymentAuthorizeRequestDtoPaymentType | undefined;
+    payPal!: PayPalDto | undefined;
 
     constructor(data?: IMemberPaymentAuthorizeRequestDto) {
         if (data) {
@@ -45503,7 +45614,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
             this.packageId = data["packageId"];
             this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
             this.achCustomer = data["achCustomer"] ? ACHCustomerDto.fromJS(data["achCustomer"]) : <any>undefined;
-            this.paymentType = data["paymentType"];
+            this.payPal = data["payPal"] ? PayPalDto.fromJS(data["payPal"]) : <any>undefined;
         }
     }
 
@@ -45520,7 +45631,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
         data["packageId"] = this.packageId;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
         data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
-        data["paymentType"] = this.paymentType;
+        data["payPal"] = this.payPal ? this.payPal.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -45530,7 +45641,7 @@ export interface IMemberPaymentAuthorizeRequestDto {
     packageId: number | undefined;
     bankCard: BankCardDto | undefined;
     achCustomer: ACHCustomerDto | undefined;
-    paymentType: MemberPaymentAuthorizeRequestDtoPaymentType | undefined;
+    payPal: PayPalDto | undefined;
 }
 
 export class BankCardDto implements IBankCardDto {
@@ -45651,6 +45762,46 @@ export class ACHCustomerDto implements IACHCustomerDto {
 export interface IACHCustomerDto {
     customerRoutingNo: string;
     customerAcctNo: string;
+}
+
+export class PayPalDto implements IPayPalDto {
+    paymentId!: string;
+    payerId!: string;
+
+    constructor(data?: IPayPalDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.paymentId = data["paymentId"];
+            this.payerId = data["payerId"];
+        }
+    }
+
+    static fromJS(data: any): PayPalDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["paymentId"] = this.paymentId;
+        data["payerId"] = this.payerId;
+        return data; 
+    }
+}
+
+export interface IPayPalDto {
+    paymentId: string;
+    payerId: string;
 }
 
 export class PaymentAuthorizeResponseDto implements IPaymentAuthorizeResponseDto {
@@ -52892,8 +53043,10 @@ export interface IAddTenantSslCertificateInput {
 }
 
 export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
+    requestPaymentType!: PaymentRequestInfoDtoRequestPaymentType | undefined;
     bankCard!: BankCardInfoDto | undefined;
     achCustomer!: ACHCustomerInfoDto | undefined;
+    payPal!: PayPalInfoDto | undefined;
 
     constructor(data?: IPaymentRequestInfoDto) {
         if (data) {
@@ -52906,8 +53059,10 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.requestPaymentType = data["requestPaymentType"];
             this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : <any>undefined;
             this.achCustomer = data["achCustomer"] ? ACHCustomerInfoDto.fromJS(data["achCustomer"]) : <any>undefined;
+            this.payPal = data["payPal"] ? PayPalInfoDto.fromJS(data["payPal"]) : <any>undefined;
         }
     }
 
@@ -52920,15 +53075,19 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["requestPaymentType"] = this.requestPaymentType;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
         data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
+        data["payPal"] = this.payPal ? this.payPal.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IPaymentRequestInfoDto {
+    requestPaymentType: PaymentRequestInfoDtoRequestPaymentType | undefined;
     bankCard: BankCardInfoDto | undefined;
     achCustomer: ACHCustomerInfoDto | undefined;
+    payPal: PayPalInfoDto | undefined;
 }
 
 export class BankCardInfoDto implements IBankCardInfoDto {
@@ -53107,6 +53266,46 @@ export interface IACHCustomerInfoDto {
     memo: string | undefined;
 }
 
+export class PayPalInfoDto implements IPayPalInfoDto {
+    paymentId!: string | undefined;
+    payerId!: string | undefined;
+
+    constructor(data?: IPayPalInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.paymentId = data["paymentId"];
+            this.payerId = data["payerId"];
+        }
+    }
+
+    static fromJS(data: any): PayPalInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["paymentId"] = this.paymentId;
+        data["payerId"] = this.payerId;
+        return data; 
+    }
+}
+
+export interface IPayPalInfoDto {
+    paymentId: string | undefined;
+    payerId: string | undefined;
+}
+
 export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionWithBankCardInfoDto {
     editionId!: number;
     frequency!: SetupSubscriptionWithBankCardInfoDtoFrequency;
@@ -53154,10 +53353,55 @@ export interface ISetupSubscriptionWithBankCardInfoDto {
     bankCard: BankCardInfoDto;
 }
 
+export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
+    editionId!: number | undefined;
+    frequency!: SetupSubscriptionInfoDtoFrequency | undefined;
+    billingInfo!: PaymentRequestInfoDto | undefined;
+
+    constructor(data?: ISetupSubscriptionInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.frequency = data["frequency"];
+            this.billingInfo = data["billingInfo"] ? PaymentRequestInfoDto.fromJS(data["billingInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SetupSubscriptionInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetupSubscriptionInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["frequency"] = this.frequency;
+        data["billingInfo"] = this.billingInfo ? this.billingInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISetupSubscriptionInfoDto {
+    editionId: number | undefined;
+    frequency: SetupSubscriptionInfoDtoFrequency | undefined;
+    billingInfo: PaymentRequestInfoDto | undefined;
+}
+
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
+    isLocked!: boolean | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -53173,6 +53417,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.module = data["module"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
+            this.isLocked = data["isLocked"];
         }
     }
 
@@ -53188,6 +53433,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["module"] = this.module;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
+        data["isLocked"] = this.isLocked;
         return data; 
     }
 }
@@ -53196,6 +53442,7 @@ export interface IModuleSubscriptionInfoDto {
     module: ModuleSubscriptionInfoDtoModule | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
+    isLocked: boolean | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
@@ -56282,6 +56529,11 @@ export enum TenantHostType2 {
     FundingUi = "FundingUi", 
 }
 
+export enum Frequency {
+    _30 = 30, 
+    _365 = 365, 
+}
+
 export enum DefaultTimezoneScope {
     _1 = 1, 
     _2 = 2, 
@@ -56575,11 +56827,6 @@ export enum MemberInfoDtoGender {
     _1 = 1, 
 }
 
-export enum MemberPaymentAuthorizeRequestDtoPaymentType {
-    _0 = 0, 
-    _1 = 1, 
-}
-
 export enum RegisterMemberRequestTenantHostType {
     PlatformApi = "PlatformApi", 
     PlatformUi = "PlatformUi", 
@@ -56764,7 +57011,18 @@ export enum CompleteTenantRegistrationInputTenantHostType {
     FundingUi = "FundingUi", 
 }
 
+export enum PaymentRequestInfoDtoRequestPaymentType {
+    Recurring = "Recurring", 
+    Charge = "Charge", 
+    Capture = "Capture", 
+}
+
 export enum SetupSubscriptionWithBankCardInfoDtoFrequency {
+    _30 = 30, 
+    _365 = 365, 
+}
+
+export enum SetupSubscriptionInfoDtoFrequency {
     _30 = 30, 
     _365 = 365, 
 }
