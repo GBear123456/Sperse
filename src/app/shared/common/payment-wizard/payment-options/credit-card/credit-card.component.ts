@@ -38,7 +38,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     cvvMaxLength = 3;
     patterns = {
         monthPattern: '^(?:0?[1-9]|1[0-2])$',
-        yearPattern: '^(2018|201[8-9]|202[0-9]|203[0-3])$'
+        yearPattern: '^(201[8-9]|202[0-9]|203[0-3])$'
     };
 
     creditCardData = this.formBuilder.group({
@@ -134,6 +134,44 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         if (e.which < 48 || e.which > 57) {
             e.preventDefault();
         }
+    }
+
+    checkMonthData(e) {
+        this.checkIfNumber(e);
+        let digit = e.key, val = '' + digit;
+        if (!e.target.value) {
+            if (/^\d$/.test(val) && (val !== '0' && val !== '1')) {
+                e.preventDefault();
+                setTimeout(function () {
+                    e.target.value = '0' + val;
+                });
+            }
+        } else {
+            if (e.target.value === '0') {
+                if (!/^[1-9]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            } else {
+                if (!/^[0-2]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            }
+        }
+    }
+
+    checkExpYear(e) {
+        let typedMonth = e.target.value;
+        let currentMonth = ('0' + ((new Date()).getMonth() + 1)).slice(-2);
+        if (currentMonth > typedMonth)
+            this.patterns.yearPattern = '^(2019|202[0-9]|203[0-3])$';
+        else
+            this.patterns.yearPattern = '^(201[8-9]|202[0-9]|203[0-3])$';
+    }
+
+    onYearFocus(e) {
+        let currentYear =  (new Date()).getFullYear().toString().slice(0, -1);
+        if (!e.target.value)
+            e.target.value = currentYear;
     }
 
     checkCreditCardNumber(event) {

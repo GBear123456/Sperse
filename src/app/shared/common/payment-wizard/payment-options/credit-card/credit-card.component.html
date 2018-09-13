@@ -16,21 +16,27 @@
         <div class="col-4">
             <div class="row">
                 <mat-form-field class="col-4">
-                    <input matInput placeholder="MM"
-                        type="tel"
-                        [pattern]='patterns.monthPattern'
-                        formControlName="expirationMonth"
-                        minlength="1" maxlength="2"
-                        (keypress)="checkIfNumber($event)">
+                    <input matInput
+                           placeholder="MM"
+                           type="tel"
+                           [pattern]='patterns.monthPattern'
+                           formControlName="expirationMonth"
+                           minlength="2"
+                           maxlength="2"
+                           (keypress)="checkMonthData($event)"
+                           (keyup)="checkExpYear($event)">
                 </mat-form-field>
                 <div class="col-2 align-self-center">/</div>
                 <mat-form-field class="col-6">
-                    <input matInput placeholder="YYYY"
-                        type="tel"
-                        formControlName="expirationYear"
-                        [pattern]='patterns.yearPattern'
-                        minlength="4" maxlength="4"
-                        (keypress)="checkIfNumber($event)">
+                    <input matInput
+                           placeholder="YYYY"
+                           type="tel"
+                           formControlName="expirationYear"
+                           [pattern]='patterns.yearPattern'
+                           minlength="4"
+                           maxlength="4"
+                           (focus)="onYearFocus($event)"
+                           (keypress)="checkIfNumber($event)">
                 </mat-form-field>
 
                 <mat-error class="exp-date-errors col-12"
