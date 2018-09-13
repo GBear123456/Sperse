@@ -97,6 +97,7 @@
                         [dataSource]="pipelineDataSource"
                         [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']"
                         [pipelinePurposeId]="pipelinePurposeId"
+                        [filterModelStages]="filterModelStages"
                         [(selectedLeads)]="selectedLeads"
                         (onStagesLoaded)="onStagesLoaded($event)"
                         (onCardClick)="onCardClick($event)">

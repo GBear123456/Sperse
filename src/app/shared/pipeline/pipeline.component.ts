@@ -52,6 +52,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     @Input() totalsURI: string;
     @Input() selectFields: string[];
+    @Input() filterModelStages: any;
     @Input('dataSource')
     set dataSource(dataSource: DataSource) {
         if (this._dataSource = dataSource)
@@ -222,52 +223,62 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return elm && elm.getAttribute('accessKey');
     }
 
+    checkFilterExcludeCondition(stageId) { 
+        return this.filterModelStages && this.filterModelStages.isSelected 
+            && !this.filterModelStages.items.element.value.some((item) => {
+                return item.split(':').pop() == stageId;
+            });
+    }
+
     loadStagesLeads(page = 0, stageIndex = undefined, oneStageOnly = false) {
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name],
             filter = {StageId: stage.id};
 
-        if (!dataSource)
-            dataSource = this._dataSources[stage.name] =
-                new DataSource(_.extend(_.clone(this._dataSource), {
-                    requireTotalCount: !this.totalsURI,
-                    select: this.selectFields
-                }));
+        if (this.checkFilterExcludeCondition(stage.id)) 
+            stage['leads'] = [];
+        else {
+            if (!dataSource)
+                dataSource = this._dataSources[stage.name] =
+                    new DataSource(_.extend(_.clone(this._dataSource), {
+                        requireTotalCount: !this.totalsURI,
+                        select: this.selectFields
+                    }));
 
-        if (!isNaN(stage['lastLeadId']) && page)
-            filter['Id'] = {lt: stage['lastLeadId']};
+            if (!isNaN(stage['lastLeadId']) && page)
+                filter['Id'] = {lt: stage['lastLeadId']};
 
-        dataSource.pageSize(this.STAGE_PAGE_COUNT);
-        dataSource['_store']['_url'] =
-            this.getODataUrl(this._dataSource.uri, 
-                this.queryWithSearch.concat({and: [
-                    _.extend(filter, this._dataSource.customFilter)
-                ]})
-        );
-        dataSource.sort({getter: 'Id', desc: true});
-//        dataSource.pageIndex(page);
-        dataSource.load().done((leads) => {              
-            if (leads.length)
-                stage['leads'] = (page && oneStageOnly ? _.uniqBy(
-                    (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
-                        stage['lastLeadId'] = Math.min(stage['lastLeadId'] || Infinity, lead['Id']);
-                        return lead;
-                    });
-            else  {
-                if (!page)
-                    stage['leads'] = [];
-                stage['total'] = stage['leads'].length || 0;
-                stage['full'] = true;
-            }
-      
-            let allStagesLoaded = this.isAllStagesLoaded();
-            if (oneStageOnly || allStagesLoaded)
-                setTimeout(() => this.finishLoading(), 1000);
-            if (this.totalsURI && !oneStageOnly && allStagesLoaded) 
-                this.processTotalsRequest(this.queryWithSearch);
-        });
-
+            dataSource.pageSize(this.STAGE_PAGE_COUNT);
+            dataSource['_store']['_url'] =
+                this.getODataUrl(this._dataSource.uri, 
+                    this.queryWithSearch.concat({and: [
+                        _.extend(filter, this._dataSource.customFilter)
+                    ]})
+            );
+            dataSource.sort({getter: 'Id', desc: true});
+            dataSource.load().done((leads) => {              
+                if (leads.length)
+                    stage['leads'] = (page && oneStageOnly ? _.uniqBy(
+                        (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
+                            stage['lastLeadId'] = Math.min(stage['lastLeadId'] || Infinity, lead['Id']);
+                            return lead;
+                        });
+                else  {
+                    if (!page)
+                        stage['leads'] = [];
+                    stage['total'] = stage['leads'].length || 0;
+                    stage['full'] = true;
+                }
+          
+                let allStagesLoaded = this.isAllStagesLoaded();
+                if (oneStageOnly || allStagesLoaded)
+                    setTimeout(() => this.finishLoading(), 1000);
+                if (this.totalsURI && !oneStageOnly && allStagesLoaded) 
+                    this.processTotalsRequest(this.queryWithSearch);
+            });
+        }
+            
         if (!oneStageOnly && stages[index + 1])
             this.loadStagesLeads(page, index + 1);
     }
