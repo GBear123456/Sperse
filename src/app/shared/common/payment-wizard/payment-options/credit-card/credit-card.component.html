@@ -2,11 +2,12 @@
     <div class="row">
         <mat-form-field class="col-8">
             <input matInput
-                placeholder="CARD NUMBER"
-                type="tel"
-                formControlName="cardNumber"
-                (keypress)="checkCreditCardNumber($event)"
-                ccNumber>
+                   maxlength="19"
+                   placeholder="CARD NUMBER"
+                   type="tel"
+                   formControlName="cardNumber"
+                   (keypress)="checkCreditCardNumber($event)"
+                   ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
                 {{ l('CardNumberValidationMessage') }}
             </mat-error>
