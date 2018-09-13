@@ -95,7 +95,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
             data: dialogData,
             hasBackdrop: false,
             position: this.getDialogPossition(event)
-        }).afterClosed().subscribe(result => {
+        }).afterClosed().subscribe(result => {  
+            scrollTo(0, 0);
             if (result) {
                 if (dialogData.contactId) {
                     this.updateDataField(field, data, dialogData);

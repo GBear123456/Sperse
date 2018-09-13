@@ -122,6 +122,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.getDialogPossition(event)
         }).afterClosed().subscribe(result => {
+            scrollTo(0, 0);
             if (result) {
                 if (dialogData.contactId) {
                     this.updateDataField(address, dialogData);

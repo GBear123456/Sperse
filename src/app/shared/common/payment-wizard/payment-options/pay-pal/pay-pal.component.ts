@@ -1,55 +1,30 @@
-import { Component, OnInit, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, Injector, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 
-import { Router } from '@angular/router';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
-
+import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import {
-    EditionSelectDto,
-    CreatePaymentDto,
-    ExecutePaymentDto,
-    CreatePaymentDtoPaymentPeriodType,
-    CreatePaymentDtoEditionPaymentType,
-    ExecutePaymentDtoPaymentPeriodType,
-    ExecutePaymentDtoEditionPaymentType,
-    PaymentServiceProxy
+    TenantSubscriptionServiceProxy,
+    Frequency
 } from '@shared/service-proxies/service-proxies';
-
-import {
-    PaymentPeriodType,
-    SubscriptionPaymentGatewayType,
-    EditionPaymentType
-} from '@shared/AppEnums';
+import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 
 @Component({
     selector: 'pay-pal',
     templateUrl: './pay-pal.component.html',
     styleUrls: ['./pay-pal.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [TenantSubscriptionServiceProxy]
 })
 export class PayPalComponent extends AppComponentBase implements OnInit {
-    @Input() descriptionText = this.l('PayPalPaymentDescriptionText');
+    @Input() editionId: number;
+    @Input() billingPeriod: BillingPeriod = BillingPeriod.Monthly;
 
-    @Input() selectedPaymentPeriodType: PaymentPeriodType = PaymentPeriodType.Monthly;
-    @Input() editionPaymentType: EditionPaymentType;
+    @Output() onSubmit: EventEmitter<PayPalDataModel> = new EventEmitter<PayPalDataModel>();
 
-    _edition: EditionSelectDto = new EditionSelectDto();
-
-    @Input()
-    get edition() {
-        return this._edition;
-    }
-
-    set edition(val: EditionSelectDto) {
-        this._edition = val;
-    }
-
-    subscriptionPaymentGateway = SubscriptionPaymentGatewayType;
+    descriptionText = this.l('PayPalPaymentDescriptionText');
 
     constructor(injector: Injector,
-        private _paymentAppService: PaymentServiceProxy,
-        private _appSessionService: AppSessionService,
-        private _router: Router
+        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
     ) {
         super(injector);
     }
@@ -64,16 +39,11 @@ export class PayPalComponent extends AppComponentBase implements OnInit {
         );
     }
 
-    getAdditionalData(key: string): string {
-        return this._edition.additionalData['paypal'][key];
-    }
-
-    setAdditionalData(key: string, value: string): string {
-        return this._edition.additionalData['paypal'][key] = value;
-    }
-
     preparePaypalButton(): void {
         const self = this;
+        let frequency = this.billingPeriod == BillingPeriod.Monthly
+            ? Frequency._30
+            : Frequency._365;
         (<any>window).paypal.Button.render({
             style: {
                 //label: 'checkout',
@@ -81,56 +51,21 @@ export class PayPalComponent extends AppComponentBase implements OnInit {
                 shape: 'pill',          // pill | rect
                 color: 'blue'           // gold | blue | silver | black
             },
-            env: 'sandbox', //!!VP shoud be some strategy
-//            commit: true, //!!VP if used server side integration
-            client: {
-                sandbox:    'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R',
-                production: '<insert production client id>'
-            },
+            env: this.setting.get('App.Payment.PayPal.Environment'),
+            commit: true,
             payment(data, actions) {
-/*
-                const input = new CreatePaymentDto();
-                input.editionId = self.edition.id;
-                input.editionPaymentType = <CreatePaymentDtoEditionPaymentType>(self.editionPaymentType);
-                input.subscriptionPaymentGatewayType = self.subscriptionPaymentGateway.Paypal;
-                input.paymentPeriodType = <CreatePaymentDtoPaymentPeriodType>(self.selectedPaymentPeriodType);
-                return self._paymentAppService
-                    .createPayment(input).toPromise()
-                    .then((result: any) => {
-                        return result.id;
+                return self.tenantSubscriptionServiceProxy
+                    .requestPayment(self.editionId, frequency)
+                    .toPromise()
+                    .then((result: string) => {
+                        return result;
                     });
-*/
-                 return actions.payment.create({
-                    payment: {
-                        transactions: [
-                            {
-                                amount: { total: '0.01', currency: 'USD' }
-                            }
-                        ]
-                    }
-                });
             },
 
             onAuthorize(data, actions) {
-                return actions.payment.execute().then(function() {
-/*
-                const input = new ExecutePaymentDto();
-                input.gateway = self.subscriptionPaymentGateway.Paypal;
-                input.paymentPeriodType = <ExecutePaymentDtoPaymentPeriodType>(self.selectedPaymentPeriodType);
-                input.editionId = self.edition.id;
-                input.editionPaymentType = <ExecutePaymentDtoEditionPaymentType>(self.editionPaymentType);
-
-                self.setAdditionalData('PaymentId', data.paymentID);
-                self.setAdditionalData('PayerId', data.payerID);
-                input.additionalData = self._edition.additionalData.paypal;
-
-                self._paymentAppService
-                    .executePayment(input)
-                    .toPromise().then((result: ExecutePaymentDto) => {
-                        self._router.navigate(['app/admin/subscription-management']);
-                    });
-*/
-
+                self.onSubmit.next({
+                    payerId: data.payerID,
+                    paymentId: data.paymentID
                 });
             }
         }, '#paypal-button');
