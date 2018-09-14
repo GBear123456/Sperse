@@ -104,7 +104,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
 
     clear() {
         this.listComponent.deselectAll();
-        this.apply();
+        this.apply(true);
     }
 
     onInitialized($event) {
