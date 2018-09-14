@@ -11,7 +11,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
          DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
+         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule,
          DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -25,13 +25,6 @@ import { ClientDetailsService } from './client-details.service';
 import { ClientDetailsComponent } from './client-details.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
-import { StaticListComponent } from '../../shared/static-list/static-list.component';
-import { TagsListComponent } from '../../shared/tags-list/tags-list.component';
-import { ListsListComponent } from '../../shared/lists-list/lists-list.component';
-import { TypesListComponent } from '../../shared/types-list/types-list.component';
-import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '../../shared/rating/rating.component';
-import { StarsListComponent } from '../../shared/stars-list/stars-list.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddComponent } from './notes/note-add/note-add.component';
@@ -107,13 +100,6 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddComponent,
-    TagsListComponent,
-    ListsListComponent,
-    TypesListComponent,
-    UserAssignmentComponent,
-    RatingComponent,
-    StarsListComponent,
-    StaticListComponent,
     AdvancedListComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
@@ -147,7 +133,6 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     DxDateBoxModule,
     DxTooltipModule,
     DxListModule,
-    DxSliderModule,
     DxTreeListModule,
     DxTreeViewModule,
     RoundProgressModule,
@@ -166,13 +151,6 @@ import { AdvancedListComponent } from '@app/crm/shared/advanced-list/advanced-li
     ClientDetailsComponent,
     ContactInformationComponent,
     RequiredDocumentsComponent,
-    TagsListComponent,
-    ListsListComponent,
-    TypesListComponent,
-    UserAssignmentComponent,
-    RatingComponent,
-    StarsListComponent,
-    StaticListComponent,
     AdvancedListComponent,
     DocumentTypesListComponent
   ],

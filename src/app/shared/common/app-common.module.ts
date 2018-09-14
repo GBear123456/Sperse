@@ -12,8 +12,8 @@ import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule, DxRadioGroupModule, DxPopupModule,
-    DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule
+    DxTreeViewModule, DxRadioGroupModule, DxPopupModule, DxSliderModule,
+    DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule, DxTreeListModule
 } from 'devextreme-angular';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { TableModule } from 'primeng/table';
@@ -59,6 +59,13 @@ import { CreditCardComponent } from './payment-wizard/payment-options/credit-car
 import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
 import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
+import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
+import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
+import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
+import { RatingComponent } from '@app/crm/shared/rating/rating.component';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
+import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 
 @NgModule({
     imports: [
@@ -115,7 +122,8 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         DxProgressBarModule,
         DxTooltipModule,
         DxSwitchModule,
-
+        DxTreeListModule,
+        DxSliderModule,
         CreditCardDirectivesModule,
         AngularGooglePlaceModule
     ],
@@ -145,7 +153,14 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         CreditCardComponent,
         PayPalComponent,
         BankTransferComponent,
-        ECheckComponent
+        ECheckComponent,
+        StaticListComponent,
+        UserAssignmentComponent,
+        TagsListComponent,
+        ListsListComponent,
+        RatingComponent,
+        StarsListComponent,
+        TypesListComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -164,7 +179,14 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        RatingBarComponent
+        RatingBarComponent,
+        StaticListComponent,
+        UserAssignmentComponent,
+        TagsListComponent,
+        ListsListComponent,
+        RatingComponent,
+        StarsListComponent,
+        TypesListComponent
     ],
     providers: [
         DateTimeService,
