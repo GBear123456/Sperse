@@ -12,10 +12,9 @@ import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
-    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule
+    DxTreeViewModule, DxRadioGroupModule, DxPopupModule,
+    DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule
 } from 'devextreme-angular';
-
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -23,8 +22,6 @@ import { ModalModule } from 'ngx-bootstrap';
 import { FileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
-import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
-import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 
@@ -33,6 +30,7 @@ import { AbpModule } from '@abp/abp.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -106,9 +104,7 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         DxContextMenuModule,
         DxTreeViewModule,
         DxRadioGroupModule,
-        DxCheckBoxModule,
         DxTextBoxModule,
-        DxScrollViewModule,
         DxDataGridModule,
         DxSelectBoxModule,
         MatDialogModule,
@@ -140,7 +136,6 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
         RatingBarComponent,
         PaymentWizardComponent,
         PaymentPlanCardComponent,
@@ -169,7 +164,6 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
         RatingBarComponent
     ],
     providers: [
@@ -182,7 +176,6 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
         PaymentWizardComponent
     ]
 })

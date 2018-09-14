@@ -12,7 +12,7 @@ import * as moment from 'moment';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ActivityServiceProxy, CreateActivityDtoType, CreateActivityDto, UpdateActivityDto } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { ModalDialogComponent } from 'app/shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 

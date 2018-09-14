@@ -83,7 +83,7 @@
                 display: inline-block;
                 background-color: #dadee1;
             }
-            input {                                
+            input {
                 &, &:read-only {
                     font-size: 22px;
                     font-weight: 500;
@@ -106,17 +106,27 @@
     }
 
     mat-dialog-actions {
-        height: 75px;
+        height: 100%;
         .mat-dialog-buttons {
             height: 46px;
             align-self: center;
+            display: flex;
             button {
                 outline: none;
-            }
-
-            button:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                &.button-icon {
+                    border: none;
+                    border-radius: initial;
+                    margin: auto;
+                    border: 1px solid #eaeef0;
+                    background: #fff;
+                    &:hover {
+                        background: #fff;
+                    }
+                }
             }
         }
         .mat-dialog-options {

@@ -36,8 +36,8 @@
                 </div>
 
                 <p class="agree-rights">By continuing I agree to
-                    <a data-toggle="modal" data-target="#terms">Terms</a> &
-                    <a data-toggle="modal" data-target="#privacy">Policies</a>.</p>
+                    <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
+                    <a (click)="openConditionsDialog(conditions.Policies)">Policies</a></p>
             </form>
 
             <div class="login-options" *ngIf="multiTenancySideIsTeanant && loginService.externalLoginProviders.length > 0">
@@ -72,45 +72,4 @@
         </div> -->
     </div>
 
-    <div class="modal right fade" id="privacy" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">SPERSE PRIVACY POLICY</h4>
-                    <div class="control-buttons">
-                        <a class="download" href="https://testapi.sperse.com/docs/SpersePrivacyPolicy.pdf" target="_blank">
-                            <img src="assets/common/icons/download-icon.svg" alt="download">
-                        </a>
-                        <button class="print-this">
-                            <img src="assets/common/icons/print-icon.svg" alt="print">
-                        </button>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body print-this-section">
-                </div>
-            </div><!-- modal-content -->
-        </div><!-- modal-dialog -->
-    </div><!-- modal -->
-
-    <div class="modal right fade" id="terms" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">SPERSE TERMS OF SERVICE</h4>
-                    <div class="control-buttons">
-                        <a class="download" href="https://testapi.sperse.com/docs/SperseTermsOfService.pdf" target="_blank">
-                            <img src="assets/common/icons/download-icon.svg" alt="download">
-                        </a>
-                        <button class="print-this">
-                            <img src="assets/common/icons/print-icon.svg" alt="print">
-                        </button>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body print-this-section">
-                </div>
-            </div><!-- modal-content -->
-        </div><!-- modal-dialog -->
-    </div><!-- modal -->
 </div>

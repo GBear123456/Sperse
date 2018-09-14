@@ -31,7 +31,7 @@ import {
     ContactPhoneServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput
 } from '@shared/service-proxies/service-proxies';
-import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';

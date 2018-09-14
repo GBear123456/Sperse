@@ -2,6 +2,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
@@ -12,6 +13,10 @@ import {
     BankCardDto,
     CountryStateDto
 } from '@shared/service-proxies/service-proxies';
+import { until } from '@node_modules/@types/selenium-webdriver';
+import Condition = until.Condition;
+import { ConditionsType } from '@shared/AppEnums';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
 @Component({
     selector: 'payment-info',
@@ -35,6 +40,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
 
     googleAutoComplete: Boolean;
     countryCode = 'US';
+    conditions = ConditionsType;
     public options = {
         types: ['address'],
         componentRestrictions: {
@@ -43,7 +49,8 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     };
 
     constructor(injector: Injector,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private dialog: MatDialog
     ) {
         super(injector);
 
@@ -120,5 +127,9 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     blurInput(event) {
         if (!(event.component._value && event.component._value.trim()))
             event.component.option({ mask: '', value: '' });
+    }
+
+    openConditionsDialog(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: {type: type} });
     }
 }

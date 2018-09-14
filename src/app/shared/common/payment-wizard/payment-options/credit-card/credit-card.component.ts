@@ -3,6 +3,7 @@ import { Component, OnInit, Injector, ChangeDetectionStrategy, Output, EventEmit
 import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { Store, select } from '@ngrx/store';
 import { CreditCardValidator } from 'angular-cc-library';
 import { AngularGooglePlaceService } from 'angular-google-place';
@@ -16,6 +17,8 @@ import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsType } from '@shared/AppEnums';
 
 export interface Country {
     code: string;
@@ -60,7 +63,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private formBuilder: FormBuilder,
         private _angularGooglePlaceService: AngularGooglePlaceService,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private dialog: MatDialog
     ) {
         super(injector);
         this.creditCardData.get('billingStateCode').disable();
@@ -204,6 +208,10 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
             .subscribe(result => {
                 this.states = result;
             });
+    }
+
+    openTermsDialog() {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: ConditionsType.Terms }});
     }
 
     submit() {
