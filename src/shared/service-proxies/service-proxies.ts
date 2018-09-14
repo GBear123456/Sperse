@@ -8097,58 +8097,6 @@ export class ContactGroupServiceProxy {
     /**
      * @return Success
      */
-    getFiltersInitialData(): Observable<ContactGroupFiltersInitialData> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetFiltersInitialData";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFiltersInitialData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFiltersInitialData(<any>response_);
-                } catch (e) {
-                    return <Observable<ContactGroupFiltersInitialData>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ContactGroupFiltersInitialData>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<ContactGroupFiltersInitialData> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactGroupFiltersInitialData.fromJS(resultData200) : new ContactGroupFiltersInitialData();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ContactGroupFiltersInitialData>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getContactGroupTypes(): Observable<ContactGroupTypeDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetContactGroupTypes";
         url_ = url_.replace(/[?&]$/, "");
@@ -14058,58 +14006,6 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getFiltersInitialData(): Observable<LeadFiltersInitialData> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetFiltersInitialData";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFiltersInitialData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFiltersInitialData(<any>response_);
-                } catch (e) {
-                    return <Observable<LeadFiltersInitialData>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<LeadFiltersInitialData>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<LeadFiltersInitialData> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? LeadFiltersInitialData.fromJS(resultData200) : new LeadFiltersInitialData();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LeadFiltersInitialData>(<any>null);
-    }
-
-    /**
      * @updateLeadStageInfo (optional) 
      * @return Success
      */
@@ -15394,70 +15290,6 @@ export class NotificationServiceProxy {
 }
 
 @Injectable()
-export class OrderServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getFiltersInitialData(): Observable<OrderFiltersInitialData> {
-        let url_ = this.baseUrl + "/api/services/CRM/Order/GetFiltersInitialData";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFiltersInitialData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFiltersInitialData(<any>response_);
-                } catch (e) {
-                    return <Observable<OrderFiltersInitialData>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OrderFiltersInitialData>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<OrderFiltersInitialData> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OrderFiltersInitialData.fromJS(resultData200) : new OrderFiltersInitialData();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OrderFiltersInitialData>(<any>null);
-    }
-}
-
-@Injectable()
 export class OrderSubscriptionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -16733,58 +16565,6 @@ export class PartnerServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getFiltersInitialData(): Observable<PartnerFiltersInitialData> {
-        let url_ = this.baseUrl + "/api/services/CRM/Partner/GetFiltersInitialData";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetFiltersInitialData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetFiltersInitialData(<any>response_);
-                } catch (e) {
-                    return <Observable<PartnerFiltersInitialData>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PartnerFiltersInitialData>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetFiltersInitialData(response: HttpResponseBase): Observable<PartnerFiltersInitialData> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PartnerFiltersInitialData.fromJS(resultData200) : new PartnerFiltersInitialData();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PartnerFiltersInitialData>(<any>null);
     }
 }
 
@@ -25149,6 +24929,578 @@ export class UserServiceProxy {
     }
 
     protected processUnlockUser(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateEmail(input: UpdateUserEmailDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdateEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updatePhone(input: UpdateUserPhoneDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdatePhone";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePhone(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePhone(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePhone(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updatePassword(input: UpdateUserPasswordDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdatePassword";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePassword(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePassword(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePassword(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateOptions(input: UpdateUserOptionsDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UpdateOptions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateOptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateOptions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateOptions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    sendActivationEmail(input: SendActivationEmailDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/SendActivationEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendActivationEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendActivationEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendActivationEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignPermissions(input: UpdateUserPermissionsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/AssignPermissions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAssignPermissions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAssignPermissions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAssignPermissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    unassignPermissions(input: UnassignUserPermissionsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignPermissions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnassignPermissions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnassignPermissions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUnassignPermissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignRoles(input: UpdateUserRolesInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/AssignRoles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAssignRoles(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAssignRoles(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAssignRoles(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    unassignRoles(input: UpdateUserRolesInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignRoles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnassignRoles(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnassignRoles(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUnassignRoles(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    assignOrganizathionUnits(input: UpdateUserOrganizathionUnitsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/AssignOrganizathionUnits";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAssignOrganizathionUnits(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAssignOrganizathionUnits(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAssignOrganizathionUnits(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    unassignOrganizathionUnits(input: UpdateUserOrganizathionUnitsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignOrganizathionUnits";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnassignOrganizathionUnits(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnassignOrganizathionUnits(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUnassignOrganizathionUnits(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -36428,15 +36780,11 @@ export interface IUpdateContactGroupStatusesInput {
     statusId: string;
 }
 
-export class ContactGroupFiltersInitialData implements IContactGroupFiltersInitialData {
-    statuses!: ContactGroupStatusDto[] | undefined;
-    users!: UserInfoDto[] | undefined;
-    lists!: ContactGroupListInfoDto[] | undefined;
-    tags!: ContactGroupTagInfoDto[] | undefined;
-    ratings!: ContactGroupRatingInfoDto[] | undefined;
-    stars!: ContactGroupStarInfoDto[] | undefined;
+export class ContactGroupTypeDto implements IContactGroupTypeDto {
+    id!: string | undefined;
+    name!: string | undefined;
 
-    constructor(data?: IContactGroupFiltersInitialData) {
+    constructor(data?: IContactGroupTypeDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -36447,89 +36795,29 @@ export class ContactGroupFiltersInitialData implements IContactGroupFiltersIniti
 
     init(data?: any) {
         if (data) {
-            if (data["statuses"] && data["statuses"].constructor === Array) {
-                this.statuses = [];
-                for (let item of data["statuses"])
-                    this.statuses.push(ContactGroupStatusDto.fromJS(item));
-            }
-            if (data["users"] && data["users"].constructor === Array) {
-                this.users = [];
-                for (let item of data["users"])
-                    this.users.push(UserInfoDto.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(ContactGroupListInfoDto.fromJS(item));
-            }
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(ContactGroupTagInfoDto.fromJS(item));
-            }
-            if (data["ratings"] && data["ratings"].constructor === Array) {
-                this.ratings = [];
-                for (let item of data["ratings"])
-                    this.ratings.push(ContactGroupRatingInfoDto.fromJS(item));
-            }
-            if (data["stars"] && data["stars"].constructor === Array) {
-                this.stars = [];
-                for (let item of data["stars"])
-                    this.stars.push(ContactGroupStarInfoDto.fromJS(item));
-            }
+            this.id = data["id"];
+            this.name = data["name"];
         }
     }
 
-    static fromJS(data: any): ContactGroupFiltersInitialData {
+    static fromJS(data: any): ContactGroupTypeDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ContactGroupFiltersInitialData();
+        let result = new ContactGroupTypeDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.statuses && this.statuses.constructor === Array) {
-            data["statuses"] = [];
-            for (let item of this.statuses)
-                data["statuses"].push(item.toJSON());
-        }
-        if (this.users && this.users.constructor === Array) {
-            data["users"] = [];
-            for (let item of this.users)
-                data["users"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.ratings && this.ratings.constructor === Array) {
-            data["ratings"] = [];
-            for (let item of this.ratings)
-                data["ratings"].push(item.toJSON());
-        }
-        if (this.stars && this.stars.constructor === Array) {
-            data["stars"] = [];
-            for (let item of this.stars)
-                data["stars"].push(item.toJSON());
-        }
+        data["id"] = this.id;
+        data["name"] = this.name;
         return data; 
     }
 }
 
-export interface IContactGroupFiltersInitialData {
-    statuses: ContactGroupStatusDto[] | undefined;
-    users: UserInfoDto[] | undefined;
-    lists: ContactGroupListInfoDto[] | undefined;
-    tags: ContactGroupTagInfoDto[] | undefined;
-    ratings: ContactGroupRatingInfoDto[] | undefined;
-    stars: ContactGroupStarInfoDto[] | undefined;
+export interface IContactGroupTypeDto {
+    id: string | undefined;
+    name: string | undefined;
 }
 
 export class ContactGroupStatusDto implements IContactGroupStatusDto {
@@ -36572,54 +36860,6 @@ export interface IContactGroupStatusDto {
     name: string | undefined;
 }
 
-export class UserInfoDto implements IUserInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-    isActive!: boolean | undefined;
-    profilePicture!: string | undefined;
-
-    constructor(data?: IUserInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-            this.profilePicture = data["profilePicture"];
-        }
-    }
-
-    static fromJS(data: any): UserInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        data["profilePicture"] = this.profilePicture;
-        return data; 
-    }
-}
-
-export interface IUserInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-    isActive: boolean | undefined;
-    profilePicture: string | undefined;
-}
-
 export class ContactGroupListInfoDto implements IContactGroupListInfoDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -36657,166 +36897,6 @@ export class ContactGroupListInfoDto implements IContactGroupListInfoDto {
 
 export interface IContactGroupListInfoDto {
     id: number | undefined;
-    name: string | undefined;
-}
-
-export class ContactGroupTagInfoDto implements IContactGroupTagInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IContactGroupTagInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ContactGroupTagInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactGroupTagInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IContactGroupTagInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class ContactGroupRatingInfoDto implements IContactGroupRatingInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IContactGroupRatingInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ContactGroupRatingInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactGroupRatingInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IContactGroupRatingInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class ContactGroupStarInfoDto implements IContactGroupStarInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IContactGroupStarInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ContactGroupStarInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactGroupStarInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IContactGroupStarInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class ContactGroupTypeDto implements IContactGroupTypeDto {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IContactGroupTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ContactGroupTypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactGroupTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IContactGroupTypeDto {
-    id: string | undefined;
     name: string | undefined;
 }
 
@@ -36964,6 +37044,46 @@ export interface IUpdateContactGroupListInput {
     name: string;
 }
 
+export class ContactGroupRatingInfoDto implements IContactGroupRatingInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupRatingInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupRatingInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupRatingInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupRatingInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+}
+
 export class RateContactGroupInput implements IRateContactGroupInput {
     contactGroupId!: number;
     ratingId!: number | undefined;
@@ -37052,6 +37172,46 @@ export interface IRateContactGroupsInput {
     ratingId: number | undefined;
 }
 
+export class ContactGroupStarInfoDto implements IContactGroupStarInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupStarInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupStarInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupStarInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupStarInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+}
+
 export class MarkContactGroupInput implements IMarkContactGroupInput {
     contactGroupId!: number;
     starId!: number | undefined;
@@ -37138,6 +37298,46 @@ export class MarkContactGroupsInput implements IMarkContactGroupsInput {
 export interface IMarkContactGroupsInput {
     contactGroupIds: number[] | undefined;
     starId: number | undefined;
+}
+
+export class ContactGroupTagInfoDto implements IContactGroupTagInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IContactGroupTagInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupTagInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupTagInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IContactGroupTagInfoDto {
+    id: number | undefined;
+    name: string | undefined;
 }
 
 export class UpdateContactGroupTagsInput implements IUpdateContactGroupTagsInput {
@@ -44796,326 +44996,6 @@ export interface IImportOutput {
     errorMessage: string | undefined;
 }
 
-export class LeadFiltersInitialData implements ILeadFiltersInitialData {
-    pipelines!: PipelineDto[] | undefined;
-    leadTypes!: LeadTypeDto[] | undefined;
-    users!: UserInfoDto[] | undefined;
-    lists!: ContactGroupListInfoDto[] | undefined;
-    tags!: ContactGroupTagInfoDto[] | undefined;
-    ratings!: ContactGroupRatingInfoDto[] | undefined;
-    stars!: ContactGroupStarInfoDto[] | undefined;
-
-    constructor(data?: ILeadFiltersInitialData) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["pipelines"] && data["pipelines"].constructor === Array) {
-                this.pipelines = [];
-                for (let item of data["pipelines"])
-                    this.pipelines.push(PipelineDto.fromJS(item));
-            }
-            if (data["leadTypes"] && data["leadTypes"].constructor === Array) {
-                this.leadTypes = [];
-                for (let item of data["leadTypes"])
-                    this.leadTypes.push(LeadTypeDto.fromJS(item));
-            }
-            if (data["users"] && data["users"].constructor === Array) {
-                this.users = [];
-                for (let item of data["users"])
-                    this.users.push(UserInfoDto.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(ContactGroupListInfoDto.fromJS(item));
-            }
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(ContactGroupTagInfoDto.fromJS(item));
-            }
-            if (data["ratings"] && data["ratings"].constructor === Array) {
-                this.ratings = [];
-                for (let item of data["ratings"])
-                    this.ratings.push(ContactGroupRatingInfoDto.fromJS(item));
-            }
-            if (data["stars"] && data["stars"].constructor === Array) {
-                this.stars = [];
-                for (let item of data["stars"])
-                    this.stars.push(ContactGroupStarInfoDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): LeadFiltersInitialData {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadFiltersInitialData();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.pipelines && this.pipelines.constructor === Array) {
-            data["pipelines"] = [];
-            for (let item of this.pipelines)
-                data["pipelines"].push(item.toJSON());
-        }
-        if (this.leadTypes && this.leadTypes.constructor === Array) {
-            data["leadTypes"] = [];
-            for (let item of this.leadTypes)
-                data["leadTypes"].push(item.toJSON());
-        }
-        if (this.users && this.users.constructor === Array) {
-            data["users"] = [];
-            for (let item of this.users)
-                data["users"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.ratings && this.ratings.constructor === Array) {
-            data["ratings"] = [];
-            for (let item of this.ratings)
-                data["ratings"].push(item.toJSON());
-        }
-        if (this.stars && this.stars.constructor === Array) {
-            data["stars"] = [];
-            for (let item of this.stars)
-                data["stars"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ILeadFiltersInitialData {
-    pipelines: PipelineDto[] | undefined;
-    leadTypes: LeadTypeDto[] | undefined;
-    users: UserInfoDto[] | undefined;
-    lists: ContactGroupListInfoDto[] | undefined;
-    tags: ContactGroupTagInfoDto[] | undefined;
-    ratings: ContactGroupRatingInfoDto[] | undefined;
-    stars: ContactGroupStarInfoDto[] | undefined;
-}
-
-export class PipelineDto implements IPipelineDto {
-    id!: number | undefined;
-    name!: string | undefined;
-    purpose!: string | undefined;
-    stages!: StageDto[] | undefined;
-
-    constructor(data?: IPipelineDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.purpose = data["purpose"];
-            if (data["stages"] && data["stages"].constructor === Array) {
-                this.stages = [];
-                for (let item of data["stages"])
-                    this.stages.push(StageDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PipelineDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PipelineDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["purpose"] = this.purpose;
-        if (this.stages && this.stages.constructor === Array) {
-            data["stages"] = [];
-            for (let item of this.stages)
-                data["stages"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPipelineDto {
-    id: number | undefined;
-    name: string | undefined;
-    purpose: string | undefined;
-    stages: StageDto[] | undefined;
-}
-
-export class LeadTypeDto implements ILeadTypeDto {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: ILeadTypeDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): LeadTypeDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadTypeDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface ILeadTypeDto {
-    id: number | undefined;
-    name: string | undefined;
-}
-
-export class StageDto implements IStageDto {
-    id!: number | undefined;
-    name!: string | undefined;
-    sortOrder!: number | undefined;
-    color!: string | undefined;
-    accessibleActions!: ActionDto[] | undefined;
-
-    constructor(data?: IStageDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.sortOrder = data["sortOrder"];
-            this.color = data["color"];
-            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
-                this.accessibleActions = [];
-                for (let item of data["accessibleActions"])
-                    this.accessibleActions.push(ActionDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): StageDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new StageDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["sortOrder"] = this.sortOrder;
-        data["color"] = this.color;
-        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
-            data["accessibleActions"] = [];
-            for (let item of this.accessibleActions)
-                data["accessibleActions"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IStageDto {
-    id: number | undefined;
-    name: string | undefined;
-    sortOrder: number | undefined;
-    color: string | undefined;
-    accessibleActions: ActionDto[] | undefined;
-}
-
-export class ActionDto implements IActionDto {
-    id!: number | undefined;
-    name!: string | undefined;
-    sysId!: string | undefined;
-    targetStageId!: number | undefined;
-
-    constructor(data?: IActionDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.sysId = data["sysId"];
-            this.targetStageId = data["targetStageId"];
-        }
-    }
-
-    static fromJS(data: any): ActionDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ActionDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["sysId"] = this.sysId;
-        data["targetStageId"] = this.targetStageId;
-        return data; 
-    }
-}
-
-export interface IActionDto {
-    id: number | undefined;
-    name: string | undefined;
-    sysId: string | undefined;
-    targetStageId: number | undefined;
-}
-
 export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     leadId!: number;
     stageId!: number;
@@ -45318,6 +45198,46 @@ export interface IUpdateLeadInfoInput {
     affiliateCode: string | undefined;
     channelCode: string | undefined;
     comments: string | undefined;
+}
+
+export class LeadTypeDto implements ILeadTypeDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ILeadTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): LeadTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ILeadTypeDto {
+    id: number | undefined;
+    name: string | undefined;
 }
 
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
@@ -46666,102 +46586,6 @@ export class NotificationSubscriptionDto implements INotificationSubscriptionDto
 export interface INotificationSubscriptionDto {
     name: string;
     isSubscribed: boolean | undefined;
-}
-
-export class OrderFiltersInitialData implements IOrderFiltersInitialData {
-    pipelines!: PipelineDto[] | undefined;
-    subscriptionStatuses!: BillingSubscriptionStatusDto[] | undefined;
-
-    constructor(data?: IOrderFiltersInitialData) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["pipelines"] && data["pipelines"].constructor === Array) {
-                this.pipelines = [];
-                for (let item of data["pipelines"])
-                    this.pipelines.push(PipelineDto.fromJS(item));
-            }
-            if (data["subscriptionStatuses"] && data["subscriptionStatuses"].constructor === Array) {
-                this.subscriptionStatuses = [];
-                for (let item of data["subscriptionStatuses"])
-                    this.subscriptionStatuses.push(BillingSubscriptionStatusDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): OrderFiltersInitialData {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrderFiltersInitialData();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.pipelines && this.pipelines.constructor === Array) {
-            data["pipelines"] = [];
-            for (let item of this.pipelines)
-                data["pipelines"].push(item.toJSON());
-        }
-        if (this.subscriptionStatuses && this.subscriptionStatuses.constructor === Array) {
-            data["subscriptionStatuses"] = [];
-            for (let item of this.subscriptionStatuses)
-                data["subscriptionStatuses"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IOrderFiltersInitialData {
-    pipelines: PipelineDto[] | undefined;
-    subscriptionStatuses: BillingSubscriptionStatusDto[] | undefined;
-}
-
-export class BillingSubscriptionStatusDto implements IBillingSubscriptionStatusDto {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IBillingSubscriptionStatusDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): BillingSubscriptionStatusDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new BillingSubscriptionStatusDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IBillingSubscriptionStatusDto {
-    id: string | undefined;
-    name: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -48151,122 +47975,6 @@ export interface IBulkUpdatePartnerTypeInput {
     typeName: string | undefined;
 }
 
-export class PartnerFiltersInitialData implements IPartnerFiltersInitialData {
-    types!: PartnerTypeDto[] | undefined;
-    statuses!: ContactGroupStatusDto[] | undefined;
-    users!: UserInfoDto[] | undefined;
-    lists!: ContactGroupListInfoDto[] | undefined;
-    tags!: ContactGroupTagInfoDto[] | undefined;
-    ratings!: ContactGroupRatingInfoDto[] | undefined;
-    stars!: ContactGroupStarInfoDto[] | undefined;
-
-    constructor(data?: IPartnerFiltersInitialData) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["types"] && data["types"].constructor === Array) {
-                this.types = [];
-                for (let item of data["types"])
-                    this.types.push(PartnerTypeDto.fromJS(item));
-            }
-            if (data["statuses"] && data["statuses"].constructor === Array) {
-                this.statuses = [];
-                for (let item of data["statuses"])
-                    this.statuses.push(ContactGroupStatusDto.fromJS(item));
-            }
-            if (data["users"] && data["users"].constructor === Array) {
-                this.users = [];
-                for (let item of data["users"])
-                    this.users.push(UserInfoDto.fromJS(item));
-            }
-            if (data["lists"] && data["lists"].constructor === Array) {
-                this.lists = [];
-                for (let item of data["lists"])
-                    this.lists.push(ContactGroupListInfoDto.fromJS(item));
-            }
-            if (data["tags"] && data["tags"].constructor === Array) {
-                this.tags = [];
-                for (let item of data["tags"])
-                    this.tags.push(ContactGroupTagInfoDto.fromJS(item));
-            }
-            if (data["ratings"] && data["ratings"].constructor === Array) {
-                this.ratings = [];
-                for (let item of data["ratings"])
-                    this.ratings.push(ContactGroupRatingInfoDto.fromJS(item));
-            }
-            if (data["stars"] && data["stars"].constructor === Array) {
-                this.stars = [];
-                for (let item of data["stars"])
-                    this.stars.push(ContactGroupStarInfoDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PartnerFiltersInitialData {
-        data = typeof data === 'object' ? data : {};
-        let result = new PartnerFiltersInitialData();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.types && this.types.constructor === Array) {
-            data["types"] = [];
-            for (let item of this.types)
-                data["types"].push(item.toJSON());
-        }
-        if (this.statuses && this.statuses.constructor === Array) {
-            data["statuses"] = [];
-            for (let item of this.statuses)
-                data["statuses"].push(item.toJSON());
-        }
-        if (this.users && this.users.constructor === Array) {
-            data["users"] = [];
-            for (let item of this.users)
-                data["users"].push(item.toJSON());
-        }
-        if (this.lists && this.lists.constructor === Array) {
-            data["lists"] = [];
-            for (let item of this.lists)
-                data["lists"].push(item.toJSON());
-        }
-        if (this.tags && this.tags.constructor === Array) {
-            data["tags"] = [];
-            for (let item of this.tags)
-                data["tags"].push(item.toJSON());
-        }
-        if (this.ratings && this.ratings.constructor === Array) {
-            data["ratings"] = [];
-            for (let item of this.ratings)
-                data["ratings"].push(item.toJSON());
-        }
-        if (this.stars && this.stars.constructor === Array) {
-            data["stars"] = [];
-            for (let item of this.stars)
-                data["stars"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPartnerFiltersInitialData {
-    types: PartnerTypeDto[] | undefined;
-    statuses: ContactGroupStatusDto[] | undefined;
-    users: UserInfoDto[] | undefined;
-    lists: ContactGroupListInfoDto[] | undefined;
-    tags: ContactGroupTagInfoDto[] | undefined;
-    ratings: ContactGroupRatingInfoDto[] | undefined;
-    stars: ContactGroupStarInfoDto[] | undefined;
-}
-
 export class PartnerTypeDto implements IPartnerTypeDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -48989,6 +48697,170 @@ export class PipelineData implements IPipelineData {
 export interface IPipelineData {
     id: number | undefined;
     name: string | undefined;
+}
+
+export class PipelineDto implements IPipelineDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    purpose!: string | undefined;
+    stages!: StageDto[] | undefined;
+
+    constructor(data?: IPipelineDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.purpose = data["purpose"];
+            if (data["stages"] && data["stages"].constructor === Array) {
+                this.stages = [];
+                for (let item of data["stages"])
+                    this.stages.push(StageDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PipelineDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PipelineDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["purpose"] = this.purpose;
+        if (this.stages && this.stages.constructor === Array) {
+            data["stages"] = [];
+            for (let item of this.stages)
+                data["stages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPipelineDto {
+    id: number | undefined;
+    name: string | undefined;
+    purpose: string | undefined;
+    stages: StageDto[] | undefined;
+}
+
+export class StageDto implements IStageDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    sortOrder!: number | undefined;
+    color!: string | undefined;
+    accessibleActions!: ActionDto[] | undefined;
+
+    constructor(data?: IStageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+            this.color = data["color"];
+            if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
+                this.accessibleActions = [];
+                for (let item of data["accessibleActions"])
+                    this.accessibleActions.push(ActionDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): StageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        data["color"] = this.color;
+        if (this.accessibleActions && this.accessibleActions.constructor === Array) {
+            data["accessibleActions"] = [];
+            for (let item of this.accessibleActions)
+                data["accessibleActions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IStageDto {
+    id: number | undefined;
+    name: string | undefined;
+    sortOrder: number | undefined;
+    color: string | undefined;
+    accessibleActions: ActionDto[] | undefined;
+}
+
+export class ActionDto implements IActionDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    sysId!: string | undefined;
+    targetStageId!: number | undefined;
+
+    constructor(data?: IActionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.sysId = data["sysId"];
+            this.targetStageId = data["targetStageId"];
+        }
+    }
+
+    static fromJS(data: any): ActionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["sysId"] = this.sysId;
+        data["targetStageId"] = this.targetStageId;
+        return data; 
+    }
+}
+
+export interface IActionDto {
+    id: number | undefined;
+    name: string | undefined;
+    sysId: string | undefined;
+    targetStageId: number | undefined;
 }
 
 export class CurrentUserProfileEditDto implements ICurrentUserProfileEditDto {
@@ -53171,22 +53043,8 @@ export interface IBankCardInfoDto {
 }
 
 export class ACHCustomerInfoDto implements IACHCustomerInfoDto {
-    firstName!: string | undefined;
-    lastName!: string | undefined;
     customerRoutingNo!: string | undefined;
     customerAcctNo!: string | undefined;
-    customerAcctType!: string | undefined;
-    address1!: string | undefined;
-    address2!: string | undefined;
-    city!: string | undefined;
-    state!: string | undefined;
-    zipCode!: string | undefined;
-    dln!: string | undefined;
-    dlnState!: string | undefined;
-    ssn!: string | undefined;
-    dateOfBirth!: string | undefined;
-    originatorName!: string | undefined;
-    memo!: string | undefined;
 
     constructor(data?: IACHCustomerInfoDto) {
         if (data) {
@@ -53199,22 +53057,8 @@ export class ACHCustomerInfoDto implements IACHCustomerInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
             this.customerRoutingNo = data["customerRoutingNo"];
             this.customerAcctNo = data["customerAcctNo"];
-            this.customerAcctType = data["customerAcctType"];
-            this.address1 = data["address1"];
-            this.address2 = data["address2"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.zipCode = data["zipCode"];
-            this.dln = data["dln"];
-            this.dlnState = data["dlnState"];
-            this.ssn = data["ssn"];
-            this.dateOfBirth = data["dateOfBirth"];
-            this.originatorName = data["originatorName"];
-            this.memo = data["memo"];
         }
     }
 
@@ -53227,43 +53071,15 @@ export class ACHCustomerInfoDto implements IACHCustomerInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
         data["customerRoutingNo"] = this.customerRoutingNo;
         data["customerAcctNo"] = this.customerAcctNo;
-        data["customerAcctType"] = this.customerAcctType;
-        data["address1"] = this.address1;
-        data["address2"] = this.address2;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["zipCode"] = this.zipCode;
-        data["dln"] = this.dln;
-        data["dlnState"] = this.dlnState;
-        data["ssn"] = this.ssn;
-        data["dateOfBirth"] = this.dateOfBirth;
-        data["originatorName"] = this.originatorName;
-        data["memo"] = this.memo;
         return data; 
     }
 }
 
 export interface IACHCustomerInfoDto {
-    firstName: string | undefined;
-    lastName: string | undefined;
     customerRoutingNo: string | undefined;
     customerAcctNo: string | undefined;
-    customerAcctType: string | undefined;
-    address1: string | undefined;
-    address2: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    zipCode: string | undefined;
-    dln: string | undefined;
-    dlnState: string | undefined;
-    ssn: string | undefined;
-    dateOfBirth: string | undefined;
-    originatorName: string | undefined;
-    memo: string | undefined;
 }
 
 export class PayPalInfoDto implements IPayPalInfoDto {
@@ -55536,6 +55352,423 @@ export interface IInviteUserInput {
     emailAddress: string;
     assignedRoleNames: string[];
     tenantHostType: InviteUserInputTenantHostType | undefined;
+}
+
+export class UpdateUserEmailDto implements IUpdateUserEmailDto {
+    id!: number;
+    emailAddress!: string;
+
+    constructor(data?: IUpdateUserEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.emailAddress = data["emailAddress"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserEmailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["emailAddress"] = this.emailAddress;
+        return data; 
+    }
+}
+
+export interface IUpdateUserEmailDto {
+    id: number;
+    emailAddress: string;
+}
+
+export class UpdateUserPhoneDto implements IUpdateUserPhoneDto {
+    id!: number;
+    phoneNumber!: string;
+
+    constructor(data?: IUpdateUserPhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.phoneNumber = data["phoneNumber"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserPhoneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserPhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["phoneNumber"] = this.phoneNumber;
+        return data; 
+    }
+}
+
+export interface IUpdateUserPhoneDto {
+    id: number;
+    phoneNumber: string;
+}
+
+export class UpdateUserPasswordDto implements IUpdateUserPasswordDto {
+    id!: number;
+    password!: string | undefined;
+    setRandomPassword!: boolean | undefined;
+
+    constructor(data?: IUpdateUserPasswordDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.password = data["password"];
+            this.setRandomPassword = data["setRandomPassword"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserPasswordDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserPasswordDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["password"] = this.password;
+        data["setRandomPassword"] = this.setRandomPassword;
+        return data; 
+    }
+}
+
+export interface IUpdateUserPasswordDto {
+    id: number;
+    password: string | undefined;
+    setRandomPassword: boolean | undefined;
+}
+
+export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
+    id!: number;
+    isActive!: boolean | undefined;
+    shouldChangePasswordOnNextLogin!: boolean | undefined;
+    isTwoFactorEnabled!: boolean | undefined;
+    isLockoutEnabled!: boolean | undefined;
+
+    constructor(data?: IUpdateUserOptionsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.isActive = data["isActive"];
+            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
+            this.isTwoFactorEnabled = data["isTwoFactorEnabled"];
+            this.isLockoutEnabled = data["isLockoutEnabled"];
+        }
+    }
+
+    static fromJS(data: any): UpdateUserOptionsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserOptionsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
+        data["isTwoFactorEnabled"] = this.isTwoFactorEnabled;
+        data["isLockoutEnabled"] = this.isLockoutEnabled;
+        return data; 
+    }
+}
+
+export interface IUpdateUserOptionsDto {
+    id: number;
+    isActive: boolean | undefined;
+    shouldChangePasswordOnNextLogin: boolean | undefined;
+    isTwoFactorEnabled: boolean | undefined;
+    isLockoutEnabled: boolean | undefined;
+}
+
+export class SendActivationEmailDto implements ISendActivationEmailDto {
+    id!: number;
+    newEmailAddress!: string | undefined;
+
+    constructor(data?: ISendActivationEmailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.newEmailAddress = data["newEmailAddress"];
+        }
+    }
+
+    static fromJS(data: any): SendActivationEmailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendActivationEmailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["newEmailAddress"] = this.newEmailAddress;
+        return data; 
+    }
+}
+
+export interface ISendActivationEmailDto {
+    id: number;
+    newEmailAddress: string | undefined;
+}
+
+export class UnassignUserPermissionsInput implements IUnassignUserPermissionsInput {
+    id!: number | undefined;
+    unassignPermissionNames!: string[];
+
+    constructor(data?: IUnassignUserPermissionsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.unassignPermissionNames = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            if (data["unassignPermissionNames"] && data["unassignPermissionNames"].constructor === Array) {
+                this.unassignPermissionNames = [];
+                for (let item of data["unassignPermissionNames"])
+                    this.unassignPermissionNames.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UnassignUserPermissionsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnassignUserPermissionsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (this.unassignPermissionNames && this.unassignPermissionNames.constructor === Array) {
+            data["unassignPermissionNames"] = [];
+            for (let item of this.unassignPermissionNames)
+                data["unassignPermissionNames"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUnassignUserPermissionsInput {
+    id: number | undefined;
+    unassignPermissionNames: string[];
+}
+
+export class UpdateUserRolesInput implements IUpdateUserRolesInput {
+    id!: number | undefined;
+    rolesNames!: string[];
+
+    constructor(data?: IUpdateUserRolesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.rolesNames = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            if (data["rolesNames"] && data["rolesNames"].constructor === Array) {
+                this.rolesNames = [];
+                for (let item of data["rolesNames"])
+                    this.rolesNames.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateUserRolesInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserRolesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (this.rolesNames && this.rolesNames.constructor === Array) {
+            data["rolesNames"] = [];
+            for (let item of this.rolesNames)
+                data["rolesNames"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateUserRolesInput {
+    id: number | undefined;
+    rolesNames: string[];
+}
+
+export class UpdateUserOrganizathionUnitsInput implements IUpdateUserOrganizathionUnitsInput {
+    id!: number | undefined;
+    organizathionUnits!: number[];
+
+    constructor(data?: IUpdateUserOrganizathionUnitsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.organizathionUnits = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            if (data["organizathionUnits"] && data["organizathionUnits"].constructor === Array) {
+                this.organizathionUnits = [];
+                for (let item of data["organizathionUnits"])
+                    this.organizathionUnits.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateUserOrganizathionUnitsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateUserOrganizathionUnitsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (this.organizathionUnits && this.organizathionUnits.constructor === Array) {
+            data["organizathionUnits"] = [];
+            for (let item of this.organizathionUnits)
+                data["organizathionUnits"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateUserOrganizathionUnitsInput {
+    id: number | undefined;
+    organizathionUnits: number[];
+}
+
+export class UserInfoDto implements IUserInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    isActive!: boolean | undefined;
+    profilePicture!: string | undefined;
+
+    constructor(data?: IUserInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+            this.profilePicture = data["profilePicture"];
+        }
+    }
+
+    static fromJS(data: any): UserInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        data["profilePicture"] = this.profilePicture;
+        return data; 
+    }
+}
+
+export interface IUserInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+    isActive: boolean | undefined;
+    profilePicture: string | undefined;
 }
 
 export class AssignContactGroupInput implements IAssignContactGroupInput {
