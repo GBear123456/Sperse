@@ -66,14 +66,6 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.creditCardData.get('billingStateCode').disable();
         this.googleAutoComplete = Boolean(window['google']);
         this.getCountries();
-        if (this.countries) {
-            this.filteredCountries = this.creditCardData.get('billingCountry').valueChanges
-                .pipe(
-                    startWith<string | Country>(''),
-                    map(value => typeof value === 'string' ? value : value.name),
-                    map(name => name ? this._filterCountry(name) : this.countries.slice())
-                );
-        }
     }
 
     ngOnInit() {}
@@ -194,6 +186,13 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.store$.pipe(select(CountriesStoreSelectors.getCountries))
             .subscribe(result => {
                 this.countries = result;
+
+                this.filteredCountries = this.creditCardData.get('billingCountry').valueChanges
+                    .pipe(
+                        startWith<string | Country>(''),
+                        map(value => typeof value === 'string' ? value : value.name),
+                        map(name => name ? this._filterCountry(name) : this.countries.slice())
+                    );
             });
     }
 
