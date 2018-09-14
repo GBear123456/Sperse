@@ -53,8 +53,8 @@
                 ).then((tenantApiHostOutput) => {
                     let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
 
-                    if (tenantApiHostOutput.apiHostName !== null) {
-                        remoteServiceUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.apiHostName;
+                    if (tenantApiHostOutput.result && tenantApiHostOutput.result.apiHostName) {
+                        remoteServiceUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.result.apiHostName;
                     } else {
                         remoteServiceUrl = result.remoteServiceBaseUrl;
                     }
