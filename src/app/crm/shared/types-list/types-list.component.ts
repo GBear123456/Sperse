@@ -241,7 +241,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowInserting($event) {
-        let typeName = $event.data.name.trim();
+        let typeName = $event.data.name ? $event.data.name.trim() : '';
         if (!typeName || this.IsDuplicate(typeName))
             $event.cancel = true;
     }
