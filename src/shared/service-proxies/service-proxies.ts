@@ -25211,8 +25211,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updatePassword(input: UpdateUserPasswordDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/UpdatePassword";
+    resetPassword(input: ResetUserPasswordDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/ResetPassword";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -25226,12 +25226,12 @@ export class UserServiceProxy {
             })
         };
 
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdatePassword(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processResetPassword(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdatePassword(<any>response_);
+                    return this.processResetPassword(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25240,7 +25240,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processUpdatePassword(response: HttpResponseBase): Observable<void> {
+    protected processResetPassword(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25315,8 +25315,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    sendActivationEmail(input: SendActivationEmailDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/SendActivationEmail";
+    grantPermission(input: GrantPermissionInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/GrantPermission";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -25331,11 +25331,11 @@ export class UserServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendActivationEmail(response_);
+            return this.processGrantPermission(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSendActivationEmail(<any>response_);
+                    return this.processGrantPermission(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25344,7 +25344,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processSendActivationEmail(response: HttpResponseBase): Observable<void> {
+    protected processGrantPermission(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25367,8 +25367,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignPermissions(input: UpdateUserPermissionsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/AssignPermissions";
+    prohibitPermission(input: ProhibitPermissionInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/ProhibitPermission";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -25383,11 +25383,11 @@ export class UserServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignPermissions(response_);
+            return this.processProhibitPermission(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignPermissions(<any>response_);
+                    return this.processProhibitPermission(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25396,7 +25396,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processAssignPermissions(response: HttpResponseBase): Observable<void> {
+    protected processProhibitPermission(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25419,8 +25419,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    unassignPermissions(input: UnassignUserPermissionsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignPermissions";
+    assignRole(input: UpdateUserRoleInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/AssignRole";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -25435,11 +25435,11 @@ export class UserServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUnassignPermissions(response_);
+            return this.processAssignRole(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUnassignPermissions(<any>response_);
+                    return this.processAssignRole(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25448,7 +25448,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processUnassignPermissions(response: HttpResponseBase): Observable<void> {
+    protected processAssignRole(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25471,8 +25471,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignRoles(input: UpdateUserRolesInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/AssignRoles";
+    unassignRole(input: UpdateUserRoleInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignRole";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -25487,11 +25487,11 @@ export class UserServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignRoles(response_);
+            return this.processUnassignRole(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignRoles(<any>response_);
+                    return this.processUnassignRole(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25500,163 +25500,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processAssignRoles(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    unassignRoles(input: UpdateUserRolesInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignRoles";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUnassignRoles(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUnassignRoles(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUnassignRoles(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    assignOrganizathionUnits(input: UpdateUserOrganizathionUnitsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/AssignOrganizathionUnits";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignOrganizathionUnits(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAssignOrganizathionUnits(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processAssignOrganizathionUnits(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    unassignOrganizathionUnits(input: UpdateUserOrganizathionUnitsInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignOrganizathionUnits";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUnassignOrganizathionUnits(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUnassignOrganizathionUnits(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUnassignOrganizathionUnits(response: HttpResponseBase): Observable<void> {
+    protected processUnassignRole(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -55649,12 +55493,14 @@ export interface IUpdateUserPhoneDto {
     phoneNumber: string;
 }
 
-export class UpdateUserPasswordDto implements IUpdateUserPasswordDto {
+export class ResetUserPasswordDto implements IResetUserPasswordDto {
     id!: number;
     password!: string | undefined;
     setRandomPassword!: boolean | undefined;
+    shouldChangePasswordOnNextLogin!: boolean | undefined;
+    sendActivationEmail!: boolean | undefined;
 
-    constructor(data?: IUpdateUserPasswordDto) {
+    constructor(data?: IResetUserPasswordDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -55668,12 +55514,14 @@ export class UpdateUserPasswordDto implements IUpdateUserPasswordDto {
             this.id = data["id"];
             this.password = data["password"];
             this.setRandomPassword = data["setRandomPassword"];
+            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
+            this.sendActivationEmail = data["sendActivationEmail"];
         }
     }
 
-    static fromJS(data: any): UpdateUserPasswordDto {
+    static fromJS(data: any): ResetUserPasswordDto {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateUserPasswordDto();
+        let result = new ResetUserPasswordDto();
         result.init(data);
         return result;
     }
@@ -55683,20 +55531,23 @@ export class UpdateUserPasswordDto implements IUpdateUserPasswordDto {
         data["id"] = this.id;
         data["password"] = this.password;
         data["setRandomPassword"] = this.setRandomPassword;
+        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
+        data["sendActivationEmail"] = this.sendActivationEmail;
         return data; 
     }
 }
 
-export interface IUpdateUserPasswordDto {
+export interface IResetUserPasswordDto {
     id: number;
     password: string | undefined;
     setRandomPassword: boolean | undefined;
+    shouldChangePasswordOnNextLogin: boolean | undefined;
+    sendActivationEmail: boolean | undefined;
 }
 
 export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
     id!: number;
     isActive!: boolean | undefined;
-    shouldChangePasswordOnNextLogin!: boolean | undefined;
     isTwoFactorEnabled!: boolean | undefined;
     isLockoutEnabled!: boolean | undefined;
 
@@ -55713,7 +55564,6 @@ export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
         if (data) {
             this.id = data["id"];
             this.isActive = data["isActive"];
-            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
             this.isTwoFactorEnabled = data["isTwoFactorEnabled"];
             this.isLockoutEnabled = data["isLockoutEnabled"];
         }
@@ -55730,7 +55580,6 @@ export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["isActive"] = this.isActive;
-        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["isTwoFactorEnabled"] = this.isTwoFactorEnabled;
         data["isLockoutEnabled"] = this.isLockoutEnabled;
         return data; 
@@ -55740,81 +55589,33 @@ export class UpdateUserOptionsDto implements IUpdateUserOptionsDto {
 export interface IUpdateUserOptionsDto {
     id: number;
     isActive: boolean | undefined;
-    shouldChangePasswordOnNextLogin: boolean | undefined;
     isTwoFactorEnabled: boolean | undefined;
     isLockoutEnabled: boolean | undefined;
 }
 
-export class SendActivationEmailDto implements ISendActivationEmailDto {
-    id!: number;
-    newEmailAddress!: string | undefined;
-
-    constructor(data?: ISendActivationEmailDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.newEmailAddress = data["newEmailAddress"];
-        }
-    }
-
-    static fromJS(data: any): SendActivationEmailDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SendActivationEmailDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["newEmailAddress"] = this.newEmailAddress;
-        return data; 
-    }
-}
-
-export interface ISendActivationEmailDto {
-    id: number;
-    newEmailAddress: string | undefined;
-}
-
-export class UnassignUserPermissionsInput implements IUnassignUserPermissionsInput {
+export class GrantPermissionInput implements IGrantPermissionInput {
     id!: number | undefined;
-    unassignPermissionNames!: string[];
+    permissionName!: string;
 
-    constructor(data?: IUnassignUserPermissionsInput) {
+    constructor(data?: IGrantPermissionInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.unassignPermissionNames = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            if (data["unassignPermissionNames"] && data["unassignPermissionNames"].constructor === Array) {
-                this.unassignPermissionNames = [];
-                for (let item of data["unassignPermissionNames"])
-                    this.unassignPermissionNames.push(item);
-            }
+            this.permissionName = data["permissionName"];
         }
     }
 
-    static fromJS(data: any): UnassignUserPermissionsInput {
+    static fromJS(data: any): GrantPermissionInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UnassignUserPermissionsInput();
+        let result = new GrantPermissionInput();
         result.init(data);
         return result;
     }
@@ -55822,50 +55623,39 @@ export class UnassignUserPermissionsInput implements IUnassignUserPermissionsInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        if (this.unassignPermissionNames && this.unassignPermissionNames.constructor === Array) {
-            data["unassignPermissionNames"] = [];
-            for (let item of this.unassignPermissionNames)
-                data["unassignPermissionNames"].push(item);
-        }
+        data["permissionName"] = this.permissionName;
         return data; 
     }
 }
 
-export interface IUnassignUserPermissionsInput {
+export interface IGrantPermissionInput {
     id: number | undefined;
-    unassignPermissionNames: string[];
+    permissionName: string;
 }
 
-export class UpdateUserRolesInput implements IUpdateUserRolesInput {
+export class ProhibitPermissionInput implements IProhibitPermissionInput {
     id!: number | undefined;
-    rolesNames!: string[];
+    permissionName!: string;
 
-    constructor(data?: IUpdateUserRolesInput) {
+    constructor(data?: IProhibitPermissionInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.rolesNames = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            if (data["rolesNames"] && data["rolesNames"].constructor === Array) {
-                this.rolesNames = [];
-                for (let item of data["rolesNames"])
-                    this.rolesNames.push(item);
-            }
+            this.permissionName = data["permissionName"];
         }
     }
 
-    static fromJS(data: any): UpdateUserRolesInput {
+    static fromJS(data: any): ProhibitPermissionInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateUserRolesInput();
+        let result = new ProhibitPermissionInput();
         result.init(data);
         return result;
     }
@@ -55873,50 +55663,39 @@ export class UpdateUserRolesInput implements IUpdateUserRolesInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        if (this.rolesNames && this.rolesNames.constructor === Array) {
-            data["rolesNames"] = [];
-            for (let item of this.rolesNames)
-                data["rolesNames"].push(item);
-        }
+        data["permissionName"] = this.permissionName;
         return data; 
     }
 }
 
-export interface IUpdateUserRolesInput {
+export interface IProhibitPermissionInput {
     id: number | undefined;
-    rolesNames: string[];
+    permissionName: string;
 }
 
-export class UpdateUserOrganizathionUnitsInput implements IUpdateUserOrganizathionUnitsInput {
+export class UpdateUserRoleInput implements IUpdateUserRoleInput {
     id!: number | undefined;
-    organizathionUnits!: number[];
+    roleName!: string;
 
-    constructor(data?: IUpdateUserOrganizathionUnitsInput) {
+    constructor(data?: IUpdateUserRoleInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.organizathionUnits = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            if (data["organizathionUnits"] && data["organizathionUnits"].constructor === Array) {
-                this.organizathionUnits = [];
-                for (let item of data["organizathionUnits"])
-                    this.organizathionUnits.push(item);
-            }
+            this.roleName = data["roleName"];
         }
     }
 
-    static fromJS(data: any): UpdateUserOrganizathionUnitsInput {
+    static fromJS(data: any): UpdateUserRoleInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateUserOrganizathionUnitsInput();
+        let result = new UpdateUserRoleInput();
         result.init(data);
         return result;
     }
@@ -55924,18 +55703,14 @@ export class UpdateUserOrganizathionUnitsInput implements IUpdateUserOrganizathi
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        if (this.organizathionUnits && this.organizathionUnits.constructor === Array) {
-            data["organizathionUnits"] = [];
-            for (let item of this.organizathionUnits)
-                data["organizathionUnits"].push(item);
-        }
+        data["roleName"] = this.roleName;
         return data; 
     }
 }
 
-export interface IUpdateUserOrganizathionUnitsInput {
+export interface IUpdateUserRoleInput {
     id: number | undefined;
-    organizathionUnits: number[];
+    roleName: string;
 }
 
 export class UserInfoDto implements IUserInfoDto {
