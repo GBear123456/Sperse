@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, Injector, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
@@ -15,7 +15,7 @@ import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pa
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSubscriptionServiceProxy]
 })
-export class PayPalComponent extends AppComponentBase implements OnInit {
+export class PayPalComponent extends AppComponentBase implements AfterViewInit {
     @Input() editionId: number;
     @Input() billingPeriod: BillingPeriod = BillingPeriod.Monthly;
 
@@ -29,14 +29,13 @@ export class PayPalComponent extends AppComponentBase implements OnInit {
         super(injector);
     }
 
-    ngOnInit() {
+    ngAfterViewInit() {
         this.startLoading();
-        jQuery.getScript('https://www.paypalobjects.com/api/checkout.js')
-            .done(() => {
-                this.finishLoading();
-                this.preparePaypalButton();
-            }
-        );
+        if ((<any>window)['paypal'])
+            setTimeout(() => { this.preparePaypalButton(); });
+        else
+            jQuery.getScript('https://www.paypalobjects.com/api/checkout.js')
+                .done(() => { this.preparePaypalButton(); });
     }
 
     preparePaypalButton(): void {
@@ -44,6 +43,7 @@ export class PayPalComponent extends AppComponentBase implements OnInit {
         let frequency = this.billingPeriod == BillingPeriod.Monthly
             ? Frequency._30
             : Frequency._365;
+        this.finishLoading();
         (<any>window).paypal.Button.render({
             style: {
                 //label: 'checkout',
