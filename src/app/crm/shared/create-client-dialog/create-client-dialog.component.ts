@@ -71,7 +71,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     stages: any[] = [];
     stageId: number;
     partnerTypes: any[] = [];
-    partnerTypeName: string;
 
     saveButtonId = 'saveClientOptions';
     saveContextMenuItems = [];
@@ -312,6 +311,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         let stageId = this.stageId;
         let lists = this.listsComponent.selectedItems;
         let tags = this.tagsComponent.selectedItems;
+        let partnerTypeName = this.partnerTypesComponent.selectedItems.length ? this.partnerTypesComponent.selectedItems[0].name : undefined;
         let ratingId = this.ratingComponent.ratingValue;
         let dataObj = {
             firstName: this.person.firstName,
@@ -341,7 +341,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             tags: tags,
             ratingId: ratingId,
             contactGroupTypeId: this.data.customerType,
-            partnerTypeName: this.partnerTypeName
+            partnerTypeName: partnerTypeName
         };
 
         let saveButton: any = document.getElementById(this.saveButtonId);
@@ -826,7 +826,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.userAssignmentComponent.reset();
         this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
         this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
-        this.partnerTypeName = undefined;
     }
 
     onSaveOptionSelectionChanged($event) {
@@ -871,7 +870,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onPartnerTypeChanged(event) {
-        this.partnerTypeName = event.selectedRowsData[0].name;
         this.partnerTypesComponent.apply();
     }
 }
