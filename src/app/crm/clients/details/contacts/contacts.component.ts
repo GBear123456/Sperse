@@ -26,7 +26,7 @@ import { ClientDetailsService } from '../client-details.service';
 })
 export class ContactsComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() customerInfo: ContactGroupInfoDto;
+    @Input() contactInfo: ContactGroupInfoDto;
 
     isEditAllowed = false;
 
@@ -111,7 +111,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     createOrganization(field, data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.customerInfo.id,
+            contactGroupId: this.contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -121,7 +121,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.customerInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

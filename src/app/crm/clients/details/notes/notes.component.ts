@@ -21,7 +21,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('drawer') drawer: MatSidenav;
     public data: {
-        customerInfo: ContactGroupInfoDto
+        contactInfo: ContactGroupInfoDto
     };
 
     private formatting = AppConsts.formatting;
@@ -41,7 +41,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this.data = this._customerService['data'];
-        this._notesService.getNotes(this.data.customerInfo.id).subscribe((result) => {
+        this._notesService.getNotes(this.data.contactInfo.id).subscribe((result) => {
             this.dataSource = result;
         });
     }

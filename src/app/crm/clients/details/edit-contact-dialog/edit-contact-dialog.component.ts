@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CrmStore, ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors, EmailUsageTypesStoreActions, EmailUsageTypesStoreSelectors, PhoneUsageTypesStoreActions, PhoneUsageTypesStoreSelectors } from '@app/crm/store';
+import { AppStore, ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors, EmailUsageTypesStoreActions, EmailUsageTypesStoreSelectors, PhoneUsageTypesStoreActions, PhoneUsageTypesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import {
@@ -47,7 +47,7 @@ export class EditContactDialog extends AppComponentBase {
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
                 private _contactLinkService: ContactLinkServiceProxy,
-                private store$: Store<CrmStore.State>) {
+                private store$: Store<AppStore.State>) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');

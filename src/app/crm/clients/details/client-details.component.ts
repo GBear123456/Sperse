@@ -12,7 +12,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { CrmStore, PartnerTypesStoreSelectors } from '@app/crm/store';
+import { AppStore, PartnerTypesStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroupType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -49,7 +49,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
     customerId: number;
     customerType: string;
-    customerInfo: ContactGroupInfoDto;
+    contactInfo: ContactGroupInfoDto;
     primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
     leadInfo: LeadInfoDto;
@@ -90,35 +90,19 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
                 private _clientDetailsService: ClientDetailsService,
-                private store$: Store<CrmStore.State>) {
+                private store$: Store<AppStore.State>
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         _contactGroupService['data'] = {
-            customerInfo: null,
+            contactInfo: null,
             leadInfo: null,
             partnerInfo: null
         };
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._route.params
-            .subscribe(params => {
-                let clientId = params['clientId'],
-                    partnerId = params['partnerId'],
-                    customerId = clientId || partnerId,
-                    leadId = params['leadId'];
-
-                _userService['data'] = {
-                    userId: null, user: null, roles: null
-                };
-                _contactGroupService['data'].customerInfo = {
-                    id: customerId
-                };
-
-                if (leadId)
-                    this.leadId = leadId;
-
-                this.loadData(customerId, leadId, partnerId);
-            }));
+            .subscribe(params => this.loadData(params)));
 
         this.paramsSubscribe.push(this._route.queryParams
             .subscribe(params => {
@@ -172,10 +156,11 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         return this.customerType !== ContactGroupType.Partner && !this.partnerTypeId && !this.leadId;
     }
 
-    private fillCustomerDetails(result) {
-        this._contactGroupService['data'].customerInfo = result;
+    private fillContactDetails(result, primaryContactId = null) {
+        this._contactGroupService['data'].contactInfo = result;
+        primaryContactId = primaryContactId || result.primaryContactInfo.id;
         result.contactPersons.every((contact) => {
-            let isPrimaryContact = (contact.id == result.primaryContactInfo.id);
+            let isPrimaryContact = (contact.id == primaryContactId);
             if (isPrimaryContact)
                 result.primaryContactInfo = contact;
             return !isPrimaryContact;
@@ -183,7 +168,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
 
         this.ratingId = result.ratingId;
         this.primaryContact = result.primaryContactInfo;
-        this.customerInfo = result;
+        this.contactInfo = result;
         this.initVerificationChecklist();
 
         this._clientDetailsService.userUpdate(
@@ -204,20 +189,47 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
         this.partnerTypeId = result.typeId;
     }
 
-    loadData(customerId: number, leadId: number, partnerId: number) {
+    loadData(params) {
+        let userId = params['userId'],
+            clientId = params['clientId'],
+            partnerId = params['partnerId'],
+            customerId = clientId || partnerId,
+            leadId = params['leadId'];
+
+        this._userService['data'] = {
+            userId: null, user: null, roles: null
+        };
+        this._contactGroupService['data'].contactInfo = {
+            id: customerId || userId
+        };
+
+        if (userId)
+            this.loadDataForUser(userId);
+        else 
+            this.loadDataForClient(customerId,
+                this.leadId = leadId, partnerId);
+    }
+
+    loadDataForUser(userId) {
+        this._contactGroupService.getContactGroupForUser(userId).subscribe((res) => {
+            this.fillContactDetails(res.contactGroupInfo, res.userContactId);
+        });
+    }
+
+    loadDataForClient(customerId: number, leadId: number, partnerId: number) {
         if (customerId) {
             this.startLoading(true);
             this.customerId = customerId;
-            let customerInfo$ = this._contactGroupService.getContactGroupInfo(this.customerId);
+            let contactInfo$ = this._contactGroupService.getContactGroupInfo(this.customerId);
             if (leadId) {
                 let leadData, leadInfo$ = this._leadService.getLeadInfo(leadId);
-                forkJoin(customerInfo$, leadInfo$).pipe(finalize(() => {
+                forkJoin(contactInfo$, leadInfo$).pipe(finalize(() => {
                     this.finishLoading(true);
                     if (!leadData)
                         this.close(true);
                 })).subscribe(result => {
                     leadData = result;
-                    this.fillCustomerDetails(result[0]);
+                    this.fillContactDetails(result[0]);
                     this.fillLeadDetails(result[1]);
                     this.loadLeadsStages();
                 });
@@ -225,23 +237,23 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
                 if (this.customerType == ContactGroupType.Partner) {
                     let partnerInfo$ = this._partnerService.get(partnerId);
-                    forkJoin(customerInfo$, partnerInfo$).pipe(finalize(() => {
+                    forkJoin(contactInfo$, partnerInfo$).pipe(finalize(() => {
                         this.finishLoading(true);
                         if (!this.partnerInfo)
                             this.close(true);
                     })).subscribe(result => {
-                        this.fillCustomerDetails(result[0]);
+                        this.fillContactDetails(result[0]);
                         this.fillPartnerDetails(result[1]);
                         this.loadPartnerTypes();
                     });
                 } else {
                     let lastLeadInfo$ = this._leadService.getLast(customerId);
-                    forkJoin(customerInfo$, lastLeadInfo$).pipe(finalize(() => {
+                    forkJoin(contactInfo$, lastLeadInfo$).pipe(finalize(() => {
                         this.finishLoading(true);
-                        if (!this.customerInfo)
+                        if (!this.contactInfo)
                             this.close(true);
                     })).subscribe(result => {
-                        this.fillCustomerDetails(result[0]);
+                        this.fillContactDetails(result[0]);
                         this.fillLeadDetails(result[1]);
                     });
                 }
@@ -283,7 +295,7 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     private getCustomerName() {
-        return this.customerInfo.primaryContactInfo.fullName;
+        return this.contactInfo.primaryContactInfo.fullName;
     }
 
     private showConfirmationDialog(status) {
@@ -294,12 +306,12 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
                 if (isConfirmed) {
                     this.updateStatusInternal(status.id)
                         .subscribe(() => {
-                            this.customerInfo.statusId = status.id;
+                            this.contactInfo.statusId = status.id;
                             this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                             this.notify.success(this.l('StatusSuccessfullyUpdated'));
                         });
                 } else {
-                    this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.customerInfo.statusId]);
+                    this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
                 }
             }
         );
@@ -410,11 +422,12 @@ export class ClientDetailsComponent extends AppComponentBase implements OnInit, 
     }
 
     initVerificationChecklist(): void {
+        let person = this.primaryContact.person;
         let contactDetails = this.primaryContact.details;
         this.verificationChecklist = [
             this.getVerificationChecklistItem(
                 VerificationChecklistItemType.Identity,
-                this.primaryContact.person.identityConfirmationDate
+                person && person.identityConfirmationDate
                     ? VerificationChecklistItemStatus.success
                     : VerificationChecklistItemStatus.unsuccess
             ),

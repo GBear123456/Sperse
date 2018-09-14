@@ -20,7 +20,7 @@ import {
     EmailUsageTypesStoreActions,
     EmailUsageTypesStoreSelectors,
     PhoneUsageTypesStoreSelectors
-} from '@app/crm/store';
+} from '@app/store';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';

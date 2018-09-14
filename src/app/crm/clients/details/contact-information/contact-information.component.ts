@@ -8,7 +8,7 @@ import { ContactGroupServiceProxy, ContactGroupInfoDto } from '@shared/service-p
 })
 export class ContactInformationComponent implements OnInit {
     public data: {
-        customerInfo: ContactGroupInfoDto
+        contactInfo: ContactGroupInfoDto
     };
 
     constructor(injector: Injector,

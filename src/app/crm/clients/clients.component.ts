@@ -13,13 +13,13 @@ import * as _ from 'underscore';
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { AssignedUsersStoreSelectors,
-    CrmStore,
+    AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
     StatusesStoreSelectors,
     RatingsStoreSelectors
-} from '@app/crm/store';
+} from '@app/store';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -100,7 +100,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _clientService: ClientService,
-        private store$: Store<CrmStore.State>
+        private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 

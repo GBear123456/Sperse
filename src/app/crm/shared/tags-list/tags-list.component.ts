@@ -10,7 +10,7 @@ import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { CrmStore, TagsStoreActions, TagsStoreSelectors } from '@app/crm/store';
+import { AppStore, TagsStoreActions, TagsStoreSelectors } from '@app/store';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -54,7 +54,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         public dialog: MatDialog,
         private _filterService: FiltersService,
         private _tagsService: ContactGroupTagsServiceProxy,
-        private store$: Store<CrmStore.State>,
+        private store$: Store<AppStore.State>,
         private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);

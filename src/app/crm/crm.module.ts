@@ -56,7 +56,6 @@ import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
-import { ClientDetailsModule } from './clients/details/client-details.module';
 import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
@@ -115,7 +114,6 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
       AngularGooglePlaceModule,
 
       CRMDashboardWidgetsModule,
-      ClientDetailsModule,
       FileUploadModule,
       ModalModule.forRoot(),
       TabsModule.forRoot(),

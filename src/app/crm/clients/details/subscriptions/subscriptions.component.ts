@@ -19,7 +19,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
 
     public data: {
-        customerInfo: ContactGroupInfoDto
+        contactInfo: ContactGroupInfoDto
     };
     public dataSource: OrderSubscriptionDto[] = [];
 
@@ -52,7 +52,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
 
     refreshData() {
         this._orderSubscriptionService
-            .getSubscriptionHistory(this.data.customerInfo.id)
+            .getSubscriptionHistory(this.data.contactInfo.id)
             .subscribe(result => {
                 this.dataSource = result;
             });

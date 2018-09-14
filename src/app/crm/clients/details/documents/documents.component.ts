@@ -39,7 +39,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     private currentDocumentURL: string;
 
     public data: {
-        customerInfo: ContactGroupInfoDto
+        contactInfo: ContactGroupInfoDto
     };
     public formatting = AppConsts.formatting;
     public dataSource: DocumentInfo[];
@@ -264,7 +264,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     loadDocuments(callback = null) {
-        this._documentService.getAll(this.data.customerInfo.id).subscribe((result) => {
+        this._documentService.getAll(this.data.contactInfo.id).subscribe((result) => {
             this.dataSource = result;
             callback && callback();
         });
@@ -315,7 +315,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 Math.round(input.size / 10000)
             );
         this._documentService.upload(UploadDocumentInput.fromJS({
-            contactGroupId: this.data.customerInfo.id,
+            contactGroupId: this.data.contactInfo.id,
             typeId: input.typeId,
             fileName: input.name,
             size: input.size,

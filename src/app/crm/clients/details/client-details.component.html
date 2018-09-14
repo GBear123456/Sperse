@@ -1,4 +1,4 @@
-<details-header [data]="customerInfo" [ratingId]="ratingId"
+<details-header [data]="contactInfo" [ratingId]="ratingId"
                 (onContactSelected)="onContactSelected($event)"></details-header>
 <div class="close-details" (click)="close()"></div>
 <div class="box-shadow-wrapper">
@@ -12,7 +12,7 @@
             [clientId]="customerId"
             [customerType]="customerType"
             [leadId]="leadId"
-            [customerInfo]="customerInfo"
+            [contactInfo]="contactInfo"
             [stages]="leadStages"
             [selectedStageId]="clientStageId"
             [partnerTypes]="partnerTypes"

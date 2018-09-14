@@ -96,7 +96,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
                 action: () => {
-                    this._router.navigate(['app/admin/user', this.actionRecord.id])
+                    this.openUserDetails(this.actionRecord.id);
                 }
             },
             {
@@ -257,6 +257,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         ]);
     }
 
+    openUserDetails(userId) {
+        this._router.navigate(['app/contacts/user', userId],
+            { queryParams: { referrer: 'app/admin/users'} });
+    }
+
     initFilterConfig() {
         forkJoin(
             this._permissionService.getAllPermissions(),
@@ -383,7 +388,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             let userId = event.data && event.data.id;
             if (userId) {
                 event.component.cancelEditData();
-                this._router.navigate(['app/admin/user', userId])
+                this.openUserDetails(userId);
             }
         }
     }

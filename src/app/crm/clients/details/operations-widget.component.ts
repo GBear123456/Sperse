@@ -30,7 +30,7 @@ export class OperationsWidgetComponent implements OnInit {
 
     /*** @todo add localization service */
 
-    @Input() customerInfo: ContactGroupInfoDto;
+    @Input() contactInfo: ContactGroupInfoDto;
     @Input() clientId: number;
     @Input() customerType: string;
     @Input() leadId: number;

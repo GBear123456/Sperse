@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AssignedUsersStoreSelectors, CrmStore} from '@app/crm/store';
+import { AssignedUsersStoreSelectors, AppStore} from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -45,7 +45,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         injector: Injector,
         private _filtersService: FiltersService,
         private _userAssignmentService: UserAssignmentServiceProxy,
-        private store$: Store<CrmStore.State>,
+        private store$: Store<AppStore.State>,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }

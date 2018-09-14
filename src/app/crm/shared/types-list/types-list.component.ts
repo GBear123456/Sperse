@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { CrmStore, PartnerTypesStoreActions, PartnerTypesStoreSelectors } from '@app/crm/store';
+import { AppStore, PartnerTypesStoreActions, PartnerTypesStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -57,7 +57,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         private _filterService: FiltersService,
         private _partnerService: PartnerServiceProxy,
         private _partnerTypeService: PartnerTypeServiceProxy,
-        private store$: Store<CrmStore.State>,
+        private store$: Store<AppStore.State>,
         private actions$: ActionsSubject
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);

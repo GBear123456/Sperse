@@ -21,6 +21,25 @@ import { RP_USER_INFO_ID } from './client-details.const';
     imports: [
         RouterModule.forChild([
             {
+                path: 'user/:userId',
+                component: ClientDetailsComponent,
+                children: [
+                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
+                    {path: 'lead-information', component: LeadInformationComponent },
+                    {path: 'questionnaire', component: QuestionnaireComponent },
+                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'application-status', component: ApplicationStatusComponent },
+                    {path: 'referral-history', component: ReferralHistoryComponent },
+                    {path: 'subscriptions', component: SubscriptionsComponent },
+                    {path: 'payment-information', component: PaymentInformationComponent, data: {rightPanelOpened: false} },
+                    {path: 'activity-logs', component: ActivityLogsComponent },
+                    {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
+                ]
+            },
+            {
                 path: 'client/:clientId',
                 component: ClientDetailsComponent,
                 children: [

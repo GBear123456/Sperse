@@ -63,7 +63,6 @@ import { SystemSettingsComponent } from './settings/system-settings.component';
 import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
-import { UserDetailsModule } from './users/details/user-details.module';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 
 @NgModule({
@@ -108,7 +107,6 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
         AutoCompleteModule,
         EditorModule,
         InputMaskModule,
-        UserDetailsModule,
         PaymentInfoModule
     ],
     declarations: [

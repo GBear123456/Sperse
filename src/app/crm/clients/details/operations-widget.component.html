@@ -21,7 +21,7 @@
         [showConfirmation]="false"
         [hideButtons]="true"
         [highlightSelected]="true"
-        [selectedKeys]="[customerInfo?.statusId]"
+        [selectedKeys]="[contactInfo?.statusId]"
         [targetSelector]="'[aria-label=Status]'"
         [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
         (onItemSelected)="updateStatus($event)">
@@ -40,9 +40,9 @@
         <!--[list]="partnerTypes">-->
     <!--</crm-static-list>-->
     <crm-types-list [selectedKeys]="[clientId]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
-    <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.tags"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="customerInfo?.lists"></crm-lists-list>
-    <crm-user-assignment-list [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.assignedUserId"></crm-user-assignment-list>
-    <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
-    <crm-stars-list [selectedKeys]="[clientId]" [selectedItemKey]="customerInfo?.starId"></crm-stars-list>
+    <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
+    <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.lists"></crm-lists-list>
+    <crm-user-assignment-list [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.assignedUserId"></crm-user-assignment-list>
+    <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
+    <crm-stars-list [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.starId"></crm-stars-list>
 </div>

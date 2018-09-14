@@ -24,18 +24,18 @@ export class NoteAddComponent extends AppComponentBase  {
     @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
     @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
     @Input()
-    set customerInfo(customerInfo: any) {
-        if (customerInfo.contactPersons) {
-            this._customerInfo = customerInfo;
-            let orgContact = <any>customerInfo.organizationContactInfo,
-                contacts = customerInfo.contactPersons.length ? customerInfo.contactPersons : [customerInfo.primaryContactInfo];
+    set contactInfo(contactInfo: any) {
+        if (contactInfo.contactPersons) {
+            this._contactInfo = contactInfo;
+            let orgContact = <any>contactInfo.organizationContactInfo,
+                contacts = contactInfo.contactPersons.length ? contactInfo.contactPersons : [contactInfo.primaryContactInfo];
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
         }
     }
 
     @Output() onAdded: EventEmitter<any> = new EventEmitter();
-    private _customerInfo: ContactGroupInfoDto;
+    private _contactInfo: ContactGroupInfoDto;
     private validator: any;
 
     masks = AppConsts.masks;
@@ -76,7 +76,7 @@ export class NoteAddComponent extends AppComponentBase  {
     saveNote() {
         if (this.validator.validate().isValid)
             this._notesService.createNote(CreateNoteInput.fromJS({
-                contactGroupId: this._customerInfo.id,
+                contactGroupId: this._contactInfo.id,
                 text: this.summary,
                 contactId: this.contact,
                 contactPhoneId: this.phone || undefined,

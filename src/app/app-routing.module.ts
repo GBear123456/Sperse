@@ -37,6 +37,11 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
                         loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
                         data: { preload: false }
                     },
+                   {
+                        path: 'contacts',
+                        loadChildren: 'app/crm/clients/details/client-details.module#ClientDetailsModule', //Lazy load contacts module
+                        data: { preload: false }
+                    },
                     {
                         path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module

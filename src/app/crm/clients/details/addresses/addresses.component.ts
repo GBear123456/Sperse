@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/crm/store';
+import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -31,7 +31,7 @@ import {
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() customerInfo: ContactGroupInfoDto;
+    @Input() contactInfo: ContactGroupInfoDto;
 
     types: Object = {};
     country: string;
@@ -137,7 +137,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     createOrganization(address, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.customerInfo.id,
+            contactGroupId: this.contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -147,7 +147,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.customerInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

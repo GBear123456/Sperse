@@ -12,7 +12,7 @@ import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
-import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/crm/store';
+import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
 
 @Component({
     selector: 'edit-address-dialog',

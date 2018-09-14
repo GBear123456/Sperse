@@ -20,6 +20,7 @@ import { AppCommonModule } from './shared/common/app-common.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AccessDeniedComponent } from './main/access-denied/access-denied.component';
 import { FiltersModule } from '@shared/filters/filters.module';
+import { ClientDetailsModule } from './crm/clients/details/client-details.module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import {
     InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy,
@@ -47,6 +48,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ngCommon.CommonModule,
         AppRoutingModule,
         FiltersModule.forRoot(),
+        ClientDetailsModule,
         AppStoreModule
     ],
     providers: [
