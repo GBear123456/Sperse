@@ -25419,8 +25419,8 @@ export class UserServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignRole(input: UpdateUserRoleInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/AssignRole";
+    addToRole(input: UpdateUserRoleInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/AddToRole";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -25435,11 +25435,11 @@ export class UserServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignRole(response_);
+            return this.processAddToRole(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignRole(<any>response_);
+                    return this.processAddToRole(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25448,7 +25448,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processAssignRole(response: HttpResponseBase): Observable<void> {
+    protected processAddToRole(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25468,17 +25468,20 @@ export class UserServiceProxy {
     }
 
     /**
-     * @input (optional) 
+     * @id (optional) 
      * @return Success
      */
-    unassignRole(input: UpdateUserRoleInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/User/UnassignRole";
+    removeFromRole(id: number | null | undefined, roleName: string): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/RemoveFromRole?";
+        if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (roleName === undefined || roleName === null)
+            throw new Error("The parameter 'roleName' must be defined and cannot be null.");
+        else
+            url_ += "RoleName=" + encodeURIComponent("" + roleName) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(input);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -25486,12 +25489,12 @@ export class UserServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUnassignRole(response_);
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRemoveFromRole(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUnassignRole(<any>response_);
+                    return this.processRemoveFromRole(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -25500,7 +25503,7 @@ export class UserServiceProxy {
         }));
     }
 
-    protected processUnassignRole(response: HttpResponseBase): Observable<void> {
+    protected processRemoveFromRole(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
