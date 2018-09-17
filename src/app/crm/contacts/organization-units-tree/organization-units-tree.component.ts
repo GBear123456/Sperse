@@ -1,7 +1,9 @@
 import { Component, Injector, ViewChild } from '@angular/core';
-import { OrganizationUnitDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrganizationUnitDto, UserServiceProxy, OrganizationUnitServiceProxy, 
+    UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
+import { finalize } from 'rxjs/operators';
 
 import DataSource from 'devextreme/data/data_source';
 import { DxTreeViewComponent } from 'devextreme-angular';
@@ -19,15 +21,18 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
     public searchEnabled = false;
     public sortTreeDesc = false;
 
+    private userId: number;
+
     private organizationUnitsData: OrganizationUnitDto[];
 
     constructor(injector: Injector,
-        private _userService: UserServiceProxy,
+        private _userOrgUnitsService: OrganizationUnitServiceProxy,
         private _contactsService: ContactsService
     ) {
         super(injector);
 
         _contactsService.orgUnitsSubscribe((userData) => {            
+            this.userId = userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         });
     }
@@ -73,9 +78,19 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
         }
     }
 
-    onChange() {
-        this._contactsService.orgUnitsSave(
-            this.getSelectedOrganizationUnits());
+    onChange(event) {
+        let sub;
+        if (event.itemData.selected)
+            sub = this._userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
+                userIds: [this.userId],
+                organizationUnitId: event.itemData.id
+            }))
+        else
+            sub = this._userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id);
+
+        sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
     }
 
     toolbarConfig = [

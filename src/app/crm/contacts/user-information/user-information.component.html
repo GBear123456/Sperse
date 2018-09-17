@@ -8,11 +8,11 @@
                 <div class="col-md-6">
                     <div class="section-item">
                         <div class="item-edit-label">{{l("EmailAddress")}}:</div>
-                        <inplace-edit [data]="this.getPropData('emailAddress')" (valueChanged)="updateValue($event, 'emailAddress')"></inplace-edit>
+                        <inplace-edit [data]="this.getPropData(EMAIL_FIELD)" (valueChanged)="updateValue($event, EMAIL_FIELD)"></inplace-edit>
                     </div>
                     <div class="section-item">
                         <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
-                        <inplace-edit [data]="getPhoneNumberPropData()" [mask]="masks.phone" [maskInvalidMessage]="l('PhoneValidationError')" (valueChanged)="updateValue($event, 'phoneNumber')"></inplace-edit>
+                        <inplace-edit [data]="getPhoneNumberPropData()" [mask]="masks.phone" [maskInvalidMessage]="l('PhoneValidationError')" (valueChanged)="updateValue($event, PHONE_FIELD)"></inplace-edit>
                     </div>
                     <div class="section-item">
                         <div class="item-edit-label">{{l("UserName")}}:</div>
@@ -43,16 +43,16 @@
                     </ng-container>
                     <ul *ngIf="data && data?.user" class="items-list">
                         <li>
-                            <dx-check-box [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="update()"></dx-check-box>
+                            <dx-check-box [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="update(ACTIVE_FIELD, data.user.isActive)"></dx-check-box>
                         </li>
-                        <li>
+                        <!-- li>
                             <dx-check-box [(value)]="data.user.shouldChangePasswordOnNextLogin" [text]="l('ShouldChangePasswordOnNextLogin')" (onValueChanged)="update()"></dx-check-box>
+                        </li -->
+                        <li>
+                            <dx-check-box [(value)]="data.user.isTwoFactorEnabled" [text]="l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
                         </li>
                         <li>
-                            <dx-check-box [(value)]="data.user.isTwoFactorEnabled" [text]="l('IsTwoFactorEnabled')" (onValueChanged)="update()"></dx-check-box>
-                        </li>
-                        <li>
-                            <dx-check-box [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')" (onValueChanged)="update()"></dx-check-box>
+                            <dx-check-box [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
                         </li>
                     </ul>
                 </div>
@@ -62,7 +62,7 @@
                     </div>
                     <ul class="items-list">
                         <li *ngFor="let role of data?.roles">
-                            <dx-check-box [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="update()"></dx-check-box>
+                            <dx-check-box [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate(role)"></dx-check-box>
                         </li>
                     </ul>
                 </div>

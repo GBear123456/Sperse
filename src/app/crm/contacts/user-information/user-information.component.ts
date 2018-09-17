@@ -1,7 +1,8 @@
 import { Injector, Component, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, UpdateUserOptionsDto, UpdateUserRoleInput,
+    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
@@ -23,6 +24,12 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     readonly GENERAL_TAB_INDEX        = 0;
     readonly PERMISSIONS_TAB_INDEX    = 1;
     readonly LOGIN_ATTEMPTS_TAB_INDEX = 2;
+
+    readonly EMAIL_FIELD = 'emailAddress';
+    readonly PHONE_FIELD = 'phoneNumber';
+    readonly ACTIVE_FIELD = 'isActive';
+    readonly TWO_FACTOR_FIELD = 'isTwoFactorEnabled';
+    readonly LOCKOUT_FIELD = 'isLockoutEnabled';
 
     selectedTabIndex = this.GENERAL_TAB_INDEX; 
 
@@ -122,8 +129,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     updateValue(value, fieldName) {
-        this.data.user[fieldName] = value
-        this.update();
+        this.data.user[fieldName] = value;
+        this.update(fieldName, value);
     }
 
     startPasswordEdit() {
@@ -170,16 +177,46 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         this.passwordObject.value = this.data.user.password;
     }
 
-    update() {
+    roleUpdate(role) {
+        let sub;
+        if (role.isAssigned)
+            sub = this._userService.addToRole(UpdateUserRoleInput.fromJS({
+                id: this.userData.user.id,
+                roleName: role.roleName
+            });
+        else
+            sub = this._userService.removeFromRole(this.userData.user.id, role.roleName);
+
         this.startLoading();
-        this._userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({ 
-            user: this.userData.user,
-            setRandomPassword: this.userData.user['setRandomPassword'],
-            sendActivationEmail: this.userData.user['sendActivationEmail'],
-            assignedRoleNames: _.map(_.filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
-            tenantHostType: <any>TenantHostType.PlatformUi,
-            organizationUnits: this.selectedOrgUnits
-        })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
+        sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
+            this.notify.info(this.l('SavedSuccessfully'));
+        });
+    }
+
+    update(fieldName = undefined, value = undefined) {
+        let sub, data = {
+            id: this.userData.user.id
+        };
+        data[fieldName] = value;
+
+        if (fieldName == this.EMAIL_FIELD)
+            sub = this._userService.updateEmail(UpdateUserEmailDto.fromJS(data));
+        else if (fieldName == this.PHONE_FIELD)
+            sub = this._userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
+        else if ([this.ACTIVE_FIELD, this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0)
+            sub = this._userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
+        else
+            sub = this._userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({ 
+                user: this.userData.user,
+                setRandomPassword: this.userData.user['setRandomPassword'],
+                sendActivationEmail: this.userData.user['sendActivationEmail'],
+                assignedRoleNames: _.map(_.filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
+                tenantHostType: <any>TenantHostType.PlatformUi,
+                organizationUnits: this.selectedOrgUnits
+            }));
+
+        this.startLoading();
+        sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
         });
     }

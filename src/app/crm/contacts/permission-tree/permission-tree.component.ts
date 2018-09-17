@@ -1,7 +1,8 @@
 import { Component, Injector, ViewChild, OnInit } from '@angular/core';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, UpdateUserPermissionsInput } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, UpdateUserPermissionsInput, 
+    GrantPermissionInput, ProhibitPermissionInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { finalize } from 'rxjs/operators';
 
@@ -51,11 +52,17 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
         );
     }
 
-    update() {
-        this._userService.updateUserPermissions(UpdateUserPermissionsInput.fromJS({
+    update(event) {
+        let sub, data = {
             id: this.data.userId,
-            grantedPermissionNames: this.getGrantedPermissionNames()
-        })).pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+            permissionName: event.itemData.name
+        };
+        if (event.itemData.selected)
+            sub = this._userService.grantPermission(GrantPermissionInput.fromJS(data));
+        else 
+            sub = this._userService.prohibitPermission(ProhibitPermissionInput.fromJS(data))
+                                                 
+        sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
         });
     }
