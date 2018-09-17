@@ -1,0 +1,144 @@
+:host {
+    .dialog-title {
+        margin-bottom: 24px;
+    }
+
+    mat-dialog-content {
+        padding: 0;
+    }
+
+    .contact-persons-container {
+        display: flex;
+        flex-direction: column;
+
+        h5 {
+            color: #677380;
+        }
+    }
+
+    .contact-person-info {
+        display: flex; 
+        flex-direction: row; 
+
+        &:hover {
+            cursor: pointer;
+            background: #f3f7fa;
+        }
+    }
+
+    .full-name {
+        font-family: Montserrat;
+        display: flex;
+        justify-content: space-between; 
+
+        h1 {
+            color: #202b35;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            font-size: 22px !important;
+            font-weight: 400;
+            line-height: 1;
+
+            &.no-name {
+                font-size: 18px !important;
+                font-weight: 200;
+                font-style: italic;
+            }
+        }
+    }
+
+    .person-info-actions {
+        display: flex;
+        justify-content: flex-end;
+        height: 18px;
+        margin-top: 8px;
+        margin-left: 5px;
+    }
+
+    .avatar {
+        margin: 10px;
+        z-index: 1;
+    }
+
+    .avatar img {
+        border-radius: 50%;
+        height: 80px;
+        width: 80px;
+        background-color: #fff;
+    }
+
+    // mat-progress-bar {
+    //     width: 100px;
+    //     height: 3px;
+    // }
+
+    // /deep/ .mat-progress-bar-fill:after {
+    //     background-color: #00aeef;
+    // }
+
+    .personal-info {
+        margin-top: 5px;
+        padding-right: 12px;
+        width: 100%;
+
+        // .rating {
+        //     display: flex;
+        //     bottom: 2px;
+        //     align-items: center;
+        //     position: relative;
+        //     justify-content: flex-end;
+
+        //     & > * {
+        //         max-width: 50%;
+        //     }
+
+        //     mat-progress-bar {
+        //         margin-right: 10px;
+        //     }
+        // }
+    }
+
+    .person-title {
+        display: flex;
+        justify-content: space-between;
+
+        h6 {
+            font-size: 12px;
+        }
+    }
+
+    .action-link {
+        text-indent: -9999px;
+        display: inline-block;
+        background-size: cover;
+        width: 18px;
+        height: 18px;
+        opacity: 0.5;
+        margin-left: 7px;
+    }
+
+    .action-link {
+        &:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+    }
+
+    .action-link-edit {
+        background: url("../../../../assets/common/icons/edit-icon.svg");
+    }
+
+    .action-link-favorite {
+        background: url("../../../../assets/common/icons/star-icon.svg");
+    }
+
+    .organization-name {
+        margin-top: 4px;
+
+        h5 {
+            color: #000000;
+            margin: 0;
+            font-size: 15px;
+        }
+    }
+}

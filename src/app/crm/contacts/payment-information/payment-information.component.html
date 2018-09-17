@@ -1,0 +1,66 @@
+<div class="warning" *ngIf="warningMessage$ | async">
+    <div>
+        <img src="assets/common/icons/warning-icon.svg" />
+        <span>{{ warningMessage$ | async }}</span>
+    </div>
+    <button (click)="updateCard()">{{ l('Update') }}</button>
+</div>
+<div class="main">
+    <div class="balance">
+        <div class="balanceAmount">
+            <h4>{{ l('Balance') }}</h4>
+            {{ amountCurrency + (balanceAmount$ | async | number : '1.2-2') }}
+        </div>
+        <ul class="balanceInfo">
+            <li>
+                <img src="assets/common/icons/automatic-payments.svg">
+                {{ l('AutomaticPayments') }}
+            </li>
+            <li>
+                <img src="assets/common/icons/last-payment.svg">
+                {{ l('LastPayment', lastPaymentDate, amountCurrency, lastPaymentAmount) }}
+            </li>
+        </ul>
+    </div>
+    <div class="details">
+        <div class="transactions">
+            <h3>{{ l('Transactions') }}</h3>
+            <div>
+                <ul>
+                    <li *ngFor="let transaction of transactions$ | async">
+                        <span class="date">{{ transaction.date.format('MMM  M, YYYY') }}</span>
+                        <span class="amount">{{ amountCurrency + transaction.amount }}</span>
+                    </li>
+                </ul>
+                <button class="viewAllTransactions" *ngIf="!allTransactionsAreShowen" (click)="viewAllTransactions()">{{ l('ViewAllTransactions') }}</button>
+            </div>
+        </div>
+        <div class="paymentMethods">
+            <div class="title">
+                <h3>{{ l('PaymentMethods') }}</h3>
+                <button class="addNewPaymentMethod" (click)="addNewPaymentMethod()">+{{ l('AddNew') }}</button>
+            </div>
+            <ul class="paymentMethodsList">
+                <li *ngFor="let paymentMethod of paymentMethods$ | async">
+                    <div>
+                        <div [ngClass]="{'active': paymentMethod.active}" class="paymentMethodIcon" >
+                            <img [src]="'assets/common/icons/' + paymentMethod.iconName + '-payment-method.svg'">
+                        </div>
+                        <div>
+                            <p class="paymentName">{{ paymentMethod.name }}</p>
+                            <p class="paymentExpiration">{{ paymentMethod.expiration }}</p>
+                        </div>
+                    </div>
+                    <div class="issue" *ngIf="paymentMethod?.issues">
+                        <img src="assets/common/icons/red-warning-icon.svg">
+                        {{ paymentMethod.issues.length + ' ' + l('Issue') }}
+                    </div>
+                    <div class="actions">
+                        <button (click)="editPaymentMethod()"><img src="assets/common/icons/edit-pencil-icon.svg"></button>
+                        <button (click)="removePaymentMethod()"><img src="assets/common/icons/delete-icon.svg"></button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

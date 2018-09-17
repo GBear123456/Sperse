@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
@@ -31,8 +31,7 @@ import { getLoaded } from './selectors';
 
 @Injectable()
 export class PartnerTypesStoreEffects {
-    constructor(private partnersService: PartnerServiceProxy,
-                private partnerTypeServiceProxy: PartnerTypeServiceProxy,
+    constructor(private injector: Injector,
                 private actions$: Actions,
                 private store$: Store<State>,
                 private notifyService: NotifyService) {}
@@ -48,7 +47,7 @@ export class PartnerTypesStoreEffects {
                 return empty();
             }
 
-            return this.partnerTypeServiceProxy.getAll()
+            return this.injector.get(PartnerTypeServiceProxy).getAll()
                 .pipe(
                     map((partnerTypes: PartnerTypeDto[]) => {
                         return new partnerTypesActions.LoadSuccessAction(partnerTypes);
@@ -65,7 +64,7 @@ export class PartnerTypesStoreEffects {
         ofType<partnerTypesActions.AddPartnerType>(partnerTypesActions.ActionTypes.ADD_PARTNER_TYPE),
         map(action => action.payload),
         mergeMap(payload => {
-            const request = this.partnersService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
+            const request = this.injector.get(PartnerServiceProxy).bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
                 partnerIds: payload.partnerIds,
                 typeName: payload.typeName
             }));
@@ -88,7 +87,7 @@ export class PartnerTypesStoreEffects {
         ofType<partnerTypesActions.RenamePartnerType>(partnerTypesActions.ActionTypes.RENAME_PARTNER_TYPE),
         map(action => action.payload),
         mergeMap(payload => {
-            return this.partnerTypeServiceProxy.rename(RenamePartnerTypeInput.fromJS({
+            return this.injector.get(PartnerTypeServiceProxy).rename(RenamePartnerTypeInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(
@@ -110,7 +109,7 @@ export class PartnerTypesStoreEffects {
         ofType<partnerTypesActions.RemovePartnerType>(partnerTypesActions.ActionTypes.REMOVE_PARTNER_TYPE),
         map(action => action.payload),
         mergeMap(payload => {
-            return this.partnerTypeServiceProxy.delete(payload.id, payload.moveToPartnerTypeId, payload.deleteAllReferences).pipe(
+            return this.injector.get(PartnerTypeServiceProxy).delete(payload.id, payload.moveToPartnerTypeId, payload.deleteAllReferences).pipe(
                 finalize(() => {
                     this.store$.dispatch(new partnerTypesActions.LoadRequestAction(true));
                 }),

@@ -64,6 +64,7 @@ import { UploadSSLCertificateModalComponent } from './settings/modals/upload-ssl
 import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-binding-modal.component';
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
+import { ContactsModule } from '../crm/contacts/contacts.module';
 
 @NgModule({
     imports: [
@@ -77,6 +78,7 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
         TabsModule.forRoot(),
         TooltipModule.forRoot(),
         PopoverModule.forRoot(),
+        ContactsModule,
 
         DxValidationGroupModule,
         DxValidationSummaryModule,

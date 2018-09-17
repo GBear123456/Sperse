@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Actions, Effect, ofType } from '@ngrx/effects';
@@ -16,7 +16,7 @@ import { ListResultDtoOfEmailUsageTypeDto } from '@shared/service-proxies/servic
 
 @Injectable()
 export class EmailUsageTypesStoreEffects {
-    constructor(private contactEmailServiceProxy: ContactEmailServiceProxy,
+    constructor(private injector: Injector,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -30,7 +30,7 @@ export class EmailUsageTypesStoreEffects {
                 return empty();
             }
 
-            return this.contactEmailServiceProxy.getEmailUsageTypes()
+            return this.injector.get(ContactEmailServiceProxy).getEmailUsageTypes()
                 .pipe(
                     map((emailUsageTypes: ListResultDtoOfEmailUsageTypeDto) => {
                         return new emailUsageTypesActions.LoadSuccessAction(emailUsageTypes.items);

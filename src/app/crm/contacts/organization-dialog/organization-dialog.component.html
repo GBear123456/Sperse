@@ -1,0 +1,33 @@
+<mat-dialog-content>
+    <div class="logo" (click)="showUploadPhotoDialog($event)">
+        <img src="{{ data?.primaryPhoto ? 'data:image/png;base64,' + data.primaryPhoto.original : '../../../../assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+    </div>
+
+    <hr/>
+
+    <div class="short-info form-wrapper">
+        <div *ngFor="let section of sections">
+            <div class="company-name" *ngIf="section.header">
+                <div class="org-edit-label">{{l(capitalize(section.field))}}:</div>
+                <div>
+                    <inplace-edit [data]="getPropData(section.field)" (valueChanged)="updateValue($event, section.field)"></inplace-edit>
+                </div>
+            </div>
+            <div *ngIf="!section.header">
+                <div *ngIf="section.expandable" class="row more-fields-button" (click)="toggleMoreFields($event)">{{l('More')}}</div><div class="more-fields {{section.expandable ? 'collapsed': ''}}">
+                    <div *ngFor="let items of section.fields" class="row">
+                        <div *ngFor="let item of items" class="col-sm-6 col-xs-12">
+                            <div class="org-edit-label">{{l(capitalize(item?.name || item))}}:</div>
+                            <div [ngSwitch]="item?.name ? 'select' : 'text'">
+                                <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
+                                <inplace-select *ngSwitchCase="'select'" [data]="item.data" (valueChanged)="item.onChange($event)" ></inplace-select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+</mat-dialog-content>

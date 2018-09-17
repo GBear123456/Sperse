@@ -5,6 +5,9 @@ import * as ApiServiceProxies from './service-proxies';
 
 @NgModule({
     providers: [
+        ApiServiceProxies.ContactEmailServiceProxy,
+        ApiServiceProxies.ContactPhoneServiceProxy,
+        ApiServiceProxies.ContactLinkServiceProxy,
         ApiServiceProxies.AuditLogServiceProxy,
         ApiServiceProxies.CachingServiceProxy,
         ApiServiceProxies.ChatServiceProxy,

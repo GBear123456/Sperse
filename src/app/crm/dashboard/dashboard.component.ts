@@ -70,6 +70,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
                 ) this.openDialog();
             }, 500);
         }
+        this.finishLoading(true);
     }
 
     addClient() {
@@ -83,6 +84,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
+        this.startLoading(true);
         this._appService.updateToolbar(null);
 
         this.zendeskService.showWidget();
