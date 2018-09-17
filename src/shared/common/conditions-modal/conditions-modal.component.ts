@@ -5,13 +5,16 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { ConditionsType } from '@shared/AppEnums';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { PrinterService } from '@shared/common/printer/printer.service';
+import { FileFormat } from '@shared/common/printer/file-format.enum';
 
 @Component({
     selector: 'conditions-modal',
     templateUrl: './conditions-modal.component.html',
     styleUrls: [ './conditions-modal.component.less' ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ PrinterService ]
 })
 export class ConditionsModalComponent extends ModalDialogComponent implements OnInit {
     conditionBody$: Observable<SafeHtml>;
@@ -34,7 +37,8 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
         injector: Injector,
         private http: HttpClient,
         private element: ElementRef,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private printerService: PrinterService
     ) {
         super(injector);
     }
@@ -60,9 +64,9 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             { responseType: 'text' }
         ).pipe(
             /** To avoid cutting of style tag from html */
+            tap(body => this.conditionBody = body),
             map(html => this.sanitizer.bypassSecurityTrustHtml(html))
         );
-        this.conditionBody$.subscribe(body => { this.conditionBody = body; });
     }
 
     download() {
@@ -70,15 +74,6 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     printContent() {
-        let domClone = this.element.nativeElement.querySelector('.content').cloneNode(true);
-        let printSection = document.getElementById('printSection');
-        if (!printSection) {
-            printSection = document.createElement('div');
-            printSection.id = 'printSection';
-            document.body.appendChild(printSection);
-        }
-        printSection.innerHTML = '';
-        printSection.appendChild(domClone);
-        window.print();
+        this.printerService.printDocument(this.conditionBody, FileFormat.Html);
     }
 }

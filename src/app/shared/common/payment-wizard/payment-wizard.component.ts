@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation, Injector } from '@angu
 /** Third party imports */
 import { MatDialogRef, MatStepper } from '@angular/material';
 import { Observable } from 'rxjs';
-import { concatAll, map, max } from 'rxjs/operators';
+import { concatAll, publishReplay, refCount, map, max } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -43,7 +43,9 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
         this.plan$ = this.paymentService.plan$;
         /** get packages observable but filter free package */
         this.paymentPlans$ = this.packageServiceProxy.getPackagesConfig(Module.CRM).pipe(
-            map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free CRM'))
+            publishReplay(),
+            refCount(),
+            map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free CRM')),
         );
         this.paymentPlansMaxUsersAmount$ = this.paymentPlans$.pipe(
             concatAll(),
