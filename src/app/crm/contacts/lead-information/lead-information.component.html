@@ -1,0 +1,18 @@
+<div class="lead-info row">
+    <div *ngFor="let column of layoutColumns" class="col-md-6">
+        <div *ngFor="let section of column.sections" class="section">
+            <i *ngIf="section.image" class="icons {{section.image}}"></i>
+            <h3 class="lab">{{l('LeadInfoSection_' + section.name)}}</h3>
+            <div *ngFor="let item of section.items" class="section-item">
+                <div *ngIf="!item.hideLabel" class="item-edit-label">{{l(capitalize(item?.name || item))}}:</div>
+                <div *ngIf="!isEditAllowed || item.readonly">{{getPropValue(item.name)}}</div>
+                <ng-container *ngIf="isEditAllowed && !item.readonly">
+                    <div [ngSwitch]="item?.data ? 'select' : 'text'">
+                        <inplace-edit *ngSwitchCase="'text'" [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
+                        <inplace-select *ngSwitchCase="'select'" [data]="item.data" (valueChanged)="item.onChange($event)" ></inplace-select>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>  

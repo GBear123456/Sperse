@@ -1,0 +1,239 @@
+:host {
+    button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    ul {
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+
+    h3 {
+        font-size: 17px;
+        line-height: 1.41;
+        color: #202b35;
+        margin-bottom: 0;
+        font-weight: 600;
+    }
+
+    .warning {
+        background-color: #e7326a;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.14;
+        letter-spacing: 0.3px;
+        text-align: left;
+        color: #ffffff;
+        padding: 10px 27px 10px 19px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        & > div {
+            display: flex;
+            img {
+                margin-right: 12px;
+            }
+        }
+        button {
+            border-radius: 13.5px;
+            background-color: rgba(133, 29, 61, .3);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            padding: 5px 17px;
+        }
+    }
+
+    .main {
+        padding: 0 24px;
+        .balance {
+            border-bottom: 1px solid #e5e9ec;
+            padding-top: 32px;
+            padding-bottom: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            height: 121px;
+            .balanceAmount {
+                font-size: 38px;
+                line-height: 0.63;
+                letter-spacing: normal;
+                text-align: left;
+                color: #202b35;
+                margin-right: 67px;
+                height: 100%;
+                h4 {
+                    font-size: 13px;
+                    line-height: 1.85;
+                    color: #202b35;
+                    font-weight: 600;
+                }
+            }
+            .balanceInfo {
+                padding-left: 25px;
+                border-left: 1px solid #e5e9ec;
+                position: relative;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                &:before, &:after {
+                    border-right: 7px solid #fff;
+                    border-top: 7px solid transparent;
+                    border-bottom: 7px solid transparent;
+                    position: absolute;
+                    content: '';
+                    left: -7px;
+                    margin: auto;
+                    top: 0;
+                    bottom: 0;
+                    height: 7px;
+                    width: 7px;
+                }
+
+                &:before {
+                    border-bottom: 7px solid transparent;
+                    border-top: 7px solid transparent;
+                    border-left: 7px solid transparent;
+                    border-right-color: #e5e9ec;
+                    left: -15px;
+                }
+                li {
+                    font-size: 13px;
+                    font-weight: 300;
+                    line-height: 1.85;
+                    color: #424c56;
+                    display: flex;
+                    align-items: center;
+                    img {
+                        margin-right: 11px;
+                    }
+                }
+            }
+        }
+
+        .details {
+            padding-top: 24px;
+            display: flex;
+            .transactions {
+                flex-basis: 50%;
+                border-right: 1px solid #e5e9ec;
+                padding-right: 36px;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 3.14;
+                color: #424c56;
+                h3 {
+                    margin-bottom: 11px;
+                }
+                ul {
+                    li {
+                        display: flex;
+                        justify-content: space-between;
+                        .amount {
+                            font-size: 15px;
+                            line-height: 2.93;
+                            color: #424c56;
+                        }
+                    }
+                }
+                button.viewAllTransactions {
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 3.14;
+                    color: #00aeef;
+                    margin-top: 32px;
+                }
+            }
+            .paymentMethods {
+                flex-basis: 50%;
+                padding-left: 26px;
+                .title {
+                    font-size: 14px;
+                    line-height: 1.71;
+                    letter-spacing: 0.3px;
+                    color: #00aeef;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .addNewPaymentMethod {
+                        font-size: 14px;
+                        line-height: 1.71;
+                        letter-spacing: 0.3px;
+                        color: #00aeef;
+                        font-weight: 600;
+                    }
+                }
+                ul.paymentMethodsList {
+                    li {
+                        padding: 15px 0;
+                        border-bottom: 1px solid #e5e9ec;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        & > div {
+                            display: flex;
+                            align-items: center;
+                        }
+
+                        .paymentMethodIcon {
+                            border-radius: 4px;
+                            background-color: rgba(229, 233, 236, .3);;
+                            border: solid 1px #e5e9ec;
+                            width: 58px;
+                            height: 40px;
+                            position: relative;
+                            margin-right: 24px;
+                            &.active:after {
+                                content: url('../../../../assets/common/icons/green-check.svg');
+                                display: block;
+                                position: absolute;
+                                top: -10px;
+                                right: -10px;
+                                width: 21px;
+                                height: 21px;
+                            }
+                        }
+                        .paymentName {
+                            font-size: 15px;
+                            line-height: 1.6;
+                            color: #202b35;
+                            font-weight: 600;
+                        }
+                        .paymentExpiration {
+                            font-size: 13px;
+                            font-weight: 300;
+                            line-height: 1.85;
+                            letter-spacing: 0.3px;
+                            color: #424c56;
+                        }
+                        .issue {
+                            font-size: 14px;
+                            font-weight: 500;
+                            line-height: 1.71;
+                            letter-spacing: 0.3px;
+                            color: #e7326a;
+                            img {
+                                margin-right: 7px;
+                            }
+                        }
+                        .actions {
+                            button:not(:first-child) {
+                                margin-left: 20px;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}

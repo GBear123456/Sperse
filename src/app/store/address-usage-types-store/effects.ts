@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Actions, Effect, ofType } from '@ngrx/effects';
@@ -15,7 +15,7 @@ import { getLoaded } from './selectors';
 
 @Injectable()
 export class AddressUsageTypesStoreEffects {
-    constructor(private contactAddressServiceProxy: ContactAddressServiceProxy,
+    constructor(private injector: Injector,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -29,7 +29,7 @@ export class AddressUsageTypesStoreEffects {
                 return empty();
             }
 
-            return this.contactAddressServiceProxy.getAddressUsageTypes()
+            return this.injector.get(ContactAddressServiceProxy).getAddressUsageTypes()
                 .pipe(
                     map((addressUsageTypes: ListResultDtoOfAddressUsageTypeDto) => {
                         return new addressUsageTypesActions.LoadSuccessAction(addressUsageTypes.items);

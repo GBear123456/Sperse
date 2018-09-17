@@ -18,6 +18,7 @@ import { CommonModule } from '@shared/common/common.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import {
     DxListModule,
+    DxTreeListModule,
     DxTooltipModule,
     DxDataGridModule,
     DxToolbarModule,
@@ -73,6 +74,7 @@ import { CreateActivityDialogComponent } from './activity/create-activity-dialog
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactsModule } from './contacts/contacts.module';
 
 @NgModule({
     imports: [
@@ -80,6 +82,7 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
       ngCommon.CommonModule,
       CommonModule,
       AppCommonModule,
+      DxTreeListModule,
       DxDataGridModule,
       DxToolbarModule,
       DxTemplateModule,
@@ -114,6 +117,7 @@ import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
       AngularGooglePlaceModule,
 
       CRMDashboardWidgetsModule,
+      ContactsModule,
       FileUploadModule,
       ModalModule.forRoot(),
       TabsModule.forRoot(),

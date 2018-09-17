@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Actions, Effect, ofType } from '@ngrx/effects';
@@ -16,7 +16,7 @@ import { ListResultDtoOfContactLinkTypeDto } from '@shared/service-proxies/servi
 
 @Injectable()
 export class ContactLinkTypesStoreEffects {
-    constructor(private contactLinkServiceProxy: ContactLinkServiceProxy,
+    constructor(private injector: Injector,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -30,7 +30,7 @@ export class ContactLinkTypesStoreEffects {
                 return empty();
             }
 
-            return this.contactLinkServiceProxy.getContactLinkTypes()
+            return this.injector.get(ContactLinkServiceProxy).getContactLinkTypes()
                 .pipe(
                     map((contactLinkTypes: ListResultDtoOfContactLinkTypeDto) => {
                         return new contactLinkTypesActions.LoadSuccessAction(contactLinkTypes.items);

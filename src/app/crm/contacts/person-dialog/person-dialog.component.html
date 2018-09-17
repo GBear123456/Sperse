@@ -1,0 +1,10 @@
+<mat-dialog-content>
+    <div class="names form-wrapper">
+        <ng-container *ngFor="let item of ['namePrefix', 'firstName', 'middleName', 'lastName', 'nameSuffix', 'nickName']">
+            <div class="name-item">
+                <div class="edit-label">{{l(capitalize(item))}}:</div>
+                <inplace-edit [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
+            </div>
+        </ng-container>
+    </div>
+</mat-dialog-content>
