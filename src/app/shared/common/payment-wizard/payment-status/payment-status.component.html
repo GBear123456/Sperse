@@ -1,3 +1,8 @@
 <img [ngClass]="paymentStatus" [src]="'assets/common/icons/' + paymentStatus + '.svg'">
 <h2>{{ l('PaymentStatus_' + paymentStatus ) }}</h2>
 <p *ngIf="text">{{ text }}</p>
+<button mat-button
+        matStepperPrevious
+        type="button"
+        class="btn btn-layout btn-back"
+        *ngIf="paymentStatus === 'payment-failed'">Back</button>

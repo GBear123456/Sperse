@@ -159,9 +159,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         let typedMonth = e.target.value;
         let currentMonth = ('0' + ((new Date()).getMonth() + 1)).slice(-2);
         if (currentMonth > typedMonth)
-            this.patterns.yearPattern = '^(2019|202[0-9]|203[0-3])$';
-        else
             this.patterns.yearPattern = '^(201[8-9]|202[0-9]|203[0-3])$';
+        else
+            this.patterns.yearPattern = '^(2019|202[0-9]|203[0-3])$';
     }
 
     onYearFocus(e) {
@@ -217,6 +217,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     submit() {
         if (this.creditCardData.valid) {
             this.onSubmit.next(this.creditCardData.getRawValue());
+            this.creditCardData.controls.cvv.setValue('');
         }
     }
 }
