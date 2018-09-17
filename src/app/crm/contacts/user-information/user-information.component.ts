@@ -183,7 +183,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             sub = this._userService.addToRole(UpdateUserRoleInput.fromJS({
                 id: this.userData.user.id,
                 roleName: role.roleName
-            });
+            }));
         else
             sub = this._userService.removeFromRole(this.userData.user.id, role.roleName);
 
