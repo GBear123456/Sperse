@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material';
-import { DxValidatorModule, DxTextBoxModule, DxValidationSummaryModule, DxButtonModule } from 'devextreme-angular';
+import { DxButtonModule, DxCheckBoxModule, DxValidatorModule, DxTextBoxModule, DxValidationSummaryModule,
+    DxScrollViewModule,  } from 'devextreme-angular';
 
 /** Application imports */
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
@@ -29,6 +30,8 @@ import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/countr
 import { InternationalPhoneNumberModule } from '../../node_modules/ngx-international-phone-number/src';
 import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
 @NgModule({
     declarations: [
@@ -46,7 +49,9 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
         AccountConnectorDialogComponent,
         AccountConnectorChooserComponent,
         XeroLoginComponent,
-        QuovoLoginComponent
+        QuovoLoginComponent,
+        ModalDialogComponent,
+        ConditionsModalComponent
     ],
     exports: [
         CalendarComponent,
@@ -60,7 +65,10 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
         InfoComponent,
         CountryPhoneNumberComponent,
         TitleCasePipe,
-        AccountConnectorDialogComponent
+        AccountConnectorDialogComponent,
+        ModalDialogComponent,
+        ConditionsModalComponent,
+        DxCheckBoxModule
     ],
     imports: [
         ngCommon.CommonModule,
@@ -71,10 +79,14 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
         DxValidatorModule,
         DxTextBoxModule,
         DxValidationSummaryModule,
+        DxCheckBoxModule,
+        DxScrollViewModule,
         DxButtonModule
     ],
     entryComponents: [
-        AccountConnectorDialogComponent
+        AccountConnectorDialogComponent,
+        ModalDialogComponent,
+        ConditionsModalComponent
     ],
     providers: [
         AppUrlService,

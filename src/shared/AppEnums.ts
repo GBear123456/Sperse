@@ -147,3 +147,8 @@ export enum AccountConnectors {
     Quovo = 'Quovo',
     Xero = 'Xero'
 }
+
+export enum ConditionsType {
+    Terms = 'Terms',
+    Policies = 'Policies'
+}

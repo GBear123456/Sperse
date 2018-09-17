@@ -1,7 +1,9 @@
 import { Component, OnInit, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
-
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { BankTransferDataModel } from '@app/shared/common/payment-wizard/models/bank-transfer-data.model';
+import { MatDialog } from '@angular/material';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsType } from '@shared/AppEnums';
 
 @Component({
     selector: 'bank-transfer',
@@ -19,10 +21,17 @@ export class BankTransferComponent extends AppComponentBase implements OnInit {
         SWIFT_Code: 'BOFAUS6S'
     };
 
-    constructor(injector: Injector) {
+    constructor(
+        injector: Injector,
+        private dialog: MatDialog
+    ) {
         super(injector);
     }
 
     ngOnInit() {}
+
+    openTermsModal() {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: ConditionsType.Terms } });
+    }
 
 }

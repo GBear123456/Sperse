@@ -5,6 +5,8 @@
                    maxlength="19"
                    placeholder="CARD NUMBER"
                    type="tel"
+                   name="cardnumber"
+                   autocomplete="cc-number"
                    formControlName="cardNumber"
                    (keypress)="checkCreditCardNumber($event)"
                    ccNumber>
@@ -23,6 +25,7 @@
                            formControlName="expirationMonth"
                            minlength="2"
                            maxlength="2"
+                           autocomplete="nope"
                            (keypress)="checkMonthData($event)"
                            (keyup)="checkExpYear($event)">
                 </mat-form-field>
@@ -35,6 +38,7 @@
                            [pattern]='patterns.yearPattern'
                            minlength="4"
                            maxlength="4"
+                           autocomplete="nope"
                            (focus)="onYearFocus($event)"
                            (keypress)="checkIfNumber($event)">
                 </mat-form-field>
@@ -51,7 +55,11 @@
     </div>
     <div class="row">
         <mat-form-field class="col-8">
-            <input matInput placeholder="NAME ON CARD" formControlName="holderName">
+            <input matInput
+                   placeholder="NAME ON CARD"
+                   name="ccname"
+                   autocomplete="cc-name"
+                   formControlName="holderName">
             <mat-error *ngIf="creditCardData.controls.holderName.touched && creditCardData.controls.holderName.invalid">
                 {{ l('HolderNameValidationMessage') }}
             </mat-error>
@@ -143,7 +151,7 @@
                     <img class="info-icon" src="/assets/common/icons/information-button.svg" alt="info">
                 </div>
                 <div class="col-11 terms-text">
-                    <p>{{ l('CreditCardTermsAndConditionText') }} <a href="javascript:;">{{ l('TermsConditions') }}</a></p>
+                    <p>{{ l('CreditCardTermsAndConditionText') }} <a (click)="openTermsDialog()">{{ l('TermsConditions') }}</a></p>
                 </div>
             </div>
         </div>

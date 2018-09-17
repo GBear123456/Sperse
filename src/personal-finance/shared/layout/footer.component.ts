@@ -1,5 +1,8 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { ConditionsType } from '@shared/AppEnums';
+import { MatDialog } from '@angular/material';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
 @Component({
     templateUrl: 'footer.component.html',
@@ -8,13 +11,18 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 })
 export class FooterComponent extends AppComponentBase implements OnInit {
     currentYear = new Date().getFullYear();
-
+    conditions = ConditionsType;
     constructor(
-        injector: Injector
+        injector: Injector,
+        private dialog: MatDialog
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
+    }
+
+    openConditionsDialog(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: type }});
     }
 }

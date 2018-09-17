@@ -12,10 +12,9 @@ import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule, DxRadioGroupModule, DxCheckBoxModule, DxPopupModule,
-    DxScrollViewModule, DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule
+    DxTreeViewModule, DxRadioGroupModule, DxPopupModule, DxSliderModule,
+    DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule, DxTreeListModule
 } from 'devextreme-angular';
-
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -23,8 +22,6 @@ import { ModalModule } from 'ngx-bootstrap';
 import { FileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
-import { ModalDialogComponent } from './dialogs/modal/modal-dialog.component';
-import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 
@@ -33,6 +30,7 @@ import { AbpModule } from '@abp/abp.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
+import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -61,6 +59,13 @@ import { CreditCardComponent } from './payment-wizard/payment-options/credit-car
 import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
 import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
+import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
+import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
+import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
+import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
+import { RatingComponent } from '@app/crm/shared/rating/rating.component';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
+import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 
 @NgModule({
     imports: [
@@ -106,9 +111,7 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         DxContextMenuModule,
         DxTreeViewModule,
         DxRadioGroupModule,
-        DxCheckBoxModule,
         DxTextBoxModule,
-        DxScrollViewModule,
         DxDataGridModule,
         DxSelectBoxModule,
         MatDialogModule,
@@ -119,7 +122,8 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         DxProgressBarModule,
         DxTooltipModule,
         DxSwitchModule,
-
+        DxTreeListModule,
+        DxSliderModule,
         CreditCardDirectivesModule,
         AngularGooglePlaceModule
     ],
@@ -140,7 +144,6 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
         RatingBarComponent,
         PaymentWizardComponent,
         PaymentPlanCardComponent,
@@ -150,7 +153,14 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         CreditCardComponent,
         PayPalComponent,
         BankTransferComponent,
-        ECheckComponent
+        ECheckComponent,
+        StaticListComponent,
+        UserAssignmentComponent,
+        TagsListComponent,
+        ListsListComponent,
+        RatingComponent,
+        StarsListComponent,
+        TypesListComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -169,8 +179,14 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
-        RatingBarComponent
+        RatingBarComponent,
+        StaticListComponent,
+        UserAssignmentComponent,
+        TagsListComponent,
+        ListsListComponent,
+        RatingComponent,
+        StarsListComponent,
+        TypesListComponent
     ],
     providers: [
         DateTimeService,
@@ -182,7 +198,6 @@ import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-chec
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        ModalDialogComponent,
         PaymentWizardComponent
     ]
 })

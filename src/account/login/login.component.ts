@@ -1,13 +1,19 @@
-import { AbpSessionService } from '@abp/session/abp-session.service';
-import { AppConsts } from '@shared/AppConsts';
+/** Core imports */
 import { Component, Injector, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+
+/** Application imports */
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { ConditionsType } from '@shared/AppEnums';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
-import { UrlHelper } from 'shared/helpers/UrlHelper';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ExternalLoginProvider, LoginService } from './login.service';
-import * as _ from 'underscore';
 
 @Component({
     templateUrl: './login.component.html',
@@ -19,13 +25,14 @@ import * as _ from 'underscore';
 export class LoginComponent extends AppComponentBase implements OnInit {
     submitting = false;
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
-
+    conditions = ConditionsType;
     constructor(
         injector: Injector,
         public loginService: LoginService,
         private _router: Router,
         private _sessionService: AbpSessionService,
-        private _sessionAppService: SessionServiceProxy
+        private _sessionAppService: SessionServiceProxy,
+        private dialog: MatDialog
     ) {
         super(injector);
     }
@@ -63,49 +70,10 @@ export class LoginComponent extends AppComponentBase implements OnInit {
                     location.href = returnUrl;
                 });
         }
+    }
 
-        let privacy = $('#privacy');
-        privacy.on('show.bs.modal', function() {
-            $(this)
-                .addClass('modal-scrollfix')
-                .find('.modal-body')
-                .html('loading...')
-                .load(AppConsts.remoteServiceBaseUrl + '/docs/privacy.html', function() {
-                    privacy
-                        .removeClass('modal-scrollfix')
-                        .modal('handleUpdate');
-                });
-        });
-
-        let terms = $('#terms');
-        terms.on('show.bs.modal', function() {
-            $(this)
-                .addClass('modal-scrollfix')
-                .find('.modal-body')
-                .html('loading...')
-                .load(AppConsts.remoteServiceBaseUrl + '/docs/terms.html', function() {
-                    terms
-                        .removeClass('modal-scrollfix')
-                        .modal('handleUpdate');
-                });
-        });
-
-        $('.print-this').on('click', function() {
-            printElement($('.print-this-section')[0]);
-        });
-
-        function printElement(elem) {
-            let domClone = elem.cloneNode(true);
-            let printSection = document.getElementById('printSection');
-            if (!printSection) {
-                printSection = document.createElement('div');
-                printSection.id = 'printSection';
-                document.body.appendChild(printSection);
-            }
-            printSection.innerHTML = '';
-            printSection.appendChild(domClone);
-            window.print();
-        }
+    openConditionsDialog(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: type }});
     }
 
     login(): void {

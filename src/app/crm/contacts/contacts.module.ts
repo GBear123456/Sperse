@@ -11,7 +11,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
          DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule,
+         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule,
          DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -25,14 +25,6 @@ import { ContactsService } from './contacts.service';
 import { ContactsComponent } from './contacts.component';
 import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
-import { StaticListComponent } from '../shared/static-list/static-list.component';
-import { TagsListComponent } from '../shared/tags-list/tags-list.component';
-import { ListsListComponent } from '../shared/lists-list/lists-list.component';
-import { TypesListComponent } from '../shared/types-list/types-list.component';
-import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
-import { RatingComponent } from '../shared/rating/rating.component';
-import { StarsListComponent } from '../shared/stars-list/stars-list.component';
-import { AdvancedListComponent } from '../shared/advanced-list/advanced-list.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddComponent } from './notes/note-add/note-add.component';
@@ -107,14 +99,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddComponent,
-    TagsListComponent,
-    ListsListComponent,
-    TypesListComponent,
-    UserAssignmentComponent,
-    RatingComponent,
-    StarsListComponent,
-    StaticListComponent,
-    AdvancedListComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
     DocumentTypesListComponent,
@@ -147,7 +131,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     DxDateBoxModule,
     DxTooltipModule,
     DxListModule,
-    DxSliderModule,
     DxTreeListModule,
     DxTreeViewModule,
     RoundProgressModule,
@@ -161,16 +144,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     VgControlsModule,
     VgOverlayPlayModule,
     VgBufferingModule
-  ],
-  exports: [
-    TagsListComponent,
-    ListsListComponent,
-    TypesListComponent,
-    UserAssignmentComponent,
-    RatingComponent,
-    StarsListComponent,
-    StaticListComponent,
-    AdvancedListComponent
   ],
   entryComponents: [
     EditContactDialog,
@@ -186,9 +159,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
   providers: [
     ContactsService,
     ContactAddressServiceProxy,
-    ContactEmailServiceProxy,
-    ContactPhoneServiceProxy,
-    ContactLinkServiceProxy,
     ContactGroupServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,

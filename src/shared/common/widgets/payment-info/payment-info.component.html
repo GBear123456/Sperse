@@ -193,10 +193,8 @@
             </div>
             <div class="col">
                 <div class="agreements">
-                    {{l("ByContinueIAgree")}} <a href="terms-of-service" target="_blank"
-                                                 title="{{l('TermsOfService')}}">{{l("TermsOfService")}}</a>
-                    {{l("And")}} <a href="privacy-policy" target="_blank"
-                                    title="{{l('PrivacyPolicy')}}">{{l("PrivacyPolicy")}}</a>
+                    {{l("ByContinueIAgree")}} <a (click)="openConditionsDialog(conditions.Terms)" title="{{l('TermsOfService')}}">{{l("TermsOfService")}}</a>
+                    {{l("And")}} <a (click)="openConditionsDialog(conditions.Policies)" title="{{l('PrivacyPolicy')}}">{{l("PrivacyPolicy")}}</a>
                 </div>
             </div>
         </div>

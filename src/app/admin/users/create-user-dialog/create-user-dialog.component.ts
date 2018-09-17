@@ -16,7 +16,7 @@ import {
     UserRoleDto, PasswordComplexitySetting, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { ModalDialogComponent } from '@app/shared/common/dialogs/modal/modal-dialog.component';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';

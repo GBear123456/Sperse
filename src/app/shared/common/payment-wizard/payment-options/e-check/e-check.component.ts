@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injec
 import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -10,6 +11,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { NumberToWordsPipe } from '@shared/common/pipes/number-to-words/number-to-words.pipe';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsType } from '@shared/AppEnums';
 
 @Component({
     selector: 'e-check',
@@ -53,7 +56,8 @@ export class ECheckComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private formBuilder: FormBuilder,
         private customNumberPipe: CustomNumberPipe,
-        private numberToWordsPipe: NumberToWordsPipe
+        private numberToWordsPipe: NumberToWordsPipe,
+        private dialog: MatDialog
     ) {
         super(injector);
     }
@@ -77,6 +81,10 @@ export class ECheckComponent extends AppComponentBase implements OnInit {
         if (this.echeckForm.valid) {
             this.onSubmit.next(this.echeckForm.getRawValue());
         }
+    }
+
+    openTermsModal() {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: {type: ConditionsType.Terms } });
     }
 
 }
