@@ -6598,58 +6598,6 @@ export class ContactServiceProxy {
         }
         return _observableOf<ContactShortInfoDto>(<any>null);
     }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    createUserForContact(input: CreateUserForContactInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/CreateUserForContact";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateUserForContact(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateUserForContact(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateUserForContact(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -15747,58 +15695,6 @@ export class OrganizationContactServiceProxy {
         }
         return _observableOf<ContactShortInfoDto>(<any>null);
     }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    createUserForContact(input: CreateUserForContactInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/CreateUserForContact";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateUserForContact(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateUserForContact(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateUserForContact(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -17340,6 +17236,58 @@ export class PersonContactServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    createUserForContact(input: CreateUserForContactInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/CreateUserForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateUserForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateUserForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateUserForContact(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @userId (optional) 
      * @return Success
      */
@@ -17393,58 +17341,6 @@ export class PersonContactServiceProxy {
         }
         return _observableOf<ContactShortInfoDto>(<any>null);
     }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    createUserForContact(input: CreateUserForContactInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/CreateUserForContact";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateUserForContact(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateUserForContact(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateUserForContact(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -17462,131 +17358,10 @@ export class PipelineServiceProxy {
      * @purposeId (optional) 
      * @return Success
      */
-    getPipelinesData(purposeId: string | null | undefined): Observable<PipelineData[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelinesData?";
-        if (purposeId !== undefined)
-            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPipelinesData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetPipelinesData(<any>response_);
-                } catch (e) {
-                    return <Observable<PipelineData[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PipelineData[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetPipelinesData(response: HttpResponseBase): Observable<PipelineData[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(PipelineData.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PipelineData[]>(<any>null);
-    }
-
-    /**
-     * @purposeId (optional) 
-     * @return Success
-     */
-    getPipelinesFullData(purposeId: string | null | undefined): Observable<PipelineDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelinesFullData?";
-        if (purposeId !== undefined)
-            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPipelinesFullData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetPipelinesFullData(<any>response_);
-                } catch (e) {
-                    return <Observable<PipelineDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PipelineDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetPipelinesFullData(response: HttpResponseBase): Observable<PipelineDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(PipelineDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PipelineDto[]>(<any>null);
-    }
-
-    /**
-     * @purposeId (optional) 
-     * @pipelineId (optional) 
-     * @return Success
-     */
-    getPipelineDefinitions(purposeId: string | null | undefined, pipelineId: number | null | undefined): Observable<PipelineDto[]> {
+    getPipelineDefinitions(purposeId: string | null | undefined): Observable<PipelineDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinitions?";
         if (purposeId !== undefined)
-            url_ += "PurposeId=" + encodeURIComponent("" + purposeId) + "&"; 
-        if (pipelineId !== undefined)
-            url_ += "PipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
+            url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -20161,298 +19936,6 @@ export class SyncAccountServiceProxy {
             }));
         }
         return _observableOf<boolean>(<any>null);
-    }
-}
-
-@Injectable()
-export class TenancyServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getTenancies(contactGroupId: number): Observable<PagedResultDtoOfTenancyListDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancies?";
-        if (contactGroupId === undefined || contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
-        else
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTenancies(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetTenancies(<any>response_);
-                } catch (e) {
-                    return <Observable<PagedResultDtoOfTenancyListDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PagedResultDtoOfTenancyListDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetTenancies(response: HttpResponseBase): Observable<PagedResultDtoOfTenancyListDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PagedResultDtoOfTenancyListDto.fromJS(resultData200) : new PagedResultDtoOfTenancyListDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PagedResultDtoOfTenancyListDto>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    createTenancy(input: CreateTenancyInput | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/CreateTenancy";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateTenancy(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateTenancy(<any>response_);
-                } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<number>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateTenancy(response: HttpResponseBase): Observable<number> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<number>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getTenancyForEdit(id: number, contactGroupId: number): Observable<GetTenancyForEditOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/GetTenancyForEdit?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (contactGroupId === undefined || contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
-        else
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTenancyForEdit(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetTenancyForEdit(<any>response_);
-                } catch (e) {
-                    return <Observable<GetTenancyForEditOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetTenancyForEditOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetTenancyForEdit(response: HttpResponseBase): Observable<GetTenancyForEditOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetTenancyForEditOutput.fromJS(resultData200) : new GetTenancyForEditOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetTenancyForEditOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    updateTenancy(input: UpdateTenancyInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/UpdateTenancy";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateTenancy(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateTenancy(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateTenancy(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    deleteTenancy(id: number, contactGroupId: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Tenancy/DeleteTenancy?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (contactGroupId === undefined || contactGroupId === null)
-            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
-        else
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteTenancy(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteTenancy(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDeleteTenancy(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 }
 
@@ -24894,6 +24377,61 @@ export class UserServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    getUser(id: number | null | undefined): Observable<UserInfoDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetUser?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUser(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUser(response: HttpResponseBase): Observable<UserInfoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UserInfoDto.fromJS(resultData200) : new UserInfoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto>(<any>null);
     }
 
     /**
@@ -33062,65 +32600,6 @@ export interface IContactPhotoDto {
     thumbnail: string | undefined;
     source: string | undefined;
     comment: string | undefined;
-}
-
-export class CreateUserForContactInput implements ICreateUserForContactInput {
-    contactId!: number;
-    emailAddress!: string | undefined;
-    phoneNumber!: string | undefined;
-    assignedRoleNames!: string[];
-
-    constructor(data?: ICreateUserForContactInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.assignedRoleNames = [];
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.emailAddress = data["emailAddress"];
-            this.phoneNumber = data["phoneNumber"];
-            if (data["assignedRoleNames"] && data["assignedRoleNames"].constructor === Array) {
-                this.assignedRoleNames = [];
-                for (let item of data["assignedRoleNames"])
-                    this.assignedRoleNames.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): CreateUserForContactInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateUserForContactInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["emailAddress"] = this.emailAddress;
-        data["phoneNumber"] = this.phoneNumber;
-        if (this.assignedRoleNames && this.assignedRoleNames.constructor === Array) {
-            data["assignedRoleNames"] = [];
-            for (let item of this.assignedRoleNames)
-                data["assignedRoleNames"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface ICreateUserForContactInput {
-    contactId: number;
-    emailAddress: string | undefined;
-    phoneNumber: string | undefined;
-    assignedRoleNames: string[];
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
@@ -48721,44 +48200,63 @@ export interface IUpdatePersonInfoOutput {
     fullName: string | undefined;
 }
 
-export class PipelineData implements IPipelineData {
-    id!: number | undefined;
-    name!: string | undefined;
+export class CreateUserForContactInput implements ICreateUserForContactInput {
+    contactId!: number;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    assignedRoleNames!: string[];
 
-    constructor(data?: IPipelineData) {
+    constructor(data?: ICreateUserForContactInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.assignedRoleNames = [];
+        }
     }
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
+            this.contactId = data["contactId"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            if (data["assignedRoleNames"] && data["assignedRoleNames"].constructor === Array) {
+                this.assignedRoleNames = [];
+                for (let item of data["assignedRoleNames"])
+                    this.assignedRoleNames.push(item);
+            }
         }
     }
 
-    static fromJS(data: any): PipelineData {
+    static fromJS(data: any): CreateUserForContactInput {
         data = typeof data === 'object' ? data : {};
-        let result = new PipelineData();
+        let result = new CreateUserForContactInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
+        data["contactId"] = this.contactId;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        if (this.assignedRoleNames && this.assignedRoleNames.constructor === Array) {
+            data["assignedRoleNames"] = [];
+            for (let item of this.assignedRoleNames)
+                data["assignedRoleNames"].push(item);
+        }
         return data; 
     }
 }
 
-export interface IPipelineData {
-    id: number | undefined;
-    name: string | undefined;
+export interface ICreateUserForContactInput {
+    contactId: number;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    assignedRoleNames: string[];
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -50731,330 +50229,6 @@ export class RenameSyncAccountInput implements IRenameSyncAccountInput {
 export interface IRenameSyncAccountInput {
     id: number;
     newName: string;
-}
-
-export class PagedResultDtoOfTenancyListDto implements IPagedResultDtoOfTenancyListDto {
-    totalCount!: number | undefined;
-    items!: TenancyListDto[] | undefined;
-
-    constructor(data?: IPagedResultDtoOfTenancyListDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.totalCount = data["totalCount"];
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(TenancyListDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PagedResultDtoOfTenancyListDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PagedResultDtoOfTenancyListDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPagedResultDtoOfTenancyListDto {
-    totalCount: number | undefined;
-    items: TenancyListDto[] | undefined;
-}
-
-export class TenancyListDto implements ITenancyListDto {
-    name!: string | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ITenancyListDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): TenancyListDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenancyListDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ITenancyListDto {
-    name: string | undefined;
-    id: number | undefined;
-}
-
-export class CreateTenancyInput implements ICreateTenancyInput {
-    contactGroupId!: number;
-    adminEmailAddress!: string;
-    adminPassword!: string | undefined;
-    shouldChangePasswordOnNextLogin!: boolean | undefined;
-    sendActivationEmail!: boolean | undefined;
-    tenantHostType!: CreateTenancyInputTenantHostType | undefined;
-    tenancyName!: string;
-    name!: string;
-    connectionString!: string | undefined;
-    crmConnectionString!: string | undefined;
-    memberDbConnectionString!: string | undefined;
-    editionId!: number | undefined;
-    isActive!: boolean | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    isInTrialPeriod!: boolean | undefined;
-
-    constructor(data?: ICreateTenancyInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactGroupId = data["contactGroupId"];
-            this.adminEmailAddress = data["adminEmailAddress"];
-            this.adminPassword = data["adminPassword"];
-            this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
-            this.sendActivationEmail = data["sendActivationEmail"];
-            this.tenantHostType = data["tenantHostType"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-            this.connectionString = data["connectionString"];
-            this.crmConnectionString = data["crmConnectionString"];
-            this.memberDbConnectionString = data["memberDbConnectionString"];
-            this.editionId = data["editionId"];
-            this.isActive = data["isActive"];
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.isInTrialPeriod = data["isInTrialPeriod"];
-        }
-    }
-
-    static fromJS(data: any): CreateTenancyInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateTenancyInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactGroupId"] = this.contactGroupId;
-        data["adminEmailAddress"] = this.adminEmailAddress;
-        data["adminPassword"] = this.adminPassword;
-        data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
-        data["sendActivationEmail"] = this.sendActivationEmail;
-        data["tenantHostType"] = this.tenantHostType;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        data["connectionString"] = this.connectionString;
-        data["crmConnectionString"] = this.crmConnectionString;
-        data["memberDbConnectionString"] = this.memberDbConnectionString;
-        data["editionId"] = this.editionId;
-        data["isActive"] = this.isActive;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data; 
-    }
-}
-
-export interface ICreateTenancyInput {
-    contactGroupId: number;
-    adminEmailAddress: string;
-    adminPassword: string | undefined;
-    shouldChangePasswordOnNextLogin: boolean | undefined;
-    sendActivationEmail: boolean | undefined;
-    tenantHostType: CreateTenancyInputTenantHostType | undefined;
-    tenancyName: string;
-    name: string;
-    connectionString: string | undefined;
-    crmConnectionString: string | undefined;
-    memberDbConnectionString: string | undefined;
-    editionId: number | undefined;
-    isActive: boolean | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    isInTrialPeriod: boolean | undefined;
-}
-
-export class GetTenancyForEditOutput implements IGetTenancyForEditOutput {
-    tenancyName!: string;
-    name!: string;
-    connectionString!: string | undefined;
-    crmConnectionString!: string | undefined;
-    memberDbConnectionString!: string | undefined;
-    editionId!: number | undefined;
-    isActive!: boolean | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    isInTrialPeriod!: boolean | undefined;
-
-    constructor(data?: IGetTenancyForEditOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-            this.connectionString = data["connectionString"];
-            this.crmConnectionString = data["crmConnectionString"];
-            this.memberDbConnectionString = data["memberDbConnectionString"];
-            this.editionId = data["editionId"];
-            this.isActive = data["isActive"];
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.isInTrialPeriod = data["isInTrialPeriod"];
-        }
-    }
-
-    static fromJS(data: any): GetTenancyForEditOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetTenancyForEditOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        data["connectionString"] = this.connectionString;
-        data["crmConnectionString"] = this.crmConnectionString;
-        data["memberDbConnectionString"] = this.memberDbConnectionString;
-        data["editionId"] = this.editionId;
-        data["isActive"] = this.isActive;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data; 
-    }
-}
-
-export interface IGetTenancyForEditOutput {
-    tenancyName: string;
-    name: string;
-    connectionString: string | undefined;
-    crmConnectionString: string | undefined;
-    memberDbConnectionString: string | undefined;
-    editionId: number | undefined;
-    isActive: boolean | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    isInTrialPeriod: boolean | undefined;
-}
-
-export class UpdateTenancyInput implements IUpdateTenancyInput {
-    id!: number;
-    contactGroupId!: number;
-    tenancyName!: string;
-    name!: string;
-    connectionString!: string | undefined;
-    crmConnectionString!: string | undefined;
-    memberDbConnectionString!: string | undefined;
-    editionId!: number | undefined;
-    isActive!: boolean | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    isInTrialPeriod!: boolean | undefined;
-
-    constructor(data?: IUpdateTenancyInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.contactGroupId = data["contactGroupId"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-            this.connectionString = data["connectionString"];
-            this.crmConnectionString = data["crmConnectionString"];
-            this.memberDbConnectionString = data["memberDbConnectionString"];
-            this.editionId = data["editionId"];
-            this.isActive = data["isActive"];
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.isInTrialPeriod = data["isInTrialPeriod"];
-        }
-    }
-
-    static fromJS(data: any): UpdateTenancyInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateTenancyInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["contactGroupId"] = this.contactGroupId;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        data["connectionString"] = this.connectionString;
-        data["crmConnectionString"] = this.crmConnectionString;
-        data["memberDbConnectionString"] = this.memberDbConnectionString;
-        data["editionId"] = this.editionId;
-        data["isActive"] = this.isActive;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
-        return data; 
-    }
-}
-
-export interface IUpdateTenancyInput {
-    id: number;
-    contactGroupId: number;
-    tenancyName: string;
-    name: string;
-    connectionString: string | undefined;
-    crmConnectionString: string | undefined;
-    memberDbConnectionString: string | undefined;
-    editionId: number | undefined;
-    isActive: boolean | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    isInTrialPeriod: boolean | undefined;
 }
 
 export class PagedResultDtoOfTenantListDto implements IPagedResultDtoOfTenantListDto {
@@ -55273,6 +54447,54 @@ export interface IUpdateUserPictureInput {
     image: string | undefined;
 }
 
+export class UserInfoDto implements IUserInfoDto {
+    id!: number | undefined;
+    name!: string | undefined;
+    isActive!: boolean | undefined;
+    profilePicture!: string | undefined;
+
+    constructor(data?: IUserInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.isActive = data["isActive"];
+            this.profilePicture = data["profilePicture"];
+        }
+    }
+
+    static fromJS(data: any): UserInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        data["profilePicture"] = this.profilePicture;
+        return data; 
+    }
+}
+
+export interface IUserInfoDto {
+    id: number | undefined;
+    name: string | undefined;
+    isActive: boolean | undefined;
+    profilePicture: string | undefined;
+}
+
 export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     user!: UserEditDto;
     assignedRoleNames!: string[];
@@ -55714,54 +54936,6 @@ export class UpdateUserRoleInput implements IUpdateUserRoleInput {
 export interface IUpdateUserRoleInput {
     id: number | undefined;
     roleName: string;
-}
-
-export class UserInfoDto implements IUserInfoDto {
-    id!: number | undefined;
-    name!: string | undefined;
-    isActive!: boolean | undefined;
-    profilePicture!: string | undefined;
-
-    constructor(data?: IUserInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.isActive = data["isActive"];
-            this.profilePicture = data["profilePicture"];
-        }
-    }
-
-    static fromJS(data: any): UserInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["isActive"] = this.isActive;
-        data["profilePicture"] = this.profilePicture;
-        return data; 
-    }
-}
-
-export interface IUserInfoDto {
-    id: number | undefined;
-    name: string | undefined;
-    isActive: boolean | undefined;
-    profilePicture: string | undefined;
 }
 
 export class AssignContactGroupInput implements IAssignContactGroupInput {
@@ -57182,12 +56356,6 @@ export enum SyncProgressDtoSyncStatus {
     SyncPending = "SyncPending", 
     Unavailable = "Unavailable", 
     Completed = "Completed", 
-}
-
-export enum CreateTenancyInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CreateTenantInputTenantHostType {
