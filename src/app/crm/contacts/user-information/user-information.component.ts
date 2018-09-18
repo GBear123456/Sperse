@@ -2,7 +2,7 @@ import { Injector, Component, OnInit, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
-    UpdateUserOptionsDto, UpdateUserRoleInput, ContactGroupInfoDto, ContactServiceProxy, ContactGroupServiceProxy, 
+    UpdateUserOptionsDto, UpdateUserRoleInput, ContactGroupInfoDto, ContactGroupServiceProxy, PersonContactServiceProxy,
     CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -77,7 +77,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,
         private _contactsService: ContactsService,
-        private _contactsServiceProxy: ContactServiceProxy,
+        private _contactsServiceProxy: PersonContactServiceProxy,
         private _contactGroupService: ContactGroupServiceProxy,
         private _roleServiceProxy: RoleServiceProxy
     ) {
@@ -94,7 +94,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.update();
         });
 
-        _roleServiceProxy.getRoles().subscribe((res) => {
+        _roleServiceProxy.getRoles(undefined).subscribe((res) => {
             this.roles = res.items;
         });
 
