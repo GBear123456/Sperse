@@ -209,6 +209,13 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
+
+                this.filteredStates = this.creditCardData.get('billingState').valueChanges
+                    .pipe(
+                        startWith<string | CountryStateDto>(''),
+                        map(value => typeof value === 'string' ? value : value.name),
+                        map(name => name ? this._filterStates(name) : this.states.slice())
+                    );
             });
     }
 
