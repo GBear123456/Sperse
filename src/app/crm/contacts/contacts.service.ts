@@ -8,6 +8,7 @@ export class ContactsService {
     private userSubject: Subject<number>;
     private organizationUnits: Subject<any>;
     private organizationUnitsSave: Subject<any>;
+    private invalidateSubject: Subject<any>;
 
     constructor(injector: Injector) {
         this.verificationSubject = new Subject<any>();
@@ -15,6 +16,7 @@ export class ContactsService {
         this.userSubject = new Subject<any>();
         this.organizationUnits = new Subject<any>();
         this.organizationUnitsSave = new Subject<any>();
+        this.invalidateSubject = new Subject<any>();
     }
 
     verificationSubscribe(callback) {
@@ -55,5 +57,13 @@ export class ContactsService {
 
     orgUnitsSave(data) {
         this.organizationUnitsSave.next(data);
+    }
+
+    invalidateSubscribe(callback) {
+        this.invalidateSubject.asObservable().subscribe(callback);
+    }
+
+    invalidate() { 
+        this.invalidateSubject.next();
     }
 }

@@ -1,12 +1,14 @@
-import { Injector, Component, OnInit } from '@angular/core';
+import { Injector, Component, OnInit, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, UpdateUserOptionsDto, UpdateUserRoleInput,
-    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
+    UpdateUserOptionsDto, UpdateUserRoleInput, ContactGroupInfoDto, ContactServiceProxy, ContactGroupServiceProxy, 
+    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
+import { DxSelectBoxComponent } from 'devextreme-angular';
 
 import { finalize } from 'rxjs/operators';
 
@@ -19,6 +21,8 @@ import * as _ from 'lodash';
     providers: [ PhoneFormatPipe ]
 })
 export class UserInformationComponent extends AppComponentBase implements OnInit {
+    @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
+    @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
     data: any;
 
     readonly GENERAL_TAB_INDEX        = 0;
@@ -33,6 +37,17 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     selectedTabIndex = this.GENERAL_TAB_INDEX; 
 
+    roles: any = [];
+    emails: any = [];
+    phones: any = [];
+    contactInfoData: any;
+    inviteData = CreateUserForContactInput.fromJS({  
+        contactId: undefined,
+        emailAddress: '',
+        phoneNumber: undefined,
+        assignedRoleNames: []
+    });
+   
     showInviteUserForm = false;
     passwordObject = { passwordInplaceEdit: false, originalValue: '', value: '' };
     passwordValidator: PasswordComplexityValidator = new PasswordComplexityValidator();
@@ -40,7 +55,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     selectedOrgUnits: number[] = [];
 
     masks = AppConsts.masks;
-
+    phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
+    
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
@@ -57,21 +73,29 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     };
 
     constructor(injector: Injector,
+        public phoneFormatPipe: PhoneFormatPipe,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,
-        private _phoneFormatPipe: PhoneFormatPipe,
-        private _contactsService: ContactsService
+        private _contactsService: ContactsService,
+        private _contactsServiceProxy: ContactServiceProxy,
+        private _contactGroupService: ContactGroupServiceProxy,
+        private _roleServiceProxy: RoleServiceProxy
     ) {
         super(injector);
 
         _contactsService.userSubscribe((userId) => {            
-            if (this.data.userId = userId)
+            if ((this.data = _userService['data']).userId = userId)
                 this.loadData();
+            this.checkShowInviteForm();
         });
 
         _contactsService.orgUnitsSaveSubscribe((data) => {            
             this.selectedOrgUnits = data;
             this.update();
+        });
+
+        _roleServiceProxy.getRoles().subscribe((res) => {
+            this.roles = res.items;
         });
 
         this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
@@ -86,8 +110,24 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     ngOnInit() {
+        this.contactInfoData = this._contactGroupService['data'];
         if ((this.data = this._userService['data']).userId)
             this.loadData();
+        else
+            setTimeout(() => this.checkShowInviteForm(), 500);
+    }    
+
+    checkShowInviteForm() {
+        this.showInviteUserForm = this.data && !this.data.userId && 
+            this.permission.isGranted('Pages.Administration.Users.Create');
+
+        let contactInfo = this.contactInfoData.contactInfo.primaryContactInfo;
+        if (contactInfo) {
+            this.phones = contactInfo.details.phones
+                .filter((item) => {return item.isActive;});
+            this.emails = contactInfo.details.emails
+                .filter((item) => {return item.isActive;});
+        }
     }
 
     loadData() {
@@ -109,6 +149,40 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             });
     }
 
+    inviteUser() {
+        if (!this.inviteData.emailAddress || !this.emailAddressComponent.instance.option('isValid'))
+            return this.message.warn(this.l('InvalidEmailAddress'));
+
+        if(!this.inviteData.phoneNumber || !this.phoneNumberComponent.instance.option('isValid')) 
+            return this.message.warn(this.l('PhoneValidationError'));
+
+        if (!this.inviteData.assignedRoleNames.length)
+            return this.message.warn(this.l('RoleIsRequired'));
+
+        this.message.confirm(
+            this.l('CreateNewUser'),
+            this.l('AreYouSure'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    this.inviteData.contactId = this.contactInfoData.contactInfo.primaryContactInfo.id;
+                    this._contactsServiceProxy.createUserForContact(this.inviteData)
+                        .pipe(finalize(() => this.finishLoading())).subscribe(() => {
+                            this._contactsService.invalidate(); //location.reload();
+                        });
+                }
+            }
+        );
+    }
+
+    inviteRoleUpdate(event, item) {
+        let riles = this.inviteData.assignedRoleNames, roleIndex;
+        if (event.value)
+            riles.push(item.name);
+        else if ((roleIndex = riles.indexOf(item.name)) >= 0)
+            this.inviteData.assignedRoleNames.splice(roleIndex, 1);
+    }
+
     getPropData(field: string) {
         let validationRules = this.validationRules[field] || [];
 
@@ -124,7 +198,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     getPhoneNumberPropData() {
         let data = this.getPropData('phoneNumber');
-        data.displayValue = this._phoneFormatPipe.transform(data.value);
+        data.displayValue = this.phoneFormatPipe.transform(data.value);
         return data;
     }
 
@@ -219,5 +293,24 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
         });
+    }
+
+    checkInsertCustomValue(list) {
+        if (list.indexOf(this.inviteData) < 0)
+            list.unshift(this.inviteData);
+    }
+
+    onCustomItemCreating($event, field) {
+        let isEmail = (field == 'emailAddress');
+        this.checkInsertCustomValue(isEmail ? 
+            this.emails: this.phones);
+
+        setTimeout(() => {
+            this.inviteData[field] = $event.text;
+        });
+    }
+
+    onValueChanged($event) {  
+        this.inviteData[$event.component.option('name')] = $event.value;
     }
 }

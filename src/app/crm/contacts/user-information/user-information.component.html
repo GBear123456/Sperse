@@ -1,5 +1,75 @@
 <div class="invite-user-form" *ngIf="showInviteUserForm">
-    Invite user form will be here soon
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-select-box #emailAddress
+            width="300px"
+            placeholder="Email Address"
+            name="emailAddress"
+            [showClearButton]="true"
+            [acceptCustomValue]="true"
+            [dataSource]="emails"
+            displayExpr="emailAddress"
+            valueExpr="emailAddress"
+            [value]="inviteData.emailAddress"
+            (onCustomItemCreating)="onCustomItemCreating($event, 'emailAddress')"
+            (onValueChanged)="onValueChanged($event)"
+            fieldTemplate="emailTemplate"
+            itemTemplate="emailItemTemplate">
+            <div *dxTemplate="let item of 'emailTemplate'">
+                <div class="email-wrapper">
+                    <dx-text-box
+                        [value]="item?.emailAddress">
+                   </dx-text-box>
+                </div>
+            </div>
+            <div *dxTemplate="let item of 'emailItemTemplate'">
+                <div class="email-item-wrapper">
+                    <span>{{item?.emailAddress}}</span>          
+                </div>
+            </div>
+            <dx-validator>
+                <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}"></dxi-validation-rule>
+                <dxi-validation-rule type="email" message="{{l('InvalidEmailAddress')}}"></dxi-validation-rule>
+            </dx-validator>
+        </dx-select-box>
+        <dx-select-box #phoneNumber
+            width="300px"
+            placeholder="Phone Number"
+            name="phoneNumber"
+            [showClearButton]="true"
+            [acceptCustomValue]="true"
+            [dataSource]="phones"
+            displayExpr="phoneNumber"
+            valueExpr="phoneNumber"
+            [value]="inviteData.phoneNumber"
+            (onCustomItemCreating)="onCustomItemCreating($event, 'phoneNumber')"
+            (onValueChanged)="onValueChanged($event)"
+            fieldTemplate="phoneTemplate"
+            itemTemplate="phoneItemTemplate">
+            <div *dxTemplate="let item of 'phoneTemplate'">
+                <div class="phone-wrapper">
+                    <dx-text-box
+                        [value]="phoneFormatPipe.transform(item?.phoneNumber)">
+                   </dx-text-box>
+                </div>
+            </div>
+            <div *dxTemplate="let item of 'phoneItemTemplate'">
+                <div class="phone-item-wrapper">
+                    <span>{{phoneFormatPipe.transform(item?.phoneNumber)}}</span>          
+                </div>
+            </div>
+            <dx-validator>
+                <dxi-validation-rule type="required" message="{{l('PhoneValidationError')}}"></dxi-validation-rule>
+                <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
+                <dxi-validation-rule type="pattern" [pattern]="phonePattern"></dxi-validation-rule>
+            </dx-validator>
+        </dx-select-box>
+        <ul class="items-list">
+            <li *ngFor="let role of roles">
+                <dx-check-box text="{{role.displayName}}" (onValueChanged)="inviteRoleUpdate($event, role)"></dx-check-box>
+            </li>
+        </ul>
+        <button class="button-layout button-primary" (click)="inviteUser($event)">{{l('Invite')}}</button>
+    </dx-scroll-view>
 </div>
 <mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="data.userId">
     <mat-tab label="General">
