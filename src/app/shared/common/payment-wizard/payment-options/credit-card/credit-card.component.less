@@ -78,7 +78,28 @@
                     }
                 }
             }
-
+            &.maestro {
+                + .mat-form-field-label-wrapper {
+                    &::after {
+                        background: url('../../../../../../assets/common/images/payments/card-logo/maestro.svg') no-repeat;
+                    }
+                }
+            }
+            &.unionpay {
+                + .mat-form-field-label-wrapper {
+                    &::after {
+                        background: url('../../../../../../assets/common/images/payments/card-logo/unionpay.svg') no-repeat;
+                    }
+                }
+            }
+            &.forbrugsforeningen {
+                + .mat-form-field-label-wrapper {
+                    &::after {
+                        background: url('../../../../../../assets/common/images/payments/card-logo/f-logo.png') 70% 50% no-repeat;
+                        background-size: contain;
+                    }
+                }
+            }
         }
 
         .mat-input-element,
