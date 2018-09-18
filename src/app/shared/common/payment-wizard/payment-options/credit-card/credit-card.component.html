@@ -21,9 +21,7 @@
                     <input matInput
                            placeholder="MM"
                            type="tel"
-                           [pattern]='patterns.monthPattern'
                            formControlName="expirationMonth"
-                           minlength="2"
                            maxlength="2"
                            autocomplete="nope"
                            (keypress)="checkMonthData($event)"
