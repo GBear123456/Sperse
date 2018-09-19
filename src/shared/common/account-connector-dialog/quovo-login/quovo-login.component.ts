@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, Injector } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input, Output, Injector } from '@angular/core';
 import { QuovoHandler, QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -8,6 +8,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
     template: ``
 })
 export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
+    @Input() accountId: any;
     @Output() onClose: EventEmitter<any> = new EventEmitter();
 
     quovoHandler: QuovoHandler;
@@ -28,7 +29,7 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
             if (this.loading) {
                 this.finishLoading(true);
             }
-            this.quovoHandler.open((e) => this.onQuovoHanderClose(e));
+            this.quovoHandler.open((e) => this.onQuovoHanderClose(e), this.accountId);
         } else {
             if (!this.loading) {
                 this.startLoading(true);

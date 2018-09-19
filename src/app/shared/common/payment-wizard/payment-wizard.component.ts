@@ -60,7 +60,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
         if (this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement'))
             this.stepper.next();
         else
-            this.message.info('SubscriptionManagmentPermissionRequired');
+            this.message.info(this.l('SubscriptionManagmentPermissionRequired'));
     }
 
     changePlan(e) {

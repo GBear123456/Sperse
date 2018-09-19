@@ -1,4 +1,4 @@
-<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit()">
+<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()">
     <div class="row">
         <mat-form-field class="col-8">
             <input matInput
@@ -88,7 +88,7 @@
                 (postal_code)="creditCardData.controls.billingZip.setValue($event)"
                 (city)="creditCardData.controls.billingCity.setValue($event)"
                 (setAddress)="setBillingAddress($event)"
-                angularGooglePlace>
+                angularGooglePlace />
             <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">
                 {{ l('BillingAddressValidationMessage') }}
             </mat-error>
@@ -118,7 +118,7 @@
             </mat-error>
         </mat-form-field>
         <mat-form-field class="col-4">
-            <input matInput placeholder="ZIP CODE" type="tel" maxlength="5" formControlName="billingZip">
+            <input matInput placeholder="ZIP CODE" type="tel" maxlength="10" formControlName="billingZip">
             <mat-error *ngIf="creditCardData.controls.billingZip.touched && creditCardData.controls.billingZip.invalid">
                 {{ l('BillingZipValidationMessage') }}
             </mat-error>

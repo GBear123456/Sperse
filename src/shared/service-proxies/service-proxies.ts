@@ -16757,6 +16757,65 @@ export class PaymentServiceProxy {
     }
 
     /**
+     * @contactGroupId (optional) 
+     * @return Success
+     */
+    getPayments(contactGroupId: number | null | undefined): Observable<MonthlyPaymentInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/GetPayments?";
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPayments(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPayments(<any>response_);
+                } catch (e) {
+                    return <Observable<MonthlyPaymentInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MonthlyPaymentInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPayments(response: HttpResponseBase): Observable<MonthlyPaymentInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(MonthlyPaymentInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MonthlyPaymentInfo[]>(<any>null);
+    }
+
+    /**
      * @upgradeEditionId (optional) 
      * @return Success
      */
@@ -47594,6 +47653,50 @@ export class RenamePartnerTypeInput implements IRenamePartnerTypeInput {
 export interface IRenamePartnerTypeInput {
     id: number;
     name: string;
+}
+
+export class MonthlyPaymentInfo implements IMonthlyPaymentInfo {
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    amount!: number | undefined;
+
+    constructor(data?: IMonthlyPaymentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): MonthlyPaymentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new MonthlyPaymentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IMonthlyPaymentInfo {
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    amount: number | undefined;
 }
 
 export class PaymentInfoDto implements IPaymentInfoDto {

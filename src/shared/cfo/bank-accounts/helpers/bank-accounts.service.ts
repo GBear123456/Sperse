@@ -374,13 +374,7 @@ export class BankAccountsService {
 
     /** Check if sync accounts and bank accounts changed */
     accountsChanged = (oldSyncAccounts: any[], newSyncAccounts: any[]) => {
-        const oldSyncAccountsIds = oldSyncAccounts.map(syncAccount => syncAccount.syncAccountId);
-        const newSyncAccountsIds = newSyncAccounts.map(syncAccount => syncAccount.syncAccountId);
-        const accountsIdsCollector = (accountsIds, syncAccount) => accountsIds.concat(syncAccount.bankAccounts);
-        const oldBankAccountsIds = oldSyncAccounts.reduce(accountsIdsCollector, []);
-        const newBankAccountsIds = newSyncAccounts.reduce(accountsIdsCollector, []);
-        return !ArrayHelper.dataChanged(oldSyncAccountsIds, newSyncAccountsIds) &&
-               !ArrayHelper.dataChanged(oldBankAccountsIds, newBankAccountsIds);
+        return !ArrayHelper.dataChanged(oldSyncAccounts, newSyncAccounts);
     }
 
     arrayDistinct = (oldData, newData) => !ArrayHelper.dataChanged(oldData, newData);

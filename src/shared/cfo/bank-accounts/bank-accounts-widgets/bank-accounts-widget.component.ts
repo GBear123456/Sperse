@@ -140,11 +140,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         });
     }
 
-    refreshGrid() {
-        if (this.mainDataGrid)
-            this.mainDataGrid.instance.refresh();
-    }
-
     masterRowExpandChange(e) {
         if (e.isExpanded) {
             this.mainDataGrid.instance.collapseRow(e.key);
@@ -365,7 +360,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this._syncAccountServiceProxy
             .rename(this.instanceType, this.instanceId, this.bankAccountInfo)
             .subscribe(res => {
-                this.refreshGrid();
+                this.reloadDataSource.emit();
                 this.onDataChange.emit();
             });
     }
