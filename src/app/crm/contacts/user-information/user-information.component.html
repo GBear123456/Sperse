@@ -4,6 +4,7 @@
             width="300px"
             placeholder="Email Address"
             name="emailAddress"
+            [disabled]="!isEditAllowed"
             [showClearButton]="true"
             [acceptCustomValue]="true"
             [dataSource]="emails"
@@ -35,6 +36,7 @@
             width="300px"
             placeholder="Phone Number"
             name="phoneNumber"
+            [disabled]="!isEditAllowed"
             [showClearButton]="true"
             [acceptCustomValue]="true"
             [dataSource]="phones"
@@ -65,7 +67,7 @@
         </dx-select-box>
         <ul class="items-list">
             <li *ngFor="let role of roles">
-                <dx-check-box text="{{role.displayName}}" (onValueChanged)="inviteRoleUpdate($event, role)"></dx-check-box>
+                <dx-check-box [disabled]="!isEditAllowed" text="{{role.displayName}}" (onValueChanged)="inviteRoleUpdate($event, role)"></dx-check-box>
             </li>
         </ul>
         <button class="button-layout button-primary" (click)="inviteUser($event)">{{l('Invite')}}</button>
@@ -88,51 +90,29 @@
                         <div class="item-edit-label">{{l("UserName")}}:</div>
                         <div>{{data?.user?.userName}}</div>
                     </div>
-                    <ng-container *ngIf="data && data?.user && !data.user['setRandomPassword']">
-                        <div class="section-item">
-                            <div class="item-edit-label">{{l("Password")}}:</div>
-
-                            <div *ngIf="data && data?.user">
-                                <div *ngIf="!passwordObject.passwordInplaceEdit" class="inplace-edit-view-mode">
-                                    <span [ngClass]="{ 'placeholder': !data.user.password }" (click)="startPasswordEdit()">{{showPassword(data.user.password) || l('EditValuePlaceholder')}}</span>
-                                </div>
-                                <div *ngIf="passwordObject.passwordInplaceEdit" class="inplace-edit-edit-mode">
-                                    <dx-validation-group>
-                                        <dx-text-box [placeholder]="l('EditValuePlaceholder')" [(value)]="passwordObject.value">
-                                            <dx-validator>
-                                                <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
-                                                <dxi-validation-rule type="custom" [validationCallback]="validatePassword"></dxi-validation-rule>
-                                            </dx-validator>
-                                        </dx-text-box>
-                                        <dx-button class="button-update" icon="todo" (onClick)="updatePassword($event)"></dx-button>
-                                        <dx-button class="button-exit" icon="refresh" (onClick)="closePasswordEdit()"></dx-button>
-                                    </dx-validation-group>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-container>
+                    <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{l('PasswordReset')}}</button>                    
+                    <div class="title">
+                        {{l('Options') + ':'}}
+                    </div>
                     <ul *ngIf="data && data?.user" class="items-list">
                         <li>
-                            <dx-check-box [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="update(ACTIVE_FIELD, data.user.isActive)"></dx-check-box>
-                        </li>
-                        <!-- li>
-                            <dx-check-box [(value)]="data.user.shouldChangePasswordOnNextLogin" [text]="l('ShouldChangePasswordOnNextLogin')" (onValueChanged)="update()"></dx-check-box>
-                        </li -->
-                        <li>
-                            <dx-check-box [(value)]="data.user.isTwoFactorEnabled" [text]="l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="l('Active')" (onValueChanged)="update(ACTIVE_FIELD, data.user.isActive)"></dx-check-box>
                         </li>
                         <li>
-                            <dx-check-box [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isTwoFactorEnabled" [text]="l('IsTwoFactorEnabled')" (onValueChanged)="update(TWO_FACTOR_FIELD, data.user.isTwoFactorEnabled)"></dx-check-box>
+                        </li>
+                        <li>
+                            <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isLockoutEnabled" [text]="l('IsLockoutEnabled')" (onValueChanged)="update(LOCKOUT_FIELD, data.user.isLockoutEnabled)"></dx-check-box>
                         </li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <div class="title">
-                        {{l('Roles')}}
+                        {{l('Roles') + ':'}}
                     </div>
                     <ul class="items-list">
                         <li *ngFor="let role of data?.roles">
-                            <dx-check-box [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate(role)"></dx-check-box>
+                            <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate(role)"></dx-check-box>
                         </li>
                     </ul>
                 </div>

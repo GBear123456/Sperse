@@ -50,13 +50,16 @@
         }
 
         .items-list {
-            border-top: 1px solid #e6e2e2;
-            padding-top: 15px;
             margin-top: 5px;
             width: 320px;
             li {
                 padding-bottom: 15px;
             }
+        }
+
+        .reset-password {
+            margin-bottom: 20px;
+            margin-left: 50px;
         }
     }
 
@@ -78,63 +81,6 @@
     .section-item {
         display: flex;
         line-height: 35px;
-    }
-
-    .inplace-edit-view-mode {
-        cursor: pointer;
-        display: inline-block;
-
-        .placeholder {
-            font-style: italic;
-            font-size: 12px;
-            font-weight: 200;
-        }
-    }
-
-    .inplace-edit-edit-mode {
-        height: 35px;
-        display: inline-block;
-
-        /deep/ dx-text-box {
-            display: inline-block;
-
-            input {
-                margin: 0px;
-                padding: 0 0 0 5px;
-                font-size: 15px;
-                font-weight: 300;
-                line-height: 1.67;
-                letter-spacing: 0.3px;
-                text-align: left;
-                font-family: Montserrat;
-            }
-
-            .dx-placeholder {
-                font-size: 14px;
-                font-weight: 400;
-            }
-
-            &.dx-state-focused {
-                .dx-placeholder {
-                    top: -25px;
-                }
-            }
-        }
-
-        /deep/ dx-button {
-            border: none;
-            position: relative;
-            top: -14px;
-            display: inline-block;
-
-            &.button-update i {
-                color: #00aeef;
-            }
-
-            &.button-exit i {
-                color: #f44336;
-            }
-        }
     }
 
     /deep/ .validation-error-list {

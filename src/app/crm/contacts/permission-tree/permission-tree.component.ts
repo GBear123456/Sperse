@@ -23,6 +23,8 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
     public searchEnabled = false;
     public sortTreeDesc = false;
 
+    isEditAllowed = false;
+
     private permissionsData: PermissionTreeEditModel;
     
     constructor(injector: Injector,
@@ -35,6 +37,8 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
             if (this.data.userId = userId)
                 this.loadData();
         });
+
+        this.isEditAllowed = this.isGranted('Pages.Administration.Users.ChangePermissionsAndRoles');
     }
 
     ngOnInit() {        

@@ -1,14 +1,15 @@
 import { Injector, Component, OnInit, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
+import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
     UpdateUserOptionsDto, UpdateUserRoleInput, ContactGroupInfoDto, ContactGroupServiceProxy, PersonContactServiceProxy,
     CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
-import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
 import { DxSelectBoxComponent } from 'devextreme-angular';
+import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
+import { MatDialog } from '@angular/material';
 
 import { finalize } from 'rxjs/operators';
 
@@ -37,6 +38,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     selectedTabIndex = this.GENERAL_TAB_INDEX; 
 
+    isEditAllowed = false;
+    changeRolesAllowed = false;
+
     roles: any = [];
     emails: any = [];
     phones: any = [];
@@ -49,8 +53,6 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     });
    
     showInviteUserForm = false;
-    passwordObject = { passwordInplaceEdit: false, originalValue: '', value: '' };
-    passwordValidator: PasswordComplexityValidator = new PasswordComplexityValidator();
     userData: GetUserForEditOutput = new GetUserForEditOutput();
     selectedOrgUnits: number[] = [];
 
@@ -64,18 +66,10 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         'emailAddress': [{ type: 'email', message: this.l('InvalidEmailAddress') }]
     };
 
-    passwordErrorsMessages = {
-        'requireDigit': this.l('PasswordComplexity_RequireDigit_Hint'),
-        'requiredLength': this.l('PasswordComplexity_RequiredLength_Hint', 6),
-        'requireLowercase': this.l('PasswordComplexity_RequireLowercase_Hint'),
-        'requireNonAlphanumeric': this.l('PasswordComplexity_RequireNonAlphanumeric_Hint'),
-        'requireUppercase': this.l('PasswordComplexity_RequireUppercase_Hint')
-    };
-
     constructor(injector: Injector,
+        public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
         private _userService: UserServiceProxy,
-        private _profileService: ProfileServiceProxy,
         private _contactsService: ContactsService,
         private _contactsServiceProxy: PersonContactServiceProxy,
         private _contactGroupService: ContactGroupServiceProxy,
@@ -98,15 +92,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.roles = res.items;
         });
 
-        this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
-            this.passwordValidator.requireDigit = passwordComplexityResult.setting.requireDigit;
-            this.passwordValidator.requiredLength = passwordComplexityResult.setting.requiredLength;
-            this.passwordValidator.requireLowercase = passwordComplexityResult.setting.requireLowercase;
-            this.passwordValidator.requireNonAlphanumeric = passwordComplexityResult.setting.requireNonAlphanumeric;
-            this.passwordValidator.requireUppercase = passwordComplexityResult.setting.requireUppercase;
-
-            this.passwordErrorsMessages.requiredLength = this.l('PasswordComplexity_RequiredLength_Hint', passwordComplexityResult.setting.requiredLength);
-        });
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.changeRolesAllowed = this.isGranted('Pages.Administration.Users.ChangePermissionsAndRoles');
     }
 
     ngOnInit() {
@@ -168,7 +155,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.inviteData.contactId = this.contactInfoData.contactInfo.primaryContactInfo.id;
                     this._contactsServiceProxy.createUserForContact(this.inviteData)
                         .pipe(finalize(() => this.finishLoading())).subscribe(() => {
-                            this._contactsService.invalidate(); //location.reload();
+                            this._contactsService.invalidate();
                         });
                 }
             }
@@ -176,10 +163,10 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     inviteRoleUpdate(event, item) {
-        let riles = this.inviteData.assignedRoleNames, roleIndex;
+        let roles = this.inviteData.assignedRoleNames, roleIndex;
         if (event.value)
-            riles.push(item.name);
-        else if ((roleIndex = riles.indexOf(item.name)) >= 0)
+            roles.push(item.name);
+        else if ((roleIndex = roles.indexOf(item.name)) >= 0)
             this.inviteData.assignedRoleNames.splice(roleIndex, 1);
     }
 
@@ -205,50 +192,6 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     updateValue(value, fieldName) {
         this.data.user[fieldName] = value;
         this.update(fieldName, value);
-    }
-
-    startPasswordEdit() {
-        this.passwordObject.passwordInplaceEdit = true;
-        this.passwordObject.originalValue = this.data.user.password;
-        this.passwordObject.value = this.data.user.password;
-    }
-
-    updatePassword(event) {
-        if (event.validationGroup.validate().isValid) {
-            this.data.user.password = this.passwordObject.value;
-            this.passwordObject.passwordInplaceEdit = false;
-            this.update();
-        }
-    }
-
-    validatePassword = (e) => {
-        let result = this.passwordValidator.validate(<any>{ value: e.value });
-        e.rule.isValid = true;
-        let message = '';
-
-        if (result) {
-            message = '<ul class="validation-error-list">';
-            Object.keys(result).forEach(prop => {
-                if (result[prop]) {
-                    e.rule.isValid = false;
-                    message = message + '<li>' + this.passwordErrorsMessages[prop] + '</li>';
-                }
-            });
-            message += '</ul>';
-        }
-        e.rule.message = message;
-        return e.rule.isValid;
-    }
-
-    showPassword(password: string): string {
-        if (password)
-            return _.repeat('•', password.length);
-        return null;
-    }
-
-    closePasswordEdit() {
-        this.passwordObject.passwordInplaceEdit = false;
-        this.passwordObject.value = this.data.user.password;
     }
 
     roleUpdate(role) {
@@ -312,5 +255,18 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     onValueChanged($event) {  
         this.inviteData[$event.component.option('name')] = $event.value;
+    }
+
+    resetPasswordDialog(event) { 
+        this.data.user.setRandomPassword = true;
+        this.data.user.shouldChangePasswordOnNextLogin = true;
+        this.data.user.sendActivationEmail = true;
+
+        this.dialog.closeAll();
+        this.dialog.open(ResetPasswordDialog, {
+            data: this.data,
+            hasBackdrop: true
+        });
+        event.stopPropagation();
     }
 }

@@ -228,7 +228,10 @@ button {
         background: darken(#00aeef, 10%);
         cursor: pointer;
     }
-
+    &[disabled] {
+        cursor: default;
+        background-color: #b1b0b3;
+    }
 	  &.menu {
         padding: 0px 50px 0px 30px;
         &:before {
