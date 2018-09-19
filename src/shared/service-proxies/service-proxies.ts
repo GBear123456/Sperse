@@ -47656,7 +47656,8 @@ export interface IRenamePartnerTypeInput {
 }
 
 export class MonthlyPaymentInfo implements IMonthlyPaymentInfo {
-    date!: moment.Moment | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
     constructor(data?: IMonthlyPaymentInfo) {
@@ -47670,7 +47671,8 @@ export class MonthlyPaymentInfo implements IMonthlyPaymentInfo {
 
     init(data?: any) {
         if (data) {
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
     }
@@ -47684,14 +47686,16 @@ export class MonthlyPaymentInfo implements IMonthlyPaymentInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
     }
 }
 
 export interface IMonthlyPaymentInfo {
-    date: moment.Moment | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
     amount: number | undefined;
 }
 
