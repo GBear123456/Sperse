@@ -93,7 +93,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
                 data: {
                     connector: syncAccount.syncTypeId === 'Q' ? AccountConnectors.Quovo : AccountConnectors.Xero,
                     config: {
-                        accountId: syncAccount.syncAccountId
+                        accountId: syncAccount.syncTypeId === 'Q' ? syncAccount.syncRef : syncAccount.syncAccountId,
                     }
                 }
             }};
