@@ -22603,8 +22603,8 @@ export class TenantSubscriptionServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setupSubscriptionWithBankCard(input: SetupSubscriptionWithBankCardInfoDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscriptionWithBankCard";
+    setupSubscription(input: SetupSubscriptionInfoDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscription";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -22619,11 +22619,11 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSetupSubscriptionWithBankCard(response_);
+            return this.processSetupSubscription(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSetupSubscriptionWithBankCard(<any>response_);
+                    return this.processSetupSubscription(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -22632,7 +22632,7 @@ export class TenantSubscriptionServiceProxy {
         }));
     }
 
-    protected processSetupSubscriptionWithBankCard(response: HttpResponseBase): Observable<void> {
+    protected processSetupSubscription(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -52461,56 +52461,9 @@ export interface IPayPalInfoDto {
     payerId: string | undefined;
 }
 
-export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionWithBankCardInfoDto {
-    editionId!: number;
-    frequency!: SetupSubscriptionWithBankCardInfoDtoFrequency;
-    bankCard!: BankCardInfoDto;
-
-    constructor(data?: ISetupSubscriptionWithBankCardInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.bankCard = new BankCardInfoDto();
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.editionId = data["editionId"];
-            this.frequency = data["frequency"];
-            this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : new BankCardInfoDto();
-        }
-    }
-
-    static fromJS(data: any): SetupSubscriptionWithBankCardInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SetupSubscriptionWithBankCardInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["frequency"] = this.frequency;
-        data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISetupSubscriptionWithBankCardInfoDto {
-    editionId: number;
-    frequency: SetupSubscriptionWithBankCardInfoDtoFrequency;
-    bankCard: BankCardInfoDto;
-}
-
 export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
-    editionId!: number | undefined;
-    frequency!: SetupSubscriptionInfoDtoFrequency | undefined;
+    editionId!: number;
+    frequency!: SetupSubscriptionInfoDtoFrequency;
     billingInfo!: PaymentRequestInfoDto | undefined;
 
     constructor(data?: ISetupSubscriptionInfoDto) {
@@ -52547,8 +52500,8 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 }
 
 export interface ISetupSubscriptionInfoDto {
-    editionId: number | undefined;
-    frequency: SetupSubscriptionInfoDtoFrequency | undefined;
+    editionId: number;
+    frequency: SetupSubscriptionInfoDtoFrequency;
     billingInfo: PaymentRequestInfoDto | undefined;
 }
 
@@ -56512,11 +56465,6 @@ export enum PaymentRequestInfoDtoRequestPaymentType {
     Recurring = "Recurring", 
     Charge = "Charge", 
     Capture = "Capture", 
-}
-
-export enum SetupSubscriptionWithBankCardInfoDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
 }
 
 export enum SetupSubscriptionInfoDtoFrequency {
