@@ -13,17 +13,20 @@
                 <validation-messages [formCtrl]="passwordInput"></validation-messages>
             </div>
 
-            <div class="form-group margin-top-20">
-                <label class="m-checkbox">
-                    <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberClient" value="true" />{{l("RememberThisBrowser")}}
-                    <span></span>
-                </label>
+            <div class="form-group margin-top-10 clearfix">
+                <div class="mt-checkbox-list pull-right">
+                    <label class="mt-checkbox mt-checkbox-outline">
+                        <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient"
+                               type="checkbox" name="rememberClient" value="true" />{{l("RememberThisBrowser")}}
+                        <span></span>
+                    </label>
+                </div>
             </div>
 
 
             <div class="m-login__form-action form-actions">
                 <button type="submit" class="submit" [disabled]="!twoFactorForm.form.valid">{{l("Submit")}}</button>
-                <span class="remaining-time-counter">{{l("RemainingTime")}}: {{l("SecondShort{0}", remainingSeconds)}}.</span>
+                <div class="remaining-time-counter">{{l("RemainingTime")}}: {{l("SecondShort{0}", remainingSeconds)}}.</div>
             </div>
         </form>
     </div>

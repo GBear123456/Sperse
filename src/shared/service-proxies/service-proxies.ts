@@ -24499,12 +24499,15 @@ export class UserServiceProxy {
 
     /**
      * @id (optional) 
+     * @includePhoto (optional) 
      * @return Success
      */
-    getUser(id: number | null | undefined): Observable<UserInfoDto> {
+    getUser(id: number | null | undefined, includePhoto: boolean | null | undefined): Observable<UserInfoDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUser?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (includePhoto !== undefined)
+            url_ += "includePhoto=" + encodeURIComponent("" + includePhoto) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -24550,6 +24553,65 @@ export class UserServiceProxy {
             }));
         }
         return _observableOf<UserInfoDto>(<any>null);
+    }
+
+    /**
+     * @includePhotos (optional) 
+     * @return Success
+     */
+    getPrivilegedUsersInfo(includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetPrivilegedUsersInfo?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPrivilegedUsersInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPrivilegedUsersInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPrivilegedUsersInfo(response: HttpResponseBase): Observable<UserInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(UserInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto[]>(<any>null);
     }
 
     /**
@@ -25194,8 +25256,8 @@ export class UserAssignmentServiceProxy {
      * @includePhotos (optional) 
      * @return Success
      */
-    getUsers(includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetUsers?";
+    getPrivilegedUsersInfo(includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetPrivilegedUsersInfo?";
         if (includePhotos !== undefined)
             url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -25210,11 +25272,11 @@ export class UserAssignmentServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUsers(response_);
+            return this.processGetPrivilegedUsersInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetUsers(<any>response_);
+                    return this.processGetPrivilegedUsersInfo(<any>response_);
                 } catch (e) {
                     return <Observable<UserInfoDto[]>><any>_observableThrow(e);
                 }
@@ -25223,7 +25285,7 @@ export class UserAssignmentServiceProxy {
         }));
     }
 
-    protected processGetUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
+    protected processGetPrivilegedUsersInfo(response: HttpResponseBase): Observable<UserInfoDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -54698,6 +54760,7 @@ export class UserInfoDto implements IUserInfoDto {
     id!: number | undefined;
     name!: string | undefined;
     isActive!: boolean | undefined;
+    profilePictureId!: string | undefined;
     profilePicture!: string | undefined;
 
     constructor(data?: IUserInfoDto) {
@@ -54714,6 +54777,7 @@ export class UserInfoDto implements IUserInfoDto {
             this.id = data["id"];
             this.name = data["name"];
             this.isActive = data["isActive"];
+            this.profilePictureId = data["profilePictureId"];
             this.profilePicture = data["profilePicture"];
         }
     }
@@ -54730,6 +54794,7 @@ export class UserInfoDto implements IUserInfoDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isActive"] = this.isActive;
+        data["profilePictureId"] = this.profilePictureId;
         data["profilePicture"] = this.profilePicture;
         return data; 
     }
@@ -54739,6 +54804,7 @@ export interface IUserInfoDto {
     id: number | undefined;
     name: string | undefined;
     isActive: boolean | undefined;
+    profilePictureId: string | undefined;
     profilePicture: string | undefined;
 }
 

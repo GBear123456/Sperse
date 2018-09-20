@@ -30,7 +30,7 @@ export class AssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._userAssignmentService.getUsers(true)
+            return this._userAssignmentService.getPrivilegedUsersInfo(true)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction(users);
