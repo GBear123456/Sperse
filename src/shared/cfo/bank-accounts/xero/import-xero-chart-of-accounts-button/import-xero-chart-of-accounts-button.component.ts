@@ -32,7 +32,6 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
         this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
-                console.log(this.createAccountAvailable);
             });
     }
 
