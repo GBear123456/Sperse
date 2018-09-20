@@ -9,13 +9,13 @@ import { catchError, exhaustMap, map, startWith, withLatestFrom } from 'rxjs/ope
 
 /** Application imports */
 import * as assignedUsersActions from './actions';
-import { UserAssignmentServiceProxy, UserInfoDto } from 'shared/service-proxies/service-proxies';
+import { UserServiceProxy, UserInfoDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
 
 @Injectable()
 export class AssignedUsersStoreEffects {
-    constructor(private _userAssignmentService: UserAssignmentServiceProxy,
+    constructor(private _userService: UserServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -30,7 +30,7 @@ export class AssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._userAssignmentService.getUsers(true)
+            return this._userService.getPrivilegedUsersInfo(true)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction(users);
