@@ -82,7 +82,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     public headlineConfig = {
         names: [this.l('Customers')],
         icon: 'people',
-        onRefresh: this.refreshDataGrid.bind(this),
+        onRefresh: this.invalidate.bind(this),
         buttons: [
             {
                 enabled: true,
@@ -143,12 +143,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
                     if (params['refresh'])
-                        this.refreshDataGrid();
+                        this.invalidate();
             });
-    }
-
-    invalidate() {
-        this.refreshDataGrid();
     }
 
     showColumnChooser() {
@@ -168,11 +164,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.initToolbarConfig();
     }
 
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance) {
-            this.dataGrid.instance.refresh();
+    invalidate() {
+        if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        }
+        super.invalidate();
     }
 
     showCompactRowsHeight() {
@@ -186,10 +181,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: this.refreshDataGrid.bind(this),
+                refreshParent: this.invalidate.bind(this),
                 customerType: ContactGroupType.Client
             }
-        }).afterClosed().subscribe(() => this.refreshDataGrid());
+        }).afterClosed().subscribe(() => this.invalidate());
     }
 
     isClientCFOAvailable(userId) {
@@ -201,6 +196,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (!clientId)
             return;
 
+        this.searchClear = false;
         event.component.cancelEditData();
         this._router.navigate(['app/crm/client', clientId],
             { queryParams: { referrer: 'app/crm/clients'} });
@@ -590,7 +586,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             ContactGroupType.Client,
             status.id,
             () => {
-                this.refreshDataGrid();
+                this.invalidate();
                 this.dataGrid.instance.clearSelection();
             }
         );
@@ -619,11 +615,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     activate() {
+        super.activate();
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
-
-        if (this.searchValue)
-            this.searchValueChange({value: ''});
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -633,12 +627,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.rootComponent.overflowHidden(true);
 
         if (this.dependencyChanged)
-            this.refreshDataGrid();
+            this.invalidate();
 
         this.showHostElement();
     }
 
     deactivate() {
+        super.deactivate();
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();

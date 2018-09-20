@@ -48,9 +48,11 @@ export abstract class AppComponentBase {
     localizationService: AppLocalizationService;
     oDataService: ODataService;
 
+    public searchClear: boolean = true; 
     public searchValue: string;
     public searchColumns: any[];
 
+    private _prevScrollPos: any;
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
     public _exportService: ExportService;
@@ -230,4 +232,28 @@ export abstract class AppComponentBase {
         return this.oDataService.getSearchFilter(this.searchColumns, this.searchValue);
     }
 
+    activate() {
+        if (this.searchValue && this.searchClear) {
+            this.searchValue = '';
+            this.invalidate();
+        } if (this.dataGrid && this.dataGrid.instance) {
+            let scroll = this.dataGrid.instance.getScrollable();
+            if (scroll) {
+                setTimeout(() => {
+                    scroll.update();
+                    if (this._prevScrollPos)
+                        scroll.scrollTo(this._prevScrollPos);
+                }, 200);
+            }
+        }
+        this.searchClear = true;
+    } 
+
+    deactivate() {
+        if (this.dataGrid && this.dataGrid.instance) {
+            let scroll = this.dataGrid.instance.getScrollable();
+            if (scroll)
+                this._prevScrollPos = scroll.scrollOffset();
+        }
+    }
 }

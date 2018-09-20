@@ -111,7 +111,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     public headlineConfig = {
         names: [this.l('Leads')],
         onRefresh: () => {
-            this.refreshDataGrid();
+            this.invalidate();
         },
         icon: 'basket',
         buttons: [
@@ -184,7 +184,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 if ('addNew' == params['action'])
                     setTimeout(() => this.createLead());
                 if (params['refresh'])
-                    this.refreshDataGrid();
+                    this.invalidate();
             });
     }
 
@@ -198,7 +198,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    refreshDataGrid(quiet = false, stageId = undefined) {
+    invalidate(quiet = false, stageId = undefined) {
         setTimeout(() => {
             if (this.showPipeline)
                 this.pipelineComponent.refresh(quiet, stageId);
@@ -207,10 +207,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.setGridDataLoaded();
                 });
         });
-    }
-
-    invalidate() {
-        this.refreshDataGrid(true);
     }
 
     showColumnChooser() {
@@ -659,7 +655,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             closeOnNavigation: false,
             data: {
                 refreshParent: (quite, stageId) => {
-                    this.refreshDataGrid(quite, stageId);
+                    this.invalidate(quite, stageId);
                 },
                 isInLeadMode: true,
                 customerType: ContactGroupType.Client
@@ -692,7 +688,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
             if (this.selectedLeads.length)
                 setTimeout(() => { //!!VP temporary solution for grid refresh
-                    this.refreshDataGrid();
+                    this.invalidate();
                     if (this.dataGrid && this.dataGrid.instance) {
                         this.dataGrid.instance.clearSelection();
                     }
@@ -706,6 +702,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (!leadId || !clientId)
             return;
 
+        this.searchClear = false;
         event.component.cancelEditData();
         this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'],
             { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
@@ -757,7 +754,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._leadService.deleteLeads(selectedIds).subscribe(() => {
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
-            this.refreshDataGrid();
+            this.invalidate();
         });
     }
 
@@ -774,11 +771,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     activate() {
+        super.activate();
+
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
-
-        if (this.searchValue)
-            this.searchValueChange({value: ''});
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -791,6 +787,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
+        super.deactivate();
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
 
