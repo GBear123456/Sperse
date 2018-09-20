@@ -16816,6 +16816,65 @@ export class PaymentServiceProxy {
     }
 
     /**
+     * @contactGroupId (optional) 
+     * @return Success
+     */
+    getPaymentMethods(contactGroupId: number | null | undefined): Observable<PaymentMethodInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/GetPaymentMethods?";
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPaymentMethods(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPaymentMethods(<any>response_);
+                } catch (e) {
+                    return <Observable<PaymentMethodInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PaymentMethodInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPaymentMethods(response: HttpResponseBase): Observable<PaymentMethodInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PaymentMethodInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PaymentMethodInfo[]>(<any>null);
+    }
+
+    /**
      * @upgradeEditionId (optional) 
      * @return Success
      */
@@ -22603,8 +22662,8 @@ export class TenantSubscriptionServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    setupSubscriptionWithBankCard(input: SetupSubscriptionWithBankCardInfoDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscriptionWithBankCard";
+    setupSubscription(input: SetupSubscriptionInfoDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/SetupSubscription";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -22619,11 +22678,11 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSetupSubscriptionWithBankCard(response_);
+            return this.processSetupSubscription(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSetupSubscriptionWithBankCard(<any>response_);
+                    return this.processSetupSubscription(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -22632,7 +22691,7 @@ export class TenantSubscriptionServiceProxy {
         }));
     }
 
-    protected processSetupSubscriptionWithBankCard(response: HttpResponseBase): Observable<void> {
+    protected processSetupSubscription(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -47699,6 +47758,138 @@ export interface IMonthlyPaymentInfo {
     amount: number | undefined;
 }
 
+export class PaymentMethodInfo implements IPaymentMethodInfo {
+    type!: PaymentMethodInfoType | undefined;
+    achCustomerInfo!: ACHCustomerShortInfo | undefined;
+    bankCardInfo!: BankCardShortInfo | undefined;
+
+    constructor(data?: IPaymentMethodInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.type = data["type"];
+            this.achCustomerInfo = data["achCustomerInfo"] ? ACHCustomerShortInfo.fromJS(data["achCustomerInfo"]) : <any>undefined;
+            this.bankCardInfo = data["bankCardInfo"] ? BankCardShortInfo.fromJS(data["bankCardInfo"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PaymentMethodInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentMethodInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["achCustomerInfo"] = this.achCustomerInfo ? this.achCustomerInfo.toJSON() : <any>undefined;
+        data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IPaymentMethodInfo {
+    type: PaymentMethodInfoType | undefined;
+    achCustomerInfo: ACHCustomerShortInfo | undefined;
+    bankCardInfo: BankCardShortInfo | undefined;
+}
+
+export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    customerAcctType!: ACHCustomerShortInfoCustomerAcctType | undefined;
+
+    constructor(data?: IACHCustomerShortInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.customerAcctType = data["customerAcctType"];
+        }
+    }
+
+    static fromJS(data: any): ACHCustomerShortInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ACHCustomerShortInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["customerAcctType"] = this.customerAcctType;
+        return data; 
+    }
+}
+
+export interface IACHCustomerShortInfo {
+    firstName: string | undefined;
+    lastName: string | undefined;
+    customerAcctType: ACHCustomerShortInfoCustomerAcctType | undefined;
+}
+
+export class BankCardShortInfo implements IBankCardShortInfo {
+    cardNumber!: string | undefined;
+    expirationMonth!: string | undefined;
+    expirationYear!: string | undefined;
+
+    constructor(data?: IBankCardShortInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.cardNumber = data["cardNumber"];
+            this.expirationMonth = data["expirationMonth"];
+            this.expirationYear = data["expirationYear"];
+        }
+    }
+
+    static fromJS(data: any): BankCardShortInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankCardShortInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["cardNumber"] = this.cardNumber;
+        data["expirationMonth"] = this.expirationMonth;
+        data["expirationYear"] = this.expirationYear;
+        return data; 
+    }
+}
+
+export interface IBankCardShortInfo {
+    cardNumber: string | undefined;
+    expirationMonth: string | undefined;
+    expirationYear: string | undefined;
+}
+
 export class PaymentInfoDto implements IPaymentInfoDto {
     edition!: EditionSelectDto | undefined;
     additionalPrice!: number | undefined;
@@ -52461,56 +52652,9 @@ export interface IPayPalInfoDto {
     payerId: string | undefined;
 }
 
-export class SetupSubscriptionWithBankCardInfoDto implements ISetupSubscriptionWithBankCardInfoDto {
-    editionId!: number;
-    frequency!: SetupSubscriptionWithBankCardInfoDtoFrequency;
-    bankCard!: BankCardInfoDto;
-
-    constructor(data?: ISetupSubscriptionWithBankCardInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.bankCard = new BankCardInfoDto();
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.editionId = data["editionId"];
-            this.frequency = data["frequency"];
-            this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : new BankCardInfoDto();
-        }
-    }
-
-    static fromJS(data: any): SetupSubscriptionWithBankCardInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SetupSubscriptionWithBankCardInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["frequency"] = this.frequency;
-        data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISetupSubscriptionWithBankCardInfoDto {
-    editionId: number;
-    frequency: SetupSubscriptionWithBankCardInfoDtoFrequency;
-    bankCard: BankCardInfoDto;
-}
-
 export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
-    editionId!: number | undefined;
-    frequency!: SetupSubscriptionInfoDtoFrequency | undefined;
+    editionId!: number;
+    frequency!: SetupSubscriptionInfoDtoFrequency;
     billingInfo!: PaymentRequestInfoDto | undefined;
 
     constructor(data?: ISetupSubscriptionInfoDto) {
@@ -52547,8 +52691,8 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 }
 
 export interface ISetupSubscriptionInfoDto {
-    editionId: number | undefined;
-    frequency: SetupSubscriptionInfoDtoFrequency | undefined;
+    editionId: number;
+    frequency: SetupSubscriptionInfoDtoFrequency;
     billingInfo: PaymentRequestInfoDto | undefined;
 }
 
@@ -56360,6 +56504,17 @@ export enum PackageConfigDtoModule {
     HUB = "HUB", 
 }
 
+export enum PaymentMethodInfoType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+}
+
+export enum ACHCustomerShortInfoCustomerAcctType {
+    _0 = 0, 
+    _1 = 1, 
+}
+
 export class AdditionalData implements IAdditionalData {
     paypal!: { [key: string] : string; } | undefined;
 
@@ -56512,11 +56667,6 @@ export enum PaymentRequestInfoDtoRequestPaymentType {
     Recurring = "Recurring", 
     Charge = "Charge", 
     Capture = "Capture", 
-}
-
-export enum SetupSubscriptionWithBankCardInfoDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
 }
 
 export enum SetupSubscriptionInfoDtoFrequency {

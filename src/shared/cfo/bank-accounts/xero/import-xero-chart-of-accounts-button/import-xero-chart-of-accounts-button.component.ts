@@ -20,6 +20,7 @@ import { AccountConnectors } from '@shared/AppEnums';
 export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onComplete = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
+    createAccountAvailable: boolean;
 
     constructor(
         injector: Injector,
@@ -28,6 +29,10 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
         private dialog: MatDialog
     ) {
         super(injector);
+        this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
+            .subscribe((result) => {
+                this.createAccountAvailable = result;
+            });
     }
 
     ngOnInit(): void {
@@ -35,6 +40,9 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
     }
 
     importChartOfAccount(): void {
+        if (!this.createAccountAvailable)
+            return;
+
         abp.ui.setBusy();
 
         this._syncAccountServiceProxy.getActive(InstanceType[this.instanceType], this.instanceId, 'X')

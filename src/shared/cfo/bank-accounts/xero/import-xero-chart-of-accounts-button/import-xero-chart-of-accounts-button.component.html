@@ -1,7 +1,9 @@
-<div (click)="importChartOfAccount()" class="xero-container">
-    <img src="/assets/common/images/xero.svg" (click)="importChartOfAccount()" class="xero-img" />
-    <div class="import-text">
+<a (click)="importChartOfAccount()"
+   class="xero-container"
+   [ngClass]="{'disabled':!createAccountAvailable}">
+    <img src="/assets/common/images/xero.svg" class="xero-img" />
+    <span class="import-text">
         <p>Import from</p>
         <p>Xero Accounting</p>
-    </div>
-</div>
+    </span>
+</a>
