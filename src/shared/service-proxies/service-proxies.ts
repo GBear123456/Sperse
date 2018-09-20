@@ -25253,6 +25253,65 @@ export class UserAssignmentServiceProxy {
     }
 
     /**
+     * @includePhotos (optional) 
+     * @return Success
+     */
+    getPrivilegedUsersInfo(includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetPrivilegedUsersInfo?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPrivilegedUsersInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPrivilegedUsersInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPrivilegedUsersInfo(response: HttpResponseBase): Observable<UserInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(UserInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto[]>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
