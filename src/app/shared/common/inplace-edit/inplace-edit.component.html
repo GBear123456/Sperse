@@ -6,11 +6,9 @@
     <span [ngClass]="{ 'placeholder': !data?.value }" (click)="setEditModeEnabled(true, $event)">{{data?.displayValue || data?.value || data?.lEditPlaceholder}}</span>
 </div>
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
-    <dx-validation-group>        
-        <dx-text-box [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal" [mask]="mask" [maskInvalidMessage]="maskInvalidMessage">
-            <dx-validator *ngIf="data?.validationRules?.length" [validationRules]="data?.validationRules"></dx-validator>
-        </dx-text-box>
-        <dx-button class="button-update" icon="todo" (onClick)="updateItem($event)"></dx-button>
-        <dx-button class="button-exit" icon="refresh" (onClick)="setEditModeEnabled(false)"></dx-button>
-    </dx-validation-group>
+    <dx-text-box [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal" [mask]="mask" [maskInvalidMessage]="maskInvalidMessage">
+        <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
+    </dx-text-box>
+    <dx-button class="button-update" icon="todo" (onClick)="updateItem($event)"></dx-button>
+    <dx-button class="button-exit" icon="refresh" (onClick)="setEditModeEnabled(false)"></dx-button>
 </div>

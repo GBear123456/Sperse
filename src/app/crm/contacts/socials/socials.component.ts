@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, Injector, Input } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -22,7 +22,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
     styleUrls: ['./socials.component.less'],
     providers: [ DialogService ]
 })
-export class SocialsComponent extends AppComponentBase implements OnInit {
+export class SocialsComponent extends AppComponentBase {
     @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() contactInfo: ContactGroupInfoDto;
 
@@ -90,7 +90,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
             isActive: Boolean(data && data.isActive),
             comment: data && data.comment,
             deleteItem: (event) => {
-                this.deleteLink(data, event, index);
+                this.deleteLink(data.id);
             }
         };
         this.dialog.closeAll();
@@ -141,7 +141,7 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
 
     updateDataField(data, dialogData) {
         if (dialogData.usageTypeId != AppConsts.otherLinkTypeId)
-        dialogData['linkTypeId'] = dialogData.usageTypeId;
+            dialogData['linkTypeId'] = dialogData.usageTypeId;
 
         this._contactLinkService
             [(data ? 'update' : 'create') + 'ContactLink'](
@@ -162,25 +162,40 @@ export class SocialsComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    deleteLink(link, event, index) {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: {
-                title: this.l('DeleteContactHeader', this.l('Link')),
-                message: this.l('DeleteContactMessage', this.l('Link').toLowerCase())
-            }
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                this.dialog.closeAll();
-                this._contactLinkService.deleteContactLink(
-                    this.contactInfoData.contactId, link.id).subscribe(result => {
-                    if (!result)
+    updateLink(link, newValue) {
+        link.url = newValue;
+        this.updateDataField(link, link);
+    }
+
+    deleteLink(id) {
+        this._contactLinkService.deleteContactLink(
+            this.contactInfoData.contactId, id).subscribe(result => {
+            if (!result) {
+                this.contactInfoData.links.every((item, index) => {
+                    if (item.id == id) {
                         this.contactInfoData.links.splice(index, 1);
+                        return false;
+                    }
+                    return true;
                 });
             }
         });
-        event.stopPropagation();
     }
 
-    ngOnInit() {
+    getLinkInplaceEditData(link) {
+        let linkLocalization = this.l('Link');
+        return {
+            id: link.id,
+            value: link.url,
+            validationRules: [
+                {type: 'required', message: this.l('LinkIsRequired')}
+            ],
+            isDeleteEnabled: true,
+            isEditDialogEnabled: true,
+            lEntityName: linkLocalization,
+            lEditPlaceholder: linkLocalization,
+            lDeleteConfirmTitle: this.l('DeleteContactHeader', linkLocalization),
+            lDeleteConfirmMessage: this.l('DeleteContactMessage', linkLocalization.toLowerCase())
+        };
     }
 }

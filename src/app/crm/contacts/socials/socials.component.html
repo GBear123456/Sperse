@@ -13,10 +13,7 @@
   <div class="other-links">
     <ul class="others">
       <li *ngFor="let social of contactInfoData?.links; let i = index" [ngStyle]="{display: social.isSocialNetwork ? 'none': 'block'}">
-        <div *ngIf="isEditAllowed" class="actions"><i class="edit fa fa-pencil" aria-hidden="true" (click)="showEditDialog(social, $event, i)"></i><i class="delete fa fa-times" aria-hidden="true" (click)="deleteLink(social, $event, i)"></i></div>
-        <a href="{{social.url}}" target="_blank">
-          {{social.url}}
-        </a>
+        <inplace-edit [data]="getLinkInplaceEditData(social)" (valueChanged)="updateLink(social, $event)" (openDialog)="showEditDialog(social, $event, i)" (itemDeleted)="deleteLink($event)"></inplace-edit>
       </li>
     </ul>
   </div>
