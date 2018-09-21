@@ -42,4 +42,8 @@ export class UrlHelper {
     static isInstallUrl(url): boolean {
         return url && url.indexOf('app/admin/install') >= 0;
     }
+
+    static isLoginUrl(url): boolean {
+        return url && url.indexOf('account/login') >= 0;
+    }
 }

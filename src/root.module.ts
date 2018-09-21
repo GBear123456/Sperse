@@ -17,7 +17,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
+import { RouteGuard } from '@shared/common/auth/route-guard';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -144,7 +144,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppLocalizationService,
         AppUiCustomizationService,
         AppAuthService,
-        AppRouteGuard,
+        RouteGuard,
         AppSessionService,
         AppHttpConfiguration,
         AppHttpInterceptor,

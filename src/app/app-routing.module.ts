@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { NavigationEnd, RouteConfigLoadEnd, RouteConfigLoadStart, Router, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
-import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
 import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';
 
@@ -11,8 +10,6 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
             {
                 path: '',
                 component: AppComponent,
-                canActivate: [ AppRouteGuard ],
-                canActivateChild: [ AppRouteGuard ],
                 children: [
                     {
                         path: '',
