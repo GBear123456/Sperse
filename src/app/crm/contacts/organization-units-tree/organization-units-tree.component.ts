@@ -21,8 +21,9 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
     public searchEnabled = false;
     public sortTreeDesc = false;
 
-    private userId: number;
+    isEditAllowed = false;
 
+    private userId: number;
     private organizationUnitsData: OrganizationUnitDto[];
 
     constructor(injector: Injector,
@@ -35,6 +36,8 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
             this.userId = userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         });
+
+        this.isEditAllowed = this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
     }
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {

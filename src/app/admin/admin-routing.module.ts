@@ -25,7 +25,7 @@ import { SystemSettingsComponent } from './settings/system-settings.component';
             {
                 path: '',
                 children: [
-                    { path: 'users', component: UsersComponent, data: { permission: 'Pages.Administration.Users' } },
+                    { path: 'users', component: UsersComponent, data: { permission: 'Pages.Administration.Users', reuse: true } },
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Administration.Roles' } },
                     { path: 'auditLogs', component: AuditLogsComponent, data: { permission: 'Pages.Administration.AuditLogs' } },
                     { path: 'maintenance', component: MaintenanceComponent, data: { permission: 'Pages.Administration.Host.Maintenance' } },

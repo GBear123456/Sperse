@@ -65,9 +65,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         if (this.dataEmpty) { 
             clearTimeout(this.openDialogTimeout);
             this.openDialogTimeout = setTimeout(() => {
-                if (!this._appService.subscriptionIsExpiringSoon() 
-                    && !this._appService.subscriptionInGracePeriod()
-                ) this.openDialog();
+                if (this._appService.hasModuleSubscription())
+                    this.openDialog();
             }, 500);
         }
         this.finishLoading(true);

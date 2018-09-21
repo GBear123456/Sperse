@@ -43,6 +43,8 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
+    private orgUnits: any = [];
+
     private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
@@ -88,6 +90,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             this.roles = userResult.roles;
             this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
+            this.orgUnits = userResult.allOrganizationUnits;
             this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
                 allOrganizationUnits: userResult.allOrganizationUnits,
                 selectedOrganizationUnits: userResult.memberedOrganizationUnits
@@ -278,6 +281,17 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.setRandomPassword = false;
         this.sendActivationEmail = true;
         this.user = new UserEditDto();
+        this.photoOriginalData = undefined;
+        this.photoThumbnailData = undefined;
+        this.roles.forEach((role, index) => {
+            role.isAssigned = !index;
+        });
+
+        if (this.orgUnits.length)
+            this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
+                allOrganizationUnits: this.orgUnits,
+                selectedOrganizationUnits: [this.orgUnits[0].code]
+            };
 
         setTimeout(() =>
             this.setComponentToValid(

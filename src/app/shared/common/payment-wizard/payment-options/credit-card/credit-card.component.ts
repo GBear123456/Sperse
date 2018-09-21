@@ -39,9 +39,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     filteredCountries: Observable<Country[]>;
     filteredStates: Observable<CountryStateDto[]>;
     cvvMaxLength = 3;
+    lastYearRegexItem: any;
     patterns = {
-        monthPattern: '^(?:0?[1-9]|1[0-2])$',
-        yearPattern: '^(201[8-9]|202[0-9]|203[0-3])$'
+        yearPattern: `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`
     };
 
     creditCardData = this.formBuilder.group({
@@ -72,7 +72,11 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.getCountries();
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        let maxExpYear = (new Date()).getFullYear() + 15;
+        let stringMaxExpYear = maxExpYear.toString();
+        this.lastYearRegexItem = stringMaxExpYear.slice(0, -1) + '[0-' + stringMaxExpYear[stringMaxExpYear.length - 1] + ']';
+    }
 
     private _filterCountry(name: string): Country[] {
         const filterValue = name.toLowerCase();
@@ -137,10 +141,8 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         let digit = e.key, val = '' + digit;
         if (!e.target.value) {
             if (/^\d$/.test(val) && (val !== '0' && val !== '1')) {
+                this.creditCardData.controls['expirationMonth'].setValue('0' + val);
                 e.preventDefault();
-                setTimeout(function () {
-                    e.target.value = '0' + val;
-                });
             }
         } else {
             if (e.target.value === '0') {
@@ -159,9 +161,9 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         let typedMonth = e.target.value;
         let currentMonth = ('0' + ((new Date()).getMonth() + 1)).slice(-2);
         if (currentMonth > typedMonth)
-            this.patterns.yearPattern = '^(201[8-9]|202[0-9]|203[0-3])$';
+            this.patterns.yearPattern = `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`;
         else
-            this.patterns.yearPattern = '^(2019|202[0-9]|203[0-3])$';
+            this.patterns.yearPattern = `^(2019|202[0-9]|${this.lastYearRegexItem})$`;
     }
 
     onYearFocus(e) {
@@ -207,6 +209,13 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
+
+                this.filteredStates = this.creditCardData.get('billingState').valueChanges
+                    .pipe(
+                        startWith<string | CountryStateDto>(''),
+                        map(value => typeof value === 'string' ? value : value.name),
+                        map(name => name ? this._filterStates(name) : this.states.slice())
+                    );
             });
     }
 

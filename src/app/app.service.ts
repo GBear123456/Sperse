@@ -145,8 +145,7 @@ export class AppService extends AppServiceBase {
     }
 
     switchModule(name: string, params: {}) {
-        if (this.isNotHostTenant()
-            && this.checkModuleExpired(name)
+        if (this.checkModuleExpired(name)
             && !this.subscriptionInGracePeriod(name)
         ) {
             let module = this.getModule();

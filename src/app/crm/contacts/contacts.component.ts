@@ -73,6 +73,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         opened: true
     };
 
+    private params: any;
     private rootComponent: any;
     private paramsSubscribe: any = [];
     private referrerParams;
@@ -125,6 +126,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             if (this.rightPanelSetting.id == RP_USER_INFO_ID)
                 this.rightPanelSetting.opened = Boolean(userId);
         });
+        _contactsService.invalidateSubscribe(() => this.invalidate());
     }
 
     private getCheckPropertyValue(obj, prop, def) {
@@ -136,7 +138,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Contact Information', route: 'contact-information'},
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
-                hidden: !this.permission.isGranted('Pages.Administration.Users'),
+                hidden: !this.permission.isGranted(contact.userId ? 
+                    'Pages.Administration.Users': 'Pages.Administration.Users.Create'),
                 route: 'user-information'
             },
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
@@ -188,13 +191,18 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.partnerTypeId = result.typeId;
     }
 
+    invalidate() {
+        this.loadData(this.params);
+    }
+
     loadData(params) {
         let userId = params['userId'],
             clientId = params['clientId'],
             partnerId = params['partnerId'],
             customerId = clientId || partnerId,
             leadId = params['leadId'];
-
+  
+        this.params = params;
         this._userService['data'] = {
             userId: null, user: null, roles: null
         };

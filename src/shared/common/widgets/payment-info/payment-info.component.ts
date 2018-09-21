@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import {
-    BankCardDto,
+    BankCardInfoDto,
     CountryStateDto
 } from '@shared/service-proxies/service-proxies';
 import { until } from '@node_modules/@types/selenium-webdriver';
@@ -35,7 +35,7 @@ export class PaymentInfoComponent extends AppComponentBase implements OnInit {
     validationGroup: any;
 
     expirationDate: string;
-    bankCard: BankCardDto = BankCardDto.fromJS({});
+    bankCard: BankCardInfoDto = BankCardInfoDto.fromJS({});
     states: CountryStateDto[];
 
     googleAutoComplete: Boolean;

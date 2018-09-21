@@ -1,111 +1,174 @@
 .socials {  
-  h3 {
-    font-size: 12px;
-    line-height: 1.67;
-    letter-spacing: 0.7px;
-    text-align: left;
-    color: #677380;
-    font-weight: 400;
-  }
-
-  .add-contact {
-    color: #00aeef;
-    font-size: 32px;
-    font-weight: 100;
-    float: right;
-    position: relative;
-    bottom: 51px;
-    cursor: pointer;
-    margin: 0px;
-  }
-
-  .social {
-    ul {
-      margin-bottom: 0;
-
-      li {
-        margin: 0px;
-      }
-      a, i {
-        font-size: 34px;
-      }
-      i.fa-facebook {
-        color: #455ea2;
-      }
-      i.fa-twitter {
-        color: #5ca7e2;
-      }
-      i.fa-pinterest {
-        color: #cd0f00;
-      }
-      i.fa-google-plus {
-        color: #dd4b39;
-      }
-      i.fa-linkedin {
-        color: #007bb6;
-      }
+    h3 {
+      font-size: 12px;
+      line-height: 1.67;
+      letter-spacing: 0.7px;
+      text-align: left;
+      color: #677380;
+      font-weight: 400;
     }
-  }
 
-  li {
-    display: inline-block;
-    position: relative;
-    margin: 10px;
-    margin-right: 35px;
-    padding: 5px;
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.67;
-    letter-spacing: 0.3px;
-    text-align: left;
-    color: #424c56;
+    .add-contact {
+      color: #00aeef;
+      font-size: 32px;
+      font-weight: 100;
+      float: right;
+      position: relative;
+      bottom: 51px;
+      cursor: pointer;
+      margin: 0px;
+    }
 
-    .actions  {
-      position: absolute;
-      display: none;
-      right: 18px;
-      top: 4px;
+    .social {
+      ul {
+        margin-bottom: 0;
 
-      i {
-        font-size: 18px;
-        padding: 7px;
-        cursor: pointer;
-      }
-
-      i.edit {
-        color: #00aeef;
-      }
-    
-      i.delete {
-        color: #f44336;
+        li {
+          margin: 0px;
+        }
+        a, i {
+          font-size: 34px;
+        }
+        i.fa-facebook {
+          color: #455ea2;
+        }
+        i.fa-twitter {
+          color: #5ca7e2;
+        }
+        i.fa-pinterest {
+          color: #cd0f00;
+        }
+        i.fa-google-plus {
+          color: #dd4b39;
+        }
+        i.fa-linkedin {
+          color: #007bb6;
+        }
       }
     }
 
-    &:hover {
-      background-color: #F7FAFA;
-
-      .actions {
-        display: block;
-      }      
-    }
-  }
-
-  ul.others {
-    padding-left: 0;
-   
     li {
-      margin-bottom: 10px;
-      display: flex;
-      vertical-align: middle;
-      align-items: center;
+      display: inline-block;
+      position: relative;
+      margin: 10px;
+      margin-right: 35px;
+      padding: 5px;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 2;
+      text-align: left;
+      color: #424c56;
 
-      a {
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 1.67;
-        letter-spacing: 0.3px;
-        color: #424c56;
+      .actions  {
+        position: absolute;
+        display: none;
+        right: 18px;
+        top: 4px;
+
+        i {
+          font-size: 18px;
+          padding: 7px;
+          cursor: pointer;
+        }
+
+        i.edit {
+          color: #00aeef;
+        }
+      
+        i.delete {
+          color: #f44336;
+        }
+      }
+
+      &:hover {
+        .actions {
+          display: block;
+        }      
       }
     }
-  }
+
+    ul.others {
+      padding-left: 0;
+     
+      li {
+        margin-bottom: 10px;
+        display: flex;
+        vertical-align: middle;
+        align-items: center;
+
+        a {
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 1.67;
+          letter-spacing: 0.3px;
+          color: #424c56;
+        }
+      }
+    }
+
+    /deep/ inplace-edit {
+        .inplace-edit-view-mode {
+            width: 100%;
+            cursor: pointer;
+            display: inline-block;
+            &:hover {
+                background-color: #F7FAFA;
+            }
+
+            .placeholder {
+                font-style: italic;
+                font-size: 12px;
+                font-weight: 200;
+            }
+        }
+
+        .inplace-edit-edit-mode {
+            width: 100%;
+            height: 35px;
+            display: inline-block;
+
+            /deep/ dx-text-box {
+                width: 70%;
+                min-width: 230px;
+                display: inline-block;
+
+                input {
+                    margin: 0px;
+                    padding: 0 0 0 5px;
+                    font-size: 15px;
+                    font-weight: 300;
+                    line-height: 1.67;
+                    letter-spacing: 0.3px;
+                    text-align: left;
+                    font-family: Montserrat;
+                }
+
+                .dx-placeholder {
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -25px;
+                    }
+                }
+            }
+
+            /deep/ dx-button {
+                border: none;
+                position: relative;
+                top: -14px;
+                display: inline-block;
+
+                &.button-update i {
+                    color: #00aeef;
+                }
+
+                &.button-exit i {
+                    color: #f44336;
+                }
+            }
+        }
+    }
 }

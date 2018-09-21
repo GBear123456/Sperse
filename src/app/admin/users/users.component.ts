@@ -49,7 +49,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     public headlineConfig = {
         names: [this.l('Users')],
         icon: 'people',
-        onRefresh: this.refreshDataGrid.bind(this),
+        onRefresh: this.invalidate.bind(this),
         buttons: [
             {
                 enabled: this.isGranted('Pages.Administration.Users.Create'),
@@ -80,9 +80,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         public _impersonationService: ImpersonationService
     ) {
         super(injector);
-
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
 
         this.actionMenuItems = [
             {
@@ -129,9 +126,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             }
         ].filter(Boolean);
 
-        this.initFilterConfig();
-        this.initToolbarConfig();
-
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
@@ -152,6 +146,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 });
             }
         });
+
+        this.activate();
     }
 
     initToolbarConfig() {
@@ -258,6 +254,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     openUserDetails(userId) {
+        this.searchClear = false;
         this._router.navigate(['app/admin/user', userId],
             { queryParams: { referrer: 'app/admin/users'} });
     }
@@ -316,7 +313,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             }
 
             this.initToolbarConfig();
-            this.refreshDataGrid();
+            this.invalidate();
         });
     }
 
@@ -330,7 +327,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
-        this.refreshDataGrid();
+        this.invalidate();
     }
 
     unlockUser(record): void {
@@ -339,11 +336,11 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    refreshDataGrid(quietly = false) {
-        if (this.dataGrid && this.dataGrid.instance) {
+    invalidate(quietly = false) {
+        if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.option('loadPanel.enabled', !quietly);
-            this.dataGrid.instance.refresh();
-        }
+
+        super.invalidate();
     }
 
     exportToExcel(): void {
@@ -358,8 +355,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: { refreshParent: this.refreshDataGrid.bind(this) }
-        }).afterClosed().subscribe(() => this.refreshDataGrid());
+            data: { refreshParent: this.invalidate.bind(this) }
+        }).afterClosed().subscribe(() => this.invalidate());
     }
 
     deleteUser(user: UserListDto): void {
@@ -375,7 +372,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 if (isConfirmed) {
                     this._userServiceProxy.deleteUser(user.id)
                         .subscribe(() => {
-                            this.refreshDataGrid();
+                            this.invalidate();
                             this.notify.success(this.l('SuccessfullyDeleted'));
                         });
                 }
@@ -394,11 +391,32 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.rootComponent.overflowHidden();
+        this.deactivate();
+    }
+
+    activate() {
+        super.activate();
+
+        this.initFilterConfig();
+        this.initToolbarConfig();
+
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+
+        this.showHostElement();
+    }
+
+    deactivate() {
+        super.deactivate();
+
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
+
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
+
+       this.hideHostElement();
     }
 
     onContentReady(event) {

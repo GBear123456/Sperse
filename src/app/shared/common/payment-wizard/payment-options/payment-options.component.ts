@@ -6,12 +6,10 @@ import { Step } from '@app/shared/common/payment-wizard/models/step.model';
 import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info';
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
-    ACHCustomerDto,
+    ACHCustomerInfoDto,
     PayPalDto,
     PaymentRequestInfoDtoRequestPaymentType,
-    SetupSubscriptionWithBankCardInfoDto,
-    SetupSubscriptionWithBankCardInfoDtoFrequency,
-    BankCardDto,
+    BankCardInfoDto,
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
     SetupSubscriptionInfoDto,
@@ -89,16 +87,23 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
-                const paymentInfo = PaymentRequestInfoDto.fromJS({
-                    requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
-                    achCustomer: ACHCustomerDto.fromJS({
-                        customerRoutingNo: eCheckData.routingNumber,
-                        customerAcctNo: eCheckData.bankAccountNumber,
-                        memo: eCheckData.paymentDescription
+                let paymentInfo = SetupSubscriptionInfoDto.fromJS({
+                    editionId: this.plan.selectedEditionId,
+                    frequency: this.plan.billingPeriod == BillingPeriod.Monthly
+                        ? SetupSubscriptionInfoDtoFrequency._30
+                        : SetupSubscriptionInfoDtoFrequency._365,
+                    billingInfo: PaymentRequestInfoDto.fromJS({
+                        requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
+                        achCustomer: ACHCustomerInfoDto.fromJS({
+                            customerRoutingNo: eCheckData.routingNumber,
+                            customerAcctNo: eCheckData.bankAccountNumber,
+                            memo: eCheckData.paymentDescription // this property does not exist !!!
+                        })
                     })
                 });
+
                 /** Start submitting data and change status in a case of error or success */
-                this.tenantSubscriptionServiceProxy.addPaymentInfo(paymentInfo).subscribe(
+                this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo).subscribe(
                     res => {
                         this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
                     },
@@ -113,28 +118,30 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
-                const cardPaymentInfo = SetupSubscriptionWithBankCardInfoDto.fromJS({
-                    requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
+                const cardPaymentInfo = SetupSubscriptionInfoDto.fromJS({
                     editionId: this.plan.selectedEditionId,
                     frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                        ? SetupSubscriptionWithBankCardInfoDtoFrequency._30
-                        : SetupSubscriptionWithBankCardInfoDtoFrequency._365,
-                    bankCard: BankCardDto.fromJS({
-                        holderName: creditCardData.holderName,
-                        cardNumber: creditCardData.cardNumber.replace(/-|\s/g, ''),
-                        expirationMonth: creditCardData.expirationMonth,
-                        expirationYear: creditCardData.expirationYear,
-                        cvv: creditCardData.cvv,
-                        billingAddress: creditCardData.billingAddress,
-                        billingZip: creditCardData.billingZip,
-                        billingCity: creditCardData.billingCity,
-                        billingStateCode: creditCardData.billingStateCode,
-                        billingState: creditCardData.billingState['name'],
-                        billingCountryCode: creditCardData.billingCountryCode,
-                        billingCountry: creditCardData.billingCountry['name'],
+                        ? SetupSubscriptionInfoDtoFrequency._30
+                        : SetupSubscriptionInfoDtoFrequency._365,
+                    billingInfo: PaymentRequestInfoDto.fromJS({
+                        requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
+                        bankCard: BankCardInfoDto.fromJS({
+                            holderName: creditCardData.holderName,
+                            cardNumber: creditCardData.cardNumber.replace(/-|\s/g, ''),
+                            expirationMonth: creditCardData.expirationMonth,
+                            expirationYear: creditCardData.expirationYear,
+                            cvv: creditCardData.cvv,
+                            billingAddress: creditCardData.billingAddress,
+                            billingZip: creditCardData.billingZip,
+                            billingCity: creditCardData.billingCity,
+                            billingStateCode: creditCardData.billingStateCode,
+                            billingState: creditCardData.billingState['name'],
+                            billingCountryCode: creditCardData.billingCountryCode,
+                            billingCountry: creditCardData.billingCountry['name'],
+                        })
                     })
                 });
-                this.tenantSubscriptionServiceProxy.setupSubscriptionWithBankCard(cardPaymentInfo).subscribe(
+                this.tenantSubscriptionServiceProxy.setupSubscription(cardPaymentInfo).subscribe(
                     res => { this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed }); },
                     err => {
                         this.appHttpConfiguration.avoidErrorHandling = false;

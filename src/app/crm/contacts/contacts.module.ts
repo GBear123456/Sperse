@@ -41,6 +41,7 @@ import { RequiredDocumentsComponent } from './required-documents/required-docume
 import { VerificationChecklistComponent } from './verification-checklist/verification-checklist.component';
 import { ContactInformationComponent } from './contact-information/contact-information.component';
 import { UserInformationComponent } from './user-information/user-information.component';
+import { ResetPasswordDialog } from './user-information/reset-password-dialog/reset-password-dialog.component';
 import { LoginAttempsComponent } from './login-attemps/login-attemps.component';
 import { LeadInformationComponent } from './lead-information/lead-information.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
@@ -71,6 +72,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     EditContactDialog,
     EditAddressDialog,
     ContactsComponent,
+    ResetPasswordDialog,
     DetailsHeaderComponent,
     ClientScoresComponent,
     SocialsComponent,
@@ -147,6 +149,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
   entryComponents: [
     EditContactDialog,
     EditAddressDialog,
+    ResetPasswordDialog,
     OrganizationDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,

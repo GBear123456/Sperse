@@ -258,13 +258,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             );
             dataSource.sort({getter: 'Id', desc: true});
             dataSource.load().done((leads) => {              
-                if (leads.length)
+                if (leads.length) {
                     stage['leads'] = (page && oneStageOnly ? _.uniqBy(
                         (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
-                            stage['lastLeadId'] = Math.min(stage['lastLeadId'] || Infinity, lead['Id']);
+                            stage['lastLeadId'] = Math.min((page ? stage['lastLeadId']: undefined) || Infinity, lead['Id']);
                             return lead;
                         });
-                else  {
+                    stage['full'] = (stage['leads'].length >= stage['total']);
+                } else  {
                     if (!page)
                         stage['leads'] = [];
                     stage['total'] = stage['leads'].length || 0;

@@ -93,7 +93,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     public headlineConfig = {
         names: [this.l('Partners')],
         icon: 'people',
-        onRefresh: this.refreshDataGrid.bind(this),
+        onRefresh: this.invalidate.bind(this),
         buttons: [
             {
                 enabled: true,
@@ -158,12 +158,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createPartner());
                     if (params['refresh'])
-                        this.refreshDataGrid();
+                        this.invalidate();
             });
-    }
-
-    invalidate() {
-        this.refreshDataGrid();
     }
 
     showColumnChooser() {
@@ -183,11 +179,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.initToolbarConfig();
     }
 
-    refreshDataGrid() {
-        if (this.dataGrid && this.dataGrid.instance) {
-            this.dataGrid.instance.refresh();
+    invalidate() {
+        if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        }
+        super.invalidate();
     }
 
     showCompactRowsHeight() {
@@ -201,10 +196,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: this.refreshDataGrid.bind(this),
+                refreshParent: this.invalidate.bind(this),
                 customerType: ContactGroupType.Partner
             }
-        }).afterClosed().subscribe(() => this.refreshDataGrid());
+        }).afterClosed().subscribe(() => this.invalidate());
     }
 
     isPartnerCFOAvailable(userId) {
@@ -216,6 +211,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (!partnerId)
             return;
 
+        this.searchClear = false;
         event.component.cancelEditData();
         this._router.navigate(['app/crm/partner', partnerId],
             { queryParams: { referrer: 'app/crm/partners'} });
@@ -629,7 +625,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             ContactGroupType.Partner,
             status.id,
             () => {
-                this.refreshDataGrid();
+                this.invalidate();
                 this.dataGrid.instance.clearSelection();
             }
         );
@@ -641,7 +637,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             partnerIds: selectedIds,
             typeId: $event.id
         })).subscribe(() => {
-            this.refreshDataGrid();
+            this.invalidate();
             this.dataGrid.instance.clearSelection();
         });
     }
@@ -680,10 +676,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     activate() {
+        super.activate();
         this._filtersService.localizationSourceName = this.localizationSourceName;
-
-        if (this.searchValue)
-            this.searchValueChange({value: ''});
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -692,12 +686,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.rootComponent.overflowHidden(true);
 
         if (this.dependencyChanged)
-            this.refreshDataGrid();
+            this.invalidate();
 
         this.showHostElement();
     }
 
     deactivate() {
+        super.deactivate();
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();
@@ -705,7 +700,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
-        this.hideHostElement();
+        this.hideHostElement();        
     }
 
     onShowingPopup(e) {

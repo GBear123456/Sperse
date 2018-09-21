@@ -43,6 +43,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     isEditAllowed = false;
 
+    private _clickTimeout;
+    private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
 
@@ -207,19 +209,26 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     inPlaceEdit(address, event, index) {
-        if (!this.isEditAllowed || !window['google'])
-            return this.showDialog(address, event, index);
+        this._clickCounter++;
+        clearTimeout(this._clickTimeout);
+        this._clickTimeout = setTimeout(() => {
+            if (this.isEditAllowed && this._clickCounter > 1) {
+                if (!window['google'])
+                    return this.showDialog(address, event, index);
 
-        if (!this._isInPlaceEditAllowed)
-            return;
+                if (!this._isInPlaceEditAllowed)
+                    return;
 
-        address.inplaceEdit = true;
-        address.autoComplete = this.aggregateAddress(address);
+                address.inplaceEdit = true;
+                address.autoComplete = this.aggregateAddress(address);
 
-        if (this._itemInEditMode && this._itemInEditMode != address)
-            this._itemInEditMode.inplaceEdit = false;
+                if (this._itemInEditMode && this._itemInEditMode != address)
+                    this._itemInEditMode.inplaceEdit = false;
 
-        this._itemInEditMode = address;
+                this._itemInEditMode = address;
+            } else 
+                this.showDialog(address, event, index);
+        }, 250);
 
         event.stopPropagation();
     }

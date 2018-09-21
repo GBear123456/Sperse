@@ -1,6 +1,7 @@
 <div [hidden]="!data.userId">
     <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
     <dx-tree-view dataStructure="plain"
+                  [disabled]="!isEditAllowed"
                   [dataSource]="permissionsDataSource"
                   parentIdExpr="parentName"
                   keyExpr="name"
