@@ -15541,7 +15541,7 @@ export class OrganizationContactServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getOrganizations(searchString: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfoDto[]> {
+    getOrganizations(searchString: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizations?";
         if (searchString !== undefined)
             url_ += "searchString=" + encodeURIComponent("" + searchString) + "&"; 
@@ -15565,14 +15565,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetOrganizations(<any>response_);
                 } catch (e) {
-                    return <Observable<OrganizationShortInfoDto[]>><any>_observableThrow(e);
+                    return <Observable<OrganizationShortInfo[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<OrganizationShortInfoDto[]>><any>_observableThrow(response_);
+                return <Observable<OrganizationShortInfo[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetOrganizations(response: HttpResponseBase): Observable<OrganizationShortInfoDto[]> {
+    protected processGetOrganizations(response: HttpResponseBase): Observable<OrganizationShortInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15586,7 +15586,7 @@ export class OrganizationContactServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(OrganizationShortInfoDto.fromJS(item));
+                    result200.push(OrganizationShortInfo.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -15595,7 +15595,7 @@ export class OrganizationContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<OrganizationShortInfoDto[]>(<any>null);
+        return _observableOf<OrganizationShortInfo[]>(<any>null);
     }
 
     /**
@@ -45301,6 +45301,7 @@ export interface ISubmitMemberInfoResultDto {
 export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorizeRequestDto {
     registrationId!: string;
     packageId!: number | undefined;
+    paymentInfoType!: MemberPaymentAuthorizeRequestDtoPaymentInfoType | undefined;
     bankCard!: BankCardDto | undefined;
     achCustomer!: ACHCustomerDto | undefined;
     payPal!: PayPalDto | undefined;
@@ -45318,6 +45319,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
         if (data) {
             this.registrationId = data["registrationId"];
             this.packageId = data["packageId"];
+            this.paymentInfoType = data["paymentInfoType"];
             this.bankCard = data["bankCard"] ? BankCardDto.fromJS(data["bankCard"]) : <any>undefined;
             this.achCustomer = data["achCustomer"] ? ACHCustomerDto.fromJS(data["achCustomer"]) : <any>undefined;
             this.payPal = data["payPal"] ? PayPalDto.fromJS(data["payPal"]) : <any>undefined;
@@ -45335,6 +45337,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
         data = typeof data === 'object' ? data : {};
         data["registrationId"] = this.registrationId;
         data["packageId"] = this.packageId;
+        data["paymentInfoType"] = this.paymentInfoType;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
         data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
         data["payPal"] = this.payPal ? this.payPal.toJSON() : <any>undefined;
@@ -45345,6 +45348,7 @@ export class MemberPaymentAuthorizeRequestDto implements IMemberPaymentAuthorize
 export interface IMemberPaymentAuthorizeRequestDto {
     registrationId: string;
     packageId: number | undefined;
+    paymentInfoType: MemberPaymentAuthorizeRequestDtoPaymentInfoType | undefined;
     bankCard: BankCardDto | undefined;
     achCustomer: ACHCustomerDto | undefined;
     payPal: PayPalDto | undefined;
@@ -46590,11 +46594,11 @@ export interface IContactInfoBaseDto {
     comment: string | undefined;
 }
 
-export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
+export class OrganizationShortInfo implements IOrganizationShortInfo {
     id!: number | undefined;
     name!: string | undefined;
 
-    constructor(data?: IOrganizationShortInfoDto) {
+    constructor(data?: IOrganizationShortInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -46610,9 +46614,9 @@ export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
         }
     }
 
-    static fromJS(data: any): OrganizationShortInfoDto {
+    static fromJS(data: any): OrganizationShortInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new OrganizationShortInfoDto();
+        let result = new OrganizationShortInfo();
         result.init(data);
         return result;
     }
@@ -46625,7 +46629,7 @@ export class OrganizationShortInfoDto implements IOrganizationShortInfoDto {
     }
 }
 
-export interface IOrganizationShortInfoDto {
+export interface IOrganizationShortInfo {
     id: number | undefined;
     name: string | undefined;
 }
@@ -52573,6 +52577,7 @@ export interface IAddTenantSslCertificateInput {
 
 export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
     requestPaymentType!: PaymentRequestInfoDtoRequestPaymentType | undefined;
+    paymentInfoType!: PaymentRequestInfoDtoPaymentInfoType | undefined;
     bankCard!: BankCardInfoDto | undefined;
     achCustomer!: ACHCustomerInfoDto | undefined;
     payPal!: PayPalInfoDto | undefined;
@@ -52589,6 +52594,7 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
     init(data?: any) {
         if (data) {
             this.requestPaymentType = data["requestPaymentType"];
+            this.paymentInfoType = data["paymentInfoType"];
             this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : <any>undefined;
             this.achCustomer = data["achCustomer"] ? ACHCustomerInfoDto.fromJS(data["achCustomer"]) : <any>undefined;
             this.payPal = data["payPal"] ? PayPalInfoDto.fromJS(data["payPal"]) : <any>undefined;
@@ -52605,6 +52611,7 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["requestPaymentType"] = this.requestPaymentType;
+        data["paymentInfoType"] = this.paymentInfoType;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
         data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
         data["payPal"] = this.payPal ? this.payPal.toJSON() : <any>undefined;
@@ -52614,6 +52621,7 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
 
 export interface IPaymentRequestInfoDto {
     requestPaymentType: PaymentRequestInfoDtoRequestPaymentType | undefined;
+    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType | undefined;
     bankCard: BankCardInfoDto | undefined;
     achCustomer: ACHCustomerInfoDto | undefined;
     payPal: PayPalInfoDto | undefined;
@@ -56605,6 +56613,12 @@ export enum MemberInfoDtoGender {
     _1 = 1, 
 }
 
+export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
+    BankCard = "BankCard", 
+    ACH = "ACH", 
+    PayPal = "PayPal", 
+}
+
 export enum RegisterMemberRequestTenantHostType {
     PlatformApi = "PlatformApi", 
     PlatformUi = "PlatformUi", 
@@ -56636,9 +56650,9 @@ export enum PackageConfigDtoModule {
 }
 
 export enum PaymentMethodInfoType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
+    BankCard = "BankCard", 
+    ACH = "ACH", 
+    PayPal = "PayPal", 
 }
 
 export enum ACHCustomerShortInfoCustomerAcctType {
@@ -56798,6 +56812,12 @@ export enum PaymentRequestInfoDtoRequestPaymentType {
     Recurring = "Recurring", 
     Charge = "Charge", 
     Capture = "Capture", 
+}
+
+export enum PaymentRequestInfoDtoPaymentInfoType {
+    BankCard = "BankCard", 
+    ACH = "ACH", 
+    PayPal = "PayPal", 
 }
 
 export enum SetupSubscriptionInfoDtoFrequency {

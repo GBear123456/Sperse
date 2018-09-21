@@ -12,7 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { LinkType, LinkUsageType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
-import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
+import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfo, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
 
 import { finalize } from 'rxjs/operators';
 
@@ -34,7 +34,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     private readonly ORGANIZATIONS_TOP_COUNT = 20;
 
     public contactEmploymentInfo: any = {};
-    private organizations: OrganizationShortInfoDto[];
+    private organizations: OrganizationShortInfo[];
     private organizationAddress: ContactAddressDto;
     private organizationWebsiteUrl: string;
     private organizationPhoneNumber: string;
@@ -170,7 +170,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             this._originalData[orgNameField] = contactEmploymentData[orgNameField];
             this._originalData[orgIdField] = contactEmploymentData[orgIdField];
 
-            this.initializeOrganizationList().then((res: OrganizationShortInfoDto[]) => {
+            this.initializeOrganizationList().then((res: OrganizationShortInfo[]) => {
                 this.organizations = res;
             });
         }
@@ -311,7 +311,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         this._lookupTimeout = setTimeout(() => {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.l('LookingForItems'));
-            this.initializeOrganizationList(search).then((res: OrganizationShortInfoDto[]) => {
+            this.initializeOrganizationList(search).then((res: OrganizationShortInfo[]) => {
                 if (search == this._latestSearchPhrase) {
                     this.organizations = res;
                     $event.component.option('opened', true);

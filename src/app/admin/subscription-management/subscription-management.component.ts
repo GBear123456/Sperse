@@ -12,7 +12,8 @@ import {
     TenantLoginInfoDto,
     UserLoginInfoDto,
     TenantSubscriptionServiceProxy,
-    PaymentRequestInfoDto
+    PaymentRequestInfoDto,
+    PaymentRequestInfoDtoPaymentInfoType
 } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
@@ -121,6 +122,7 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
         bankCard.holderName = this.appSession.user.name + ' ' + this.appSession.user.surname;
 
         let paymentRequest = new PaymentRequestInfoDto();
+        paymentRequest.paymentInfoType = PaymentRequestInfoDtoPaymentInfoType.BankCard;
         paymentRequest.bankCard = bankCard;
 
         this.startLoading(true);
