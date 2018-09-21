@@ -12679,6 +12679,65 @@ export class ImportServiceProxy {
     }
 
     /**
+     * @inputFieldNames (optional) 
+     * @return Success
+     */
+    getMappedFields(inputFieldNames: string[] | null | undefined): Observable<ImportFieldInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Import/GetMappedFields?";
+        if (inputFieldNames !== undefined)
+            inputFieldNames && inputFieldNames.forEach(item => { url_ += "inputFieldNames=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMappedFields(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMappedFields(<any>response_);
+                } catch (e) {
+                    return <Observable<ImportFieldInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ImportFieldInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMappedFields(response: HttpResponseBase): Observable<ImportFieldInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ImportFieldInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ImportFieldInfoDto[]>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -41676,7 +41735,7 @@ export class ImportInput implements IImportInput {
     items!: ImportItemInput[] | undefined;
     lists!: ContactGroupListInput[] | undefined;
     tags!: ContactGroupTagInput[] | undefined;
-    fields!: ImportFieldInput[] | undefined;
+    fields!: ImportFieldInfoDto[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     starId!: number | undefined;
@@ -41717,7 +41776,7 @@ export class ImportInput implements IImportInput {
             if (data["fields"] && data["fields"].constructor === Array) {
                 this.fields = [];
                 for (let item of data["fields"])
-                    this.fields.push(ImportFieldInput.fromJS(item));
+                    this.fields.push(ImportFieldInfoDto.fromJS(item));
             }
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
@@ -41779,7 +41838,7 @@ export interface IImportInput {
     items: ImportItemInput[] | undefined;
     lists: ContactGroupListInput[] | undefined;
     tags: ContactGroupTagInput[] | undefined;
-    fields: ImportFieldInput[] | undefined;
+    fields: ImportFieldInfoDto[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     starId: number | undefined;
@@ -41880,11 +41939,11 @@ export interface IImportItemInput {
     utmContent: string | undefined;
 }
 
-export class ImportFieldInput implements IImportFieldInput {
+export class ImportFieldInfoDto implements IImportFieldInfoDto {
     inputFieldName!: string;
     outputFieldName!: string;
 
-    constructor(data?: IImportFieldInput) {
+    constructor(data?: IImportFieldInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -41900,9 +41959,9 @@ export class ImportFieldInput implements IImportFieldInput {
         }
     }
 
-    static fromJS(data: any): ImportFieldInput {
+    static fromJS(data: any): ImportFieldInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ImportFieldInput();
+        let result = new ImportFieldInfoDto();
         result.init(data);
         return result;
     }
@@ -41915,7 +41974,7 @@ export class ImportFieldInput implements IImportFieldInput {
     }
 }
 
-export interface IImportFieldInput {
+export interface IImportFieldInfoDto {
     inputFieldName: string;
     outputFieldName: string;
 }
