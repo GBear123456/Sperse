@@ -14,6 +14,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactEmploymentServiceProxy, OrganizationContactServiceProxy, OrganizationShortInfoDto, UpdateContactEmploymentInput, ContactAddressDto, ContactInfoBaseDto } from '@shared/service-proxies/service-proxies';
 
+import { finalize } from 'rxjs/operators';
+
 @Component({
     selector: 'employment',
     templateUrl: './employment.component.html',
@@ -28,6 +30,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     private get contactId() {
         return this._contactInfoBehaviorSubject.getValue();
     }
+
+    private readonly ORGANIZATIONS_TOP_COUNT = 20;
 
     public contactEmploymentInfo: any = {};
     private organizations: OrganizationShortInfoDto[];
@@ -48,6 +52,8 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     private _selectedOrgId: number;
 
     private _isInPlaceEditAllowed = true;
+    private _latestSearchPhrase = '';
+    private _lookupTimeout;
 
     constructor(
         injector: Injector,
@@ -60,39 +66,65 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
+        if (!this._contactEmploymentService['data'])
+            this._contactEmploymentService['data'] = {};
+
+        if (!this._organizationContactServiceProxy['data'])
+            this._organizationContactServiceProxy['data'] = {};
+
         this.initializeEmploymentInfo();
-        this.initializeOrganizationList();
     }
 
     initializeEmploymentInfo() {
-        this._contactInfoBehaviorSubject
-        .subscribe(r => {
+        this._contactInfoBehaviorSubject.subscribe(r => {
             let contactId = this.contactId;
             if (contactId) {
-                this._contactEmploymentService.get(contactId).subscribe(response => {
-                    this.contactEmploymentInfo = response.contactEmploymentInfo || {};
-                    if (this.contactEmploymentInfo) {
-                        if (this.isEditOrgDetailsAllowed = Boolean(this.contactEmploymentInfo['orgId']))
-                            this.setOrganizationContactInfo(this.contactEmploymentInfo.orgId);
-                    }
-                });
+                if (this._contactEmploymentService['data'] && this._contactEmploymentService['data'].id == contactId) {
+                    this.contactEmploymentInfo = this._contactEmploymentService['data'].contactEmploymentInfo;
+                    if (this.isEditOrgDetailsAllowed = Boolean(this.contactEmploymentInfo['orgId']))
+                        this.loadOrganizationContactInfo(this.contactEmploymentInfo.orgId);                    
+                } else {
+                    this.startLoading();
+                    this._contactEmploymentService.get(contactId).pipe(finalize(() => this.finishLoading()))
+                        .subscribe(response => {
+                            this._contactEmploymentService['data'].id = contactId;
+                            this._contactEmploymentService['data'].contactEmploymentInfo = response.contactEmploymentInfo;
+
+                            this.contactEmploymentInfo = response.contactEmploymentInfo || {};
+                            if (this.isEditOrgDetailsAllowed = Boolean(this.contactEmploymentInfo['orgId']))
+                                this.loadOrganizationContactInfo(this.contactEmploymentInfo.orgId);
+                        }
+                    );
+                }
             }
         });
     }
 
-    initializeOrganizationList() {
-        this._organizationContactServiceProxy.getOrganizations().subscribe(response => {
-            this.organizations = response;
+    initializeOrganizationList(searchString = '') {
+        return new Promise((resolve, reject) => {
+            this._organizationContactServiceProxy.getOrganizations(searchString, 
+                this.ORGANIZATIONS_TOP_COUNT).subscribe(response => {
+                    resolve(response);
+                }
+            );
         });
     }
 
-    setOrganizationContactInfo(orgId: number) {
-        this._organizationContactServiceProxy.getOrganizationContactInfo(orgId).subscribe(response => {
-            this.organizationAddress = this.getOrganizationPrimaryAddress(response);
-            this.organizationWebsiteUrl = this.getOrganizationWebsiteUrl(response);
-            this.organizationPhoneNumber = this.getOrganizationPrimaryPhoneNumber(response);
-            this.organizationMobilePhoneNumber = this.getOrganizationMobilePhoneNumber(response);
-        });
+    setOrganizationContactInfo(data) {
+        this.organizationAddress = this.getOrganizationPrimaryAddress(data);
+        this.organizationWebsiteUrl = this.getOrganizationWebsiteUrl(data);
+        this.organizationPhoneNumber = this.getOrganizationPrimaryPhoneNumber(data);
+        this.organizationMobilePhoneNumber = this.getOrganizationMobilePhoneNumber(data);
+    }
+
+    loadOrganizationContactInfo(orgId: number) {
+        if (this._organizationContactServiceProxy['data'].id == orgId)
+            this.setOrganizationContactInfo(this._organizationContactServiceProxy['data']);
+        else 
+            this._organizationContactServiceProxy.getOrganizationContactInfo(orgId).subscribe(response => {
+                this._organizationContactServiceProxy['data'] = response;
+                this.setOrganizationContactInfo(response);
+            });
     }
 
     getOrganizationPrimaryAddress(organizationContactInfo: ContactInfoBaseDto) {
@@ -137,6 +169,10 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             contactEmploymentData.inplaceEditField = orgNameField;
             this._originalData[orgNameField] = contactEmploymentData[orgNameField];
             this._originalData[orgIdField] = contactEmploymentData[orgIdField];
+
+            this.initializeOrganizationList().then((res: OrganizationShortInfoDto[]) => {
+                this.organizations = res;
+            });
         }
     }
 
@@ -165,7 +201,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
 
         if (this._selectedOrgName != this._originalData['orgName']) {
             if (this._selectedOrgId) {
-                this.setOrganizationContactInfo(this._selectedOrgId);
+                this.loadOrganizationContactInfo(this._selectedOrgId);
                 this.clearPersonEmploymentContacts();
                 this.isEditOrgDetailsAllowed = false;
             } else {
@@ -261,5 +297,30 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
             shift += shift - availableSpaceY + 130;
 
         return shift;
+    }
+
+    lookupOrganizationItems($event) {
+        let search = this._latestSearchPhrase = $event.event.target.value;
+
+        if (this.organizations.length) {
+            setTimeout(() => {$event.event.target.value = search;});
+            this.organizations = [];
+        }
+
+        clearTimeout(this._lookupTimeout);
+        this._lookupTimeout = setTimeout(() => {
+            $event.component.option('opened', true);
+            $event.component.option('noDataText', this.l('LookingForItems'));
+            this.initializeOrganizationList(search).then((res: OrganizationShortInfoDto[]) => {
+                if (search == this._latestSearchPhrase) {
+                    this.organizations = res;
+                    $event.component.option('opened', true);
+                    setTimeout(() => {$event.event.target.value = search;});
+                    if (!res['length'])
+                        $event.component.option('noDataText', this.l('NoItemsFound'));
+                } else
+                    $event.component.option('opened', false);
+            });
+        }, 500);
     }
 }

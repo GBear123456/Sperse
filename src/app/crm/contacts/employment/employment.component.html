@@ -9,10 +9,13 @@
                 <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'orgName'" class="inplace-edit-wrapper">
                     <dx-validation-group>
                         <dx-select-box
+                            displayExpr="name"
                             [items]="organizations"
+                            [searchTimeout]="0" 
+                            [searchEnabled]="true"
                             [acceptCustomValue]="true"
                             [value]="contactEmploymentInfo.orgName"
-                            displayExpr="name"
+                            (onInput)="lookupOrganizationItems($event)"
                             (onSelectionChanged)="organizationNameChanged($event)">
                             <dx-validator>
                                 <dxi-validation-rule type="required" message="{{l('CompanyNameIsRequired')}}"></dxi-validation-rule>

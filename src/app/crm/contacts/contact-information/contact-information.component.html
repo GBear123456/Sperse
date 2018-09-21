@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group (selectedTabChange)="selectedTabChange($event)">
     <mat-tab label="Personal">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
@@ -37,7 +37,7 @@
         </dx-scroll-view>
     </mat-tab>
     <mat-tab label="Employment">
-        <dx-scroll-view showScrollbar="onHover">
+        <dx-scroll-view *ngIf="checkTabEnabled(EMPLOYMENT_TAB_INDEX)" showScrollbar="onHover">
             <employment [contactId]="data?.contactInfo?.primaryContactInfo?.id"></employment>
         </dx-scroll-view>
     </mat-tab>

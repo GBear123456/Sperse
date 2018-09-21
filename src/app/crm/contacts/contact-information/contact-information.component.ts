@@ -11,8 +11,26 @@ export class ContactInformationComponent implements OnInit {
         contactInfo: ContactGroupInfoDto
     };
 
+    readonly PERSONAL_TAB_INDEX     = 0;
+    readonly BUSINESS_TAB_INDEX     = 1;
+    readonly EMPLOYMENT_TAB_INDEX   = 2;
+    readonly CONFIDENTIAL_TAB_INDEX = 3;
+
+    seletedTabIndex = this.PERSONAL_TAB_INDEX;
+    loadedTabs = [];
+
     constructor(injector: Injector,
                 private _contactGroupService: ContactGroupServiceProxy) {
+    }
+
+    checkTabEnabled(tabIndex) {
+        return this.seletedTabIndex == tabIndex || this.loadedTabs[tabIndex];
+    }
+
+    selectedTabChange(event) {
+        this.loadedTabs[this.seletedTabIndex] = true;
+        this.loadedTabs[event.index] = true;
+        this.seletedTabIndex = event.index
     }
 
     ngOnInit() {
