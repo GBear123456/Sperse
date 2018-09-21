@@ -2,6 +2,7 @@ import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Router, Routes, NavigationEnd } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { AppRootComponent } from 'root.components';
+import { RouteGuard } from '@shared/common/auth/route-guard';
 
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
@@ -67,6 +68,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 const routes: Routes = [{
     path: '',
     component: AppRootComponent,
+    canActivate: [ RouteGuard ],
+    canActivateChild: [ RouteGuard ],
     children: [
         {
             path: 'account',
@@ -103,14 +106,14 @@ export class RootRoutingModule implements AfterViewInit {
                 private _injector: Injector,
                 private _applicationRef: ApplicationRef
     ) {
+        if (AppConsts.isMobile) {
+            _router.config[0].children.push({
+                path: '',
+                redirectTo: '/app/cfo/main/start',
+                pathMatch: 'full'
+            });
+        }
         _router.config[0].children.push(
-           {
-               path: '',
-               redirectTo: AppConsts.isMobile
-                   ? '/app/cfo/main/start'
-                   : '/app',
-               pathMatch: 'full'
-           },
            {
                path: 'app',
                loadChildren: AppConsts.isMobile

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Router, NavigationEnd, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
 import { AppComponent } from './mobile.component';
-import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
+import { RouteGuard } from '@shared/common/auth/route-guard';
 
 @NgModule({
     imports: [
@@ -9,8 +9,8 @@ import { AppRouteGuard } from '@shared/common/auth/auth-route-guard';
             {
                 path: '',
                 component: AppComponent,
-                canActivate: [AppRouteGuard],
-                canActivateChild: [AppRouteGuard],
+                canActivate: [RouteGuard],
+                canActivateChild: [RouteGuard],
                 children: [
                     {
                         path: 'cfo/:instance',
