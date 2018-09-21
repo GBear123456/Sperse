@@ -161,13 +161,13 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         let typedMonth = e.target.value;
         let currentMonth = ('0' + ((new Date()).getMonth() + 1)).slice(-2);
         if (currentMonth > typedMonth)
-            this.patterns.yearPattern = `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`;
-        else
             this.patterns.yearPattern = `^(2019|202[0-9]|${this.lastYearRegexItem})$`;
+        else
+            this.patterns.yearPattern = `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`;
     }
 
     onYearFocus(e) {
-        let currentYear =  (new Date()).getFullYear().toString().slice(0, -1);
+        let currentYear =  (new Date()).getFullYear().toString().slice(0, -2);
         if (!e.target.value)
             e.target.value = currentYear;
     }

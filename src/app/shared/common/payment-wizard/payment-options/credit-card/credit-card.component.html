@@ -1,13 +1,16 @@
-<form class="credit-card-form" [formGroup]="creditCardData" (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()">
+<form class="credit-card-form" [formGroup]="creditCardData"
+      (ngSubmit)="submit()" (keydown.enter)="$event.preventDefault()">
+
     <div class="row">
         <mat-form-field class="col-8">
             <input matInput
                    maxlength="19"
                    placeholder="CARD NUMBER"
                    type="tel"
-                   name="cardnumber"
-                   autocomplete="cc-number"
+                   name="cc-number"
+                   id="cc-number"
                    formControlName="cardNumber"
+                   autocomplete="cc-number"
                    (keypress)="checkCreditCardNumber($event)"
                    ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
@@ -23,7 +26,7 @@
                            type="tel"
                            formControlName="expirationMonth"
                            maxlength="2"
-                           autocomplete="nope"
+                           autocomplete="new-password"
                            (keypress)="checkMonthData($event)"
                            (keyup)="checkExpYear($event)">
                 </mat-form-field>
@@ -36,7 +39,7 @@
                            [pattern]='patterns.yearPattern'
                            minlength="4"
                            maxlength="4"
-                           autocomplete="nope"
+                           autocomplete="new-password"
                            (focus)="onYearFocus($event)"
                            (keypress)="checkIfNumber($event)">
                 </mat-form-field>
@@ -54,8 +57,10 @@
     <div class="row">
         <mat-form-field class="col-8">
             <input matInput
+                   type="text"
+                   name="cc-name"
+                   id="cc-name"
                    placeholder="NAME ON CARD"
-                   name="ccname"
                    autocomplete="cc-name"
                    formControlName="holderName">
             <mat-error *ngIf="creditCardData.controls.holderName.touched && creditCardData.controls.holderName.invalid">
@@ -65,14 +70,14 @@
 
         <mat-form-field class="col-4">
             <input matInput
-                placeholder="CVV CODE"
-                type="password"
-                autocomplete="off"
-                formControlName="cvv"
-                minlength="3"
-                [attr.maxlength]="cvvMaxLength"
-                id="cvvCode"
-                ccCVC>
+                   placeholder="CVV CODE"
+                   formControlName="cvv"
+                   minlength="3"
+                   [attr.maxlength]="cvvMaxLength"
+                   id="cc-csc"
+                   name="cc-csc"
+                   autocomplete="new-password"
+                   ccCVC>
             <mat-error *ngIf="creditCardData.controls.cvv.touched && creditCardData.controls.cvv.invalid">
                 {{ l('CvvValidationMessage') }}
             </mat-error>
@@ -155,7 +160,7 @@
         </div>
 
         <div class="col-4 text-right">
-            <button mat-raised-button class="btn btn-layout" [disabled]="!creditCardData.touched || !creditCardData.valid">{{l('Purchase')}}</button>
+            <button mat-raised-button class="btn btn-layout" >{{l('Purchase')}}</button>
         </div>
     </footer>
 </form>
