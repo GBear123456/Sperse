@@ -58,8 +58,7 @@ import { DocumentTypesListComponent } from './document-types-list/document-types
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
-import { ContactGroupServiceProxy, ContactEmailServiceProxy, ContactAddressServiceProxy,
-    ContactPhoneServiceProxy, MemberServiceProxy, ContactLinkServiceProxy, OrganizationContactServiceProxy,
+import { ContactGroupServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -158,7 +157,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
   ],
   providers: [
     ContactsService,
-    ContactAddressServiceProxy,
     ContactGroupServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,
