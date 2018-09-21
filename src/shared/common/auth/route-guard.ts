@@ -12,7 +12,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Injectable()
-export class AppRouteGuard implements CanActivate, CanActivateChild {
+export class RouteGuard implements CanActivate, CanActivateChild {
 
     constructor(
         private _feature: FeatureCheckerService,
@@ -23,7 +23,7 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
-        if (state && UrlHelper.isInstallUrl(state.url)) {
+        if (state && (UrlHelper.isInstallUrl(state.url) || UrlHelper.isLoginUrl(state.url))) {
             return true;
         }
 
@@ -32,17 +32,17 @@ export class AppRouteGuard implements CanActivate, CanActivateChild {
             return false;
         }
 
-        if (!route.data || (!route.data['permission'] && !route.data['feature'])) {
+        if ((!route.data || (!route.data['permission'] && !route.data['feature'])) && state.url !== '/') {
             return true;
         }
 
         if ((!route.data['permission'] || this._permissionChecker.isGranted(route.data['permission']))
-            && (!route.data['feature'] || this._feature.isEnabled(route.data['feature']))
+            && (!route.data['feature'] || this._feature.isEnabled(route.data['feature'])) && state.url !== '/'
         ) {
             return true;
         }
 
-        if (route.data && route.data['permission'] && route.data['permission'] === 'Pages.Detect.Route')
+        if ((route.data && route.data['permission'] && route.data['permission'] === 'Pages.Detect.Route') || state.url === '/')
             this._router.navigate([this.selectBestRoute()]);
         else
             this._router.navigate(['/app/access-denied']);
