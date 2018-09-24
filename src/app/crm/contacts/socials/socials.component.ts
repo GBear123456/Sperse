@@ -16,6 +16,8 @@ import {
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
+import * as _ from 'underscore';
+
 @Component({
     selector: 'socials',
     templateUrl: './socials.component.html',
@@ -163,8 +165,7 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     updateLink(link, newValue) {
-        link.url = newValue;
-        this.updateDataField(link, link);
+        this.updateDataField(link, _.extend(_.clone(link), {url: newValue}));
     }
 
     deleteLink(id) {
@@ -187,6 +188,7 @@ export class SocialsComponent extends AppComponentBase {
         return {
             id: link.id,
             value: link.url,
+            link: link.url,
             validationRules: [
                 {type: 'required', message: this.l('LinkIsRequired')}
             ],

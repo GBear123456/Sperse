@@ -228,6 +228,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 this._itemInEditMode = address;
             } else 
                 this.showDialog(address, event, index);
+            this._clickCounter = 0;
         }, 250);
 
         event.stopPropagation();

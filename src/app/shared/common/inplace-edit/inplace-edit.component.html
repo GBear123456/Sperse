@@ -3,7 +3,9 @@
         <i *ngIf="data?.isEditDialogEnabled" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
         <i *ngIf="data?.isDeleteEnabled" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
     </div>
-    <span [ngClass]="{ 'placeholder': !data?.value }" (click)="setEditModeEnabled(true, $event)">{{data?.displayValue || data?.value || data?.lEditPlaceholder}}</span>
+    <span [ngClass]="{ 'placeholder': !data?.value }" (click)="setEditModeEnabled(true, $event)">
+        <a (click)="data.link && $event.stopPropagation()" [attr.href]="data.link" target="_blank">{{data?.displayValue || data?.value || data?.lEditPlaceholder}}</a>
+    </span>
 </div>
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
     <dx-text-box [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal" [mask]="mask" [maskInvalidMessage]="maskInvalidMessage">
