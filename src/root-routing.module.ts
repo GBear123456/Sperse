@@ -120,6 +120,10 @@ export class RootRoutingModule implements AfterViewInit {
                    ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
                    : 'app/app.module#AppModule',         //Lazy load desktop module
                data: { preload: true }
+           },
+           {
+                path: '**',
+                redirectTo: ''
            }
         );
         _router.resetConfig(_router.config);

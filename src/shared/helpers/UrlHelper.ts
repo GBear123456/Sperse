@@ -43,7 +43,7 @@ export class UrlHelper {
         return url && url.indexOf('app/admin/install') >= 0;
     }
 
-    static isLoginUrl(url): boolean {
-        return url && url.indexOf('account/login') >= 0;
+    static isAccountModuleUrl(url): boolean {
+        return url && url.indexOf('account/') >= 0;
     }
 }
