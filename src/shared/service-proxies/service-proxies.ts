@@ -49055,6 +49055,7 @@ export interface IGetPasswordComplexitySettingOutput {
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     profilePicture!: string | undefined;
+    profileThumbnail!: string | undefined;
 
     constructor(data?: IGetProfilePictureOutput) {
         if (data) {
@@ -49068,6 +49069,7 @@ export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     init(data?: any) {
         if (data) {
             this.profilePicture = data["profilePicture"];
+            this.profileThumbnail = data["profileThumbnail"];
         }
     }
 
@@ -49081,12 +49083,14 @@ export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["profilePicture"] = this.profilePicture;
+        data["profileThumbnail"] = this.profileThumbnail;
         return data; 
     }
 }
 
 export interface IGetProfilePictureOutput {
     profilePicture: string | undefined;
+    profileThumbnail: string | undefined;
 }
 
 export class ChangeUserLanguageDto implements IChangeUserLanguageDto {
@@ -54261,8 +54265,8 @@ export class UserListDto implements IUserListDto {
     userName!: string | undefined;
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
-    profilePictureId!: string | undefined;
-    profilePicture!: string | undefined;
+    profileThumbnailId!: string | undefined;
+    profileThumbnail!: string | undefined;
     isEmailConfirmed!: boolean | undefined;
     roles!: UserListRoleDto[] | undefined;
     lastLoginTime!: moment.Moment | undefined;
@@ -54286,8 +54290,8 @@ export class UserListDto implements IUserListDto {
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
-            this.profilePictureId = data["profilePictureId"];
-            this.profilePicture = data["profilePicture"];
+            this.profileThumbnailId = data["profileThumbnailId"];
+            this.profileThumbnail = data["profileThumbnail"];
             this.isEmailConfirmed = data["isEmailConfirmed"];
             if (data["roles"] && data["roles"].constructor === Array) {
                 this.roles = [];
@@ -54315,8 +54319,8 @@ export class UserListDto implements IUserListDto {
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
-        data["profilePictureId"] = this.profilePictureId;
-        data["profilePicture"] = this.profilePicture;
+        data["profileThumbnailId"] = this.profileThumbnailId;
+        data["profileThumbnail"] = this.profileThumbnail;
         data["isEmailConfirmed"] = this.isEmailConfirmed;
         if (this.roles && this.roles.constructor === Array) {
             data["roles"] = [];
@@ -54337,8 +54341,8 @@ export interface IUserListDto {
     userName: string | undefined;
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
-    profilePictureId: string | undefined;
-    profilePicture: string | undefined;
+    profileThumbnailId: string | undefined;
+    profileThumbnail: string | undefined;
     isEmailConfirmed: boolean | undefined;
     roles: UserListRoleDto[] | undefined;
     lastLoginTime: moment.Moment | undefined;
