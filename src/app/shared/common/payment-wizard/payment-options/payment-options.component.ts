@@ -113,7 +113,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         this.appHttpConfiguration.avoidErrorHandling = false;
                         this.onStatusChange.emit({
                             status: PaymentStatusEnum.Failed,
-                            statusText: error.message
+                            statusText: error.message,
+                            errorDetailsText: error.details
                         });
                     }
                 );
@@ -150,7 +151,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         this.appHttpConfiguration.avoidErrorHandling = false;
                         this.onStatusChange.emit({
                             status: PaymentStatusEnum.Failed,
-                            statusText: err.message
+                            statusText: err.message,
+                            errorDetailsText: err.details
                         });
                     }
                 );
@@ -180,7 +182,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         this.appHttpConfiguration.avoidErrorHandling = false;
                         this.onStatusChange.emit({
                             status: PaymentStatusEnum.Failed,
-                            statusText: error.message
+                            statusText: error.message,
+                            errorDetailsText: error.details
                         });
                     }
                 );

@@ -3,4 +3,5 @@ import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/paym
 export interface StatusInfo {
     status: PaymentStatusEnum;
     statusText?: string;
+    errorDetailsText?: string;
 }

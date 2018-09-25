@@ -14,6 +14,7 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
     code: string;
     remainingSeconds = 90;
     timerSubscription: Subscription;
+    IsRememberBrowserEnabled: boolean;
 
     constructor(
         injector: Injector,
@@ -21,6 +22,7 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
         private _router: Router
     ) {
         super(injector);
+        this.IsRememberBrowserEnabled = abp.setting.values['Abp.Zero.UserManagement.TwoFactorLogin.IsRememberBrowserEnabled'] === 'true';
     }
 
     canActivate(): boolean {
