@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnInit, Input, Injector } from '@angular/core';
-import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
+
 import { AppComponentBase } from '@shared/common/app-component-base';
+import {StatusInfo} from '@app/shared/common/payment-wizard/models/status-info';
 
 @Component({
     selector: 'payment-status',
@@ -9,8 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentStatusComponent extends AppComponentBase implements OnInit {
-    @Input() paymentStatus: PaymentStatusEnum = PaymentStatusEnum.Pending;
-    @Input() text = '';
+    @Input() paymentStatusData: StatusInfo;
 
     constructor(injector: Injector) {
         super(injector);
