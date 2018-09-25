@@ -17,6 +17,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
+import { ImportServiceProxy, ImportFieldInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'import-wizard',
@@ -103,6 +104,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         private _parser: Papa,
         private _dialog: MatDialog,
         private _formBuilder: FormBuilder,
+        private _importProxy: ImportServiceProxy,
         private _phoneNumberService: PhoneNumberService
     ) {
         super(injector);
@@ -150,10 +152,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     next() {
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
             this.uploadFile.controls.valid.updateValueAndValidity();
-            if (this.uploadFile.valid) {
-                this.buildMappingDataSource();
-                this.stepper.next();
-            } else
+            if (this.uploadFile.valid)
+                this.buildMappingDataSource().then(() => this.stepper.next());                
+            else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
             this.dataMapping.controls.valid.updateValueAndValidity();
@@ -220,8 +221,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
         let data = rows || this.reviewGrid.instance.getSelectedRowsData();
         this.onComplete.emit({
+            fields: this.getMappedFields().map((entity) => {
+                return ImportFieldInfoDto.fromJS({
+                    inputFieldName: entity.sourceField,
+                    outputFieldName: entity.mappedField
+                });
+            }),
             records: data.length && data || this.reviewDataSource, 
-            importAll: importAll
+            importAll: importAll,
         });
     }
 
@@ -440,54 +447,75 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         }
     }
 
-    buildMappingDataSource() {
-        if (this.fileData && this.fileData.data && this.fileData.data.length) {
-            if (!this.fileHasHeader && !this.fileHeaderWasGenerated) {
-                let columnsCount = this.fileData.data[0].length;
-                let headers: string[] = [];
-                for (let i = 0; i < columnsCount; i++) {
-                    headers.push(`Column ${i + 1}`);
-                }
+    getColumnsMappingSuggestions(callback) {
+        this._importProxy.getMappedFields(this.fileData.data[0]).subscribe(callback);
+    }
 
-                this.fileData.data.unshift(headers);
-                this.fileHeaderWasGenerated = true;
-            } else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
-                this.fileData.data.shift();
-                this.fileHeaderWasGenerated = false;
+    checkFileHeaderAvailability() {
+        if (!this.fileHasHeader && !this.fileHeaderWasGenerated) {
+            let columnsCount = this.fileData.data[0].length;
+            let headers: string[] = [];
+            for (let i = 0; i < columnsCount; i++) {
+                headers.push(`Column ${i + 1}`);
             }
-            
-            let noNameCount = 0, 
-                data = this.fileData.data[0].map((field, index) => {
-                    let fieldId;
-                    return {
-                        id: index,
-                        sourceField: field || this.l('NoName', [++noNameCount]),
-                        sampleValue: this.lookForValueExample(index),
-                        mappedField: this.lookupFields.every((item) => {
-                            let isSameField = item.id.split(ImportWizardComponent.FieldSeparator)
-                                .pop().toLowerCase().indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0;
-                            if (isSameField)
-                                fieldId = item.id;
-                            return !isSameField;
-                        }) ? '' : fieldId
-                    };
-                });
 
-            this.mapDataSource = {
-                store: {
-                    type: 'array',
-                    key: 'id',
-                    data: data
-                }
-            };
-
-            let selectedMapRowKeys = [];
-            data.forEach(v => {
-                if (v.mappedField)
-                    selectedMapRowKeys.push(v.id);
-            });
-            this.selectedMapRowKeys = selectedMapRowKeys;
+            this.fileData.data.unshift(headers);
+            this.fileHeaderWasGenerated = true;
+        } else if (this.fileHasHeader && this.fileHeaderWasGenerated) {
+            this.fileData.data.shift();
+            this.fileHeaderWasGenerated = false;
         }
+    }
+
+    buildMappingDataSource() {
+        return new Promise((resolve, reject) => {
+            if (this.fileData && this.fileData.data && this.fileData.data.length) {
+                this.checkFileHeaderAvailability();
+                let createDataSourceInternal = (mappingSuggestions = []) => {
+                    let noNameCount = 0, 
+                        data = this.fileData.data[0].map((field, index) => {
+                            let fieldId, suggestionField = _.findWhere(mappingSuggestions, {inputFieldName: field});
+                            return {
+                                id: index,
+                                sourceField: field || this.l('NoName', [++noNameCount]),
+                                sampleValue: this.lookForValueExample(index),
+                                mappedField: (this.lookupFields.every((item) => {                                      
+                                    let isSameField = suggestionField ? suggestionField.outputFieldName == item.id: 
+                                        (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase()
+                                            .indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0);
+                                    if (isSameField)
+                                        fieldId = item.id;
+                                    return !isSameField;
+                                }) ? '' : fieldId)
+                            };
+                        });
+
+                    this.mapDataSource = {
+                        store: {
+                            type: 'array',
+                            key: 'id',
+                            data: data
+                        }
+                    };
+
+                    let selectedMapRowKeys = [];
+                    data.forEach(v => {
+                        if (v.mappedField)
+                            selectedMapRowKeys.push(v.id);
+                    });
+                    this.selectedMapRowKeys = selectedMapRowKeys;
+                    resolve();
+                };
+
+                if (this.fileHeaderWasGenerated)
+                    createDataSourceInternal();
+                else this.getColumnsMappingSuggestions((res) => {
+                    createDataSourceInternal(res);
+                });
+                
+            } else 
+                resolve();
+        });
     }
 
     checkIfFileHasHeaders() {

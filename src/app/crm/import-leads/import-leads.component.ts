@@ -27,8 +27,8 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
-ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
-ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
+    ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
+    ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus } from '@shared/AppEnums';
@@ -352,7 +352,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    let leadsInput = this.createLeadsInput(data.records);
+                    let leadsInput = this.createLeadsInput(data);
                     this._importProxy.import(leadsInput)
                         .pipe(
                             finalize(() => this.finishLoading(true))
@@ -375,8 +375,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         );
     }
 
-    createLeadsInput(data: any[], importAll: boolean = true): ImportInput {
-        let result = ImportInput.fromJS({
+    createLeadsInput(data: any): ImportInput {
+        let result = ImportInput.fromJS({  
             fileName: this.wizard.fileName,
             fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,
@@ -385,13 +385,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             starId: this.starsListComponent.selectedItemKey,
             leadStageId: this.selectedStageId,
             partnerTypeName: this.selectedPartnerTypeName,
-            ignoreInvalidValues: importAll
+            ignoreInvalidValues: data.importAll,
+            fields: data.fields
         });
         result.items = [];
         result.lists = this.listsComponent.selectedItems;
         result.tags = this.tagsComponent.selectedItems;
 
-        data.forEach(v => {
+        data.records.forEach(v => {
             let lead = new ImportItemInput();
             let keys = Object.keys(v);
             keys.forEach(key => {
