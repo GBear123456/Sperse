@@ -56,8 +56,17 @@
             font-weight: 400;
             line-height: 1;
 
-            /deep/ .inplace-edit-view-mode .placeholder {
-                font-size: 24px;
+            /deep/ .inplace-edit-view-mode {
+                .placeholder {
+                    font-size: 24px;
+                }
+                span {
+                    width: 92%;
+                    overflow: hidden;
+                    display: inline-block;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
             }
         }
     }

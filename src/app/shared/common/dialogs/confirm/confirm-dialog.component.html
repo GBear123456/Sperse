@@ -3,6 +3,6 @@
   <p>{{data.message}}</p>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button md-button [mat-dialog-close]="true" class="button-layout button-primary">{{l('Confirm')}}</button>
+  <button md-button mat-dialog-close class="button-layout button-default">{{data.btnCancelTitle || l('Cancel')}}</button>
+  <button md-button [mat-dialog-close]="true" class="button-layout button-primary">{{data.btnConfirmTitle || l('Confirm')}}</button>
 </mat-dialog-actions>
