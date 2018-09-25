@@ -54737,6 +54737,7 @@ export interface IUpdateUserPermissionsInput {
 export class UpdateUserPictureInput implements IUpdateUserPictureInput {
     userId!: number | undefined;
     image!: string | undefined;
+    imageThumbnail!: string | undefined;
 
     constructor(data?: IUpdateUserPictureInput) {
         if (data) {
@@ -54751,6 +54752,7 @@ export class UpdateUserPictureInput implements IUpdateUserPictureInput {
         if (data) {
             this.userId = data["userId"];
             this.image = data["image"];
+            this.imageThumbnail = data["imageThumbnail"];
         }
     }
 
@@ -54765,6 +54767,7 @@ export class UpdateUserPictureInput implements IUpdateUserPictureInput {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
         data["image"] = this.image;
+        data["imageThumbnail"] = this.imageThumbnail;
         return data; 
     }
 }
@@ -54772,12 +54775,14 @@ export class UpdateUserPictureInput implements IUpdateUserPictureInput {
 export interface IUpdateUserPictureInput {
     userId: number | undefined;
     image: string | undefined;
+    imageThumbnail: string | undefined;
 }
 
 export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     user!: UserEditDto;
     assignedRoleNames!: string[];
     profilePicture!: string | undefined;
+    profileThumbnail!: string | undefined;
     sendActivationEmail!: boolean | undefined;
     setRandomPassword!: boolean | undefined;
     organizationUnits!: number[] | undefined;
@@ -54805,6 +54810,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                     this.assignedRoleNames.push(item);
             }
             this.profilePicture = data["profilePicture"];
+            this.profileThumbnail = data["profileThumbnail"];
             this.sendActivationEmail = data["sendActivationEmail"];
             this.setRandomPassword = data["setRandomPassword"];
             if (data["organizationUnits"] && data["organizationUnits"].constructor === Array) {
@@ -54832,6 +54838,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                 data["assignedRoleNames"].push(item);
         }
         data["profilePicture"] = this.profilePicture;
+        data["profileThumbnail"] = this.profileThumbnail;
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["setRandomPassword"] = this.setRandomPassword;
         if (this.organizationUnits && this.organizationUnits.constructor === Array) {
@@ -54848,6 +54855,7 @@ export interface ICreateOrUpdateUserInput {
     user: UserEditDto;
     assignedRoleNames: string[];
     profilePicture: string | undefined;
+    profileThumbnail: string | undefined;
     sendActivationEmail: boolean | undefined;
     setRandomPassword: boolean | undefined;
     organizationUnits: number[] | undefined;
@@ -55221,8 +55229,8 @@ export class UserInfoDto implements IUserInfoDto {
     id!: number | undefined;
     name!: string | undefined;
     isActive!: boolean | undefined;
-    profilePictureId!: string | undefined;
-    profilePicture!: string | undefined;
+    profileThumbnailId!: string | undefined;
+    profileThumbnail!: string | undefined;
 
     constructor(data?: IUserInfoDto) {
         if (data) {
@@ -55238,8 +55246,8 @@ export class UserInfoDto implements IUserInfoDto {
             this.id = data["id"];
             this.name = data["name"];
             this.isActive = data["isActive"];
-            this.profilePictureId = data["profilePictureId"];
-            this.profilePicture = data["profilePicture"];
+            this.profileThumbnailId = data["profileThumbnailId"];
+            this.profileThumbnail = data["profileThumbnail"];
         }
     }
 
@@ -55255,8 +55263,8 @@ export class UserInfoDto implements IUserInfoDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["isActive"] = this.isActive;
-        data["profilePictureId"] = this.profilePictureId;
-        data["profilePicture"] = this.profilePicture;
+        data["profileThumbnailId"] = this.profileThumbnailId;
+        data["profileThumbnail"] = this.profileThumbnail;
         return data; 
     }
 }
@@ -55265,8 +55273,8 @@ export interface IUserInfoDto {
     id: number | undefined;
     name: string | undefined;
     isActive: boolean | undefined;
-    profilePictureId: string | undefined;
-    profilePicture: string | undefined;
+    profileThumbnailId: string | undefined;
+    profileThumbnail: string | undefined;
 }
 
 export class AssignContactGroupInput implements IAssignContactGroupInput {
