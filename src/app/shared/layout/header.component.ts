@@ -53,6 +53,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     userName = '';
 
     profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    profileThumbnail = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
     defaultLogo = AppConsts.appBaseUrl + '/assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
@@ -143,7 +144,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     getProfilePicture(): void {
         this._profileServiceProxy.getProfilePicture().subscribe(result => {
             if (result && result.profilePicture) {
-                this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
+                this.profilePicture = this.getImageBase64Src(result.profilePicture);
+                this.profileThumbnail = this.getImageBase64Src(result.profileThumbnail);
             }
         });
     }
