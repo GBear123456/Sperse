@@ -63,7 +63,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: "pattern", pattern: AppConsts.regexPatterns.phone }],
-        'emailAddress': [{ type: 'email', message: this.l('InvalidEmailAddress') }]
+        'emailAddress': [{ type: 'email', message: this.l('InvalidEmailAddress') }, { type: 'required', message: this.l('EmailIsRequired') }]
     };
 
     constructor(injector: Injector,

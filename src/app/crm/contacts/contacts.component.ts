@@ -204,10 +204,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
   
         this.params = params;
         this._userService['data'] = {
-            userId: null, user: null, roles: null
+            userId: userId, user: null, roles: null
         };
         this._contactGroupService['data'].contactInfo = {
-            id: customerId || userId
+            id: customerId
         };
         this._contactGroupService['data'].leadInfo = {
             id: leadId

@@ -25,7 +25,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ AppService, ContactPhotoServiceProxy, DialogService, UserServiceProxy ]
+    providers: [ AppService, ContactPhotoServiceProxy, DialogService ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input() data: ContactGroupInfoDto;
@@ -42,15 +42,18 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
         private appService: AppService,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+        private _userService: UserServiceProxy
     ) {
         super(injector);
-
-        this.canSendVerificationRequest = this.appService.canSendVerificationRequest();
     }
 
     ngOnInit(): void {
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+
+        this.canSendVerificationRequest = 
+            !(this._userService['data'] && this._userService['data'].userId) 
+                && this.appService.canSendVerificationRequest();
     }
 
     requestVerification() {
