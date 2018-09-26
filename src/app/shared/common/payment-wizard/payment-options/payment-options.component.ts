@@ -8,7 +8,7 @@ import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment
 import {
     ACHCustomerInfoDto,
     PayPalDto,
-    PaymentRequestInfoDtoRequestPaymentType,
+    PaymentRequestInfoDtoPaymentMethod,
     BankCardInfoDto,
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
@@ -94,7 +94,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         ? SetupSubscriptionInfoDtoFrequency._30
                         : SetupSubscriptionInfoDtoFrequency._365,
                     billingInfo: PaymentRequestInfoDto.fromJS({
-                        requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
+                        paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
                         paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.ACH,
                         achCustomer: ACHCustomerInfoDto.fromJS({
                             customerRoutingNo: eCheckData.routingNumber,
@@ -127,7 +127,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         ? SetupSubscriptionInfoDtoFrequency._30
                         : SetupSubscriptionInfoDtoFrequency._365,
                     billingInfo: PaymentRequestInfoDto.fromJS({
-                        requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Recurring,
+                        paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
                         paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.BankCard,
                         bankCard: BankCardInfoDto.fromJS({
                             holderName: creditCardData.holderName,
@@ -165,7 +165,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                         ? SetupSubscriptionInfoDtoFrequency._30
                         : SetupSubscriptionInfoDtoFrequency._365,
                     billingInfo: PaymentRequestInfoDto.fromJS({
-                        requestPaymentType: PaymentRequestInfoDtoRequestPaymentType.Capture,
+                        paymentMethod: PaymentRequestInfoDtoPaymentMethod.Capture,
                         paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.PayPal,
                         payPal: PayPalInfoDto.fromJS({
                             paymentId: payPalData.paymentId,
