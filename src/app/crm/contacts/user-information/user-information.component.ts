@@ -84,14 +84,18 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         });
 
         _contactsService.orgUnitsSaveSubscribe((data) => {            
-            this.selectedOrgUnits = data;
+            this.data.raw.memberedOrganizationUnits = [];
+            (this.selectedOrgUnits = data).forEach((item) => {
+                this.data.raw.memberedOrganizationUnits.push(
+                    _.find(data.allOrganizationUnits, {id: item})['code']);
+            });            
             this.update();
         });
 
         if (!(this.roles = _roleServiceProxy['data']))
-        _roleServiceProxy.getRoles(undefined).subscribe((res) => {
-            _roleServiceProxy['data'] = this.roles = res.items;
-        });
+            _roleServiceProxy.getRoles(undefined).subscribe((res) => {
+                _roleServiceProxy['data'] = this.roles = res.items;
+            });
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
         this.changeRolesAllowed = this.isGranted('Pages.Administration.Users.ChangePermissionsAndRoles');
@@ -119,22 +123,29 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     loadData() {
-        this.startLoading();
-        this._userService.getUserForEdit(this.data.userId)
-            .pipe(finalize(() => this.finishLoading()))
-            .subscribe((userEditOutput) => {
-                this._userService['data'].user = userEditOutput.user;
-                userEditOutput.user['setRandomPassword'] = false;
-                userEditOutput.user['sendActivationEmail'] = false;
-
-                this._userService['data'].roles = userEditOutput.roles;
-                this._contactsService.orgUnitsUpdate(
-                    this.userData = userEditOutput);
-
-                userEditOutput.memberedOrganizationUnits.forEach((item) => {
-                    this.selectedOrgUnits.push(_.find(userEditOutput.allOrganizationUnits, {code: item}).id)
+        if (this.data && this.data.raw)
+            setTimeout(() => this.fillUserData(this.data['raw']));
+        else {
+            this.startLoading();
+            this._userService.getUserForEdit(this.data.userId)
+                .pipe(finalize(() => this.finishLoading()))
+                .subscribe((userEditOutput) => {
+                    this.fillUserData(this._userService['data'].raw = userEditOutput);
                 });
-            });
+        }
+    }
+
+    fillUserData(data) {
+        this._userService['data'].user = data.user;
+        data.user['setRandomPassword'] = false;
+        data.user['sendActivationEmail'] = false;
+
+        this._userService['data'].roles = data.roles;
+
+        this._contactsService.orgUnitsUpdate(this.userData = data);
+        data.memberedOrganizationUnits.forEach((item) => {
+            this.selectedOrgUnits.push(_.find(data.allOrganizationUnits, {code: item})['id']);
+        });
     }
 
     inviteUser() {
