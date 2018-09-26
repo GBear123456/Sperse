@@ -88,8 +88,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.update();
         });
 
+        if (!(this.roles = _roleServiceProxy['data']))
         _roleServiceProxy.getRoles(undefined).subscribe((res) => {
-            this.roles = res.items;
+            _roleServiceProxy['data'] = this.roles = res.items;
         });
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');

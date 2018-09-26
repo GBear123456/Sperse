@@ -14,8 +14,7 @@ import { ContactGroupServiceProxy, ContactGroupInfoDto, NotesServiceProxy } from
 
 @Component({
     templateUrl: './notes.component.html',
-    styleUrls: ['./notes.component.less'],
-    providers: [ NotesServiceProxy ]
+    styleUrls: ['./notes.component.less']
 })
 export class NotesComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -41,8 +40,13 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this.data = this._customerService['data'];
+        if (!(this.dataSource = this._notesService['data']))
+            this.loadData();
+    }
+
+    loadData() {
         this._notesService.getNotes(this.data.contactInfo.id).subscribe((result) => {
-            this.dataSource = result;
+            this._notesService['data'] = this.dataSource = result;
         });
     }
 
@@ -77,7 +81,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
     noteAdded() {
         this.notify.info(this.l('SavedSuccessfully'));
-        this.ngOnInit();
+        this.loadData();
     }
-
 }

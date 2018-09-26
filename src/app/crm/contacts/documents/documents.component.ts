@@ -26,7 +26,7 @@ import { ContactsService } from '../contacts.service';
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
-    providers: [ DocumentServiceProxy, DocumentTypeServiceProxy, FileSizePipe, PrinterService ]
+    providers: [ FileSizePipe, PrinterService ]
 })
 export class DocumentsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -258,16 +258,18 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     loadDocumentTypes() {
-        this._documentTypeService.getAll().subscribe((result) => {
-            this.documentTypes = result;
-        });
+        if (!(this.documentTypes = this._documentTypeService['data']))
+            this._documentTypeService.getAll().subscribe((result) => {
+                this._documentTypeService['data'] = this.documentTypes = result;
+            });
     }
 
     loadDocuments(callback = null) {
-        this._documentService.getAll(this.data.contactInfo.id).subscribe((result) => {
-            this.dataSource = result;
-            callback && callback();
-        });
+        if (!(this.dataSource = this._documentService['data']))
+            this._documentService.getAll(this.data.contactInfo.id).subscribe((result) => {
+                this._documentService['data'] = this.dataSource = result;
+                callback && callback();
+            });
     }
 
     onToolbarPreparing($event) {

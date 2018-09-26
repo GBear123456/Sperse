@@ -77,7 +77,6 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private paramsSubscribe: any = [];
     private referrerParams;
-    private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
     constructor(injector: Injector,
                 private _router: Router,
@@ -127,6 +126,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 this.rightPanelSetting.opened = Boolean(userId);
         });
         _contactsService.invalidateSubscribe(() => this.invalidate());
+        _contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
     }
 
     private getCheckPropertyValue(obj, prop, def) {
@@ -209,6 +209,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this._contactGroupService['data'].contactInfo = {
             id: customerId || userId
         };
+        this._contactGroupService['data'].leadInfo = {
+            id: leadId
+        };
 
         if (userId)
             this.loadDataForUser(userId);
@@ -226,55 +229,51 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     loadDataForClient(customerId: number, leadId: number, partnerId: number) {
         if (customerId) {
             this.startLoading(true);
-            this.customerId = customerId;
-            let contactInfo$ = this._contactGroupService.getContactGroupInfo(this.customerId);
-            if (leadId) {
-                let leadData, leadInfo$ = this._leadService.getLeadInfo(leadId);
-                forkJoin(contactInfo$, leadInfo$).pipe(finalize(() => {
+            let contactInfo$ = this._contactGroupService
+                .getContactGroupInfo(this.customerId = customerId);
+
+            this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
+            if (this.customerType == ContactGroupType.Partner) {
+                let partnerInfo$ = this._partnerService.get(partnerId);
+                forkJoin(contactInfo$, partnerInfo$).pipe(finalize(() => {
                     this.finishLoading(true);
-                    if (!leadData)
+                    if (!this.partnerInfo)
                         this.close(true);
                 })).subscribe(result => {
-                    leadData = result;
                     this.fillContactDetails(result[0]);
-                    this.fillLeadDetails(result[1]);
-                    this.loadLeadsStages();
+                    this.fillPartnerDetails(result[1]);
+                    this.loadPartnerTypes();
                 });
             } else {
-                this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
-                if (this.customerType == ContactGroupType.Partner) {
-                    let partnerInfo$ = this._partnerService.get(partnerId);
-                    forkJoin(contactInfo$, partnerInfo$).pipe(finalize(() => {
-                        this.finishLoading(true);
-                        if (!this.partnerInfo)
-                            this.close(true);
-                    })).subscribe(result => {
-                        this.fillContactDetails(result[0]);
-                        this.fillPartnerDetails(result[1]);
-                        this.loadPartnerTypes();
-                    });
-                } else {
-                    let lastLeadInfo$ = this._leadService.getLast(customerId);
-                    forkJoin(contactInfo$, lastLeadInfo$).pipe(finalize(() => {
-                        this.finishLoading(true);
-                        if (!this.contactInfo)
-                            this.close(true);
-                    })).subscribe(result => {
-                        this.fillContactDetails(result[0]);
-                        this.fillLeadDetails(result[1]);
-                    });
-                }
+                contactInfo$.pipe(finalize(() => {
+                    this.finishLoading(true);
+                    if (!this.contactInfo)
+                        this.close(true);
+                })).subscribe(result => {
+                    this.fillContactDetails(result);
+                });
             }
-        } else if (leadId) {
-            this._contactGroupService['data'].leadInfo = {
-                id: leadId
-            };
-            this.loadLeadsStages();
+        } 
+    }
+
+    loadLeadData() {
+        if (!this.leadInfo) {
+            this.startLoading(true);
+            let leadId = this._contactGroupService['data'].leadInfo.id,
+                leadInfo$ = leadId ? this._leadService.getLeadInfo(leadId): 
+                    this._leadService.getLast(this.customerId);
+            
+            leadInfo$.pipe(finalize(() => {
+                this.finishLoading(true);
+            })).subscribe(result => {
+                this.fillLeadDetails(result);            
+                this.loadLeadsStages();
+            });
         }
     }
 
     private loadLeadsStages() {
-        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
             .subscribe(result => {
                 this.leadStages = result.stages.map((stage) => {
                     return {
@@ -405,7 +404,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.rootComponent.pageHeaderFixed(true);
     }
 
-    delete() {
+    deleteLead() {
         this.message.confirm(
             this.l('LeadDeleteWarningMessage', this.getCustomerName()),
             isConfirmed => {
