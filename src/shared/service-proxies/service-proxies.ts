@@ -52521,7 +52521,7 @@ export interface IAddTenantSslCertificateInput {
 }
 
 export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
-    requestPaymentType!: PaymentRequestInfoDtoRequestPaymentType | undefined;
+    paymentMethod!: PaymentRequestInfoDtoPaymentMethod | undefined;
     paymentInfoType!: PaymentRequestInfoDtoPaymentInfoType | undefined;
     bankCard!: BankCardInfoDto | undefined;
     achCustomer!: ACHCustomerInfoDto | undefined;
@@ -52538,7 +52538,7 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.requestPaymentType = data["requestPaymentType"];
+            this.paymentMethod = data["paymentMethod"];
             this.paymentInfoType = data["paymentInfoType"];
             this.bankCard = data["bankCard"] ? BankCardInfoDto.fromJS(data["bankCard"]) : <any>undefined;
             this.achCustomer = data["achCustomer"] ? ACHCustomerInfoDto.fromJS(data["achCustomer"]) : <any>undefined;
@@ -52555,7 +52555,7 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["requestPaymentType"] = this.requestPaymentType;
+        data["paymentMethod"] = this.paymentMethod;
         data["paymentInfoType"] = this.paymentInfoType;
         data["bankCard"] = this.bankCard ? this.bankCard.toJSON() : <any>undefined;
         data["achCustomer"] = this.achCustomer ? this.achCustomer.toJSON() : <any>undefined;
@@ -52565,7 +52565,7 @@ export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
 }
 
 export interface IPaymentRequestInfoDto {
-    requestPaymentType: PaymentRequestInfoDtoRequestPaymentType | undefined;
+    paymentMethod: PaymentRequestInfoDtoPaymentMethod | undefined;
     paymentInfoType: PaymentRequestInfoDtoPaymentInfoType | undefined;
     bankCard: BankCardInfoDto | undefined;
     achCustomer: ACHCustomerInfoDto | undefined;
@@ -56761,7 +56761,7 @@ export enum CompleteTenantRegistrationInputTenantHostType {
     FundingUi = "FundingUi", 
 }
 
-export enum PaymentRequestInfoDtoRequestPaymentType {
+export enum PaymentRequestInfoDtoPaymentMethod {
     Recurring = "Recurring", 
     Charge = "Charge", 
     Capture = "Capture", 
