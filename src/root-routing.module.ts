@@ -3,6 +3,7 @@ import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, Router
 import { AppConsts } from '@shared/AppConsts';
 import { AppRootComponent } from 'root.components';
 import { RouteGuard } from '@shared/common/auth/route-guard';
+import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
@@ -71,31 +72,39 @@ const routes: Routes = [{
     canActivate: [ RouteGuard ],
     canActivateChild: [ RouteGuard ],
     children: [
-        {
-            path: 'account',
-            loadChildren: 'account/account.module#AccountModule', //Lazy load account module
-            data: { preload: true }
-        },
-        {
-            path: 'personal-finance',
-            loadChildren: 'personal-finance/personal-finance.module#PersonalFinanceModule', //Lazy load account module
-            data: { preload: true }
-        },
-        {
-            path: 'mobile',
-            loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
-            data: { preload: true }
-        },
-        {
-            path: 'desktop',
-            loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-            data: { preload: true }
-        }
-    ]
-}];
+            {
+                path: 'account',
+                loadChildren: 'account/account.module#AccountModule', //Lazy load account module
+                data: { preload: true }
+            },
+            {
+                path: 'personal-finance',
+                loadChildren: 'personal-finance/personal-finance.module#PersonalFinanceModule', //Lazy load account module
+                data: { preload: true }
+            },
+            {
+                path: 'mobile',
+                loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
+                data: { preload: true }
+            },
+            {
+                path: 'desktop',
+                loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
+                data: { preload: true }
+            }
+        ]
+    },
+    { path: 'not-found', component: NotFoundComponent },
+    { path: '**', redirectTo: 'not-found' }
+];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [
+        RouterModule.forRoot(routes)
+    ],
+    declarations: [
+        NotFoundComponent
+    ],
     exports: [
         RouterModule
     ]
@@ -107,11 +116,13 @@ export class RootRoutingModule implements AfterViewInit {
                 private _applicationRef: ApplicationRef
     ) {
         if (AppConsts.isMobile) {
-            _router.config[0].children.push({
-                path: '',
-                redirectTo: '/app/cfo/main/start',
-                pathMatch: 'full'
-            });
+            _router.config[0].children.push(
+                {
+                    path: '',
+                    redirectTo: '/app/cfo/main/start',
+                    pathMatch: 'full'
+                }
+            );
         }
         _router.config[0].children.push(
            {
@@ -123,7 +134,7 @@ export class RootRoutingModule implements AfterViewInit {
            },
            {
                 path: '**',
-                redirectTo: ''
+                redirectTo: 'not-found'
            }
         );
         _router.resetConfig(_router.config);
