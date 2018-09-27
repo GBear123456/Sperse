@@ -174,7 +174,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     })
                 });
 
-                this.tenantSubscriptionServiceProxy.executePayment(payPalPaymentInfo).subscribe(
+                this.tenantSubscriptionServiceProxy.setupSubscription(payPalPaymentInfo).subscribe(
                     res => {
                         this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
                     },
