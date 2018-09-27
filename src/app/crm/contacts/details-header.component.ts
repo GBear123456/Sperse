@@ -171,4 +171,13 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     isClientProspective() {
         return this.data ? this.data.statusId == ContactGroupStatus.Prospective : true;
     }
+
+    isClientCFOAvailable() {
+        return this.data && this.data.primaryContactInfo && 
+            this.appService.isCFOAvailable(this.data.primaryContactInfo.userId);
+    }
+
+    redirectToCFO() {
+        this.appService.redirectToCFO(this.data.primaryContactInfo.userId);
+    }
 }
