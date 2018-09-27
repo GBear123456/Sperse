@@ -22,4 +22,8 @@ export class XeroLoginButtonComponent extends CFOComponentBase {
     addAccount(): void {
         this.xeroLoginDialog.show();
     }
+
+    addXeroAccount() {
+        this.onComplete.emit();
+    }
 }

@@ -5,6 +5,7 @@
           [dragEnabled]="false"
           [showTitle]="false"
           [closeOnOutsideClick]="false"
+          (onShown)="onShownModal()"
           [(visible)]="popupVisible">
 
     <div *dxTemplate="let data of 'content'">
