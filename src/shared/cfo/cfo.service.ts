@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppService } from '@app/app.service';
-//import { LayoutService } from '@app/shared/layout/layout.service';
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
 
@@ -9,7 +9,7 @@ export class CFOService extends CFOServiceBase {
 
     constructor(
         private _appService: AppService,
-        //private _layoutService: LayoutService,
+        private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _contactService: ContactServiceProxy
     ) {
@@ -43,7 +43,7 @@ export class CFOService extends CFOServiceBase {
     instanceChangeProcess(callback: any = null) {
         if (this.instanceId != null) {
             this._appService.setContactInfoVisibility(true);
-            //this._layoutService.hideDefaultPageHeader();
+            this._layoutService.hideDefaultPageHeader();
         }
         this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
             if (this.instanceId && data.userId)
