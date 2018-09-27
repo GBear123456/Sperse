@@ -6,7 +6,6 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { AppConsts } from '@shared/AppConsts';
-import { EditionPaymentType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ChangeUserLanguageDto, GetCurrentLoginInformationsOutput, LinkedUserDto, ProfileServiceProxy, SessionServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -63,7 +62,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-    editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
 
     constructor(
         injector: Injector,

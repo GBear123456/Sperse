@@ -22,7 +22,6 @@ import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 
-import { EditionPaymentType } from '@shared/AppEnums';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
@@ -59,7 +58,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     readonly GATEWAY_PAYPAL = 2;
 
     selectedGateway: number = this.GATEWAY_ECHECK;
-    editionPaymentType = EditionPaymentType.NewRegistration;
 
     paymentMethods = PaymentMethods;
     constructor(
