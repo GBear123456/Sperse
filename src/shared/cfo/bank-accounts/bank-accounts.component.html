@@ -34,5 +34,5 @@
         (reloadDataSource)="loadBankAccounts()"
         (onDataChange)="bankAccountDataChanged()">
     </bank-accounts-widget>
-    <xero-login-dialog [operationType]="'update'"></xero-login-dialog>
+    <xero-login-dialog [operationType]="'update'" (onComplete)="addAccountComplete()"></xero-login-dialog>
 </div>
