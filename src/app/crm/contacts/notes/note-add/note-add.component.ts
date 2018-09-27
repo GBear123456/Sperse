@@ -18,7 +18,7 @@ import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog
     selector: 'note-add',
     templateUrl: './note-add.component.html',
     styleUrls: ['./note-add.component.less'],
-    providers: [ NotesServiceProxy, PhoneFormatPipe ]
+    providers: [ PhoneFormatPipe ]
 })
 export class NoteAddComponent extends AppComponentBase  {
     @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
@@ -65,12 +65,19 @@ export class NoteAddComponent extends AppComponentBase  {
         private _contactPhoneService: ContactPhoneServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        _notesService.getNoteTypes().subscribe((result) => {
-            if (result.length) {
-                this.type = result[0].id;
-                this.types = result;
-            }
-        });
+        if (_notesService['types'])
+            this.initTypes(_notesService['types']);
+        else
+            _notesService.getNoteTypes().subscribe((result) => {
+                this.initTypes(_notesService['types'] = result);
+            });
+    }
+
+    initTypes(types) {
+        if (types.length) {
+            this.type = types[0].id;
+            this.types = types;
+        }
     }
 
     saveNote() {

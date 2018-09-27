@@ -29,7 +29,6 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
-import { EditionPaymentType } from '@shared/AppEnums';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -59,6 +58,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
     profilePicture = '/assets/common/images/default-profile-picture.png';
+    profileThumbnail = '/assets/common/images/default-profile-picture.png';
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
@@ -68,7 +68,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-    editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
 
     memberAreaLinks = [
         {
@@ -194,7 +193,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     getProfilePicture(): void {
         this._profileServiceProxy.getProfilePicture().subscribe(result => {
             if (result && result.profilePicture) {
-                this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
+                this.profilePicture = this.getImageBase64Src(result.profilePicture);
+                this.profileThumbnail = this.getImageBase64Src(result.profileThumbnail);
             }
         });
     }
@@ -268,12 +268,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         }
 
         return Math.round(moment(this._appSessionService.tenant.subscriptionEndDateUtc).diff(moment().utc(), 'days', true));
-    }
-
-    getTrialSubscriptionNotification(): string {
-        return abp.utils.formatString(this.l("TrialSubscriptionNotification"),
-            "<strong>" + this._appSessionService.tenant.edition.displayName + "</strong>",
-            "<a href='/account/buy?editionId=" + this._appSessionService.tenant.edition.id + "&editionPaymentType=" + this.editionPaymentType.BuyNow + "'>" + this.l("ClickHere") + "</a>");
     }
 
     getExpireNotification(localizationKey: string): string {

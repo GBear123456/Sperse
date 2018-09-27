@@ -1,6 +1,5 @@
 import { AfterViewChecked, Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EditionPaymentType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -37,7 +36,6 @@ export class SubscriptionManagementComponent extends AppComponentBase implements
     user: UserLoginInfoDto = new UserLoginInfoDto();
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     application: ApplicationInfoDto = new ApplicationInfoDto();
-    editionPaymentType: EditionPaymentType = EditionPaymentType;
 
     filterText = '';
     private rootComponent;

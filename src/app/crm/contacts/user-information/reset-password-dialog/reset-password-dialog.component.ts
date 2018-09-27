@@ -97,15 +97,20 @@ export class ResetPasswordDialog extends AppComponentBase {
     }
 
     setRandomPasswordChanged() {
-        if (this.data.user.setRandomPassword)
+        if (this.data.user.setRandomPassword) {
             this.data.user.password = undefined;
+            this.passwordObject.passwordInplaceEdit = false;
+        }
     }
 
     resetPassword($event) {
-        this.startLoading();
-        this._userService.resetPassword(ResetUserPasswordDto.fromJS(this.data.user))
-            .pipe(finalize(() => this.finishLoading())).subscribe(() => { 
-                this.dialogRef.close();
-            });
+        if (!this.passwordObject.passwordInplaceEdit && (this.data.user.setRandomPassword || this.data.user.password)) {
+            this.startLoading();
+            this._userService.resetPassword(ResetUserPasswordDto.fromJS(this.data.user))
+                .pipe(finalize(() => this.finishLoading())).subscribe(() => { 
+                    this.dialogRef.close();
+                });
+        } else 
+            this.notify.warn(this.l('PleaseEnterYourNewPassword'));
     }
 }

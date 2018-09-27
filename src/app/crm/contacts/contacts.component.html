@@ -20,7 +20,9 @@
             (print)="printMainArea()"
             (onUpdateStatus)="updateStatus($event)"
             (onUpdateRating)="updateRating($event)"
-            (onDelete)="delete()"
+            (onDelete)="deleteLead()"
+            [getProcessAction]="getChangeAssignUser()"
+            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()"
         ></operations-widget>
     </div>
     <mat-sidenav-container>

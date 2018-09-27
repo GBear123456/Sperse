@@ -52,6 +52,8 @@ export class OperationsWidgetComponent implements OnInit {
     get partnerTypes(): any[] {
         return this._partnerTypes;
     }
+    @Input() getAssignedUsersSelector;
+    @Input() getProcessAction;
 
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();

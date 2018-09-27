@@ -167,11 +167,15 @@ export abstract class AppComponentBase {
 
     getPhoto(photo, gender = null): string {
         if (photo)
-            return 'data:image/jpeg;base64,' + photo;
+            return this.getImageBase64Src(photo);
         if (gender)
             return 'assets/common/images/no-photo-' + gender + '.png';
 
         return 'assets/common/images/no-photo.png';
+    }
+
+    getImageBase64Src(imageBase64: string): string {
+        return 'data:image/jpeg;base64,' + imageBase64;
     }
 
     startLoading(globally = false) {
@@ -197,7 +201,7 @@ export abstract class AppComponentBase {
     }
 
     invalidate() {
-        if (this.dataGrid)
+        if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.refresh();
     }
 

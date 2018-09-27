@@ -12,7 +12,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-import { AssignedUsersStoreSelectors,
+import { CustomerAssignedUsersStoreSelectors,
     AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
@@ -43,7 +43,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { ContactGroupStatusDto } from '@shared/service-proxies/service-proxies';
+import { ContactGroupStatusDto, AssignUsersInput, AssignUserInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
@@ -99,7 +99,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _clientService: ClientService,
+        public _clientService: ClientService,
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -290,7 +290,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(AssignedUsersStoreSelectors.getAssignedUsers)),
+                                    dataSource$: this.store$.pipe(select(CustomerAssignedUsersStoreSelectors.getAssignedUsers)),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -647,5 +647,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
+    }
+    
+    getAssignedUsersStoreSelectors() {
+        return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     }
 }

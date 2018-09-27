@@ -1,14 +1,14 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { State } from './state';
 
-export const getAssignedUsersState = createFeatureSelector<State>('assignedUsers');
+export const getActivityAssignedUsersState = createFeatureSelector<State>('activityAssignedUsers');
 
 export const getAssignedUsers = createSelector(
-    getAssignedUsersState,
+    getActivityAssignedUsersState,
     (state: State) => state.assignedUsers
 );
 
 export const getLoaded = createSelector(
-    getAssignedUsersState,
+    getActivityAssignedUsersState,
     (state: State) => state.loaded
 );

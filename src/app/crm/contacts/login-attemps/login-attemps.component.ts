@@ -1,4 +1,4 @@
-import { Injector, Component, OnInit } from '@angular/core';
+import { Injector, Component, OnInit, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
 import { UserServiceProxy, UserLoginServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
@@ -9,7 +9,7 @@ import * as moment from 'moment';
     templateUrl: './login-attemps.component.html',
     styleUrls: ['./login-attemps.component.less']
 })
-export class LoginAttempsComponent extends AppComponentBase implements OnInit {
+export class LoginAttempsComponent extends AppComponentBase implements OnInit, OnDestroy {
     userLoginAttempts: UserLoginAttemptDto[];
 
     constructor(injector: Injector,
@@ -21,7 +21,7 @@ export class LoginAttempsComponent extends AppComponentBase implements OnInit {
 
         _contactsService.userSubscribe((userId) => {            
             if (userId) this.loadData(userId);
-        });
+        }, this.constructor.name);
     }
 
     ngOnInit() {
@@ -45,5 +45,9 @@ export class LoginAttempsComponent extends AppComponentBase implements OnInit {
             else
                 e.rowElement.classList.add('failed-row');
         }
+    }
+
+    ngOnDestroy() {
+        this._contactsService.unsubscribe(this.constructor.name);
     }
 }

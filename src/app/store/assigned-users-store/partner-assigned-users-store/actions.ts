@@ -2,9 +2,9 @@ import { Action } from '@ngrx/store';
 import { UserInfoDto } from 'shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
-    LOAD_REQUEST       = '[Assigned Users] Load Request',
-    LOAD_FAILURE       = '[Assigned Users] Load Failure',
-    LOAD_SUCCESS       = '[Assigned Users] Load Success'
+    LOAD_REQUEST       = '[Partner Assigned Users] Load Request',
+    LOAD_FAILURE       = '[Partner Assigned Users] Load Failure',
+    LOAD_SUCCESS       = '[Partner Assigned Users] Load Success'
 }
 
 export class LoadRequestAction implements Action {

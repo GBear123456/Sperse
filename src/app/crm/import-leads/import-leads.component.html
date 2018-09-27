@@ -41,7 +41,8 @@
 </div>
 
 <crm-user-assignment-list [selectedKeys]="selectedClientKeys" [selectedItemKey]="userId" [bulkUpdateMode]="true"
-                          [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"></crm-user-assignment-list>
+                          [hideButtons]="true" (onSelectionChanged)="onUserAssignmentChanged($event)"
+                          [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()"></crm-user-assignment-list>
 <crm-static-list #stagesList
     [width]="'210px'"
     [highlightSelected]="true"

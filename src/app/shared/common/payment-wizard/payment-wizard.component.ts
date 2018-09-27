@@ -28,7 +28,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     packages$: Observable<PackageConfigDto[]>;
     packagesMaxUsersAmount$: Observable<number>;
     paymentStatus: PaymentStatusEnum;
-    paymentStatusText: string;
+    paymentStatusData: StatusInfo;
     constructor(private injector: Injector,
                 private appService: AppService,
                 private dialogRef: MatDialogRef<PaymentWizardComponent>,
@@ -71,9 +71,8 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
         this.dialogRef.disableClose = statusInfo.status == PaymentStatusEnum.BeingConfirmed;
         if (statusInfo.status == PaymentStatusEnum.Confirmed)
             this.appService.loadModeuleSubscriptions();
-        this.paymentStatus = statusInfo.status;
-        if (statusInfo.statusText)
-            this.paymentStatusText = statusInfo.statusText;
+
+        this.paymentStatusData = statusInfo;
     }
 
     close() {

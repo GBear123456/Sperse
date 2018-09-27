@@ -104,7 +104,9 @@
     .play {
         text-align: center;
         margin-top: 70px;
-        cursor: pointer;
+        /** @todo uncomment cursor:pointer and remove pointer events when video will be provided for crm */
+        //cursor: pointer;
+        pointer-events: none;
 
         .bottomp {
             margin-top: 89px;
@@ -320,7 +322,7 @@
             justify-content: flex-start;
         }
     }
-    
+
     // zapier
     .zapier {
         .header {
@@ -399,6 +401,7 @@
             text-decoration: none;
             transition: .3s;
             cursor: pointer;
+            visibility: hidden;
 
             img {
                 margin: -3px 5px 0 0;

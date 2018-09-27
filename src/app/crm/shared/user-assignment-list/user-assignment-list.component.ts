@@ -1,24 +1,24 @@
 /** Core imports */
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import { Component, Injector, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AssignedUsersStoreSelectors, AppStore} from '@app/store';
+import { AppStore } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AssignContactGroupInput, AssignContactGroupsInput, UserAssignmentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AssignUserInput, AssignUsersInput, UserInfoDto } from '@shared/service-proxies/service-proxies';
 
 
 @Component({
-  selector: 'crm-user-assignment-list',
-  templateUrl: './user-assignment-list.component.html',
-  styleUrls: ['./user-assignment-list.component.less'],
-  providers: [UserAssignmentServiceProxy]
+    selector: 'crm-user-assignment-list',
+    templateUrl: './user-assignment-list.component.html',
+    styleUrls: ['./user-assignment-list.component.less']
 })
 export class UserAssignmentComponent extends AppComponentBase implements OnInit {
     @Input() multiSelection = false;
@@ -34,6 +34,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     set selectedItemKey(value) {
         this.selectedItemKeys = this.multiSelection ? value : [value];
     }
+    @Input() getAssignedUsersSelector;
+    @Input() getProcessAction;
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
@@ -44,7 +46,6 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _userAssignmentService: UserAssignmentServiceProxy,
         private store$: Store<AppStore.State>,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -103,23 +104,25 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     process() {
-        if (this.bulkUpdateMode)
-            this._userAssignmentService.assignContactGroups(AssignContactGroupsInput.fromJS({
-                contactGroupIds: this.selectedKeys,
-                userId: this.selectedItemKey
-            })).pipe(finalize(() => {
-                this.listComponent.unselectAll();
-            })).subscribe((result) => {
-                this.notify.success(this.l('UserAssigned'));
-            });
-        else
-            this._userAssignmentService.assignContactGroup(AssignContactGroupInput.fromJS({
-                contactGroupId: this.selectedKeys[0],
-                userId: this.selectedItemKey
-            })).subscribe((result) => {
-                this.moveSelectedItemsToTop();
-                this.notify.success(this.l('UserAssigned'));
-            });
+        if (this.getProcessAction) {
+            if (this.bulkUpdateMode)
+                this.getProcessAction.assignContactGroups(AssignUsersInput.fromJS({
+                    entityIds: this.selectedKeys,
+                    userId: this.selectedItemKey
+                })).pipe(finalize(() => {
+                    this.listComponent.unselectAll();
+                })).subscribe((result) => {
+                    this.notify.success(this.l('UserAssigned'));
+                });
+            else
+                this.getProcessAction.assignContactGroup(AssignUserInput.fromJS({
+                    entityId: this.selectedKeys[0],
+                    userId: this.selectedItemKey
+                })).subscribe((result) => {
+                    this.moveSelectedItemsToTop();
+                    this.notify.success(this.l('UserAssigned'));
+                });
+        }
     }
 
     clear() {
@@ -132,7 +135,11 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     ngOnInit() {
-        this.store$.pipe(select(AssignedUsersStoreSelectors.getAssignedUsers)).subscribe((result) => {
+        this.refreshList();
+    }
+
+    refreshList() {
+        this.store$.pipe(select(this.getAssignedUsersSelector)).subscribe((result) => {
             this.list = result;
         });
     }

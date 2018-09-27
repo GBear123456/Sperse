@@ -6,7 +6,6 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { AppConsts } from '@shared/AppConsts';
-import { EditionPaymentType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ChangeUserLanguageDto, GetCurrentLoginInformationsOutput, LinkedUserDto, ProfileServiceProxy, SessionServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -53,6 +52,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     userName = '';
 
     profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    profileThumbnail = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
     defaultLogo = AppConsts.appBaseUrl + '/assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
@@ -62,7 +62,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-    editionPaymentType: typeof EditionPaymentType = EditionPaymentType;
 
     constructor(
         injector: Injector,
@@ -143,7 +142,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     getProfilePicture(): void {
         this._profileServiceProxy.getProfilePicture().subscribe(result => {
             if (result && result.profilePicture) {
-                this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
+                this.profilePicture = this.getImageBase64Src(result.profilePicture);
+                this.profileThumbnail = this.getImageBase64Src(result.profileThumbnail);
             }
         });
     }
@@ -199,8 +199,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this.subscriptionIsExpiringSoon() || 
-            this._appService.subscriptionInGracePeriod();
+        return !this._appService.showContactInfoPanel &&
+            (this.subscriptionIsExpiringSoon() || this._appService.subscriptionInGracePeriod());
     }
 
     subscriptionIsExpiringSoon() {

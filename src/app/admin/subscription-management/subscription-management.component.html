@@ -40,24 +40,6 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="form-group m-form__group row">
-                                <label class="col-sm-4 control-label"></label>
-                                <div class="col-sm-8">
-                                    <a *ngIf="tenant.edition && !tenant.edition.isFree && !tenant.isInTrialPeriod"
-                                       [routerLink]="['/account/extend']" [queryParams]="{ editionPaymentType: editionPaymentType.Extend}" class="btn btn-info">
-                                        {{l("Extend")}}
-                                    </a>
-                                    <a *ngIf="tenant.isInTrialPeriod"
-                                       [routerLink]="['/account/buy']" [queryParams]="{editionPaymentType: editionPaymentType.BuyNow, editionId: tenant.edition.id }"
-                                       class="btn btn-info">
-                                        {{l("BuyNow")}}
-                                    </a>
-                                    <a *ngIf="tenant.edition && (tenant.edition.isFree || !tenant.edition.isHighestEdition) && !tenant.isInTrialPeriod"
-                                       [routerLink]="['/account/select-edition']" class="btn btn-warning">
-                                        {{l("Upgrade")}}
-                                    </a>
-                                </div>
-                            </div>
                         </form>
                     </tab>
                     <tab heading="{{l('PaymentMethods')}}" customClass="m-tabs__item">

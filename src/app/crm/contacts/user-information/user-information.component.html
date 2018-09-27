@@ -86,10 +86,6 @@
                         <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
                         <inplace-edit [data]="getPhoneNumberPropData()" [mask]="masks.phone" [maskInvalidMessage]="l('PhoneValidationError')" (valueChanged)="updateValue($event, PHONE_FIELD)"></inplace-edit>
                     </div>
-                    <div class="section-item">
-                        <div class="item-edit-label">{{l("UserName")}}:</div>
-                        <div>{{data?.user?.userName}}</div>
-                    </div>
                     <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{l('PasswordReset')}}</button>                    
                     <div class="title">
                         {{l('Options') + ':'}}

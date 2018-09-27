@@ -39,7 +39,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             if (result && result.origImage) {
                 this._userService.updateUserPicture(UpdateUserPictureInput.fromJS({
                     userId: this.data['userId'],
-                    image: StringHelper.getBase64(result.origImage)
+                    image: StringHelper.getBase64(result.origImage),
+                    imageThumbnail: StringHelper.getBase64(result.imageThumbnail)
                 })).subscribe(() => {
                     this.data['photo'] = result.origImage;
 

@@ -7,9 +7,6 @@ import {
     IsTenantAvailableOutputState,
     IncomeStatisticsDateInterval,
 //    RegisterTenantInputSubscriptionStartType,
-    CreatePaymentDtoEditionPaymentType,
-    CreatePaymentDtoPaymentPeriodType,
-    CreatePaymentDtoSubscriptionPaymentGatewayType,
     SalesSummaryDatePeriod
 } from '@shared/service-proxies/service-proxies';
 
@@ -59,25 +56,10 @@ export class SubscriptionStartType {
     static Paid: number = RegisterTenantInputSubscriptionStartType._3;
 }
 */
-export class EditionPaymentType {
-    static NewRegistration: number = CreatePaymentDtoEditionPaymentType._0;
-    static BuyNow: number = CreatePaymentDtoEditionPaymentType._1;
-    static Upgrade: number = CreatePaymentDtoEditionPaymentType._2;
-    static Extend: number = CreatePaymentDtoEditionPaymentType._3;
-}
 
 export class AppEditionExpireAction {
     static DeactiveTenant = 'DeactiveTenant';
     static AssignToAnotherEdition = 'AssignToAnotherEdition';
-}
-
-export class PaymentPeriodType  {
-    static Monthly: number = CreatePaymentDtoPaymentPeriodType._30;
-    static Annual: number = CreatePaymentDtoPaymentPeriodType._365;
-}
-
-export class SubscriptionPaymentGatewayType {
-    static Paypal: number = CreatePaymentDtoSubscriptionPaymentGatewayType._1;
 }
 
 export class AppSalesSummaryDatePeriod {

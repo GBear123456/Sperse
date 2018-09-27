@@ -24,7 +24,8 @@
     <crm-user-assignment-list [multiSelection]="true"
             [targetSelector]="'[accesskey=\'UserAssign\']'" 
             [(selectedItemKey)]="data.appointment.AssignedUserIds" 
-            [hideButtons]="true">
+            [hideButtons]="true"
+            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
 
     <div class="tab-content">

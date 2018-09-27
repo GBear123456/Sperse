@@ -59,9 +59,9 @@ import { DocumentTypesListComponent } from './document-types-list/document-types
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
-import { ContactGroupServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy,
-    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy,
-    PartnerServiceProxy, PartnerTypeServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
+    OrganizationTypeServiceProxy, ContactEmploymentServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
+    PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
@@ -168,7 +168,10 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     OrganizationContactServiceProxy,
     OrganizationTypeServiceProxy,
     PersonContactServiceProxy,
-    NameParserService
+    NameParserService,
+    NotesServiceProxy,
+    DocumentServiceProxy, 
+    DocumentTypeServiceProxy
   ]
 })
 export class ContactsModule { }

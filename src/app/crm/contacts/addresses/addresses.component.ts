@@ -45,8 +45,9 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     private _clickTimeout;
     private _clickCounter = 0;
-    private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
+
+    private _latestFormatedAddress: string;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
@@ -96,7 +97,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
-        let parent = event.target.closest('.address-wrapper');
+        let parent = event.target && event.target.closest('.address-wrapper') || document.body;
         return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
     }
 
@@ -133,7 +134,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 }
             }
         });
-        event.stopPropagation();
+        if (event.stopPropagation)
+            event.stopPropagation();
     }
 
     createOrganization(address, dialogData) {
@@ -209,15 +211,15 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     inPlaceEdit(address, event, index) {
+        if (address.inplaceEdit)
+            return ;
+
         this._clickCounter++;
         clearTimeout(this._clickTimeout);
         this._clickTimeout = setTimeout(() => {
             if (this.isEditAllowed && this._clickCounter > 1) {
                 if (!window['google'])
-                    return this.showDialog(address, event, index);
-
-                if (!this._isInPlaceEditAllowed)
-                    return;
+                    this.showDialog(address, event, index);
 
                 address.inplaceEdit = true;
                 address.autoComplete = this.aggregateAddress(address);
@@ -237,7 +239,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     closeInPlaceEdit(address, event) {
         this.clearInplaceData();
         address.inplaceEdit = false;
-        this._isInPlaceEditAllowed = true;
         event.event.stopPropagation();
     }
 
@@ -250,7 +251,26 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         this.zip = '';
     }
 
-    updateItem(address, event) {
+    updateItem(address, event, index) {
+        event.event.stopPropagation();
+
+        if ((this._latestFormatedAddress != address.autoComplete) 
+            && (address.autoComplete != this.aggregateAddress(address))
+        ) {
+            address.inplaceEdit = false;
+            return this.dialog.open(ConfirmDialogComponent, {
+                data: {
+                    title: this.l('AreYouSure'),
+                    message: this.l('EnterAddressManually'),
+                    btnConfirmTitle: this.l('Update'),
+                    btnCancelTitle: this.l('Discard')
+                }
+            }).afterClosed().subscribe(isConfirmed => {
+                if (isConfirmed)
+                    this.showDialog(address, event, index);
+            });
+        }
+
         this.loadCountries();
         this.getCountries().pipe(
             first()
@@ -289,8 +309,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                     });
             }
             address.inplaceEdit = false;
-            this._isInPlaceEditAllowed = true;
-            event.event.stopPropagation();
         });
     }
 
@@ -305,7 +323,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     addressChanged(address, event) {
-        this._isInPlaceEditAllowed = address.autoComplete == event.formatted_address;
+        this._latestFormatedAddress = address.autoComplete = event.formatted_address;
     }
-
 }

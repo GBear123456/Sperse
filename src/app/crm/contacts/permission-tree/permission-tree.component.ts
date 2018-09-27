@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, UpdateUserPermissionsInput, 
@@ -15,7 +15,7 @@ import * as _ from 'lodash';
     templateUrl: './permission-tree.component.html',
     styleUrls: ['./permission-tree.component.less']
 })
-export class PermissionTreeComponent extends AppComponentBase implements OnInit {
+export class PermissionTreeComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxTreeViewComponent) permissionsTree: DxTreeViewComponent;
 
     public data: any;
@@ -36,7 +36,7 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
         _contactsService.userSubscribe((userId) => {            
             if (this.data.userId = userId)
                 this.loadData();
-        });
+        }, this.constructor.name);
 
         this.isEditAllowed = this.isGranted('Pages.Administration.Users.ChangePermissionsAndRoles');
     }
@@ -166,4 +166,8 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit 
             ]
         }
     ];
+
+    ngOnDestroy() {
+        this._contactsService.unsubscribe(this.constructor.name);
+    }
 }

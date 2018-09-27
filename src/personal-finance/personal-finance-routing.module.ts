@@ -53,7 +53,8 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                         component: ContactUsComponent
                     }
                 ]
-            }
+            },
+            { path: '**', redirectTo: 'not-found' }
         ])
     ],
     exports: [RouterModule]
