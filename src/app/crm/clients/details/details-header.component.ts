@@ -25,7 +25,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ AppService, ContactPhotoServiceProxy, DialogService, UserServiceProxy ]
+    providers: [ ContactPhotoServiceProxy, DialogService, UserServiceProxy ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input() data: CustomerInfoDto;
@@ -163,5 +163,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     isClientProspective() {
         return this.data ? this.data.statusId == CustomerStatus.Prospective : true;
+    }
+
+    isClientCFOAvailable() {
+        return this.data && this.data.primaryContactInfo && 
+            this.appService.isCFOAvailable(this.data.primaryContactInfo.userId);
+    }
+
+    redirectToCFO(event, userId) {
+        this.appService.redirectToCFO(this.data.primaryContactInfo.userId);
     }
 }
