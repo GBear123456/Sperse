@@ -208,7 +208,6 @@
 
     <div *ngIf="subscriptionStatusBarVisible()"
          [ngClass]="{'hidden': !subscriptionStatusBarVisible()}" class="alert hidden subscription-info">
-        <span *ngIf="tenant.isInTrialPeriod && !subscriptionIsExpiringSoon()" [innerHTML]="getTrialSubscriptionNotification()"></span>
         <a *ngIf="subscriptionIsExpiringSoon()" routerLink="/app/admin/subscription-management">
             <span *ngIf="subscriptionIsExpiringSoon() && tenant.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("TrialExpireNotification")}}</span>
             <span *ngIf="subscriptionIsExpiringSoon() && !tenant.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("SubscriptionExpireNotification")}}</span>

@@ -17760,68 +17760,6 @@ export class PaymentServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createPayment(input: CreatePaymentDto | null | undefined): Observable<any> {
-        let url_ = this.baseUrl + "/api/services/Platform/Payment/CreatePayment";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreatePayment(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreatePayment(<any>response_);
-                } catch (e) {
-                    return <Observable<any>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<any>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreatePayment(response: HttpResponseBase): Observable<any> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200) {
-                result200 = {};
-                for (let key in resultData200) {
-                    if (resultData200.hasOwnProperty(key))
-                        result200[key] = resultData200[key];
-                }
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<any>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
     cancelPayment(input: CancelPaymentDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Payment/CancelPayment";
         url_ = url_.replace(/[?&]$/, "");
@@ -17868,68 +17806,6 @@ export class PaymentServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    executePayment(input: ExecutePaymentDto | null | undefined): Observable<any> {
-        let url_ = this.baseUrl + "/api/services/Platform/Payment/ExecutePayment";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processExecutePayment(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processExecutePayment(<any>response_);
-                } catch (e) {
-                    return <Observable<any>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<any>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processExecutePayment(response: HttpResponseBase): Observable<any> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200) {
-                result200 = {};
-                for (let key in resultData200) {
-                    if (resultData200.hasOwnProperty(key))
-                        result200[key] = resultData200[key];
-                }
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<any>(<any>null);
     }
 
     /**
@@ -23594,58 +23470,6 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<string>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    executePayment(input: SetupSubscriptionInfoDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/ExecutePayment";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processExecutePayment(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processExecutePayment(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processExecutePayment(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -48681,7 +48505,6 @@ export class EditionSelectDto implements IEditionSelectDto {
     trialDayCount!: number | undefined;
     waitingDayAfterExpire!: number | undefined;
     isFree!: boolean | undefined;
-    additionalData!: AdditionalData | undefined;
 
     constructor(data?: IEditionSelectDto) {
         if (data) {
@@ -48703,7 +48526,6 @@ export class EditionSelectDto implements IEditionSelectDto {
             this.trialDayCount = data["trialDayCount"];
             this.waitingDayAfterExpire = data["waitingDayAfterExpire"];
             this.isFree = data["isFree"];
-            this.additionalData = data["additionalData"] ? AdditionalData.fromJS(data["additionalData"]) : <any>undefined;
         }
     }
 
@@ -48725,7 +48547,6 @@ export class EditionSelectDto implements IEditionSelectDto {
         data["trialDayCount"] = this.trialDayCount;
         data["waitingDayAfterExpire"] = this.waitingDayAfterExpire;
         data["isFree"] = this.isFree;
-        data["additionalData"] = this.additionalData ? this.additionalData.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -48740,60 +48561,10 @@ export interface IEditionSelectDto {
     trialDayCount: number | undefined;
     waitingDayAfterExpire: number | undefined;
     isFree: boolean | undefined;
-    additionalData: AdditionalData | undefined;
-}
-
-export class CreatePaymentDto implements ICreatePaymentDto {
-    editionId!: number | undefined;
-    editionPaymentType!: CreatePaymentDtoEditionPaymentType | undefined;
-    paymentPeriodType!: CreatePaymentDtoPaymentPeriodType | undefined;
-    subscriptionPaymentGatewayType!: CreatePaymentDtoSubscriptionPaymentGatewayType | undefined;
-
-    constructor(data?: ICreatePaymentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.editionId = data["editionId"];
-            this.editionPaymentType = data["editionPaymentType"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            this.subscriptionPaymentGatewayType = data["subscriptionPaymentGatewayType"];
-        }
-    }
-
-    static fromJS(data: any): CreatePaymentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreatePaymentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["editionPaymentType"] = this.editionPaymentType;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        data["subscriptionPaymentGatewayType"] = this.subscriptionPaymentGatewayType;
-        return data; 
-    }
-}
-
-export interface ICreatePaymentDto {
-    editionId: number | undefined;
-    editionPaymentType: CreatePaymentDtoEditionPaymentType | undefined;
-    paymentPeriodType: CreatePaymentDtoPaymentPeriodType | undefined;
-    subscriptionPaymentGatewayType: CreatePaymentDtoSubscriptionPaymentGatewayType | undefined;
 }
 
 export class CancelPaymentDto implements ICancelPaymentDto {
     paymentId!: string | undefined;
-    gateway!: CancelPaymentDtoGateway | undefined;
 
     constructor(data?: ICancelPaymentDto) {
         if (data) {
@@ -48807,7 +48578,6 @@ export class CancelPaymentDto implements ICancelPaymentDto {
     init(data?: any) {
         if (data) {
             this.paymentId = data["paymentId"];
-            this.gateway = data["gateway"];
         }
     }
 
@@ -48821,78 +48591,12 @@ export class CancelPaymentDto implements ICancelPaymentDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["paymentId"] = this.paymentId;
-        data["gateway"] = this.gateway;
         return data; 
     }
 }
 
 export interface ICancelPaymentDto {
     paymentId: string | undefined;
-    gateway: CancelPaymentDtoGateway | undefined;
-}
-
-export class ExecutePaymentDto implements IExecutePaymentDto {
-    gateway!: ExecutePaymentDtoGateway | undefined;
-    editionPaymentType!: ExecutePaymentDtoEditionPaymentType | undefined;
-    editionId!: number | undefined;
-    paymentPeriodType!: ExecutePaymentDtoPaymentPeriodType | undefined;
-    additionalData!: { [key: string] : string; } | undefined;
-
-    constructor(data?: IExecutePaymentDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.gateway = data["gateway"];
-            this.editionPaymentType = data["editionPaymentType"];
-            this.editionId = data["editionId"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["additionalData"]) {
-                this.additionalData = {};
-                for (let key in data["additionalData"]) {
-                    if (data["additionalData"].hasOwnProperty(key))
-                        this.additionalData[key] = data["additionalData"][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): ExecutePaymentDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ExecutePaymentDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["gateway"] = this.gateway;
-        data["editionPaymentType"] = this.editionPaymentType;
-        data["editionId"] = this.editionId;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.additionalData) {
-            data["additionalData"] = {};
-            for (let key in this.additionalData) {
-                if (this.additionalData.hasOwnProperty(key))
-                    data["additionalData"][key] = this.additionalData[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface IExecutePaymentDto {
-    gateway: ExecutePaymentDtoGateway | undefined;
-    editionPaymentType: ExecutePaymentDtoEditionPaymentType | undefined;
-    editionId: number | undefined;
-    paymentPeriodType: ExecutePaymentDtoPaymentPeriodType | undefined;
-    additionalData: { [key: string] : string; } | undefined;
 }
 
 export class PagedResultDtoOfSubscriptionPaymentListDto implements IPagedResultDtoOfSubscriptionPaymentListDto {
@@ -57140,90 +56844,6 @@ export enum PaymentMethodInfoType {
 export enum ACHCustomerShortInfoCustomerAcctType {
     _0 = 0, 
     _1 = 1, 
-}
-
-export class AdditionalData implements IAdditionalData {
-    paypal!: { [key: string] : string; } | undefined;
-
-    constructor(data?: IAdditionalData) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["Paypal"]) {
-                this.paypal = {};
-                for (let key in data["Paypal"]) {
-                    if (data["Paypal"].hasOwnProperty(key))
-                        this.paypal[key] = data["Paypal"][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): AdditionalData {
-        data = typeof data === 'object' ? data : {};
-        let result = new AdditionalData();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.paypal) {
-            data["Paypal"] = {};
-            for (let key in this.paypal) {
-                if (this.paypal.hasOwnProperty(key))
-                    data["Paypal"][key] = this.paypal[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface IAdditionalData {
-    paypal: { [key: string] : string; } | undefined;
-}
-
-export enum CreatePaymentDtoEditionPaymentType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-}
-
-export enum CreatePaymentDtoPaymentPeriodType {
-    _30 = 30, 
-    _365 = 365, 
-}
-
-export enum CreatePaymentDtoSubscriptionPaymentGatewayType {
-    _1 = 1, 
-}
-
-export enum CancelPaymentDtoGateway {
-    _1 = 1, 
-}
-
-export enum ExecutePaymentDtoGateway {
-    _1 = 1, 
-}
-
-export enum ExecutePaymentDtoEditionPaymentType {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-}
-
-export enum ExecutePaymentDtoPaymentPeriodType {
-    _30 = 30, 
-    _365 = 365, 
 }
 
 export enum QuestionDtoType {
