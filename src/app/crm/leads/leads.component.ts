@@ -20,7 +20,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
-    AssignedUsersStoreSelectors,
+    LeadAssignedUsersStoreSelectors,
     AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
@@ -310,7 +310,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(AssignedUsersStoreSelectors.getAssignedUsers)),
+                                dataSource$: this.store$.pipe(select(LeadAssignedUsersStoreSelectors.getAssignedUsers)),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -814,5 +814,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     }
                 }
             );
+    }
+
+    getAssignedUsersStoreSelectors() {
+        return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+    }
+
+    getChangeAssignUser() {
+        return {
+            'assignContactGroups': this._leadService.assignContactGroups.bind(this._leadService),
+            'assignContactGroup': this._leadService.assignContactGroup.bind(this._leadService)
+        };
     }
 }

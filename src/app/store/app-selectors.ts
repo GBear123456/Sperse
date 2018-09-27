@@ -1,5 +1,8 @@
 import { AddressUsageTypesStoreSelectors } from './address-usage-types-store/index';
-import { AssignedUsersStoreSelectors } from './assigned-users-store/index';
+import { CustomerAssignedUsersStoreSelectors } from './assigned-users-store/customer-assigned-users-store/index';
+import { LeadAssignedUsersStoreSelectors } from './assigned-users-store/lead-assigned-users-store/index';
+import { PartnerAssignedUsersStoreSelectors } from './assigned-users-store/partner-assigned-users-store/index';
+import { ActivityAssignedUsersStoreSelectors } from './assigned-users-store/activity-assigned-users-store/index';
 import { ContactLinkTypesStoreSelectors } from './contact-link-types-store/index';
 import { EmailUsageTypesStoreSelectors } from './email-usage-types-store/index';
 import { ListsStoreSelectors } from './lists-store/index';
@@ -12,7 +15,10 @@ import { TagsStoreSelectors } from './tags-store/index';
 
 export {
     AddressUsageTypesStoreSelectors,
-    AssignedUsersStoreSelectors,
+    CustomerAssignedUsersStoreSelectors,
+    LeadAssignedUsersStoreSelectors,
+    PartnerAssignedUsersStoreSelectors,
+    ActivityAssignedUsersStoreSelectors,
     ContactLinkTypesStoreSelectors,
     EmailUsageTypesStoreSelectors,
     ListsStoreSelectors,

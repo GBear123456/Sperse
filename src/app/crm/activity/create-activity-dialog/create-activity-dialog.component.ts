@@ -15,6 +15,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
+import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -324,5 +325,9 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     initDateValidationGroup($event) {
         this.dateValidator = $event.component;
+    }
+
+    getAssignedUsersStoreSelectors() {
+        return ActivityAssignedUsersStoreSelectors.getAssignedUsers;
     }
 }

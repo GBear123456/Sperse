@@ -1,7 +1,7 @@
 import { ActionTypes } from './actions';
 import { State, initialState } from './state';
 
-export function assignedUsersReducer(state: State = initialState, action) {
+export function leadAssignedUsersReducer(state: State = initialState, action) {
     switch (action.type) {
         case ActionTypes.LOAD_REQUEST: {
             const reload = action.payload;

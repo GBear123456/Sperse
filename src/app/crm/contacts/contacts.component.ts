@@ -12,7 +12,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { AppStore, PartnerTypesStoreSelectors } from '@app/store';
+import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroupType } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -506,5 +506,38 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.InitNavLinks(contact);
         this._contactsService.userUpdate(
             this._userService['data'].userId = contact.userId);
+    }
+
+    getAssignedUsersStoreSelectors() {
+        debugger
+        if (this.leadId || this.leadInfo)
+            return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+
+        if(this.customerType == ContactGroupType.Partner)
+            return PartnerAssignedUsersStoreSelectors.getAssignedUsers;
+
+        if (this.customerType == ContactGroupType.Client)
+            return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
+    }
+
+    getChangeAssignUser() {
+        debugger
+        if (this.leadId || this.leadInfo)
+            return {
+                'assignContactGroups': this._leadService.assignContactGroups.bind(this._partnerService),
+                'assignContactGroup': this._leadService.assignContactGroup.bind(this._partnerService)
+            };
+
+        if (this.customerType == ContactGroupType.Partner)
+            return {
+                'assignContactGroups': this._partnerService.assignContactGroups.bind(this._partnerService),
+                'assignContactGroup': this._partnerService.assignContactGroup.bind(this._partnerService)
+            };
+
+        if (this.customerType == ContactGroupType.Client)
+            return {
+                'assignContactGroups': this._contactGroupService.assignContactGroups.bind(this._partnerService),
+                'assignContactGroup': this._contactGroupService.assignContactGroup.bind(this._partnerService)
+            };
     }
 }

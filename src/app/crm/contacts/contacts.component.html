@@ -21,6 +21,8 @@
             (onUpdateStatus)="updateStatus($event)"
             (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteLead()"
+            [getProcessAction]="getChangeAssignUser()"
+            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()"
         ></operations-widget>
     </div>
     <mat-sidenav-container>
