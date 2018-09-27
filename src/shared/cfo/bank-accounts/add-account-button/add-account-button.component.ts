@@ -12,6 +12,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 })
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
+    @Output() onComplete: EventEmitter<any> = new EventEmitter();
     tooltipVisible = false;
     quovoHandler: QuovoHandler;
     createAccountAvailable: boolean;
@@ -58,5 +59,9 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
 
     xeroButtonClick() {
         this.quovoHandler.close();
+    }
+
+    addXeroAccount() {
+        this.onComplete.emit();
     }
 }

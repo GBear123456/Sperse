@@ -15,7 +15,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit {
     @Input() operationType: 'add' | 'update' = 'add';
-    @Output() onComplete = new EventEmitter();
+    @Output() onComplete: EventEmitter<any> = new EventEmitter();
     showForm = false;
     popupVisible = false;
     consumerKey: string;
@@ -33,9 +33,7 @@ export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit
         this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + '/Xero/GetCertificate';
     }
 
-    ngOnInit() {
-        this.overlayElement = document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content');
-    }
+    ngOnInit() {}
 
     show(data: {id: number} = null): void {
         if (data && data.id) {
@@ -57,6 +55,10 @@ export class XeroLoginDialogComponent extends CFOComponentBase implements OnInit
             else
                 this.updateSyncAccount();
         }
+    }
+
+    onShownModal() {
+        this.overlayElement = document.querySelector('.dx-overlay-wrapper.xeroLoginDialog .dx-overlay-content');
     }
 
     connectToXero(e) {

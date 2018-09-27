@@ -6,7 +6,10 @@
         [selectedItems]="selectedBusinessEntities"
         (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
-    <add-account-button *ngIf="isInstanceAdmin" class="add-link" (onClose)="addAccountClose($event)"></add-account-button>
+    <add-account-button *ngIf="isInstanceAdmin" class="add-link"
+                        (onComplete)="addAccountComplete()"
+                        (onClose)="addAccountClose($event)">
+    </add-account-button>
 </div>
 <div class="accountsSummary">
     <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="accountsDataTotalNetWorth$ | async  | currency: 'USD' : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
@@ -34,5 +37,5 @@
         (reloadDataSource)="loadBankAccounts()"
         (onDataChange)="bankAccountDataChanged()">
     </bank-accounts-widget>
-    <xero-login-dialog [operationType]="'update'" (onComplete)="addAccountComplete()"></xero-login-dialog>
+    <xero-login-dialog [operationType]="'update'"></xero-login-dialog>
 </div>
