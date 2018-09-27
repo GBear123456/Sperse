@@ -201,8 +201,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this.subscriptionIsExpiringSoon() || 
-            this._appService.subscriptionInGracePeriod();
+        return !this._appService.showContactInfoPanel &&
+            (this.subscriptionIsExpiringSoon() || this._appService.subscriptionInGracePeriod());
     }
 
     subscriptionIsExpiringSoon() {
