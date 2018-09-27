@@ -93,6 +93,7 @@
               "src/styles.css"
             ],
             "scripts": [
+              "node_modules/@webcomponents/custom-elements/src/native-shim.js",
               "node_modules/jquery/dist/jquery.js",
               "node_modules/jquery-validation/dist/jquery.validate.js",
               "node_modules/popper.js/dist/umd/popper.js",
@@ -498,6 +499,178 @@
               "e2e/tsconfig.json"
             ],
             "exclude": []
+          }
+        }
+      }
+    },
+    "package-chooser-widget": {
+      "root": "projects/package-chooser-widget/",
+      "sourceRoot": "projects/package-chooser-widget/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/package-chooser-widget",
+            "index": "projects/package-chooser-widget/src/index.html",
+            "main": "projects/package-chooser-widget/src/main.ts",
+            "polyfills": "projects/package-chooser-widget/src/polyfills.ts",
+            "tsConfig": "projects/package-chooser-widget/tsconfig.app.json",
+            "assets": [
+              "projects/package-chooser-widget/src/favicon.ico"
+            ],
+            "styles": [
+              "projects/package-chooser-widget/src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js",
+              "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/abp-web-resources/Abp/Framework/scripts/abp.js",
+              "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.js"
+            ]
+          },
+          "configurations": {
+            "dev": {
+              "optimization": false,
+              "sourceMap": false,
+              "extractCss": false,
+              "aot": false,
+              "showCircularDependencies": true,
+              "buildOptimizer": false,
+              "vendorChunk": true
+            },
+            "devstaging": {
+              "optimization": false,
+              "sourceMap": false,
+              "extractCss": false,
+              "aot": false,
+              "showCircularDependencies": true,
+              "buildOptimizer": false,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.devstaging.ts"
+                },
+                {
+                  "replace": "src/assets/appconfig.json",
+                  "with": "src/assets/appconfig.devstaging.json"
+                }
+              ]
+            },
+            "staging": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractCss": false,
+              "namedChunks": false,
+              "aot": true,
+              "showCircularDependencies": true,
+              "extractLicenses": true,
+              "buildOptimizer": true,
+              "vendorChunk": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                },
+                {
+                  "replace": "src/assets/appconfig.json",
+                  "with": "src/assets/appconfig.staging.json"
+                }
+              ]
+            },
+            "beta": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractCss": false,
+              "namedChunks": false,
+              "aot": true,
+              "showCircularDependencies": true,
+              "extractLicenses": true,
+              "buildOptimizer": true,
+              "vendorChunk": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.beta.ts"
+                },
+                {
+                  "replace": "src/assets/appconfig.json",
+                  "with": "src/assets/appconfig.beta.json"
+                }
+              ]
+            },
+            "prod": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractCss": false,
+              "namedChunks": false,
+              "aot": true,
+              "showCircularDependencies": true,
+              "extractLicenses": true,
+              "buildOptimizer": true,
+              "vendorChunk": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.devstaging.ts"
+                },
+                {
+                  "replace": "src/assets/appconfig.json",
+                  "with": "src/assets/appconfig.devstaging.json"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "package-chooser-widget:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "package-chooser-widget:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "package-chooser-widget:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/package-chooser-widget/src/test.ts",
+            "polyfills": "projects/package-chooser-widget/src/polyfills.ts",
+            "tsConfig": "projects/package-chooser-widget/tsconfig.spec.json",
+            "karmaConfig": "projects/package-chooser-widget/karma.conf.js",
+            "styles": [
+              "projects/package-chooser-widget/src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "projects/package-chooser-widget/src/favicon.ico",
+              "projects/package-chooser-widget/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/package-chooser-widget/tsconfig.app.json",
+              "projects/package-chooser-widget/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }

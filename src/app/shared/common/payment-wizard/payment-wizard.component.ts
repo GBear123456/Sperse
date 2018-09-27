@@ -8,7 +8,7 @@ import { concatAll, publishReplay, refCount, map, max } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { OptionsPaymentPlan } from '@app/shared/common/payment-wizard/models/options-payment-plan.model';
+import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { Module, PackageConfigDto, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -24,9 +24,9 @@ import { StatusInfo } from './models/status-info';
 })
 export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
-    plan$: Observable<OptionsPaymentPlan>;
-    paymentPlans$: Observable<PackageConfigDto[]>;
-    paymentPlansMaxUsersAmount$: Observable<number>;
+    plan$: Observable<PackageOptions>;
+    packages$: Observable<PackageConfigDto[]>;
+    packagesMaxUsersAmount$: Observable<number>;
     paymentStatus: PaymentStatusEnum;
     paymentStatusText: string;
     constructor(private injector: Injector,
@@ -42,12 +42,12 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         this.plan$ = this.paymentService.plan$;
         /** get packages observable but filter free package */
-        this.paymentPlans$ = this.packageServiceProxy.getPackagesConfig(Module.CRM).pipe(
+        this.packages$ = this.packageServiceProxy.getPackagesConfig(Module.CRM).pipe(
             publishReplay(),
             refCount(),
             map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free CRM')),
         );
-        this.paymentPlansMaxUsersAmount$ = this.paymentPlans$.pipe(
+        this.packagesMaxUsersAmount$ = this.packages$.pipe(
             concatAll(),
             map(packages => packages.editions),
             concatAll(),

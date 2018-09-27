@@ -27,97 +27,99 @@
 
 </head>
 <body>
-    <div id="loginPage" style="display: none;">
-        <div class="login">
-            <header>
-                <div class="logo" style="width:200px;height:60px;">
-                    <a routerlink="/" ng-reflect-router-link="/" href="/">
-                        <img id="logoImage" alt="logo" height="60" width="200" class="ng-star-inserted" style="display: none;">
-                    </a>
-                </div>
-            </header>
-            <main class="main-content">
-                <div class="account-forms">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
-                            <router-outlet></router-outlet>
-                            <ng-component _nghost-c1="" class="ng-tns-c1-0 ng-star-inserted">
-                                <div _ngcontent-c1="" class="container-fluid ng-trigger ng-trigger-routerTransition" style="margin-top: 0px; opacity: 1;">
-                                    <div _ngcontent-c1="" class="row">
-                                        <div _ngcontent-c1="" class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
-                                            <h1 _ngcontent-c1="" class="d-none d-md-block">Sperse Login</h1>
-                                            <h1 _ngcontent-c1="" class="d-md-none">Login</h1>
-                                            <form id="loginForm" class="login-form ng-pristine ng-invalid ng-touched" method="post" novalidate="">
-                                                <div _ngcontent-c1="" class="form-group clearfix">
-                                                    <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-pristine ng-invalid ng-touched" autofocus="" autocomplete="off" name="userNameOrEmailAddress" required="" tabindex="1" type="text" ng-reflect-required="" ng-reflect-name="userNameOrEmailAddress" placeholder="Email address">
+    <root>
+        <div id="loginPage" style="display: none;">
+            <div class="login">
+                <header>
+                    <div class="logo" style="width:200px;height:60px;">
+                        <a routerlink="/" ng-reflect-router-link="/" href="/">
+                            <img id="logoImage" alt="logo" height="60" width="200" class="ng-star-inserted" style="display: none;">
+                        </a>
+                    </div>
+                </header>
+                <main class="main-content">
+                    <div class="account-forms">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
+                                <router-outlet></router-outlet>
+                                <ng-component _nghost-c1="" class="ng-tns-c1-0 ng-star-inserted">
+                                    <div _ngcontent-c1="" class="container-fluid ng-trigger ng-trigger-routerTransition" style="margin-top: 0px; opacity: 1;">
+                                        <div _ngcontent-c1="" class="row">
+                                            <div _ngcontent-c1="" class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
+                                                <h1 _ngcontent-c1="" class="d-none d-md-block">Sperse Login</h1>
+                                                <h1 _ngcontent-c1="" class="d-md-none">Login</h1>
+                                                <form id="loginForm" class="login-form ng-pristine ng-invalid ng-touched" method="post" novalidate="">
                                                     <div _ngcontent-c1="" class="form-group clearfix">
-                                                        <div _ngcontent-c1="" class="mt-checkbox-list pull-right">
-                                                            <label _ngcontent-c1="" class="mt-checkbox mt-checkbox-outline">
-                                                                <input _ngcontent-c1="" class="form-control ng-untouched ng-pristine ng-valid" name="rememberMe" type="checkbox" value="true" ng-reflect-name="rememberMe" ng-reflect-model="false">Remember me <span _ngcontent-c1="" class="ng-tns-c1-0"></span></label>
+                                                        <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-pristine ng-invalid ng-touched" autofocus="" autocomplete="off" name="userNameOrEmailAddress" required="" tabindex="1" type="text" ng-reflect-required="" ng-reflect-name="userNameOrEmailAddress" placeholder="Email address">
+                                                        <div _ngcontent-c1="" class="form-group clearfix">
+                                                            <div _ngcontent-c1="" class="mt-checkbox-list pull-right">
+                                                                <label _ngcontent-c1="" class="mt-checkbox mt-checkbox-outline">
+                                                                    <input _ngcontent-c1="" class="form-control ng-untouched ng-pristine ng-valid" name="rememberMe" type="checkbox" value="true" ng-reflect-name="rememberMe" ng-reflect-model="false">Remember me <span _ngcontent-c1="" class="ng-tns-c1-0"></span></label>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div _ngcontent-c1="" class="form-group clearfix">
-                                                    <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-untouched ng-pristine ng-invalid" autocomplete="off" maxlength="32" name="password" required="" tabindex="2" type="password" ng-reflect-required="" ng-reflect-maxlength="32" ng-reflect-name="password" placeholder="Password">
-                                                    <div _ngcontent-c1="" class="form-group clearfix"><a _ngcontent-c1="" class="forget-password pull-right" id="forget-password" routerlink="/account/forgot-password" ng-reflect-router-link="/account/forgot-password" href="/account/forgot-password">Forgot password?</a></div>
-                                                </div>
-                                                <div _ngcontent-c1="" class="form-actions">
-                                                    <button  _ngcontent-c1="" class="submit" name="submit" type="submit"> Login <img _ngcontent-c1="" class="pull-right" alt="right arrow" src="/assets/common/icons/arrow-right-long-icon.svg"></button>
-                                                </div>
-                                                <p _ngcontent-c1="" class="agree-rights" style="display: none;">By continuing I agree to <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#terms" data-toggle="modal">Terms</a> &amp; <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#privacy" data-toggle="modal">Policies</a></p>
-                                            </form>
-                                            <!-- div _ngcontent-c1="" class="create-account">
-                                                <p _ngcontent-c1="" class="ng-tns-c1-0 ng-star-inserted" style=""><a _ngcontent-c1="" class="uppercase" id="register-btn" routerlink="/account/select-edition" ng-reflect-router-link="/account/select-edition" href="/account/select-edition">New tenant</a><span _ngcontent-c1="" class="pipe-divider"> | </span></p>
-                                            </div -->
-                                        </div>
-                                    </div>
-                                    <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="privacy" role="dialog" tabindex="-1">
-                                        <div _ngcontent-c1="" class="modal-dialog" role="document">
-                                            <div _ngcontent-c1="" class="modal-content">
-                                                <div _ngcontent-c1="" class="modal-header">
-                                                    <h4 _ngcontent-c1="" class="modal-title">SPERSE PRIVACY POLICY</h4>
-                                                    <div _ngcontent-c1="" class="control-buttons">
-                                                        <a _ngcontent-c1="" class="download" href="https://testapi.sperse.com/docs/SpersePrivacyPolicy.pdf" target="_blank"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="download" src="assets/common/icons/download-icon.svg"></a>
-                                                        <button _ngcontent-c1="" class="print-this"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="print" src="assets/common/icons/print-icon.svg"></button>
+                                                    <div _ngcontent-c1="" class="form-group clearfix">
+                                                        <input _ngcontent-c1="" class="form-control form-control-solid placeholder-no-fix input-ltr ng-untouched ng-pristine ng-invalid" autocomplete="off" maxlength="32" name="password" required="" tabindex="2" type="password" ng-reflect-required="" ng-reflect-maxlength="32" ng-reflect-name="password" placeholder="Password">
+                                                        <div _ngcontent-c1="" class="form-group clearfix"><a _ngcontent-c1="" class="forget-password pull-right" id="forget-password" routerlink="/account/forgot-password" ng-reflect-router-link="/account/forgot-password" href="/account/forgot-password">Forgot password?</a></div>
                                                     </div>
-                                                    <button _ngcontent-c1="" class="close" aria-label="Close" data-dismiss="modal" type="button"></button>
+                                                    <div _ngcontent-c1="" class="form-actions">
+                                                        <button  _ngcontent-c1="" class="submit" name="submit" type="submit"> Login <img _ngcontent-c1="" class="pull-right" alt="right arrow" src="/assets/common/icons/arrow-right-long-icon.svg"></button>
+                                                    </div>
+                                                    <p _ngcontent-c1="" class="agree-rights" style="display: none;">By continuing I agree to <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#terms" data-toggle="modal">Terms</a> &amp; <a _ngcontent-c1="" class="ng-tns-c1-0" data-target="#privacy" data-toggle="modal">Policies</a></p>
+                                                </form>
+                                                <!-- div _ngcontent-c1="" class="create-account">
+                                                    <p _ngcontent-c1="" class="ng-tns-c1-0 ng-star-inserted" style=""><a _ngcontent-c1="" class="uppercase" id="register-btn" routerlink="/account/select-edition" ng-reflect-router-link="/account/select-edition" href="/account/select-edition">New tenant</a><span _ngcontent-c1="" class="pipe-divider"> | </span></p>
+                                                </div -->
+                                            </div>
+                                        </div>
+                                        <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="privacy" role="dialog" tabindex="-1">
+                                            <div _ngcontent-c1="" class="modal-dialog" role="document">
+                                                <div _ngcontent-c1="" class="modal-content">
+                                                    <div _ngcontent-c1="" class="modal-header">
+                                                        <h4 _ngcontent-c1="" class="modal-title">SPERSE PRIVACY POLICY</h4>
+                                                        <div _ngcontent-c1="" class="control-buttons">
+                                                            <a _ngcontent-c1="" class="download" href="https://testapi.sperse.com/docs/SpersePrivacyPolicy.pdf" target="_blank"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="download" src="assets/common/icons/download-icon.svg"></a>
+                                                            <button _ngcontent-c1="" class="print-this"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="print" src="assets/common/icons/print-icon.svg"></button>
+                                                        </div>
+                                                        <button _ngcontent-c1="" class="close" aria-label="Close" data-dismiss="modal" type="button"></button>
+                                                    </div>
+                                                    <div _ngcontent-c1="" class="modal-body print-this-section"></div>
                                                 </div>
-                                                <div _ngcontent-c1="" class="modal-body print-this-section"></div>
+                                            </div>
+                                        </div>
+                                        <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="terms" role="dialog" tabindex="-1">
+                                            <div _ngcontent-c1="" class="modal-dialog" role="document">
+                                                <div _ngcontent-c1="" class="modal-content">
+                                                    <div _ngcontent-c1="" class="modal-header">
+                                                        <h4 _ngcontent-c1="" class="modal-title">SPERSE TERMS OF SERVICE</h4>
+                                                        <div _ngcontent-c1="" class="control-buttons">
+                                                            <a _ngcontent-c1="" class="download" href="https://testapi.sperse.com/docs/SperseTermsOfService.pdf" target="_blank"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="download" src="assets/common/icons/download-icon.svg"></a>
+                                                            <button _ngcontent-c1="" class="print-this"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="print" src="assets/common/icons/print-icon.svg"></button>
+                                                        </div>
+                                                        <button _ngcontent-c1="" class="close" aria-label="Close" data-dismiss="modal" type="button"></button>
+                                                    </div>
+                                                    <div _ngcontent-c1="" class="modal-body print-this-section"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div _ngcontent-c1="" class="modal right fade" aria-hidden="true" id="terms" role="dialog" tabindex="-1">
-                                        <div _ngcontent-c1="" class="modal-dialog" role="document">
-                                            <div _ngcontent-c1="" class="modal-content">
-                                                <div _ngcontent-c1="" class="modal-header">
-                                                    <h4 _ngcontent-c1="" class="modal-title">SPERSE TERMS OF SERVICE</h4>
-                                                    <div _ngcontent-c1="" class="control-buttons">
-                                                        <a _ngcontent-c1="" class="download" href="https://testapi.sperse.com/docs/SperseTermsOfService.pdf" target="_blank"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="download" src="assets/common/icons/download-icon.svg"></a>
-                                                        <button _ngcontent-c1="" class="print-this"><img _ngcontent-c1="" class="ng-tns-c1-0" alt="print" src="assets/common/icons/print-icon.svg"></button>
-                                                    </div>
-                                                    <button _ngcontent-c1="" class="close" aria-label="Close" data-dismiss="modal" type="button"></button>
-                                                </div>
-                                                <div _ngcontent-c1="" class="modal-body print-this-section"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </ng-component>
-                        </div>
-                        <div class="col-md-6 col-sm-12 d-none d-md-block text-center slogan-side"><img alt="The digital brain of your business" class="img-responsive" src="assets/common/images/brain.svg" width="488">
-                            <h2 class="slogan">The digital brain of your business</h2>
-                            <p class="slogan-description">Augumented by Artificial Intelligence</p>
+                                </ng-component>
+                            </div>
+                            <div class="col-md-6 col-sm-12 d-none d-md-block text-center slogan-side"><img alt="The digital brain of your business" class="img-responsive" src="assets/common/images/brain.svg" width="488">
+                                <h2 class="slogan">The digital brain of your business</h2>
+                                <p class="slogan-description">Augumented by Artificial Intelligence</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </main>
-            <footer>
-                <div class="copyright"> 2018 © Sperse Platform. </div>
-            </footer>
+                </main>
+                <footer>
+                    <div class="copyright"> 2018 © Sperse Platform. </div>
+                </footer>
+            </div>
         </div>
-    </div>
-    <!-- Spinner -->
-    <div id="loadSpinner" class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
-    <script src="assets/login/script.js" async></script>
+        <!-- Spinner -->
+        <div id="loadSpinner" class="lds-css ng-scope"><div class="lds-spin"><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div></div>
+        <script src="assets/login/script.js" async></script>
+    </root>
 </body>
 </html>

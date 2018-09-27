@@ -146,7 +146,6 @@ import { ContactsModule } from './contacts/contacts.module';
       DeleteAndReassignDialogComponent,
       CreateActivityDialogComponent,
       CrmIntroComponent,
-      // PaymentWizardComponent,
       ActivityComponent
     ],
     providers: [
@@ -158,8 +157,7 @@ import { ContactsModule } from './contacts/contacts.module';
         CreateClientDialogComponent,
         CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
-        CrmIntroComponent/*,
-        PaymentWizardComponent*/
+        CrmIntroComponent
     ]
 })
 export class CrmModule {

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injector, Input } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OptionsPaymentPlan } from '@app/shared/common/payment-wizard/models/options-payment-plan.model';
+import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { Step } from '@app/shared/common/payment-wizard/models/step.model';
 import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info';
@@ -34,7 +34,7 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
     providers: [ TenantSubscriptionServiceProxy ]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
-    @Input() plan: OptionsPaymentPlan;
+    @Input() plan: PackageOptions;
     @Input() steps: Step[] = [
         {
             name: this.l('ChooseYourPlan'),

@@ -5,8 +5,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /** Third party imports */
 import {
-    MatProgressBarModule, MatStepperModule, MatInputModule,
-    MatDialogModule, MatTabsModule, MatSidenavModule, MatFormFieldModule, MatButtonModule, MatSelectModule, MatTooltipModule, MatSliderModule, MatAutocompleteModule
+    MatProgressBarModule,
+    MatStepperModule,
+    MatInputModule,
+    MatDialogModule,
+    MatTabsModule,
+    MatSidenavModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatSliderModule,
+    MatAutocompleteModule,
+    MatSlideToggleModule
 } from '@angular/material';
 import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
@@ -51,8 +62,8 @@ import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { RatingBarComponent } from './rating-bar/rating-bar.component';
 import { PaymentWizardComponent } from './payment-wizard/payment-wizard.component';
-import { PaymentPlanCardComponent } from './payment-wizard/payment-plan-chooser/payment-plan-card/payment-plan-card.component';
-import { PaymentPlanChooserComponent } from './payment-wizard/payment-plan-chooser/payment-plan-chooser.component';
+import { PackageCardComponent } from './payment-wizard/package-chooser/package-card/package-card.component';
+import { PackageChooserComponent } from './payment-wizard/package-chooser/package-chooser.component';
 import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
 import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';
 import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
@@ -89,6 +100,7 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         MatSelectModule,
         MatTooltipModule,
         MatSliderModule,
+        MatSlideToggleModule,
         MatAutocompleteModule,
         ReactiveFormsModule,
         FileDropModule,
@@ -146,8 +158,8 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         ConfirmDialogComponent,
         RatingBarComponent,
         PaymentWizardComponent,
-        PaymentPlanCardComponent,
-        PaymentPlanChooserComponent,
+        PackageCardComponent,
+        PackageChooserComponent,
         PaymentStatusComponent,
         PaymentOptionsComponent,
         CreditCardComponent,

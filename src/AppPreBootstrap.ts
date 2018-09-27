@@ -48,7 +48,7 @@ export class AppPreBootstrap {
             url: appRootUrl + 'assets/' + environment.appConfig,
             method: 'GET',
         }).done(result => {
-            AppConsts.appBaseUrlFormat = result.appBaseUrl;
+            AppConsts.appBaseUrlFormat = environment.appBaseUrl;
             AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
             AppConsts.recaptchaSiteKey = result.recaptchaSiteKey;
             AppConsts.googleSheetClientId = result.googleSheetClientId;
@@ -132,7 +132,7 @@ export class AppPreBootstrap {
         });
     }
 
-    private static getUserConfiguration(callback: () => void): JQueryPromise<any> {
+    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true): JQueryPromise<any> {
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
         const token = abp.auth.getToken();
 
@@ -151,15 +151,15 @@ export class AppPreBootstrap {
             headers: requestHeaders
         }).done(result => {
             $.extend(true, abp, result);
-
             abp.clock.provider = this.getCurrentClockProvider(result.clock.provider);
 
-            moment.locale(abp.localization.currentLanguage.name);
-            (window as any).moment.locale(abp.localization.currentLanguage.name);
-
-            if (abp.clock.provider.supportsMultipleTimezone) {
-                moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-                (window as any).moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+            if (window.hasOwnProperty('moment')) {
+                moment.locale(abp.localization.currentLanguage.name);
+                (window as any).moment.locale(abp.localization.currentLanguage.name);
+                if (abp.clock.provider.supportsMultipleTimezone && moment) {
+                    moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+                    (window as any).moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+                }
             }
 
             abp.event.trigger('abp.dynamicScriptsInitialized');
@@ -167,7 +167,7 @@ export class AppPreBootstrap {
             AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
             AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
-            LocalizedResourcesHelper.loadResources(callback);
+            loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();
         });
     }
 

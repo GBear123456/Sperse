@@ -5,31 +5,21 @@
 @scrollbar-color: #dee3e5;
 
 :host {
-    background: linear-gradient(111deg, #c86dd7, #3023ae) no-repeat 100% 360px;
     padding: 34px 42px 33px 44px;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
-    /** white triangle to correspond to design */
-    &:before {
-        content: '';
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 115px 980px 0 0;
-        border-color: #ffffff transparent transparent transparent;
-        bottom: 180px;
-        left: 0;
-        position: absolute;
-    }
-    .header {
+    margin: auto;
+
+    .packageHeader {
         text-align: center;
         .title {
             font-size: 36px;
             font-weight: 600;
             color: #424c56;
+            margin-bottom: 0;
+            margin-top: 0;
         }
         .subtitle {
             font-size: 16px;
@@ -42,7 +32,7 @@
             justify-content: center;
             align-items: center;
             margin: 27px 0 10px 0;
-            div {
+            & > div {
                 font-size: 14px;
                 font-weight: 500;
                 color: #919aa3;
@@ -71,34 +61,55 @@
                     }
                 }
             }
-            /deep/ .dx-switch {
+
+            /deep/ mat-slide-toggle.mat-slide-toggle {
                 margin: 0 18px;
-                .dx-switch-container {
-                    border-color: #9a9a9a;
-                    background-color: #fff;
+                .mat-slide-toggle-bar {
+                    width: 60px;
+                    height: 26px;
                     border-radius: 13px;
-
-                    .dx-switch-inner {
-                        .dx-switch-on,
-                        .dx-switch-off {
-                            color: transparent;
-                        }
-
-                        .dx-switch-handle {
+                    background-color: #ffffff;
+                    border: solid 1px rgba(154, 154, 154, .4);
+                    .mat-slide-toggle-thumb-container {
+                        width: 100%;
+                        height: 100%;
+                        top: 0px;
+                        transform: translate3d(0px, 0, 0);
+                        margin: 0 4px;
+                        cursor: pointer;
+                        .mat-slide-toggle-thumb {
                             width: 18px;
                             height: 18px;
-                            margin-left: -18px;
-                            &::before {
-                                background-color: #00aeef;
-                                border-radius: 18px;
-                                height: 18px;
-                            }
+                            background-color: #00aeef;
+                            top: 0;
+                            bottom: 0;
+                            margin: auto 0;
+                            position: absolute;
                         }
+                        .mat-slide-toggle-ripple {
+                            display: none;
+                        }
+                    }
+
+                    .mat-slide-toggle.mat-checked {
+                        &:not(.mat-disabled) .mat-slide-toggle-thumb {
+                            background-color: #00aeef;
+                        }
+                    }
+                    .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+                        background: initial;
                     }
                 }
 
+                &.mat-checked {
+                    .mat-slide-toggle-bar .mat-slide-toggle-thumb-container {
+                        transform: translate3d(34px,0,0);
+                    }
+                    &:not(.mat-disabled) .mat-slide-toggle-bar {
+                        background: #fff;
+                    }
+                }
             }
-
         }
         .slider {
             display: flex;
@@ -114,13 +125,20 @@
                 font-weight: 100;
                 color: #00aeef;
                 cursor: pointer;
+                font-style: normal;
             }
 
             .minus {
                 color: #888d92 !important;
+                &:before {
+                    content: "\f068";
+                }
             }
             .plus {
                 color: #00aeef;
+                &:before {
+                    content: "\f067";
+                }
             }
         }
         .mat-slider-horizontal {
@@ -188,9 +206,13 @@
                         position: absolute;
                         font-family: FontAwesome;
                         font-size: 8px;
+                        height: 8px;
                         font-weight: 100;
                         color: @heading-color;
                         opacity: .5;
+                        top: 0;
+                        bottom: 0;
+                        margin: auto;
                     }
 
                     &::before {
@@ -206,15 +228,16 @@
             }
         }
     }
-    .paymentPlans {
+    .packages {
         display: flex;
         justify-content: center;
         margin-bottom: 35px;
     }
     .footer {
         text-align: center;
-        padding: 0 210px;
+        padding: 0 180px;
         position: relative;
+        margin: 0 auto;
         .downgrade {
             font-size: 12px;
             font-weight: 700;
@@ -230,9 +253,9 @@
             font-size: 18px;
             font-weight: 700;
             text-align: center;
-            color: #00aeef;
+            color: #fff;
             border-radius: 100px;
-            background-color: #ffffff;
+            background-color: #009dd7;
             line-height: normal;
             position: absolute;
             right: 10px;
@@ -241,9 +264,38 @@
             cursor: pointer;
             &[disabled] {
                 color: grey;
+                background-color: #ccc;
                 pointer-events: none;
                 cursor: default;
             }
+        }
+    }
+
+}
+
+:host(.withBackground) {
+    position: relative;
+    overflow-y: hidden;
+    &:before {
+        content: '';
+        background: linear-gradient(111deg, #c86dd7, #3023ae) no-repeat 100% 360px;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: auto;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: -100px;
+        transform: skew(0, -183deg);
+        z-index: -1;
+    }
+
+    .footer button {
+        background-color: #fff;
+        &[disabled] {
+            background-color: #fff;
         }
     }
 }

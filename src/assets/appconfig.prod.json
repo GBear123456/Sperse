@@ -1,6 +1,5 @@
 {
   "remoteServiceBaseUrl": "https://api.sperse.com",
-  "appBaseUrl": "https://app.sperse.com",
   "recaptchaSiteKey": "6Lcmdi8UAAAAAFMAymcmeUJaZ79EFp47MiSlCCCF",
   "googleSheetClientId": "1052585251895-1t71n0d5rit59rdri4pqm1b3mi8317m6.apps.googleusercontent.com",
   "subscriptionExpireNootifyDayCount": 7,
