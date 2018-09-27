@@ -99,7 +99,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        private _clientService: ClientService,
+        public _clientService: ClientService,
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
