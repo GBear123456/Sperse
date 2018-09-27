@@ -158,8 +158,12 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         return this.customerType !== ContactGroupType.Partner && !this.partnerTypeId && !this.leadId;
     }
 
+    private storeInitialData() {
+        this.initialData = JSON.stringify(this._contactGroupService['data']);
+    }
+
     private fillContactDetails(result, primaryContactId = null) {
-        this._contactGroupService['data'].contactInfo = result;
+        this._contactGroupService['data'].contactInfo = result;       
         primaryContactId = primaryContactId || result.primaryContactInfo.id;
         result.contactPersons.every((contact) => {
             let isPrimaryContact = (contact.id == primaryContactId);
@@ -177,18 +181,18 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this._userService['data'].userId = this.primaryContact.userId
         );
         this.InitNavLinks(this.primaryContact);
+        this.storeInitialData();
     }
 
     private fillLeadDetails(result) {
-        this._contactGroupService['data'].leadInfo = result;
-        this.initialData = JSON.stringify(this._contactGroupService['data']);
-        this.leadInfo = result;
+        this._contactGroupService['data'].leadInfo = this.leadInfo = result;
+        this.storeInitialData();
     }
 
     private fillPartnerDetails(result) {
-        this._contactGroupService['data'].partnerInfo = result;
-        this.partnerInfo = result;
+        this._contactGroupService['data'].partnerInfo = this.partnerInfo = result;
         this.partnerTypeId = result.typeId;
+        this.storeInitialData();
     }
 
     invalidate() {
@@ -402,6 +406,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.paramsSubscribe.forEach((sub) => sub.unsubscribe());
         this.rootComponent.overflowHidden();
         this.rootComponent.pageHeaderFixed(true);
+
+        this._contactsService.unsubscribe();
     }
 
     deleteLead() {

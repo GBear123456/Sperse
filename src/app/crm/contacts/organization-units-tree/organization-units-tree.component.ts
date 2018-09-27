@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
 import { OrganizationUnitDto, UserServiceProxy, OrganizationUnitServiceProxy, 
     UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -14,7 +14,7 @@ import * as _ from 'lodash';
     templateUrl: './organization-units-tree.component.html',
     styleUrls: ['./organization-units-tree.component.less']
 })
-export class OrganizationUnitsTreeComponent extends AppComponentBase {
+export class OrganizationUnitsTreeComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
 
     public oranizationUnitsDataSource: DataSource;
@@ -35,7 +35,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
         _contactsService.orgUnitsSubscribe((userData) => {            
             this.userId = userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
-        });
+        }, this.constructor.name);
 
         this.isEditAllowed = this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
     }
@@ -92,8 +92,9 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
             sub = this._userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id);
 
         sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+            this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
             this.notify.info(this.l('SavedSuccessfully'));
-        });
+        });        
     }
 
     toolbarConfig = [
@@ -144,4 +145,8 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase {
             ]
         }
     ];
+
+    ngOnDestroy() {
+        this._contactsService.unsubscribe(this.constructor.name);
+    }
 }

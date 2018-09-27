@@ -201,7 +201,7 @@ export abstract class AppComponentBase {
     }
 
     invalidate() {
-        if (this.dataGrid)
+        if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.refresh();
     }
 

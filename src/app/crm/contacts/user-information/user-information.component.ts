@@ -1,4 +1,4 @@
-import { Injector, Component, OnInit, ViewChild } from '@angular/core';
+import { Injector, Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
@@ -21,7 +21,7 @@ import * as _ from 'lodash';
     styleUrls: ['./user-information.component.less'],
     providers: [ PhoneFormatPipe ]
 })
-export class UserInformationComponent extends AppComponentBase implements OnInit {
+export class UserInformationComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
     @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
     data: any;
@@ -58,7 +58,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     masks = AppConsts.masks;
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
-    
+
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
@@ -81,16 +81,15 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             if ((this.data = _userService['data']).userId = userId)
                 this.loadData();
             this.checkShowInviteForm();
-        });
+        }, this.constructor.name);
 
         _contactsService.orgUnitsSaveSubscribe((data) => {            
             this.data.raw.memberedOrganizationUnits = [];
             (this.selectedOrgUnits = data).forEach((item) => {
                 this.data.raw.memberedOrganizationUnits.push(
-                    _.find(data.allOrganizationUnits, {id: item})['code']);
+                    _.find(this.data.raw.allOrganizationUnits, {id: item})['code']);
             });            
-            this.update();
-        });
+        }, this.constructor.name);
 
         if (!(this.roles = _roleServiceProxy['data']))
             _roleServiceProxy.getRoles(undefined).subscribe((res) => {
@@ -123,15 +122,15 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     loadData() {
-        if (this.data && this.data.raw)
-            setTimeout(() => this.fillUserData(this.data['raw']));
-        else {
-            this.startLoading();
+        if (this.data && this.data.raw && this.data.raw.user.id == this.data.userId)
+            this.fillUserData(this.data['raw']);
+        else if (!this.loading) {
+            this.startLoading(); 
             this._userService.getUserForEdit(this.data.userId)
                 .pipe(finalize(() => this.finishLoading()))
                 .subscribe((userEditOutput) => {
                     this.fillUserData(this._userService['data'].raw = userEditOutput);
-                });
+                });  
         }
     }
 
@@ -142,10 +141,10 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
         this._userService['data'].roles = data.roles;
 
-        this._contactsService.orgUnitsUpdate(this.userData = data);
         data.memberedOrganizationUnits.forEach((item) => {
             this.selectedOrgUnits.push(_.find(data.allOrganizationUnits, {code: item})['id']);
         });
+        setTimeout(() => this._contactsService.orgUnitsUpdate(this.userData = data));
     }
 
     inviteUser() {
@@ -165,7 +164,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 if (isConfirmed) {
                     this.startLoading();
                     this.inviteData.contactId = this.contactInfoData.contactInfo.primaryContactInfo.id;
-                    this._contactsServiceProxy.createUserForContact(this.inviteData)
+                    this._contactsServiceProxy.createUserForContact(_.extend(_.clone(this.inviteData), 
+                        { phoneNumber: this.inviteData.phoneNumber.replace(/\D/g, '') }))
                         .pipe(finalize(() => this.finishLoading())).subscribe(() => {
                             this._contactsService.invalidate();
                         });
@@ -280,5 +280,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             hasBackdrop: true
         });
         event.stopPropagation();
+    }
+
+    ngOnDestroy() {
+        this._contactsService.unsubscribe(this.constructor.name);
     }
 }
