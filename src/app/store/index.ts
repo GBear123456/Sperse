@@ -2,7 +2,10 @@ import { AppStoreModule } from '@app/store/app-store.module';
 import * as AppStore from './app-state';
 
 export * from './address-usage-types-store/index';
-export * from './assigned-users-store/index';
+export * from './assigned-users-store/customer-assigned-users-store/index';
+export * from './assigned-users-store/lead-assigned-users-store/index';
+export * from './assigned-users-store/partner-assigned-users-store/index';
+export * from './assigned-users-store/activity-assigned-users-store/index';
 export * from './contact-link-types-store/index';
 export * from './email-usage-types-store/index';
 export * from './lists-store/index';

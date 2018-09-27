@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 import { UserInfoDto } from 'shared/service-proxies/service-proxies';
 
-export const assignedUsersAdapter: EntityAdapter<
+export const leadAssignedUsersAdapter: EntityAdapter<
     UserInfoDto
 > = createEntityAdapter<UserInfoDto>({});
 

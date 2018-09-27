@@ -51,7 +51,12 @@
         <!--[bulkUpdateConfirmationKey]="'RemoveFromBulkUpdateConfirmation'"-->
     <!--&gt;</app-advanced-list>-->
 
-    <crm-user-assignment-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelAssignment"></crm-user-assignment-list>
+    <crm-user-assignment-list [selectedKeys]="selectedPartnerKeys"
+                              [bulkUpdateMode]="true"
+                              [filterModel]="filterModelAssignment"
+                              [getProcessAction]="getChangeAssignUser()"
+                              [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
+    </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
     <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">

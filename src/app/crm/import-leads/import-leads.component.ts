@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { AppStore, PartnerTypesStoreSelectors } from '@app/store';
+import { AppStore, PartnerTypesStoreSelectors, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors } from '@app/store';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
@@ -234,7 +234,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         if (this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX)
             this.selectedPartnerTypeName = null;
 
+        this.userAssignmentComponent.getAssignedUsersSelector = this.getAssignedUsersStoreSelectors();
+        this.userAssignmentComponent.refreshList();
+
         this.initToolbarConfig();
+    }
+
+    getAssignedUsersStoreSelectors() {
+        if (this.importType === ImportInputImportType.Client)
+            return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
+
+        if (this.importType === ImportInputImportType.Partner)
+            return PartnerAssignedUsersStoreSelectors.getAssignedUsers;
+
+        if (this.importType === ImportInputImportType.Lead)
+            return LeadAssignedUsersStoreSelectors.getAssignedUsers;
     }
 
     private initFieldsConfig() {

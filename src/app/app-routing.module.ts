@@ -38,10 +38,10 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
                         path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
                         data: { preload: false }
-                    },
-                    { path: '**', redirectTo: 'notifications' }
+                    }
                 ]
-            }
+            },
+            { path: '**', redirectTo: 'not-found' }
         ])
     ],
     exports: [RouterModule]
