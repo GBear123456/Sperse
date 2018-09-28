@@ -226,7 +226,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             width: '980px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
-            data: { module: this._appService.getModule() }
+            data: { module: this._appService.getModule().toUpperCase() }
         }).afterClosed().subscribe(result => {});
     }
 }
