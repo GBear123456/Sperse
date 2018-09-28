@@ -5,9 +5,9 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { ConditionsType } from '@shared/AppEnums';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, publishReplay, refCount } from 'rxjs/operators';
 import { PrinterService } from '@shared/common/printer/printer.service';
-import { FileFormat } from '@shared/common/printer/file-format.enum';
+import printJS from 'print-js';
 
 @Component({
     selector: 'conditions-modal',
@@ -37,8 +37,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
         injector: Injector,
         private http: HttpClient,
         private element: ElementRef,
-        private sanitizer: DomSanitizer,
-        private printerService: PrinterService
+        private sanitizer: DomSanitizer
     ) {
         super(injector);
     }
@@ -63,6 +62,8 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             AppConsts.remoteServiceBaseUrl + this.conditionsOptions[this.data.type].bodyLink,
             { responseType: 'text' }
         ).pipe(
+            publishReplay(),
+            refCount(),
             /** To avoid cutting of style tag from html */
             tap(body => this.conditionBody = body),
             map(html => this.sanitizer.bypassSecurityTrustHtml(html))
@@ -74,6 +75,18 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     printContent() {
-        this.printerService.printDocument(this.conditionBody, FileFormat.Html);
+        printJS({
+            type: 'html',
+            printable: 'content',
+            documentTitle: this.data.title,
+            style: '.visible-on-print { visibility: visible; text-align: center; }',
+            onLoadingStart: () => {
+                /** Height property works incorrectly with the following p if set in styles */
+                document.querySelector('.visible-on-print')['style'].height = 'auto';
+            },
+            onLoadingEnd: () => {
+                document.querySelector('.visible-on-print')['style'].height = '0';
+            }
+        });
     }
 }

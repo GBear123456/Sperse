@@ -1,3 +1,3 @@
 export interface Printer {
-    print(src: string);
+    print(src: string, printWindowTitle: string);
 }

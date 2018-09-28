@@ -22,9 +22,9 @@ export class PrinterService {
         return printObject;
     }
 
-    printDocument(printContent: any, format: FileFormat = FileFormat.String) {
+    printDocument(printContent: any, format: FileFormat = FileFormat.String, printWindowTitle = null) {
         const printer = this.createPrintObject(format);
-        printer.print(printContent);
+        printer.print(printContent, printWindowTitle);
     }
 
 }

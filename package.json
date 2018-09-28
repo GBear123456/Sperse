@@ -145,6 +145,7 @@
     "payment": "^2.3.0",
     "popper.js": "^1.12.9",
     "primeng": "6.0.0-alpha.1",
+    "print-js": "^1.0.52",
     "prismjs": "^1.8.1",
     "push.js": "^1.0.4",
     "qj": "~2.0.0",

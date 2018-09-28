@@ -6389,6 +6389,10 @@ primeng@6.0.0-alpha.1:
   version "6.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/primeng/-/primeng-6.0.0-alpha.1.tgz#bda5fb05ccc93e16706c85a3d617a0136967bf55"
 
+print-js@^1.0.52:
+  version "1.0.52"
+  resolved "https://registry.yarnpkg.com/print-js/-/print-js-1.0.52.tgz#f94437be3e255d487c18e04b51b8e4696ffa93c0"
+
 printj@~1.1.0, printj@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/printj/-/printj-1.1.2.tgz#d90deb2975a8b9f600fb3a1c94e3f4c53c78a222"

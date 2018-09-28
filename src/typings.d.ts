@@ -120,4 +120,5 @@ interface JQuery {
     inputmask(...any): any;
 }
 
-
+/** PrintJS library */
+declare var printJS: any;
