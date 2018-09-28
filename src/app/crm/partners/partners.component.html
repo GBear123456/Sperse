@@ -54,7 +54,7 @@
     <crm-user-assignment-list [selectedKeys]="selectedPartnerKeys"
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
-                              [getProcessAction]="getChangeAssignUser()"
+                              [proxyService]="partnerService"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>

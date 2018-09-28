@@ -43,7 +43,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { ContactGroupStatusDto, AssignUsersInput, AssignUserInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, ContactGroupStatusDto, AssignUsersInput, AssignUserInput } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({
@@ -94,12 +94,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        public contactService: ContactGroupServiceProxy,
         private _router: Router,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
-        public _clientService: ClientService,
+        private _clientService: ClientService,
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);

@@ -21,7 +21,7 @@
             (onUpdateStatus)="updateStatus($event)"
             (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteLead()"
-            [getProcessAction]="getChangeAssignUser()"
+            [proxyService]="getProxyService()"
             [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()"
         ></operations-widget>
     </div>

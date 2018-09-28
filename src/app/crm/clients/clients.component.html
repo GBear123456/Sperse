@@ -18,7 +18,7 @@
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
-                              [getProcessAction]="_clientService.getChangeAssignUser()"
+                              [proxyService]="contactService"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>

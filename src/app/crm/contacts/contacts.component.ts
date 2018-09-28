@@ -525,23 +525,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     }
 
-    getChangeAssignUser() {
+    getProxyService() {
         if (this.leadId || this.leadInfo)
-            return {
-                'assignContactGroups': this._leadService.assignContactGroups.bind(this._partnerService),
-                'assignContactGroup': this._leadService.assignContactGroup.bind(this._partnerService)
-            };
+            return this._leadService;
 
         if (this.customerType == ContactGroupType.Partner)
-            return {
-                'assignContactGroups': this._partnerService.assignContactGroups.bind(this._partnerService),
-                'assignContactGroup': this._partnerService.assignContactGroup.bind(this._partnerService)
-            };
+            return this._partnerService;
 
         if (this.customerType == ContactGroupType.Client)
-            return {
-                'assignContactGroups': this._contactGroupService.assignContactGroups.bind(this._partnerService),
-                'assignContactGroup': this._contactGroupService.assignContactGroup.bind(this._partnerService)
-            };
+            return this._contactGroupService;
     }
 }
