@@ -6614,7 +6614,7 @@ export class ContactServiceProxy {
      * @userId (optional) 
      * @return Success
      */
-    getContactInfoByUser(userId: number | null | undefined): Observable<ContactShortInfoDto> {
+    getContactInfoByUser(userId: number | null | undefined): Observable<ContactShortInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByUser?";
         if (userId !== undefined)
             url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
@@ -6636,14 +6636,14 @@ export class ContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(<any>response_);
                 } catch (e) {
-                    return <Observable<ContactShortInfoDto>><any>_observableThrow(e);
+                    return <Observable<ContactShortInfo>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ContactShortInfoDto>><any>_observableThrow(response_);
+                return <Observable<ContactShortInfo>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactInfoByUser(response: HttpResponseBase): Observable<ContactShortInfoDto> {
+    protected processGetContactInfoByUser(response: HttpResponseBase): Observable<ContactShortInfo> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -6654,7 +6654,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
+            result200 = resultData200 ? ContactShortInfo.fromJS(resultData200) : new ContactShortInfo();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -6662,7 +6662,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ContactShortInfoDto>(<any>null);
+        return _observableOf<ContactShortInfo>(<any>null);
     }
 }
 
@@ -16240,7 +16240,7 @@ export class OrganizationContactServiceProxy {
      * @userId (optional) 
      * @return Success
      */
-    getContactInfoByUser(userId: number | null | undefined): Observable<ContactShortInfoDto> {
+    getContactInfoByUser(userId: number | null | undefined): Observable<ContactShortInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetContactInfoByUser?";
         if (userId !== undefined)
             url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
@@ -16262,14 +16262,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(<any>response_);
                 } catch (e) {
-                    return <Observable<ContactShortInfoDto>><any>_observableThrow(e);
+                    return <Observable<ContactShortInfo>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ContactShortInfoDto>><any>_observableThrow(response_);
+                return <Observable<ContactShortInfo>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactInfoByUser(response: HttpResponseBase): Observable<ContactShortInfoDto> {
+    protected processGetContactInfoByUser(response: HttpResponseBase): Observable<ContactShortInfo> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16280,7 +16280,7 @@ export class OrganizationContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
+            result200 = resultData200 ? ContactShortInfo.fromJS(resultData200) : new ContactShortInfo();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16288,7 +16288,7 @@ export class OrganizationContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ContactShortInfoDto>(<any>null);
+        return _observableOf<ContactShortInfo>(<any>null);
     }
 }
 
@@ -18112,7 +18112,7 @@ export class PersonContactServiceProxy {
      * @userId (optional) 
      * @return Success
      */
-    getContactInfoByUser(userId: number | null | undefined): Observable<ContactShortInfoDto> {
+    getContactInfoByUser(userId: number | null | undefined): Observable<ContactShortInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetContactInfoByUser?";
         if (userId !== undefined)
             url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
@@ -18134,14 +18134,14 @@ export class PersonContactServiceProxy {
                 try {
                     return this.processGetContactInfoByUser(<any>response_);
                 } catch (e) {
-                    return <Observable<ContactShortInfoDto>><any>_observableThrow(e);
+                    return <Observable<ContactShortInfo>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ContactShortInfoDto>><any>_observableThrow(response_);
+                return <Observable<ContactShortInfo>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactInfoByUser(response: HttpResponseBase): Observable<ContactShortInfoDto> {
+    protected processGetContactInfoByUser(response: HttpResponseBase): Observable<ContactShortInfo> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18152,7 +18152,7 @@ export class PersonContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactShortInfoDto.fromJS(resultData200) : new ContactShortInfoDto();
+            result200 = resultData200 ? ContactShortInfo.fromJS(resultData200) : new ContactShortInfo();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -18160,7 +18160,7 @@ export class PersonContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ContactShortInfoDto>(<any>null);
+        return _observableOf<ContactShortInfo>(<any>null);
     }
 }
 
@@ -33101,12 +33101,13 @@ export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
 }
 
-export class ContactShortInfoDto implements IContactShortInfoDto {
+export class ContactShortInfo implements IContactShortInfo {
     id!: number | undefined;
     fullName!: string | undefined;
-    photo!: ContactPhotoDto | undefined;
+    photo!: ContactPhotoInfo | undefined;
+    ratingId!: number | undefined;
 
-    constructor(data?: IContactShortInfoDto) {
+    constructor(data?: IContactShortInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -33119,13 +33120,14 @@ export class ContactShortInfoDto implements IContactShortInfoDto {
         if (data) {
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.photo = data["photo"] ? ContactPhotoDto.fromJS(data["photo"]) : <any>undefined;
+            this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
+            this.ratingId = data["ratingId"];
         }
     }
 
-    static fromJS(data: any): ContactShortInfoDto {
+    static fromJS(data: any): ContactShortInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ContactShortInfoDto();
+        let result = new ContactShortInfo();
         result.init(data);
         return result;
     }
@@ -33135,23 +33137,24 @@ export class ContactShortInfoDto implements IContactShortInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
+        data["ratingId"] = this.ratingId;
         return data; 
     }
 }
 
-export interface IContactShortInfoDto {
+export interface IContactShortInfo {
     id: number | undefined;
     fullName: string | undefined;
-    photo: ContactPhotoDto | undefined;
+    photo: ContactPhotoInfo | undefined;
+    ratingId: number | undefined;
 }
 
-export class ContactPhotoDto implements IContactPhotoDto {
+export class ContactPhotoInfo implements IContactPhotoInfo {
     original!: string | undefined;
     thumbnail!: string | undefined;
-    source!: string | undefined;
-    comment!: string | undefined;
+    photoSourceId!: string | undefined;
 
-    constructor(data?: IContactPhotoDto) {
+    constructor(data?: IContactPhotoInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -33164,14 +33167,13 @@ export class ContactPhotoDto implements IContactPhotoDto {
         if (data) {
             this.original = data["original"];
             this.thumbnail = data["thumbnail"];
-            this.source = data["source"];
-            this.comment = data["comment"];
+            this.photoSourceId = data["photoSourceId"];
         }
     }
 
-    static fromJS(data: any): ContactPhotoDto {
+    static fromJS(data: any): ContactPhotoInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ContactPhotoDto();
+        let result = new ContactPhotoInfo();
         result.init(data);
         return result;
     }
@@ -33180,17 +33182,15 @@ export class ContactPhotoDto implements IContactPhotoDto {
         data = typeof data === 'object' ? data : {};
         data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
-        data["source"] = this.source;
-        data["comment"] = this.comment;
+        data["photoSourceId"] = this.photoSourceId;
         return data; 
     }
 }
 
-export interface IContactPhotoDto {
+export interface IContactPhotoInfo {
     original: string | undefined;
     thumbnail: string | undefined;
-    source: string | undefined;
-    comment: string | undefined;
+    photoSourceId: string | undefined;
 }
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
@@ -34111,50 +34111,6 @@ export interface IAddressInfo {
     countryId: string | undefined;
     country: string | undefined;
     usageTypeId: string | undefined;
-}
-
-export class ContactPhotoInfo implements IContactPhotoInfo {
-    original!: string | undefined;
-    thumbnail!: string | undefined;
-    photoSourceId!: string | undefined;
-
-    constructor(data?: IContactPhotoInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.original = data["original"];
-            this.thumbnail = data["thumbnail"];
-            this.photoSourceId = data["photoSourceId"];
-        }
-    }
-
-    static fromJS(data: any): ContactPhotoInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactPhotoInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["original"] = this.original;
-        data["thumbnail"] = this.thumbnail;
-        data["photoSourceId"] = this.photoSourceId;
-        return data; 
-    }
-}
-
-export interface IContactPhotoInfo {
-    original: string | undefined;
-    thumbnail: string | undefined;
-    photoSourceId: string | undefined;
 }
 
 export class ContactEmailInfo implements IContactEmailInfo {
@@ -35775,6 +35731,54 @@ export interface IPersonInfoDto {
     contactId: number | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
+}
+
+export class ContactPhotoDto implements IContactPhotoDto {
+    original!: string | undefined;
+    thumbnail!: string | undefined;
+    source!: string | undefined;
+    comment!: string | undefined;
+
+    constructor(data?: IContactPhotoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.original = data["original"];
+            this.thumbnail = data["thumbnail"];
+            this.source = data["source"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): ContactPhotoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactPhotoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["original"] = this.original;
+        data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface IContactPhotoDto {
+    original: string | undefined;
+    thumbnail: string | undefined;
+    source: string | undefined;
+    comment: string | undefined;
 }
 
 export class ContactPhoneDto implements IContactPhoneDto {
@@ -51157,6 +51161,7 @@ export class CreateTenantInput implements ICreateTenantInput {
     isActive!: boolean | undefined;
     subscriptionEndDateUtc!: moment.Moment | undefined;
     isInTrialPeriod!: boolean | undefined;
+    maxUserCount!: number | undefined;
     tenantHostType!: CreateTenantInputTenantHostType | undefined;
 
     constructor(data?: ICreateTenantInput) {
@@ -51184,6 +51189,7 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
             this.isInTrialPeriod = data["isInTrialPeriod"];
+            this.maxUserCount = data["maxUserCount"];
             this.tenantHostType = data["tenantHostType"];
         }
     }
@@ -51211,6 +51217,7 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
+        data["maxUserCount"] = this.maxUserCount;
         data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
@@ -51231,6 +51238,7 @@ export interface ICreateTenantInput {
     isActive: boolean | undefined;
     subscriptionEndDateUtc: moment.Moment | undefined;
     isInTrialPeriod: boolean | undefined;
+    maxUserCount: number | undefined;
     tenantHostType: CreateTenantInputTenantHostType | undefined;
 }
 
@@ -51245,6 +51253,7 @@ export class TenantEditDto implements ITenantEditDto {
     isActive!: boolean | undefined;
     subscriptionEndDateUtc!: moment.Moment | undefined;
     isInTrialPeriod!: boolean | undefined;
+    maxUserCount!: number | undefined;
     id!: number | undefined;
 
     constructor(data?: ITenantEditDto) {
@@ -51268,6 +51277,7 @@ export class TenantEditDto implements ITenantEditDto {
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
             this.isInTrialPeriod = data["isInTrialPeriod"];
+            this.maxUserCount = data["maxUserCount"];
             this.id = data["id"];
         }
     }
@@ -51291,6 +51301,7 @@ export class TenantEditDto implements ITenantEditDto {
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
+        data["maxUserCount"] = this.maxUserCount;
         data["id"] = this.id;
         return data; 
     }
@@ -51307,6 +51318,7 @@ export interface ITenantEditDto {
     isActive: boolean | undefined;
     subscriptionEndDateUtc: moment.Moment | undefined;
     isInTrialPeriod: boolean | undefined;
+    maxUserCount: number | undefined;
     id: number | undefined;
 }
 
@@ -53155,6 +53167,7 @@ export interface IPayPalInfoDto {
 
 export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
     editionId!: number;
+    maxUserCount!: number | undefined;
     frequency!: SetupSubscriptionInfoDtoFrequency;
     billingInfo!: PaymentRequestInfoDto | undefined;
 
@@ -53170,6 +53183,7 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
     init(data?: any) {
         if (data) {
             this.editionId = data["editionId"];
+            this.maxUserCount = data["maxUserCount"];
             this.frequency = data["frequency"];
             this.billingInfo = data["billingInfo"] ? PaymentRequestInfoDto.fromJS(data["billingInfo"]) : <any>undefined;
         }
@@ -53185,6 +53199,7 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["editionId"] = this.editionId;
+        data["maxUserCount"] = this.maxUserCount;
         data["frequency"] = this.frequency;
         data["billingInfo"] = this.billingInfo ? this.billingInfo.toJSON() : <any>undefined;
         return data; 
@@ -53193,6 +53208,7 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 
 export interface ISetupSubscriptionInfoDto {
     editionId: number;
+    maxUserCount: number | undefined;
     frequency: SetupSubscriptionInfoDtoFrequency;
     billingInfo: PaymentRequestInfoDto | undefined;
 }
