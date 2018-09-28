@@ -2,12 +2,11 @@
     <mat-dialog-content>
         <mat-horizontal-stepper #stepper>
             <mat-step>
-                <payment-plan-chooser
-                    [paymentPlansMaxUsersAmount]="paymentPlansMaxUsersAmount$ | async"
-                    [paymentPlans]="paymentPlans$ | async"
+                <package-chooser
+                    [showBackground]="true"
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
-                </payment-plan-chooser>
+                </package-chooser>
             </mat-step>
             <mat-step>
                 <ng-container *ngIf="(plan$ | async) as plan">

@@ -7,5 +7,6 @@ export const environment = {
     production: false,
     zenDeskEnabled: false,
     hmr: false,
+    appBaseUrl: 'http://localhost:7200',
     appConfig: 'appconfig.json'
 };

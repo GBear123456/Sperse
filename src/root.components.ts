@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 	Root Document Component (Body Selector)
 */
 @Component({
-    selector: 'body',
+    selector: 'root',
     template: '<app-root></app-root>'
 })
 export class RootComponent implements AfterViewInit {

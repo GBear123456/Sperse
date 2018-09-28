@@ -1,6 +1,6 @@
 /** Core imports */
 import * as ngCommon from '@angular/common';
-import {NgModule} from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 
 /** Third party imports */
 import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';

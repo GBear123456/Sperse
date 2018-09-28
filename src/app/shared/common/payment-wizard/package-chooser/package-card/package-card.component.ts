@@ -2,25 +2,34 @@ import {
     Component,
     ChangeDetectionStrategy,
     Input,
-    Injector,
-    HostBinding
+    HostBinding,
+    ViewEncapsulation
 } from '@angular/core';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { PackageEditionConfigDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { environment } from '@root/environments/environment';
 
 @Component({
-    selector: 'payment-plan-card',
-    templateUrl: './payment-plan-card.component.html',
-    styleUrls: ['./payment-plan-card.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'package-card',
+    templateUrl: './package-card.component.html',
+    styleUrls: ['./package-card.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.Emulated
 })
-export class PaymentPlanCardComponent extends AppComponentBase {
+export class PackageCardComponent {
     @Input() name: string;
     @Input() billingPeriod: BillingPeriod;
     @Input() currencySymbol = '$';
     @Input() usersAmount: number;
     @Input() editions: PackageEditionConfigDto[];
+    baseUrl = environment.appBaseUrl;
+
+    constructor(private localizationService: AppLocalizationService) {}
+
+    l(key: string, ...args: any[]): string {
+        return this.localizationService.l(key, 'CRM', ...args);
+    }
 
     get selectedEdition(): PackageEditionConfigDto {
         return this.editions.find(edition => {
@@ -73,9 +82,5 @@ export class PaymentPlanCardComponent extends AppComponentBase {
     }
 
     @HostBinding('class.bestValue') @Input() bestValue = false;
-
-    constructor(injector: Injector) {
-        super(injector);
-    }
 
 }

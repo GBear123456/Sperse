@@ -1,6 +1,6 @@
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 
-export interface OptionsPaymentPlan {
+export interface PackageOptions {
     name: string;
     billingPeriod: BillingPeriod;
     currencySymbol?: string;

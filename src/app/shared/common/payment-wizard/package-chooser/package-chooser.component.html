@@ -1,0 +1,41 @@
+<div class="packageHeader">
+    <h2 class="title">{{ title }}</h2>
+    <h3 class="subtitle">{{ subtitle }}</h3>
+    <div class="billingPeriod">
+        <div [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('BilledMonthly') }}</div>
+        <mat-slide-toggle
+            [checked]="true"
+            (change)="billingPeriodChanged($event)">
+        </mat-slide-toggle>
+        <div [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('BilledYearly') }}
+            <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
+        </div>
+    </div>
+    <div class="slider">
+        <i class="minus" name="minus" role="button" (click)="decreaseUserCount()"></i>
+        <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)"></mat-slider>
+        <i class="plus" name="plus" role="button" (click)="increaseUserCount()"></i>
+    </div>
+</div>
+<div class="packages">
+    <ng-container *ngFor="let package of packages; let i = index;">
+        <package-card
+            [name]="package.name"
+            [bestValue]="package.bestValue"
+            [billingPeriod]="selectedBillingPeriod"
+            [usersAmount]="usersAmount"
+            [editions]="package.editions"
+            [ngClass]="{
+            'selected': selectedPackageIndex === i,
+            'large': packages.length < 3 || package.bestValue,
+            'heightFitContent' : packages.length > 2
+        }"
+            (click)="selectPackage(i)">
+        </package-card>
+    </ng-container>
+</div>
+<div class="footer">
+    <p class="downgrade">{{ l('DowngradeToFree') }}</p>
+    <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
+    <button [disabled]="this.selectedPackageIndex === undefined" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
+</div>

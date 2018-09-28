@@ -8,27 +8,6 @@
     background: #fff;
     margin: 25px 10px;
     cursor: pointer;
-    &.heightFitContent {
-        height: fit-content;
-    }
-    &.bestValue {
-        border-radius: 5px;
-        box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
-        border: solid 3px #60d956;
-    }
-    &.selected {
-        background: #fcfafb;
-        box-shadow: 0 0 10px #00aeef;
-        &:after {
-            content: url('../../../../../../assets/common/icons/check.svg');
-            display: block;
-            width: 13px;
-            height: 9px;
-            position: absolute;
-            left: 5px;
-            top: 5px;
-        }
-    }
     /** Best Value Triangle */
     .bestValue {
         position: absolute;
@@ -53,7 +32,7 @@
             width: 50px;
         }
     }
-    .header {
+    .cardHeader {
         display: flex;
         justify-content: space-between;
         margin-bottom: 19px;
@@ -99,7 +78,6 @@
             }
         }
     }
-
     .planFeatures {
         font-size: 10px;
         font-weight: 500;
@@ -120,41 +98,62 @@
             }
         }
     }
+}
 
-    /** Big size */
-    &.large {
-        margin-top: 0;
-        padding-top: 30px;
-        width: 310px;
-        .header {
-            padding-right: 39px;
-            .left {
-                .title {
-                    font-size: 14px;
-                    margin-bottom: 13px;
-                }
-                .includesUsers,
-                .amountPerMonth {
-                    font-size: 12px;
-                }
+:host(.heightFitContent) {
+    height: fit-content;
+}
+:host(.bestValue) {
+    border-radius: 5px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+    border: solid 3px #60d956;
+}
+:host(.selected) {
+    background: #fcfafb;
+    box-shadow: 0 0 10px #00aeef;
+    &:after {
+        content: url('../../../../../../assets/common/icons/check.svg');
+        display: block;
+        width: 13px;
+        height: 9px;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+    }
+}
+
+:host(.large) {
+    margin-top: 0;
+    padding-top: 30px;
+    width: 310px;
+    .cardHeader {
+        padding-right: 39px;
+        .left {
+            .title {
+                font-size: 14px;
+                margin-bottom: 13px;
             }
-            .right {
-                .currency {
-                    font-size: 14px;
-                }
-                .price {
-                    font-size: 32px;
-                }
-                .perUserPerMonth {
-                    font-size: 10px;
-                }
+            .includesUsers,
+            .amountPerMonth {
+                font-size: 12px;
             }
         }
-        .planFeatures {
-            font-size: 12px;
-            ul li:not(:last-child) {
-                margin-bottom: 12.8px;
+        .right {
+            .currency {
+                font-size: 14px;
             }
+            .price {
+                font-size: 32px;
+            }
+            .perUserPerMonth {
+                font-size: 10px;
+            }
+        }
+    }
+    .planFeatures {
+        font-size: 12px;
+        ul li:not(:last-child) {
+            margin-bottom: 12.8px;
         }
     }
 }
