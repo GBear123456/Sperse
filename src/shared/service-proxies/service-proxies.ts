@@ -42301,11 +42301,15 @@ export class ImportItemInput implements IImportItemInput {
     campaignId!: string | undefined;
     channelId!: string | undefined;
     referrerURL!: string | undefined;
+    gclId!: string | undefined;
     utmSource!: string | undefined;
     utmMedium!: string | undefined;
     utmCampaign!: string | undefined;
     utmTerm!: string | undefined;
     utmContent!: string | undefined;
+    utmKeyword!: string | undefined;
+    utmAdGroup!: string | undefined;
+    utmName!: string | undefined;
 
     constructor(data?: IImportItemInput) {
         if (data) {
@@ -42327,11 +42331,15 @@ export class ImportItemInput implements IImportItemInput {
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.referrerURL = data["referrerURL"];
+            this.gclId = data["gclId"];
             this.utmSource = data["utmSource"];
             this.utmMedium = data["utmMedium"];
             this.utmCampaign = data["utmCampaign"];
             this.utmTerm = data["utmTerm"];
             this.utmContent = data["utmContent"];
+            this.utmKeyword = data["utmKeyword"];
+            this.utmAdGroup = data["utmAdGroup"];
+            this.utmName = data["utmName"];
         }
     }
 
@@ -42353,11 +42361,15 @@ export class ImportItemInput implements IImportItemInput {
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["referrerURL"] = this.referrerURL;
+        data["gclId"] = this.gclId;
         data["utmSource"] = this.utmSource;
         data["utmMedium"] = this.utmMedium;
         data["utmCampaign"] = this.utmCampaign;
         data["utmTerm"] = this.utmTerm;
         data["utmContent"] = this.utmContent;
+        data["utmKeyword"] = this.utmKeyword;
+        data["utmAdGroup"] = this.utmAdGroup;
+        data["utmName"] = this.utmName;
         return data; 
     }
 }
@@ -42372,11 +42384,15 @@ export interface IImportItemInput {
     campaignId: string | undefined;
     channelId: string | undefined;
     referrerURL: string | undefined;
+    gclId: string | undefined;
     utmSource: string | undefined;
     utmMedium: string | undefined;
     utmCampaign: string | undefined;
     utmTerm: string | undefined;
     utmContent: string | undefined;
+    utmKeyword: string | undefined;
+    utmAdGroup: string | undefined;
+    utmName: string | undefined;
 }
 
 export class ImportFieldInfoDto implements IImportFieldInfoDto {
@@ -42530,7 +42546,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
     employeeCount!: number | undefined;
     dateFounded!: moment.Moment | undefined;
     ein!: string | undefined;
-    revenue!: number | undefined;
+    annualRevenue!: number | undefined;
+    industry!: string | undefined;
     companyPhone!: string | undefined;
     companyPhoneExt!: string | undefined;
     companyFaxNumber!: string | undefined;
@@ -42571,7 +42588,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.employeeCount = data["employeeCount"];
             this.dateFounded = data["dateFounded"] ? moment(data["dateFounded"].toString()) : <any>undefined;
             this.ein = data["ein"];
-            this.revenue = data["revenue"];
+            this.annualRevenue = data["annualRevenue"];
+            this.industry = data["industry"];
             this.companyPhone = data["companyPhone"];
             this.companyPhoneExt = data["companyPhoneExt"];
             this.companyFaxNumber = data["companyFaxNumber"];
@@ -42612,7 +42630,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["employeeCount"] = this.employeeCount;
         data["dateFounded"] = this.dateFounded ? this.dateFounded.toISOString() : <any>undefined;
         data["ein"] = this.ein;
-        data["revenue"] = this.revenue;
+        data["annualRevenue"] = this.annualRevenue;
+        data["industry"] = this.industry;
         data["companyPhone"] = this.companyPhone;
         data["companyPhoneExt"] = this.companyPhoneExt;
         data["companyFaxNumber"] = this.companyFaxNumber;
@@ -42646,7 +42665,8 @@ export interface IImportBusinessInput {
     employeeCount: number | undefined;
     dateFounded: moment.Moment | undefined;
     ein: string | undefined;
-    revenue: number | undefined;
+    annualRevenue: number | undefined;
+    industry: string | undefined;
     companyPhone: string | undefined;
     companyPhoneExt: string | undefined;
     companyFaxNumber: string | undefined;
@@ -42904,11 +42924,15 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
     campaignId!: string | undefined;
     channelId!: string | undefined;
     referrerURL!: string | undefined;
+    gclId!: string | undefined;
     utmSource!: string | undefined;
     utmMedium!: string | undefined;
     utmCampaign!: string | undefined;
     utmTerm!: string | undefined;
     utmContent!: string | undefined;
+    utmKeyword!: string | undefined;
+    utmAdGroup!: string | undefined;
+    utmName!: string | undefined;
 
     constructor(data?: IImportContactGroupInput) {
         if (data) {
@@ -42952,11 +42976,15 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
             this.referrerURL = data["referrerURL"];
+            this.gclId = data["gclId"];
             this.utmSource = data["utmSource"];
             this.utmMedium = data["utmMedium"];
             this.utmCampaign = data["utmCampaign"];
             this.utmTerm = data["utmTerm"];
             this.utmContent = data["utmContent"];
+            this.utmKeyword = data["utmKeyword"];
+            this.utmAdGroup = data["utmAdGroup"];
+            this.utmName = data["utmName"];
         }
     }
 
@@ -42997,11 +43025,15 @@ export class ImportContactGroupInput implements IImportContactGroupInput {
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
         data["referrerURL"] = this.referrerURL;
+        data["gclId"] = this.gclId;
         data["utmSource"] = this.utmSource;
         data["utmMedium"] = this.utmMedium;
         data["utmCampaign"] = this.utmCampaign;
         data["utmTerm"] = this.utmTerm;
         data["utmContent"] = this.utmContent;
+        data["utmKeyword"] = this.utmKeyword;
+        data["utmAdGroup"] = this.utmAdGroup;
+        data["utmName"] = this.utmName;
         return data; 
     }
 }
@@ -43027,11 +43059,15 @@ export interface IImportContactGroupInput {
     campaignId: string | undefined;
     channelId: string | undefined;
     referrerURL: string | undefined;
+    gclId: string | undefined;
     utmSource: string | undefined;
     utmMedium: string | undefined;
     utmCampaign: string | undefined;
     utmTerm: string | undefined;
     utmContent: string | undefined;
+    utmKeyword: string | undefined;
+    utmAdGroup: string | undefined;
+    utmName: string | undefined;
 }
 
 export class GetStatusOutput implements IGetStatusOutput {
@@ -45650,6 +45686,9 @@ export class UTMParameterInfo implements IUTMParameterInfo {
     campaign!: string | undefined;
     term!: string | undefined;
     content!: string | undefined;
+    keyword!: string | undefined;
+    adGroup!: string | undefined;
+    name!: string | undefined;
 
     constructor(data?: IUTMParameterInfo) {
         if (data) {
@@ -45667,6 +45706,9 @@ export class UTMParameterInfo implements IUTMParameterInfo {
             this.campaign = data["campaign"];
             this.term = data["term"];
             this.content = data["content"];
+            this.keyword = data["keyword"];
+            this.adGroup = data["adGroup"];
+            this.name = data["name"];
         }
     }
 
@@ -45684,6 +45726,9 @@ export class UTMParameterInfo implements IUTMParameterInfo {
         data["campaign"] = this.campaign;
         data["term"] = this.term;
         data["content"] = this.content;
+        data["keyword"] = this.keyword;
+        data["adGroup"] = this.adGroup;
+        data["name"] = this.name;
         return data; 
     }
 }
@@ -45694,6 +45739,9 @@ export interface IUTMParameterInfo {
     campaign: string | undefined;
     term: string | undefined;
     content: string | undefined;
+    keyword: string | undefined;
+    adGroup: string | undefined;
+    name: string | undefined;
 }
 
 export class SubmitMemberInfoResultDto implements ISubmitMemberInfoResultDto {
