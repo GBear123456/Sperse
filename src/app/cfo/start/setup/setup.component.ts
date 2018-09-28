@@ -133,4 +133,16 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     xeroButtonClick() {
         this.quovoHandler.close();
     }
+
+    onXeroComplete() {
+        this.startLoading(true);
+        this._syncService.syncAllAccounts(InstanceType[this.instanceType], this.instanceId, true, true)
+            .pipe(finalize(() => {
+                this.isDisabled = false;
+            }))
+            .subscribe(() => {
+                this.finishLoading(true);
+                this._cfoService.instanceChangeProcess(() => this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']));
+            });
+    }
 }
