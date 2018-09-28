@@ -3,8 +3,6 @@
         <mat-horizontal-stepper #stepper>
             <mat-step>
                 <package-chooser
-                    [packagesMaxUsersAmount]="packagesMaxUsersAmount$ | async"
-                    [packages]="packages$ | async"
                     [showBackground]="true"
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
