@@ -436,8 +436,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this._syncServiceProxy
             .requestSyncForAccounts(this.instanceType, this.instanceId, this.syncAccountIds)
             .subscribe(res => {
-                this.reloadDataSource.emit();
-                this.onDataChange.emit();
+                if (res) {
+                    this.reloadDataSource.emit();
+                    this.onDataChange.emit();
+                } else {
+                    this.notify.info(this.l('Sync is currently experiencing problems. Please try to update info or to sync later.'));
+                }
             });
     }
 
