@@ -34,13 +34,6 @@ export class ClientService {
             }
         }
     }
-    getChangeAssignUser() {
-        return {
-            'assignContactGroups': this.contactGroupServiceProxy.assignContactGroups.bind(this.contactGroupServiceProxy),
-            'assignContactGroup': this.contactGroupServiceProxy.assignContactGroup.bind(this.contactGroupServiceProxy) 
-        };
-    }
-
     private showUpdateContactGroupStatusConfirmationDialog(contactGroupIds: number[], typeId: string, statusId: string, callback: (() => void)) {
         let customerType = typeId == ContactGroupType.Partner ? 'Partner' : 'Client';
         this.message.confirm(

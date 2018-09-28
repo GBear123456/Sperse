@@ -107,13 +107,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        public partnerService: PartnerServiceProxy,
         private _router: Router,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _clientService: ClientService,
-        private _partnerService: PartnerServiceProxy,
         private _partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>
     ) {
@@ -633,7 +633,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     updatePartnerTypes($event) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
+        this.partnerService.bulkUpdateType(BulkUpdatePartnerTypeInput.fromJS({
             partnerIds: selectedIds,
             typeId: $event.id
         })).subscribe(() => {
@@ -710,12 +710,5 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     getAssignedUsersStoreSelectors() {
         return PartnerAssignedUsersStoreSelectors.getAssignedUsers;
-    }
-
-    getChangeAssignUser() {
-        return {
-            'assignContactGroups': this._partnerService.assignContactGroups.bind(this._partnerService),
-            'assignContactGroup': this._partnerService.assignContactGroup.bind(this._partnerService)
-        };
     }
 }

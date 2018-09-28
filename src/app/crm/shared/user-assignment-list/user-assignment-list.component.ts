@@ -35,7 +35,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.selectedItemKeys = this.multiSelection ? value : [value];
     }
     @Input() getAssignedUsersSelector;
-    @Input() getProcessAction;
+    @Input() proxyService: any;
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
@@ -104,9 +104,9 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     process() {
-        if (this.getProcessAction) {
+        if (this.proxyService) {
             if (this.bulkUpdateMode)
-                this.getProcessAction.assignContactGroups(AssignUsersInput.fromJS({
+                this.proxyService.assignContactGroups(AssignUsersInput.fromJS({
                     entityIds: this.selectedKeys,
                     userId: this.selectedItemKey
                 })).pipe(finalize(() => {
@@ -115,7 +115,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     this.notify.success(this.l('UserAssigned'));
                 });
             else
-                this.getProcessAction.assignContactGroup(AssignUserInput.fromJS({
+                this.proxyService.assignContactGroup(AssignUserInput.fromJS({
                     entityId: this.selectedKeys[0],
                     userId: this.selectedItemKey
                 })).subscribe((result) => {
@@ -140,6 +140,11 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     refreshList() {
         this.store$.pipe(select(this.getAssignedUsersSelector)).subscribe((result) => {
+            if (this.selectedKeys.length && result && this.proxyService)
+                this.proxyService.getOtherAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
+                    if (res && res.length)
+                        this.list = res.concat(result);
+                });
             this.list = result;
         });
     }

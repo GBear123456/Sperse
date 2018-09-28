@@ -20,7 +20,7 @@
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
-                              [getProcessAction]="getChangeAssignUser()"
+                              [proxyService]="leadService"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>

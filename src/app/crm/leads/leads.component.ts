@@ -125,13 +125,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        public leadService: LeadServiceProxy,
         private _router: Router,
         private _route: ActivatedRoute,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
-        private _leadService: LeadServiceProxy,
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -751,7 +751,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private deleteLeadsInternal(selectedIds: number[]) {
-        this._leadService.deleteLeads(selectedIds).subscribe(() => {
+        this.leadService.deleteLeads(selectedIds).subscribe(() => {
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.invalidate();
@@ -818,12 +818,5 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     getAssignedUsersStoreSelectors() {
         return LeadAssignedUsersStoreSelectors.getAssignedUsers;
-    }
-
-    getChangeAssignUser() {
-        return {
-            'assignContactGroups': this._leadService.assignContactGroups.bind(this._leadService),
-            'assignContactGroup': this._leadService.assignContactGroup.bind(this._leadService)
-        };
     }
 }
