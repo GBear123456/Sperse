@@ -90,6 +90,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterModelStar: FilterModel;
 
     private rootComponent: any;
+    private exportCallback: Function;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
@@ -179,12 +180,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onContentReady(event) {
         this.finishLoading();
-        if (this.dataLayoutType == DataLayoutType.Grid)
-            this.setGridDataLoaded();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
+        if (this.exportCallback)
+            this.exportCallback();
+        else {
+            if (this.dataLayoutType == DataLayoutType.Grid)
+                this.setGridDataLoaded();
+            event.component.columnOption('command:edit', {
+                visibleIndex: -1,
+                width: 40
+            });
+        }
     }
 
     refreshDataGrid(quiet = false, stageId = undefined) {
@@ -494,15 +499,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 text: this.l('Save as PDF'),
                                 icon: 'pdf',
                             }, {
-                                action: this.exportToXLS.bind(this),
+                                action: this.exportData.bind(this, (options) => {
+                                    this.exportToXLS(options);
+                                }),
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
-                                action: this.exportToCSV.bind(this),
+                                action: this.exportData.bind(this, (options) => {
+                                    this.exportToCSV(options);
+                                }),
                                 text: this.l('Export to CSV'),
                                 icon: 'sheet'
                             }, {
-                                action: this.exportToGoogleSheet.bind(this),
+                                action: this.exportData.bind(this, (options) => {
+                                    this.exportToGoogleSheet(options);
+                                }),
                                 text: this.l('Export to Google Sheets'),
                                 icon: 'sheet'
                             }, { type: 'downloadOptions' }]
@@ -560,6 +571,24 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]);
     }
 
+    exportData(callback, options) {
+        if (this.showPipeline) {
+            let instance = this.dataGrid.instance;
+            if (instance.option('dataSource'))
+                callback(options);
+            else {
+                this.startLoading();
+                instance.option('dataSource', this.dataSource);
+                this.processFilterInternal(this);
+                this.exportCallback = () => {
+                    this.exportCallback = null;
+                    callback(options);
+                };
+            }
+        } else
+            callback(options);
+    }
+
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
@@ -610,13 +639,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.processFilterInternal();
     }
 
-    processFilterInternal() {
+    processFilterInternal(cxt = undefined) {
         if (this.showPipeline) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
 
-        let context = this.showPipeline ? this.pipelineComponent: this;
+        let context = cxt || (this.showPipeline ? this.pipelineComponent: this);
         context.processODataFilter.call(context,
             this.dataGrid.instance, this.dataSourceURI,
                 this.filters, (filter) => {

@@ -146,14 +146,16 @@ export abstract class AppComponentBase {
     }
 
     exportToCSV(option) {
+        this.startLoading();
         this._exportService.saveAsCSV(
-            this.dataGrid,
-            option == 'all'
-        );
+            this.dataGrid, option == 'all'
+        ).then(() => this.finishLoading());
     }
 
     exportToGoogleSheet(option) {
-        this._exportService.exportToGoogleSheets(this.dataGrid, option == 'all');
+        this.startLoading();
+        this._exportService.exportToGoogleSheets(
+            this.dataGrid, option == 'all').then(() => this.finishLoading());
     }
 
     toggleFullscreen(element: any) {
