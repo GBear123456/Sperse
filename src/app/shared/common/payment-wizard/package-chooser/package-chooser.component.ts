@@ -41,16 +41,18 @@ export class PackageChooserComponent implements OnInit {
     @Input() packagesMaxUsersAmount: number;
     @Input() packages: PackageConfigDto[];
     @Input() nextStepButtonText = this.l('Next');
+    @Input() module: Module;
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
-    @HostBinding('class.withBackground') @Input() showBackground = false;
+    @HostBinding('class.withBackground') @Input() showBackground;
     selectedBillingPeriod = BillingPeriod.Yearly;
-    selectedPackageIndex: number;
     usersAmount = 25;
     sliderInitialMinValue = 5;
     sliderInitialStep = 5;
     sliderInitialMaxValue = 100;
     sliderStep = 5;
+    selectedPackageCardComponentIndex: number;
+    selectedPackageCardComponent: PackageCardComponent;
     private enableSliderScalingChange = false;
 
     constructor(
@@ -66,10 +68,10 @@ export class PackageChooserComponent implements OnInit {
     ngOnInit() {
         /** Load data internally if it's not provided through input*/
         if (!this.packages) {
-            const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(Module.CRM).pipe(
+            const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
                 publishReplay(),
                 refCount(),
-                map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free CRM'))
+                map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free ' + this.module))
             );
             packagesConfig$.subscribe(packages => {
                 this.packages = packages;
@@ -79,7 +81,7 @@ export class PackageChooserComponent implements OnInit {
                 concatAll(),
                 map(packages => packages.editions),
                 concatAll(),
-                map(editions => +editions.features['CRM.MaxUserCount']),
+                map(editions => +editions.features[this.module + '.MaxUserCount']),
                 max()
             ).subscribe(maxAmount => {
                 this.packagesMaxUsersAmount = maxAmount;
@@ -92,8 +94,12 @@ export class PackageChooserComponent implements OnInit {
         this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
     }
 
-    selectPackage(i) {
-        this.selectedPackageIndex = i;
+    selectPackage(packageCardComponentIndex: number) {
+        const selectedPlanCardComponent = this.packageCardComponents.toArray()[packageCardComponentIndex];
+        if (selectedPlanCardComponent.isActive) {
+            this.selectedPackageCardComponentIndex = packageCardComponentIndex;
+            this.selectedPackageCardComponent = selectedPlanCardComponent;
+        }
     }
 
     getActiveStatus(status: 'month' | 'year') {
@@ -135,17 +141,16 @@ export class PackageChooserComponent implements OnInit {
     }
 
     goToNextStep() {
-        const selectedPlanCardComponent = this.packageCardComponents.toArray()[this.selectedPackageIndex];
-        const totalPrice = selectedPlanCardComponent.totalPrice;
+        const totalPrice = this.selectedPackageCardComponent.totalPrice;
         const plan: PackageOptions = {
-            name: selectedPlanCardComponent.name,
-            billingPeriod: selectedPlanCardComponent.billingPeriod,
-            pricePerUserPerMonth: selectedPlanCardComponent.pricePerUserPerMonth,
-            subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? selectedPlanCardComponent.monthlyPricePerYear : totalPrice,
+            name: this.selectedPackageCardComponent.name,
+            billingPeriod: this.selectedPackageCardComponent.billingPeriod,
+            pricePerUserPerMonth: this.selectedPackageCardComponent.pricePerUserPerMonth,
+            subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.selectedPackageCardComponent.monthlyPricePerYear : totalPrice,
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : 0,
             total: totalPrice,
-            usersAmount: selectedPlanCardComponent.selectedEditionUsersAmount,
-            selectedEditionId: selectedPlanCardComponent.selectedEdition.id
+            usersAmount: this.selectedPackageCardComponent.selectedEditionUsersAmount,
+            selectedEditionId: this.selectedPackageCardComponent.selectedEdition.id
         };
         this.onPlanChosen.emit(plan);
         this.moveToNextStep.next();

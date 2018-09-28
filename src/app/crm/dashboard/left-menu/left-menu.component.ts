@@ -28,9 +28,9 @@ export class DashboardMenuComponent extends AppComponentBase {
             { caption: 'ManageLeads', component: '/leads', showPlus: true },
             { caption: 'ImportYourList', component: '/import-list', disabled: false },
             { caption: 'CustomizeSettings', component: '/editions', disabled: true },
-            { 
-              caption: 'PaymentWizard', component: '/payment-wizard', 
-              disabled: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT 
+            {
+              caption: 'PaymentWizard', component: '/payment-wizard',
+              disabled: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT
             }
         ];
     }

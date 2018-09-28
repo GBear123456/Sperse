@@ -132,7 +132,7 @@ export class AppService extends AppServiceBase {
     hasModuleSubscription(name = undefined) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module || 
+        return !this.isNotHostTenant() || !module ||
             !module.endDate || (module.endDate > moment().utc());
     }
 

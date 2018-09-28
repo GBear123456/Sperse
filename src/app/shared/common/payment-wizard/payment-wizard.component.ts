@@ -1,8 +1,8 @@
 /** Application imports */
-import { Component, OnInit, ViewChild, ViewEncapsulation, Injector } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ViewEncapsulation, Injector, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef, MatStepper } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatStepper } from '@angular/material';
 import { Observable } from 'rxjs';
 
 /** Application imports */
@@ -10,7 +10,7 @@ import { AppService } from '@app/app.service';
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { PackageServiceProxy } from '@shared/service-proxies/service-proxies';
+import { Module, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { StatusInfo } from './models/status-info';
 
@@ -19,21 +19,24 @@ import { StatusInfo } from './models/status-info';
     templateUrl: './payment-wizard.component.html',
     styleUrls: ['./payment-wizard.component.less'],
     encapsulation: ViewEncapsulation.None,
-    providers: [ PaymentService, PackageServiceProxy ]
+    providers: [ PaymentService, PackageServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
     plan$: Observable<PackageOptions>;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
+    module: Module;
     constructor(private injector: Injector,
                 private appService: AppService,
                 private dialogRef: MatDialogRef<PaymentWizardComponent>,
-                private paymentService: PaymentService
+                private paymentService: PaymentService,
+                @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         super(injector);
+        this.module = data.module;
     }
-
 
     ngOnInit() {
         this.plan$ = this.paymentService.plan$;

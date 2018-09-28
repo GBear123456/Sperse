@@ -7,17 +7,18 @@ import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Store } from '@ngrx/store';
 
 /** Application imports */
-import { RootStore, StatesStoreActions } from '@root/store';
 import { AppService } from '@app/app.service';
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
 import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
+import { RootStore, StatesStoreActions } from '@root/store';
+import { Module } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppConsts } from '@shared/AppConsts';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
-import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -62,7 +63,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {
         this.dataEmpty = !data.length;
-        if (this.dataEmpty) { 
+        if (this.dataEmpty) {
             clearTimeout(this.openDialogTimeout);
             this.openDialogTimeout = setTimeout(() => {
                 if (this._appService.hasModuleSubscription())
@@ -117,8 +118,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             width: '980px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
+            data: { module: Module.CRM }
         });
-        dialogRef.afterClosed().subscribe(result => {});
+        dialogRef.afterClosed().subscribe(() => {});
     }
 
 }

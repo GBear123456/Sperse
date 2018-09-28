@@ -1,6 +1,7 @@
 import {
     Component,
     ChangeDetectionStrategy,
+    OnChanges,
     Input,
     HostBinding,
     ViewEncapsulation
@@ -9,6 +10,7 @@ import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-
 import { PackageEditionConfigDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { environment } from '@root/environments/environment';
+import { Module } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'package-card',
@@ -17,15 +19,28 @@ import { environment } from '@root/environments/environment';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.Emulated
 })
-export class PackageCardComponent {
+export class PackageCardComponent implements OnChanges {
     @Input() name: string;
     @Input() billingPeriod: BillingPeriod;
     @Input() currencySymbol = '$';
     @Input() usersAmount: number;
     @Input() editions: PackageEditionConfigDto[];
+    @Input() module: Module;
+    @HostBinding('class.isActive') public isActive: boolean;
+    @HostBinding('class.bestValue') @Input() bestValue = false;
     baseUrl = environment.appBaseUrl;
+    lastActiveSelectedEditionUsersAmount: number;
+    lastActiveFeatures: any[];
+    lastActivePricePerMonth: number;
+    lastActiveMonthlyPricePerYear: number;
+    lastActiveTotalPrice: number;
+    lastActivePricePerUserPerMonth: number;
 
     constructor(private localizationService: AppLocalizationService) {}
+
+    ngOnChanges() {
+        this.isActive = this.editions && !!this.selectedEdition;
+    }
 
     l(key: string, ...args: any[]): string {
         return this.localizationService.l(key, 'CRM', ...args);
@@ -33,54 +48,70 @@ export class PackageCardComponent {
 
     get selectedEdition(): PackageEditionConfigDto {
         return this.editions.find(edition => {
-            const maxUsersCount = +edition.features['CRM.MaxUserCount'];
+            const maxUsersCount = +edition.features[this.module + '.MaxUserCount'];
             return this.usersAmount <= maxUsersCount;
         });
     }
 
     get selectedEditionUsersAmount(): number {
-        return +this.selectedEdition.features['CRM.MaxUserCount'];
+        if (this.isActive) {
+            this.lastActiveSelectedEditionUsersAmount = +this.selectedEdition.features[this.module + '.MaxUserCount'];
+        }
+        return this.lastActiveSelectedEditionUsersAmount;
     }
 
     get features() {
-        const maxActiveContactCount = +this.selectedEdition.features['CRM.MaxActiveContactCount'] ? this.selectedEdition.features['CRM.MaxActiveContactCount'] : this.l('Unlimited');
-        const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ? this.selectedEdition.features['Admin.MaxSpaceGB'] : this.l('Unlimited');
-        return [
-            {
-                name: 'Contacts',
-                value: this.l('FeaturesContacts') + ': ' + maxActiveContactCount
-            },
-            {
-                name: 'File Storage',
-                value: this.l('FeaturesFileStorage') + ': ' + maxSpaceGB
-            },
-            {
-                name: 'Lead Management Pipeline Funnel',
-                value: this.l('LeadManagementPipelineFunnel')
-            },
-            {
-                name: 'Team Permission Management',
-                value: this.l('Team Permission Management')
-            }
-        ];
+        if (this.isActive) {
+            const maxActiveContactCount = +this.selectedEdition.features[this.module + '.MaxActiveContactCount'] ? this.selectedEdition.features[this.module + '.MaxActiveContactCount'] : this.l('Unlimited');
+            const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ? this.selectedEdition.features['Admin.MaxSpaceGB'] : this.l('Unlimited');
+            this.lastActiveFeatures = [
+                {
+                    name: 'Contacts',
+                    value: this.l('FeaturesContacts') + ': ' + maxActiveContactCount
+                },
+                {
+                    name: 'File Storage',
+                    value: this.l('FeaturesFileStorage') + ': ' + maxSpaceGB
+                },
+                {
+                    name: 'Lead Management Pipeline Funnel',
+                    value: this.l('LeadManagementPipelineFunnel')
+                },
+                {
+                    name: 'Team Permission Management',
+                    value: this.l('Team Permission Management')
+                }
+            ];
+        }
+        return this.lastActiveFeatures;
     }
 
     get pricePerMonth(): number {
-        return this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : +(this.selectedEdition.annualPrice / 12).toFixed(2);
+        if (this.isActive) {
+            this.lastActivePricePerMonth = this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : +(this.selectedEdition.annualPrice / 12).toFixed(2);
+        }
+        return this.lastActivePricePerMonth;
     }
 
     get monthlyPricePerYear(): number {
-        return this.selectedEdition.monthlyPrice * 12;
+        if (this.isActive) {
+            this.lastActiveMonthlyPricePerYear = this.selectedEdition.monthlyPrice * 12;
+        }
+        return this.lastActiveMonthlyPricePerYear;
     }
 
     get totalPrice(): number {
-        return this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : this.selectedEdition.annualPrice;
+        if (this.isActive) {
+            this.lastActiveTotalPrice = (this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : this.selectedEdition.annualPrice);
+        }
+        return this.lastActiveTotalPrice;
     }
 
     get pricePerUserPerMonth(): number {
-        return +(this.pricePerMonth / this.selectedEditionUsersAmount).toFixed(2);
+        if (this.isActive) {
+            this.lastActivePricePerUserPerMonth = (+(this.pricePerMonth / this.selectedEditionUsersAmount).toFixed(2));
+        }
+        return this.lastActivePricePerUserPerMonth;
     }
-
-    @HostBinding('class.bestValue') @Input() bestValue = false;
 
 }

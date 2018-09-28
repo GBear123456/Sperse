@@ -7,7 +7,6 @@ import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info
 import { PaymentMethods } from '@app/shared/common/payment-wizard/models/payment-methods.enum';
 import {
     ACHCustomerInfoDto,
-    PayPalDto,
     PaymentRequestInfoDtoPaymentMethod,
     BankCardInfoDto,
     PaymentRequestInfoDto,
@@ -21,8 +20,6 @@ import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-chec
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
-
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({

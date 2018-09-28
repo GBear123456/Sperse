@@ -9,7 +9,6 @@ import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { MatDialog } from '@angular/material';
-
 import { ModuleSubscriptionInfoDtoModule } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -48,6 +47,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                                 width: '980px',
                                 id: 'payment-wizard',
                                 panelClass: ['payment-wizard', 'setup'],
+                                data: { module: name.toUpperCase() }
                             }).afterClosed().subscribe(result => {});
                         }
                     });

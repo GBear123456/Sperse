@@ -209,10 +209,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     subscriptionInGracePeriod() {
         return this._appService.subscriptionInGracePeriod();
-    }           
+    }
 
     getSubscriptionExpiringDayCount(gracePeriod): number {
-        return gracePeriod ? this._appService.getGracePeriodDayCount(): 
+        return gracePeriod ? this._appService.getGracePeriodDayCount() :
             this._appService.getSubscriptionExpiringDayCount();
     }
 
@@ -226,6 +226,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             width: '980px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
+            data: { module: this._appService.getModule() }
         }).afterClosed().subscribe(result => {});
     }
 }

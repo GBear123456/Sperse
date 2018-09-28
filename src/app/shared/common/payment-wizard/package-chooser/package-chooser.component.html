@@ -25,11 +25,12 @@
             [billingPeriod]="selectedBillingPeriod"
             [usersAmount]="usersAmount"
             [editions]="package.editions"
+            [module]="module"
             [ngClass]="{
-            'selected': selectedPackageIndex === i,
-            'large': packages.length < 3 || package.bestValue,
-            'heightFitContent' : packages.length > 2
-        }"
+                'selected': selectedPackageCardComponentIndex === i,
+                'large': packages.length < 3 || package.bestValue,
+                'heightFitContent' : packages.length > 2
+            }"
             (click)="selectPackage(i)">
         </package-card>
     </ng-container>
@@ -37,5 +38,5 @@
 <div class="footer">
     <p class="downgrade">{{ l('DowngradeToFree') }}</p>
     <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
-    <button [disabled]="this.selectedPackageIndex === undefined" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
+    <button [disabled]="this.selectedPackageCardComponentIndex === undefined || !this.selectedPackageCardComponent || !this.selectedPackageCardComponent.isActive" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
 </div>
