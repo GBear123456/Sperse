@@ -23,26 +23,34 @@
     height: 655px;
 }
 
+#quovo-connect-modal.quovo-connect .close-modal {
+    font-size: 12px;
+    color: rgb(55, 56, 58);
+    text-shadow: 0 0 1px;
+    font-weight: bold;
+}
+
 #quovo-connect-modal.quovo-connect .search h2 {
-    font-weight: 600;
+    font-weight: 500;
     font-family: Montserrat;
     font-size: 32px !important;
     text-align: center;
     color: #424c56;
-    margin-bottom: 25px;
+    margin-bottom: 45px;
+    margin-top: 15px;
 }
 
 #quovo-connect-modal.quovo-connect .search h2::after {
     content: 'Search from over 15.000 financial institutions';
     display: block;
-    font-weight: 300;
+    font-weight: 400;
     font-family: Montserrat;
-    font-size: 16px !important;
+    font-size: 15px !important;
     line-height: 1.44;
     letter-spacing: 0.4px;
     text-align: center;
     color: #888d92;
-    margin-top: 15px;
+    margin-top: 12px;
 }
 
 #quovo-connect-modal.quovo-connect .search .search-group input {
@@ -55,7 +63,7 @@
     border: solid 1px #dadee1;
     padding: 11px 17px;
     border-radius: 3px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 #quovo-connect-modal.quovo-connect .search .search-group i {
@@ -68,10 +76,21 @@
 
 #quovo-connect-modal.quovo-connect .institutions-container {
     height: auto;
+    max-width: 630px;
+    margin: 0 auto;
 }
+
+#quovo-connect-modal.quovo-connect .institutions-container .institutions {
+    padding: 0 0 20px;
+}
+
 #quovo-connect-modal.quovo-connect .institutions .institution-card {
     height: 95px;
-    padding: 20px;
+    padding: 18px 12px;
+}
+
+#quovo-connect-modal.quovo-connect .p-10 {
+    padding: 8px !important;
 }
 
 /*  placeholder styles */
