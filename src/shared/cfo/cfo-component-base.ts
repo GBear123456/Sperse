@@ -10,7 +10,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     instanceId: number;
     instanceType: string;
     get isInstanceAdmin() {
-        return (this.instanceType == InstanceType.User) || !isNaN(parseInt(this.instanceType)) || 
+        return (this.instanceType == InstanceType.User) || !isNaN(parseInt(this.instanceType)) ||
             (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin'));
     }
     get componentIsActivated(): boolean {
