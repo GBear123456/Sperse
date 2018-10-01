@@ -122,15 +122,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             names: [this.l('Transactions')],
             onRefresh: this.refreshDataGrid.bind(this),
             iconSrc: 'assets/common/icons/credit-card-icon.svg',
-            buttons: [
-                {
-                    enabled: this.noRefreshedAfterSync,
-                    action: this.refreshDataGrid.bind(this),
-                    lable: this.l('Refresh'),
-                    icon: 'refresh',
-                    class: 'btn-default back-button'
-                }
-            ]
+            class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
     }
 

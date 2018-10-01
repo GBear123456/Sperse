@@ -92,5 +92,24 @@
             vertical-align: bottom;
             background: url("../../../../assets/common/icons/refresh-btn.svg") no-repeat center;
         }
+
+        &.need-refresh {
+            .refresh-button {
+                position: relative;
+
+                &::after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 11px;
+                    height: 11px;
+                    border-radius: 50%;
+                    background: #3dc14c;
+                    right: 2px;
+                    border: 2px solid #fff;
+                    top: 2px;
+                }
+            }
+        }
     }
 }
