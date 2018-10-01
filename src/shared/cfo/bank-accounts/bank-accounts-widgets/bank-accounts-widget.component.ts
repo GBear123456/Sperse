@@ -440,7 +440,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                     this.reloadDataSource.emit();
                     this.onDataChange.emit();
                 } else {
-                    this.notify.info(this.l('Sync is currently experiencing problems. Please try to update info or to sync later.'));
+                    this.notify.info(this.l('SyncProblemMessage_TryLater'));
                 }
             });
     }
