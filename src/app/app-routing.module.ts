@@ -40,8 +40,7 @@ import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.com
                         data: { preload: false }
                     }
                 ]
-            },
-            { path: '**', redirectTo: 'not-found' }
+            }
         ])
     ],
     exports: [RouterModule]
