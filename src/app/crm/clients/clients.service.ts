@@ -5,7 +5,7 @@ import { MessageService } from '@abp/message/message.service';
 import { ContactGroupType } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { ContactGroupServiceProxy, UpdateContactGroupStatusesInput, AssignUsersInput, AssignUserInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, UpdateContactGroupStatusesInput } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class ClientService {
