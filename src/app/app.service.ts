@@ -148,8 +148,7 @@ export class AppService extends AppServiceBase {
         if (this.checkModuleExpired(name)
             && !this.subscriptionInGracePeriod(name)
         ) {
-            let module = this.getModule();
-            name = ModuleSubscriptionInfoDtoModule[module] ? this.getDefaultModule() : module;
+            name = this.getDefaultModule();
             params = {};
         }
 

@@ -91,11 +91,10 @@ const routes: Routes = [{
                 path: 'desktop',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
                 data: { preload: true }
-            }
+            },
+            { path: 'not-found', component: NotFoundComponent }
         ]
-    },
-    { path: 'not-found', component: NotFoundComponent },
-    { path: '**', redirectTo: 'not-found' }
+    }
 ];
 
 @NgModule({
@@ -131,11 +130,9 @@ export class RootRoutingModule implements AfterViewInit {
                    ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
                    : 'app/app.module#AppModule',         //Lazy load desktop module
                data: { preload: true }
-           },
-           {
-                path: '**',
-                redirectTo: 'not-found'
-           }
+           },          
+           { path: '', redirectTo: 'app', pathMatch: 'full' },
+           { path: '**', redirectTo: 'not-found' }
         );
         _router.resetConfig(_router.config);
     }

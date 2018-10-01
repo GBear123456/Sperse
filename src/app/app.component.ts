@@ -36,9 +36,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
                 if (name != appService.getDefaultModule()) {
-                    if (ModuleSubscriptionInfoDtoModule[name.toUpperCase()]
-                        && !appService.subscriptionInGracePeriod(name)
-                    ) this._router.navigate(['app/admin']);
                     clearTimeout(paymentDialogTimeout);
                     paymentDialogTimeout = setTimeout(() => {
                         if (!this.dialog.getDialogById('payment-wizard')) {
