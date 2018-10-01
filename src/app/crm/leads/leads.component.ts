@@ -25,7 +25,7 @@ import {
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
-    RatingsStoreSelectors    
+    RatingsStoreSelectors
 } from '@app/store';
 import { PipelinesStoreSelectors } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';

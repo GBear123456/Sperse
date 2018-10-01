@@ -649,7 +649,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         e.component.option('visible', false);
         e.component.hide();
     }
-    
+
     getAssignedUsersStoreSelectors() {
         return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     }

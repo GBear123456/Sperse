@@ -6,7 +6,7 @@ import { AppCommonModule } from '@app/shared/common/app-common.module';
 
 import {
     MatSidenavModule, MatProgressBarModule, MatTabsModule, MatDialogModule,
-    MatDialogRef, MatProgressSpinnerModule, MatSelectModule
+    MatProgressSpinnerModule, MatSelectModule
 } from '@angular/material';
 
 import {

@@ -5,7 +5,7 @@ import { Injectable, Injector } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';
-import { finalize, catchError, exhaustMap, map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as emailUsageTypesActions from '@app/store/email-usage-types-store/actions';

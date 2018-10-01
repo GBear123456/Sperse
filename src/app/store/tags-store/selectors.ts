@@ -1,12 +1,5 @@
-import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
-
-import { ContactGroupTagInfoDto } from 'shared/service-proxies/service-proxies';
-import { tagsAdapter, State } from './state';
-
-// export const selectTagsState: MemoizedSelector<
-//     object,
-//     State
-// > = createFeatureSelector<State>('tags');
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { State } from './state';
 
 export const getTagsState = createFeatureSelector<State>('tags');
 

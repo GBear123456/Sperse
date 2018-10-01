@@ -4,6 +4,7 @@ import { LeadAssignedUsersStoreSelectors } from './assigned-users-store/lead-ass
 import { PartnerAssignedUsersStoreSelectors } from './assigned-users-store/partner-assigned-users-store/index';
 import { ActivityAssignedUsersStoreSelectors } from './assigned-users-store/activity-assigned-users-store/index';
 import { ContactLinkTypesStoreSelectors } from './contact-link-types-store/index';
+import { CountriesStoreSelectors } from './countries-store/index';
 import { EmailUsageTypesStoreSelectors } from './email-usage-types-store/index';
 import { ListsStoreSelectors } from './lists-store/index';
 import { PartnerTypesStoreSelectors } from './partner-types-store/index';
@@ -20,6 +21,7 @@ export {
     PartnerAssignedUsersStoreSelectors,
     ActivityAssignedUsersStoreSelectors,
     ContactLinkTypesStoreSelectors,
+    CountriesStoreSelectors,
     EmailUsageTypesStoreSelectors,
     ListsStoreSelectors,
     PartnerTypesStoreSelectors,
