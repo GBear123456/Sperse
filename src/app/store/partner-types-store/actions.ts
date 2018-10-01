@@ -5,15 +5,15 @@ export enum ActionTypes {
     LOAD_REQUEST       = '[Partner Types] Load Request',
     LOAD_FAILURE       = '[Partner Types] Load Failure',
     LOAD_SUCCESS       = '[Partner Types] Load Success',
-    ADD_PARTNER_TYPE            = '[Partner Types] Add new tag',
-    ADD_PARTNER_TYPE_SUCCESS    = '[Partner Types] Add tag successfuly',
-    ADD_PARTNER_TYPE_FAILUTE    = '[Partner Types] Add tag with failure',
-    RENAME_PARTNER_TYPE         = '[Partner Types] Rename tag',
-    RENAME_PARTNER_TYPE_SUCCESS = '[Partner Types] Rename tag successfuly',
-    RENAME_PARTNER_TYPE_FAILURE = '[Partner Types] Rename tag fauilure',
-    REMOVE_PARTNER_TYPE         = '[Partner Types] Remove tag',
-    REMOVE_PARTNER_TYPE_SUCCESS = '[Partner Types] Remove tag success',
-    REMOVE_PARTNER_TYPE_FAILURE = '[Partner Types] Remove tag failure'
+    ADD_PARTNER_TYPE            = '[Partner Types] Add new partner type',
+    ADD_PARTNER_TYPE_SUCCESS    = '[Partner Types] Add partner type successfuly',
+    ADD_PARTNER_TYPE_FAILUTE    = '[Partner Types] Add partner type with failure',
+    RENAME_PARTNER_TYPE         = '[Partner Types] Rename partner type',
+    RENAME_PARTNER_TYPE_SUCCESS = '[Partner Types] Rename partner type successfuly',
+    RENAME_PARTNER_TYPE_FAILURE = '[Partner Types] Rename partner type fauilure',
+    REMOVE_PARTNER_TYPE         = '[Partner Types] Remove partner type',
+    REMOVE_PARTNER_TYPE_SUCCESS = '[Partner Types] Remove partner type success',
+    REMOVE_PARTNER_TYPE_FAILURE = '[Partner Types] Remove partner type failure'
 }
 
 export class LoadRequestAction implements Action {

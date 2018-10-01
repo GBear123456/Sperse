@@ -138,8 +138,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Contact Information', route: 'contact-information'},
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
-                hidden: !this.permission.isGranted(contact.userId ? 
-                    'Pages.Administration.Users': 'Pages.Administration.Users.Create'),
+                hidden: !this.permission.isGranted(contact.userId ?
+                    'Pages.Administration.Users' : 'Pages.Administration.Users.Create'),
                 route: 'user-information'
             },
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
@@ -163,7 +163,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private fillContactDetails(result, primaryContactId = null) {
-        this._contactGroupService['data'].contactInfo = result;       
+        this._contactGroupService['data'].contactInfo = result;
         primaryContactId = primaryContactId || result.primaryContactInfo.id;
         result.contactPersons.every((contact) => {
             let isPrimaryContact = (contact.id == primaryContactId);
@@ -205,7 +205,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             partnerId = params['partnerId'],
             customerId = clientId || partnerId,
             leadId = params['leadId'];
-  
+
         this.params = params;
         this._userService['data'] = {
             userId: userId, user: null, roles: null
@@ -219,7 +219,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         if (userId)
             this.loadDataForUser(userId);
-        else 
+        else
             this.loadDataForClient(customerId,
                 this.leadId = leadId, partnerId);
     }
@@ -257,20 +257,20 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     this.fillContactDetails(result);
                 });
             }
-        } 
+        }
     }
 
     loadLeadData() {
         if (!this.leadInfo) {
             this.startLoading(true);
             let leadId = this._contactGroupService['data'].leadInfo.id,
-                leadInfo$ = leadId ? this._leadService.getLeadInfo(leadId): 
+                leadInfo$ = leadId ? this._leadService.getLeadInfo(leadId) :
                     this._leadService.getLast(this.customerId);
-            
+
             leadInfo$.pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe(result => {
-                this.fillLeadDetails(result);            
+                this.fillLeadDetails(result);
                 this.loadLeadsStages();
             });
         }

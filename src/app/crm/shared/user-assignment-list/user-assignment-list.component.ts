@@ -8,12 +8,11 @@ import { Observable } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppStore } from '@app/store';
+import { AppStore, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AssignUserInput, AssignUsersInput, UserInfoDto } from '@shared/service-proxies/service-proxies';
-
+import { AssignUserInput, AssignUsersInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'crm-user-assignment-list',
@@ -34,7 +33,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     set selectedItemKey(value) {
         this.selectedItemKeys = this.multiSelection ? value : [value];
     }
-    @Input() getAssignedUsersSelector;
+    @Input() getAssignedUsersSelector = CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     @Input() proxyService: any;
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -140,7 +139,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     refreshList() {
         this.store$.pipe(select(this.getAssignedUsersSelector)).subscribe((result) => {
-            if (this.selectedKeys.length && result && this.proxyService)
+            if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
                 this.proxyService.getOtherAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
                     if (res && res.length)
                         this.list = res.concat(result);
