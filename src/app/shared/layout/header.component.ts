@@ -143,7 +143,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         this._profileServiceProxy.getProfilePicture().subscribe(result => {
             if (result && result.profilePicture) {
                 this.profilePicture = this.getImageBase64Src(result.profilePicture);
-                this.profileThumbnail = this.getImageBase64Src(result.profileThumbnail);
+                this.profileThumbnail = this.getImageBase64Src(result.profileThumbnail || result.profilePicture);
             }
         });
     }
@@ -217,7 +217,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getExpireNotification(localizationKey: string, grace = false): string {
-        return this.l(localizationKey, this.getSubscriptionExpiringDayCount(grace));
+        let dayCount = this.getSubscriptionExpiringDayCount(grace);
+        return this.l(localizationKey, (dayCount ? 
+            (this.l('PeriodDescription', dayCount,
+                dayCount > 1 ? 'Periods_Day_plural': 'Periods_Day')
+            ) : this.l('Today')).toLowerCase());
     }
 
     openPaymentWizardDialog() {

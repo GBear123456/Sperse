@@ -11,7 +11,7 @@
                    id="cc-number"
                    formControlName="cardNumber"
                    autocomplete="cc-number"
-                   (keypress)="checkCreditCardNumber($event)"
+                   (blur)="checkCreditCardNumber($event)"
                    ccNumber>
             <mat-error *ngIf="creditCardData.controls.cardNumber.touched && creditCardData.controls.cardNumber.invalid">
                 {{ l('CardNumberValidationMessage') }}
