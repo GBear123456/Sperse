@@ -34,11 +34,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     private openDialogTimeout: any;
     public dataEmpty: boolean;
     public headlineConfig = {
-      names: [this.l('Dashboard')],
-      onRefresh: this.refresh.bind(this),
-      text: this.l('statistics and reports'),
-      icon: 'globe',
-      buttons: []
+        names: [this.l('Dashboard')],
+        onRefresh: this.refresh.bind(this),
+        text: this.l('statistics and reports'),
+        icon: 'globe',
+        buttons: []
     };
     dialogConfig = new MatDialogConfig();
 
