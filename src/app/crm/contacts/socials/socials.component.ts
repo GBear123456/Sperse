@@ -188,7 +188,7 @@ export class SocialsComponent extends AppComponentBase {
         return {
             id: link.id,
             value: link.url,
-            link: link.url,
+            link: this.normalizeLink(link.url),
             validationRules: [
                 {type: 'required', message: this.l('LinkIsRequired')}
             ],
@@ -199,5 +199,9 @@ export class SocialsComponent extends AppComponentBase {
             lDeleteConfirmTitle: this.l('DeleteContactHeader', linkLocalization),
             lDeleteConfirmMessage: this.l('DeleteContactMessage', linkLocalization.toLowerCase())
         };
+    }
+
+    normalizeLink(link) {
+        return ((/http[s]{0,1}:\/\//g).test(link) ? link: 'http://' + link);
     }
 }
