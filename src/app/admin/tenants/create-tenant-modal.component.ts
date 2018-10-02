@@ -136,7 +136,9 @@ export class CreateTenantModalComponent extends AppComponentBase {
         }
 
         if (this.tenantEditionId === 0) {
-            this.tenantEditionId = null;
+            this.tenant.editions = null;
+        } else {
+            this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
         }
 
         //take selected date as UTC
@@ -147,11 +149,6 @@ export class CreateTenantModalComponent extends AppComponentBase {
         }
 
         this.tenant.tenantHostType = <any>TenantHostType.PlatformUi;
-        if (this.tenantEditionId <= 0) {
-            this.tenant.editions = null;
-        } else {
-            this.tenant.editions = [TenantEditEditionDto.fromJS({editionId: this.tenantEditionId})];
-        }
 
         this._tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))

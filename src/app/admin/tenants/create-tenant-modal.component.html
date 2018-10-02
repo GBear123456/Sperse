@@ -89,7 +89,7 @@
 
                             <div class="form-group">
                                 <label for="edition">{{l("Edition")}}</label>
-                                <select id="edition" name="edition" class="form-control" [(ngModel)]="tenanteditionId" (change)="onEditionChange($event)">
+                                <select id="edition" name="edition" class="form-control" [(ngModel)]="tenantEditionId" (change)="onEditionChange($event)">
                                     <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
                                 </select>
                             </div>
