@@ -12,9 +12,10 @@
         </div>
     </div>
     <div class="slider">
-        <i class="minus" name="minus" role="button" (click)="decreaseUserCount()"></i>
-        <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)"></mat-slider>
-        <i class="plus" name="plus" role="button" (click)="increaseUserCount()"></i>
+        <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
+        <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
+        <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
+        <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
     </div>
 </div>
 <div class="packages">
@@ -27,7 +28,7 @@
             [editions]="package.editions"
             [module]="module"
             [ngClass]="{
-                'selected': selectedPackageCardComponentIndex === i,
+                'selected': selectedPackageIndex === i,
                 'large': packages.length < 3 || package.bestValue,
                 'heightFitContent' : packages.length > 2
             }"
@@ -38,5 +39,5 @@
 <div class="footer">
     <p class="downgrade">{{ l('DowngradeToFree') }}</p>
     <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
-    <button [disabled]="this.selectedPackageCardComponentIndex === undefined || !this.selectedPackageCardComponent || !this.selectedPackageCardComponent.isActive" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
+    <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
 </div>
