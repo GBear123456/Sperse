@@ -1383,8 +1383,8 @@ export class ActivityServiceProxy {
      * @includePhotos (optional) 
      * @return Success
      */
-    getOtherAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetOtherAssignableUsers?";
+    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Activity/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
@@ -1403,11 +1403,11 @@ export class ActivityServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetOtherAssignableUsers(response_);
+            return this.processGetRelatedAssignableUsers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetOtherAssignableUsers(<any>response_);
+                    return this.processGetRelatedAssignableUsers(<any>response_);
                 } catch (e) {
                     return <Observable<UserInfoDto[]>><any>_observableThrow(e);
                 }
@@ -1416,7 +1416,7 @@ export class ActivityServiceProxy {
         }));
     }
 
-    protected processGetOtherAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
+    protected processGetRelatedAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8445,8 +8445,8 @@ export class ContactGroupServiceProxy {
      * @includePhotos (optional) 
      * @return Success
      */
-    getOtherAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetOtherAssignableUsers?";
+    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
@@ -8465,11 +8465,11 @@ export class ContactGroupServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetOtherAssignableUsers(response_);
+            return this.processGetRelatedAssignableUsers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetOtherAssignableUsers(<any>response_);
+                    return this.processGetRelatedAssignableUsers(<any>response_);
                 } catch (e) {
                     return <Observable<UserInfoDto[]>><any>_observableThrow(e);
                 }
@@ -8478,7 +8478,7 @@ export class ContactGroupServiceProxy {
         }));
     }
 
-    protected processGetOtherAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
+    protected processGetRelatedAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14903,8 +14903,8 @@ export class LeadServiceProxy {
      * @includePhotos (optional) 
      * @return Success
      */
-    getOtherAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetOtherAssignableUsers?";
+    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
@@ -14923,11 +14923,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetOtherAssignableUsers(response_);
+            return this.processGetRelatedAssignableUsers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetOtherAssignableUsers(<any>response_);
+                    return this.processGetRelatedAssignableUsers(<any>response_);
                 } catch (e) {
                     return <Observable<UserInfoDto[]>><any>_observableThrow(e);
                 }
@@ -14936,7 +14936,7 @@ export class LeadServiceProxy {
         }));
     }
 
-    protected processGetOtherAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
+    protected processGetRelatedAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17335,8 +17335,8 @@ export class PartnerServiceProxy {
      * @includePhotos (optional) 
      * @return Success
      */
-    getOtherAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Partner/GetOtherAssignableUsers?";
+    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
@@ -17355,11 +17355,11 @@ export class PartnerServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetOtherAssignableUsers(response_);
+            return this.processGetRelatedAssignableUsers(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetOtherAssignableUsers(<any>response_);
+                    return this.processGetRelatedAssignableUsers(<any>response_);
                 } catch (e) {
                     return <Observable<UserInfoDto[]>><any>_observableThrow(e);
                 }
@@ -17368,7 +17368,7 @@ export class PartnerServiceProxy {
         }));
     }
 
-    protected processGetOtherAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
+    protected processGetRelatedAssignableUsers(response: HttpResponseBase): Observable<UserInfoDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -27000,6 +27000,7 @@ export interface ISwitchToLinkedAccountOutput {
 
 export class ActivityDto implements IActivityDto {
     id!: number | undefined;
+    creatorUserId!: number | undefined;
     type!: ActivityDtoType | undefined;
     title!: string;
     description!: string | undefined;
@@ -27023,6 +27024,7 @@ export class ActivityDto implements IActivityDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.creatorUserId = data["creatorUserId"];
             this.type = data["type"];
             this.title = data["title"];
             this.description = data["description"];
@@ -27050,6 +27052,7 @@ export class ActivityDto implements IActivityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["creatorUserId"] = this.creatorUserId;
         data["type"] = this.type;
         data["title"] = this.title;
         data["description"] = this.description;
@@ -27070,6 +27073,7 @@ export class ActivityDto implements IActivityDto {
 
 export interface IActivityDto {
     id: number | undefined;
+    creatorUserId: number | undefined;
     type: ActivityDtoType | undefined;
     title: string;
     description: string | undefined;
@@ -35375,6 +35379,7 @@ export class ContactGroupInfoDto implements IContactGroupInfoDto {
     status!: string | undefined;
     typeId!: string | undefined;
     assignedUserId!: number | undefined;
+    creatorUserId!: number | undefined;
     starId!: number | undefined;
     ratingId!: number | undefined;
     tags!: number[] | undefined;
@@ -35403,6 +35408,7 @@ export class ContactGroupInfoDto implements IContactGroupInfoDto {
             this.status = data["status"];
             this.typeId = data["typeId"];
             this.assignedUserId = data["assignedUserId"];
+            this.creatorUserId = data["creatorUserId"];
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
             if (data["tags"] && data["tags"].constructor === Array) {
@@ -35443,6 +35449,7 @@ export class ContactGroupInfoDto implements IContactGroupInfoDto {
         data["status"] = this.status;
         data["typeId"] = this.typeId;
         data["assignedUserId"] = this.assignedUserId;
+        data["creatorUserId"] = this.creatorUserId;
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
         if (this.tags && this.tags.constructor === Array) {
@@ -35476,6 +35483,7 @@ export interface IContactGroupInfoDto {
     status: string | undefined;
     typeId: string | undefined;
     assignedUserId: number | undefined;
+    creatorUserId: number | undefined;
     starId: number | undefined;
     ratingId: number | undefined;
     tags: number[] | undefined;

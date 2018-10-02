@@ -140,7 +140,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     refreshList() {
         this.store$.pipe(select(this.getAssignedUsersSelector)).subscribe((result) => {
             if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
-                this.proxyService.getOtherAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
+                this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
                     if (res && res.length)
                         this.list = res.concat(result);
                 });
