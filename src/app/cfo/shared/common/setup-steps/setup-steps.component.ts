@@ -1,5 +1,7 @@
 import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
 
 @Component({
     templateUrl: './setup-steps.component.html',
@@ -7,7 +9,6 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
     selector: 'setup-steps',
 })
 export class SetupStepComponent extends CFOComponentBase implements OnInit {
-    @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts' },
@@ -19,7 +20,11 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
-    constructor(injector: Injector) {
+    dialogConfig = new MatDialogConfig();
+
+    constructor(injector: Injector,
+        public dialog: MatDialog
+    ) {
         super(injector);
     }
 
@@ -37,7 +42,12 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         else return '';
     }
 
-    showDialog() {
-        this.openIntro.emit(event);
+    showIntro() {
+        this.dialogConfig.height = '655px';
+        this.dialogConfig.width = '880px';
+        this.dialogConfig.id = this.dialogConfig.backdropClass = 'cfo-intro';
+        this.dialogConfig.panelClass = ['cfo-intro', 'dashboard'];
+        this.dialogConfig.data = { alreadyStarted: true };
+        this.dialog.open(CfoIntroComponent, this.dialogConfig);
     }
 }

@@ -68,7 +68,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                                 this.treeList.instance.repaint();
                             }, 1000);
                             this.filtersService.fixed =
-                                !this.filtersService.fixed;
+                                !this.filtersService.fixed;                                                       
                         },
                         options: {
                             checkPressed: () => {
