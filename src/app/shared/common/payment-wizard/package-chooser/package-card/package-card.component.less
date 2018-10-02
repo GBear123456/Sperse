@@ -51,6 +51,11 @@
                 font-size: 10.2px;
                 font-weight: 500;
                 color: #686f76;
+                display: flex;
+                .decimal {
+                    font-size: 6px;
+                    line-height: 8px;
+                }
             }
         }
         .right {
@@ -64,11 +69,15 @@
                 color: #686f76;
                 margin-right: 3px;
             }
-            .price {
+            .priceNumber {
                 font-size: 27.2px;
                 font-weight: 700;
                 color: #424c56;
                 line-height: 0.8em;
+            }
+            .priceDecimal {
+                font-size: 18px;
+                font-weight: 600;
             }
             .perUserPerMonth {
                 font-size: 8.5px;
@@ -145,14 +154,21 @@
             .includesUsers,
             .amountPerMonth {
                 font-size: 12px;
+                .decimal {
+                    font-size: 7px;
+                    line-height: 9px;
+                }
             }
         }
         .right {
             .currency {
                 font-size: 14px;
             }
-            .price {
+            .priceNumber {
                 font-size: 32px;
+            }
+            .priceDecimal {
+                font-size: 21px;
             }
             .perUserPerMonth {
                 font-size: 10px;

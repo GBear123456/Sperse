@@ -3,6 +3,7 @@ export class HeadLineConfigModel {
   text?: string;
   icon?: string;
   iconSrc?: string;
+  class?: string;
   buttons: any[];
   onRefresh: () => void;
 }

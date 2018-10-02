@@ -35,13 +35,13 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class PackageChooserComponent implements OnInit {
     @ViewChildren(PackageCardComponent) packageCardComponents: QueryList<PackageCardComponent>;
     @ViewChildren(MatSlider) slider: MatSlider;
-    @Input() title = this.l('TrialExpired');
+    @Input() module: Module;
+    @Input() title = this.l('TrialExpired', this.module);
     @Input() subtitle = this.l('ChoosePlan');
     @Input() yearDiscount = 33;
     @Input() packagesMaxUsersAmount: number;
     @Input() packages: PackageConfigDto[];
     @Input() nextStepButtonText = this.l('Next');
-    @Input() module: Module;
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
@@ -51,7 +51,7 @@ export class PackageChooserComponent implements OnInit {
     sliderInitialStep = 5;
     sliderInitialMaxValue = 100;
     sliderStep = 5;
-    selectedPackageCardComponentIndex: number;
+    selectedPackageIndex: number;
     selectedPackageCardComponent: PackageCardComponent;
     private enableSliderScalingChange = false;
 
@@ -66,38 +66,36 @@ export class PackageChooserComponent implements OnInit {
     }
 
     ngOnInit() {
-        /** Load data internally if it's not provided through input*/
-        if (!this.packages) {
-            const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
-                publishReplay(),
-                refCount(),
-                map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free ' + this.module))
-            );
-            packagesConfig$.subscribe(packages => {
-                this.packages = packages;
-                this.changeDetectionRef.detectChanges();
-            });
-            packagesConfig$.pipe(
-                concatAll(),
-                map(packages => packages.editions),
-                concatAll(),
-                map(editions => +editions.features[this.module + '.MaxUserCount']),
-                max()
-            ).subscribe(maxAmount => {
-                this.packagesMaxUsersAmount = maxAmount;
-                this.changeDetectionRef.detectChanges();
-            });
-        }
+        const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
+            publishReplay(),
+            refCount(),
+            map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free ' + this.module))
+        );
+        packagesConfig$.subscribe(packages => {
+            this.packages = packages;
+            this.selectedPackageIndex = this.packages.indexOf(this.packages.find(packageConfig => packageConfig.bestValue));
+            this.changeDetectionRef.detectChanges();
+        });
+        packagesConfig$.pipe(
+            concatAll(),
+            map(packages => packages.editions),
+            concatAll(),
+            map(editions => +editions.features[this.module + '.MaxUserCount']),
+            max()
+        ).subscribe(maxAmount => {
+            this.packagesMaxUsersAmount = maxAmount;
+            this.changeDetectionRef.detectChanges();
+        });
     }
 
     billingPeriodChanged(e) {
         this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
     }
 
-    selectPackage(packageCardComponentIndex: number) {
-        const selectedPlanCardComponent = this.packageCardComponents.toArray()[packageCardComponentIndex];
+    selectPackage(packageIndex: number) {
+        const selectedPlanCardComponent = this.packageCardComponents.toArray()[packageIndex];
         if (selectedPlanCardComponent.isActive) {
-            this.selectedPackageCardComponentIndex = packageCardComponentIndex;
+            this.selectedPackageIndex = packageIndex;
             this.selectedPackageCardComponent = selectedPlanCardComponent;
         }
     }
@@ -141,6 +139,10 @@ export class PackageChooserComponent implements OnInit {
     }
 
     goToNextStep() {
+        if (!this.selectedPackageCardComponent) {
+            this.selectPackage(this.selectedPackageIndex);
+        }
+
         const totalPrice = this.selectedPackageCardComponent.totalPrice;
         const plan: PackageOptions = {
             name: this.selectedPackageCardComponent.name,

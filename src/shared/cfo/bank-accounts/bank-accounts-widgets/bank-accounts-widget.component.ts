@@ -310,6 +310,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                     if (e.newData.businessEntityId) {
                         this.accountsEntitiesBindingChanged.emit();
                     }
+                    if (e.newData) {
+                        this.reloadDataSource.emit();
+                    }
                 },
                 error => deferred.resolve(true)
             );
@@ -343,7 +346,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.syncAccountsDataSource = this.syncAccountsDataSource.filter(item => item.syncAccountId != syncAccountId);
                 this.reloadDataSource.emit();
                 this.onDataChange.emit();
-
             });
     }
 
