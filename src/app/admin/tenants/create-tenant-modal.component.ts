@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CommonLookupServiceProxy,
     CreateTenantInput,
+    TenantEditEditionDto,
     PasswordComplexitySetting,
     ProfileServiceProxy,
     TenantServiceProxy,
@@ -32,6 +33,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
     useHostDb = true;
     editions: SubscribableEditionComboboxItemDto[] = [];
     tenant: CreateTenantInput;
+    tenantEditionId = 0;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     isUnlimited = false;
     isSubscriptionFieldsVisible = false;
@@ -69,7 +71,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
         this.tenant.isActive = true;
         this.tenant.shouldChangePasswordOnNextLogin = true;
         this.tenant.sendActivationEmail = true;
-        this.tenant.editionId = 0;
+        this.tenantEditionId = 0;
         this.tenant.isInTrialPeriod = false;
 
         this._commonLookupService.getEditionsForCombobox(false)
@@ -85,7 +87,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
                 this._commonLookupService.getDefaultEditionName().subscribe((getDefaultEditionResult) => {
                     let defaultEdition = _.filter(this.editions, { 'displayText': getDefaultEditionResult.name });
                     if (defaultEdition && defaultEdition[0]) {
-                        this.tenant.editionId = parseInt(defaultEdition[0].value);
+                        this.tenantEditionId = parseInt(defaultEdition[0].value);
                         this.toggleSubscriptionFields();
                     }
                 });
@@ -97,7 +99,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     selectedEditionIsFree(): boolean {
-        let selectedEditions = _.filter(this.editions, { 'value': this.tenant.editionId })
+        let selectedEditions = _.filter(this.editions, { 'value': this.tenantEditionId })
             .map(u => Object.assign(new SubscribableEditionComboboxItemDto(), u));
 
         if (selectedEditions.length !== 1) {
@@ -110,7 +112,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     subscriptionEndDateIsValid(): boolean {
-        if (this.tenant.editionId <= 0) {
+        if (this.tenantEditionId <= 0) {
             return true;
         }
 
@@ -133,18 +135,21 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.adminPassword = null;
         }
 
-        if (this.tenant.editionId === 0) {
-            this.tenant.editionId = null;
+        if (this.tenantEditionId === 0) {
+            this.tenant.editions = null;
+        } else {
+            this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
         }
 
         //take selected date as UTC
-        if (!this.isUnlimited && this.tenant.editionId > 0) {
+        if (!this.isUnlimited && this.tenantEditionId > 0) {
             this.tenant.subscriptionEndDateUtc = moment($(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date().format('YYYY-MM-DDTHH:mm:ss') + 'Z');
         } else {
             this.tenant.subscriptionEndDateUtc = null;
         }
 
         this.tenant.tenantHostType = <any>TenantHostType.PlatformUi;
+
         this._tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
@@ -160,12 +165,12 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     onEditionChange(): void {
-        this.tenant.isInTrialPeriod = this.tenant.editionId > 0 && !this.selectedEditionIsFree();
+        this.tenant.isInTrialPeriod = this.tenantEditionId > 0  && !this.selectedEditionIsFree();
         this.toggleSubscriptionFields();
     }
 
     toggleSubscriptionFields() {
-        if (this.tenant.editionId <= 0 || this.isSelectedEditionFree) {
+        if (this.tenantEditionId <= 0 || this.isSelectedEditionFree) {
             this.isSubscriptionFieldsVisible = false;
 
             if (this.isSelectedEditionFree) {

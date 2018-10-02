@@ -32927,6 +32927,9 @@ export interface IListResultDtoOfSubscribableEditionComboboxItemDto {
 
 export class SubscribableEditionComboboxItemDto implements ISubscribableEditionComboboxItemDto {
     isFree!: boolean | undefined;
+    packageName!: string | undefined;
+    moduleId!: string | undefined;
+    moduleName!: string | undefined;
     value!: string | undefined;
     displayText!: string | undefined;
     isSelected!: boolean | undefined;
@@ -32943,6 +32946,9 @@ export class SubscribableEditionComboboxItemDto implements ISubscribableEditionC
     init(data?: any) {
         if (data) {
             this.isFree = data["isFree"];
+            this.packageName = data["packageName"];
+            this.moduleId = data["moduleId"];
+            this.moduleName = data["moduleName"];
             this.value = data["value"];
             this.displayText = data["displayText"];
             this.isSelected = data["isSelected"];
@@ -32959,6 +32965,9 @@ export class SubscribableEditionComboboxItemDto implements ISubscribableEditionC
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isFree"] = this.isFree;
+        data["packageName"] = this.packageName;
+        data["moduleId"] = this.moduleId;
+        data["moduleName"] = this.moduleName;
         data["value"] = this.value;
         data["displayText"] = this.displayText;
         data["isSelected"] = this.isSelected;
@@ -32968,6 +32977,9 @@ export class SubscribableEditionComboboxItemDto implements ISubscribableEditionC
 
 export interface ISubscribableEditionComboboxItemDto {
     isFree: boolean | undefined;
+    packageName: string | undefined;
+    moduleId: string | undefined;
+    moduleName: string | undefined;
     value: string | undefined;
     displayText: string | undefined;
     isSelected: boolean | undefined;
@@ -51172,11 +51184,10 @@ export class CreateTenantInput implements ICreateTenantInput {
     cfoConnectionString!: string | undefined;
     shouldChangePasswordOnNextLogin!: boolean | undefined;
     sendActivationEmail!: boolean | undefined;
-    editionId!: number | undefined;
+    editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
     subscriptionEndDateUtc!: moment.Moment | undefined;
     isInTrialPeriod!: boolean | undefined;
-    maxUserCount!: number | undefined;
     tenantHostType!: CreateTenantInputTenantHostType | undefined;
 
     constructor(data?: ICreateTenantInput) {
@@ -51200,11 +51211,14 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.cfoConnectionString = data["cfoConnectionString"];
             this.shouldChangePasswordOnNextLogin = data["shouldChangePasswordOnNextLogin"];
             this.sendActivationEmail = data["sendActivationEmail"];
-            this.editionId = data["editionId"];
+            if (data["editions"] && data["editions"].constructor === Array) {
+                this.editions = [];
+                for (let item of data["editions"])
+                    this.editions.push(TenantEditEditionDto.fromJS(item));
+            }
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
             this.isInTrialPeriod = data["isInTrialPeriod"];
-            this.maxUserCount = data["maxUserCount"];
             this.tenantHostType = data["tenantHostType"];
         }
     }
@@ -51228,11 +51242,14 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["cfoConnectionString"] = this.cfoConnectionString;
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["sendActivationEmail"] = this.sendActivationEmail;
-        data["editionId"] = this.editionId;
+        if (this.editions && this.editions.constructor === Array) {
+            data["editions"] = [];
+            for (let item of this.editions)
+                data["editions"].push(item.toJSON());
+        }
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
-        data["maxUserCount"] = this.maxUserCount;
         data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
@@ -51249,12 +51266,51 @@ export interface ICreateTenantInput {
     cfoConnectionString: string | undefined;
     shouldChangePasswordOnNextLogin: boolean | undefined;
     sendActivationEmail: boolean | undefined;
-    editionId: number | undefined;
+    editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
     subscriptionEndDateUtc: moment.Moment | undefined;
     isInTrialPeriod: boolean | undefined;
-    maxUserCount: number | undefined;
     tenantHostType: CreateTenantInputTenantHostType | undefined;
+}
+
+export class TenantEditEditionDto implements ITenantEditEditionDto {
+    editionId!: number | undefined;
+    maxUserCount!: number | undefined;
+
+    constructor(data?: ITenantEditEditionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.maxUserCount = data["maxUserCount"];
+        }
+    }
+
+    static fromJS(data: any): TenantEditEditionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantEditEditionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["maxUserCount"] = this.maxUserCount;
+        return data; 
+    }
+}
+
+export interface ITenantEditEditionDto {
+    editionId: number | undefined;
+    maxUserCount: number | undefined;
 }
 
 export class TenantEditDto implements ITenantEditDto {
@@ -51264,11 +51320,10 @@ export class TenantEditDto implements ITenantEditDto {
     crmConnectionString!: string | undefined;
     memberDbConnectionString!: string | undefined;
     cfoConnectionString!: string | undefined;
-    editionId!: number | undefined;
+    editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
     subscriptionEndDateUtc!: moment.Moment | undefined;
     isInTrialPeriod!: boolean | undefined;
-    maxUserCount!: number | undefined;
     id!: number | undefined;
 
     constructor(data?: ITenantEditDto) {
@@ -51288,11 +51343,14 @@ export class TenantEditDto implements ITenantEditDto {
             this.crmConnectionString = data["crmConnectionString"];
             this.memberDbConnectionString = data["memberDbConnectionString"];
             this.cfoConnectionString = data["cfoConnectionString"];
-            this.editionId = data["editionId"];
+            if (data["editions"] && data["editions"].constructor === Array) {
+                this.editions = [];
+                for (let item of data["editions"])
+                    this.editions.push(TenantEditEditionDto.fromJS(item));
+            }
             this.isActive = data["isActive"];
             this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
             this.isInTrialPeriod = data["isInTrialPeriod"];
-            this.maxUserCount = data["maxUserCount"];
             this.id = data["id"];
         }
     }
@@ -51312,11 +51370,14 @@ export class TenantEditDto implements ITenantEditDto {
         data["crmConnectionString"] = this.crmConnectionString;
         data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["cfoConnectionString"] = this.cfoConnectionString;
-        data["editionId"] = this.editionId;
+        if (this.editions && this.editions.constructor === Array) {
+            data["editions"] = [];
+            for (let item of this.editions)
+                data["editions"].push(item.toJSON());
+        }
         data["isActive"] = this.isActive;
         data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
         data["isInTrialPeriod"] = this.isInTrialPeriod;
-        data["maxUserCount"] = this.maxUserCount;
         data["id"] = this.id;
         return data; 
     }
@@ -51329,11 +51390,10 @@ export interface ITenantEditDto {
     crmConnectionString: string | undefined;
     memberDbConnectionString: string | undefined;
     cfoConnectionString: string | undefined;
-    editionId: number | undefined;
+    editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
     subscriptionEndDateUtc: moment.Moment | undefined;
     isInTrialPeriod: boolean | undefined;
-    maxUserCount: number | undefined;
     id: number | undefined;
 }
 
