@@ -1,4 +1,4 @@
-﻿<div bsModal #editModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editModal"
+<div bsModal #editModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editModal"
      aria-hidden="true" [config]="{backdrop: 'static'}">
     <div class="modal-dialog">
 
@@ -18,7 +18,7 @@
                                 <label>{{l("Name")}}</label>
                             </div>
                             <div class="form-group form-md-line-input form-md-floating-label has-info">
-                                <select id="edition" name="edition" class="form-control edited" [(ngModel)]="tenant.editionId" (change)="onEditionChange($event)">
+                                <select id="edition" name="edition" class="form-control edited" [(ngModel)]="tenantEditionId" (change)="onEditionChange($event)">
                                     <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
                                 </select>
                                 <label for="edition">{{l("Edition")}}</label>
