@@ -253,6 +253,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             action: this.showColumnChooser.bind(this)
                         }
                     ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
+                    ]
                 }
             ]);
         }
