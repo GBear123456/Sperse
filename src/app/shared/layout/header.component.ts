@@ -220,7 +220,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         let dayCount = this.getSubscriptionExpiringDayCount(grace);
         return this.l(localizationKey, (dayCount ? 
             (this.l('PeriodDescription', dayCount,
-                dayCount > 1 ? 'Periods_Day_plural': 'Periods_Day')
+                this.l(dayCount > 1 ? 'Periods_Day_plural': 'Periods_Day'))
             ) : this.l('Today')).toLowerCase());
     }
 
