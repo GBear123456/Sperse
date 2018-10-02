@@ -118,12 +118,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     refresh() {
         this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes))
             .subscribe((result: any) => {
-                if (result) {
-                    this.list = result.map((obj) => {
-                        obj['parent'] = 0;
-                        return obj;
-                    });
-                }
+                this.list = result;
             });
     }
 

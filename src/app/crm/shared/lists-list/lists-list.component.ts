@@ -122,7 +122,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this.store$.pipe(select(ListsStoreSelectors.getListsWithParent)).subscribe(lists => {
+        this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe(lists => {
             this.list = lists;
         });
     }
