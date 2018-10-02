@@ -12,8 +12,7 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 @Component({
     selector: 'subscriptions',
     templateUrl: './subscriptions.component.html',
-    styleUrls: ['./subscriptions.component.less'],
-    providers: [ OrderSubscriptionServiceProxy ]
+    styleUrls: ['./subscriptions.component.less']
 })
 export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
@@ -50,12 +49,20 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    refreshData() {
-        this._orderSubscriptionService
-            .getSubscriptionHistory(this.data.contactInfo.id)
-            .subscribe(result => {
-                this.dataSource = result;
-            });
+    refreshData(forced = false) {
+        let subData = this._orderSubscriptionService['data'],
+            groupId = this.data.contactInfo.id;
+        if (!forced && subData && subData.groupId == groupId)
+            this.dataSource = subData.source;
+        else
+            this._orderSubscriptionService
+                .getSubscriptionHistory(groupId)
+                .subscribe(result => {
+                    this._orderSubscriptionService['data'] = {
+                        groupId: groupId,
+                        source: this.dataSource = result
+                    };
+                });
     }
 
     cancelSubscription(id: number) {
@@ -65,7 +72,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
                     .cancel(id)
                     .subscribe(() => {
                         abp.notify.success(this.l('Cancelled'));
-                        this.refreshData();
+                        this.refreshData(true);
                     });
             }
         });
