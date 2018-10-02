@@ -41,6 +41,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
                 if (this.instanceType !== this._cfoService.instanceType
                     || this.instanceId !== this._cfoService.instanceId) {
+                    this._cfoService.instanceTypeChanged.next(this.instanceType);
                     this._cfoService.instanceType = this.instanceType;
                     this._cfoService.instanceId = this.instanceId;
                     this._cfoService.instanceChangeProcess();
