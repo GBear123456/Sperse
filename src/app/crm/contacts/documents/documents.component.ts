@@ -265,9 +265,15 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     loadDocuments(callback = null) {
-        if (!(this.dataSource = this._documentService['data']))
-            this._documentService.getAll(this.data.contactInfo.id).subscribe((result) => {
-                this._documentService['data'] = this.dataSource = result;
+        let documentData = this._documentService['data'], groupId = this.data.contactInfo.id;
+        if (!callback && documentData && documentData.groupId == groupId)
+            this.dataSource = documentData.source;
+        else
+            this._documentService.getAll(groupId).subscribe((result) => {
+                this._documentService['data'] = {
+                    groupId: groupId,
+                    source: this.dataSource = result
+                }
                 callback && callback();
             });
     }
@@ -329,7 +335,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 this.updateUploadProgress({progress: 0});
             }, 5000);
         })).subscribe(() => {
-            this.loadDocuments();
+            this.loadDocuments(Function);
         });
     }
 
