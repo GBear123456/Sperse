@@ -36,7 +36,7 @@ export abstract class AppServiceBase {
     }
 
     getModule() {
-        let module = (/\/app\/(\w+)\//.exec(location.pathname)
+        let module = (/\/app\/(\w+)\//.exec(location.pathname + location.hash)
             || [this.MODULE_DEFAULT]).pop().toLowerCase();
         return this.isModuleActive(module) ? module : this.getDefaultModule();
     }
