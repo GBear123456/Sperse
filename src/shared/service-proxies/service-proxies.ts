@@ -35373,6 +35373,7 @@ export class ContactGroupInfoDto implements IContactGroupInfoDto {
     id!: number | undefined;
     statusId!: string | undefined;
     status!: string | undefined;
+    typeId!: string | undefined;
     assignedUserId!: number | undefined;
     starId!: number | undefined;
     ratingId!: number | undefined;
@@ -35400,6 +35401,7 @@ export class ContactGroupInfoDto implements IContactGroupInfoDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.status = data["status"];
+            this.typeId = data["typeId"];
             this.assignedUserId = data["assignedUserId"];
             this.starId = data["starId"];
             this.ratingId = data["ratingId"];
@@ -35439,6 +35441,7 @@ export class ContactGroupInfoDto implements IContactGroupInfoDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["status"] = this.status;
+        data["typeId"] = this.typeId;
         data["assignedUserId"] = this.assignedUserId;
         data["starId"] = this.starId;
         data["ratingId"] = this.ratingId;
@@ -35471,6 +35474,7 @@ export interface IContactGroupInfoDto {
     id: number | undefined;
     statusId: string | undefined;
     status: string | undefined;
+    typeId: string | undefined;
     assignedUserId: number | undefined;
     starId: number | undefined;
     ratingId: number | undefined;
