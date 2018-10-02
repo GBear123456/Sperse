@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CommonLookupServiceProxy, SubscribableEditionComboboxItemDto, TenantEditDto, TenantServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CommonLookupServiceProxy, SubscribableEditionComboboxItemDto, TenantEditDto, TenantEditEditionDto, TenantServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { ModalDirective } from 'ngx-bootstrap';
@@ -24,6 +24,7 @@ export class EditTenantModalComponent extends AppComponentBase {
     subscriptionEndDateUtcIsValid = false;
 
     tenant: TenantEditDto = undefined;
+    tenantEditionId = 0;
     currentConnectionString: string;
     editions: SubscribableEditionComboboxItemDto[] = [];
     isSubscriptionFieldsVisible = false;
@@ -51,7 +52,7 @@ export class EditTenantModalComponent extends AppComponentBase {
                 this.tenant = tenantResult;
                 this.currentConnectionString = tenantResult.connectionString;
 
-                this.tenant.editionId = this.tenant.editionId || 0;
+                this.tenantEditionId = this.tenant.editions && this.tenant.editions.length > 0 ? this.tenant.editions[0].editionId : 0;
                 this.isUnlimited = !this.tenant.subscriptionEndDateUtc;
                 this.subscriptionEndDateUtcIsValid = this.isUnlimited || this.tenant.subscriptionEndDateUtc !== undefined;
                 this.modal.show();
@@ -76,7 +77,7 @@ export class EditTenantModalComponent extends AppComponentBase {
             return '';
         }
 
-        if (!this.tenant.editionId) {
+        if (!this.tenantEditionId) {
             return '';
         }
 
@@ -88,11 +89,11 @@ export class EditTenantModalComponent extends AppComponentBase {
     }
 
     selectedEditionIsFree(): boolean {
-        if (!this.tenant.editionId) {
+        if (!this.tenantEditionId) {
             return true;
         }
 
-        let selectedEditions = _.filter(this.editions, { value: this.tenant.editionId + '' });
+        let selectedEditions = _.filter(this.editions, { value: this.tenantEditionId + '' });
         if (selectedEditions.length !== 1) {
             return true;
         }
@@ -103,12 +104,14 @@ export class EditTenantModalComponent extends AppComponentBase {
 
     save(): void {
         this.saving = true;
-        if (this.tenant.editionId === 0) {
-            this.tenant.editionId = null;
+        if (this.tenantEditionId === 0) {
+            this.tenant.editions = null;
+        } else {
+            this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
         }
 
         //take selected date as UTC
-        if (!this.isUnlimited && this.tenant.editionId) {
+        if (!this.isUnlimited && this.tenantEditionId) {
             let date = $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date();
             if (!date) {
                 date = this.tenant.subscriptionEndDateUtc;
@@ -155,7 +158,7 @@ export class EditTenantModalComponent extends AppComponentBase {
     }
 
     toggleSubscriptionFields() {
-        if (this.tenant.editionId > 0) {
+        if (this.tenantEditionId > 0) {
             this.isSubscriptionFieldsVisible = true;
         } else {
             this.isSubscriptionFieldsVisible = false;
