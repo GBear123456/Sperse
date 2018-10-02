@@ -170,7 +170,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     PersonContactServiceProxy,
     NameParserService,
     NotesServiceProxy,
-    DocumentServiceProxy, 
+    DocumentServiceProxy,
     DocumentTypeServiceProxy,
     OrderSubscriptionServiceProxy
   ]

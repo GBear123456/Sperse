@@ -38,7 +38,6 @@ export class PartnerTypesStoreEffects {
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
-        startWith(new partnerTypesActions.LoadRequestAction(false)),
         ofType<partnerTypesActions.LoadRequestAction>(partnerTypesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {

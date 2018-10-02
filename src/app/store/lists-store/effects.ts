@@ -23,7 +23,6 @@ export class ListsStoreEffects {
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
-        startWith(new listsActions.LoadRequestAction(false)),
         ofType<listsActions.LoadRequestAction>(listsActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {

@@ -130,7 +130,7 @@ export class RootRoutingModule implements AfterViewInit {
                    ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
                    : 'app/app.module#AppModule',         //Lazy load desktop module
                data: { preload: true }
-           },          
+           },
            { path: '', redirectTo: 'app', pathMatch: 'full' },
            { path: '**', redirectTo: 'not-found' }
         );

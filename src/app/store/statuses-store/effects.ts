@@ -21,7 +21,6 @@ export class StatusesStoreEffects {
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
-        startWith(new statusesActions.LoadRequestAction(false)),
         ofType<statusesActions.LoadRequestAction>(statusesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {

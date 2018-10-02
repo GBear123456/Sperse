@@ -75,6 +75,7 @@ import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ContactsModule } from './contacts/contacts.module';
+import { AppStoreService } from '@app/store/app-store.service';
 
 @NgModule({
     imports: [
@@ -149,6 +150,7 @@ import { ContactsModule } from './contacts/contacts.module';
       ActivityComponent
     ],
     providers: [
+        AppStoreService,
         ImportServiceProxy,
         ImportLeadsService,
         ZendeskService
@@ -165,13 +167,16 @@ export class CrmModule {
 
     constructor(
         private _appService: AppService,
+        private _appStoreService: AppStoreService,
         private _importLeadsService: ImportLeadsService
     ) {
+        this._appStoreService.loadUserDictionaries();
         _appService.subscribeModuleChange((config) => {
             if (config['name'] == this.name)
                 _importLeadsService.setupImportCheck();
             else
                 _importLeadsService.stopImportCheck();
         });
+        this._appService.loadUserDictionaries();
     }
 }
