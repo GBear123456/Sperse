@@ -34,6 +34,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     user = new UserEditDto();
     roles: UserRoleDto[];
+    initialRoles: UserRoleDto[];
     sendActivationEmail = true;
     setRandomPassword = false;
     passwordComplexityInfo = '';
@@ -88,6 +89,9 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this._userService.getUserForEdit(undefined).subscribe(userResult => {
             this.user = userResult.user;
             this.roles = userResult.roles;
+            this.initialRoles = this.roles.map((role) => {
+                return _.clone(role);
+            });
             this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
             this.orgUnits = userResult.allOrganizationUnits;
@@ -285,7 +289,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.photoOriginalData = undefined;
         this.photoThumbnailData = undefined;
         this.roles.forEach((role, index) => {
-            role.isAssigned = !index;
+            role.isAssigned = this.initialRoles[index].isAssigned;
         });
 
         if (this.orgUnits.length)
