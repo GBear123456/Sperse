@@ -30,15 +30,16 @@ import {
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { ContactsService } from './contacts.service';
-
 import { RP_DEFAULT_ID, RP_USER_INFO_ID } from './contacts.const';
+import { AppStoreService } from '@app/store/app-store.service';
 
 @Component({
     templateUrl: './contacts.component.html',
     styleUrls: ['./contacts.component.less'],
     host: {
         '(document:click)': 'closeEditDialogs($event)'
-    }
+    },
+    providers: [ AppStoreService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
@@ -89,10 +90,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
                 private _contactsService: ContactsService,
-                private store$: Store<AppStore.State>
+                private store$: Store<AppStore.State>,
+                private _appStoreService: AppStoreService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
+        this._appStoreService.loadUserDictionaries();
         this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         _contactGroupService['data'] = {
             contactInfo: null,

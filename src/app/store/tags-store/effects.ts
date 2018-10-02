@@ -23,7 +23,6 @@ export class TagsStoreEffects {
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
-        startWith(new tagsActions.LoadRequestAction(false)),
         ofType<tagsActions.LoadRequestAction>(tagsActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {
