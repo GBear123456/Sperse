@@ -8,19 +8,6 @@ export const getTags = createSelector(
     (state: State) => state.tags
 );
 
-export const getTagsWithParent = createSelector(
-    getTags,
-    tags => {
-        if (tags) {
-            tags.map((obj) => {
-                obj['parent'] = 0;
-                return obj;
-            });
-            return tags;
-        }
-    }
-);
-
 export const getLoaded = createSelector(
     getTagsState,
     (state: State) => state.loaded

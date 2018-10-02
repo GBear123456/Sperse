@@ -138,7 +138,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this.store$.pipe(select(TagsStoreSelectors.getTagsWithParent)).subscribe((tags: ContactGroupTagInfoDto[]) => {
+        this.store$.pipe(select(TagsStoreSelectors.getTags)).subscribe((tags: ContactGroupTagInfoDto[]) => {
             this.list = tags;
         });
     }

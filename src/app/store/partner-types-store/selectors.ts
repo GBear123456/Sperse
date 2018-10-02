@@ -6,15 +6,7 @@ export const getPartnerTypesState = createFeatureSelector<State>('partnerTypes')
 export const getPartnerTypes = createSelector(
     getPartnerTypesState,
     (state: State) => {
-        return state.partnerTypes && state.partnerTypes.length ?
-               state.partnerTypes.map(type => {
-                   return {
-                       id: type.id,
-                       name: type.name,
-                       text: type.name
-                   };
-               }) :
-               state.partnerTypes;
+        return state.partnerTypes
     }
 );
 
