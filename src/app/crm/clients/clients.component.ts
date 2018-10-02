@@ -43,7 +43,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { ContactGroupServiceProxy, ContactGroupStatusDto, AssignUsersInput, AssignUserInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupServiceProxy, ContactGroupStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
 @Component({

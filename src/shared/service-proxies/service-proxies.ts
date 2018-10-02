@@ -8276,8 +8276,8 @@ export class ContactGroupServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignContactGroup(input: AssignUserInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/AssignContactGroup";
+    assignUser(input: AssignUserInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/AssignUser";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -8292,11 +8292,11 @@ export class ContactGroupServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignContactGroup(response_);
+            return this.processAssignUser(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignContactGroup(<any>response_);
+                    return this.processAssignUser(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -8305,7 +8305,7 @@ export class ContactGroupServiceProxy {
         }));
     }
 
-    protected processAssignContactGroup(response: HttpResponseBase): Observable<void> {
+    protected processAssignUser(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8328,8 +8328,8 @@ export class ContactGroupServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignContactGroups(input: AssignUsersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/AssignContactGroups";
+    assignUserForEach(input: AssignUserForEachInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactGroup/AssignUserForEach";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -8344,11 +8344,11 @@ export class ContactGroupServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignContactGroups(response_);
+            return this.processAssignUserForEach(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignContactGroups(<any>response_);
+                    return this.processAssignUserForEach(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -8357,7 +8357,7 @@ export class ContactGroupServiceProxy {
         }));
     }
 
-    protected processAssignContactGroups(response: HttpResponseBase): Observable<void> {
+    protected processAssignUserForEach(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14734,8 +14734,8 @@ export class LeadServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignContactGroup(input: AssignUserInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/AssignContactGroup";
+    assignUser(input: AssignUserInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/AssignUser";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -14750,11 +14750,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignContactGroup(response_);
+            return this.processAssignUser(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignContactGroup(<any>response_);
+                    return this.processAssignUser(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -14763,7 +14763,7 @@ export class LeadServiceProxy {
         }));
     }
 
-    protected processAssignContactGroup(response: HttpResponseBase): Observable<void> {
+    protected processAssignUser(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14786,8 +14786,8 @@ export class LeadServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignContactGroups(input: AssignUsersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/AssignContactGroups";
+    assignUserForEach(input: AssignUserForEachInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/AssignUserForEach";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -14802,11 +14802,11 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignContactGroups(response_);
+            return this.processAssignUserForEach(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignContactGroups(<any>response_);
+                    return this.processAssignUserForEach(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -14815,7 +14815,7 @@ export class LeadServiceProxy {
         }));
     }
 
-    protected processAssignContactGroups(response: HttpResponseBase): Observable<void> {
+    protected processAssignUserForEach(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17166,8 +17166,8 @@ export class PartnerServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignContactGroup(input: AssignUserInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Partner/AssignContactGroup";
+    assignUser(input: AssignUserInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/AssignUser";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -17182,11 +17182,11 @@ export class PartnerServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignContactGroup(response_);
+            return this.processAssignUser(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignContactGroup(<any>response_);
+                    return this.processAssignUser(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -17195,7 +17195,7 @@ export class PartnerServiceProxy {
         }));
     }
 
-    protected processAssignContactGroup(response: HttpResponseBase): Observable<void> {
+    protected processAssignUser(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17218,8 +17218,8 @@ export class PartnerServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    assignContactGroups(input: AssignUsersInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Partner/AssignContactGroups";
+    assignUserForEach(input: AssignUserForEachInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Partner/AssignUserForEach";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -17234,11 +17234,11 @@ export class PartnerServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAssignContactGroups(response_);
+            return this.processAssignUserForEach(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAssignContactGroups(<any>response_);
+                    return this.processAssignUserForEach(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -17247,7 +17247,7 @@ export class PartnerServiceProxy {
         }));
     }
 
-    protected processAssignContactGroups(response: HttpResponseBase): Observable<void> {
+    protected processAssignUserForEach(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -36997,7 +36997,7 @@ export interface IContactGroupStatusDto {
 }
 
 export class AssignUserInput implements IAssignUserInput {
-    entityId!: number;
+    id!: number;
     userId!: number | undefined;
 
     constructor(data?: IAssignUserInput) {
@@ -37011,7 +37011,7 @@ export class AssignUserInput implements IAssignUserInput {
 
     init(data?: any) {
         if (data) {
-            this.entityId = data["entityId"];
+            this.id = data["id"];
             this.userId = data["userId"];
         }
     }
@@ -37025,62 +37025,65 @@ export class AssignUserInput implements IAssignUserInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["entityId"] = this.entityId;
+        data["id"] = this.id;
         data["userId"] = this.userId;
         return data; 
     }
 }
 
 export interface IAssignUserInput {
-    entityId: number;
+    id: number;
     userId: number | undefined;
 }
 
-export class AssignUsersInput implements IAssignUsersInput {
-    entityIds!: number[] | undefined;
+export class AssignUserForEachInput implements IAssignUserForEachInput {
+    ids!: number[];
     userId!: number | undefined;
 
-    constructor(data?: IAssignUsersInput) {
+    constructor(data?: IAssignUserForEachInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.ids = [];
+        }
     }
 
     init(data?: any) {
         if (data) {
-            if (data["entityIds"] && data["entityIds"].constructor === Array) {
-                this.entityIds = [];
-                for (let item of data["entityIds"])
-                    this.entityIds.push(item);
+            if (data["ids"] && data["ids"].constructor === Array) {
+                this.ids = [];
+                for (let item of data["ids"])
+                    this.ids.push(item);
             }
             this.userId = data["userId"];
         }
     }
 
-    static fromJS(data: any): AssignUsersInput {
+    static fromJS(data: any): AssignUserForEachInput {
         data = typeof data === 'object' ? data : {};
-        let result = new AssignUsersInput();
+        let result = new AssignUserForEachInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.entityIds && this.entityIds.constructor === Array) {
-            data["entityIds"] = [];
-            for (let item of this.entityIds)
-                data["entityIds"].push(item);
+        if (this.ids && this.ids.constructor === Array) {
+            data["ids"] = [];
+            for (let item of this.ids)
+                data["ids"].push(item);
         }
         data["userId"] = this.userId;
         return data; 
     }
 }
 
-export interface IAssignUsersInput {
-    entityIds: number[] | undefined;
+export interface IAssignUserForEachInput {
+    ids: number[];
     userId: number | undefined;
 }
 

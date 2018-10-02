@@ -12,7 +12,7 @@ import { AppStore, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AssignUserInput, AssignUsersInput } from '@shared/service-proxies/service-proxies';
+import { AssignUserInput, AssignUserForEachInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'crm-user-assignment-list',
@@ -105,8 +105,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     process() {
         if (this.proxyService) {
             if (this.bulkUpdateMode)
-                this.proxyService.assignContactGroups(AssignUsersInput.fromJS({
-                    entityIds: this.selectedKeys,
+                this.proxyService.assignUserForEach(AssignUserForEachInput.fromJS({
+                    ids: this.selectedKeys,
                     userId: this.selectedItemKey
                 })).pipe(finalize(() => {
                     this.listComponent.unselectAll();
@@ -114,8 +114,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     this.notify.success(this.l('UserAssigned'));
                 });
             else
-                this.proxyService.assignContactGroup(AssignUserInput.fromJS({
-                    entityId: this.selectedKeys[0],
+                this.proxyService.assignUser(AssignUserInput.fromJS({
+                    id: this.selectedKeys[0],
                     userId: this.selectedItemKey
                 })).subscribe((result) => {
                     this.moveSelectedItemsToTop();

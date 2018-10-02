@@ -9,7 +9,7 @@
         </div>
         &nbsp;<small>{{data.text}}</small><div class="transclude"><ng-content></ng-content></div>
     </div>
-    <div class="headline-buttons">
+    <div class="headline-buttons" [ngClass]="data.class">
         <ng-template ngFor let-item [ngForOf]="data.buttons">
             <button *ngIf="item.enabled" class="btn {{item?.class || 'btn-layout'}}" (click)="item.action()"><i class="icon-{{item.icon}}"></i> {{item.lable}}</button>
         </ng-template>

@@ -639,7 +639,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 setTimeout(() => this.finishLoading());
                 if (!this.categories.length) this.noDataText = this.ls('Platform', 'NoData');
             }
-            );
+        );
     }
 
     setTransactionsCount() {
