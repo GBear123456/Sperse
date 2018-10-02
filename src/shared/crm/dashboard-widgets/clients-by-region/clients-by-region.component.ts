@@ -1,15 +1,12 @@
-import { Component, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, AfterViewChecked } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { DashboardServiceProxy, GetCustomersByRegionOutput } from 'shared/service-proxies/service-proxies';
+import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
-import { DxVectorMapComponent } from 'devextreme-angular'; 
+import { DxVectorMapComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
-
 import { DecimalPipe } from '@angular/common';
 import DxChart from 'devextreme/viz/chart';
 import * as mapsData from 'devextreme/dist/js/vectormap-data/world.js';
-
-import * as _ from "underscore";
 
 @Component({
     selector: 'clients-by-region',
@@ -17,13 +14,13 @@ import * as _ from "underscore";
     styleUrls: ['./clients-by-region.component.less'],
     providers: []
 })
-export class ClientsByReginComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class ClientsByReginComponent extends AppComponentBase implements AfterViewChecked {
     @ViewChild(DxVectorMapComponent) mapComponent: DxVectorMapComponent;
 
     worldMap: any = mapsData.world;
     gdpData: any = {};
     toolTipData: Object;
-    pipe: any = new DecimalPipe("en-US");
+    pipe: any = new DecimalPipe('en-US');
 
     constructor(
         injector: Injector,
@@ -42,8 +39,8 @@ export class ClientsByReginComponent extends AppComponentBase implements OnInit,
                                 this.gdpData[val.countryId].total += val.customerCount;
                             else
                                 this.gdpData[val.countryId] = {
-                                    name: val.countryId, 
-                                    total: val.customerCount, 
+                                    name: val.countryId,
+                                    total: val.customerCount,
                                     states: []
                                 };
 
@@ -53,23 +50,19 @@ export class ClientsByReginComponent extends AppComponentBase implements OnInit,
                             });
                         });
                     }
-            )
+            );
         });
     }
 
-    ngOnInit() {
-
-    }
-
-    ngAfterViewInit() {
-        setTimeout(() => this.mapComponent.instance.render(), 2000);
+    ngAfterViewChecked() {
+        this.mapComponent.instance.render();
     }
 
     customizeTooltip = (arg) => {
         let countryGDPData = this.gdpData[arg.attribute('iso_a2')];
         let total = countryGDPData && countryGDPData.total;
-        let totalMarkupString = total ? "<div id='nominal' >" + 
-            this.l('CRMDashboard_TotalCount') + ": " + total + "</div>" : "";
+        let totalMarkupString = total ? "<div id='nominal' >" +
+            this.l('CRMDashboard_TotalCount') + " : " + total + "</div>" : "";
         let node = "<div #gdp><h4>" + arg.attribute("name") + "</h4>" +
             totalMarkupString + "<div id='gdp-sectors'></div></div>";
 
@@ -85,7 +78,7 @@ export class ClientsByReginComponent extends AppComponentBase implements OnInit,
         });
     }
 
-    customizeText = (arg) => this.pipe.transform(arg.start, "1.0-0") + 
+    customizeText = (arg) => this.pipe.transform(arg.start, "1.0-0") +
         " to " + this.pipe.transform(arg.end, "1.0-0");
 
     tooltipShown(e) {
