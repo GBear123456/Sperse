@@ -19,6 +19,7 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PackageChooserWidgetComponent } from './package-chooser-widget-component';
 import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
+import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 
 export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
@@ -32,7 +33,8 @@ export function initialize(widgetsService: WidgetsService, injector: Injector, h
     declarations: [
         PackageChooserComponent,
         PackageChooserWidgetComponent,
-        PackageCardComponent
+        PackageCardComponent,
+        CustomNumberPipe
     ],
     imports: [
         AbpModule,
