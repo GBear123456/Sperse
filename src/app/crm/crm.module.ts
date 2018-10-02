@@ -177,6 +177,5 @@ export class CrmModule {
             else
                 _importLeadsService.stopImportCheck();
         });
-        this._appService.loadUserDictionaries();
     }
 }

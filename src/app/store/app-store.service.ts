@@ -16,7 +16,7 @@ import { AppStore } from './index';
 @Injectable()
 export class AppStoreService {
 
-    constructor(private store$: Store<AppStore>) {}
+    constructor(private store$: Store<AppStore.State>) {}
 
     loadUserDictionaries() {
         /** @todo check permissions */
