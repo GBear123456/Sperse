@@ -28,9 +28,11 @@ export class AppUrlService {
         let baseUrl = this.ensureEndsWith(AppConsts.appBaseUrlFormat, '/');
 
         //Add base href if it is not configured in appconfig.json
+/*
         if (baseUrl.indexOf(AppConsts.appBaseHref) < 0) {
             baseUrl = baseUrl + this.removeFromStart(AppConsts.appBaseHref, '/');
         }
+*/
 
         if (baseUrl.indexOf(AppUrlService.tenancyNamePlaceHolder) < 0) {
             return baseUrl;
