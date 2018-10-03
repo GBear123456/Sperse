@@ -121,7 +121,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.headlineConfig = {
             names: [this.l('Transactions')],
             onRefresh: this.refreshDataGrid.bind(this),
-            iconSrc: 'assets/common/icons/credit-card-icon.svg',
+            iconSrc: './assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
     }
@@ -207,7 +207,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             options: {
                                 id: 'bankAccountSelect',
                                 text: this.l('Accounts'),
-                                icon: 'assets/common/icons/accounts.svg'
+                                icon: './assets/common/icons/accounts.svg'
                             },
                             attr: {
                                 'custaccesskey': 'bankAccountSelect',
@@ -823,7 +823,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.categoriesShowed = true;
 
         let img = new Image();
-        img.src = 'assets/common/icons/drag-icon.svg';
+        img.src = './assets/common/icons/drag-icon.svg';
 
         let element = <any>$($event.element);
         let affectedRows = element.find('tr.dx-data-row').removeAttr('draggable').off('dragstart').off('dragend');

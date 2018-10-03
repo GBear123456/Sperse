@@ -53,8 +53,8 @@ export class LocalizedResourcesHelper {
 
         const currentCulture = abp.localization.currentLanguage.name;
 
-        const bootstrapSelect = AppConsts.appBaseUrl + '/assets/localization/bootstrap-select/defaults-{0}.js';
-        const jqueryTimeago = AppConsts.appBaseUrl + '/assets/localization/jquery-timeago/jquery.timeago.{0}.js';
+        const bootstrapSelect = './assets/localization/bootstrap-select/defaults-{0}.js';
+        const jqueryTimeago = './assets/localization/jquery-timeago/jquery.timeago.{0}.js';
 
         return $.when(
             jQuery.getScript(abp.utils.formatString(bootstrapSelect, LocalizedResourcesHelper.findBootstrapSelectLocalization(currentCulture))),

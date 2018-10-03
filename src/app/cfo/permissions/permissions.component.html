@@ -21,7 +21,7 @@
             <dxo-editing [allowUpdating]="true" mode="cell"></dxo-editing>
             <dxo-grouping [allowCollapsing]="false"></dxo-grouping>
             <div *dxTemplate="let data of 'addUserTemplate'">
-                <img class="addUserButton" (click)="showUsersPopup($event)" src="assets/common/icons/add-user-icon.svg" [alt]="l('UserPermissions_AddUser')">
+                <img class="addUserButton" (click)="showUsersPopup($event)" src="./assets/common/icons/add-user-icon.svg" [alt]="l('UserPermissions_AddUser')">
             </div>
         </dx-data-grid>
         <app-no-data

@@ -58,7 +58,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.rootComponent.overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
-            iconSrc: 'assets/common/icons/pie-chart.svg',
+            iconSrc: './assets/common/icons/pie-chart.svg',
             onRefresh: this.refreshWidgets.bind(this),
             buttons: []
         };

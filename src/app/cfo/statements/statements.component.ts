@@ -99,7 +99,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     finalize(() => abp.ui.clearBusy())
                 ).subscribe();
             },
-            iconSrc: 'assets/common/icons/credit-card-icon.svg'
+            iconSrc: './assets/common/icons/credit-card-icon.svg'
         };
     }
 
@@ -168,7 +168,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             action: this.toggleReportPeriodFilter.bind(this),
                             options: {
                                 id: 'reportPeriod',
-                                icon: 'assets/common/icons/report-period.svg'
+                                icon: './assets/common/icons/report-period.svg'
                             }
                         },
                         {
@@ -178,7 +178,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             options: {
                                 id: 'bankAccountSelect',
                                 text: this.l('Accounts'),
-                                icon: 'assets/common/icons/accounts.svg'
+                                icon: './assets/common/icons/accounts.svg'
                             },
                             attr: {
                                 'custaccesskey': 'bankAccountSelect',

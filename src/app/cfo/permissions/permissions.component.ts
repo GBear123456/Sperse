@@ -82,7 +82,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     };
     public headlineConfig = {
         names: [this.l('SetupStep_Permissions')],
-        iconSrc: 'assets/common/icons/user-permissions.svg',
+        iconSrc: './assets/common/icons/user-permissions.svg',
         onRefresh: this.onRefresh.bind(this),
     };
     constructor(injector: Injector,
@@ -212,7 +212,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         columnHeader.insertAdjacentHTML('beforeEnd',
             `<div class="userFullName dx-datagrid-text-content dx-text-content-alignment-left">${user.userName}</div>
              <div class="userEmail">${user.emailAddress}</div>
-             <img src="/assets/common/icons/remove-user-icon.svg" [alt]="l('UserPermissions_RemoveUser')" class="removeUserButton" (click)="removeUser(${+user.id})"/>`);
+             <img src="./assets/common/icons/remove-user-icon.svg" [alt]="l('UserPermissions_RemoveUser')" class="removeUserButton" (click)="removeUser(${+user.id})"/>`);
         return columnHeader;
     }
 

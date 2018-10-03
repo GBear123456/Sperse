@@ -242,7 +242,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             action: this.toggleReportPeriodFilter.bind(this),
                             options: {
                                 id: 'reportPeriod',
-                                icon: 'assets/common/icons/report-period.svg'
+                                icon: './assets/common/icons/report-period.svg'
                             }
                         },
                         {
@@ -252,7 +252,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             options: {
                                 id: 'bankAccountSelect',
                                 text: this.l('Accounts'),
-                                icon: 'assets/common/icons/accounts.svg'
+                                icon: './assets/common/icons/accounts.svg'
                             },
                             attr: {
                                 'custaccesskey': 'bankAccountSelect',
@@ -360,7 +360,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Daily Cash Balances')],
-            iconSrc: 'assets/common/icons/pulse-icon.svg',
+            iconSrc: './assets/common/icons/pulse-icon.svg',
             onRefresh: this.getUpdatedDataSource.bind(this),
             buttons: [
                 {

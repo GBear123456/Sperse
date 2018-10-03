@@ -11,7 +11,7 @@
         </ul>
     </div>
     <div class="securedInfo">
-        <img [src]="'assets/common/icons/secured-shield.svg'" />
+        <img [src]="'./assets/common/icons/secured-shield.svg'" />
         <p>{{ l('SecuredAndEncryptedPaymentMessage') }}</p>
     </div>
     <div class="orderSummary">
@@ -50,7 +50,7 @@
     <div class="header">
         <h2>{{ l('ChoosePaymentOption') }}</h2>
         <div class="phoneBlock">
-            <img [src]="'assets/common/icons/talking.svg'" />
+            <img [src]="'./assets/common/icons/talking.svg'" />
             <div>
                 <p class="tip">{{ l('HaveAQuestionCall') }}</p>
                 <p class="phoneNumber">{{ phoneNumber }}</p>
@@ -68,7 +68,7 @@
             </mat-tab>
             <mat-tab>
                 <ng-template mat-tab-label="">
-                    <img [src]="'assets/common/icons/paypal-logo.png'">
+                    <img [src]="'./assets/common/icons/paypal-logo.png'">
                 </ng-template>
                 <pay-pal *ngIf="selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [billingPeriod]="plan.billingPeriod" (onSubmit)="submitData($event, paymentMethods.PayPal)"></pay-pal>
             </mat-tab>

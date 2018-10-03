@@ -96,7 +96,7 @@ export class UserNotificationHelper extends AppComponentBase {
         //Desktop notification
         Push.create('Platform', {
             body: this.format(userNotification).text,
-            icon: abp.appPath + 'assets/common/images/app-logo-small.png',
+            icon: './assets/common/images/app-logo-small.png',
             timeout: 6000,
             onClick: function () {
                 window.focus();

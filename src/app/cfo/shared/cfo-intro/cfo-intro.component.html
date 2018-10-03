@@ -29,18 +29,18 @@
                     <h2>CFO</h2>
                     <p>Cash Flow Outlook</p>
                     <div class="play" (click)="goToStep(0)">
-                        <img src="assets/common/images/cfo-intro/play-btn.png">
+                        <img src="./assets/common/images/cfo-intro/play-btn.png">
                         <div class="bottomp">
                             <p>
                                 Know Your Cash Flow
                             </p>
-                            <img src="assets/common/images/cfo-intro/frb.png">
+                            <img src="./assets/common/images/cfo-intro/frb.png">
                         </div>
                     </div>
                 </div>
                 <div class="footer">
                     <a (click)="goToStep(0)">
-                        <img src="assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video
+                        <img src="./assets/common/images/cfo-intro/button-play.svg" alt="play"> Play video
                     </a>
                     <button mat-button matStepperNext class="btn btn-layout">Next</button>
                 </div>
@@ -55,19 +55,19 @@
                     <h2>Key Features</h2>
                     <ul class="treka">
                         <li>
-                            <img src="assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation
+                            <img src="./assets/common/images/cfo-intro/sijalica.png">Easy Setup and Financial Account Aggregation
                         </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization
+                            <img src="./assets/common/images/cfo-intro/drugi.png">Daily Bank Account Transaction Synchronization
                         </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts
+                            <img src="./assets/common/images/cfo-intro/treci.png">Rolling Cash Flow Reports and Forecasts
                         </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day
+                            <img src="./assets/common/images/cfo-intro/catvrti.png">Financial Activity by Year, Quarter, Month, Day
                         </li>
                         <li>
-                            <img src="assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification
+                            <img src="./assets/common/images/cfo-intro/pati.png">Drag-n-drop transaction classification
                         </li>
                     </ul>
                 </div>
@@ -95,10 +95,10 @@
                         </div>
                         <section class="dole">
                             <div class="bra">
-                                <img src="assets/common/images/cfo-intro/brands.png">
+                                <img src="./assets/common/images/cfo-intro/brands.png">
                             </div>
                             <div class="str">
-                                <img src="assets/common/images/cfo-intro/arrow.png">
+                                <img src="./assets/common/images/cfo-intro/arrow.png">
                                 <p>
                                     <span>Daily</span>
                                     <br> updates from your bank accounts
@@ -165,7 +165,7 @@
         <mat-step>
             <div class="questionnaire-step step-item">
                 <div class="header">
-                    <img src="/assets/common/images/sperse-logo.png">
+                    <img src="./assets/common/images/sperse-logo.png">
                 </div>
                 <div class="main">
                     <app-questionnaire [identifier]="identifier"
@@ -187,7 +187,7 @@
         <mat-step *ngIf="showImportUsersStep">
             <div class="import-users-step step-item">
                 <div class="header">
-                    <img src="/assets/common/images/sperse-logo.png">
+                    <img src="./assets/common/images/sperse-logo.png">
                 </div>
                 <div class="main">
                     <app-import-users-step ></app-import-users-step>

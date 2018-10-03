@@ -1,5 +1,5 @@
 <div class="description ">
-    <img class="info-icon" src="/assets/common/icons/information-button.svg">
+    <img class="info-icon" src="./assets/common/icons/information-button.svg">
     <p>{{ descriptionText }}</p>
 </div>
 <form id="echeckForm" [formGroup]="echeckForm" (ngSubmit)="submit()">
@@ -30,7 +30,7 @@
             <mat-label>
                 <span>{{ l('routingNumberTitle') }}</span>
             </mat-label>
-            <img class="info-icon" src="/assets/common/icons/information-button.svg" [matTooltip]="l('routingNumberDescription')" >
+            <img class="info-icon" src="./assets/common/icons/information-button.svg" [matTooltip]="l('routingNumberDescription')" >
             <input matInput formControlName="routingNumber" (keypress)="onKeyPress($event)" minlength="9" maxlength="9">
             <mat-error *ngIf="echeckForm.controls['routingNumber'].touched && echeckForm.controls['routingNumber']?.invalid">{{ l('routingNumberValidationMessage') }}</mat-error>
         </mat-form-field>
@@ -38,7 +38,7 @@
             <mat-label>
                 <span>{{ l('bankAccountNumberTitle') }}</span>
             </mat-label>
-            <img class="info-icon" [matTooltip]="l('bankAccountNumberDescription')" src="/assets/common/icons/information-button.svg">
+            <img class="info-icon" [matTooltip]="l('bankAccountNumberDescription')" src="./assets/common/icons/information-button.svg">
             <input matInput formControlName="bankAccountNumber" (keypress)="onKeyPress($event)" minlength="4" maxlength="17">
             <mat-error *ngIf="echeckForm.controls['bankAccountNumber'].touched && echeckForm.controls['bankAccountNumber']?.invalid">{{ l('bankAccountNumberValidationMessage') }}</mat-error>
         </mat-form-field>
@@ -46,7 +46,7 @@
 </form>
 <div class="footer">
     <div class="info">
-        <img class="info-icon" src="/assets/common/icons/information-button.svg">
+        <img class="info-icon" src="./assets/common/icons/information-button.svg">
         <p>{{ l('ECheckTermsAndConditionText') }} <a (click)="openTermsModal()">{{ l('TermsConditions') }}</a></p>
     </div>
     <button [disabled]="!echeckForm.touched || !echeckForm.valid" class="sendCheck" form="echeckForm">{{ l('SendCheck') }}</button>

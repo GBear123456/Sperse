@@ -14,8 +14,8 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     @ViewChild('loginAttemptsModal') modal: ModalDirective;
 
     userLoginAttempts: UserLoginAttemptDto[];
-    profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
-    defaultProfilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    profilePicture = './assets/common/images/default-profile-picture.png';
+    defaultProfilePicture = './assets/common/images/default-profile-picture.png';
 
     constructor(
         injector: Injector,
