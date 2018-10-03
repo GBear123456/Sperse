@@ -1077,9 +1077,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     activate() {
         this.filtersService.localizationSourceName = this.localizationSourceName;
-        this.initToolbarConfig();
-        this.filtersService.setup(this.filters);
         this.initFiltering();
+        this.filtersService.setup(this.filters, this._route.snapshot.queryParams, true);
+        this.initToolbarConfig();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this._bankAccountsService.load();
@@ -1098,6 +1098,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
+        this.rootComponent.overflowHidden(false);
     }
 }
