@@ -19,8 +19,8 @@
     </div>
 </div>
 
-<dx-tooltip class="addXeroAccount" target="#add-account" [(visible)]="xeroButtonVisible">
-    <div *dxTemplate="let data = data of 'content'">
+<dx-tooltip class="addXeroAccount" [(visible)]="xeroButtonVisible">
+    <div *dxTemplate="let data of 'content'">
         <xero-login (click)="xeroButtonClick()" (onComplete)="onXeroComplete()"></xero-login>
     </div>
 </dx-tooltip>
