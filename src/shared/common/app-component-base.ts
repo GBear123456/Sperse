@@ -50,7 +50,7 @@ export abstract class AppComponentBase implements OnDestroy {
     localizationService: AppLocalizationService;
     oDataService: ODataService;
 
-    public searchClear: boolean = true; 
+    public searchClear = true;
     public searchValue: string;
     public searchColumns: any[];
 

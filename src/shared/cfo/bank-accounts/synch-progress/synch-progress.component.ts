@@ -13,7 +13,7 @@ import { DxTooltipComponent } from 'devextreme-angular';
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
-    @Output() completed = true;
+    completed = true;
     synchData: SyncProgressOutput;
     currentProgress: number;
     showComponent = true;
@@ -26,7 +26,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     accountProgressTooltipTarget;
     accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
-
+    getSyncProgressRequest;
     readonly maxTryCount = 3;
     tryCount = 0;
 
@@ -48,19 +48,21 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             .done(result => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
-                this.getSynchProgressAjax();
+                if (!this.getSyncProgressRequest) {
+                    clearTimeout(this.timeoutHandler);
+                    this.getSynchProgressAjax();
+                }
             }).fail(result => {
                 this.syncFailed = true;
             });
+        this.getSynchProgressAjax();
     }
 
     public getSynchProgressAjax() {
-        this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {})
+        this.getSyncProgressRequest = this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {})
             .done((result: SyncProgressOutput) => {
                 this.currentProgress = result.totalProgress.progressPercent;
-
                 this.synchData = result;
-
                 let hasFailed = false;
                 this.synchData.accountProgresses.forEach(value => {
                     if (value.syncStatus == SyncProgressDtoSyncStatus.ActionRequired
@@ -69,7 +71,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                     }
                 });
                 this.hasFailedAccounts = hasFailed;
-
                 if (this.currentProgress != 100) {
                     setTimeout(() => { this.completed = false; });
                     this.timeoutHandler = setTimeout(
@@ -89,7 +90,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                     }
                 }
                 this.lastSyncDate = result.totalProgress.lastSyncDate;
-
                 this._cfoService.instanceType = this.instanceType;
                 if (!this.statusCheckCompleted && result.accountProgresses &&
                     !result.accountProgresses.every((account) => {
@@ -98,8 +98,10 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 ) this._cfoService.instanceChangeProcess((hasTransactions) => {
                     this.statusCheckCompleted = hasTransactions;
                 });
+                this.getSyncProgressRequest = null;
             }).fail(result => {
                 this.syncFailed = true;
+                this.getSyncProgressRequest = null;
             });
     }
 

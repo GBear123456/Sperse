@@ -24,9 +24,9 @@ export class DashboardMenuComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.items = [
-            { caption: 'ManageClients', component: '/clients', showPlus: true },
-            { caption: 'ManageLeads', component: '/leads', showPlus: true },
-            { caption: 'ImportYourList', component: '/import-list', disabled: false },
+            { caption: 'ManageClients', component: '/clients', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Customers') },
+            { caption: 'ManageLeads', component: '/leads', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Leads') },
+            { caption: 'ImportYourList', component: '/import-list', hidden: !this.permission.isGranted('Pages.CRM.BulkImport') },
             { caption: 'CustomizeSettings', component: '/editions', disabled: true },
             {
               caption: 'PaymentWizard', component: '/payment-wizard',

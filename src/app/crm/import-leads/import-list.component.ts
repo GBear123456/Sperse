@@ -14,7 +14,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ImportStatus } from '@shared/AppEnums';
 import { ImportLeadsService } from './import-leads.service';
 
 @Component({
@@ -56,7 +55,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 paginate: true,
                 key: 'Id'
             }
-        };        
+        };
 
         this.initHeadlineConfig();
         this.initToolbarConfig();
