@@ -22,8 +22,8 @@ import { ActivityComponent } from './activity/activity.component';
                     { path: 'partners', component: PartnersComponent, data: { permission: 'Pages.CRM.Partners', reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
                     { path: 'orders', component: OrdersComponent, data: { permission: 'Pages.CRM.Orders' } },
-                    { path: 'import-leads', component: ImportLeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
-                    { path: 'import-list', component: ImportListComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
+                    { path: 'import-leads', component: ImportLeadsComponent, data: { permission: 'Pages.CRM.BulkImport', reuse: true } },
+                    { path: 'import-list', component: ImportListComponent, data: { permission: 'Pages.CRM.BulkImport', reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: '', reuse: true } }
                 ]
             }
