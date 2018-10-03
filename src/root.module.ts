@@ -36,9 +36,7 @@ export function appInitializerFactory(
 
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
-            let appBaseUrl = (/http[s]{0,1}:\/\//g).test(AppConsts.appBaseHref) ? 
-                AppConsts.appBaseHref: getDocumentOrigin() + AppConsts.appBaseHref;
-            AppPreBootstrap.run(appBaseUrl, () => {
+            AppPreBootstrap.run(AppConsts.appBaseHref, () => {
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
@@ -114,12 +112,7 @@ export function getCurrentLanguage(): string {
 
 export function getBaseHref(platformLocation: PlatformLocation): string {
     let baseUrl = document.head.getElementsByTagName('base')[0].href;  //platformLocation.getBaseHrefFromDOM();
-
-    if (baseUrl) {
-        return baseUrl;
-    }
-
-    return '/';
+    return (/http[s]{0,1}:\/\//g).test(baseUrl) ? baseUrl: getDocumentOrigin() + baseUrl;
 }
 
 function handleLogoutRequest(authService: AppAuthService) {

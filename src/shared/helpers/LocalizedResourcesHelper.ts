@@ -24,23 +24,23 @@ export class LocalizedResourcesHelper {
     static loadLocalizedStylesForTheme(theme: string, isRtl: boolean): JQueryPromise<any> {
         let cssPostfix = isRtl ? '-rtl':'';
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/metronic-customize.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/themes/' + theme + '/metronic-customize.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/metronic-customize.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/metronic-customize.css'));
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/metronic-customize-angular.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/themes/' + theme + '/metronic-customize-angular.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/metronic-customize-angular.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/metronic-customize-angular.css'));
 
         if (abp.setting.get('App.UiManagement.Left.Position') === 'top') {
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/metronic-customize-top-menu.css'));
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/themes/' + theme + '/metronic-customize-top-menu.css'));
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/metronic-customize-top-menu.css'));
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/metronic-customize-top-menu.css'));
         }
 
         if (isRtl) {
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseUrl + '/assets/common/styles/abp-zero-template-rtl.css'));
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/abp-zero-template-rtl.css'));
         }
 
         return $.Deferred().resolve().promise();

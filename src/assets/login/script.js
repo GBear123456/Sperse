@@ -22,6 +22,10 @@
         getAppConfig();
     }
 
+    function getBaseHref() {
+        return document.head.getElementsByTagName('base')[0].href;
+    }
+
     function ajax(url, headers) {
         return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
@@ -79,7 +83,7 @@
                 logoImage.setAttribute('src', 
                     loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
                     remoteServiceUrl + '/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
-                    '/assets/common/images/app-logo-on-dark.png'
+                    getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
                 );
                 logoImage.style.display = 'block';
             }
