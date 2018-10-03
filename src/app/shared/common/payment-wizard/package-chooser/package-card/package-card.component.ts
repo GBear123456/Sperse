@@ -62,7 +62,7 @@ export class PackageCardComponent implements OnChanges {
 
     get features() {
         if (this.isActive) {
-            const maxActiveContactCount = +this.selectedEdition.features[this.module + '.MaxActiveContactCount'] ? this.selectedEdition.features[this.module + '.MaxActiveContactCount'] : this.l('Unlimited');
+            const maxActiveContactCount = +this.selectedEdition.features[this.module + '.MaxActiveContactCount'] ? (+this.selectedEdition.features[this.module + '.MaxActiveContactCount']).toLocaleString() : this.l('Unlimited');
             const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ? this.selectedEdition.features['Admin.MaxSpaceGB'] + ' ' + this.l('GB') : this.l('Unlimited');
             this.lastActiveFeatures = [
                 {
