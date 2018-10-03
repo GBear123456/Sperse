@@ -36,7 +36,7 @@ export class PackageChooserComponent implements OnInit {
     @ViewChildren(PackageCardComponent) packageCardComponents: QueryList<PackageCardComponent>;
     @ViewChildren(MatSlider) slider: MatSlider;
     @Input() module: Module;
-    @Input() title = this.l('TrialExpired', this.module);
+    @Input() title: string;
     @Input() subtitle = this.l('ChoosePlan');
     @Input() yearDiscount = 33;
     @Input() packagesMaxUsersAmount: number;
@@ -66,6 +66,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.title = this.l('TrialExpired', this.module);
         const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
             refCount(),
