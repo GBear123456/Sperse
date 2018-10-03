@@ -17,7 +17,7 @@
 
         document.getElementById('loginPage').style.display = 'block';
         document.getElementById('loadSpinner').style.display = 'none';
-        window.history.pushState("", "", '/account/login' + document.location.search);
+        window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
         getAppConfig();
     }
