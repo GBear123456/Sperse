@@ -2,6 +2,9 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { OnInit, OnDestroy, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+
+import { takeUntil } from 'rxjs/operators';
+
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -20,8 +23,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     protected _router: Router;
     _cfoService: CFOService;
 
-    private _sub: any;
-
     constructor(injector: Injector) {
         super(injector);
 
@@ -32,7 +33,9 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         this._cfoService = injector.get(CFOService);
 
         if (this.constructor == this._route.component)
-            this._sub = this._route.params.subscribe(params => {
+            this._route.params.pipe(
+                takeUntil(this.destroy$)
+            ).subscribe(params => {
                 let instance = params['instance'];
                 if (!(this.instanceId = parseInt(instance))) {
                     this.instanceId = undefined;
@@ -41,6 +44,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
                 if (this.instanceType !== this._cfoService.instanceType
                     || this.instanceId !== this._cfoService.instanceId) {
+                    this._cfoService.instanceTypeChanged.next(this.instanceType);
                     this._cfoService.instanceType = this.instanceType;
                     this._cfoService.instanceId = this.instanceId;
                     this._cfoService.instanceChangeProcess();
@@ -56,8 +60,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     }
 
     ngOnDestroy() {
-        if (this._sub)
-            this._sub.unsubscribe();
+        super.ngOnDestroy();
     }
 
     getODataUrl(uri: String, filter?: Object) {

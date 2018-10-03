@@ -3,6 +3,7 @@ import { CanActivate, Router } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Subscription, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { LoginService } from './login.service';
 
 @Component({
@@ -37,7 +38,9 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
 
     ngOnInit(): void {
         const timerSource = timer(1000, 1000);
-        this.timerSubscription = timerSource.subscribe(() => {
+        this.timerSubscription = timerSource.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
             this.remainingSeconds = this.remainingSeconds - 1;
             if (this.remainingSeconds <= 0) {
                 this.message.warn(this.l('TimeoutPleaseTryAgain')).done(() => {
@@ -49,10 +52,7 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
     }
 
     ngOnDestroy(): void {
-        if (this.timerSubscription) {
-            this.timerSubscription.unsubscribe();
-            this.timerSubscription = null;
-        }
+        super.ngOnDestroy();
     }
 
     submit(): void {

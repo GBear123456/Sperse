@@ -3,9 +3,12 @@ import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
+    instanceTypeChanged: Subject<string> = new Subject<null>();
+    instanceTypeChanged$ = this.instanceTypeChanged.asObservable();
 
     constructor(
         private _appService: AppService,

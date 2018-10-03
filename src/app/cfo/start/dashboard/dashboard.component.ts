@@ -2,7 +2,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -17,7 +17,6 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { CfoIntroComponent } from '../../shared/cfo-intro/cfo-intro.component';
 
 @Component({
     selector: 'dashboard',
@@ -87,7 +86,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     ngOnDestroy(): void {
-        this.rootComponent.overflowHidden();
         this.zendeskService.hideWidget();
         this._dashboardService.unsubscribe();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');

@@ -223,6 +223,7 @@
                 height: 72px;
                 margin-bottom: 0;
 
+                // styles for summary values
                 .dx-toolbar-after {
                     display: flex;
                     height: 100%;
@@ -230,14 +231,20 @@
                     align-items: stretch;
                     margin: 0 !important;
 
+                    .dx-item-content {
+                        width: 100%;
+                    }
+
                     .dx-toolbar-item {
-                        max-width: 22%;
+                        width: 25%;
                         text-align: center;
                         display: flex;
                         align-items: center;
 
                         .informer {
-                            padding: 0 30px;
+                            min-width: 180px;
+                            width: 100%;
+                            padding: 0 12px;
                             border-left: 1px solid #ddd;
 
                             &.starting-balance {
