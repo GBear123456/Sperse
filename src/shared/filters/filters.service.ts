@@ -31,10 +31,12 @@ export class FiltersService {
                 if (initFilters[filter.caption]) {
                     let props = Object.keys(initFilters[filter.caption]);
                     props.forEach(val => {
-                        if (filter.items[val].setValue)
+                        if (filter.items[val].setValue) {
+                            filter.clearFilterItems();
                             filter.items[val].setValue(initFilters[filter.caption][val], filter);
-                        else
+                        } else {
                             filter.items[val] = initFilters[filter.caption][val];
+                        }
                     });
                 }
             });
