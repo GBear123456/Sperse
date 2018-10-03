@@ -22,7 +22,12 @@ import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { AppConsts } from '@shared/AppConsts.ts';
-import { Module, PackageConfigDto, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    Module,
+    PackageConfigDto,
+    PackageServiceProxy,
+    SetupSubscriptionInfoDtoFrequency
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -151,6 +156,9 @@ export class PackageChooserComponent implements OnInit {
         const plan: PackageOptions = {
             name: this.selectedPackageCardComponent.name,
             billingPeriod: this.selectedPackageCardComponent.billingPeriod,
+            subscriptionFrequency: this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
+                                   ? SetupSubscriptionInfoDtoFrequency._30
+                                   : SetupSubscriptionInfoDtoFrequency._365,
             pricePerUserPerMonth: this.selectedPackageCardComponent.pricePerUserPerMonth,
             subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.selectedPackageCardComponent.monthlyPricePerYear : totalPrice,
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : 0,
