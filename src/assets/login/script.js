@@ -17,7 +17,8 @@
 
         document.getElementById('loginPage').style.display = 'block';
         document.getElementById('loadSpinner').style.display = 'none';
-        window.history.pushState("", "", '/account/login' + document.location.search);
+        document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
+        window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
         getAppConfig();
     }
@@ -45,7 +46,7 @@
     }
 
     function getAppConfig() {
-        ajax('/assets/appconfig.json').then(function(result) {
+        ajax('./assets/appconfig.json').then(function(result) {
             remoteServiceUrl = result.remoteServiceBaseUrl;
             var cookie = queryString(document.cookie, ';');
             var currentUrl = window.location.protocol + '//' + window.location.host;
