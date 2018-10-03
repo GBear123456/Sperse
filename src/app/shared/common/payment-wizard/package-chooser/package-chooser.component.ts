@@ -42,6 +42,7 @@ export class PackageChooserComponent implements OnInit {
     @Input() packagesMaxUsersAmount: number;
     @Input() packages: PackageConfigDto[];
     @Input() nextStepButtonText = this.l('Next');
+    @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;

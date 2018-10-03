@@ -36,7 +36,7 @@
         </package-card>
     </ng-container>
 </div>
-<div class="footer">
+<div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
     <p class="downgrade">{{ l('DowngradeToFree') }}</p>
     <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
     <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
