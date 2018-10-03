@@ -10,4 +10,5 @@ export interface PackageOptions {
     usersAmount: number;
     total: number;
     selectedEditionId: number;
+    selectedEditionName: string;
 }

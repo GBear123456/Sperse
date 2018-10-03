@@ -67,7 +67,9 @@ export class PackageChooserComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.title = this.l('TrialExpired', this.module);
+        if (!this.title) {
+            this.title = this.l('TrialExpired', this.module);
+        }
         const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
             refCount(),
@@ -154,7 +156,8 @@ export class PackageChooserComponent implements OnInit {
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : 0,
             total: totalPrice,
             usersAmount: this.selectedPackageCardComponent.selectedEditionUsersAmount,
-            selectedEditionId: this.selectedPackageCardComponent.selectedEdition.id
+            selectedEditionId: this.selectedPackageCardComponent.selectedEdition.id,
+            selectedEditionName: this.selectedPackageCardComponent.selectedEdition.name
         };
         this.onPlanChosen.emit(plan);
         this.moveToNextStep.next();
