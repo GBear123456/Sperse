@@ -1,8 +1,9 @@
 /** Core imports */
-import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import * as _ from 'underscore';
+import { Subject } from 'rxjs';
 
 /** Application imports */
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -25,8 +26,9 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 
 declare let require: any;
 
-export abstract class AppComponentBase {
+export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
+    destroy$: Subject<boolean> = new Subject<boolean>();
     dataGrid: any;
     dataSource: any;
     isDataLoaded = false;
@@ -251,7 +253,7 @@ export abstract class AppComponentBase {
             }
         }
         this.searchClear = true;
-    } 
+    }
 
     deactivate() {
         if (this.dataGrid && this.dataGrid.instance) {
@@ -259,5 +261,10 @@ export abstract class AppComponentBase {
             if (scroll)
                 this._prevScrollPos = scroll.scrollOffset();
         }
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next(true);
+        this.destroy$.unsubscribe();
     }
 }

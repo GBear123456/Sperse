@@ -4,7 +4,7 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { SendTwoFactorAuthCodeModel, TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LoginService } from './login.service';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
@@ -12,7 +12,6 @@ import { Subscription, timer } from 'rxjs';
     animations: [accountModuleAnimation()]
 })
 export class SendTwoFactorCodeComponent extends AppComponentBase implements CanActivate, OnInit, OnDestroy {
-
     selectedTwoFactorProvider: string;
     submitting = false;
     remainingSeconds = 90;
@@ -43,7 +42,9 @@ export class SendTwoFactorCodeComponent extends AppComponentBase implements CanA
         this.selectedTwoFactorProvider = this.loginService.authenticateResult.twoFactorAuthProviders[0];
 
         const timerSource = timer(1000, 1000);
-        this.timerSubscription = timerSource.subscribe(() => {
+        this.timerSubscription = timerSource.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
             this.remainingSeconds = this.remainingSeconds - 1;
             if (this.remainingSeconds <= 0) {
                 this.message.warn(this.l('TimeoutPleaseTryAgain')).done(() => {
@@ -62,16 +63,16 @@ export class SendTwoFactorCodeComponent extends AppComponentBase implements CanA
         this.submitting = true;
         this._tokenAuthService
             .sendTwoFactorAuthCode(model)
-            .pipe(finalize(() => this.submitting = false))
+            .pipe(
+                takeUntil(this.destroy$),
+                finalize(() => this.submitting = false)
+            )
             .subscribe(() => {
                 this._router.navigate(['account/verify-code']);
             });
     }
 
     ngOnDestroy(): void {
-        if (this.timerSubscription) {
-            this.timerSubscription.unsubscribe();
-            this.timerSubscription = null;
-        }
+        super.ngOnDestroy();
     }
 }
