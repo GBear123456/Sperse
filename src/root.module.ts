@@ -2,7 +2,7 @@
 import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule } from '@angular/core';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PlatformLocation, registerLocaleData } from '@angular/common';
+import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -152,6 +152,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppHttpInterceptor,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
+        { provide: APP_BASE_HREF, useValue: getDocumentOrigin() },
         {
             provide: APP_INITIALIZER,
             useFactory: appInitializerFactory,
