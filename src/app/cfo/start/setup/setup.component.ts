@@ -51,7 +51,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         super.ngOnInit();
         this.headlineConfig = {
             names: [this.l('Setup_Title')],
-            iconSrc: 'assets/common/icons/magic-stick-icon.svg',
+            iconSrc: './assets/common/icons/magic-stick-icon.svg',
             buttons: []
         };
         this.rootComponent.overflowHidden(true);

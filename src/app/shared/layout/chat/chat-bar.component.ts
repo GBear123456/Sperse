@@ -36,7 +36,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     friends: ChatFriendDto[];
     currentUser: UserLoginInfoDto = this._appSessionService.user;
-    profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    profilePicture = './assets/common/images/default-profile-picture.png';
     chatMessage = '';
 
     tenantToTenantChatAllowed = false;

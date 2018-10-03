@@ -40,7 +40,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
     public headlineConfig = {
         names: [this.l('Manage rules')],
-        iconSrc: 'assets/common/icons/manage-icon.svg',
+        iconSrc: './assets/common/icons/manage-icon.svg',
         buttons: []
     };
 

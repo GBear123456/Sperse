@@ -239,7 +239,7 @@ export class ToolBarComponent extends AppComponentBase {
     }
 
     getImgURI(name: string) {
-        return 'assets/common/icons/' + name + '.svg';
+        return './assets/common/icons/' + name + '.svg';
     }
 
     getDropDownItemTemplate(link, width) {

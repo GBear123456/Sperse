@@ -24,23 +24,23 @@ export class LocalizedResourcesHelper {
     static loadLocalizedStylesForTheme(theme: string, isRtl: boolean): JQueryPromise<any> {
         let cssPostfix = isRtl ? '-rtl':'';
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/metronic-customize.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/metronic-customize.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/metronic-customize.css'));
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/metronic-customize-angular.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/metronic-customize-angular.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize-angular.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/metronic-customize-angular.css'));
 
         if (abp.setting.get('App.UiManagement.Left.Position') === 'top') {
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/metronic-customize-top-menu.css'));
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/themes/' + theme + '/metronic-customize-top-menu.css'));
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize-top-menu.css'));
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/metronic-customize-top-menu.css'));
         }
 
         if (isRtl) {
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', AppConsts.appBaseHref + 'assets/common/styles/abp-zero-template-rtl.css'));
+            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/abp-zero-template-rtl.css'));
         }
 
         return $.Deferred().resolve().promise();
@@ -53,8 +53,8 @@ export class LocalizedResourcesHelper {
 
         const currentCulture = abp.localization.currentLanguage.name;
 
-        const bootstrapSelect = AppConsts.appBaseUrl + '/assets/localization/bootstrap-select/defaults-{0}.js';
-        const jqueryTimeago = AppConsts.appBaseUrl + '/assets/localization/jquery-timeago/jquery.timeago.{0}.js';
+        const bootstrapSelect = './assets/localization/bootstrap-select/defaults-{0}.js';
+        const jqueryTimeago = './assets/localization/jquery-timeago/jquery.timeago.{0}.js';
 
         return $.when(
             jQuery.getScript(abp.utils.formatString(bootstrapSelect, LocalizedResourcesHelper.findBootstrapSelectLocalization(currentCulture))),

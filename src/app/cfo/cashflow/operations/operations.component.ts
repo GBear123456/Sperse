@@ -114,7 +114,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         action: this.toggleReportPeriodFilter.bind(this),
                         options: {
                             id: 'reportPeriod',
-                            icon: 'assets/common/icons/report-period.svg'
+                            icon: './assets/common/icons/report-period.svg'
                         }
                     },
                     {
@@ -150,7 +150,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         options: {
                             id: 'bankAccountSelect',
                             text: this.l('Accounts'),
-                            icon: 'assets/common/icons/accounts.svg'
+                            icon: './assets/common/icons/accounts.svg'
                         },
                         attr: {
                             'custaccesskey': 'bankAccountSelect',

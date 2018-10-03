@@ -33,7 +33,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         super.ngOnInit();
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('Accounts')],
-            iconSrc: 'assets/common/icons/magic-stick-icon.svg',
+            iconSrc: './assets/common/icons/magic-stick-icon.svg',
             onRefresh: this.onRefreshClick.bind(this),
             buttons: [
                 {

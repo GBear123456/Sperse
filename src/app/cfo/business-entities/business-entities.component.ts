@@ -49,7 +49,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_BusinessEntities')],
             onRefresh: this.refreshDataGrid.bind(this),
-            iconSrc: 'assets/common/icons/magic-stick-icon.svg',
+            iconSrc: './assets/common/icons/magic-stick-icon.svg',
             buttons: [
                 {
                     enabled: true,

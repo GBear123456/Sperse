@@ -855,7 +855,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     createDragImage() {
         this.dragImg = new Image();
-        this.dragImg.src = 'assets/common/icons/drag-icon.svg';
+        this.dragImg.src = './assets/common/icons/drag-icon.svg';
         this.dragImg.style.display = 'none';
         this.getElementRef().nativeElement.appendChild(this.dragImg);
     }
@@ -946,7 +946,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.headlineConfig = {
             names: [this.l('Cashflow_mainTitle')],
             onRefresh: this.refreshDataGrid.bind(this),
-            iconSrc: 'assets/common/icons/chart-icon.svg'
+            iconSrc: './assets/common/icons/chart-icon.svg'
         };
     }
 
@@ -1158,7 +1158,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     {
                         action: this.hideFooterBar.bind(this),
                         options: {
-                            icon: 'assets/common/icons/close.svg'
+                            icon: './assets/common/icons/close.svg'
                         }
                     }
                 ]
@@ -4408,7 +4408,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: 'assets/common/icons/fx.svg',
+            iconSrc: './assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class' : 'function-button'}
         });
@@ -5616,13 +5616,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         });
         this.functionButton = new Button(wrapperButton, {
-            iconSrc: 'assets/common/icons/fx.svg',
+            iconSrc: './assets/common/icons/fx.svg',
             onClick: this.toggelCalculator.bind(this, event),
             elementAttr: { 'class': 'function-button' }
         });
 
         this.saveButton = new Button(wrapperSaveButton, {
-            iconSrc: 'assets/common/icons/check.svg',
+            iconSrc: './assets/common/icons/check.svg',
             onClick: this.updateForecastCell.bind(this, e),
             elementAttr: { 'class': 'save-forecast-button' }
         });

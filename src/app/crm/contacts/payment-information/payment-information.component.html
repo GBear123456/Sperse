@@ -1,6 +1,6 @@
 <div class="warning" *ngIf="warningMessage$ | async">
     <div>
-        <img src="assets/common/icons/warning-icon.svg" />
+        <img src="./assets/common/icons/warning-icon.svg" />
         <span>{{ warningMessage$ | async }}</span>
     </div>
     <button (click)="updateCard()">{{ l('Update') }}</button>
@@ -13,11 +13,11 @@
         </div>
         <ul class="balanceInfo">
             <li>
-                <img src="assets/common/icons/automatic-payments.svg">
+                <img src="./assets/common/icons/automatic-payments.svg">
                 {{ l('AutomaticPayments') }}
             </li>
             <li>
-                <img src="assets/common/icons/last-payment.svg">
+                <img src="./assets/common/icons/last-payment.svg">
                 {{ l('LastPayment', lastPaymentDate, amountCurrency, lastPaymentAmount) }}
             </li>
         </ul>
@@ -44,7 +44,7 @@
                 <li *ngFor="let paymentMethod of paymentMethods$ | async">
                     <div>
                         <div [ngClass]="{'active': paymentMethod.active}" class="paymentMethodIcon" >
-                            <img [src]="'assets/common/icons/' + paymentMethod.iconName + '-payment-method.svg'">
+                            <img [src]="'./assets/common/icons/' + paymentMethod.iconName + '-payment-method.svg'">
                         </div>
                         <div>
                             <p class="paymentName">{{ paymentMethod.name }}</p>
@@ -52,12 +52,12 @@
                         </div>
                     </div>
                     <div class="issue" *ngIf="paymentMethod?.issues">
-                        <img src="assets/common/icons/red-warning-icon.svg">
+                        <img src="./assets/common/icons/red-warning-icon.svg">
                         {{ paymentMethod.issues.length + ' ' + l('Issue') }}
                     </div>
                     <div class="actions">
-                        <button (click)="editPaymentMethod()"><img src="assets/common/icons/edit-pencil-icon.svg"></button>
-                        <button (click)="removePaymentMethod()"><img src="assets/common/icons/delete-icon.svg"></button>
+                        <button (click)="editPaymentMethod()"><img src="./assets/common/icons/edit-pencil-icon.svg"></button>
+                        <button (click)="removePaymentMethod()"><img src="./assets/common/icons/delete-icon.svg"></button>
                     </div>
                 </li>
             </ul>
