@@ -6,8 +6,8 @@
             <div class="actions clearfix">
                 <span class="title">{{l('AssignTo')}}</span>
                 <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!checkPermissions()" (click)="clear()">{{l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!checkPermissions() || !userslist.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
+                    <span class="filter-clear" [class.disabled]="!(isRelatedUser || checkPermissions())" (click)="clear()">{{l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!(isRelatedUser || checkPermissions()) || !userslist.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
                 </div>
             </div>
             <dx-list #userslist

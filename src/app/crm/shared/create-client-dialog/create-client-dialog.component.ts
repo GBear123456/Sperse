@@ -335,7 +335,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             }) : null,
             note: this.notes[ContactTypes.Personal],
             organizationNote: this.notes[ContactTypes.Business],
-            assignedUserId: assignedUserId,
+            assignedUserId: assignedUserId || abp.session.userId,
             stageId: stageId,
             lists: lists,
             tags: tags,

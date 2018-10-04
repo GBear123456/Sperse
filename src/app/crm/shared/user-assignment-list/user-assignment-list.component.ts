@@ -41,6 +41,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     list: any;
     listComponent: any;
     tooltipVisible = false;
+    isRelatedUser = false;
 
     constructor(
         injector: Injector,
@@ -141,8 +142,16 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         this.store$.pipe(select(this.getAssignedUsersSelector)).subscribe((result) => {
             if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
                 this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
-                    if (res && res.length)
-                        this.list = res.concat(result);
+                    if (res && res.length) {
+                        res.forEach((user) => {
+                            this.isRelatedUser = this.isRelatedUser || 
+                                (user.id == abp.session.userId);
+                            if (!_.findWhere(this.list, { id: user.id }))
+                                this.list.unshift(user);
+                        });
+                        if (!this.checkPermissions() && this.isRelatedUser)
+                            this.list = res;
+                    }
                 });
             this.list = result;
         });
