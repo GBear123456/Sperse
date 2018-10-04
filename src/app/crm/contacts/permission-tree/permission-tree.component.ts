@@ -137,20 +137,20 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
                 const children = this.getRecursiveItems(event.node, 'children');
                 children.slice(1).forEach(item => event.component.unselectItem(item.itemData));
             }
+
+            let sub, data = {
+                id: this.data.userId,
+                permissionName: event.itemData.name
+            };
+            if (event.itemData.selected)
+                sub = this._userService.grantPermission(GrantPermissionInput.fromJS(data));
+            else
+                sub = this._userService.prohibitPermission(ProhibitPermissionInput.fromJS(data));
+
+            sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
+                this.notify.info(this.l('SavedSuccessfully'));
+            });
         }
-
-        let sub, data = {
-            id: this.data.userId,
-            permissionName: event.itemData.name
-        };
-        if (event.itemData.selected)
-            sub = this._userService.grantPermission(GrantPermissionInput.fromJS(data));
-        else
-            sub = this._userService.prohibitPermission(ProhibitPermissionInput.fromJS(data));
-
-        sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
-            this.notify.info(this.l('SavedSuccessfully'));
-        });
     }
 
     setPermissionsData(val: PermissionTreeEditModel) {

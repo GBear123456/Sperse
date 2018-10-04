@@ -75,7 +75,7 @@ export class ContactsService {
         return this.subscribe(this.invalidateSubject.asObservable().subscribe(callback), ident);
     }
 
-    invalidate() { 
+    invalidate() {
         this.invalidateSubject.next();
     }
 
@@ -83,7 +83,7 @@ export class ContactsService {
         return this.subscribe(this.leadInfoSubject.asObservable().subscribe(callback), ident);
     }
 
-    loadLeadInfo() { 
+    loadLeadInfo() {
         this.leadInfoSubject.next();
     }
 
