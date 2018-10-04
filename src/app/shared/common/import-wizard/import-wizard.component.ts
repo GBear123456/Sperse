@@ -221,12 +221,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
         let data = rows || this.reviewGrid.instance.getSelectedRowsData();
         this.onComplete.emit({
-            fields: this.getMappedFields().map((entity) => {
-                return ImportFieldInfoDto.fromJS({
-                    inputFieldName: entity.sourceField,
-                    outputFieldName: entity.mappedField
-                });
-            }),
+            fields: this.fileHeaderWasGenerated ? undefined:
+                this.getMappedFields().map((entity) => {
+                    return ImportFieldInfoDto.fromJS({
+                        inputFieldName: entity.sourceField,
+                        outputFieldName: entity.mappedField
+                    });
+                }
+            ),
             records: data.length && data || this.reviewDataSource, 
             importAll: importAll,
         });
