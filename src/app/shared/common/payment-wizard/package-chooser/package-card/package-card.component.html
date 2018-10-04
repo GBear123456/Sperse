@@ -2,7 +2,7 @@
 <div class="cardHeader">
     <div class="left">
         <h3 class="title">{{ name }}</h3>
-        <div class="includesUsers">{{ l('PlanIncludesUsers', selectedEditionUsersAmount) }}</div>
+        <div class="includesUsers">{{ l('PlanIncludesUsers', displayedUsersAmount) }}</div>
         <div class="amountPerMonth">{{ currencySymbol }}
             <span class="number">{{ pricePerMonth | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}<sup class="decimal">{{ pricePerMonth | customNumber: '0.2-2' }}</sup></span>/ {{ l('monthBeginning') }}
         </div>

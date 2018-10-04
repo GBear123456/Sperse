@@ -32,6 +32,8 @@ export class PackageCardComponent implements OnChanges {
     lastActiveSelectedEditionUsersAmount: number;
     lastActiveFeatures: any[];
     lastActivePricePerMonth: number;
+    lastActiveEditionPricePerMonth: number;
+    lastActiveDisplayedUsersAmount: number;
     lastActiveMonthlyPricePerYear: number;
     lastActiveTotalPrice: number;
     lastActivePricePerUserPerMonth: number;
@@ -60,10 +62,19 @@ export class PackageCardComponent implements OnChanges {
         return this.lastActiveSelectedEditionUsersAmount;
     }
 
+    get displayedUsersAmount(): number {
+        if (this.isActive) {
+            this.lastActiveDisplayedUsersAmount = this.usersAmount;
+        }
+        return this.lastActiveDisplayedUsersAmount;
+    }
+
     get features() {
         if (this.isActive) {
             const maxActiveContactCount = +this.selectedEdition.features[this.module + '.MaxActiveContactCount'] ? (+this.selectedEdition.features[this.module + '.MaxActiveContactCount']).toLocaleString() : this.l('Unlimited');
-            const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ? this.selectedEdition.features['Admin.MaxSpaceGB'] + ' ' + this.l('GB') : this.l('Unlimited');
+            const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ?
+                (+this.selectedEdition.features['Admin.MaxSpaceGB'] / this.usersCoefficient) + ' ' + this.l('GB') :
+                this.l('Unlimited');
             this.lastActiveFeatures = [
                 {
                     name: 'Contacts',
@@ -88,30 +99,47 @@ export class PackageCardComponent implements OnChanges {
 
     get pricePerMonth(): number {
         if (this.isActive) {
-            this.lastActivePricePerMonth = this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : +(this.selectedEdition.annualPrice / 12).toFixed(2);
+            this.lastActivePricePerMonth = this.billingPeriod === BillingPeriod.Monthly ?
+                +(this.selectedEdition.monthlyPrice / this.usersCoefficient).toFixed(2) :
+                +(this.selectedEdition.annualPrice / 12 / this.usersCoefficient).toFixed(2);
         }
         return this.lastActivePricePerMonth;
     }
 
+    get editionPricePerMonth(): number {
+        if (this.isActive) {
+            this.lastActiveEditionPricePerMonth = this.billingPeriod === BillingPeriod.Monthly ?
+                this.selectedEdition.monthlyPrice :
+                +(this.selectedEdition.annualPrice / 12).toFixed(2);
+        }
+        return this.lastActiveEditionPricePerMonth;
+    }
+
     get monthlyPricePerYear(): number {
         if (this.isActive) {
-            this.lastActiveMonthlyPricePerYear = this.selectedEdition.monthlyPrice * 12;
+            this.lastActiveMonthlyPricePerYear = this.selectedEdition.monthlyPrice * 12 / this.usersCoefficient;
         }
         return this.lastActiveMonthlyPricePerYear;
     }
 
     get totalPrice(): number {
         if (this.isActive) {
-            this.lastActiveTotalPrice = (this.billingPeriod === BillingPeriod.Monthly ? this.selectedEdition.monthlyPrice : this.selectedEdition.annualPrice);
+            this.lastActiveTotalPrice = this.billingPeriod === BillingPeriod.Monthly
+                ? this.selectedEdition.monthlyPrice / this.usersCoefficient
+                : this.selectedEdition.annualPrice / this.usersCoefficient;
         }
         return this.lastActiveTotalPrice;
     }
 
     get pricePerUserPerMonth(): number {
         if (this.isActive) {
-            this.lastActivePricePerUserPerMonth = (+(this.pricePerMonth / this.selectedEditionUsersAmount).toFixed(2));
+            this.lastActivePricePerUserPerMonth = (+(this.editionPricePerMonth / this.selectedEditionUsersAmount).toFixed(2));
         }
         return this.lastActivePricePerUserPerMonth;
+    }
+
+    get usersCoefficient() {
+        return this.selectedEditionUsersAmount / this.usersAmount;
     }
 
 }

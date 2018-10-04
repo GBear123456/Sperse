@@ -80,116 +80,73 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
         this.appHttpConfiguration.avoidErrorHandling = true;
+        let paymentInfo = SetupSubscriptionInfoDto.fromJS({
+            editionId: this.plan.selectedEditionId,
+            maxUserCount: this.plan.usersAmount,
+            frequency: this.plan.billingPeriod == BillingPeriod.Monthly
+                ? SetupSubscriptionInfoDtoFrequency._30
+                : SetupSubscriptionInfoDtoFrequency._365
+        });
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
-                let paymentInfo = SetupSubscriptionInfoDto.fromJS({
-                    editionId: this.plan.selectedEditionId,
-                    frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                        ? SetupSubscriptionInfoDtoFrequency._30
-                        : SetupSubscriptionInfoDtoFrequency._365,
-                    billingInfo: PaymentRequestInfoDto.fromJS({
-                        paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
-                        paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.ACH,
-                        achCustomer: ACHCustomerInfoDto.fromJS({
-                            customerRoutingNo: eCheckData.routingNumber,
-                            customerAcctNo: eCheckData.bankAccountNumber,
-                            memo: eCheckData.paymentDescription // this property does not exist !!!
-                        })
+                paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
+                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
+                    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.ACH,
+                    achCustomer: ACHCustomerInfoDto.fromJS({
+                        customerRoutingNo: eCheckData.routingNumber,
+                        customerAcctNo: eCheckData.bankAccountNumber,
+                        memo: eCheckData.paymentDescription // this property does not exist !!!
                     })
                 });
-
-                /** Start submitting data and change status in a case of error or success */
-                this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo).subscribe(
-                    res => {
-                        this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
-                    },
-                    error => {
-                        this.appHttpConfiguration.avoidErrorHandling = false;
-                        this.onStatusChange.emit({
-                            status: PaymentStatusEnum.Failed,
-                            statusText: error.message,
-                            errorDetailsText: error.details
-                        });
-                    }
-                );
                 break;
             case PaymentMethods.CreditCard:
                 const creditCardData = data as BankCardDataModel;
-                const cardPaymentInfo = SetupSubscriptionInfoDto.fromJS({
-                    editionId: this.plan.selectedEditionId,
-                    frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                        ? SetupSubscriptionInfoDtoFrequency._30
-                        : SetupSubscriptionInfoDtoFrequency._365,
-                    billingInfo: PaymentRequestInfoDto.fromJS({
-                        paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
-                        paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.BankCard,
-                        bankCard: BankCardInfoDto.fromJS({
-                            holderName: creditCardData.holderName,
-                            cardNumber: creditCardData.cardNumber.replace(/-|\s/g, ''),
-                            expirationMonth: creditCardData.expirationMonth,
-                            expirationYear: creditCardData.expirationYear,
-                            cvv: creditCardData.cvv,
-                            billingAddress: creditCardData.billingAddress,
-                            billingZip: creditCardData.billingZip,
-                            billingCity: creditCardData.billingCity,
-                            billingStateCode: creditCardData.billingStateCode,
-                            billingState: creditCardData.billingState['name'],
-                            billingCountryCode: creditCardData.billingCountryCode,
-                            billingCountry: creditCardData.billingCountry['name'],
-                        })
+                paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
+                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
+                    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.BankCard,
+                    bankCard: BankCardInfoDto.fromJS({
+                        holderName: creditCardData.holderName,
+                        cardNumber: creditCardData.cardNumber.replace(/-|\s/g, ''),
+                        expirationMonth: creditCardData.expirationMonth,
+                        expirationYear: creditCardData.expirationYear,
+                        cvv: creditCardData.cvv,
+                        billingAddress: creditCardData.billingAddress,
+                        billingZip: creditCardData.billingZip,
+                        billingCity: creditCardData.billingCity,
+                        billingStateCode: creditCardData.billingStateCode,
+                        billingState: creditCardData.billingState['name'],
+                        billingCountryCode: creditCardData.billingCountryCode,
+                        billingCountry: creditCardData.billingCountry['name'],
                     })
                 });
-                this.tenantSubscriptionServiceProxy.setupSubscription(cardPaymentInfo).subscribe(
-                    res => { this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed }); },
-                    err => {
-                        this.appHttpConfiguration.avoidErrorHandling = false;
-                        this.onStatusChange.emit({
-                            status: PaymentStatusEnum.Failed,
-                            statusText: err.message,
-                            errorDetailsText: err.details
-                        });
-                    }
-                );
                 break;
             case PaymentMethods.PayPal:
                 const payPalData = data as PayPalDataModel;
-                const payPalPaymentInfo = SetupSubscriptionInfoDto.fromJS({
-                    editionId: this.plan.selectedEditionId,
-                    frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                        ? SetupSubscriptionInfoDtoFrequency._30
-                        : SetupSubscriptionInfoDtoFrequency._365,
-                    billingInfo: PaymentRequestInfoDto.fromJS({
-                        paymentMethod: PaymentRequestInfoDtoPaymentMethod.Capture,
-                        paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.PayPal,
-                        payPal: PayPalInfoDto.fromJS({
-                            paymentId: payPalData.paymentId,
-                            payerId: payPalData.payerId
-                        })
+                paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
+                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Capture,
+                    paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.PayPal,
+                    payPal: PayPalInfoDto.fromJS({
+                        paymentId: payPalData.paymentId,
+                        payerId: payPalData.payerId
                     })
                 });
-
-                this.tenantSubscriptionServiceProxy.setupSubscription(payPalPaymentInfo).subscribe(
-                    res => {
-                        this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed });
-                    },
-                    error => {
-                        this.appHttpConfiguration.avoidErrorHandling = false;
-                        this.onStatusChange.emit({
-                            status: PaymentStatusEnum.Failed,
-                            statusText: error.message,
-                            errorDetailsText: error.details
-                        });
-                    }
-                );
-                break;
-            case PaymentMethods.BankTransfer:
-                break;
-            case PaymentMethods.Bitcoin:
                 break;
             default:
                 break;
         }
+        /** Start submitting data and change status in a case of error or success */
+        this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo).subscribe(
+            () => { this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed }); },
+            error => {
+                this.appHttpConfiguration.avoidErrorHandling = false;
+                this.onStatusChange.emit({
+                    status: PaymentStatusEnum.Failed,
+                    statusText: error.message,
+                    errorDetailsText: error.details
+                });
+            }
+        );
     }
 
     close() {

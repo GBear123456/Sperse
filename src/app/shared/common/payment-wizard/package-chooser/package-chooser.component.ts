@@ -166,7 +166,7 @@ export class PackageChooserComponent implements OnInit {
             subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.selectedPackageCardComponent.monthlyPricePerYear : totalPrice,
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : 0,
             total: totalPrice,
-            usersAmount: this.selectedPackageCardComponent.selectedEditionUsersAmount,
+            usersAmount: this.usersAmount,
             selectedEditionId: this.selectedPackageCardComponent.selectedEdition.id,
             selectedEditionName: this.selectedPackageCardComponent.selectedEdition.name
         };
