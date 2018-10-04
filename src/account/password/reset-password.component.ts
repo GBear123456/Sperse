@@ -8,7 +8,7 @@ import { AccountServiceProxy, PasswordComplexitySetting, ProfileServiceProxy, Re
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
 import { finalize } from 'rxjs/operators';
-import { isEmpty } from 'lodash';
+import { isEqual } from 'lodash';
 
 @Component({
     templateUrl: './reset-password.component.html',
@@ -37,7 +37,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
             this.model.c = this._activatedRoute.snapshot.queryParams['c'];
 
             this._accountService.resolveTenantId(new ResolveTenantIdInput({ c: this.model.c })).subscribe((tenantId) => {
-                if (isEmpty(tenantId)) tenantId = null; // hack for host tenant
+                if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
 
                 this._appSessionService.changeTenantIfNeeded(
                     tenantId
