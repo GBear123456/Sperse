@@ -35,7 +35,6 @@
                         [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate', 'StageId']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"
-                        (onStagesLoaded)="onStagesLoaded($event)"
                         (onCardClick)="showActivityDialog($event)">
                         Loading...
                     </app-pipeline>

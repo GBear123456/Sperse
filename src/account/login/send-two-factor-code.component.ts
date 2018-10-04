@@ -47,6 +47,7 @@ export class SendTwoFactorCodeComponent extends AppComponentBase implements CanA
         ).subscribe(() => {
             this.remainingSeconds = this.remainingSeconds - 1;
             if (this.remainingSeconds <= 0) {
+                this.timerSubscription.unsubscribe();
                 this.message.warn(this.l('TimeoutPleaseTryAgain')).done(() => {
                     this.loginService.authenticateModel.twoFactorVerificationCode = null;
                     this._router.navigate(['account/login']);

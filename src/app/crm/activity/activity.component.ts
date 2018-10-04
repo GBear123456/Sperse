@@ -11,6 +11,7 @@ import buildQuery from 'odata-query';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -73,8 +74,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         ]
     };
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         public dialog: MatDialog,
+        private _pipelineService: PipelineService,
         private _appService: AppService
     ) {
         super(injector);
@@ -249,7 +252,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 stages: this.stages,
                 appointment: appointment instanceof Date ? {
                     startDate: appointment
-                }: appointment,
+                } : appointment,
                 refreshParent: this.refresh.bind(this)
             }
         });
@@ -264,6 +267,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     activate() {
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
+        this.activityStagesLoad();
     }
 
     deactivate() {
@@ -280,7 +284,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.deactivate();
     }
 
-    onStagesLoaded($event) {
-        this.stages = $event.stages;
+    activityStagesLoad() {
+        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.activity)
+            .subscribe(result => {
+                this.stages = result.stages.map((stage) => {
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        text: stage.name
+                    };
+                });
+            });
     }
 }
