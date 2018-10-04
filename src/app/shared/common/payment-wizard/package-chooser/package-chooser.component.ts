@@ -73,6 +73,7 @@ export class PackageChooserComponent implements OnInit {
 
     ngOnInit() {
         if (!this.title) {
+            /** Default value for title if any was set in input */
             this.title = this.l('TrialExpired', this.module);
         }
         const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
@@ -83,6 +84,8 @@ export class PackageChooserComponent implements OnInit {
         packagesConfig$.subscribe(packages => {
             this.packages = packages;
             this.selectedPackageIndex = this.packages.indexOf(this.packages.find(packageConfig => packageConfig.bestValue));
+            /** Update selected package with the active status to handle next button status */
+            setTimeout(() => { this.selectPackage(this.selectedPackageIndex); }, 10);
             this.changeDetectionRef.detectChanges();
         });
         packagesConfig$.pipe(

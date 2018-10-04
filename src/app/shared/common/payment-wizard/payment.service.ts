@@ -9,5 +9,5 @@ import { Observable } from '@node_modules/rxjs';
 export class PaymentService {
     _plan: Subject<PackageOptions> = new Subject();
     plan$: Observable<PackageOptions> = this._plan.asObservable();
-    constructor() { }
+    constructor() {}
 }

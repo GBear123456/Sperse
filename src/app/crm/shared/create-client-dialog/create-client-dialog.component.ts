@@ -539,7 +539,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 this.company || undefined,
                 this.getCurrentEmails() || undefined,
                 this.getCurrentPhones() || undefined,
-                undefined, undefined, undefined, undefined, undefined)
+                undefined, undefined, undefined, undefined, undefined, this.data.customerType)
                 .subscribe(response => {
                     if (response)
                         this.similarCustomers = response;
