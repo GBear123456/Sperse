@@ -122,12 +122,17 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
 
         /** Check if selection was performed by click of the user or by selectItem/unselectItem methods */
         if (event.event) {
+            let itemsThatWereSelected = [], itemsThatWhereDeselected = [];
             /** If item has ancestors - select/deselect them too */
             if (event.itemData.parentName) {
                 const ancestors = this.getRecursiveItems(event.node, 'parent');
                 ancestors.slice(1).forEach(item => {
                     if (item.children.some(child => child.selected)) {
-                        event.component.selectItem(item.itemData);
+                        /** If item is not selected - select it */
+                        if (!item.itemData.selected) {
+                            event.component.selectItem(item.itemData);
+                            itemsThatWereSelected.push(item);
+                        }
                     }
                 });
             }
@@ -135,21 +140,35 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             /** If item becomes unchecked and has children - uncheck all children */
             if (event.node.children && !event.itemData.selected) {
                 const children = this.getRecursiveItems(event.node, 'children');
-                children.slice(1).forEach(item => event.component.unselectItem(item.itemData));
+                children.slice(1).forEach(item => {
+                    /** If item is selected - unselect it */
+                    if (item.itemData.selected) {
+                        event.component.unselectItem(item.itemData);
+                        itemsThatWhereDeselected.push(item);
+                    }
+                });
             }
 
             let sub, data = {
                 id: this.data.userId,
                 permissionName: event.itemData.name
             };
-            if (event.itemData.selected)
+            if (event.itemData.selected) {
                 sub = this._userService.grantPermission(GrantPermissionInput.fromJS(data));
-            else
+                itemsThatWereSelected.push(event.node);
+            } else {
                 sub = this._userService.prohibitPermission(ProhibitPermissionInput.fromJS(data));
+                itemsThatWhereDeselected.push(event.node);
+            }
 
-            sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-            });
+            sub.pipe(finalize(() => this.finishLoading(true))).subscribe(
+                () => { this.notify.info(this.l('SavedSuccessfully')); },
+                () => {
+                    /** Revert changes if error happens */
+                    itemsThatWereSelected.forEach(item => event.component.unselectItem(item.itemData));
+                    itemsThatWhereDeselected.forEach(item => event.component.selectItem(item.itemData));
+                }
+            );
         }
     }
 
