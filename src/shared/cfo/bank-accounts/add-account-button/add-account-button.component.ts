@@ -23,7 +23,7 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
         private _syncAccountServiceProxy: SyncAccountServiceProxy
     ) {
         super(injector);
-        this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
+        this._syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
             });

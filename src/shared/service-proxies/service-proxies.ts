@@ -19934,8 +19934,8 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    isAvailableCreateAccount(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/IsAvailableCreateAccount?";
+    createIsAllowed(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/CreateIsAllowed?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -19952,11 +19952,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processIsAvailableCreateAccount(response_);
+            return this.processCreateIsAllowed(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processIsAvailableCreateAccount(<any>response_);
+                    return this.processCreateIsAllowed(<any>response_);
                 } catch (e) {
                     return <Observable<boolean>><any>_observableThrow(e);
                 }
@@ -19965,7 +19965,7 @@ export class SyncAccountServiceProxy {
         }));
     }
 
-    protected processIsAvailableCreateAccount(response: HttpResponseBase): Observable<boolean> {
+    protected processCreateIsAllowed(response: HttpResponseBase): Observable<boolean> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
