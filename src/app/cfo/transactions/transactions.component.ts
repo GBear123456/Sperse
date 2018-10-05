@@ -117,154 +117,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     private updateAfterActivation: boolean;
 
-    initHeadlineConfig() {
-        this.headlineConfig = {
-            names: [this.l('Transactions')],
-            onRefresh: this.refreshDataGrid.bind(this),
-            iconSrc: './assets/common/icons/credit-card-icon.svg',
-            class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
-        };
-    }
-
-    initToolbarConfig() {
-        if (this.componentIsActivated) {
-            this._appService.updateToolbar([
-                {
-                    location: 'before', items: [
-                        {
-                            name: 'filters',
-                            action: (event) => {
-                                this.filtersService.fixed =
-                                    !this.filtersService.fixed;
-                                if (this.filtersService.fixed)
-                                    this.categoriesShowed = false;
-                                else
-                                    this.categoriesShowed =
-                                        this._categoriesShowedBefore;
-                                this.filtersService.enable();
-                            },
-                            options: {
-                                checkPressed: () => {
-                                    return this.filtersService.fixed;
-                                },
-                                mouseover: (event) => {
-                                    this.filtersService.enable();
-                                },
-                                mouseout: (event) => {
-                                    if (!this.filtersService.fixed)
-                                        this.filtersService.disable();
-                                }
-                            },
-                            attr: {
-                                'filter-selected': this.filtersService.hasFilterSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'search',
-                            widget: 'dxTextBox',
-                            options: {
-                                value: this.searchValue,
-                                width: '279',
-                                mode: 'search',
-                                placeholder: this.l('Search') + ' '
-                                + this.l('Transactions').toLowerCase(),
-                                onValueChanged: (e) => {
-                                    this.searchValueChange(e);
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'searchAll',
-                            action: this.searchAllClick.bind(this),
-                            options: {
-                                text: this.l('Search All')
-                            },
-                            attr: {
-                                'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
-                                'custaccesskey': 'search-container'
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'bankAccountSelect',
-                            widget: 'dxButton',
-                            action: this.toggleBankAccountTooltip.bind(this),
-                            options: {
-                                id: 'bankAccountSelect',
-                                text: this.l('Accounts'),
-                                icon: './assets/common/icons/accounts.svg'
-                            },
-                            attr: {
-                                'custaccesskey': 'bankAccountSelect',
-                                'accountCount': this.bankAccountCount
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'showCompactRowsHeight',
-                            action: this.showCompactRowsHeight.bind(this)
-                        },
-                        {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [{
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                }, {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                }, {
-                                    action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet'
-                                }, {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                }, {type: 'downloadOptions'}]
-                            }
-                        },
-                        {
-                            name: 'columnChooser',
-                            action: this.showColumnChooser.bind(this)
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
-                    ]
-                }
-            ]);
-        }
-    }
-
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _appService: AppService,
@@ -284,202 +136,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.searchValue = '';
     }
 
-    onToolbarPreparing(e) {
-        e.toolbarOptions.items.unshift(
-            {
-                location: 'after',
-                template: 'startBalanceTotal'
-            }, {
-                location: 'after',
-                template: 'creditTotal'
-            }, {
-                location: 'after',
-                template: 'debitTotal'
-            }, {
-                location: 'after',
-                template: 'transactionTotal'
-            });
-    }
-
-    getTotalValues() {
-        let totals = this.totalDataSource.items();
-        let selectedRows = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowsData() : [];
-
-        if (selectedRows.length) {
-            let creditTotal = this.creditTransactionTotal = 0;
-            let creditCount = this.creditTransactionCount = 0;
-            let creditClassifiedCount = this.creditClassifiedTransactionCount = 0;
-
-            let debitTotal = this.debitTransactionTotal = 0;
-            let debitCount = this.debitTransactionCount = 0;
-            let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
-
-            this.adjustmentStartingBalanceTotal = 0;
-            this.adjustmentTotal = 0;
-
-            let bankAccounts = [];
-
-            _.each(selectedRows, function (row) {
-                bankAccounts.push(row.BankAccountId);
-
-                if (row.Amount >= 0) {
-                    creditTotal += row.Amount;
-                    creditCount++;
-                    if (row.CashflowCategoryId)
-                        creditClassifiedCount++;
-                } else {
-                    debitTotal += row.Amount;
-                    debitCount++;
-                    if (row.CashflowCategoryId)
-                        debitClassifiedCount++;
-                }
-            });
-            setTimeout(() => { this.bankAccounts = _.uniq(bankAccounts); });
-
-            this.creditTransactionTotal = creditTotal;
-            this.creditTransactionCount = creditCount;
-            this.creditClassifiedTransactionCount = creditClassifiedCount;
-
-            this.debitTransactionTotal = debitTotal;
-            this.debitTransactionCount = debitCount;
-            this.debitClassifiedTransactionCount = debitClassifiedCount;
-
-            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
-            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-        } else if (totals && totals.length) {
-                this.creditTransactionTotal = totals[0].creditTotal;
-                this.creditTransactionCount = totals[0].creditCount;
-                this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
-
-                this.debitTransactionTotal = totals[0].debitTotal;
-                this.debitTransactionCount = totals[0].debitCount;
-                this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
-                setTimeout(() => {
-                    if (totals[0].bankAccounts) {
-                        this.bankAccounts = totals[0].bankAccounts;
-                    } else {
-                        this.bankAccounts = [];
-                    }
-                });
-
-                this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
-                this.adjustmentTotal = totals[0].adjustmentTotal;
-
-                this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
-                this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
-            } else {
-                this.creditTransactionTotal = 0;
-                this.creditTransactionCount = 0;
-
-                this.debitTransactionTotal = 0;
-                this.debitTransactionCount = 0;
-
-                setTimeout(() => { this.bankAccounts = []; });
-
-                this.transactionTotal = 0;
-                this.transactionCount = 0;
-
-                this.adjustmentStartingBalanceTotal = 0;
-                this.adjustmentTotal = 0;
-            }
-
-        this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
-        this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
-        this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
-        this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
-        this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);
-        this.debitTransactionTotal = Math.trunc(this.debitTransactionTotal);
-        this.transactionTotalCent = this.getFloatPart(this.transactionTotal);
-        this.transactionTotal = Math.trunc(this.transactionTotal);
-    }
-
-    getFloatPart(value) {
-        let x = Math.abs(value);
-        let int_part = Math.trunc(x);
-        let float_part = (x - int_part) * 100;
-        return float_part;
-    }
-
-    showColumnChooser() {
-        this.dataGrid.instance.showColumnChooser();
-    }
-
-    showRefreshButton() {
-        this.noRefreshedAfterSync = true;
-        this.initHeadlineConfig();
-    }
-
-    refreshDataGrid() {
-        this.noRefreshedAfterSync = false;
-        this.initHeadlineConfig();
-        this._bankAccountsService.load().subscribe(
-            () => this.applyTotalBankAccountFilter()
-        );
-        this.categorizationComponent.refreshCategories();
-    }
-
-    searchValueChange(e) {
-        this.searchValue = e.text ? e.text : e['value'];
-        this.processFilterInternal();
-        this.initToolbarConfig();
-    }
-
-    searchAllClick() {
-        this.cashFlowCategoryFilter = [];
-        this.categorizationComponent.clearSelection(false);
-
-        this.filtersService.clearAllFilters();
-        this.selectedCashflowCategoryKey = null;
-        this.initToolbarConfig();
-    }
-
-    toggleCreditDefault() {
-        this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
-    }
-    toggleDebitDefault() {
-        this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
-    }
-    toggleTotalDefault() {
-        this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
-    }
-    toggleSubaccountsDetails() {
-        this.defaultSubaccountTooltipVisible = !this.defaultSubaccountTooltipVisible;
-    }
-    applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
-        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
-        let amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
-
-        if (classified) {
-            classifiedFilter.items['yes'].setValue(true, classifiedFilter);
-            classifiedFilter.items['no'].setValue(false, classifiedFilter);
-        } else {
-            classifiedFilter.items['yes'].setValue(false, classifiedFilter);
-            classifiedFilter.items['no'].setValue(true, classifiedFilter);
-        }
-
-        if (credit) {
-            amountFilter.items['from'].setValue('0', amountFilter);
-            amountFilter.items['to'].setValue('', amountFilter);
-            this.defaultCreditTooltipVisible = false;
-        } else if (debit) {
-            amountFilter.items['to'].setValue('0', amountFilter);
-            amountFilter.items['from'].setValue('', amountFilter);
-            this.defaultDebitTooltipVisible = false;
-        } else {
-            amountFilter.items['to'].setValue('', amountFilter);
-            amountFilter.items['from'].setValue('', amountFilter);
-            this.defaultTotalTooltipVisible = false;
-        }
-
-        this.filtersService.change(classifiedFilter);
-    }
-
-    clearClassifiedFilter() {
-        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
-        classifiedFilter.items['yes'].setValue(false, classifiedFilter);
-        classifiedFilter.items['no'].setValue(false, classifiedFilter);
-        this.filtersService.change(classifiedFilter);
-    }
     ngOnInit(): void {
         super.ngOnInit();
 
@@ -634,6 +290,351 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.bankAccountCount = amount;
             this.initToolbarConfig();
         });
+    }
+
+    initHeadlineConfig() {
+        this.headlineConfig = {
+            names: [this.l('Transactions')],
+            onRefresh: this.refreshDataGrid.bind(this),
+            iconSrc: './assets/common/icons/credit-card-icon.svg',
+            class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
+        };
+    }
+
+    initToolbarConfig() {
+        if (this.componentIsActivated) {
+            this._appService.updateToolbar([
+                {
+                    location: 'before', items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                this.filtersService.fixed =
+                                    !this.filtersService.fixed;
+                                if (this.filtersService.fixed)
+                                    this.categoriesShowed = false;
+                                else
+                                    this.categoriesShowed =
+                                        this._categoriesShowedBefore;
+                                this.filtersService.enable();
+                            },
+                            options: {
+                                checkPressed: () => {
+                                    return this.filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this.filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this.filtersService.fixed)
+                                        this.filtersService.disable();
+                                }
+                            },
+                            attr: {
+                                'filter-selected': this.filtersService.hasFilterSelected
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'search',
+                            widget: 'dxTextBox',
+                            options: {
+                                value: this.searchValue,
+                                width: '279',
+                                mode: 'search',
+                                placeholder: this.l('Search') + ' '
+                                + this.l('Transactions').toLowerCase(),
+                                onValueChanged: (e) => {
+                                    this.searchValueChange(e);
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'searchAll',
+                            action: this.searchAllClick.bind(this),
+                            options: {
+                                text: this.l('Search All')
+                            },
+                            attr: {
+                                'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
+                                'custaccesskey': 'search-container'
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'bankAccountSelect',
+                            widget: 'dxButton',
+                            action: this.toggleBankAccountTooltip.bind(this),
+                            options: {
+                                id: 'bankAccountSelect',
+                                text: this.l('Accounts'),
+                                icon: './assets/common/icons/accounts.svg'
+                            },
+                            attr: {
+                                'custaccesskey': 'bankAccountSelect',
+                                'accountCount': this.bankAccountCount
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'showCompactRowsHeight',
+                            action: this.showCompactRowsHeight.bind(this)
+                        },
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [{
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                }, {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                }, {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                }, {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                }, {type: 'downloadOptions'}]
+                            }
+                        },
+                        {
+                            name: 'columnChooser',
+                            action: this.showColumnChooser.bind(this)
+                        }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
+                    ]
+                }
+            ]);
+        }
+    }
+
+    onToolbarPreparing(e) {
+        e.toolbarOptions.items.unshift(
+            {
+                location: 'after',
+                template: 'startBalanceTotal'
+            }, {
+                location: 'after',
+                template: 'creditTotal'
+            }, {
+                location: 'after',
+                template: 'debitTotal'
+            }, {
+                location: 'after',
+                template: 'transactionTotal'
+            });
+    }
+
+    getTotalValues() {
+        let totals = this.totalDataSource.items();
+        let selectedRows = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowsData() : [];
+
+        if (selectedRows.length) {
+            let creditTotal = this.creditTransactionTotal = 0;
+            let creditCount = this.creditTransactionCount = 0;
+            let creditClassifiedCount = this.creditClassifiedTransactionCount = 0;
+
+            let debitTotal = this.debitTransactionTotal = 0;
+            let debitCount = this.debitTransactionCount = 0;
+            let debitClassifiedCount = this.debitClassifiedTransactionCount = 0;
+
+            this.adjustmentStartingBalanceTotal = 0;
+            this.adjustmentTotal = 0;
+
+            let bankAccounts = [];
+
+            _.each(selectedRows, function (row) {
+                bankAccounts.push(row.BankAccountId);
+
+                if (row.Amount >= 0) {
+                    creditTotal += row.Amount;
+                    creditCount++;
+                    if (row.CashflowCategoryId)
+                        creditClassifiedCount++;
+                } else {
+                    debitTotal += row.Amount;
+                    debitCount++;
+                    if (row.CashflowCategoryId)
+                        debitClassifiedCount++;
+                }
+            });
+            setTimeout(() => { this.bankAccounts = _.uniq(bankAccounts); });
+
+            this.creditTransactionTotal = creditTotal;
+            this.creditTransactionCount = creditCount;
+            this.creditClassifiedTransactionCount = creditClassifiedCount;
+
+            this.debitTransactionTotal = debitTotal;
+            this.debitTransactionCount = debitCount;
+            this.debitClassifiedTransactionCount = debitClassifiedCount;
+
+            this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal;
+            this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+        } else if (totals && totals.length) {
+                this.creditTransactionTotal = totals[0].creditTotal;
+                this.creditTransactionCount = totals[0].creditCount;
+                this.creditClassifiedTransactionCount = totals[0].classifiedCreditTransactionCount;
+
+                this.debitTransactionTotal = totals[0].debitTotal;
+                this.debitTransactionCount = totals[0].debitCount;
+                this.debitClassifiedTransactionCount = totals[0].classifiedDebitTransactionCount;
+                setTimeout(() => {
+                    if (totals[0].bankAccounts) {
+                        this.bankAccounts = totals[0].bankAccounts;
+                    } else {
+                        this.bankAccounts = [];
+                    }
+                });
+
+                this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
+                this.adjustmentTotal = totals[0].adjustmentTotal;
+
+                this.transactionTotal = this.creditTransactionTotal + this.debitTransactionTotal + this.adjustmentTotal + this.adjustmentStartingBalanceTotal;
+                this.transactionCount = this.creditTransactionCount + this.debitTransactionCount;
+            } else {
+                this.creditTransactionTotal = 0;
+                this.creditTransactionCount = 0;
+
+                this.debitTransactionTotal = 0;
+                this.debitTransactionCount = 0;
+
+                setTimeout(() => { this.bankAccounts = []; });
+
+                this.transactionTotal = 0;
+                this.transactionCount = 0;
+
+                this.adjustmentStartingBalanceTotal = 0;
+                this.adjustmentTotal = 0;
+            }
+
+        this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
+        this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
+        this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
+        this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
+        this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);
+        this.debitTransactionTotal = Math.trunc(this.debitTransactionTotal);
+        this.transactionTotalCent = this.getFloatPart(this.transactionTotal);
+        this.transactionTotal = Math.trunc(this.transactionTotal);
+    }
+
+    getFloatPart(value) {
+        let x = Math.abs(value);
+        let int_part = Math.trunc(x);
+        let float_part = (x - int_part) * 100;
+        return float_part;
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
+    }
+
+    showRefreshButton() {
+        this.noRefreshedAfterSync = true;
+        this.initHeadlineConfig();
+    }
+
+    refreshDataGrid() {
+        this.noRefreshedAfterSync = false;
+        this.initHeadlineConfig();
+        this._bankAccountsService.load().subscribe(
+            () => this.applyTotalBankAccountFilter()
+        );
+        this.categorizationComponent.refreshCategories(false, false);
+    }
+
+    searchValueChange(e) {
+        this.searchValue = e.text ? e.text : e['value'];
+        this.processFilterInternal();
+        this.initToolbarConfig();
+    }
+
+    searchAllClick() {
+        this.cashFlowCategoryFilter = [];
+        this.categorizationComponent.clearSelection(false);
+
+        this.filtersService.clearAllFilters();
+        this.selectedCashflowCategoryKey = null;
+        this.initToolbarConfig();
+    }
+
+    toggleCreditDefault() {
+        this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
+    }
+    toggleDebitDefault() {
+        this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
+    }
+    toggleTotalDefault() {
+        this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
+    }
+    toggleSubaccountsDetails() {
+        this.defaultSubaccountTooltipVisible = !this.defaultSubaccountTooltipVisible;
+    }
+    applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
+        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+        let amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
+
+        if (classified) {
+            classifiedFilter.items['yes'].setValue(true, classifiedFilter);
+            classifiedFilter.items['no'].setValue(false, classifiedFilter);
+        } else {
+            classifiedFilter.items['yes'].setValue(false, classifiedFilter);
+            classifiedFilter.items['no'].setValue(true, classifiedFilter);
+        }
+
+        if (credit) {
+            amountFilter.items['from'].setValue('0', amountFilter);
+            amountFilter.items['to'].setValue('', amountFilter);
+            this.defaultCreditTooltipVisible = false;
+        } else if (debit) {
+            amountFilter.items['to'].setValue('0', amountFilter);
+            amountFilter.items['from'].setValue('', amountFilter);
+            this.defaultDebitTooltipVisible = false;
+        } else {
+            amountFilter.items['to'].setValue('', amountFilter);
+            amountFilter.items['from'].setValue('', amountFilter);
+            this.defaultTotalTooltipVisible = false;
+        }
+
+        this.filtersService.change(classifiedFilter);
+    }
+
+    clearClassifiedFilter() {
+        let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
+        classifiedFilter.items['yes'].setValue(false, classifiedFilter);
+        classifiedFilter.items['no'].setValue(false, classifiedFilter);
+        this.filtersService.change(classifiedFilter);
     }
 
     initFiltering() {
