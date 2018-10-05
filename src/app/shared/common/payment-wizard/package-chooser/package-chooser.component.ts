@@ -79,7 +79,8 @@ export class PackageChooserComponent implements OnInit {
         const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
             refCount(),
-            map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free ' + this.module))
+            /** Filter out free packages */
+            map(packages => packages.filter(packageConfig => packageConfig.editions[0].annualPrice))
         );
         packagesConfig$.subscribe(packages => {
             this.packages = packages;
