@@ -72,7 +72,6 @@ export class CreateTenantModalComponent extends AppComponentBase {
         this.tenant.shouldChangePasswordOnNextLogin = true;
         this.tenant.sendActivationEmail = true;
         this.tenantEditionId = 0;
-        this.tenant.isInTrialPeriod = false;
 
         this._commonLookupService.getEditionsForCombobox(false)
             .subscribe((result) => {
@@ -141,13 +140,6 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
         }
 
-        //take selected date as UTC
-        if (!this.isUnlimited && this.tenantEditionId > 0) {
-            this.tenant.subscriptionEndDateUtc = moment($(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date().format('YYYY-MM-DDTHH:mm:ss') + 'Z');
-        } else {
-            this.tenant.subscriptionEndDateUtc = null;
-        }
-
         this.tenant.tenantHostType = <any>TenantHostType.PlatformUi;
 
         this._tenantService.createTenant(this.tenant)
@@ -165,7 +157,6 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     onEditionChange(): void {
-        this.tenant.isInTrialPeriod = this.tenantEditionId > 0  && !this.selectedEditionIsFree();
         this.toggleSubscriptionFields();
     }
 
