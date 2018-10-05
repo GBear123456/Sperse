@@ -872,4 +872,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
     }
+
+    getAssignmentsPermissinKey() {
+        let type = 'Customers';
+        if (this.data.isInLeadMode)
+            type = 'Leads';
+        else if (this.partnerTypesComponent.selectedItems.length)
+            type = 'Partners';
+
+        return 'Pages.CRM.' + type + '.ManageAssignments';
+    }
 }

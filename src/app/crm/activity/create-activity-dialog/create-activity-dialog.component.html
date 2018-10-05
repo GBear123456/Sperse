@@ -25,6 +25,7 @@
             [targetSelector]="'[accesskey=\'UserAssign\']'" 
             [(selectedItemKey)]="data.appointment.AssignedUserIds" 
             [hideButtons]="true"
+            [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
             [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
 

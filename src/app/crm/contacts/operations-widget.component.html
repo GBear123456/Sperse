@@ -46,6 +46,7 @@
         [selectedKeys]="[clientId]" 
         [selectedItemKey]="contactInfo?.assignedUserId" 
         [getAssignedUsersSelector]="getAssignedUsersSelector" 
+        [permissionKey]="assignmentsPermissionKey"
         [proxyService]="proxyService">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>

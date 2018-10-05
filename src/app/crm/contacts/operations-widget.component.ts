@@ -54,6 +54,7 @@ export class OperationsWidgetComponent implements OnInit {
     }
     @Input() getAssignedUsersSelector;
     @Input() proxyService;
+    @Input() assignmentsPermissionKey;
 
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();

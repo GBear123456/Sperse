@@ -26,6 +26,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     @Input() targetSelector = '[aria-label="Assign"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
+    @Input() permissionKey: string = '';
     @Input() get selectedItemKey() {
         return this.multiSelection ? this.selectedItemKeys :
             (this.selectedItemKeys && this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined);
@@ -212,7 +213,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.Customers.ManageAssignments') &&
+        return this.permission.isGranted(this.permissionKey) &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
 }

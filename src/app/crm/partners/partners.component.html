@@ -55,6 +55,7 @@
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
                               [proxyService]="partnerService"
+                              [permissionKey]="'Pages.CRM.Partners.ManageAssignments'"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
