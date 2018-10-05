@@ -140,22 +140,23 @@ export abstract class AppComponentBase {
         return abp.setting.get(key);
     }
 
-    exportToXLS(option) {
-        this.dataGrid.export.fileName = this._exportService.getFileName();
-        this.dataGrid.instance.exportToExcel(option == 'selected');
-    }
-
-    exportToCSV(option) {
+    exportTo(option, type) {
         this.startLoading();
-        this._exportService.saveAsCSV(
+        return this._exportService['exportTo' + type](
             this.dataGrid, option == 'all'
         ).then(() => this.finishLoading());
     }
 
+    exportToXLS(option) {
+        return this.exportTo(option, 'Excel');
+    }
+
+    exportToCSV(option) {
+        return this.exportTo(option, 'CSV');
+    }
+
     exportToGoogleSheet(option) {
-        this.startLoading();
-        this._exportService.exportToGoogleSheets(
-            this.dataGrid, option == 'all').then(() => this.finishLoading());
+        return this.exportTo(option, 'GoogleSheets');
     }
 
     toggleFullscreen(element: any) {

@@ -12,6 +12,7 @@ import {
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
+import DataSource from 'devextreme/data/data_source';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -500,19 +501,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 icon: 'pdf',
                             }, {
                                 action: this.exportData.bind(this, (options) => {
-                                    this.exportToXLS(options);
+                                    return this.exportToXLS(options);
                                 }),
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
                                 action: this.exportData.bind(this, (options) => {
-                                    this.exportToCSV(options);
+                                    return this.exportToCSV(options);
                                 }),
                                 text: this.l('Export to CSV'),
                                 icon: 'sheet'
                             }, {
                                 action: this.exportData.bind(this, (options) => {
-                                    this.exportToGoogleSheet(options);
+                                    return this.exportToGoogleSheet(options);
                                 }),
                                 text: this.l('Export to Google Sheets'),
                                 icon: 'sheet'
@@ -571,18 +572,40 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]);
     }
 
+    exportPipelineSelectedItemsFilter(dataSource) {
+        let selectedLeads = this.pipelineComponent.getSelectedLeads();
+        if (selectedLeads.length) {
+            dataSource.filter(selectedLeads.map((lead) => {
+                return ['Id', '=', lead.Id];
+            }).reduce((r, a) => r.concat([a, 'or']), []));
+        }
+        return selectedLeads.length;
+    }
+
     exportData(callback, options) {
-        if (this.showPipeline) {
-            let instance = this.dataGrid.instance;
-            if (instance.option('dataSource'))
-                callback(options);
-            else {
-                this.startLoading();
-                instance.option('dataSource', this.dataSource);
-                this.processFilterInternal(this);
+        if (this.showPipeline) {            
+            let importOption = 'all',
+                instance = this.dataGrid.instance,
+                dataSource = instance.option('dataSource'),
+                checkExportOption = (dataSource, ignoreFilter = false) => {
+                    if (options == importOption)
+                        ignoreFilter || this.processFilterInternal(this);
+                    else if (!this.exportPipelineSelectedItemsFilter(dataSource))
+                        importOption = options;
+                };
+                
+            if (dataSource) {
+                checkExportOption(dataSource, true);
+                callback(importOption).then(
+                    () => dataSource.filter(null));
+            } else {
+                instance.option('dataSource', 
+                    dataSource = new DataSource(this.dataSource));
+                checkExportOption(dataSource);
                 this.exportCallback = () => {
-                    this.exportCallback = null;
-                    callback(options);
+                    this.exportCallback = null;                    
+                    callback(importOption).then(
+                      () => dataSource.filter(null));
                 };
             }
         } else
