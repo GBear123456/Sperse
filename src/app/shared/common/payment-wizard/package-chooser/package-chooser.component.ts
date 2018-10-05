@@ -52,7 +52,7 @@ export class PackageChooserComponent implements OnInit {
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
     selectedBillingPeriod = BillingPeriod.Yearly;
-    usersAmount = 25;
+    usersAmount = 5;
     sliderInitialMinValue = 5;
     sliderInitialStep = 5;
     sliderInitialMaxValue = 100;
