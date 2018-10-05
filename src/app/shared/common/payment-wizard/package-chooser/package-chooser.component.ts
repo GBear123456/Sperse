@@ -52,7 +52,7 @@ export class PackageChooserComponent implements OnInit {
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
     selectedBillingPeriod = BillingPeriod.Yearly;
-    usersAmount = 25;
+    usersAmount = 5;
     sliderInitialMinValue = 5;
     sliderInitialStep = 5;
     sliderInitialMaxValue = 100;
@@ -79,7 +79,8 @@ export class PackageChooserComponent implements OnInit {
         const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
             refCount(),
-            map(packages => packages.filter(packageConfig => packageConfig.name !== 'Free ' + this.module))
+            /** Filter out free packages */
+            map(packages => packages.filter(packageConfig => packageConfig.editions[0].annualPrice))
         );
         packagesConfig$.subscribe(packages => {
             this.packages = packages;
