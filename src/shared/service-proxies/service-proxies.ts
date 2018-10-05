@@ -27,332 +27,6 @@ export class AccountServiceProxy {
     }
 
     /**
-     * @returnUrl (optional) 
-     * @return Success
-     */
-    loginGet(returnUrl: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Account/Login?";
-        if (returnUrl !== undefined)
-            url_ += "returnUrl=" + encodeURIComponent("" + returnUrl) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLoginGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processLoginGet(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processLoginGet(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @tenancyname (optional) 
-     * @rememberLogin (optional) 
-     * @returnUrl (optional) 
-     * @tenantSetted (optional) 
-     * @button (optional) 
-     * @return Success
-     */
-    loginPost(tenancyname: string | null | undefined, username: string, password: string, rememberLogin: boolean | null | undefined, returnUrl: string | null | undefined, tenantSetted: boolean | null | undefined, button: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Account/Login?";
-        if (tenancyname !== undefined)
-            url_ += "Tenancyname=" + encodeURIComponent("" + tenancyname) + "&"; 
-        if (username === undefined || username === null)
-            throw new Error("The parameter 'username' must be defined and cannot be null.");
-        else
-            url_ += "Username=" + encodeURIComponent("" + username) + "&"; 
-        if (password === undefined || password === null)
-            throw new Error("The parameter 'password' must be defined and cannot be null.");
-        else
-            url_ += "Password=" + encodeURIComponent("" + password) + "&"; 
-        if (rememberLogin !== undefined)
-            url_ += "RememberLogin=" + encodeURIComponent("" + rememberLogin) + "&"; 
-        if (returnUrl !== undefined)
-            url_ += "ReturnUrl=" + encodeURIComponent("" + returnUrl) + "&"; 
-        if (tenantSetted !== undefined)
-            url_ += "TenantSetted=" + encodeURIComponent("" + tenantSetted) + "&"; 
-        if (button !== undefined)
-            url_ += "button=" + encodeURIComponent("" + button) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLoginPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processLoginPost(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processLoginPost(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @provider (optional) 
-     * @returnUrl (optional) 
-     * @return Success
-     */
-    externalLogin(provider: string | null | undefined, returnUrl: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Account/ExternalLogin?";
-        if (provider !== undefined)
-            url_ += "provider=" + encodeURIComponent("" + provider) + "&"; 
-        if (returnUrl !== undefined)
-            url_ += "returnUrl=" + encodeURIComponent("" + returnUrl) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processExternalLogin(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processExternalLogin(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processExternalLogin(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    externalLoginCallback(): Observable<void> {
-        let url_ = this.baseUrl + "/api/Account/ExternalLoginCallback";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processExternalLoginCallback(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processExternalLoginCallback(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processExternalLoginCallback(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @logoutId (optional) 
-     * @return Success
-     */
-    logoutGet(logoutId: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Account/Logout?";
-        if (logoutId !== undefined)
-            url_ += "logoutId=" + encodeURIComponent("" + logoutId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLogoutGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processLogoutGet(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processLogoutGet(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @logoutId (optional) 
-     * @return Success
-     */
-    logoutPost(logoutId: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Account/Logout?";
-        if (logoutId !== undefined)
-            url_ += "LogoutId=" + encodeURIComponent("" + logoutId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLogoutPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processLogoutPost(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processLogoutPost(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
      * @input (optional) 
      * @return Success
      */
@@ -51515,8 +51189,6 @@ export class CreateTenantInput implements ICreateTenantInput {
     sendActivationEmail!: boolean | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    isInTrialPeriod!: boolean | undefined;
     tenantHostType!: CreateTenantInputTenantHostType | undefined;
 
     constructor(data?: ICreateTenantInput) {
@@ -51546,8 +51218,6 @@ export class CreateTenantInput implements ICreateTenantInput {
                     this.editions.push(TenantEditEditionDto.fromJS(item));
             }
             this.isActive = data["isActive"];
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.isInTrialPeriod = data["isInTrialPeriod"];
             this.tenantHostType = data["tenantHostType"];
         }
     }
@@ -51577,8 +51247,6 @@ export class CreateTenantInput implements ICreateTenantInput {
                 data["editions"].push(item.toJSON());
         }
         data["isActive"] = this.isActive;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
         data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
@@ -51597,8 +51265,6 @@ export interface ICreateTenantInput {
     sendActivationEmail: boolean | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    isInTrialPeriod: boolean | undefined;
     tenantHostType: CreateTenantInputTenantHostType | undefined;
 }
 
@@ -51651,8 +51317,6 @@ export class TenantEditDto implements ITenantEditDto {
     cfoConnectionString!: string | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    isInTrialPeriod!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: ITenantEditDto) {
@@ -51678,8 +51342,6 @@ export class TenantEditDto implements ITenantEditDto {
                     this.editions.push(TenantEditEditionDto.fromJS(item));
             }
             this.isActive = data["isActive"];
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.isInTrialPeriod = data["isInTrialPeriod"];
             this.id = data["id"];
         }
     }
@@ -51705,8 +51367,6 @@ export class TenantEditDto implements ITenantEditDto {
                 data["editions"].push(item.toJSON());
         }
         data["isActive"] = this.isActive;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
         data["id"] = this.id;
         return data; 
     }
@@ -51721,8 +51381,6 @@ export interface ITenantEditDto {
     cfoConnectionString: string | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    isInTrialPeriod: boolean | undefined;
     id: number | undefined;
 }
 

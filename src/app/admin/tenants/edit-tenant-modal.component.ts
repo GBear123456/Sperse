@@ -53,8 +53,8 @@ export class EditTenantModalComponent extends AppComponentBase {
                 this.currentConnectionString = tenantResult.connectionString;
 
                 this.tenantEditionId = this.tenant.editions && this.tenant.editions.length > 0 ? this.tenant.editions[0].editionId : 0;
-                this.isUnlimited = !this.tenant.subscriptionEndDateUtc;
-                this.subscriptionEndDateUtcIsValid = this.isUnlimited || this.tenant.subscriptionEndDateUtc !== undefined;
+                this.isUnlimited = true;
+                this.subscriptionEndDateUtcIsValid = this.isUnlimited;
                 this.modal.show();
                 this.toggleSubscriptionFields();
             });
@@ -66,7 +66,7 @@ export class EditTenantModalComponent extends AppComponentBase {
         $(this.subscriptionEndDateUtc.nativeElement).datetimepicker({
             locale: abp.localization.currentLanguage.name,
             format: 'L',
-            defaultDate: this.tenant.subscriptionEndDateUtc,
+            defaultDate: null,
         }).on('dp.change', (e) => {
             this.subscriptionEndDateUtcIsValid = e.date !== false;
         });
@@ -110,18 +110,6 @@ export class EditTenantModalComponent extends AppComponentBase {
             this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
         }
 
-        //take selected date as UTC
-        if (!this.isUnlimited && this.tenantEditionId) {
-            let date = $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date();
-            if (!date) {
-                date = this.tenant.subscriptionEndDateUtc;
-            }
-
-            this.tenant.subscriptionEndDateUtc = moment(date.format('YYYY-MM-DDTHH:mm:ss') + 'Z');
-        } else {
-            this.tenant.subscriptionEndDateUtc = null;
-        }
-
         this._tenantService.updateTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
@@ -137,17 +125,12 @@ export class EditTenantModalComponent extends AppComponentBase {
     }
 
     onEditionChange(): void {
-        if (this.selectedEditionIsFree()) {
-            this.tenant.isInTrialPeriod = false;
-        }
-
         this.toggleSubscriptionFields();
     }
 
     onUnlimitedChange(): void {
         if (this.isUnlimited) {
             $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').clear();
-            this.tenant.subscriptionEndDateUtc = null;
             this.subscriptionEndDateUtcIsValid = true;
         } else {
             let date = $(this.subscriptionEndDateUtc.nativeElement).data('DateTimePicker').date();
