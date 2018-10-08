@@ -113,6 +113,7 @@
             <mat-autocomplete
                 #state="matAutocomplete"
                 autoActiveFirstOption
+                (optionSelected)="onStateChange($event)"
                 [displayWith]="displayName">
                 <mat-option *ngFor="let state of filteredStates | async" [value]="state">
                     {{ state.name }}
@@ -160,7 +161,7 @@
         </div>
 
         <div class="col-4 text-right">
-            <button mat-raised-button class="btn btn-layout" >{{l('Purchase')}}</button>
+            <button mat-raised-button class="btn btn-layout" [disabled]="!creditCardData.touched || !creditCardData.valid">{{l('Purchase')}}</button>
         </div>
     </footer>
 </form>

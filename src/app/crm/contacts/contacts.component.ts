@@ -25,7 +25,8 @@ import {
     PartnerServiceProxy,
     PartnerInfoDto,
     UpdatePartnerTypeInput,
-    UserServiceProxy
+    UserServiceProxy,
+    CustomerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -92,7 +93,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 private _pipelineService: PipelineService,
                 private _contactsService: ContactsService,
                 private store$: Store<AppStore.State>,
-                private _appStoreService: AppStoreService
+                private _appStoreService: AppStoreService,
+                private _customerService: CustomerServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._appStoreService.loadUserDictionaries();
@@ -547,6 +549,6 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             return this._partnerService;
 
         if (this.customerType == ContactGroupType.Client)
-            return this._contactGroupService;
+            return this._customerService;
     }
 }
