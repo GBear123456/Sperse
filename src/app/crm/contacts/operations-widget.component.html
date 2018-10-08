@@ -1,54 +1,56 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <crm-static-list
-        #stagesList
-        [width]="'210px'"
-        [title]="localizationService.l('Stages')"
-        [selectedKeys]="[selectedStageId]"
-        [selectedItems]=""
-        [hideButtons]="true"
-        [highlightSelected]="true"
-        (onSelectionChanged)="updateStage($event)"
-        [targetSelector]="'[aria-label=Stage]'"
-        [funnelStyling]="true"
-        [showTitle]="false"
-        [list]="stages">
-    </crm-static-list>
-    <crm-static-list
-        #statusesList
-        [width]="'180px'"
-        [title]="localizationService.l('Status')"
-        [showConfirmation]="false"
-        [hideButtons]="true"
-        [highlightSelected]="true"
-        [selectedKeys]="[contactInfo?.statusId]"
-        [targetSelector]="'[aria-label=Status]'"
-        [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
-        (onItemSelected)="updateStatus($event)">
-    </crm-static-list>
-    <!--<crm-static-list-->
-        <!--#partnerTypesList-->
-        <!--[width]="'210px'"-->
-        <!--[title]="localizationService.l('Type')"-->
-        <!--[selectedKeys]="[selectedPartnerTypeId]"-->
-        <!--[selectedItems]=""-->
-        <!--[hideButtons]="true"-->
-        <!--[highlightSelected]="true"-->
-        <!--(onSelectionChanged)="updatePartnerType($event)"-->
-        <!--[targetSelector]="'[accessKey=PartnerType]'"-->
-        <!--[showTitle]="false"-->
-        <!--[list]="partnerTypes">-->
-    <!--</crm-static-list>-->
-    <crm-types-list [selectedKeys]="[clientId]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
-    <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
-    <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.lists"></crm-lists-list>
-    <crm-user-assignment-list 
-        [selectedKeys]="[clientId]" 
-        [selectedItemKey]="contactInfo?.assignedUserId" 
-        [getAssignedUsersSelector]="getAssignedUsersSelector" 
-        [permissionKey]="assignmentsPermissionKey"
-        [proxyService]="proxyService">
-    </crm-user-assignment-list>
-    <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
-    <crm-stars-list [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.starId"></crm-stars-list>
+    <ng-container *ngIf="enabled">
+        <crm-static-list
+            #stagesList
+            [width]="'210px'"
+            [title]="localizationService.l('Stages')"
+            [selectedKeys]="[selectedStageId]"
+            [selectedItems]=""
+            [hideButtons]="true"
+            [highlightSelected]="true"
+            (onSelectionChanged)="updateStage($event)"
+            [targetSelector]="'[aria-label=Stage]'"
+            [funnelStyling]="true"
+            [showTitle]="false"
+            [list]="stages">
+        </crm-static-list>
+        <crm-static-list
+            #statusesList
+            [width]="'180px'"
+            [title]="localizationService.l('Status')"
+            [showConfirmation]="false"
+            [hideButtons]="true"
+            [highlightSelected]="true"
+            [selectedKeys]="[contactInfo?.statusId]"
+            [targetSelector]="'[aria-label=Status]'"
+            [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
+            (onItemSelected)="updateStatus($event)">
+        </crm-static-list>
+        <!--<crm-static-list-->
+            <!--#partnerTypesList-->
+            <!--[width]="'210px'"-->
+            <!--[title]="localizationService.l('Type')"-->
+            <!--[selectedKeys]="[selectedPartnerTypeId]"-->
+            <!--[selectedItems]=""-->
+            <!--[hideButtons]="true"-->
+            <!--[highlightSelected]="true"-->
+            <!--(onSelectionChanged)="updatePartnerType($event)"-->
+            <!--[targetSelector]="'[accessKey=PartnerType]'"-->
+            <!--[showTitle]="false"-->
+            <!--[list]="partnerTypes">-->
+        <!--</crm-static-list>-->
+        <crm-types-list [selectedKeys]="[clientId]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
+        <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
+        <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.lists"></crm-lists-list>
+        <crm-user-assignment-list 
+            [selectedKeys]="[clientId]" 
+            [selectedItemKey]="contactInfo?.assignedUserId" 
+            [getAssignedUsersSelector]="getAssignedUsersSelector().getAssignedUsers" 
+            [permissionKey]="getAssignmentsPermissionKey()"
+            [proxyService]="getProxyService()">
+        </crm-user-assignment-list>
+        <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
+        <crm-stars-list [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.starId"></crm-stars-list>
+    </ng-container>
 </div>

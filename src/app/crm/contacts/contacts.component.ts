@@ -61,6 +61,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
+    operationsEnabled = false;
 
     private initialData: string;
 
@@ -183,6 +184,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             return !isPrimaryContact;
         });
 
+        this.operationsEnabled = (result.typeId != ContactGroupType.UserProfile);
         this.ratingId = result.ratingId;
         this.primaryContact = result.primaryContactInfo;
         this.contactInfo = result;
@@ -515,18 +517,19 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this._userService['data'].userId = contact.userId);
     }
 
-    getAssignedUsersStoreSelectors() {
+    getAssignedUsersStoreSelectors = () => {
         if (this.leadId || this.leadInfo)
-            return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+            return LeadAssignedUsersStoreSelectors;
 
         if(this.customerType == ContactGroupType.Partner)
-            return PartnerAssignedUsersStoreSelectors.getAssignedUsers;
+            return PartnerAssignedUsersStoreSelectors;
 
         if (this.customerType == ContactGroupType.Client)
-            return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
+            return CustomerAssignedUsersStoreSelectors;
+        return {};
     }
 
-    getAssignmentsPermissinKey() {
+    getAssignmentsPermissinKey = () => {
         let type = 'Customers';
         if (this.leadId || this.leadInfo)
             type = 'Leads';
@@ -536,7 +539,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         return 'Pages.CRM.' + type + '.ManageAssignments';
     }
 
-    getProxyService() {
+    getProxyService = () => {
         if (this.leadId || this.leadInfo)
             return this._leadService;
 

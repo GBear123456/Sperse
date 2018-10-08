@@ -110,6 +110,7 @@ export class ContactGroupStatus {
 export class ContactGroupType {
     static Client = 'C';
     static Partner = 'P';
+    static UserProfile = 'U';
 }
 
 export class ODataSearchStrategy {

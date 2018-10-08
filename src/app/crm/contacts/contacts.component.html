@@ -8,7 +8,8 @@
             <i class="fa fa-phone" aria-hidden="true"></i>
             <a [routerLink]="'notes'"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
         </div>
-        <operations-widget
+        <operations-widget 
+            [enabled]="operationsEnabled"
             [clientId]="customerId"
             [customerType]="customerType"
             [leadId]="leadId"
@@ -21,10 +22,10 @@
             (onUpdateStatus)="updateStatus($event)"
             (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteLead()"
-            [proxyService]="getProxyService()"
-            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()"
-            [assignmentsPermissionKey]="getAssignmentsPermissinKey()">
-        </operations-widget>
+            [getProxyService]="getProxyService"
+            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors"
+            [getAssignmentsPermissionKey]="getAssignmentsPermissinKey"
+        ></operations-widget>
     </div>
     <mat-sidenav-container>
         <mat-sidenav mode="side" opened="true" position="start">

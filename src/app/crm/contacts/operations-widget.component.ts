@@ -30,6 +30,26 @@ export class OperationsWidgetComponent implements OnInit {
 
     /*** @todo add localization service */
 
+    @Input()
+    set enabled(val: Boolean) {
+        this._enabled = val;
+        this.toolbarConfig = val ? this._toolbarConfig : 
+        [ 
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'print',
+                        action: this.print.emit.bind(this.print)
+                    }
+                ]
+            }
+        ];
+    }
+    get enabled(): Boolean {
+        return this._enabled;
+    }
     @Input() contactInfo: ContactGroupInfoDto;
     @Input() clientId: number;
     @Input() customerType: string;
@@ -52,9 +72,9 @@ export class OperationsWidgetComponent implements OnInit {
     get partnerTypes(): any[] {
         return this._partnerTypes;
     }
+    @Input() getProxyService;
     @Input() getAssignedUsersSelector;
-    @Input() proxyService;
-    @Input() assignmentsPermissionKey;
+    @Input() getAssignmentsPermissionKey;
 
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
@@ -63,6 +83,8 @@ export class OperationsWidgetComponent implements OnInit {
     @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
+    private _enabled: Boolean;
+    private _toolbarConfig = [];
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -83,7 +105,7 @@ export class OperationsWidgetComponent implements OnInit {
         this.initToolbarConfig();
     }
 
-    initToolbarConfig(config = null) {
+    initToolbarConfig(config = null) {        
         let items = [
             {
                 name: 'assign',
@@ -122,7 +144,7 @@ export class OperationsWidgetComponent implements OnInit {
                 action: this.toggleStars.bind(this),
             }
         ]);
-        this.toolbarConfig = config || [
+        this._toolbarConfig = config || [
             {
                 location: 'before',
                 locateInMenu: 'auto',
