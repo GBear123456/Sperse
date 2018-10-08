@@ -224,7 +224,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             userId: userId, user: null, roles: null
         };
         this._contactGroupService['data'].contactInfo = {
-            id: customerId
+            id: this.customerId = customerId
         };
         this._contactGroupService['data'].leadInfo = {
             id: leadId
@@ -246,7 +246,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (customerId) {
             this.startLoading(true);
             let contactInfo$ = this._contactGroupService
-                .getContactGroupInfo(this.customerId = customerId);
+                .getContactGroupInfo(customerId);
 
             this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
             if (this.customerType == ContactGroupType.Partner) {
@@ -277,7 +277,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this.startLoading(true);
             let leadId = this._contactGroupService['data'].leadInfo.id,
                 leadInfo$ = leadId ? this._leadService.getLeadInfo(leadId) :
-                    this._leadService.getLast(this.customerId);
+                    this._leadService.getLast(this.contactInfo.id);
 
             leadInfo$.pipe(finalize(() => {
                 this.finishLoading(true);
@@ -341,7 +341,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     private updateStatusInternal(statusId: string) {
         return this._contactGroupService.updateContactGroupStatus(new UpdateContactGroupStatusInput({
-            contactGroupId: this.customerId,
+            contactGroupId: this.contactInfo.id,
             statusId: statusId
         }));
     }

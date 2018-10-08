@@ -40,17 +40,17 @@
             <!--[showTitle]="false"-->
             <!--[list]="partnerTypes">-->
         <!--</crm-static-list>-->
-        <crm-types-list [selectedKeys]="[clientId]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
-        <crm-tags-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
-        <crm-lists-list [selectedKeys]="[clientId]" [selectedItems]="contactInfo?.lists"></crm-lists-list>
+        <crm-types-list [selectedKeys]="[contactInfo.id]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
+        <crm-tags-list [selectedKeys]="[contactInfo.id]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
+        <crm-lists-list [selectedKeys]="[contactInfo.id]" [selectedItems]="contactInfo?.lists"></crm-lists-list>
         <crm-user-assignment-list 
-            [selectedKeys]="[clientId]" 
+            [selectedKeys]="[contactInfo.id]" 
             [selectedItemKey]="contactInfo?.assignedUserId" 
             [getAssignedUsersSelector]="getAssignedUsersSelector().getAssignedUsers" 
             [permissionKey]="getAssignmentsPermissionKey()"
             [proxyService]="getProxyService()">
         </crm-user-assignment-list>
-        <crm-rating [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
-        <crm-stars-list [selectedKeys]="[clientId]" [selectedItemKey]="contactInfo?.starId"></crm-stars-list>
+        <crm-rating [selectedKeys]="[contactInfo.id]" [selectedItemKey]="contactInfo?.ratingId" (onRatingUpdated)="updateRating($event)"></crm-rating>
+        <crm-stars-list [selectedKeys]="[contactInfo.id]" [selectedItemKey]="contactInfo?.starId"></crm-stars-list>
     </ng-container>
 </div>

@@ -51,7 +51,6 @@ export class OperationsWidgetComponent implements OnInit {
         return this._enabled;
     }
     @Input() contactInfo: ContactGroupInfoDto;
-    @Input() clientId: number;
     @Input() customerType: string;
     @Input() leadId: number;
     @Input() selectedStageId: number;
