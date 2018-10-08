@@ -160,7 +160,7 @@
         </div>
 
         <div class="col-4 text-right">
-            <button mat-raised-button class="btn btn-layout" >{{l('Purchase')}}</button>
+            <button mat-raised-button class="btn btn-layout" [disabled]="!creditCardData.touched || !creditCardData.valid">{{l('Purchase')}}</button>
         </div>
     </footer>
 </form>
