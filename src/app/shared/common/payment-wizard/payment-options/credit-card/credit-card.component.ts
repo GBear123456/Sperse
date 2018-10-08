@@ -217,6 +217,14 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
                         map(name => name ? this._filterStates(name) : this.states.slice())
                     );
             });
+
+        this.creditCardData.controls.billingCountry.setValue(event.option.value);
+        this.creditCardData.controls.billingCountryCode.setValue(this.countryCode);
+    }
+
+    onStateChange(event) {
+        this.creditCardData.controls.billingState.setValue(event.option.value);
+        this.creditCardData.controls.billingStateCode.setValue(event.option.value.code);
     }
 
     openTermsDialog() {
