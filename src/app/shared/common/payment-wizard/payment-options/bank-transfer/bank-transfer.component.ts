@@ -14,9 +14,9 @@ import { ConditionsType } from '@shared/AppEnums';
 export class BankTransferComponent extends AppComponentBase implements OnInit {
     @Input() titleText = this.l('BankTransferTitleText');
     bankTransferData = <BankTransferDataModel>{
-        bankAccountNumber: 457014124486,
+        bankAccountNumber: 457031074865,
         bankRoutingNumberForACHTransfers: 122101706,
-        bankRoutingNumber: 123456789,
+        bankRoutingNumber: '026009593',
         SWIFT_CodeForUSDollar: 'BOFAUS3N',
         SWIFT_Code: 'BOFAUS6S'
     };
