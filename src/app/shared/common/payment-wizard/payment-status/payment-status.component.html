@@ -1,5 +1,5 @@
 <img [ngClass]="paymentStatusData.status" [src]="'./assets/common/icons/' + paymentStatusData.status + '.svg'">
-<h2>{{ l('PaymentStatus_' + paymentStatusData.status ) }}</h2>
+<h2>{{ separateToFewLines(l('PaymentStatus_' + paymentStatusData.status )) }}</h2>
 <ng-container *ngIf="paymentStatusData.status === 'payment-failed'">
     <p *ngIf="paymentStatusData.statusText">{{ paymentStatusData.statusText }}</p>
     <p *ngIf="paymentStatusData.errorDetailsText">{{ paymentStatusData.errorDetailsText }}</p>
