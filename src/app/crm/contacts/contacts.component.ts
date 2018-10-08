@@ -526,6 +526,16 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     }
 
+    getAssignmentsPermissinKey() {
+        let type = 'Customers';
+        if (this.leadId || this.leadInfo)
+            type = 'Leads';
+        else if (this.customerType == ContactGroupType.Partner)
+            type = 'Partners';
+
+        return 'Pages.CRM.' + type + '.ManageAssignments';
+    }
+
     getProxyService() {
         if (this.leadId || this.leadInfo)
             return this._leadService;

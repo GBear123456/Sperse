@@ -18,7 +18,8 @@
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
-                              [proxyService]="contactService"
+                              [proxyService]="contactService" 
+                              [permissionKey]="'Pages.CRM.Customers.ManageAssignments'"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>

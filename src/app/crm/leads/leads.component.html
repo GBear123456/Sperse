@@ -21,6 +21,7 @@
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
                               [proxyService]="leadService"
+                              [permissionKey]="'Pages.CRM.Leads.ManageAssignments'"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>

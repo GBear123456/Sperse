@@ -39,7 +39,11 @@
     <crm-types-list [targetSelector]="'[accesskey=\'PartnerTypesList\']'" [hideButtons]="true" (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
     <crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true"></crm-tags-list>
     <crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true"></crm-lists-list>
-    <crm-user-assignment-list [targetSelector]="'[accesskey=\'ClientAssign\']'" [hideButtons]="true" ></crm-user-assignment-list>
+    <crm-user-assignment-list   
+        [targetSelector]="'[accesskey=\'ClientAssign\']'" 
+        [permissionKey]="getAssignmentsPermissinKey()"
+        [hideButtons]="true" >
+    </crm-user-assignment-list>
     <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
     <mat-sidenav class="main_sidenav" mode="side" position="end" opened="true">
       <mat-tab-group>

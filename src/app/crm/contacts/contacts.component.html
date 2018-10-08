@@ -22,7 +22,8 @@
             (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteLead()"
             [proxyService]="getProxyService()"
-            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
+            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()"
+            [assignmentsPermissionKey]="getAssignmentsPermissinKey()">
         </operations-widget>
     </div>
     <mat-sidenav-container>
