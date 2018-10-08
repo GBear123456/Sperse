@@ -145,14 +145,13 @@ export class AppService extends AppServiceBase {
         return expired;
     }
 
-    switchModule(name: string, params: {}) {
+    switchModule(name: string, params = {}) {
         if (this.checkModuleExpired(name)
             && !this.subscriptionInGracePeriod(name)
         ) {
             name = this.getDefaultModule();
             params = {};
         }
-
         super.switchModule(name, params);
     }
 
