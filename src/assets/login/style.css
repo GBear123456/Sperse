@@ -495,8 +495,3 @@ input.form-control {
     text-align: left;
     overflow-y: auto;
 }
-
-/** To override spinners */
-.cdk-overlay-container {
-    z-index: 2000000001 !important;
-}

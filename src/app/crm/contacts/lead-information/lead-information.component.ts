@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivatedRoute } from '@angular/router';
@@ -19,7 +19,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
     private paramsSubscribe: any = [];
     private formatting = AppConsts.formatting;
-    
+
     isEditAllowed = false;
 
     stages: any[];
@@ -30,16 +30,16 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         {
             sections: [
                 {
-                    name: "General",
-                    items: [ 
-                        { name: 'stage', readonly: true }, 
-                        { name: 'amount', readonly: true }, 
-                        { name: 'creationDate', readonly: true }, 
-                        { name: 'modificationDate', readonly: true } 
+                    name: 'General',
+                    items: [
+                        { name: 'stage', readonly: true },
+                        { name: 'amount', readonly: true },
+                        { name: 'creationDate', readonly: true },
+                        { name: 'modificationDate', readonly: true }
                     ]
                 },
                 {
-                    name: "LeadSource",
+                    name: 'LeadSource',
                     items: [ { name: 'sourceCode' } ]
                 }
             ]
@@ -47,11 +47,11 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         {
             sections: [
                 {
-                    name: "Campaign",
+                    name: 'Campaign',
                     items: [ { name: 'campaignCode' }, { name: 'affiliateCode' }, { name: 'channelCode' } ]
                 },
                 {
-                    name: "Comments",
+                    name: 'Comments',
                     items: [ { name: 'comments', hideLabel: true} ]
                 }
             ]
@@ -67,7 +67,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Leads.ManageLeads');
     }
-        
+
     ngOnInit() {
         this.data = this._contactProxy['data'];
         this._contactsService.loadLeadInfo();
@@ -88,7 +88,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         return result;
     }
 
-    getPropValue(field){
+    getPropValue(field) {
         let leadInfo = this.data && this.data.leadInfo;
         let value = leadInfo && leadInfo[field];
         if (!value)
@@ -96,7 +96,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
 
         return value instanceof moment ? value.format(this.formatting.date) : value;
     }
-    
+
     updateValue(value, item) {
         let fieldName = item.name;
         this.data.leadInfo[fieldName] = value;

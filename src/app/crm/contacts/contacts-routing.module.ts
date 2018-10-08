@@ -53,7 +53,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     {path: 'application-status', component: ApplicationStatusComponent },
                     {path: 'referral-history', component: ReferralHistoryComponent },
                     {path: 'subscriptions', component: SubscriptionsComponent },
-                    {path: 'payment-information', component: PaymentInformationComponent, data: {rightPanelOpened: false} },
+                    {path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     {path: 'activity-logs', component: ActivityLogsComponent },
                     {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
                 ]
