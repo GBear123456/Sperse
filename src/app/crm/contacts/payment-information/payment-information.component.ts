@@ -28,7 +28,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     payments$: Observable<MonthlyPaymentInfo[]>;
     dispayedPayments$: Observable<MonthlyPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
-    paymentMethodsTypes: PaymentMethodInfoType = PaymentMethodInfoType;
+    paymentMethodsTypes: PaymentMethodInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
     constructor(
         injector: Injector,
