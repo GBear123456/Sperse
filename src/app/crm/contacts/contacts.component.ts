@@ -131,6 +131,15 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         _contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
     }
 
+    ngOnInit() {
+        this.rootComponent.overflowHidden(true);
+        this.rootComponent.pageHeaderFixed();
+
+        let key = this.getCacheKey(abp.session.userId);
+        if (this._cacheService.exists(key))
+            this.rightPanelSetting = this._cacheService.get(key);
+    }
+
     private getCheckPropertyValue(obj, prop, def) {
         return obj.hasOwnProperty(prop) ? obj[prop] : def;
     }
@@ -222,8 +231,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (userId)
             this.loadDataForUser(userId);
         else
-            this.loadDataForClient(customerId,
-                this.leadId = leadId, partnerId);
+            this.loadDataForClient(customerId, this.leadId = leadId, partnerId);
     }
 
     loadDataForUser(userId) {
@@ -392,15 +400,6 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         handel.document.close();
         handel.print();
         handel.close();
-    }
-
-    ngOnInit() {
-        this.rootComponent.overflowHidden(true);
-        this.rootComponent.pageHeaderFixed();
-
-        let key = this.getCacheKey(abp.session.userId);
-        if (this._cacheService.exists(key))
-            this.rightPanelSetting = this._cacheService.get(key);
     }
 
     ngOnDestroy() {
