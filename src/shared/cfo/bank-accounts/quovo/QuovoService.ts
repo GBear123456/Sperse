@@ -213,7 +213,7 @@ export class QuovoService {
     private createQuovoHandler(token, onLoad, onOpen, onClose, onAdd) {
         return Quovo.create({
             token: token,
-            userCss: AppConsts.appBaseUrl + '/assets/cfo-css/quovo.css',
+            userCss: AppConsts.appBaseHref + 'assets/cfo-css/quovo.css',
             topInstitutions: 'all',
             confirmClose: false,
             search: {
