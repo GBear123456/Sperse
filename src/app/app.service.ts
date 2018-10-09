@@ -205,7 +205,7 @@ export class AppService extends AppServiceBase {
     redirectToCFO(userId) {
         this.instanceServiceProxy.getUserInstanceInfo(userId).subscribe(result => {
             if (result && result.id && (result.status === GetUserInstanceInfoOutputStatus.Active))
-                window.open(abp.appPath + 'app/cfo/' + result.id + '/start');
+                window.open(AppConsts.appBaseUrl + '/app/cfo/' + result.id + '/start');
             else
                 this.notify.error(this.appLocalizationService.ls(AppConsts.localization.CRMLocalizationSourceName, 'CFOInstanceInactive'));
         });
