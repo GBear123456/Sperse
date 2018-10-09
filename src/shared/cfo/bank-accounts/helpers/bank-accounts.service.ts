@@ -391,9 +391,7 @@ export class BankAccountsService {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
                 });
-                if (syncAccount.bankAccounts.length > 0) {
-                    filteredSyncAccounts.push(syncAccountCopy);
-                }
+                filteredSyncAccounts.push(syncAccountCopy);
             } else if (type === this.localizationService.l('Other')) {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     let isBankAccountVisible = !_.contains(allTypes, bankAccount.typeName);
