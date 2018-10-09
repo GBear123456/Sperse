@@ -10,12 +10,19 @@ import * as moment from 'moment';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { ActivityServiceProxy, CreateActivityDtoType, CreateActivityDto, UpdateActivityDto } from '@shared/service-proxies/service-proxies';
+import {
+    ActivityServiceProxy,
+    CreateActivityDtoType,
+    CreateActivityDto,
+    UpdateActivityDto,
+    ImportInputImportType
+} from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { ActivityAssignedUsersStoreSelectors } from '@app/store';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -24,8 +31,12 @@ import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 })
 export class CreateActivityDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('leadsList') leadsList: StaticListComponent;
+    @ViewChild('clientsList') clientsList: StaticListComponent;
+    @ViewChild('ordersList') ordersList: StaticListComponent;
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild('startDate') startDate: DxDateBoxComponent;
     @ViewChild('endDate') endDate: DxDateBoxComponent;
 
@@ -33,10 +44,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     private readonly SAVE_OPTION_DEFAULT   = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private lookupTimeout: any;
-    private latestSearchPhrase: string = '';
-
+    private latestSearchPhrase = '';
     dateValidator: any;
-    types: any = [{name: CreateActivityDtoType.Event}, {name: CreateActivityDtoType.Task}];
     stages: any[] = [];
 
     leads: any = [];
@@ -47,6 +56,9 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     saveContextMenuItems = [];
 
     toolbarConfig = [];
+    isAllDay = false;
+
+    activityTypeIndex: number = 0;
 
     constructor(
         injector: Injector,
@@ -65,20 +77,19 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             {text: this.l('SaveAndClose'), selected: false}
         ];
 
-
         if (this.data.appointment.Id)
             this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
             });
 
         this.loadResourcesData();
-        this.initToolbarConfig();
     }
 
     loadResourcesData() {
         this.lookup('Leads').then(res => this.leads = res);
         this.lookup('Orders').then(res => this.orders = res);
         this.lookup('Clients').then(res => this.clients = res);
+        this.initToolbarConfig();
     }
 
     lookup(uri, search = '') {
@@ -94,6 +105,26 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             {
                 location: 'after', items: [
                     {
+                        text: '',
+                        name: 'select-box',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            width: 80,
+                            selectedIndex: this.activityTypeIndex,
+                            items: [
+                                {
+                                    action: this.activityTypeChanged.bind(this),
+                                    text: this.l('Task'),
+                                    value: CreateActivityDtoType.Task
+                                }, {
+                                    action: this.activityTypeChanged.bind(this),
+                                    text: this.l('Event'),
+                                    value: CreateActivityDtoType.Event
+                                }
+                            ]
+                        }
+                    },
+                    {
                         name: 'assign',
                         action: this.toggleUserAssignmen.bind(this),
                         options: {
@@ -104,8 +135,41 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                         name: 'stage',
                         action: this.toggleStages.bind(this),
                         options: {
+                            text: 'Status',
                             accessKey: 'ActivityStage'
                         }
+                    },
+
+                    {
+                        name: 'lead',
+                        action: this.toggleLeadList.bind(this),
+                        options: {
+                            text: this.l('Lead'),
+                            accessKey: 'LeadsList'
+                    }
+                    },
+                    {
+                        name: 'client',
+                        action: this.toggleClientLists.bind(this),
+                        options: {
+                            text: this.l('Client'),
+                            accessKey: 'ClientsList'
+                        }
+                    },
+                    {
+                        name: 'order',
+                        action: this.toggleOrderList.bind(this),
+                        options: {
+                            text: this.l('Order'),
+                            accessKey: 'OrdersList'
+                        }
+                    },
+                    {
+                        name: 'star',
+                        action: () => this.starsListComponent.toggle(),
+                        options: {
+                            width: 20,
+                        },
                     }
                 ]
             },
@@ -120,6 +184,15 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 ]
             }
         ];
+    }
+
+    private activityTypeChanged(event) {
+        this.activityTypeIndex = event.itemIndex;
+        this.data.appointment.Type = event.itemData.value;
+
+        console.log(this.activityTypeIndex);
+        console.log(this.data.appointment.Type);
+        this.initToolbarConfig();
     }
 
     saveOptionsInit() {
@@ -148,7 +221,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 this.data.stages[Math.floor(this.data.stages.length / 2)].id;
 
         if (!this.data.appointment.Type)
-            this.data.appointment.Type = CreateActivityDtoType.Event;
+            this.data.appointment.Type = CreateActivityDtoType.Task;
 
         this.data.title = this.data.appointment.Title;
         this.data.editTitle = true;
@@ -161,6 +234,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             action: this.save.bind(this)
         }];
         this.saveOptionsInit();
+
+        console.log(this.data);
     }
 
     private createEntity(): void {
@@ -181,8 +256,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             type: this.data.appointment.Type,
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
-            assignedUserIds: this.data.appointment.AssignedUserIds 
-                || [this.appSession.userId],
+            assignedUserIds: this.data.appointment.AssignedUserIds || [this.appSession.userId],
             startDate: this.getDateWithoutTimezone(this.data.appointment.StartDate),
             endDate: this.getDateWithoutTimezone(this.data.appointment.EndDate),
             stageId: this.data.appointment.StageId,
@@ -190,6 +264,10 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             orderId: this.data.appointment.OrderId,
             customerId: this.data.appointment.CustomerId
         }
+    }
+
+    onDateValueChanged($event) {
+        console.log($event);
     }
 
     createAppointment() {
@@ -250,6 +328,30 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     toggleStages() {
         this.stagesComponent.toggle();
+    }
+
+    toggleLeadList() {
+        this.leadsList.toggle();
+    }
+
+    toggleClientLists() {
+        this.clientsList.toggle();
+    }
+
+    toggleOrderList() {
+        this.ordersList.toggle();
+    }
+
+    onLeadSelected(e) {
+        this.data.appointment.LeadId = e.id;
+    }
+
+    onClientSelected(e) {
+        this.data.appointment.CustomerId = e.id;
+    }
+
+    onOrderSelected(e) {
+        this.data.appointment.OrderId = e.id;
     }
 
     toggleUserAssignmen() {
