@@ -71,6 +71,10 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
             this.appService.subscriptionInGracePeriod());
     }
 
+    subscriptionStatusBarIsHidden(): boolean {
+        return this.appService.subscriptionStatusBarIsHidden();
+    }
+
     ngAfterViewInit(): void {
         if (mApp.initialized) {
             return;
