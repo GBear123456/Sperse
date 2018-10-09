@@ -111,7 +111,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         private _profileService: ProfileServiceProxy,
         private _quickSideBarChat: QuickSideBarChat) {
         super(injector);
-        this.uploadUrl = AppConsts.remoteServiceBaseUrl + '/Chat/UploadFile';
+        this.uploadUrl = AppConsts.remoteServiceBaseUrl + '/api/Chat/UploadFile';
     }
 
     shareCurrentLink() {

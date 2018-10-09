@@ -46,7 +46,7 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
 
     initFileUploader(): void {
         const self = this;
-        self.uploader = new FileUploader({ url: AppConsts.remoteServiceBaseUrl + '/Profile/UploadProfilePicture' });
+        self.uploader = new FileUploader({ url: AppConsts.remoteServiceBaseUrl + '/api/Profile/UploadProfilePicture' });
         self._uploaderOptions.autoUpload = true;
         self._uploaderOptions.authToken = 'Bearer ' + self._tokenService.getToken();
         self._uploaderOptions.removeAfterUpload = true;
