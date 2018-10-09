@@ -112,7 +112,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     showDialog(address, event, index) {
-        let dialogData = _.pick(address || {}, 'id', 'city',
+        let dialogData = _.pick(address || {isActive: true}, 'id', 'city',
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');
         dialogData.contactId = this.contactInfoData && this.contactInfoData.contactId;

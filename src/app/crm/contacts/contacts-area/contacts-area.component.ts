@@ -81,7 +81,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             phoneExtension: data && data.phoneExtension,
             usageTypeId: data && data.usageTypeId,
             isConfirmed: Boolean(data && data.isConfirmed),
-            isActive: Boolean(data && data.isActive),
+            isActive: Boolean(data ? data.isActive: true),
             comment: data && data.comment,
             deleteItem: (event) => {
                 if (data.emailAddress)
