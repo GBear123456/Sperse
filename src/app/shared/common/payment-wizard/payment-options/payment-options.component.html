@@ -70,7 +70,9 @@
                 <ng-template mat-tab-label="">
                     <img [src]="'./assets/common/icons/paypal-logo.png'">
                 </ng-template>
-                <pay-pal *ngIf="selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [billingPeriod]="plan.billingPeriod" (onSubmit)="submitData($event, paymentMethods.PayPal)"></pay-pal>
+                <pay-pal *ngIf="selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [maxUserCount]="plan.usersAmount" [billingPeriod]="plan.billingPeriod"
+                         (onSubmit)="submitData($event, paymentMethods.PayPal)">
+                </pay-pal>
             </mat-tab>
             <mat-tab [label]="l('BankTransfer')">
                 <bank-transfer></bank-transfer>
