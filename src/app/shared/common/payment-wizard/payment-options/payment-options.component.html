@@ -30,12 +30,12 @@
             <span class="perMonthText">{{ l('UserPerMonth') }}</span>
         </div>
         <div class="usersAmountAndBilledInfo">{{ l('usersAmountAndBilledInfo', plan.usersAmount, getBillingTerm(plan.billingPeriod)) }}</div>
-        <div class="calculations">
+        <div class="calculations" [ngClass]="{ hidden: !plan?.discount }">
             <div>
                 <span>{{ l('Subtotal') }}</span>
-                <span>{{ (plan.currencySymbol || '$') + (plan.subtotal | number : '1.2-2') }}</span>
+                <span class="subtotalPrice">{{ (plan.currencySymbol || '$') + (plan.subtotal | number : '1.2-2') }}</span>
             </div>
-            <div *ngIf="plan?.discount">
+            <div>
                 <span>{{ l('Discount') }}</span>
                 <span>{{ plan.discount }}%</span>
             </div>
@@ -75,13 +75,13 @@
             <mat-tab [label]="l('BankTransfer')">
                 <bank-transfer></bank-transfer>
             </mat-tab>
-            <mat-tab [label]="l('Bitcoin')">
-                <div class="row align-items-center h-100">
-                    <div class="col-12 text-center">
-                        <h4>{{ l("This payment option will be available soon") }}</h4>
-                    </div>
-                </div>
-            </mat-tab>
+            <!--<mat-tab [label]="l('Bitcoin')">-->
+                <!--<div class="row align-items-center h-100">-->
+                    <!--<div class="col-12 text-center">-->
+                        <!--<h4>{{ l("This payment option will be available soon") }}</h4>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</mat-tab>-->
         </mat-tab-group>
     </div>
 </div>
