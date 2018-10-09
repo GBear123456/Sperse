@@ -177,3 +177,6 @@
     -webkit-transform: translate(-25px, -25px) scale(0.25) translate(25px, 25px);
     transform: translate(-25px, -25px) scale(0.25) translate(25px, 25px);
 }
+.spinner {
+    z-index: 999!important;
+}

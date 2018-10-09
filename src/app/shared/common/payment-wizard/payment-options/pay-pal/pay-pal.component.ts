@@ -17,6 +17,7 @@ import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pa
 })
 export class PayPalComponent extends AppComponentBase implements AfterViewInit {
     @Input() editionId: number;
+    @Input() maxUserCount: number;
     @Input() billingPeriod: BillingPeriod = BillingPeriod.Monthly;
 
     @Output() onSubmit: EventEmitter<PayPalDataModel> = new EventEmitter<PayPalDataModel>();
@@ -55,7 +56,7 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
             commit: true,
             payment(data, actions) {
                 return self.tenantSubscriptionServiceProxy
-                    .requestPayment(self.editionId, frequency)
+                    .requestPayment(self.editionId, self.maxUserCount, frequency)
                     .toPromise()
                     .then((result: string) => {
                         return result;

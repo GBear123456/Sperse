@@ -185,13 +185,3 @@ body.overflow-hidden.modal-open {
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 .dxc-tooltip svg path {transform: translate(0, 0) !important; filter: none !important;}
-
-
-/** To override spinners */
-.cdk-overlay-container {
-    z-index: 2000000001 !important;
-}
-
-.swal-overlay {
-    z-index: 2000000002 !important;
-}

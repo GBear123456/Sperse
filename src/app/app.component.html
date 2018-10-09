@@ -1,7 +1,7 @@
 <app-header [hidden]="isFullscreenMode"></app-header>
 
 <div class="clearfix"></div>
-<div class="page-container" [ngClass]="{'subscription-bar-visible': subscriptionStatusBarVisible()}">
+<div class="page-container" [ngClass]="{'subscription-bar-visible': subscriptionStatusBarVisible() && !subscriptionStatusBarIsHidden()}">
     <div class="page-sidebar-wrapper" [ngClass]="{'show-sidebar-wrapper': filtersService.enabled}">
         <side-bar></side-bar>
     </div>

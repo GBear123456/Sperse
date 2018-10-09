@@ -39,6 +39,7 @@ export class AppService extends AppServiceBase {
     private appLocalizationService: AppLocalizationService;
     private _setToolbarTimeout: number;
     private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
+    private subscriptionsBarsVisibilities = {};
 
     constructor(injector: Injector) {
         super(
@@ -94,6 +95,14 @@ export class AppService extends AppServiceBase {
             return _.find(this.moduleSubscriptions,
                 subscription) || subscription;
         }
+    }
+
+    subscriptionStatusBarIsHidden(): boolean {
+        return this.subscriptionsBarsVisibilities[this.getModule()];
+    }
+
+    hideSubscriptionStatusBar() {
+        Object.defineProperty(this.subscriptionsBarsVisibilities, this.getModule(), { value: true});
     }
 
     subscriptionIsExpiringSoon(name = undefined): boolean {
@@ -196,7 +205,7 @@ export class AppService extends AppServiceBase {
     redirectToCFO(userId) {
         this.instanceServiceProxy.getUserInstanceInfo(userId).subscribe(result => {
             if (result && result.id && (result.status === GetUserInstanceInfoOutputStatus.Active))
-                window.open(abp.appPath + 'app/cfo/' + result.id + '/start');
+                window.open(AppConsts.appBaseUrl + '/app/cfo/' + result.id + '/start');
             else
                 this.notify.error(this.appLocalizationService.ls(AppConsts.localization.CRMLocalizationSourceName, 'CFOInstanceInactive'));
         });

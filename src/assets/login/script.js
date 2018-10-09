@@ -41,7 +41,7 @@
                 else
                     reject(xhr);
             };
-            xhr.send();        
+            xhr.send();
         });
     }
 
@@ -75,13 +75,13 @@
     function getCurrentLoginInformations() {
         ajax(remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
             {
-                "Content-Type": "application/json", 
-                "Accept": "application/json"                
+                "Content-Type": "application/json",
+                "Accept": "application/json"
             }
         ).then(function(response) {
             loginInformations = response && response.result;
             if (window['logoImage']) {
-                logoImage.setAttribute('src', 
+                logoImage.setAttribute('src',
                     loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
                     remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
                     getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
@@ -180,7 +180,7 @@
 
     if (window['loginForm']) {
         var form = window['loginForm'];
-        form.onsubmit = function() {      
+        form.onsubmit = function() {
             if (checkIsValid()) {
                 var params = queryString(document.location.search.substr(1), '&');
                 var cookie = queryString(document.cookie, ';');
@@ -192,15 +192,15 @@
                     returnUrl: params.returnUrl,
                     autoDetectTenancy: true
                 });
-                
+
                 abp.ui.setBusy();
                 $.ajax({
                     url: remoteServiceUrl + '/api/TokenAuth/Authenticate',
                     data: authenticateModel,
                     method: 'POST',
                     headers: {
-                        "Content-Type": "application/json", 
-                        "Accept": "application/json"                
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
                     },
                     error: function(request) {
                         abp.ui.clearBusy();
@@ -212,9 +212,9 @@
                     abp.ui.clearBusy();
                     if (response.result) {
                         handleAuthResult(response.result);
-                        sessionStorage.setItem('authenticateResult',  
+                        sessionStorage.setItem('authenticateResult',
                             JSON.stringify(response.result));
-                        sessionStorage.setItem('authenticateModel', 
+                        sessionStorage.setItem('authenticateModel',
                             authenticateModel);
                     }
                 });
@@ -241,12 +241,13 @@
             clearTimeout(inputCheckTimeout);
             inputCheckTimeout = setTimeout(checkIsValid, 300);
         }
-        
-        window.addEventListener('load', function() {                        
+
+        window.addEventListener('load', function() {
             $( document ).ready( function() {
                 $('.agree-rights').show();
 
                 var privacy = $('#privacy');
+                privacy.find('.download').attr('href', remoteServiceUrl + '/docs/SpersePrivacyPolicy.pdf');
                 privacy.on('show.bs.modal', function() {
                     $(this)
                         .addClass('modal-scrollfix')
@@ -260,6 +261,7 @@
                 });
 
                 var terms = $('#terms');
+                terms.find('.download').attr('href', remoteServiceUrl + '/docs/SperseTermsOfService.pdf');
                 terms.on('show.bs.modal', function() {
                     $(this)
                         .addClass('modal-scrollfix')

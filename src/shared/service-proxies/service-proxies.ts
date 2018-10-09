@@ -23430,13 +23430,16 @@ export class TenantSubscriptionServiceProxy {
 
     /**
      * @editionId (optional) 
+     * @maxUserCount (optional) 
      * @frequency (optional) 
      * @return Success
      */
-    requestPayment(editionId: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
+    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment?";
         if (editionId !== undefined)
             url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
+        if (maxUserCount !== undefined)
+            url_ += "maxUserCount=" + encodeURIComponent("" + maxUserCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(frequency);

@@ -9,8 +9,8 @@ import {
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PackageEditionConfigDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { environment } from '@root/environments/environment';
 import { Module } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'package-card',
@@ -28,7 +28,7 @@ export class PackageCardComponent implements OnChanges {
     @Input() module: Module;
     @HostBinding('class.isActive') public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
-    baseUrl = environment.appBaseUrl;
+    baseUrl = AppConsts.appBaseHref;
     lastActiveSelectedEditionUsersAmount: number;
     lastActiveFeatures: any[];
     lastActivePricePerMonth: number;
