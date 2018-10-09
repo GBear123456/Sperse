@@ -115,7 +115,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 items: [
                     {
                         name: 'discard',
-                        action: this.resetFullDialog.bind(this)
+                        action: this.resetFullDialog.bind(this, false)
                     }
                 ]
             }
@@ -265,18 +265,28 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         component.option('isValid', true);
     }
 
-    resetFullDialog() {
-        this.data.title = '';
-        this.data.isTitleValid = true;
-        this.userAssignmentComponent.reset();
-        this.data.appointment = {            
-            Type: CreateActivityDtoType.Event
+    resetFullDialog(forced = true) {
+        let resetInternal = () => {
+            this.data.title = '';
+            this.data.isTitleValid = true;
+            this.userAssignmentComponent.reset();
+            this.data.appointment = {            
+                Type: CreateActivityDtoType.Event
+            };
+
+            setTimeout(() => {
+                this.startDate.instance.option('isValid', true);
+                this.endDate.instance.option('isValid', true);
+            }, 100);
         };
 
-        setTimeout(() => {
-            this.startDate.instance.option('isValid', true);
-            this.endDate.instance.option('isValid', true);
-        }, 100);
+        if (forced)
+            resetInternal();
+        else
+            this.message.confirm(this.l('DiscardConfirmation'), '', (confirmed) => {
+                if (confirmed)
+                    resetInternal();
+            });
     }
 
     onSaveOptionSelectionChanged($event) {
