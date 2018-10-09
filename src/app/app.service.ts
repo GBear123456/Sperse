@@ -39,6 +39,7 @@ export class AppService extends AppServiceBase {
     private appLocalizationService: AppLocalizationService;
     private _setToolbarTimeout: number;
     private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
+    private subscriptionsBarsVisibilities = {};
 
     constructor(injector: Injector) {
         super(
@@ -94,6 +95,14 @@ export class AppService extends AppServiceBase {
             return _.find(this.moduleSubscriptions,
                 subscription) || subscription;
         }
+    }
+
+    subscriptionStatusBarIsHidden(): boolean {
+        return this.subscriptionsBarsVisibilities[this.getModule()];
+    }
+
+    hideSubscriptionStatusBar() {
+        Object.defineProperty(this.subscriptionsBarsVisibilities, this.getModule(), { value: true});
     }
 
     subscriptionIsExpiringSoon(name = undefined): boolean {

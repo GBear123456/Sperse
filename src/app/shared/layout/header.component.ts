@@ -60,7 +60,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-    private subscriptionsBarsVisibilities = {};
 
     constructor(
         injector: Injector,
@@ -201,11 +200,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionStatusBarIsHidden(): boolean {
-        return this.subscriptionsBarsVisibilities[this._appService.getModule()];
+        return this._appService.subscriptionStatusBarIsHidden();
     }
 
     hideSubscriptionStatusBar() {
-        Object.defineProperty(this.subscriptionsBarsVisibilities, this._appService.getModule(), { value: true});
+        this._appService.hideSubscriptionStatusBar();
     }
 
     subscriptionIsExpiringSoon() {

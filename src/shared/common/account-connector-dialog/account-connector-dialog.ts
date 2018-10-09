@@ -44,6 +44,9 @@ export class AccountConnectorDialogComponent implements OnInit {
         if (this.data && this.data.connector) {
             this.openConnector(this.data.connector);
         }
+        this.dialogRef.afterClosed().subscribe(() => {
+            window.scrollTo(0, 0);
+        });
     }
 
     openConnector(connector: AccountConnectors) {
