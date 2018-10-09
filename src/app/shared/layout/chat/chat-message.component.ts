@@ -31,7 +31,7 @@ export class ChatMessageComponent implements OnInit {
 
             let image = JSON.parse(this.message.message.substring('[image]'.length));
             this.chatMessage = AppConsts.remoteServiceBaseUrl +
-                '/Chat/GetUploadedObject?fileId=' +
+                '/api/Chat/GetUploadedObject?fileId=' +
                 image.id +
                 '&contentType=' +
                 image.contentType;
@@ -40,7 +40,7 @@ export class ChatMessageComponent implements OnInit {
             this.chatMessageType = 'file';
             let file = JSON.parse(this.message.message.substring('[file]'.length));
             this.chatMessage = AppConsts.remoteServiceBaseUrl +
-                '/Chat/GetUploadedObject?fileId=' +
+                '/api/Chat/GetUploadedObject?fileId=' +
                 file.id +
                 '&contentType=' +
                 file.contentType;

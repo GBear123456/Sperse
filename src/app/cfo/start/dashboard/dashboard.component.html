@@ -6,45 +6,47 @@
 
     <div class="content">
         <setup-steps></setup-steps>
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="dashboard-wrapper">
-                <section class="accounts-info">
-                    <header>
-                        <h2 class="dashboard-title">
-                            {{l('Accounts_Summary')}}
-                        </h2>
-                        <add-account-button></add-account-button>
-                    </header>
-                    <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
-                </section>
-                <section class="analytics">
-                    <div class="analytics-wrap">
-                        <div class="totalByPeriod">
-                            <app-totals-by-period waitForBankAccounts="true" waitForPeriods="true"></app-totals-by-period>
+        <div class="right">
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="dashboard-wrapper">
+                    <section class="accounts-info">
+                        <header>
+                            <h2 class="dashboard-title">
+                                {{l('Accounts_Summary')}}
+                            </h2>
+                            <add-account-button></add-account-button>
+                        </header>
+                        <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
+                    </section>
+                    <section class="analytics">
+                        <div class="analytics-wrap">
+                            <div class="totalByPeriod">
+                                <app-totals-by-period waitForBankAccounts="true" waitForPeriods="true"></app-totals-by-period>
+                            </div>
+                            <div class="trendByPeriod">
+                                <app-trend-by-period waitForBankAccounts="true" waitForPeriods="true"></app-trend-by-period>
+                            </div>
                         </div>
-                        <div class="trendByPeriod">
-                            <app-trend-by-period waitForBankAccounts="true" waitForPeriods="true"></app-trend-by-period>
+                    </section>
+                    <section class="synch-status">
+                        <div class="synch-section-wrap">
+                            <div class="links">
+                                <ul class="list-of-links">
+                                    <li *ngFor="let link of linksTo" class="link-item">
+                                        <a class="link" [routerLink]="link.route">{{l(link.name)}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="synch-item">
+                                <app-categorization-status waitForBankAccounts="true"></app-categorization-status>
+                            </div>
                         </div>
-                    </div>
-                </section>
-                <section class="synch-status">
-                    <div class="synch-section-wrap">
-                        <div class="links">
-                            <ul class="list-of-links">
-                                <li *ngFor="let link of linksTo" class="link-item">
-                                    <a class="link" [routerLink]="link.route">{{l(link.name)}}</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="synch-item">
-                            <app-categorization-status waitForBankAccounts="true"></app-categorization-status>
-                        </div>
-                    </div>
-                </section>
-            </div>
-            <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
-                                  useGlobalCache="true">
-            </bank-accounts-select>
-        </dx-scroll-view>
+                    </section>
+                </div>
+                <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
+                                      useGlobalCache="true">
+                </bank-accounts-select>
+            </dx-scroll-view>
+        </div>
     </div>
 </div>

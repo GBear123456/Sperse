@@ -111,7 +111,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     initUploaders(): void {
         this.logoUploader = this.createUploader(
-            '/TenantCustomization/UploadLogo',
+            '/api/TenantCustomization/UploadLogo',
             result => {
                 this._appSessionService.tenant.logoFileType = result.fileType;
                 this._appSessionService.tenant.logoId = result.id;
@@ -119,11 +119,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         );
 
         this.customCssUploader = this.createUploader(
-            '/TenantCustomization/UploadCustomCss',
+            '/api/TenantCustomization/UploadCustomCss',
             result => {
                 this.appSession.tenant.customCssId = result.id;
                 $('#TenantCustomCss').remove();
-                $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetCustomCss?id=' + this.appSession.tenant.customCssId + '" rel="stylesheet"/>');
+                $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss?id=' + this.appSession.tenant.customCssId + '" rel="stylesheet"/>');
             }
         );
     }

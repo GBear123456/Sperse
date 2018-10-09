@@ -101,7 +101,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     refreshWidgets() {
-        const element = this.getElementRef().nativeElement.querySelector('.dx-scrollable');
+        const element = this.getElementRef().nativeElement.querySelector('.content .right');
         abp.ui.setBusy(element);
         /** @todo check requests */
         this.bankAccountsService.load().pipe(

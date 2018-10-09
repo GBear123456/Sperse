@@ -9953,7 +9953,7 @@ export class CreditReportServiceProxy {
      * @return Success
      */
     downloadCreditReport(reportId: number | null | undefined): Observable<string> {
-        let url_ = this.baseUrl + "/Reports/CreditReport/DownloadCreditReport?";
+        let url_ = this.baseUrl + "/api/Reports/CreditReport/DownloadCreditReport?";
         if (reportId !== undefined)
             url_ += "reportId=" + encodeURIComponent("" + reportId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -19144,7 +19144,7 @@ export class QuickBookServiceProxy {
      * @return Success
      */
     processResult(state: string | null | undefined, code: string | null | undefined, realmId: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/QuickBook/ProcessResult?";
+        let url_ = this.baseUrl + "/api/QuickBook/ProcessResult?";
         if (state !== undefined)
             url_ += "State=" + encodeURIComponent("" + state) + "&"; 
         if (code !== undefined)
@@ -23430,13 +23430,16 @@ export class TenantSubscriptionServiceProxy {
 
     /**
      * @editionId (optional) 
+     * @maxUserCount (optional) 
      * @frequency (optional) 
      * @return Success
      */
-    requestPayment(editionId: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
+    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment?";
         if (editionId !== undefined)
             url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
+        if (maxUserCount !== undefined)
+            url_ += "maxUserCount=" + encodeURIComponent("" + maxUserCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(frequency);
@@ -26269,7 +26272,7 @@ export class XeroServiceProxy {
      * @return Success
      */
     getCertificate(): Observable<void> {
-        let url_ = this.baseUrl + "/Xero/GetCertificate";
+        let url_ = this.baseUrl + "/api/Xero/GetCertificate";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
