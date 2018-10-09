@@ -149,9 +149,8 @@
             }
             .calculations {
                 border-top: solid 1px #dee3e5;
-                border-bottom: 1px solid #dee3e5;
                 padding: 5px 0;
-                margin: 10px 0;
+                margin: 10px 0 0;
                 div {
                     display: flex;
                     justify-content: space-between;
@@ -167,11 +166,20 @@
                         letter-spacing: 0.4px;
                         text-align: right;
                         color: #424c56;
+                        &.subtotalPrice {
+                            text-decoration: line-through;
+                        }
                     }
+                }
+                &.hidden {
+                    height: 0;
+                    visibility: hidden;
                 }
             }
             .total {
                 display: flex;
+                border-top: 1px solid #dee3e5;
+                padding-top: 10px;
                 justify-content: space-between;
                 span {
                     font-size: 14px;
