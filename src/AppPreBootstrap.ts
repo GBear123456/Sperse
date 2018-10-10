@@ -55,7 +55,7 @@ export class AppPreBootstrap {
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
             AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
 
-            if (result.appBaseUrl !== AppConsts.appBaseUrl) {
+            if (environment.appBaseUrl !== AppConsts.appBaseUrl) {
                 abp.ajax({
                     url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent('' + AppConsts.tenantHostType),
                     method: 'GET',
