@@ -39,6 +39,8 @@ export class AccountConnectorChooserComponent extends AppComponentBase implement
                 disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Xero))
             }
         ];
+        /** Select quovo by default */
+        this.selectConnector(this.connectors[0]);
     }
 
     selectConnector(connector: AccountConnector) {

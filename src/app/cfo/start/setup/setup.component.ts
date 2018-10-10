@@ -32,25 +32,6 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.rootComponent = this.getRootComponent();
     }
 
-    ngAfterViewInit() {
-        this.setupContainerElement = this.getElementRef().nativeElement.querySelector('.cashflow-setup');
-    }
-
-    private finishSetup() {
-        this._cfoService.instanceChangeProcess(() => this.addAccount());
-    }
-
-    private addAccount() {
-        this.finishLoading(false, this.setupContainerElement);
-
-        if (!this.isInstanceAdmin)
-            return;
-
-        this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig).afterClosed().subscribe(e => {
-            this.isDisabled = false;
-        });
-    }
-
     ngOnInit(): void {
         super.ngOnInit();
         this.headlineConfig = {
@@ -66,14 +47,28 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
             setTimeout(() => this.openDialog(), 300);
     }
 
+    ngAfterViewInit() {
+        this.setupContainerElement = this.getElementRef().nativeElement.querySelector('.cashflow-setup');
+    }
+
+    private addAccount() {
+        this.finishLoading(false, this.setupContainerElement);
+
+        if (!this.isInstanceAdmin)
+            return;
+
+        this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig).afterClosed().subscribe(e => {
+            this.isDisabled = false;
+        });
+    }
+
     onStart(): void {
         this.isDisabled = true;
         this.startLoading(false, this.setupContainerElement);
-        if (this._cfoService.instanceId != null)
-            this.finishSetup();
-        else
-            this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
-                this.finishSetup();
+        this.addAccount();
+        if (this._cfoService.instanceId == null)
+            this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe(data => {
+                this._cfoService.instanceChangeProcess();
             });
     }
 
