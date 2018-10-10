@@ -209,9 +209,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     ngOnInit() {
         super.ngOnInit();
-
         if (!this.data.appointment.AssignedUserIds)
-            this.data.appointment.AssignedUserIds = [];
+            this.data.appointment.AssignedUserIds = [this.appSession.userId];
 
         if (!this.data.appointment.StageId && this.data.stages)
             this.data.appointment.StageId =
@@ -240,7 +239,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
 
-        (this.data.appointment.Id ? this.updateAppointment(): this.createAppointment())
+        (this.data.appointment.Id ? this.updateAppointment() : this.createAppointment())
             .pipe(finalize(() => { saveButton.disabled = false; }))
             .subscribe((res) => {
                 this.data.appointment.Id = res;
