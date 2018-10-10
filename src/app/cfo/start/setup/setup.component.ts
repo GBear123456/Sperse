@@ -1,7 +1,6 @@
-import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Injector, OnDestroy, ElementRef } from '@angular/core';
 
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { finalize } from 'rxjs/operators';
 
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -16,20 +15,26 @@ import { AppService } from '@app/app.service';
     styleUrls: ['./setup.component.less'],
     animations: [appModuleAnimation()]
 })
-export class SetupComponent extends CFOComponentBase implements OnInit, OnDestroy {
+export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
     private rootComponent: any;
     public headlineConfig;
     isDisabled = false;
     dialogConfig = new MatDialogConfig();
+    setupContainerElement: Element;
 
     constructor(injector: Injector,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _syncService: SyncServiceProxy,
         private _appService: AppService,
+        private _elementRef: ElementRef,
         public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
+    }
+
+    ngAfterViewInit() {
+        this.setupContainerElement = this._elementRef.nativeElement.querySelector('.cashflow-setup');
     }
 
     private finishSetup() {
@@ -37,7 +42,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     }
 
     private addAccount() {
-        this.finishLoading(true);
+        this.finishLoading(false, this.setupContainerElement);
 
         if (!this.isInstanceAdmin)
             return;
@@ -58,13 +63,13 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
 
-        if (this._appService.hasModuleSubscription()) 
+        if (this._appService.hasModuleSubscription())
             setTimeout(() => this.openDialog(), 300);
     }
 
     onStart(): void {
         this.isDisabled = true;
-        this.startLoading(true);
+        this.startLoading(false, this.setupContainerElement);
         if (this._cfoService.instanceId != null)
             this.finishSetup();
         else
