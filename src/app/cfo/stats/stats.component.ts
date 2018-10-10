@@ -169,7 +169,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.bankAccountsService = bankAccountsService;
 
         this._appService.narrowingPageContentWhenFixedFilter = false;
-        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 

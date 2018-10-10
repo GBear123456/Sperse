@@ -78,17 +78,19 @@
                 </div>
                 <div class="row align-items-center">
                     <div class="col-4 align-self-center">
-                        <dx-date-box #startDate
-                                     maxLength="10"
-                                     [type]="isAllDay ? 'date' : 'datetime'"
-                                     (onValueChanged)="onDateValueChanged($event)"
-                                     [max]="data.appointment.EndDate"
-                                     [(value)]="data.appointment.StartDate">
-                            <dx-validator>
-                                <dxi-validation-rule type="required"
-                                                     message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-date-box>
+                        <ng-container *ngFor="let type of ['date', 'datetime']">
+                            <dx-date-box #startDate
+                                         maxLength="10"
+                                         *ngIf="isAllDay ? type == 'date' : type =='datetime'"
+                                         [type]="type"
+                                         [max]="data.appointment.EndDate"
+                                         [(value)]="data.appointment.StartDate">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-date-box>
+                        </ng-container>
                     </div>
 
                     <div class="col-1 align-self-center">
@@ -96,17 +98,19 @@
                     </div>
 
                     <div class="col-4 align-self-center">
-                        <dx-date-box #endDate
-                                     maxLength="10"
-                                     [type]="isAllDay ? 'date' : 'datetime'"
-                                     (onValueChanged)="onDateValueChanged($event)"
-                                     [min]="data.appointment.StartDate"
-                                     [(value)]="data.appointment.EndDate">
-                            <dx-validator>
-                                <dxi-validation-rule type="required"
-                                                     message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
-                            </dx-validator>
-                        </dx-date-box>
+                        <ng-container *ngFor="let type of ['date', 'datetime']">
+                            <dx-date-box #endDate
+                                         *ngIf="isAllDay ? type == 'date' : type =='datetime'"
+                                         maxLength="10"
+                                         [type]="type"
+                                         [min]="data.appointment.StartDate"
+                                         [(value)]="data.appointment.EndDate">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-date-box>
+                        </ng-container>
                     </div>
 
                     <div class="col-3 align-self-center text-right">

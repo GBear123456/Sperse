@@ -98,7 +98,6 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._appStoreService.loadUserDictionaries();
-        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         _contactGroupService['data'] = {
             contactInfo: null,
             leadInfo: null,
@@ -526,7 +525,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (this.leadId || this.leadInfo)
             return LeadAssignedUsersStoreSelectors;
 
-        if(this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroupType.Partner)
             return PartnerAssignedUsersStoreSelectors;
 
         if (this.customerType == ContactGroupType.Client)

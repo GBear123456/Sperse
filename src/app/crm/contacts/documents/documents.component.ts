@@ -75,10 +75,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
         private cacheService: CacheService
     ) {
         super(injector);
-
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this.cacheService = this.cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
-
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),

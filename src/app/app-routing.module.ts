@@ -13,7 +13,6 @@ import {
 /** Third party imports */
 import { of } from '@node_modules/rxjs';
 import { CacheService } from 'ng2-cache-service';
-import { CacheStoragesEnum } from 'ng2-cache-service/dist/src/enums/cache-storages.enum';
 
 /** Application imports */
 import { AppComponent } from './app.component';
@@ -32,7 +31,7 @@ export class ModulePathResolverService implements Resolve<any> {
 
     resolve(route: ActivatedRouteSnapshot) {
         if (this.sessionService.userId !== null) {
-            this.cacheService.useStorage(CacheStoragesEnum.LOCAL_STORAGE).set('lastVisitedModule_' + this.sessionService.userId, route.url[0].path);
+            this.cacheService.set('lastVisitedModule_' + this.sessionService.userId, route.url[0].path);
         }
         return of('');
     }

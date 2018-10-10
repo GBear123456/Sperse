@@ -28,6 +28,8 @@ import { AppPreBootstrap } from './AppPreBootstrap';
 import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 import { RootStoreModule } from '@root/store';
+import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
+import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 
 export function appInitializerFactory(
     injector: Injector,
@@ -144,6 +146,10 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppSessionService,
         AppHttpConfiguration,
         AppHttpInterceptor,
+        {
+            provide: CacheStorageAbstract,
+            useClass: CacheLocalStorage
+        },
         CacheService,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },

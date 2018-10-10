@@ -784,7 +784,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this._calculatorService.subscribePeriodChange((value) => {
