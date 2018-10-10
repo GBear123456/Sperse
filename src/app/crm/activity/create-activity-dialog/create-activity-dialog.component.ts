@@ -189,9 +189,6 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     private activityTypeChanged(event) {
         this.activityTypeIndex = event.itemIndex;
         this.data.appointment.Type = event.itemData.value;
-
-        console.log(this.activityTypeIndex);
-        console.log(this.data.appointment.Type);
         this.initToolbarConfig();
     }
 
@@ -234,8 +231,6 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             action: this.save.bind(this)
         }];
         this.saveOptionsInit();
-
-        console.log(this.data);
     }
 
     private createEntity(): void {
@@ -267,7 +262,6 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     onDateValueChanged($event) {
-        console.log($event);
     }
 
     createAppointment() {
@@ -354,6 +348,10 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         this.data.appointment.OrderId = e.id;
     }
 
+    onStarsChanged(e) {
+        this.data.appointment.stars = e.addedItems.id;
+    }
+
     toggleUserAssignmen() {
         this.userAssignmentComponent.toggle();
     }
@@ -372,7 +370,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             this.data.title = '';
             this.data.isTitleValid = true;
             this.userAssignmentComponent.reset();
-            this.data.appointment = {            
+            this.data.appointment = {
                 Type: CreateActivityDtoType.Event
             };
 

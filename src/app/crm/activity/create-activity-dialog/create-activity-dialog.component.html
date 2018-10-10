@@ -36,7 +36,7 @@
                      [title]="l('Lead')"
                      [showConfirmation]="false"
                      [highlightSelected]="true"
-                     [selectedKeys]="leads"
+                     [selectedKeys]="[data.appointment.LeadId]"
                      [searchEnabled]="true"
                      (onItemSelected)="onLeadSelected($event)"
                      [list]="leads">
@@ -48,7 +48,7 @@
                      [title]="l('Client')"
                      [showConfirmation]="false"
                      [highlightSelected]="true"
-                     [selectedKeys]="clients"
+                     [selectedKeys]="[data.appointment.CustomerId]"
                      [searchEnabled]="true"
                      (onItemSelected)="onClientSelected($event)"
                      [list]="clients">
@@ -60,13 +60,13 @@
                      [title]="l('Order')"
                      [showConfirmation]="false"
                      [highlightSelected]="true"
-                     [selectedKeys]="orders"
+                     [selectedKeys]="[data.appointment.OrderId]"
                      [searchEnabled]="true"
                      (onItemSelected)="onOrderSelected($event)"
                      [list]="orders">
     </crm-static-list>
 
-    <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
+    <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
 
     <div class="tab-content">
         <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
@@ -116,51 +116,6 @@
                 </div>
             </div>
         </dx-validation-group>
-        <!--<div class="field">-->
-            <!--<label>{{l('Lead')}}</label>-->
-            <!--<dx-select-box-->
-                <!--name="Leads"-->
-                <!--displayExpr="name"-->
-                <!--valueExpr="id"-->
-                <!--[width]="'360px'"-->
-                <!--[dataSource]="leads"-->
-                <!--placeholder="Search..."-->
-                <!--[searchEnabled]="true"-->
-                <!--[searchTimeout]="0"-->
-                <!--[(value)]="data.appointment.LeadId"-->
-                <!--(onInput)="lookupItems($event)">-->
-            <!--</dx-select-box>-->
-        <!--</div>-->
-        <!--<div class="field">-->
-            <!--<label>{{l('Client')}}</label>-->
-            <!--<dx-select-box-->
-                <!--name="Clients"-->
-                <!--displayExpr="name"-->
-                <!--valueExpr="id"-->
-                <!--placeholder="Search..."-->
-                <!--[width]="'360px'"-->
-                <!--[dataSource]="clients"-->
-                <!--[searchEnabled]="true"-->
-                <!--[searchTimeout]="0"-->
-                <!--[(value)]="data.appointment.CustomerId"-->
-                <!--(onInput)="lookupItems($event)">-->
-            <!--</dx-select-box>-->
-        <!--</div>-->
-        <!--<div class="field">-->
-            <!--<label>{{l('Order')}}</label>-->
-            <!--<dx-select-box-->
-                <!--name="Orders"-->
-                <!--displayExpr="name"-->
-                <!--valueExpr="id"-->
-                <!--placeholder="Search..."-->
-                <!--[width]="'360px'"-->
-                <!--[dataSource]="orders"-->
-                <!--[searchEnabled]="true"-->
-                <!--[searchTimeout]="0"-->
-                <!--[(value)]="data.appointment.OrderId"-->
-                <!--(onInput)="lookupItems($event)">-->
-            <!--</dx-select-box>-->
-        <!--</div>-->
         <div class="field description">
             <div class="row">
                 <label class="col-12">{{l('Description')}}</label>
