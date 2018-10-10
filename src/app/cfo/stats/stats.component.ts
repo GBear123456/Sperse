@@ -7,7 +7,6 @@ import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -24,8 +23,6 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import {
     StatsFilter,
     BankAccountsServiceProxy,
@@ -41,7 +38,7 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService, StatsService],
+    'providers': [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, StatsService ],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })

@@ -48,10 +48,6 @@ export class StaticListComponent extends AppComponentBase {
             this.highlightSelectedFilters();
     }
 
-    // getListHeight() {
-    //     return this.height - 90;
-    // }
-
     apply() {
         if (this.listComponent && this.selectedItems && this.selectedItems.length) {
             this.changeItems();

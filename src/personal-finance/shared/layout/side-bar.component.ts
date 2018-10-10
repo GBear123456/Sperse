@@ -1,4 +1,4 @@
-﻿import { Component, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { SideBarMenu } from './side-bar-menu';
 import { SideBarMenuItem } from './side-bar-menu-item';
 
@@ -42,10 +42,6 @@ export class SideBarComponent extends AppComponentBase {
     }
 
     showMenuItem(menuItem): boolean {
-        if (menuItem.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' && this._appSessionService.tenant && !this._appSessionService.tenant.edition) {
-            return false;
-        }
-
         if (menuItem.permissionName) {
             return this.permission.isGranted(menuItem.permissionName);
         }

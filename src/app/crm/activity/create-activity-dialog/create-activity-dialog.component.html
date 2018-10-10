@@ -9,24 +9,25 @@
     </dx-context-menu>
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <crm-static-list #stagesList
-            [width]="'210px'"
-            [selectedKeys]="[data.appointment.StageId]"
-            [showConfirmation]="false"
-            [selectedItems]=""
-            [hideButtons]="true"
-            [highlightSelected]="true"
-            [targetSelector]="'[accessKey=ActivityStage]'"
-            (onItemSelected)="onStagesChanged($event)"
-            [showTitle]="false"
-            [funnelStyling]="true"
-            [list]="data.stages">
+                     [width]="'210px'"
+                     [selectedKeys]="[data.appointment.StageId]"
+                     [showConfirmation]="false"
+                     [selectedItems]=""
+                     [hideButtons]="true"
+                     [highlightSelected]="true"
+                     [targetSelector]="'[accessKey=ActivityStage]'"
+                     (onItemSelected)="onStagesChanged($event)"
+                     [showTitle]="false"
+                     [funnelStyling]="true"
+                     [list]="data.stages">
     </crm-static-list>
     <crm-user-assignment-list [multiSelection]="true"
-            [targetSelector]="'[accesskey=\'UserAssign\']'" 
-            [(selectedItemKey)]="data.appointment.AssignedUserIds" 
-            [hideButtons]="true"
-            [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
-            [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
+                              [targetSelector]="'[accesskey=\'UserAssign\']'"
+                              [(selectedItemKey)]="data.appointment.AssignedUserIds"
+                              [hideButtons]="true"
+                              [selectedKeys]="[data.appointment.AssignedUserIds]"
+                              [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
+                              [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
 
     <crm-static-list #leadsList
@@ -48,7 +49,7 @@
                      [title]="l('Client')"
                      [showConfirmation]="false"
                      [highlightSelected]="true"
-                     [selectedKeys]="[data.appointment.CustomerId]"
+                     [selectedKeys]="[data.appointment.ContactGroupId]"
                      [searchEnabled]="true"
                      (onItemSelected)="onClientSelected($event)"
                      [list]="clients">
@@ -66,7 +67,8 @@
                      [list]="orders">
     </crm-static-list>
 
-    <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true" (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
+    <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
+                    (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
 
     <div class="tab-content">
         <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
@@ -83,7 +85,8 @@
                                      [max]="data.appointment.EndDate"
                                      [(value)]="data.appointment.StartDate">
                             <dx-validator>
-                                <dxi-validation-rule type="required" message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="required"
+                                                     message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-date-box>
                     </div>
@@ -100,7 +103,8 @@
                                      [min]="data.appointment.StartDate"
                                      [(value)]="data.appointment.EndDate">
                             <dx-validator>
-                                <dxi-validation-rule type="required" message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="required"
+                                                     message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-date-box>
                     </div>

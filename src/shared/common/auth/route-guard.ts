@@ -10,6 +10,8 @@ import {
 } from '@angular/router';
 import { AppConsts } from 'shared/AppConsts';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { CacheService } from 'ng2-cache-service';
+import { CacheStoragesEnum } from 'ng2-cache-service/dist/src/enums/cache-storages.enum';
 
 @Injectable()
 export class RouteGuard implements CanActivate, CanActivateChild {
@@ -19,7 +21,8 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         private _permissionChecker: PermissionCheckerService,
         private _router: Router,
         private _sessionService: AppSessionService,
-    ) { }
+        private _cacheService: CacheService
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
@@ -55,18 +58,32 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     }
 
     selectBestRoute(): string {
-        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT && this._feature.isEnabled('CFO')) {
-            if (AppConsts.isMobile) {
-                return 'app/cfo';
+        if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
+
+            if (this._sessionService.userId !== null) {
+                const lastModuleName = this._cacheService.useStorage(CacheStoragesEnum.LOCAL_STORAGE).get('lastVisitedModule_' + this._sessionService.userId);
+                if (lastModuleName) {
+                    return 'app/' + lastModuleName;
+                }
             }
 
-            if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
+            if (!AppConsts.isMobile && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM.BaseAccess')) {
+                return 'app/crm';
+            }
 
-                if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
-                    return '/app/cfo/main/';
+            if (this._feature.isEnabled('CFO')) {
+                if (AppConsts.isMobile) {
+                    return 'app/cfo';
+                }
 
-                if (this._feature.isEnabled('CFO.Partner'))
-                    return '/app/cfo/user/';
+                if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
+
+                    if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
+                        return '/app/cfo/main/';
+
+                    if (this._feature.isEnabled('CFO.Partner'))
+                        return '/app/cfo/user/';
+                }
             }
         }
 

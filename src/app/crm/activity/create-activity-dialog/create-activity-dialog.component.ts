@@ -209,9 +209,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     ngOnInit() {
         super.ngOnInit();
-
         if (!this.data.appointment.AssignedUserIds)
-            this.data.appointment.AssignedUserIds = [];
+            this.data.appointment.AssignedUserIds = [this.appSession.userId];
 
         if (!this.data.appointment.StageId && this.data.stages)
             this.data.appointment.StageId =
@@ -219,6 +218,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
         if (!this.data.appointment.Type)
             this.data.appointment.Type = CreateActivityDtoType.Task;
+
+        this.data.appointment.Type == 'Event' ? this.activityTypeIndex = 1 : this.activityTypeIndex = 0;
 
         this.data.title = this.data.appointment.Title;
         this.data.editTitle = true;
@@ -230,6 +231,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             class: 'primary menu',
             action: this.save.bind(this)
         }];
+        this.initToolbarConfig();
         this.saveOptionsInit();
     }
 
@@ -237,7 +239,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
 
-        (this.data.appointment.Id ? this.updateAppointment(): this.createAppointment())
+        (this.data.appointment.Id ? this.updateAppointment() : this.createAppointment())
             .pipe(finalize(() => { saveButton.disabled = false; }))
             .subscribe((res) => {
                 this.data.appointment.Id = res;
@@ -257,7 +259,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
             orderId: this.data.appointment.OrderId,
-            customerId: this.data.appointment.CustomerId
+            customerId: this.data.appointment.ContactGroupId
         }
     }
 
@@ -341,7 +343,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     onClientSelected(e) {
-        this.data.appointment.CustomerId = e.id;
+        this.data.appointment.ContactGroupId = e.id;
     }
 
     onOrderSelected(e) {
@@ -349,7 +351,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     onStarsChanged(e) {
-        this.data.appointment.stars = e.addedItems.id;
+        this.data.appointment.Stars = e.addedItems.id;
     }
 
     toggleUserAssignmen() {

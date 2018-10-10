@@ -41,6 +41,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     isEditAllowed = false;
     changeRolesAllowed = false;
 
+    phoneInplaceEdit = false;
+    initialPhoneNumber: any;
+
     roles: any = [];
     emails: any = [];
     phones: any = [];
@@ -196,7 +199,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     getPhoneNumberPropData() {
-        let data = this.getPropData('phoneNumber');
+        let data = this.getPropData(this.PHONE_FIELD);
         data.displayValue = this.phoneFormatPipe.transform(data.value);
         return data;
     }
@@ -204,6 +207,24 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     updateValue(value, fieldName) {
         this.data.user[fieldName] = value;
         this.update(fieldName, value);
+    }
+
+    updatePhoneNumber(isValid, value) {
+        isValid && this.update(this.PHONE_FIELD, 
+            this.data.user.phoneNumber, () => {
+                this.phoneInplaceEdit = false;
+            }
+        );
+    }
+
+    closePhoneInPlaceEdit() {
+        this.phoneInplaceEdit = false;
+        this.data.user.phoneNumber = this.initialPhoneNumber;
+    }
+
+    phoneInPlaceEdit() {
+        this.phoneInplaceEdit = true;
+        this.initialPhoneNumber = this.data.user.phoneNumber;
     }
 
     roleUpdate(role) {
@@ -222,7 +243,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         });
     }
 
-    update(fieldName = undefined, value = undefined) {
+    update(fieldName = undefined, value = undefined, callback = undefined) {
         let sub, data = {
             id: this.userData.user.id
         };
@@ -246,6 +267,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
         this.startLoading();
         sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
+            callback && callback();
             this.notify.info(this.l('SavedSuccessfully'));
         });
     }
