@@ -17,29 +17,29 @@
                             <input type="hidden" Name="PaymentPeriodType" value="@tenant.PaymentPeriodType" />
                             <input type="hidden" Name="Gateway" value="@SubscriptionPaymentGatewayType.Paypal" />
 
-                            <div class="form-group m-form__group row">
-                                <label class="col-sm-4 control-label m--font-bold">{{l("Edition")}}</label>
-                                <div class="col-sm-8">
-                                    <p *ngIf="tenant.edition">
-                                        {{tenant.edition.displayName}}
-                                        <span *ngIf="tenant.edition.isFree" class="m-badge m-badge--success m-badge--wide">{{l("Free")}}</span>
-                                        <span *ngIf="tenant.isInTrialPeriod" class="m-badge m-badge--warning m-badge--wide">{{l("Trial")}}</span>
-                                </div>
-                            </div>
+                            <!--<div class="form-group m-form__group row">-->
+                                <!--<label class="col-sm-4 control-label m&#45;&#45;font-bold">{{l("Edition")}}</label>-->
+                                <!--<div class="col-sm-8">-->
+                                    <!--<p *ngIf="tenant.edition">-->
+                                        <!--{{tenant.edition.displayName}}-->
+                                        <!--<span *ngIf="tenant.edition.isFree" class="m-badge m-badge&#45;&#45;success m-badge&#45;&#45;wide">{{l("Free")}}</span>-->
+                                        <!--<span *ngIf="tenant.isInTrialPeriod" class="m-badge m-badge&#45;&#45;warning m-badge&#45;&#45;wide">{{l("Trial")}}</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
                             <div class="form-group m-form__group row">
                                 <label class="col-sm-4 control-label m--font-bold">{{l("SubscriptionStartDate")}}</label>
                                 <div class="col-sm-8">
                                     <p>{{ tenant.creationTimeString }}</p>
                                 </div>
                             </div>
-                            <div class="form-group m-form__group row">
-                                <label class="col-sm-4 control-label m--font-bold">{{l("SubscriptionEndDate")}}</label>
-                                <div class="col-sm-8">
-                                    <p *ngIf="tenant.edition">
-                                        <span>{{tenant.subscriptionDateString}}</span>
-                                    </p>
-                                </div>
-                            </div>
+                            <!--<div class="form-group m-form__group row">-->
+                                <!--<label class="col-sm-4 control-label m&#45;&#45;font-bold">{{l("SubscriptionEndDate")}}</label>-->
+                                <!--<div class="col-sm-8">-->
+                                    <!--<p *ngIf="tenant.edition">-->
+                                        <!--<span>{{tenant.subscriptionDateString}}</span>-->
+                                    <!--</p>-->
+                                <!--</div>-->
+                            <!--</div>-->
                         </form>
                     </tab>
                     <tab heading="{{l('PaymentMethods')}}" customClass="m-tabs__item">

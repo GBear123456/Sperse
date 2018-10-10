@@ -15,12 +15,11 @@ import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, Paginat
 import { TableModule } from 'primeng/table';
 
 /** Application imports */
-import { LayoutCommonModule } from './layout-common.module'
+import { LayoutCommonModule } from './layout-common.module';
 import { PlatformSelectComponent } from './platform-select.component';
 import { HeaderComponent } from './header.component';
 import { SideBarComponent } from './side-bar.component';
 import { TopBarComponent } from './top-bar.component';
-import { FooterComponent } from './footer.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { SideBarMenuComponent } from './nav/side-bar-menu.component';
@@ -32,7 +31,6 @@ let COMPONENTS = [
     HeaderComponent,
     TopBarComponent,
     SideBarComponent,
-    FooterComponent,
     SideBarMenuComponent,
     TopBarMenuComponent
 ];
