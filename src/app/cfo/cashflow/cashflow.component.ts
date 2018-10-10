@@ -14,8 +14,8 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { BehaviorSubject, Subject, Subscription, Observable, forkJoin, from, of, combineLatest } from 'rxjs';
-import { distinctUntilChanged, first, filter, pluck, mergeMap, map, toArray, skip, skipWhile, switchMap } from 'rxjs/operators';
+import { Observable, forkJoin, from, of } from 'rxjs';
+import { first, filter, pluck, mergeMap, map, toArray } from 'rxjs/operators';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
 import * as _ from 'underscore.string';
@@ -35,7 +35,6 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import {
     CashflowServiceProxy,
     StatsFilter,
@@ -52,7 +51,6 @@ import {
     InstanceType10,
     InstanceType17,
     InstanceType18,
-    SyncAccountBankDto,
     UpdateForecastInput,
     CashFlowStatsDetailDtoStatus,
     AddForecastInput,
@@ -123,7 +121,7 @@ export class CellOptions {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CategoryTreeServiceProxy, CacheService, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
+    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CategoryTreeServiceProxy, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;

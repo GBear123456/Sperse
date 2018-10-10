@@ -16,8 +16,7 @@ import { FilterStatesModel } from './filter-states.model';
 
 @Component({
     templateUrl: './filter-states.component.html',
-    styleUrls: ['./filter-states.component.less'],
-    providers: [ CacheService ]
+    styleUrls: ['./filter-states.component.less']
 })
 export class FilterStatesComponent extends AppComponentBase implements FilterComponent, OnDestroy, OnInit {
     items: {

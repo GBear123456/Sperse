@@ -3,7 +3,6 @@ import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSetti
 import { GeneralScope } from '../enums/general-scope.enum';
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
-import { CacheService } from 'ng2-cache-service';
 import { from } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -11,7 +10,7 @@ import { finalize } from 'rxjs/operators';
     selector: 'preferences-modal',
     templateUrl: 'preferences-dialog.component.html',
     styleUrls: ['preferences-dialog.component.less'],
-    providers: [CashflowServiceProxy, UserPreferencesService, CacheService]
+    providers: [ CashflowServiceProxy, UserPreferencesService ]
 })
 export class PreferencesDialogComponent extends CFOModalDialogComponent implements OnInit {
     GeneralScope = GeneralScope;

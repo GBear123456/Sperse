@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -8,8 +7,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
-import { Subject, Subscription, forkJoin } from 'rxjs';
-import { finalize, first, skipWhile, switchMap } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -24,8 +23,6 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import {
     StatsFilter,
     BankAccountsServiceProxy,
@@ -39,7 +36,7 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 @Component({
     templateUrl: './statements.component.html',
     styleUrls: ['./statements.component.less'],
-    providers: [BankAccountsServiceProxy, CashFlowForecastServiceProxy, CacheService]
+    providers: [ BankAccountsServiceProxy, CashFlowForecastServiceProxy ]
 })
 export class StatementsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
