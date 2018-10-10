@@ -180,13 +180,13 @@ export abstract class AppComponentBase implements OnDestroy {
         return 'data:image/jpeg;base64,' + imageBase64;
     }
 
-    startLoading(globally = false) {
+    startLoading(globally = false, element: any = null) {
         this.loading = true;
-        abp.ui.setBusy(globally ? undefined : this.getElementRef().nativeElement);
+        abp.ui.setBusy(globally ? undefined : (element || this.getElementRef().nativeElement));
     }
 
-    finishLoading(globally = false) {
-        abp.ui.clearBusy(globally ? undefined : this.getElementRef().nativeElement);
+    finishLoading(globally = false, element: any = null) {
+        abp.ui.clearBusy(globally ? undefined : (element || this.getElementRef().nativeElement));
         this.loading = false;
     }
 
