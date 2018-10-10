@@ -4,7 +4,21 @@
 
 :host {
     /deep/ .mat-dialog-header {
-        padding: 0px 10px 0px 20px!important;
+        padding: 0 10px 0 20px!important;
+    }
+
+    /deep/ .dx-toolbar [accesskey="select-box"] {
+        &::after {
+            color: #677380;
+            font-size: 13px;
+            font-weight: 300;
+            line-height: 1.85;
+            letter-spacing: 0.3px;
+        }
+
+        .dx-button-content::after {
+            background: url('../../../../assets/common/icons/down-arrow-icon.svg') !important;
+        }
     }
 
     /deep/ .mat-dialog-actions {
@@ -20,7 +34,7 @@
         height: 700px;
 
         .field {
-            margin-bottom: 20px;
+            margin: 0 15px 20px;
      
             label {
                 font-size: 12px;
@@ -28,8 +42,6 @@
                 letter-spacing: 0.7px;
                 color: #677380;
                 font-weight: 400;
-                width: 150px;
-                margin-right: 40px;
                 text-transform: uppercase;
                 &.comment {
                     vertical-align: top;
@@ -110,5 +122,39 @@
         font-size: 18px!important;
         text-align: center;
         line-height: 18px;
+    }
+
+    .date-selector {
+        /deep/ dx-date-box {
+            width: 100% !important;
+            max-width: 190px;
+
+            .dx-texteditor-input {
+                padding-right: 0 !important;
+                padding-left: 38px;
+            }
+
+            .dx-texteditor-buttons-container {
+                left: 0;
+                right: auto;
+            }
+        }
+    }
+
+    .all-day-checkbox {
+        .dx-field-label {
+            width: 70%;
+            padding-right: 0;
+            text-transform: capitalize;
+            color: #333;
+            font-weight: bold;
+        }
+        .dx-field-value {
+            width: 30%;
+
+            dx-check-box {
+                margin-top: 11px;
+            }
+        }
     }
 }

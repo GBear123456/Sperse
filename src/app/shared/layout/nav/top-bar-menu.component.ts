@@ -29,10 +29,6 @@ export class TopBarMenuComponent extends AppComponentBase implements OnInit {
     }
 
     showMenuItem(menuItem): boolean {
-        if (menuItem.permissionName === 'Pages.Administration.Tenant.SubscriptionManagement' && this._appSessionService.tenant && !this._appSessionService.tenant.edition) {
-            return false;
-        }
-
         if (menuItem.permissionName) {
             return this.permission.isGranted(menuItem.permissionName);
         }
