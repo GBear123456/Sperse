@@ -14,8 +14,7 @@ import {
     ActivityServiceProxy,
     CreateActivityDtoType,
     CreateActivityDto,
-    UpdateActivityDto,
-    ImportInputImportType
+    UpdateActivityDto
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
@@ -52,13 +51,13 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     orders: any = [];
     clients: any = [];
 
-    saveButtonId: string = 'saveActivityOptions';
+    saveButtonId = 'saveActivityOptions';
     saveContextMenuItems = [];
 
     toolbarConfig = [];
     isAllDay = false;
 
-    activityTypeIndex: number = 0;
+    activityTypeIndex = 0;
 
     constructor(
         injector: Injector,
@@ -70,8 +69,6 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
-
         this.saveContextMenuItems = [
             {text: this.l('SaveAndAddNew'), selected: false},
             {text: this.l('SaveAndClose'), selected: false}
@@ -260,7 +257,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             leadId: this.data.appointment.LeadId,
             orderId: this.data.appointment.OrderId,
             customerId: this.data.appointment.ContactGroupId
-        }
+        };
     }
 
     onDateValueChanged($event) {
@@ -283,8 +280,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         return moment(date);
     }
 
-    private afterSave(): void
-    {
+    private afterSave(): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
@@ -406,7 +402,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             search = this.latestSearchPhrase = $event.event.target.value;
 
         if (this[uri.toLowerCase()].length) {
-            setTimeout(() => {$event.event.target.value = search;});
+            setTimeout(() => { $event.event.target.value = search; });
             this[uri.toLowerCase()] = [];
         }
 
@@ -418,7 +414,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 if (search == this.latestSearchPhrase) {
                     this[uri.toLowerCase()] = res;
                     $event.component.option('opened', true);
-                    setTimeout(() => {$event.event.target.value = search;});
+                    setTimeout(() => { $event.event.target.value = search; });
                     if (!res['length'])
                         $event.component.option('noDataText', this.l('NoItemsFound'));
                 } else

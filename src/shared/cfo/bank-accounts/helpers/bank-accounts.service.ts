@@ -74,7 +74,6 @@ export class BankAccountsService {
         this.cfoService.instanceTypeChanged$.subscribe(instanceType => {
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceType}`;
         });
-        this.cacheService = this.cacheService.useStorage(0);
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
 

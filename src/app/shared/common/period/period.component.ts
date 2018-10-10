@@ -1,6 +1,5 @@
 import { Component, Output, Injector, EventEmitter, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 
@@ -31,8 +30,6 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
         private _cacheService: CacheService
     ) {
         super(injector);
-
-        this._cacheService = this._cacheService.useStorage(AppConsts.CACHE_TYPE_LOCAL_STORAGE);
         if (this._cacheService.exists(this.getCacheKey(this.PERIOD_CACHE_KEY)))
             this.selectedPeriod = this._cacheService.get(this.getCacheKey(this.PERIOD_CACHE_KEY));
         else
