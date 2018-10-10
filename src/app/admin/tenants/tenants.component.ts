@@ -108,8 +108,6 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
 
         this._tenantService.getTenants(
             this.filters.filterText,
-            this.filters.subscriptionEndDateRangeActive ? this.filters.subscriptionEndDateStart : undefined,
-            this.filters.subscriptionEndDateRangeActive ? this.filters.subscriptionEndDateEnd : undefined,
             this.filters.creationDateRangeActive ? this.filters.creationDateStart : undefined,
             this.filters.creationDateRangeActive ? this.filters.creationDateEnd : undefined,
             this.filters.selectedEditionId,

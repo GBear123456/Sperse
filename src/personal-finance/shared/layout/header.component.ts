@@ -255,19 +255,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     subscriptionIsExpiringSoon(): boolean {
-        if (this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return moment().utc().add(AppConsts.subscriptionExpireNootifyDayCount, 'days') >= moment(this._appSessionService.tenant.subscriptionEndDateUtc);
-        }
-
         return false;
     }
 
     getSubscriptionExpiringDayCount(): number {
-        if (!this._appSessionService.tenant.subscriptionEndDateUtc) {
-            return 0;
-        }
-
-        return Math.round(moment(this._appSessionService.tenant.subscriptionEndDateUtc).diff(moment().utc(), 'days', true));
+        return 0;
     }
 
     getExpireNotification(localizationKey: string): string {
