@@ -14,6 +14,7 @@ import * as _ from 'underscore';
 export class StaticListComponent extends AppComponentBase {
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Input() width: string;
+    @Input() height: number;
     @Input() title: string;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
@@ -22,11 +23,13 @@ export class StaticListComponent extends AppComponentBase {
     @Input() updateConfirmationTitle: string;
     @Input() updateConfirmationMessage: string;
     @Input() hideButtons = false;
+    @Input() searchEnabled = false;
 
     @Input() list: any;
     @Input() showTitle = true;
 
     listComponent: any;
+    listHeight: number;
     tooltipVisible: boolean;
     @Input() selectedItems: any = [];
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
@@ -69,6 +72,7 @@ export class StaticListComponent extends AppComponentBase {
 
     onInitialized($event) {
         this.listComponent = $event.component;
+        this.listHeight = this.height - 90;
     }
 
     highlightSelectedFilters() {

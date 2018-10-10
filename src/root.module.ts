@@ -55,7 +55,7 @@ export function appInitializerFactory(
                         if (!appSessionService.tenant || !appSessionService.tenant.logoId) {
                             $('meta[property=og\\:image]').attr('content', window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png');
                         } else {
-                            $('meta[property=og\\:image]').attr('content', AppConsts.remoteServiceBaseUrl + '/TenantCustomization/GetLogo?id=' + appSessionService.tenant.logoId);
+                            $('meta[property=og\\:image]').attr('content', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + appSessionService.tenant.logoId);
                         }
 
                         if (shouldLoadLocale()) {

@@ -83,7 +83,7 @@
             if (window['logoImage']) {
                 logoImage.setAttribute('src',
                     loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
-                    remoteServiceUrl + '/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId:
+                    remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
                     getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
                 );
                 logoImage.style.display = 'block';

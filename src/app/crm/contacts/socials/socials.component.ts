@@ -89,7 +89,7 @@ export class SocialsComponent extends AppComponentBase {
             url: data && data.url,
             usageTypeId: data && data.linkTypeId ? data.linkTypeId : AppConsts.otherLinkTypeId,
             isConfirmed: Boolean(data && data.isConfirmed),
-            isActive: Boolean(data && data.isActive),
+            isActive: Boolean(data ? data.isActive: true),
             comment: data && data.comment,
             deleteItem: (event) => {
                 this.deleteLink(data.id);

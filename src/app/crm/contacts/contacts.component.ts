@@ -14,7 +14,7 @@ import * as _ from 'underscore';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupType } from '@shared/AppEnums';
+import { ContactGroupType, ContactGroupStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactGroupServiceProxy,
@@ -154,8 +154,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Contact Information', route: 'contact-information'},
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
-                hidden: !this.permission.isGranted(contact.userId ?
-                    'Pages.Administration.Users' : 'Pages.Administration.Users.Create'),
+                hidden: !(this.permission.isGranted(contact.userId ?
+                    'Pages.Administration.Users' : 'Pages.Administration.Users.Create') &&
+                    (contact.userId || this.contactInfo.statusId != ContactGroupStatus.Prospective)),
                 route: 'user-information'
             },
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},

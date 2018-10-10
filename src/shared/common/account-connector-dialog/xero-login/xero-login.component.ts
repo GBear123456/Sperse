@@ -29,7 +29,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
         private _syncAccountServiceProxy: SyncAccountServiceProxy
     ) {
         super(injector);
-        this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + '/Xero/GetCertificate';
+        this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + '/api/Xero/GetCertificate';
     }
 
     ngOnInit() {

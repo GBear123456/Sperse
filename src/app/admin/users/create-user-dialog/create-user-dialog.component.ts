@@ -140,7 +140,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
                 location: 'after', items: [
                     {
                         name: 'discard',
-                        action: this.resetFullDialog.bind(this)
+                        action: this.resetFullDialog.bind(this, false)
                     }
                 ]
             }
@@ -281,26 +281,36 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         $event.stopPropagation();
     }
 
-    resetFullDialog() {
-        this.data.title = '';
-        this.setRandomPassword = false;
-        this.sendActivationEmail = true;
-        this.user = new UserEditDto();
-        this.photoOriginalData = undefined;
-        this.photoThumbnailData = undefined;
-        this.roles.forEach((role, index) => {
-            role.isAssigned = this.initialRoles[index].isAssigned;
-        });
+    resetFullDialog(forced = true) {
+        let resetInternal = () => {
+            this.data.title = '';
+            this.setRandomPassword = false;
+            this.sendActivationEmail = true;
+            this.user = new UserEditDto();
+            this.photoOriginalData = undefined;
+            this.photoThumbnailData = undefined;
+            this.roles.forEach((role, index) => {
+                role.isAssigned = this.initialRoles[index].isAssigned;
+            });
 
-        if (this.orgUnits.length)
-            this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
-                allOrganizationUnits: this.orgUnits,
-                selectedOrganizationUnits: [this.orgUnits[0].code]
-            };
+            if (this.orgUnits.length)
+                this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
+                    allOrganizationUnits: this.orgUnits,
+                    selectedOrganizationUnits: [this.orgUnits[0].code]
+                };
 
-        setTimeout(() =>
-            this.setComponentToValid(
-                this.phoneNumber.instance));
+            setTimeout(() =>
+                this.setComponentToValid(
+                    this.phoneNumber.instance));
+        };
+
+        if (forced)
+            resetInternal();
+        else
+            this.message.confirm(this.l('DiscardConfirmation'), '', (confirmed) => {
+                if (confirmed)
+                    resetInternal();
+            });
     }
 
     onSaveOptionSelectionChanged($event) {

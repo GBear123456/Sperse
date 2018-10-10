@@ -259,7 +259,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 items: [
                     {
                         name: 'discard',
-                        action: this.resetFullDialog.bind(this)
+                        action: this.resetFullDialog.bind(this, false)
                     }
                 ]
             }
@@ -791,41 +791,51 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.checkSimilarCustomers();
     }
 
-    resetFullDialog() {
-        this.contactTypes.forEach((type) => {
-            this.resetComponent(this['emails' + this.capitalize(type)]);
-            this['phones' + this.capitalize(type)].reset();
-            this.clearButtonVisible[type]['emails'] = false;
-            this.clearButtonVisible[type]['phones'] = false;
-            this.addButtonVisible[type]['emails'] = false;
-            this.addButtonVisible[type]['phones'] = false;
-            this.contacts.emails[type] = [];
-            this.contacts.phones[type] = [];
-            this.emails[type] = [];
-            this.phoneExtension[type] = undefined;
-            this.contacts.addresses[type] = {};
-            this.notes[type] = undefined;
-        });
+    resetFullDialog(forced = true) {
+        let resetInternal = () => {
+            this.contactTypes.forEach((type) => {
+                this.resetComponent(this['emails' + this.capitalize(type)]);
+                this['phones' + this.capitalize(type)].reset();
+                this.clearButtonVisible[type]['emails'] = false;
+                this.clearButtonVisible[type]['phones'] = false;
+                this.addButtonVisible[type]['emails'] = false;
+                this.addButtonVisible[type]['phones'] = false;
+                this.contacts.emails[type] = [];
+                this.contacts.phones[type] = [];
+                this.emails[type] = [];
+                this.phoneExtension[type] = undefined;
+                this.contacts.addresses[type] = {};
+                this.notes[type] = undefined;
+            });
 
-        this.person = new PersonInfoDto();
-        this.emailType.personal = this.emailTypePersonalDefault;
-        this.phoneType.personal = this.phoneTypePersonalDefault;
-        this.emailType.business = this.emailTypeBusinessDefault;
-        this.phoneType.business = this.phoneTypeBusinessDefault;
-        this.addressTypesLoad();
-        this.data.title = undefined;
-        this.data.isTitleValid = true;
-        this.company = undefined;
-        this.similarCustomers = [];
-        this.photoOriginalData = undefined;
-        this.photoThumbnailData = undefined;
-        this.title = undefined;
-        this.website = undefined;
-        this.tagsComponent.reset();
-        this.listsComponent.reset();
-        this.userAssignmentComponent.reset();
-        this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
-        this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
+            this.person = new PersonInfoDto();
+            this.emailType.personal = this.emailTypePersonalDefault;
+            this.phoneType.personal = this.phoneTypePersonalDefault;
+            this.emailType.business = this.emailTypeBusinessDefault;
+            this.phoneType.business = this.phoneTypeBusinessDefault;
+            this.addressTypesLoad();
+            this.data.title = undefined;
+            this.data.isTitleValid = true;
+            this.company = undefined;
+            this.similarCustomers = [];
+            this.photoOriginalData = undefined;
+            this.photoThumbnailData = undefined;
+            this.title = undefined;
+            this.website = undefined;
+            this.tagsComponent.reset();
+            this.listsComponent.reset();
+            this.userAssignmentComponent.reset();
+            this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
+            this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
+        };
+
+        if (forced)
+            resetInternal();
+        else
+            this.message.confirm(this.l('DiscardConfirmation'), '', (confirmed) => {
+                if (confirmed)
+                    resetInternal();
+            });
     }
 
     onSaveOptionSelectionChanged($event) {
