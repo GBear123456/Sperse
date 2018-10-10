@@ -29,7 +29,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
         private dialog: MatDialog
     ) {
         super(injector);
-        this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
+        this._syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
             });

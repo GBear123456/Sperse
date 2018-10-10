@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AccountServiceProxy, ActivateEmailInput, ResolveTenantIdInput } from '@shared/service-proxies/service-proxies';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
+import { isEqual } from 'lodash';
 
 @Component({
     template: `
@@ -35,6 +36,7 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
         this.model.c = this._activatedRoute.snapshot.queryParams['c'];
 
         this._accountService.resolveTenantId(new ResolveTenantIdInput({ c: this.model.c })).subscribe((tenantId) => {
+            if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
             if (this._appSessionService.changeTenantIfNeeded(tenantId)) {
                 return; //changeTenantIfNeeded will reload page
             }

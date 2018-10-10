@@ -14,6 +14,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 })
 export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
+    @Output() onComplete: EventEmitter<any> = new EventEmitter();
     tooltipVisible = false;
     quovoHandler: QuovoHandler;
     createAccountAvailable: boolean;
@@ -25,7 +26,7 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
         private dialog: MatDialog
     ) {
         super(injector);
-        this._syncAccountServiceProxy.isAvailableCreateAccount(InstanceType[this.instanceType], this.instanceId)
+        this._syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
             .subscribe((result) => {
                 this.createAccountAvailable = result;
             });
