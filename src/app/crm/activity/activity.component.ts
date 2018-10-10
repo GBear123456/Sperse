@@ -165,14 +165,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     initToolbarConfig() {
         this._appService.updateToolbar([
             {
-                location: 'before', items: [
-                    {
-                        name: 'back',
-                        action: Function()
-                    }
-                ]
-            },
-            {
                 location: 'after',
                 areItemsDependent: true,
                 items: [
@@ -195,6 +187,21 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'fullscreen',
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);                          
+                            !this.showPipeline && setTimeout(() => {                                  
+                                this.schedulerComponent.instance.repaint();
+                            }, 100);
+                        }
+                    }
+                ]
             }
         ]);
     }
@@ -202,6 +209,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     onContentReady($event) {
         //!!VP this part fix scroll appearance for month view
         setTimeout(() => this.finishLoading(), 2000);
+/*
         if (this.currentView == 'month')
             setTimeout(() => {
                 let scroll = $event.element.getElementsByClassName('dx-scrollable-content')[0];
@@ -210,6 +218,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 }
                 $event.component.getWorkSpaceScrollable().update();
             }, 100);
+*/
     }
 
     onAppointmentFormCreated(event) {

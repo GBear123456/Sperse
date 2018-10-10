@@ -7,9 +7,14 @@
     position: relative;
     top: 74px;
 
-    /deep/ dx-scheduler {
-        margin: 30px;
+    &.fullscreen {
+        top: 0px !important;
+        /deep/ dx-scheduler {
+            height: calc(~"100vh - 60px")!important;
+        }
+    }
 
+    /deep/ dx-scheduler {
         .dx-loadpanel-content {
             display: none;
         }
@@ -20,7 +25,7 @@
             border-radius: 7px;
         }
         .dx-scheduler-work-space-month .dx-scheduler-date-table-cell div {
-            min-height: 200px;
+
         }
         .dx-scheduler-date-time-indicator {
             height: 2px!important;
@@ -34,6 +39,13 @@
             color: #00aeef!important;
             &:before {
                 background-color: #00aeef!important;
+            }
+        }
+        .dx-scheduler-work-space-month {
+            .dx-scheduler-date-table {
+                tr:last-child {
+                    display: none;
+                }
             }
         }
     }
