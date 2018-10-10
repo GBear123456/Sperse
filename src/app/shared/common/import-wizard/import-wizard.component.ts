@@ -481,14 +481,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                                 id: index,
                                 sourceField: field || this.l('NoName', [++noNameCount]),
                                 sampleValue: this.lookForValueExample(index),
-                                mappedField: (this.lookupFields.every((item) => {                                      
+                                mappedField: field ? (this.lookupFields.every((item) => {                                      
                                     let isSameField = suggestionField ? suggestionField.outputFieldName == item.id: 
                                         (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase()
                                             .indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0);
                                     if (isSameField)
                                         fieldId = item.id;
                                     return !isSameField;
-                                }) ? '' : fieldId)
+                                }) ? '' : fieldId): undefined
                             };
                         });
 
