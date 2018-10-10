@@ -26,7 +26,6 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         private _instanceServiceProxy: InstanceServiceProxy,
         private _syncService: SyncServiceProxy,
         private _appService: AppService,
-        private _elementRef: ElementRef,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -34,7 +33,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     ngAfterViewInit() {
-        this.setupContainerElement = this._elementRef.nativeElement.querySelector('.cashflow-setup');
+        this.setupContainerElement = this.getElementRef().nativeElement.querySelector('.cashflow-setup');
     }
 
     private finishSetup() {
