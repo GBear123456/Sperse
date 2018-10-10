@@ -84,7 +84,14 @@
                     </div>
                     <div class="section-item">
                         <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
-                        <inplace-edit [data]="getPhoneNumberPropData()" [mask]="masks.phone" [maskInvalidMessage]="l('PhoneValidationError')" (valueChanged)="updateValue($event, PHONE_FIELD)"></inplace-edit>
+                        <ul *ngIf="!phoneInplaceEdit">
+                            <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}</li>
+                        </ul>
+                        <div class="inplace-edit-wrapper" *ngIf="phoneInplaceEdit">
+                            <country-phone-number [(phoneNumber)]="data.user.phoneNumber" #countryPhoneNumber></country-phone-number>
+                            <dx-button class="update" icon="todo" (onClick)="updatePhoneNumber(countryPhoneNumber.isValid())"></dx-button>
+                            <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
+                        </div>
                     </div>
                     <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{l('PasswordReset')}}</button>                    
                     <div class="title">

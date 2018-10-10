@@ -3,6 +3,48 @@
     display: block;
     position: relative;
 
+    .inplace-edit-wrapper {
+        height: 35px;
+
+        /deep/ input {
+            margin: 0px;
+            padding: 0 0 0 5px;
+            font-size: 15px;
+            font-weight: 300;
+            line-height: 1.67;
+            letter-spacing: 0.3px;
+            text-align: left;
+            font-family: Montserrat;
+        }
+
+        dx-text-box, dx-button, international-phone-number {
+            display: inline-block;
+        }
+        
+        dx-text-box, international-phone-number {
+            min-width: 230px;
+            width: 70%;
+        }
+        
+        /deep/ dx-button {
+            &.update i {
+                color: #00aeef;
+            }
+            &.exit i {
+                color: #f44336;
+            }
+
+            border: none;
+            position: relative;
+        }
+        
+        dx-validation-group {
+            /deep/ dx-button {
+              top: -14px;
+            }
+        }
+    }
+
     /deep/ .mat-tab-label {
         color: #677380;
         text-transform: uppercase;
@@ -98,6 +140,10 @@
     .section-item {
         display: flex;
         line-height: 35px;
+
+        ul {
+            margin-bottom: 0px;
+        }
     }
 
     /deep/ .validation-error-list {
