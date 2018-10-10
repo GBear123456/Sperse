@@ -19,10 +19,8 @@ try
     Write-Host "Getting context for '$StorageName' storage ..."
     $StorageContext = New-AzureStorageContext -StorageAccountName $StorageName -StorageAccountKey $StorageKey
     
-    Write-Host "Creating container '$ContainerName' in storage '$StorageName' ..."
-    New-AzureStorageContainer -Name $ContainerName -Context $StorageContext -Permission $ContainerPublicAccessLevel -ErrorAction Stop
-    
-    $DestContainer = Get-AzureStorageContainer -Context $StorageContext -ErrorAction Stop | where-object {$_.Name -eq $DestContainerName} 
+    Write-Host "Checking container '$DestContainerName' exists ..."
+    $DestContainer = Get-AzureStorageContainer -Context $StorageContext -ErrorAction Stop | where-object {$_.Name -eq $DestContainerName}
     
     If($DestContainer) 
     {
