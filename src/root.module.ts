@@ -9,7 +9,8 @@ import { RouteReuseStrategy } from '@angular/router';
 /** Third party imports */
 import { AbpModule } from '@abp/abp.module';
 import { GestureConfig } from '@angular/material';
-import * as _ from 'lodash';
+import { CacheService } from 'ng2-cache-service';
+import { filter } from 'lodash';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -94,7 +95,7 @@ export function convertAbpLocaleToAngularLocale(locale: string): string {
         return locale;
     }
 
-    let localeMapings = _.filter(AppConsts.localeMappings, { from: locale });
+    let localeMapings = filter(AppConsts.localeMappings, { from: locale });
     if (localeMapings && localeMapings.length) {
         return localeMapings[0]['to'];
     }
@@ -143,6 +144,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppSessionService,
         AppHttpConfiguration,
         AppHttpInterceptor,
+        CacheService,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         { provide: APP_BASE_HREF, useValue: getDocumentOrigin() },

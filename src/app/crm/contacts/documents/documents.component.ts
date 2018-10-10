@@ -96,12 +96,12 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     private storeUrlToCache(id: string, urlInfo: GetUrlOutput) {
-        this.cacheService.set(id, urlInfo, 
+        this.cacheService.set(id, urlInfo,
             { maxAge: urlInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
     }
 
     private storeWopiRequestInfoToCache(id: string, requestInfo: WopiRequestOutcoming) {
-        this.cacheService.set(id, requestInfo, 
+        this.cacheService.set(id, requestInfo,
             { maxAge: requestInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
     }
 
@@ -119,8 +119,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             }));
     }
 
-    private getViewWopiRequestInfoObservable(): Observable<WopiRequestOutcoming>
-    {
+    private getViewWopiRequestInfoObservable(): Observable<WopiRequestOutcoming> {
         let id = this.currentDocumentInfo.id;
         if (this.cacheService.exists(id)) {
             let requestInfo = this.cacheService.get(id) as WopiRequestOutcoming;
@@ -131,7 +130,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             flatMap((response) => {
                 this.storeWopiRequestInfoToCache(id, response);
                 return of(response);
-            }));;
+            }));
     }
 
     initViewerToolbar(conf: any = {}) {
@@ -273,7 +272,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                 this._documentService['data'] = {
                     groupId: groupId,
                     source: this.dataSource = result
-                }
+                };
                 callback && callback();
             });
     }
@@ -446,7 +445,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
                         let reader = new FileReader();
                         reader.addEventListener('loadend', () => {
                             let content = StringHelper.getBase64(reader.result);
-                            this.previewContent = viewerType == this.TEXT_VIEWER ? atob(content): content;
+                            this.previewContent = viewerType == this.TEXT_VIEWER ? atob(content) : content;
                             this.showViewerType = viewerType;
                             this.openDocumentMode = true;
                         });
