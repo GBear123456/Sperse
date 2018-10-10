@@ -82,9 +82,10 @@ export class AppConsts {
     static readonly defaultCompanyName = 'Unknown company';
 
     /* System Action IDs */
-    static readonly SYS_ID_CRM_CANCEL_LEAD       = 'CRM.CancelLead';
-    static readonly SYS_ID_CRM_UPDATE_LEAD_STAGE = 'CRM.UpdateLeadStage';
-    static readonly SYS_ID_CRM_PROCESS_LEAD      = 'CRM.ProcessLead';
+    static readonly SYS_ID_CRM_CANCEL_LEAD           = 'CRM.CancelLead';
+    static readonly SYS_ID_CRM_UPDATE_LEAD_STAGE     = 'CRM.UpdateLeadStage';
+    static readonly SYS_ID_CRM_PROCESS_LEAD          = 'CRM.ProcessLead';
+    static readonly SYS_ID_CRM_UPDATE_ACTIVITY_STAGE = 'CRM.UpdateActivityStage';
 
     static readonly defaultCountry = 'US';
     static readonly defaultCountryCode = '+1';

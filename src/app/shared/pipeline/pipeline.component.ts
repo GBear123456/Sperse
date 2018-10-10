@@ -147,7 +147,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             copySortSource: false,
             ignoreInputTextSelection: false,
             moves: (el, source) => {
-                let stage = this.getStageByElement(el);
+                let stage = this.getStageByElement(source);
                 if (stage.id == this.firstStage.id || stage.id == this.lastStage.id)
                     return false;
 
@@ -264,6 +264,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             stage['lastLeadId'] = Math.min((page ? stage['lastLeadId']: undefined) || Infinity, lead['Id']);
                             return lead;
                         });
+                    if (!this.totalsURI)
+                        stage['total'] = dataSource.totalCount();
                     stage['full'] = (stage['leads'].length >= stage['total']);
                 } else  {
                     if (!page)
