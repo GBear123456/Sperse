@@ -20721,8 +20721,8 @@ export class SyncAccountServiceProxy {
      * @instanceId (optional) 
      * @return Success
      */
-    isAvailableCreateAccount(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/IsAvailableCreateAccount?";
+    createIsAllowed(instanceType: InstanceType90 | null | undefined, instanceId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/CreateIsAllowed?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -20739,11 +20739,11 @@ export class SyncAccountServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processIsAvailableCreateAccount(response_);
+            return this.processCreateIsAllowed(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processIsAvailableCreateAccount(<any>response_);
+                    return this.processCreateIsAllowed(<any>response_);
                 } catch (e) {
                     return <Observable<boolean>><any>_observableThrow(e);
                 }
@@ -20752,7 +20752,7 @@ export class SyncAccountServiceProxy {
         }));
     }
 
-    protected processIsAvailableCreateAccount(response: HttpResponseBase): Observable<boolean> {
+    protected processCreateIsAllowed(response: HttpResponseBase): Observable<boolean> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22636,74 +22636,6 @@ export class TenantPaymentSettingsServiceProxy {
 }
 
 @Injectable()
-export class TenantRegistrationServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    completeTenantRegistration(input: CompleteTenantRegistrationInput | null | undefined): Observable<CompleteTenantRegistrationOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantRegistration/CompleteTenantRegistration";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompleteTenantRegistration(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompleteTenantRegistration(<any>response_);
-                } catch (e) {
-                    return <Observable<CompleteTenantRegistrationOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CompleteTenantRegistrationOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCompleteTenantRegistration(response: HttpResponseBase): Observable<CompleteTenantRegistrationOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CompleteTenantRegistrationOutput.fromJS(resultData200) : new CompleteTenantRegistrationOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CompleteTenantRegistrationOutput>(<any>null);
-    }
-}
-
-@Injectable()
 export class TenantSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -23538,6 +23470,62 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<ModuleSubscriptionInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    completeTenantRegistration(input: CompleteTenantRegistrationInput | null | undefined): Observable<CompleteTenantRegistrationOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CompleteTenantRegistration";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteTenantRegistration(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteTenantRegistration(<any>response_);
+                } catch (e) {
+                    return <Observable<CompleteTenantRegistrationOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CompleteTenantRegistrationOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteTenantRegistration(response: HttpResponseBase): Observable<CompleteTenantRegistrationOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CompleteTenantRegistrationOutput.fromJS(resultData200) : new CompleteTenantRegistrationOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CompleteTenantRegistrationOutput>(<any>null);
     }
 }
 
@@ -25784,6 +25772,61 @@ export class UserServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @moduleType (optional) 
+     * @return Success
+     */
+    getAvailableUserCount(moduleType: ModuleType | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/GetAvailableUserCount?";
+        if (moduleType !== undefined)
+            url_ += "moduleType=" + encodeURIComponent("" + moduleType) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAvailableUserCount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAvailableUserCount(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAvailableUserCount(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
     }
 }
 
@@ -44608,7 +44651,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     companyName!: string;
     editionName!: string;
     paymentPeriodType!: SubmitTenantCreationRequestInputPaymentPeriodType;
-    leadInterests!: LeadInterestDto[];
+    leadInterests!: InterestDto[];
     leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
@@ -44638,7 +44681,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
                 this.leadInterests = [];
                 for (let item of data["leadInterests"])
-                    this.leadInterests.push(LeadInterestDto.fromJS(item));
+                    this.leadInterests.push(InterestDto.fromJS(item));
             }
             this.leadRequestXref = data["leadRequestXref"];
             this.firstName = data["firstName"];
@@ -44684,7 +44727,7 @@ export interface ISubmitTenantCreationRequestInput {
     companyName: string;
     editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
-    leadInterests: LeadInterestDto[];
+    leadInterests: InterestDto[];
     leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
@@ -44695,12 +44738,12 @@ export interface ISubmitTenantCreationRequestInput {
     sourceCode: string | undefined;
 }
 
-export class LeadInterestDto implements ILeadInterestDto {
+export class InterestDto implements IInterestDto {
     productId!: number | undefined;
     quantity!: number;
     amount!: number | undefined;
 
-    constructor(data?: ILeadInterestDto) {
+    constructor(data?: IInterestDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -44717,9 +44760,9 @@ export class LeadInterestDto implements ILeadInterestDto {
         }
     }
 
-    static fromJS(data: any): LeadInterestDto {
+    static fromJS(data: any): InterestDto {
         data = typeof data === 'object' ? data : {};
-        let result = new LeadInterestDto();
+        let result = new InterestDto();
         result.init(data);
         return result;
     }
@@ -44733,7 +44776,7 @@ export class LeadInterestDto implements ILeadInterestDto {
     }
 }
 
-export interface ILeadInterestDto {
+export interface IInterestDto {
     productId: number | undefined;
     quantity: number;
     amount: number | undefined;
@@ -52444,138 +52487,6 @@ export interface IPayPalSettings {
     clientSecret: string | undefined;
 }
 
-export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
-    leadRequestXref!: string;
-    tenantName!: string | undefined;
-    tenancyName!: string | undefined;
-    adminEmailAddress!: string | undefined;
-    adminPassword!: string;
-    editionId!: number | undefined;
-    paymentPeriodType!: CompleteTenantRegistrationInputPaymentPeriodType | undefined;
-    leadInterests!: LeadInterestDto[] | undefined;
-    tenantHostType!: CompleteTenantRegistrationInputTenantHostType | undefined;
-
-    constructor(data?: ICompleteTenantRegistrationInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
-            this.tenantName = data["tenantName"];
-            this.tenancyName = data["tenancyName"];
-            this.adminEmailAddress = data["adminEmailAddress"];
-            this.adminPassword = data["adminPassword"];
-            this.editionId = data["editionId"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
-                this.leadInterests = [];
-                for (let item of data["leadInterests"])
-                    this.leadInterests.push(LeadInterestDto.fromJS(item));
-            }
-            this.tenantHostType = data["tenantHostType"];
-        }
-    }
-
-    static fromJS(data: any): CompleteTenantRegistrationInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CompleteTenantRegistrationInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
-        data["tenantName"] = this.tenantName;
-        data["tenancyName"] = this.tenancyName;
-        data["adminEmailAddress"] = this.adminEmailAddress;
-        data["adminPassword"] = this.adminPassword;
-        data["editionId"] = this.editionId;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.leadInterests && this.leadInterests.constructor === Array) {
-            data["leadInterests"] = [];
-            for (let item of this.leadInterests)
-                data["leadInterests"].push(item.toJSON());
-        }
-        data["tenantHostType"] = this.tenantHostType;
-        return data; 
-    }
-}
-
-export interface ICompleteTenantRegistrationInput {
-    leadRequestXref: string;
-    tenantName: string | undefined;
-    tenancyName: string | undefined;
-    adminEmailAddress: string | undefined;
-    adminPassword: string;
-    editionId: number | undefined;
-    paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType | undefined;
-    leadInterests: LeadInterestDto[] | undefined;
-    tenantHostType: CompleteTenantRegistrationInputTenantHostType | undefined;
-}
-
-export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
-    tenantId!: number | undefined;
-    tenancyName!: string | undefined;
-    name!: string | undefined;
-    userName!: string | undefined;
-    emailAddress!: string | undefined;
-    isEmailConfirmationRequired!: boolean | undefined;
-
-    constructor(data?: ICompleteTenantRegistrationOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenantId = data["tenantId"];
-            this.tenancyName = data["tenancyName"];
-            this.name = data["name"];
-            this.userName = data["userName"];
-            this.emailAddress = data["emailAddress"];
-            this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
-        }
-    }
-
-    static fromJS(data: any): CompleteTenantRegistrationOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CompleteTenantRegistrationOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenantId"] = this.tenantId;
-        data["tenancyName"] = this.tenancyName;
-        data["name"] = this.name;
-        data["userName"] = this.userName;
-        data["emailAddress"] = this.emailAddress;
-        data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
-        return data; 
-    }
-}
-
-export interface ICompleteTenantRegistrationOutput {
-    tenantId: number | undefined;
-    tenancyName: string | undefined;
-    name: string | undefined;
-    userName: string | undefined;
-    emailAddress: string | undefined;
-    isEmailConfirmationRequired: boolean | undefined;
-}
-
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {
     general!: GeneralSettingsEditDto | undefined;
     userManagement!: TenantUserManagementSettingsEditDto;
@@ -53226,6 +53137,138 @@ export interface IModuleSubscriptionInfoDto {
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
     isLocked: boolean | undefined;
+}
+
+export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
+    requestXref!: string;
+    tenantName!: string | undefined;
+    tenancyName!: string | undefined;
+    adminEmailAddress!: string | undefined;
+    adminPassword!: string;
+    editionId!: number | undefined;
+    paymentPeriodType!: CompleteTenantRegistrationInputPaymentPeriodType | undefined;
+    interests!: InterestDto[] | undefined;
+    tenantHostType!: CompleteTenantRegistrationInputTenantHostType | undefined;
+
+    constructor(data?: ICompleteTenantRegistrationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.requestXref = data["requestXref"];
+            this.tenantName = data["tenantName"];
+            this.tenancyName = data["tenancyName"];
+            this.adminEmailAddress = data["adminEmailAddress"];
+            this.adminPassword = data["adminPassword"];
+            this.editionId = data["editionId"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(InterestDto.fromJS(item));
+            }
+            this.tenantHostType = data["tenantHostType"];
+        }
+    }
+
+    static fromJS(data: any): CompleteTenantRegistrationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CompleteTenantRegistrationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["requestXref"] = this.requestXref;
+        data["tenantName"] = this.tenantName;
+        data["tenancyName"] = this.tenancyName;
+        data["adminEmailAddress"] = this.adminEmailAddress;
+        data["adminPassword"] = this.adminPassword;
+        data["editionId"] = this.editionId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item.toJSON());
+        }
+        data["tenantHostType"] = this.tenantHostType;
+        return data; 
+    }
+}
+
+export interface ICompleteTenantRegistrationInput {
+    requestXref: string;
+    tenantName: string | undefined;
+    tenancyName: string | undefined;
+    adminEmailAddress: string | undefined;
+    adminPassword: string;
+    editionId: number | undefined;
+    paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType | undefined;
+    interests: InterestDto[] | undefined;
+    tenantHostType: CompleteTenantRegistrationInputTenantHostType | undefined;
+}
+
+export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
+    tenantId!: number | undefined;
+    tenancyName!: string | undefined;
+    name!: string | undefined;
+    userName!: string | undefined;
+    emailAddress!: string | undefined;
+    isEmailConfirmationRequired!: boolean | undefined;
+
+    constructor(data?: ICompleteTenantRegistrationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.tenantId = data["tenantId"];
+            this.tenancyName = data["tenancyName"];
+            this.name = data["name"];
+            this.userName = data["userName"];
+            this.emailAddress = data["emailAddress"];
+            this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
+        }
+    }
+
+    static fromJS(data: any): CompleteTenantRegistrationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CompleteTenantRegistrationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantId"] = this.tenantId;
+        data["tenancyName"] = this.tenancyName;
+        data["name"] = this.name;
+        data["userName"] = this.userName;
+        data["emailAddress"] = this.emailAddress;
+        data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
+        return data; 
+    }
+}
+
+export interface ICompleteTenantRegistrationOutput {
+    tenantId: number | undefined;
+    tenancyName: string | undefined;
+    name: string | undefined;
+    userName: string | undefined;
+    emailAddress: string | undefined;
+    isEmailConfirmationRequired: boolean | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
@@ -56559,6 +56602,12 @@ export enum InstanceType93 {
     Main = "Main", 
 }
 
+export enum ModuleType {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
+}
+
 export enum IsTenantAvailableOutputState {
     _1 = 1, 
     _2 = 2, 
@@ -56930,17 +56979,6 @@ export enum UpdateSslBindingIsActiveInputTenantHostType {
     FundingUi = "FundingUi", 
 }
 
-export enum CompleteTenantRegistrationInputPaymentPeriodType {
-    _30 = 30, 
-    _365 = 365, 
-}
-
-export enum CompleteTenantRegistrationInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
-    FundingUi = "FundingUi", 
-}
-
 export enum PaymentRequestInfoDtoPaymentMethod {
     Recurring = "Recurring", 
     Charge = "Charge", 
@@ -56963,6 +57001,17 @@ export enum ModuleSubscriptionInfoDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+}
+
+export enum CompleteTenantRegistrationInputPaymentPeriodType {
+    _30 = 30, 
+    _365 = 365, 
+}
+
+export enum CompleteTenantRegistrationInputTenantHostType {
+    PlatformApi = "PlatformApi", 
+    PlatformUi = "PlatformUi", 
+    FundingUi = "FundingUi", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
