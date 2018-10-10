@@ -20788,8 +20788,6 @@ export class TenantServiceProxy {
 
     /**
      * @filter (optional) 
-     * @subscriptionEndDateStart (optional) 
-     * @subscriptionEndDateEnd (optional) 
      * @creationDateStart (optional) 
      * @creationDateEnd (optional) 
      * @editionId (optional) 
@@ -20799,14 +20797,10 @@ export class TenantServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getTenants(filter: string | null | undefined, subscriptionEndDateStart: moment.Moment | null | undefined, subscriptionEndDateEnd: moment.Moment | null | undefined, creationDateStart: moment.Moment | null | undefined, creationDateEnd: moment.Moment | null | undefined, editionId: number | null | undefined, editionIdSpecified: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantListDto> {
+    getTenants(filter: string | null | undefined, creationDateStart: moment.Moment | null | undefined, creationDateEnd: moment.Moment | null | undefined, editionId: number | null | undefined, editionIdSpecified: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfTenantListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Tenant/GetTenants?";
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
-        if (subscriptionEndDateStart !== undefined)
-            url_ += "SubscriptionEndDateStart=" + encodeURIComponent(subscriptionEndDateStart ? "" + subscriptionEndDateStart.toJSON() : "") + "&"; 
-        if (subscriptionEndDateEnd !== undefined)
-            url_ += "SubscriptionEndDateEnd=" + encodeURIComponent(subscriptionEndDateEnd ? "" + subscriptionEndDateEnd.toJSON() : "") + "&"; 
         if (creationDateStart !== undefined)
             url_ += "CreationDateStart=" + encodeURIComponent(creationDateStart ? "" + creationDateStart.toJSON() : "") + "&"; 
         if (creationDateEnd !== undefined)
@@ -27315,7 +27309,6 @@ export interface IMoveActivityDto {
 export class TransitionActivityDto implements ITransitionActivityDto {
     id!: number;
     stageId!: number | undefined;
-    assignedUserIds!: number[] | undefined;
 
     constructor(data?: ITransitionActivityDto) {
         if (data) {
@@ -27330,11 +27323,6 @@ export class TransitionActivityDto implements ITransitionActivityDto {
         if (data) {
             this.id = data["id"];
             this.stageId = data["stageId"];
-            if (data["assignedUserIds"] && data["assignedUserIds"].constructor === Array) {
-                this.assignedUserIds = [];
-                for (let item of data["assignedUserIds"])
-                    this.assignedUserIds.push(item);
-            }
         }
     }
 
@@ -27349,11 +27337,6 @@ export class TransitionActivityDto implements ITransitionActivityDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["stageId"] = this.stageId;
-        if (this.assignedUserIds && this.assignedUserIds.constructor === Array) {
-            data["assignedUserIds"] = [];
-            for (let item of this.assignedUserIds)
-                data["assignedUserIds"].push(item);
-        }
         return data; 
     }
 }
@@ -27361,7 +27344,6 @@ export class TransitionActivityDto implements ITransitionActivityDto {
 export interface ITransitionActivityDto {
     id: number;
     stageId: number | undefined;
-    assignedUserIds: number[] | undefined;
 }
 
 export class AssignActivityUserDto implements IAssignActivityUserDto {
@@ -50353,12 +50335,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    isInTrialPeriod!: boolean | undefined;
-    edition!: EditionInfoDto | undefined;
     creationTime!: moment.Moment | undefined;
     paymentPeriodType!: TenantLoginInfoDtoPaymentPeriodType | undefined;
-    subscriptionDateString!: string | undefined;
     creationTimeString!: string | undefined;
     tenantCustomizations!: TenantCustomizationInfoDto | undefined;
     id!: number | undefined;
@@ -50379,12 +50357,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.isInTrialPeriod = data["isInTrialPeriod"];
-            this.edition = data["edition"] ? EditionInfoDto.fromJS(data["edition"]) : <any>undefined;
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.paymentPeriodType = data["paymentPeriodType"];
-            this.subscriptionDateString = data["subscriptionDateString"];
             this.creationTimeString = data["creationTimeString"];
             this.tenantCustomizations = data["tenantCustomizations"] ? TenantCustomizationInfoDto.fromJS(data["tenantCustomizations"]) : <any>undefined;
             this.id = data["id"];
@@ -50405,12 +50379,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
-        data["edition"] = this.edition ? this.edition.toJSON() : <any>undefined;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["paymentPeriodType"] = this.paymentPeriodType;
-        data["subscriptionDateString"] = this.subscriptionDateString;
         data["creationTimeString"] = this.creationTimeString;
         data["tenantCustomizations"] = this.tenantCustomizations ? this.tenantCustomizations.toJSON() : <any>undefined;
         data["id"] = this.id;
@@ -50424,12 +50394,8 @@ export interface ITenantLoginInfoDto {
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    isInTrialPeriod: boolean | undefined;
-    edition: EditionInfoDto | undefined;
     creationTime: moment.Moment | undefined;
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType | undefined;
-    subscriptionDateString: string | undefined;
     creationTimeString: string | undefined;
     tenantCustomizations: TenantCustomizationInfoDto | undefined;
     id: number | undefined;
@@ -50489,66 +50455,6 @@ export interface IApplicationInfoDto {
     version: string | undefined;
     releaseDate: moment.Moment | undefined;
     features: { [key: string] : boolean; } | undefined;
-}
-
-export class EditionInfoDto implements IEditionInfoDto {
-    displayName!: string | undefined;
-    trialDayCount!: number | undefined;
-    monthlyPrice!: number | undefined;
-    annualPrice!: number | undefined;
-    isHighestEdition!: boolean | undefined;
-    isFree!: boolean | undefined;
-    id!: number | undefined;
-
-    constructor(data?: IEditionInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.displayName = data["displayName"];
-            this.trialDayCount = data["trialDayCount"];
-            this.monthlyPrice = data["monthlyPrice"];
-            this.annualPrice = data["annualPrice"];
-            this.isHighestEdition = data["isHighestEdition"];
-            this.isFree = data["isFree"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): EditionInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new EditionInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["displayName"] = this.displayName;
-        data["trialDayCount"] = this.trialDayCount;
-        data["monthlyPrice"] = this.monthlyPrice;
-        data["annualPrice"] = this.annualPrice;
-        data["isHighestEdition"] = this.isHighestEdition;
-        data["isFree"] = this.isFree;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface IEditionInfoDto {
-    displayName: string | undefined;
-    trialDayCount: number | undefined;
-    monthlyPrice: number | undefined;
-    annualPrice: number | undefined;
-    isHighestEdition: boolean | undefined;
-    isFree: boolean | undefined;
-    id: number | undefined;
 }
 
 export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
@@ -51122,13 +51028,9 @@ export interface IPagedResultDtoOfTenantListDto {
 export class TenantListDto implements ITenantListDto {
     tenancyName!: string | undefined;
     name!: string | undefined;
-    editionDisplayName!: string | undefined;
     hasOwnDatabase!: boolean | undefined;
     isActive!: boolean | undefined;
     creationTime!: moment.Moment | undefined;
-    subscriptionEndDateUtc!: moment.Moment | undefined;
-    editionId!: number | undefined;
-    isInTrialPeriod!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: ITenantListDto) {
@@ -51144,13 +51046,9 @@ export class TenantListDto implements ITenantListDto {
         if (data) {
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
-            this.editionDisplayName = data["editionDisplayName"];
             this.hasOwnDatabase = data["hasOwnDatabase"];
             this.isActive = data["isActive"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.subscriptionEndDateUtc = data["subscriptionEndDateUtc"] ? moment(data["subscriptionEndDateUtc"].toString()) : <any>undefined;
-            this.editionId = data["editionId"];
-            this.isInTrialPeriod = data["isInTrialPeriod"];
             this.id = data["id"];
         }
     }
@@ -51166,13 +51064,9 @@ export class TenantListDto implements ITenantListDto {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
-        data["editionDisplayName"] = this.editionDisplayName;
         data["hasOwnDatabase"] = this.hasOwnDatabase;
         data["isActive"] = this.isActive;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["subscriptionEndDateUtc"] = this.subscriptionEndDateUtc ? this.subscriptionEndDateUtc.toISOString() : <any>undefined;
-        data["editionId"] = this.editionId;
-        data["isInTrialPeriod"] = this.isInTrialPeriod;
         data["id"] = this.id;
         return data; 
     }
@@ -51181,13 +51075,9 @@ export class TenantListDto implements ITenantListDto {
 export interface ITenantListDto {
     tenancyName: string | undefined;
     name: string | undefined;
-    editionDisplayName: string | undefined;
     hasOwnDatabase: boolean | undefined;
     isActive: boolean | undefined;
     creationTime: moment.Moment | undefined;
-    subscriptionEndDateUtc: moment.Moment | undefined;
-    editionId: number | undefined;
-    isInTrialPeriod: boolean | undefined;
     id: number | undefined;
 }
 
