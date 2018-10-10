@@ -4,8 +4,6 @@ import { NgModule } from '@angular/core';
 
 /** Third party imports */
 import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService} from 'ngx-zendesk-webwidget';
-import {CacheStorageAbstract} from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
-import {CacheMemoryStorage} from 'ng2-cache-service/dist/src/services/storage/memory/cache-memory.service';
 
 /** Application imports */
 import { AppStoreModule } from '@app/store/app-store.module';
@@ -50,10 +48,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     ],
     providers: [
         AppService,
-        {
-            provide: CacheStorageAbstract,
-            useClass: CacheMemoryStorage
-        },
         ImpersonationService,
         ngxZendeskWebwidgetService,
         InstanceServiceProxy,
