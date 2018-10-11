@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
-    TenantRegistrationServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput, TenantHostType
+    TenantSubscriptionServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -13,7 +13,8 @@ import { finalize } from 'rxjs/operators';
 @Component({
     templateUrl: './complete-tenant-registration.component.html',
     styleUrls: ['./complete-tenant-registration.component.less',],
-    animations: [accountModuleAnimation()]
+    animations: [accountModuleAnimation()],
+    providers: [TenantSubscriptionServiceProxy]
 })
 export class CompleteTenantRegistrationComponent extends AppComponentBase implements OnInit {
     model: CompleteTenantRegistrationInput = new CompleteTenantRegistrationInput();
@@ -24,7 +25,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
         private _appUrlService: AppUrlService,
         private _activatedRoute: ActivatedRoute,
         public loginService: LoginService,
-        private _tenantRegistrationService: TenantRegistrationServiceProxy,
+        private _tenantSubscriptionService: TenantSubscriptionServiceProxy,
         private _authService: AppAuthService
     ) {
         super(injector);
@@ -33,7 +34,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
     ngOnInit() {
         this._authService.logout(false);
         abp.multiTenancy.setTenantIdCookie(null);
-        this.model.leadRequestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
+        this.model.requestXref = this._activatedRoute.snapshot.queryParams['leadRequestXref'];
         this.registerTenant();
     }
 
@@ -45,7 +46,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
         this.model.adminPassword = this.generatePassword();
         this.model.tenantHostType = <any>TenantHostType.PlatformUi;
         this.startLoading(true);
-        this._tenantRegistrationService.completeTenantRegistration(this.model)
+        this._tenantSubscriptionService.completeTenantRegistration(this.model)
             .pipe(finalize(() => { this.finishLoading(true); }))
             .subscribe((result: CompleteTenantRegistrationOutput) => {
                 this.notify.success(this.l('SuccessfullyRegistered'));

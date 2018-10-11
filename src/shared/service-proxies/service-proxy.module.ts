@@ -33,7 +33,6 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.WebLogServiceProxy,
         ApiServiceProxies.AccountServiceProxy,
         ApiServiceProxies.TokenAuthServiceProxy,
-        ApiServiceProxies.TenantRegistrationServiceProxy,
         ApiServiceProxies.HostDashboardServiceProxy,
         ApiServiceProxies.PaymentServiceProxy,
         ApiServiceProxies.InvoiceServiceProxy,
