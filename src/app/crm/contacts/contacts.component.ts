@@ -203,6 +203,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     private fillLeadDetails(result) {
         this._contactGroupService['data'].leadInfo = this.leadInfo = result;
+        this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+
         this.storeInitialData();
     }
 
@@ -252,6 +254,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             let contactInfo$ = this._contactGroupService
                 .getContactGroupInfo(customerId);
 
+            if (leadId)
+                this.loadLeadsStages();
+
             this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
             if (this.customerType == ContactGroupType.Partner) {
                 let partnerInfo$ = this._partnerService.get(partnerId);
@@ -286,8 +291,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             leadInfo$.pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe(result => {
-                this.fillLeadDetails(result);
-                this.loadLeadsStages();
+                this.fillLeadDetails(result);                
             });
         }
     }
@@ -302,8 +306,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                         text: stage.name,
                         action: this.updateLeadStage.bind(this)
                     };
-                });
-                this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+                });                
             });
     }
 
@@ -468,7 +471,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
             this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
         };
-        if (this._pipelineService.updateLeadStage(this.leadInfo, sourceStage, targetStage, complete))
+        if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, complete))
             this.leadInfo.stage = targetStage;
         else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));

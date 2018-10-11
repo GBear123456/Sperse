@@ -18,8 +18,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Injectable()
 export class PipelineService {
     public stageChange: Subject<any>;
-    public pipeline: PipelineDto;
-    public stages = [];
+    private _pipelineDefinitions: any = {};
 
     constructor(
         injector: Injector,
@@ -39,9 +38,9 @@ export class PipelineService {
             })),
             filter(pipelineDefinition => pipelineDefinition),
             map(pipelineDefinition => {
-                this.pipeline = pipelineDefinition;
-                pipelineDefinition.stages = this.stages =
-                    _.sortBy(pipelineDefinition.stages, (stage) => {
+                this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages, 
+                    (stage) => {
                         return stage.sortOrder;
                     });
                 return pipelineDefinition;
@@ -49,18 +48,30 @@ export class PipelineService {
         );
     }
 
-    updateLeadStageByLeadId(entityId, oldStageName, newStageName, complete = null) {
-        let fromStage = _.findWhere(this.stages, {name: oldStageName});
+    getStages(pipelinePurposeId: string): any {
+        return this.getPipeline(pipelinePurposeId).stages;
+    };
+
+    getPipeline(pipelinePurposeId: string): PipelineDto {
+        return this._pipelineDefinitions[pipelinePurposeId];
+    }
+
+    getStageByName(pipelinePurposeId: string, stageName: string) {
+        return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
+    }
+
+    updateEntityStageById(pipelinePurposeId, entityId, oldStageName, newStageName, complete = null) {
+        let fromStage = this.getStageByName(pipelinePurposeId, oldStageName);
         if (fromStage) {
             let entity = _.findWhere(fromStage.leads, {Id: parseInt(entityId)});
-            return entity && this.updateLeadStage(entity, oldStageName, newStageName, complete);
+            return entity && this.updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete);
         }
     }
 
-    updateLeadStage(entity, oldStageName, newStageName, complete = null) {
+    updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete = null) {
         let entityId = entity['Id'] || entity['id'],
-            fromStage = _.findWhere(this.stages, {name: oldStageName}),
-            toStage = _.findWhere(this.stages, {name: newStageName});
+            fromStage = this.getStageByName(pipelinePurposeId, oldStageName),
+            toStage = this.getStageByName(pipelinePurposeId, newStageName);
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {

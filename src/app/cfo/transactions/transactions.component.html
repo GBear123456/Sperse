@@ -31,6 +31,19 @@
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
+                                  [loadPanel]="{
+                                    enabled: true,
+                                    showPane: false,
+                                    showIndicator: true,
+                                    minHeight: 150,
+                                    minWidth: 150,
+                                    shading: true,
+                                    shadingColor: 'rgba(255,255,255,0.3)',
+                                    indicatorSrc: './assets/common/images/spinner.gif'
+                                  }"
+                                  [elementAttr]="{
+                                    class: 'with-custom-loader'
+                                  }"
                                   [columnResizingMode]="'widget'"
                                   (onContentReady)="onContentReady($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"

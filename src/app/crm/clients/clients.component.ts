@@ -61,7 +61,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
-    private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
@@ -131,7 +130,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.searchValue = '';
 
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.stages).name);
+            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
 
         this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
@@ -209,10 +208,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     calculateAddressColumnValue(data) {
         return (data.City || data.StateId) ? [data.City, data.StateId].join(', ') : null;
-    }
-
-    toggleDataLayout(dataLayoutType) {
-        this.dataLayoutType = dataLayoutType;
     }
 
     initFilterConfig() {

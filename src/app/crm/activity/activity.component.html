@@ -32,6 +32,7 @@
                 <div class="funnel-wrapper">
                     <app-pipeline
                         [dataSource]="pipelineDataSource"
+                        [dragulaName]="'activityStages'"
                         [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate', 'StageId']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [(selectedLeads)]="selectedLeads"

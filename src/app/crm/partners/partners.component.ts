@@ -145,7 +145,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.searchValue = '';
 
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
-            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.stages).name);
+            this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
 
         this.canSendVerificationRequest = this._appService.canSendVerificationRequest();

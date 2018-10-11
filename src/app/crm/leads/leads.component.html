@@ -97,6 +97,7 @@
                 <div class="funnel-wrapper">
                     <app-pipeline
                         [totalsURI]="'LeadCount'"
+                        [dragulaName]="'leadStages'"
                         [dataSource]="pipelineDataSource"
                         [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'Photo']"
                         [pipelinePurposeId]="pipelinePurposeId"

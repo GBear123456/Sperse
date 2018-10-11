@@ -261,7 +261,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: AppConsts.PipelinePurposeIds.lead}))),
+                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({purpose: this.pipelinePurposeId}))),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -670,7 +670,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onStagesLoaded($event) {
         this.stages = $event.stages.map((stage) => {
             return {
-                id: this._pipelineService.pipeline.id + ':' + stage.id,
+                id: this._pipelineService.getPipeline(
+                    this.pipelinePurposeId).id + ':' + stage.id,
                 name: stage.name,
                 text: stage.name
             };
@@ -684,7 +685,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.stagesComponent.tooltipVisible = false;
             let targetStage = $event.name;
             this.selectedLeads.forEach((lead) => {
-                this._pipelineService.updateLeadStage(lead, lead.Stage, targetStage);
+                this._pipelineService.updateEntityStage(this.pipelinePurposeId, lead, lead.Stage, targetStage);
             });
             if (this.selectedLeads.length)
                 setTimeout(() => { //!!VP temporary solution for grid refresh
