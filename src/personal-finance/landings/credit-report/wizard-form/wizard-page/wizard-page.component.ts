@@ -272,7 +272,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
 
     updateCountryInfo(countryName: string) {
         countryName == 'United States' ?
-            this.country = this.defaultConfigurationItems.defaultCountryName :
+            this.country = AppConsts.defaultCountryName :
             this.country = countryName;
     }
 

@@ -328,7 +328,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
 
     updateCountryInfo(countryName: string) {
         countryName == 'United States' ?
-            this.country = this.defaultConfigurationItems.defaultCountryName :
+            this.country = AppConsts.defaultCountryName :
             this.country = countryName;
     }
 }

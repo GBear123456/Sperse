@@ -80,6 +80,7 @@ export class AppConsts {
     };
 
     static readonly defaultCompanyName = 'Unknown company';
+    static readonly defaultCountryName: 'United States of America';
 
     /* System Action IDs */
     static readonly SYS_ID_CRM_CANCEL_LEAD           = 'CRM.CancelLead';

@@ -49,10 +49,6 @@ export abstract class AppComponentBase implements OnDestroy {
     appUrlService: AppUrlService;
     localizationService: AppLocalizationService;
     oDataService: ODataService;
-    // Use it for static default values in form and etc. @Todo: Maybe make sense create some config from admin and get this data.
-    defaultConfigurationItems = {
-        defaultCountryName: 'United States of America'
-    };
 
     public searchClear = true;
     public searchValue: string;
