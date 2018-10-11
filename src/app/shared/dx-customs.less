@@ -117,3 +117,25 @@ input.form-control {
         transform: rotate(180deg);
     }
 }
+
+.with-custom-loader {
+    .dx-loadpanel-content {
+        .dx-loadpanel-content-wrapper {
+            height: 100%;
+            
+            .dx-loadpanel-indicator {
+                width: 160px;
+                height: 130px;
+                
+                .dx-loadindicator-image {
+                    -webkit-background-size: cover;
+                    background-size: cover;
+                }
+            }
+            .dx-loadpanel-message {
+                display: none !important;
+            }
+        }
+    }
+}
+
