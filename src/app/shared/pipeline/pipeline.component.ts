@@ -50,6 +50,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
 
+    @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
     @Input() selectFields: string[];
     @Input() filterModelStages: any;
@@ -62,7 +63,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     pipeline: PipelineDto;
     stages: StageDto[];
-    dragulaName = 'stage';
 
     private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
@@ -78,34 +78,36 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnInit() {
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
-            let leadId = this.getAccessKey(value[1]),
-                newStage = this.getStageByElement(value[2]);
-            if (value[1].classList.contains('selected')) {
-                this.getSelectedLeads().forEach((lead) => {
-                    if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
-                        return false;
+            if (value[0] == this.dragulaName) {
+                let leadId = this.getAccessKey(value[1]),
+                    newStage = this.getStageByElement(value[2]);
+                if (value[1].classList.contains('selected')) {
+                    this.getSelectedLeads().forEach((lead) => {
+                        if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
+                            return false;
 
-                    let oldStage = _.find(this.stages, (stage) => {
-                        return stage.name == lead.Stage;
-                    });
-
-                    if (lead && lead.Stage != newStage.name)
-                        this.updateLeadStage(lead.Id, newStage.name, lead.Stage, () => {
-                            if (lead.Id != leadId) {
-                                newStage['leads'].unshift(lead);
-                                oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
-                            }
+                        let oldStage = _.find(this.stages, (stage) => {
+                            return stage.name == lead.Stage;
                         });
-                });
-                this.selectedLeads = [];
-            } else
-                this.updateLeadStage(leadId, newStage.name,
-                    this.getStageByElement(value[3]).name);
 
+                        if (lead && lead.Stage != newStage.name)
+                            this.updateEntityStage(lead.Id, newStage.name, lead.Stage, () => {
+                                if (lead.Id != leadId) {
+                                    newStage['leads'].unshift(lead);
+                                    oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
+                                }
+                            });
+                    });
+                    this.selectedLeads = [];
+                } else
+                    this.updateEntityStage(leadId, newStage.name, 
+                        this.getStageByElement(value[3]).name);
+            }
         }));
         this.subscribers.push(
             this._dragulaService.dragend.subscribe((value) => {
-                    this.hideStageHighlighting();
+                    if (value[0] == this.dragulaName)
+                        this.hideStageHighlighting();
                 }
             )
         );
@@ -121,7 +123,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 mergeMap(pipeline => pipeline)
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
-
                 if (!this.stages && !this.quiet)
                     this.onStagesLoaded.emit(pipeline);
 
@@ -332,11 +333,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 / this.STAGE_PAGE_COUNT), stageIndex, true);
     }
 
-    updateLeadStage(leadId, newStage, oldStage, complete = null) {
+    updateEntityStage(leadId, newStage, oldStage, complete = null) {
         if (leadId && newStage != oldStage) {
             this.disabled = true;
-            this._pipelineService.updateLeadStageByLeadId(
-                leadId, oldStage, newStage, () => {
+            this._pipelineService.updateEntityStageById(
+                this.pipelinePurposeId, leadId, oldStage, newStage, () => {
                     this.stages.every((stage, index) => {
                         let result = (stage.name == oldStage);
                         if (result && stage['total'] && !stage['leads'].length) {
