@@ -632,12 +632,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts.addresses.personal.addressType = this.addressTypePersonalDefault;
             this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
-
-        /* set default value for countries
-        *  must be "United States of America" after update db
-        * */
-        if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = 'United States';
-        if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = 'United States';
+        
+        if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = this.defaultConfigurationItems.defaultCountryName;
+        if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = this.defaultConfigurationItems.defaultCountryName;
     }
 
     phoneTypesLoad() {
