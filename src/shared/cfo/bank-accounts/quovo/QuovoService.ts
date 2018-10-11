@@ -179,7 +179,7 @@ export class QuovoService {
     getQuovoHandler(instanceType: string, instanceId: number) {
         let handlerId = instanceType + instanceId;
         let quovoHandler = this.quovoHandlers[handlerId];
-        if (!quovoHandler && (instanceType == InstanceType.User || !isNaN(parseInt(instanceType)) || 
+        if (!quovoHandler && (instanceType == InstanceType.User || !isNaN(parseInt(instanceType)) ||
             (instanceType == InstanceType.Main && this._permissionChecker.isGranted('Pages.CFO.MainInstanceAdmin')))
         ) {
             quovoHandler = new QuovoHandler(instanceType, instanceId,

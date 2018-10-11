@@ -16,7 +16,7 @@ import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero
 
 @Component({
     selector: 'account-connector-dialog',
-    styleUrls: [ './account-connector-dialog.less'],
+    styleUrls: [ './qlink-icons.less', './account-connector-dialog.less' ],
     templateUrl: './account-connector-dialog.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -44,6 +44,7 @@ export class AccountConnectorDialogComponent implements OnInit {
         if (this.data && this.data.connector) {
             this.openConnector(this.data.connector);
         }
+        /** To avoid bug of scrolling of document out of the window */
         this.dialogRef.afterClosed().subscribe(() => {
             window.scrollTo(0, 0);
         });

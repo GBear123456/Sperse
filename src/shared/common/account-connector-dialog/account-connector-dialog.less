@@ -24,19 +24,32 @@
                 }
             }
         }
-    }
-    button.close {
-        border: none;
-        position: absolute;
-        right: 35px;
-        top: 35px;
-        width: 12px;
-        height: 15px;
-        cursor: pointer;
-        background: url(../../../assets/common/images/xero/close.svg) no-repeat;
-        background-size: 100%;
-        cursor: pointer;
-        z-index: 1;
+        & > button {
+            border: none;
+            position: absolute;
+            cursor: pointer;
+            z-index: 1;
+            top: 35px;
+            background-size: 100%;
+            &.close {
+                right: 35px;
+                width: 15px;
+                height: 15px;
+                background: url(../../../assets/common/images/xero/close.svg) no-repeat;
+            }
+            &.back {
+                left: 35px;
+                padding: 0;
+                background: none;
+                font-size: 18px;
+                color: white;
+                &:before {
+                    content: "\E943";
+                    font-family: "qlink-icons";
+                    background: none;
+                }
+            }
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import { Component, Inject, Injector, ElementRef } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import * as _ from 'underscore';
+import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
 
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
@@ -39,6 +40,7 @@ export class EditAddressDialog extends AppComponentBase {
                 private elementRef: ElementRef,
                 @Inject(MAT_DIALOG_DATA) public data: any,
                 public dialogRef: MatDialogRef<EditAddressDialog>,
+                private _angularGooglePlaceService: AngularGooglePlaceService,
                 private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -82,10 +84,15 @@ export class EditAddressDialog extends AppComponentBase {
     }
 
     onAddressChanged(event) {
-        let number = event.address_components[0]['long_name'];
-        let street = event.address_components[1]['long_name'];
-
+        let number = this._angularGooglePlaceService.street_number(event.address_components);
+        let street = this._angularGooglePlaceService.street(event.address_components);
         this.address = number ? (number + ' ' + street) : street;
+    }
+
+    updateCountryInfo(countryName: string) {
+        countryName == 'United States' ?
+            this.data.country = this.defaultConfigurationItems.defaultCountryName :
+            this.data.country = countryName;
     }
 
     addressTypesLoad() {

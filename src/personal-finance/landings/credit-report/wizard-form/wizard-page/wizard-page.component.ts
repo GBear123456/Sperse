@@ -7,6 +7,7 @@ import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
+import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
 
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -22,7 +23,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { PaymentInfoComponent } from '@shared/common/widgets/payment-info/payment-info.component';
 import { WizardComponent } from '../wizard.component';
-import { LoginService } from '../../../../../account/login/login.service';
+import { LoginService } from '@root/account/login/login.service';
 import { RegisterModel } from './register.model';
 import { v4 as UUID } from 'uuid';
 import { PackageIdService } from '../../../../shared/common/packages/package-id.service';
@@ -92,6 +93,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         private data: PackageIdService,
         private _memberService: MemberServiceProxy,
         private _router: Router,
+        private _angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>
     ) {
         super(injector);
@@ -263,10 +265,15 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     }
 
     onAddressChanged(event) {
-        let number = event.address_components[0]['long_name'];
-        let street = event.address_components[1]['long_name'];
-
+        let number = this._angularGooglePlaceService.street_number(event.address_components);
+        let street = this._angularGooglePlaceService.street(event.address_components);
         this.payment.bankCard.billingAddress = number ? (number + ' ' + street) : street;
+    }
+
+    updateCountryInfo(countryName: string) {
+        countryName == 'United States' ?
+            this.country = this.defaultConfigurationItems.defaultCountryName :
+            this.country = countryName;
     }
 
     getStateCodeFromName(e) {
