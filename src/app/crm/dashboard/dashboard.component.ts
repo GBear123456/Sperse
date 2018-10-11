@@ -52,11 +52,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.rootComponent = this.getRootComponent();
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 
     refresh() {
+        this.startLoading();
         this.periodChanged(this.selectedPeriod);
         this.recentClientsComponent.refresh();
     }
@@ -70,7 +70,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
                     this.openDialog();
             }, 500);
         }
-        this.finishLoading(true);
+        this.finishLoading();
     }
 
     addClient() {
@@ -84,20 +84,19 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
-        this.startLoading(true);
-        this._appService.updateToolbar(null);
+        this.startLoading();
+      
+        this.activate();
 
-        this.zendeskService.showWidget();
-        this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     ngOnDestroy() {
-        this.zendeskService.hideWidget();
+        this.deactivate();
+
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-        this.rootComponent.overflowHidden();
     }
 
     openDialog() {
@@ -123,4 +122,25 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         dialogRef.afterClosed().subscribe(() => {});
     }
 
+    activate() {
+        super.activate();
+
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+
+        this._appService.updateToolbar(null);
+        this.zendeskService.showWidget();
+
+        this.showHostElement();
+    }
+
+    deactivate() {
+        super.deactivate();
+
+        this.finishLoading();
+        this.zendeskService.hideWidget();
+        this.rootComponent.overflowHidden();
+
+        this.hideHostElement();
+    }
 }

@@ -17,7 +17,7 @@ import { ActivityComponent } from './activity/activity.component';
                 path: '',
                 children: [
                     { path: 'start', component: DashboardComponent, data: { permission: 'Pages.Detect.Route' } },
-                    { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.CRM' } },
+                    { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.CRM', reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: 'Pages.CRM.Partners', reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
