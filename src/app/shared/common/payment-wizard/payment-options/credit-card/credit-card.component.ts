@@ -123,9 +123,15 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     setBillingAddress(event) {
-        this.creditCardData.controls.billingAddress.setValue(event.name);
-        let country = this._angularGooglePlaceService.country(event.address_components);
-        this.updateCountryInfo(country);
+        let number = this._angularGooglePlaceService.street_number(event.address_components);
+        let street = this._angularGooglePlaceService.street(event.address_components);
+        let concatAddress = number ? (number + ' ' + street) : street;
+        this.creditCardData.controls.billingAddress.setValue(concatAddress); // event.name - short form of address
+        let countryName = this._angularGooglePlaceService.country(event.address_components);
+        if (countryName == 'United States')
+            countryName = this.defaultConfigurationItems.defaultCountryName;
+
+        this.updateCountryInfo(countryName);
         let state = this._angularGooglePlaceService.state(event.address_components);
         this.getStates(() => this.updateStatesInfo(state));
     }
@@ -217,14 +223,6 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
                         map(name => name ? this._filterStates(name) : this.states.slice())
                     );
             });
-
-        this.creditCardData.controls.billingCountry.setValue(event.option.value);
-        this.creditCardData.controls.billingCountryCode.setValue(this.countryCode);
-    }
-
-    onStateChange(event) {
-        this.creditCardData.controls.billingState.setValue(event.option.value);
-        this.creditCardData.controls.billingStateCode.setValue(event.option.value.code);
     }
 
     openTermsDialog() {

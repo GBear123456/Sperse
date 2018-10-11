@@ -242,4 +242,10 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     emptyAddressValue(propName) {
         this.address[propName] = null;
     }
+
+    updateCountryInfo(countryName: string) {
+        countryName == 'United States' ?
+            this.address.country = this.defaultConfigurationItems.defaultCountryName :
+            this.address.country = countryName;
+    }
 }
