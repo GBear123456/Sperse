@@ -22,7 +22,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     lastSyncDate;
     statusCheckCompleted = false;
     tooltipVisible: boolean;
-    timeoutHandler: any;
+    timeoutsIds: any[] = [];
     accountProgressTooltipTarget;
     accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
@@ -30,7 +30,9 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     readonly maxTryCount = 3;
     tryCount = 0;
 
-    constructor(injector: Injector) {
+    constructor(
+        injector: Injector
+    ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
@@ -48,8 +50,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             .done(result => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
-                if (!this.getSyncProgressRequest) {
-                    clearTimeout(this.timeoutHandler);
+                if (!this.getSyncProgressRequest && (!this.timeoutsIds || !this.timeoutsIds.length)) {
                     this.getSynchProgressAjax();
                 }
             }).fail(result => {
@@ -59,7 +60,8 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     public getSynchProgressAjax() {
-        this.getSyncProgressRequest = this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {})
+        this.getSyncProgressRequest = this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {});
+        this.getSyncProgressRequest
             .done((result: SyncProgressOutput) => {
                 this.currentProgress = result.totalProgress.progressPercent;
                 this.synchData = result;
@@ -73,9 +75,9 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 this.hasFailedAccounts = hasFailed;
                 if (this.currentProgress != 100) {
                     setTimeout(() => { this.completed = false; });
-                    this.timeoutHandler = setTimeout(
+                    this.timeoutsIds.push(setTimeout(
                         () => this.getSynchProgressAjax(), 10 * 1000
-                    );
+                    ));
                 } else {
                     if (!this.completed) {
                         setTimeout(() => { this.completed = true; });
@@ -84,9 +86,9 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                         this.onComplete.emit();
                     } else if (this.tryCount < this.maxTryCount) {
                         this.tryCount++;
-                        this.timeoutHandler = setTimeout(
+                        this.timeoutsIds.push(setTimeout(
                             () => this.getSynchProgressAjax(), 10 * 1000
-                        );
+                        ));
                     }
                 }
                 this.lastSyncDate = result.totalProgress.lastSyncDate;
@@ -158,11 +160,22 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         setTimeout(() => this.accountProgressTooltip.instance.repaint());
     }
 
-    ngOnDestroy(): void {
-        if (this.timeoutHandler) {
-            clearTimeout(this.timeoutHandler);
+    clearTimeouts() {
+        if (this.timeoutsIds && this.timeoutsIds.length) {
+            this.timeoutsIds.forEach(id => clearTimeout(id));
+            this.timeoutsIds = [];
         }
+    }
 
+    ngOnDestroy(): void {
         super.ngOnDestroy();
+        this.deactivate();
+    }
+
+    deactivate() {
+        this.clearTimeouts();
+        if (this.getSyncProgressRequest) {
+            this.getSyncProgressRequest.reject();
+        }
     }
 }

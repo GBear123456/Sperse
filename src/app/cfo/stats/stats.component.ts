@@ -788,6 +788,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
+        this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden();
     }
 

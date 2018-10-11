@@ -129,5 +129,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
 
     deactivate() {
         this.rootComponent.overflowHidden();
+        this.synchProgressComponent.deactivate();
     }
 }
