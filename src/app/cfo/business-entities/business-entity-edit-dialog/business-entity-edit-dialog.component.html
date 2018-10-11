@@ -135,7 +135,7 @@
                    placeholder=""
                    [(value)]="address.address"
                    class="dx-texteditor-input"
-                   (country)="address.country=$event"
+                   (country)="updateCountryInfo($event)"
                    (street_number)='address.streetNumber=$event'
                    (street)='address.street=$event'
                    (city)='businessEntity.city=$event'

@@ -9,6 +9,7 @@ import { DxContextMenuComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import { finalize, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
+import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
 
 /** Application imports */
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -42,6 +43,7 @@ import { TypesListComponent } from '../types-list/types-list.component';
 import { UserAssignmentComponent } from '../user-assignment-list/user-assignment-list.component';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
+
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -162,6 +164,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
         private dialogService: DialogService,
+        private _angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>
     ) {
         super(injector);
@@ -598,10 +601,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onAddressChanged(event, type) {
-        let number = event.address_components[0]['long_name'];
-        let street = event.address_components[1]['long_name'];
-
+        let number = this._angularGooglePlaceService.street_number(event.address_components);
+        let street = this._angularGooglePlaceService.street(event.address_components);
         this.contacts.addresses[type].address = number ? (number + ' ' + street) : street;
+    }
+
+    updateCountryInfo(countryName: string, type) {
+        countryName == 'United States' ?
+            this.contacts.addresses[type].country = this.defaultConfigurationItems.defaultCountryName :
+            this.contacts.addresses[type].country = countryName;
     }
 
     countriesStateLoad(): void {
@@ -632,12 +640,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts.addresses.personal.addressType = this.addressTypePersonalDefault;
             this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
-
-        /* set default value for countries
-        *  must be "United States of America" after update db
-        * */
-        if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = 'United States';
-        if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = 'United States';
+        
+        if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = this.defaultConfigurationItems.defaultCountryName;
+        if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = this.defaultConfigurationItems.defaultCountryName;
     }
 
     phoneTypesLoad() {

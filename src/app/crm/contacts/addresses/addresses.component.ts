@@ -325,4 +325,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     addressChanged(address, event) {
         this._latestFormatedAddress = address.autoComplete = event.formatted_address;
     }
+
+    updateCountryInfo(countryName: string) {
+        countryName == 'United States' ?
+            this.country = this.defaultConfigurationItems.defaultCountryName :
+            this.country = countryName;
+    }
 }

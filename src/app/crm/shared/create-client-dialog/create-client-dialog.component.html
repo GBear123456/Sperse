@@ -161,7 +161,7 @@
                           placeholder="{{l('Street')}}"
                           [(ngModel)]="contacts.addresses[type].address"
                           class="dx-texteditor-input"
-                          (country)="contacts.addresses[type].country=$event"
+                          (country)="updateCountryInfo($event, type)"
                           (street_number)='contacts.addresses[type].streetNumber=$event'
                           (street)='contacts.addresses[type].streetAddress=$event'
                           (city)='contacts.addresses[type].city=$event'

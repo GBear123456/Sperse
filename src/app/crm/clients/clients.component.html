@@ -53,10 +53,7 @@
                                     [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <img [src]="getPhoto(data.data.Photo)"
-                                 alt="{{l('AltPersonPhoto')}}"
-                                 width="38"
-                                 class="img-circle" />
+                            <div [ngStyle]="{'background-image': 'url(' + getPhoto(data.data.Photo) + ')'}" class="img-circle"></div>
                         </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>

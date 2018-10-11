@@ -18,7 +18,7 @@
                        [(ngModel)]="address.autoComplete"
                        [disabled]="false"
                        class="dx-texteditor-input"
-                       (country)="country=$event"
+                       (country)="updateCountryInfo($event)"
                        (street_number)='streetNumber=$event'
                        (street)='streetAddress=$event'
                        (city)='city=$event'

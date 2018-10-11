@@ -202,7 +202,7 @@
                                            [(ngModel)]="model.address.streetAddress"
                                            class="dx-texteditor-input"
                                            [options]="option"
-                                           (country)="country=$event"
+                                           (country)="updateCountryInfo($event)"
                                            (street_number)='street_number=$event'
                                            (street)='street_name=$event'
                                            (city)='model.address.city=$event'
