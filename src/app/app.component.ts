@@ -63,13 +63,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return !this.appService.showContactInfoPanel &&
-            (this.appService.subscriptionIsExpiringSoon() ||
-            this.appService.subscriptionInGracePeriod());
-    }
-
-    subscriptionStatusBarIsHidden(): boolean {
-        return this.appService.subscriptionStatusBarIsHidden();
+        return !this.appService.subscriptionStatusBarIsHidden();
     }
 
     ngAfterViewInit(): void {

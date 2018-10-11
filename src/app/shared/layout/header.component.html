@@ -209,9 +209,9 @@
         </div>
     		<top-bar></top-bar>
     </div>
-    <div *ngIf="subscriptionStatusBarVisible() && !subscriptionStatusBarIsHidden()" class="alert hidden subscription-info" (click)="openPaymentWizardDialog()">
+    <div *ngIf="subscriptionStatusBarVisible()" class="alert hidden subscription-info" (click)="openPaymentWizardDialog()">
         <a>
-            <span *ngIf="subscriptionInGracePeriod()"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("GracePeriodNotification", true)}}</span>
+            <span *ngIf="subscriptionInGracePeriod() || !subscriptionIsExpiringSoon()"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("GracePeriodNotification", true)}}</span>
             <span *ngIf="subscriptionIsExpiringSoon()"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("SubscriptionExpireNotification")}}</span>
         </a>
         <a class="hideSubscriptionButton"><i class="fa fa-times-circle " [title]="l('Close')" (click)="hideSubscriptionStatusBar()"></i></a>
