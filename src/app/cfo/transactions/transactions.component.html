@@ -6,21 +6,6 @@
         <div class="portlet-body">
             <div class="main-wrapper" [ngClass]="{'expanded': categoriesShowed}">
                 <div class="categories">
-                    <ul class="nav nav-tabs nav-fill transactions-tabs">
-                        <li class="nav-item">
-                            <a (click)="toggleTabContent = !toggleTabContent" class="nav-link" [ngClass]="{'active' : toggleTabContent}">
-                                {{l('ClassifyTransactions')}}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a (click)="toggleTabContent = !toggleTabContent" class="nav-link" [ngClass]="{'active' : !toggleTabContent}">
-                                {{l('Key phrases')}}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link close" (click)="categoriesShowed = false">&nbsp;</a>
-                        </li>
-                    </ul>
                     <categorization
                         [hidden]="!toggleTabContent"
                         [width]="'340px'"
@@ -38,15 +23,6 @@
                         (onFilterSelected)="filterByCashflowCategory($event)"
                         (onCategoriesChanged)="refreshDataGrid()">
                     </categorization>
-
-                    <key-phrases
-                        [width]="'340px'"
-                        [height]="'calc(100vh - 300px)'"
-                        [filterItems]="filterItems"
-                        [hidden]="toggleTabContent"
-                        (filterByKey)="searchValueChange($event)"
-                        (close)="categoriesShowed = false">
-                    </key-phrases>
                 </div>
                 <div class="transactions">
                     <dx-data-grid id="gridContainer"

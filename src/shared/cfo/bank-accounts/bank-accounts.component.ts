@@ -107,6 +107,11 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         }
     }
 
+    addAccountComplete() {
+        this.bankAccountsService.load();
+        this._synchProgress.refreshSyncComponent();
+    }
+
     bankAccountDataChanged() {
         this._synchProgress.refreshSyncComponent();
     }

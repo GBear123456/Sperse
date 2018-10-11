@@ -144,20 +144,23 @@ export abstract class AppComponentBase implements OnDestroy {
         return abp.setting.get(key);
     }
 
+    exportTo(option, type) {
+        this.startLoading();
+        return this._exportService['exportTo' + type](
+            this.dataGrid, option == 'all'
+        ).then(() => this.finishLoading());
+    }
+
     exportToXLS(option) {
-        this.dataGrid.export.fileName = this._exportService.getFileName();
-        this.dataGrid.instance.exportToExcel(option == 'selected');
+        return this.exportTo(option, 'Excel');
     }
 
     exportToCSV(option) {
-        this._exportService.saveAsCSV(
-            this.dataGrid,
-            option == 'all'
-        );
+        return this.exportTo(option, 'CSV');
     }
 
     exportToGoogleSheet(option) {
-        this._exportService.exportToGoogleSheets(this.dataGrid, option == 'all');
+        return this.exportTo(option, 'GoogleSheets');
     }
 
     toggleFullscreen(element: any) {
