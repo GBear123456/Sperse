@@ -1,6 +1,6 @@
 /** Application imports */
 import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClientModule, HttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -25,8 +25,8 @@ export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
 }
 
-export function initialize(widgetsService: WidgetsService, injector: Injector, http: HttpClient) {
-    return widgetsService.initialize(injector, http);
+export function initialize(widgetsService: WidgetsService, injector: Injector) {
+    return widgetsService.initialize(injector);
 }
 
 @NgModule({
@@ -53,7 +53,7 @@ export function initialize(widgetsService: WidgetsService, injector: Injector, h
         {
             provide: APP_INITIALIZER,
             useFactory: initialize,
-            deps: [ WidgetsService, Injector, HttpClient ],
+            deps: [ WidgetsService, Injector ],
             multi: true
         },
         {
@@ -66,6 +66,4 @@ export function initialize(widgetsService: WidgetsService, injector: Injector, h
 })
 export class AppModule {
     constructor() {}
-
-    ngDoBootstrap() {}
 }

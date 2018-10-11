@@ -8,5 +8,6 @@ export const environment = {
     zenDeskEnabled: false,
     hmr: false,
     appBaseUrl: 'http://localhost:7200',
+    appBaseHref: 'https://testui.blob.core.windows.net/current/',
     appConfig: 'appconfig.json'
 };
