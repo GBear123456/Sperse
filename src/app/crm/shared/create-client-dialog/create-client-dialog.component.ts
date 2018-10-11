@@ -608,7 +608,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     updateCountryInfo(countryName: string, type) {
         countryName == 'United States' ?
-            this.contacts.addresses[type].country = this.defaultConfigurationItems.defaultCountryName :
+            this.contacts.addresses[type].country = AppConsts.defaultCountryName :
             this.contacts.addresses[type].country = countryName;
     }
 
@@ -641,8 +641,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
         
-        if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = this.defaultConfigurationItems.defaultCountryName;
-        if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = this.defaultConfigurationItems.defaultCountryName;
+        if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = AppConsts.defaultCountryName;
+        if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = AppConsts.defaultCountryName;
     }
 
     phoneTypesLoad() {

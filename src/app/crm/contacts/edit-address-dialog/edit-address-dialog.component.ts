@@ -91,7 +91,7 @@ export class EditAddressDialog extends AppComponentBase {
 
     updateCountryInfo(countryName: string) {
         countryName == 'United States' ?
-            this.data.country = this.defaultConfigurationItems.defaultCountryName :
+            this.data.country = AppConsts.defaultCountryName :
             this.data.country = countryName;
     }
 

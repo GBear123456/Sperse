@@ -1097,6 +1097,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
+        this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden(false);
     }
 }

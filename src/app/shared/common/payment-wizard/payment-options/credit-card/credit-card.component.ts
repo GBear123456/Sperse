@@ -19,6 +19,7 @@ import { CountryStateDto } from '@shared/service-proxies/service-proxies';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ConditionsType } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 export interface Country {
     code: string;
@@ -129,7 +130,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.creditCardData.controls.billingAddress.setValue(concatAddress); // event.name - short form of address
         let countryName = this._angularGooglePlaceService.country(event.address_components);
         if (countryName == 'United States')
-            countryName = this.defaultConfigurationItems.defaultCountryName;
+            countryName = AppConsts.defaultCountryName;
 
         this.updateCountryInfo(countryName);
         let state = this._angularGooglePlaceService.state(event.address_components);
