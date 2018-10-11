@@ -496,6 +496,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
+        this.synchProgressComponent.deactivate();
         this.getRootComponent().overflowHidden();
     }
 }

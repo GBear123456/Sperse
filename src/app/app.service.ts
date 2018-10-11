@@ -39,7 +39,8 @@ export class AppService extends AppServiceBase {
     private appLocalizationService: AppLocalizationService;
     private _setToolbarTimeout: number;
     private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
-    private subscriptionsBarsVisibilities = {};
+    private _subscriptionBarsClosed = {};
+    private _subscriptionBarVisible: Boolean;
 
     constructor(injector: Injector) {
         super(
@@ -98,11 +99,15 @@ export class AppService extends AppServiceBase {
     }
 
     subscriptionStatusBarIsHidden(): boolean {
-        return this.subscriptionsBarsVisibilities[this.getModule()];
+        if (!this._subscriptionBarVisible)
+            this._subscriptionBarVisible = !this.showContactInfoPanel &&
+                (this.subscriptionIsExpiringSoon() || this.subscriptionInGracePeriod());
+
+        return this._subscriptionBarsClosed[this.getModule()] || !this._subscriptionBarVisible;
     }
 
     hideSubscriptionStatusBar() {
-        Object.defineProperty(this.subscriptionsBarsVisibilities, this.getModule(), { value: true});
+        Object.defineProperty(this._subscriptionBarsClosed, this.getModule(), { value: true });
     }
 
     subscriptionIsExpiringSoon(name = undefined): boolean {
@@ -155,12 +160,14 @@ export class AppService extends AppServiceBase {
     }
 
     switchModule(name: string, params = {}) {
+        this._subscriptionBarVisible = undefined;
         if (this.checkModuleExpired(name)
             && !this.subscriptionInGracePeriod(name)
         ) {
             name = this.getDefaultModule();
             params = {};
         }
+
         super.switchModule(name, params);
     }
 
