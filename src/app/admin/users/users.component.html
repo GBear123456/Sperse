@@ -48,10 +48,7 @@
                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <img [src]="getPhoto(data.data.profileThumbnail)"
-                                alt="{{l('AltPersonPhoto')}}"
-                                width="38"
-                                class="img-circle" />
+                            <div [ngStyle]="{'background-image': 'url(' + getPhoto(data.data.profileThumbnail) + ')'}" class="img-circle"></div>
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'">
