@@ -49,7 +49,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
 
-    syncAccountsDataSource: SyncAccountBankDto[] = [];
     bankAccountIdsForHighlight = [];
     editingStarted = false;
 
@@ -340,11 +339,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     removeAccount(syncAccountId) {
+        this.dataSource = this.dataSource.filter(item => item.syncAccountId != syncAccountId);
         this._syncAccountServiceProxy
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(res => {
-                this.syncAccountsDataSource = this.syncAccountsDataSource.filter(item => item.syncAccountId != syncAccountId);
-                this.reloadDataSource.emit();
                 this.onDataChange.emit();
             });
     }
