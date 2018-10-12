@@ -149,7 +149,7 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
             _.map(
                 _.filter(this.userData.roles, { isAssigned: true }), role => role.roleName
             );
-        userInput.tenantHostType = <any>TenantHostType.PlatformUi;
+        userInput.tenantHostType = <any>TenantHostType.PlatformApp;
 
         userInput.organizationUnits = this.organizationTree.getSelectedOrganizationUnits();
         let permissionsInput = new UpdateUserPermissionsInput();

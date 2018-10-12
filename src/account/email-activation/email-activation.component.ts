@@ -24,7 +24,7 @@ export class EmailActivationComponent extends AppComponentBase {
 
     save(): void {
         this.saving = true;
-        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
+        this.model.tenantHostType = <any>TenantHostType.PlatformApp;
         this._accountService.sendEmailActivationLink(this.model)
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {

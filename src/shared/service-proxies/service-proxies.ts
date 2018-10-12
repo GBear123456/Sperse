@@ -21599,12 +21599,8 @@ export class TenantHostServiceProxy {
     /**
      * @return Success
      */
-    getTenantApiHost(tenantHostType: TenantHostType): Observable<TenantApiHostOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetTenantApiHost?";
-        if (tenantHostType === undefined || tenantHostType === null)
-            throw new Error("The parameter 'tenantHostType' must be defined and cannot be null.");
-        else
-            url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
+    getTenantAppHost(): Observable<TenantAppHostOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetTenantAppHost";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21617,20 +21613,20 @@ export class TenantHostServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTenantApiHost(response_);
+            return this.processGetTenantAppHost(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetTenantApiHost(<any>response_);
+                    return this.processGetTenantAppHost(<any>response_);
                 } catch (e) {
-                    return <Observable<TenantApiHostOutput>><any>_observableThrow(e);
+                    return <Observable<TenantAppHostOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<TenantApiHostOutput>><any>_observableThrow(response_);
+                return <Observable<TenantAppHostOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetTenantApiHost(response: HttpResponseBase): Observable<TenantApiHostOutput> {
+    protected processGetTenantAppHost(response: HttpResponseBase): Observable<TenantAppHostOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21641,7 +21637,7 @@ export class TenantHostServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantApiHostOutput.fromJS(resultData200) : new TenantApiHostOutput();
+            result200 = resultData200 ? TenantAppHostOutput.fromJS(resultData200) : new TenantAppHostOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -21649,7 +21645,7 @@ export class TenantHostServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<TenantApiHostOutput>(<any>null);
+        return _observableOf<TenantAppHostOutput>(<any>null);
     }
 
     /**
@@ -21936,7 +21932,7 @@ export class TenantHostServiceProxy {
      * @tenantHostType (optional) 
      * @return Success
      */
-    deleteSslBinding(tenantHostType: TenantHostType2 | null | undefined): Observable<void> {
+    deleteSslBinding(tenantHostType: TenantHostType | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantHost/DeleteSslBinding?";
         if (tenantHostType !== undefined)
             url_ += "TenantHostType=" + encodeURIComponent("" + tenantHostType) + "&"; 
@@ -51712,10 +51708,10 @@ export interface IGetGeneralStatsOutput {
     bouncePercent: number | undefined;
 }
 
-export class TenantApiHostOutput implements ITenantApiHostOutput {
-    apiHostName!: string | undefined;
+export class TenantAppHostOutput implements ITenantAppHostOutput {
+    appHostName!: string | undefined;
 
-    constructor(data?: ITenantApiHostOutput) {
+    constructor(data?: ITenantAppHostOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51726,26 +51722,26 @@ export class TenantApiHostOutput implements ITenantApiHostOutput {
 
     init(data?: any) {
         if (data) {
-            this.apiHostName = data["apiHostName"];
+            this.appHostName = data["appHostName"];
         }
     }
 
-    static fromJS(data: any): TenantApiHostOutput {
+    static fromJS(data: any): TenantAppHostOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new TenantApiHostOutput();
+        let result = new TenantAppHostOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["apiHostName"] = this.apiHostName;
+        data["appHostName"] = this.appHostName;
         return data; 
     }
 }
 
-export interface ITenantApiHostOutput {
-    apiHostName: string | undefined;
+export interface ITenantAppHostOutput {
+    appHostName: string | undefined;
 }
 
 export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInput {
@@ -56313,14 +56309,7 @@ export enum SalesSummaryDatePeriod2 {
 }
 
 export enum TenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
-    FundingUi = "FundingUi", 
-}
-
-export enum TenantHostType2 {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
@@ -56364,20 +56353,17 @@ export enum IsTenantAvailableOutputState {
 }
 
 export enum RegisterInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum SendPasswordResetCodeInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum SendEmailActivationLinkInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
@@ -56635,8 +56621,7 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
 }
 
 export enum RegisterMemberRequestTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
@@ -56693,38 +56678,32 @@ export enum SyncProgressDtoSyncStatus {
 }
 
 export enum CreateTenantInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
@@ -56758,8 +56737,7 @@ export enum CompleteTenantRegistrationInputPaymentPeriodType {
 }
 
 export enum CompleteTenantRegistrationInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
@@ -56769,20 +56747,17 @@ export enum TransactionDetailsDtoTransactionStatus {
 }
 
 export enum ActivateUserForContactInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputTenantHostType {
-    PlatformApi = "PlatformApi", 
-    PlatformUi = "PlatformUi", 
+    PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
 }
 

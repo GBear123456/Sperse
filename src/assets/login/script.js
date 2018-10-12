@@ -51,7 +51,7 @@
             var cookie = queryString(document.cookie, ';');
             var currentUrl = window.location.protocol + '//' + window.location.host;
             if (result.appBaseUrl !== currentUrl) {
-                ajax(remoteServiceUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=1',
+                ajax(remoteServiceUrl + '/api/services/Platform/TenantHost/GetTenantAppHost',
                     {
                         'Accept-Language': cookie[AbpLocalizationCultureName]
                     }

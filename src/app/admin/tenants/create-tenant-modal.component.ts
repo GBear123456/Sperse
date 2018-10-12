@@ -140,7 +140,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
         }
 
-        this.tenant.tenantHostType = <any>TenantHostType.PlatformUi;
+        this.tenant.tenantHostType = <any>TenantHostType.PlatformApp;
 
         this._tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))

@@ -47,7 +47,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
                     name: parsedName.first,
                     surname: parsedName.last,
                     assignedRoleNames: v.roleNames,
-                    tenantHostType: TenantHostType.PlatformUi
+                    tenantHostType: TenantHostType.PlatformApp
                 }));
             }
         });
