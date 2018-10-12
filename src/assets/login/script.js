@@ -102,13 +102,13 @@
     }
 
     function navigate(path, params) {
-        location = path + (params ? $.param(params): '');
+        location = location.origin + path + (params ? $.param(params): '');
     }
 
     function handleAuthResult(authenticateResult) {
         if (authenticateResult.shouldResetPassword) {
             // Password reset
-            navigate('account/reset-password', {
+            navigate('/account/reset-password', {
                 queryParams: {
                     userId: authenticateResult.userId,
                     tenantId: authenticateResult.detectedTenancies[0].id,
@@ -120,7 +120,7 @@
             // Two factor authentication
             let tenantId = authenticateResult.detectedTenancies[0].id;
             abp.multiTenancy.setTenantIdCookie(tenantId);
-            navigate('account/send-code');
+            navigate('/account/send-code');
         } else if (authenticateResult.accessToken) {
             // Successfully logged in
             var form = window['loginForm'];
@@ -134,11 +134,11 @@
             );
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
-            navigate('account/select-tenant');
+            navigate('/account/select-tenant');
         } else {
             // Unexpected result!
             abp.message.warn('Unexpected authenticateResult!');
-            navigate('account/login');
+            navigate('/account/login');
         }
     }
 
