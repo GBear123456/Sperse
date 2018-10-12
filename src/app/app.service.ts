@@ -22,10 +22,10 @@ declare let require: any;
 @Injectable()
 export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
-
     public toolbarConfig: any = null;
     public toolbarIsHidden  = false;
     public narrowingPageContentWhenFixedFilter = true;
+    public hideSubscriptionCallback: Function;
     public showContactInfoPanel = false;
     public contactInfo: any;
 
@@ -108,6 +108,7 @@ export class AppService extends AppServiceBase {
 
     hideSubscriptionStatusBar() {
         Object.defineProperty(this._subscriptionBarsClosed, this.getModule(), { value: true });
+        this.hideSubscriptionCallback && this.hideSubscriptionCallback();
     }
 
     subscriptionIsExpiringSoon(name = undefined): boolean {

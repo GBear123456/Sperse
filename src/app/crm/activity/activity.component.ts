@@ -273,13 +273,28 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             quietly || !this.showPipeline, stageId);
     }
 
+    repaint() {
+        let instance = this.schedulerComponent.instance,
+            initialHeight = instance.option('height');
+    
+        instance.option('height', '0px');
+        setTimeout(() => instance.option('height', initialHeight));
+    }
+
     activate() {
+        this._appService.hideSubscriptionCallback = () => {
+            if (!this.showPipeline)
+                this.repaint();
+        };
+
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
         this.activityStagesLoad();
     }
 
     deactivate() {
+        this._appService.hideSubscriptionCallback = null;
+
         this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
     }
