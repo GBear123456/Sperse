@@ -198,7 +198,7 @@ export class AppService extends AppServiceBase {
                 if (isConfirmed) {
                     let request = new ActivateUserForContactInput();
                     request.contactId = contactId;
-                    request.tenantHostType = <any>TenantHostType.PlatformUi;
+                    request.tenantHostType = <any>TenantHostType.PlatformApp;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                         let setupInput = new SetupInput({ userId: result.userId });
                         this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(result => {

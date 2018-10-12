@@ -44,7 +44,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     registerTenant(): void {
         this.model.adminPassword = this.generatePassword();
-        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
+        this.model.tenantHostType = <any>TenantHostType.PlatformApp;
         this.startLoading(true);
         this._tenantSubscriptionService.completeTenantRegistration(this.model)
             .pipe(finalize(() => { this.finishLoading(true); }))

@@ -261,7 +261,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 setRandomPassword: this.userData.user['setRandomPassword'],
                 sendActivationEmail: this.userData.user['sendActivationEmail'],
                 assignedRoleNames: _.map(_.filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
-                tenantHostType: <any>TenantHostType.PlatformUi,
+                tenantHostType: <any>TenantHostType.PlatformApp,
                 organizationUnits: this.selectedOrgUnits
             }));
 
