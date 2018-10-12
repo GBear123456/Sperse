@@ -73,7 +73,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         clientScores: true,
         totalApproved: true,
         verification: true,
-        opened: true
+        opened: false
     };
 
     private params: any;
