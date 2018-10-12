@@ -267,7 +267,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         });
                     if (!this.totalsURI)
                         stage['total'] = dataSource.totalCount();
-                    stage['full'] = (stage['leads'].length >= stage['total']);
+                    stage['full'] = (stage['leads'].length >= (stage['total'] || 0));
                 } else  {
                     if (!page)
                         stage['leads'] = [];
@@ -278,7 +278,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 let allStagesLoaded = this.isAllStagesLoaded();
                 if (oneStageOnly || allStagesLoaded)
                     setTimeout(() => this.finishLoading(), 1000);
-                if (this.totalsURI && !oneStageOnly && allStagesLoaded) 
+                if (this.totalsURI && allStagesLoaded) 
                     this.processTotalsRequest(this.queryWithSearch);
             });
         }
