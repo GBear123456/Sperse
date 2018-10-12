@@ -59,6 +59,12 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     activityTypeIndex = 0;
 
+    isUserSelected = true;
+    isStatusSelected = true;
+    isLeadsSelected = false;
+    isClientSelected = false;
+    isStarSelected = false;
+
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -79,6 +85,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
             });
 
+        if (!this.data.appointment.StartDate) this.data.appointment.StartDate = new Date();
+        if (!this.data.appointment.EndDate) this.data.appointment.EndDate = new Date();
         this.loadResourcesData();
     }
 
@@ -126,6 +134,9 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                         action: this.toggleUserAssignmen.bind(this),
                         options: {
                             accessKey: 'UserAssign'
+                        },
+                        attr: {
+                            'filter-selected': this.isUserSelected
                         }
                     },
                     {
@@ -134,16 +145,21 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                         options: {
                             text: 'Status',
                             accessKey: 'ActivityStage'
+                        },
+                        attr: {
+                            'filter-selected': this.isStatusSelected
                         }
                     },
-
                     {
                         name: 'lead',
                         action: this.toggleLeadList.bind(this),
                         options: {
                             text: this.l('Lead'),
                             accessKey: 'LeadsList'
-                    }
+                        },
+                        attr: {
+                            'filter-selected': this.isLeadsSelected
+                        }
                     },
                     {
                         name: 'client',
@@ -151,22 +167,28 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                         options: {
                             text: this.l('Client'),
                             accessKey: 'ClientsList'
+                        },
+                        attr: {
+                            'filter-selected': this.isClientSelected
                         }
                     },
-                    {
-                        name: 'order',
-                        action: this.toggleOrderList.bind(this),
-                        options: {
-                            text: this.l('Order'),
-                            accessKey: 'OrdersList'
-                        }
-                    },
+                    // {
+                    //     name: 'order',
+                    //     action: this.toggleOrderList.bind(this),
+                    //     options: {
+                    //         text: this.l('Order'),
+                    //         accessKey: 'OrdersList'
+                    //     }
+                    // },
                     {
                         name: 'star',
                         action: () => this.starsListComponent.toggle(),
                         options: {
                             width: 20,
                         },
+                        attr: {
+                            'filter-selected': this.isStarSelected
+                        }
                     }
                 ]
             },
@@ -260,9 +282,6 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         };
     }
 
-    onDateValueChanged($event) {
-    }
-
     createAppointment() {
         return this._activityProxy.create(
             CreateActivityDto.fromJS(this.getEntityData())
@@ -330,24 +349,30 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         this.clientsList.toggle();
     }
 
-    toggleOrderList() {
-        this.ordersList.toggle();
-    }
+    // toggleOrderList() {
+    //     this.ordersList.toggle();
+    // }
 
     onLeadSelected(e) {
         this.data.appointment.LeadId = e.id;
+        this.isLeadsSelected = !!e.id;
+        this.initToolbarConfig();
     }
 
     onClientSelected(e) {
         this.data.appointment.ContactGroupId = e.id;
+        this.isClientSelected = !!e.id;
+        this.initToolbarConfig();
     }
 
-    onOrderSelected(e) {
-        this.data.appointment.OrderId = e.id;
-    }
+    // onOrderSelected(e) {
+    //     this.data.appointment.OrderId = e.id;
+    // }
 
     onStarsChanged(e) {
+        this.isStarSelected = !!e.addedItems.length;
         this.data.appointment.Stars = e.addedItems.id;
+        this.initToolbarConfig();
     }
 
     toggleUserAssignmen() {
@@ -437,5 +462,10 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     getAssignedUsersStoreSelectors() {
         return ActivityAssignedUsersStoreSelectors.getAssignedUsers;
+    }
+
+    onUserAssignmentChanged(event) {
+        this.isUserSelected = !!event.addedItems.length;
+        this.initToolbarConfig();
     }
 }

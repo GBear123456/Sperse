@@ -24,6 +24,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() updateConfirmationMessage: string;
     @Input() hideButtons = false;
     @Input() searchEnabled = false;
+    @Input() searchExprType = 'name';
 
     @Input() list: any;
     @Input() showTitle = true;
