@@ -51,7 +51,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     getDialogPossition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('ul');
-        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 400, shiftY);
     }
 
     calculateShiftY(event) {
