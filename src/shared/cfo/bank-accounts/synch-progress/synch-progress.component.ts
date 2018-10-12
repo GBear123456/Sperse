@@ -27,8 +27,11 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
     getSyncProgressRequest;
-    readonly maxTryCount = 3;
     tryCount = 0;
+    readonly maxTryCount = 3;
+    readonly initialSynchProgressDelay = 5 * 1000;
+    private synchProgressDelay = this.initialSynchProgressDelay;
+    private maxSynchProgressDelay = 10 * 60 * 60 * 1000;
 
     constructor(
         injector: Injector
@@ -55,6 +58,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 }
             }).fail(result => {
                 this.syncFailed = true;
+                this.cancelRequests();
             });
         this.getSynchProgressAjax();
     }
@@ -76,9 +80,11 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 if (this.currentProgress != 100) {
                     setTimeout(() => { this.completed = false; });
                     this.timeoutsIds.push(setTimeout(
-                        () => this.getSynchProgressAjax(), 10 * 1000
+                        () => this.getSynchProgressAjax(), this.calcAndGetSynchProgressDelay()
                     ));
                 } else {
+                    /** Replace with initial delay */
+                    this.synchProgressDelay = this.initialSynchProgressDelay;
                     if (!this.completed) {
                         setTimeout(() => { this.completed = true; });
                         this.onComplete.emit();
@@ -105,6 +111,15 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
                 this.syncFailed = true;
                 this.getSyncProgressRequest = null;
             });
+    }
+
+    /** Increase interval by 2 with every new call until max has reached */
+    calcAndGetSynchProgressDelay(): number {
+        this.synchProgressDelay = this.synchProgressDelay * 2;
+        if (this.synchProgressDelay > this.maxSynchProgressDelay) {
+            this.synchProgressDelay = this.maxSynchProgressDelay;
+        }
+        return this.synchProgressDelay;
     }
 
     calculateChartsScrolableHeight() {
@@ -167,15 +182,19 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         }
     }
 
+    cancelRequests() {
+        this.clearTimeouts();
+        if (this.getSyncProgressRequest) {
+            this.getSyncProgressRequest.reject();
+        }
+    }
+
     ngOnDestroy(): void {
         super.ngOnDestroy();
         this.deactivate();
     }
 
     deactivate() {
-        this.clearTimeouts();
-        if (this.getSyncProgressRequest) {
-            this.getSyncProgressRequest.reject();
-        }
+        this.cancelRequests();
     }
 }
