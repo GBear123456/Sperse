@@ -154,7 +154,7 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
 
         this.saving = true;
-        input.tenantHostType = <any>TenantHostType.PlatformUi;
+        input.tenantHostType = <any>TenantHostType.PlatformApp;
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {

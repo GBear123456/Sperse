@@ -7,7 +7,6 @@ import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidge
 
 /** Application imports */
 import { AppStoreModule } from '@app/store/app-store.module';
-import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { AppComponent} from './app.component';
 import { AppService } from './app.service';
@@ -55,7 +54,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,
-        BankAccountsService,
         TenantSubscriptionServiceProxy
     ]
 })

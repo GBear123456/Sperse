@@ -241,7 +241,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
         input.profileThumbnail = StringHelper.getBase64(this.photoThumbnailData);
 
-        input.tenantHostType = <any>TenantHostType.PlatformUi;
+        input.tenantHostType = <any>TenantHostType.PlatformApp;
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => { saveButton.disabled = false; }))
             .subscribe((userId) => this.afterSave(userId || this.user.id));

@@ -77,7 +77,7 @@ export class RegisterTenantComponent extends AppComponentBase implements OnInit,
         }
 
         this.saving = true;
-        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
+        this.model.tenantHostType = <any>TenantHostType.PlatformApp;
         this._tenantRegistrationService.registerTenant(this.model)
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe((result: RegisterTenantOutput) => {

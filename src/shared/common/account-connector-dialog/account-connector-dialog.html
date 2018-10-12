@@ -2,7 +2,7 @@
     <button (click)="closeDialog($event)" class="close"></button>
     <button *ngIf="selectedConnector" (click)="selectedConnector = undefined" class="back"></button>
 
-    <account-connector-chooser [hidden]="selectedConnector" [disabledConnectors]="data?.disabledConnectorsNames" (onConnectorChosen)="openConnector($event)"></account-connector-chooser>
+    <account-connector-chooser [hidden]="selectedConnector" [disabledConnectors]="data?.disabledConnectors" (onConnectorChosen)="openConnector($event)"></account-connector-chooser>
 
     <ng-template [ngIf]="selectedConnector === accountConnectors.Quovo">
         <quovo-login (onClose)="closeDialog($event)" [accountId]="data?.config?.accountId"></quovo-login>

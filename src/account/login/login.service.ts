@@ -107,7 +107,7 @@ export class LoginService {
         finallyCallback = finallyCallback || (() => { });
 
         this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
-        this.resetPasswordModel.tenantHostType = <any>TenantHostType.PlatformUi;
+        this.resetPasswordModel.tenantHostType = <any>TenantHostType.PlatformApp;
         this._accountService
             .sendPasswordResetCode(this.resetPasswordModel)
             .pipe(finalize(finallyCallback))

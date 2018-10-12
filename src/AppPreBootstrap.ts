@@ -7,7 +7,7 @@ import * as moment from 'moment-timezone';
 import { LocalizedResourcesHelper } from './shared/helpers/LocalizedResourcesHelper';
 import { UrlHelper } from './shared/helpers/UrlHelper';
 import { environment } from './environments/environment';
-import { TenantApiHostOutput } from '@shared/service-proxies/service-proxies';
+import { TenantAppHostOutput } from '@shared/service-proxies/service-proxies';
 
 export class AppPreBootstrap {
 
@@ -57,16 +57,16 @@ export class AppPreBootstrap {
 
             if (environment.appBaseUrl !== AppConsts.appBaseUrl) {
                 abp.ajax({
-                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantApiHost?TenantHostType=' + encodeURIComponent('' + AppConsts.tenantHostType),
+                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantAppHost',
                     method: 'GET',
                     headers: {
                         'Accept-Language': abp.utils.getCookieValue('Abp.Localization.CultureName')
                     }
-                }).done((tenantApiHostOutput: TenantApiHostOutput) => {
+                }).done((tenantApiHostOutput: TenantAppHostOutput) => {
                     let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
 
-                    if (tenantApiHostOutput.apiHostName !== null) {
-                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.apiHostName;
+                    if (tenantApiHostOutput.appHostName !== null) {
+                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.appHostName;
                     } else {
                         AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
                     }

@@ -53,7 +53,7 @@ export class RegisterComponent extends AppComponentBase implements OnInit {
         }
 
         this.saving = true;
-        this.model.tenantHostType = <any>TenantHostType.PlatformUi;
+        this.model.tenantHostType = <any>TenantHostType.PlatformApp;
         this._accountService.register(this.model)
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe((result: RegisterOutput) => {

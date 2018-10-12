@@ -61,7 +61,7 @@ export class AccountsComponent extends AppComponentBase {
             ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
-                    disabledConnectorsNames: [ AccountConnectors.Xero ]
+                    disabledConnectors: [ AccountConnectors.Xero ]
                 }
             }
         };

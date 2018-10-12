@@ -30,7 +30,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         ngCommon.CommonModule,
         CommonModule,
         FormsModule,
-        BankAccountsCommonModule,
+        BankAccountsCommonModule.forRoot(),
 
         DxCheckBoxModule,
         DxSelectBoxModule,
