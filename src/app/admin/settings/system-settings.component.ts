@@ -23,8 +23,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
     public sslBindingsDataSource: any;
 
     public hostTypes: any = [
-        { 'Id': 0, 'Name': 'Platform API' },
-        { 'Id': 1, 'Name': 'Platform UI' },
+        { 'Id': 1, 'Name': 'Platform App' },
         { 'Id': 2, 'Name': 'Funding UI' }
     ];
 
