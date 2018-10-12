@@ -4,13 +4,13 @@ import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus } from 'share
 
 @Injectable()
 export class UserOnlyCFOService extends CFOServiceBase {
-
     constructor(
         private _instanceServiceProxy: InstanceServiceProxy
     ) {
         super();
 
         this.instanceType = InstanceType.User;
+        this.instanceTypeChanged.next(this.instanceType);
     }
 
     instanceChangeProcess(callback: any = null) {

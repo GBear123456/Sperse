@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
 import {
@@ -87,9 +87,16 @@ import { SynchProgressComponent } from './synch-progress/synch-progress.componen
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,
-        BankAccountsService,
         SyncServiceProxy
     ]
 })
 export class BankAccountsCommonModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: BankAccountsCommonModule,
+            providers: [
+                BankAccountsService
+            ]
+        };
+    }
 }

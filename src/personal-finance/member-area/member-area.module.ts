@@ -26,7 +26,7 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
         MemberAreaRoutingModule,
         CreditSimulatorModule,
         CreditResourcesModule,
-        BankAccountsCommonModule
+        BankAccountsCommonModule.forRoot()
     ],
     declarations: [
         MemberAreaComponent,
