@@ -113,7 +113,6 @@
             <mat-autocomplete
                 #state="matAutocomplete"
                 autoActiveFirstOption
-                (optionSelected)="onStateChange($event)"
                 [displayWith]="displayName">
                 <mat-option *ngFor="let state of filteredStates | async" [value]="state">
                     {{ state.name }}

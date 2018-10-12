@@ -5,4 +5,5 @@ import { QuovoComponentConfig } from '@shared/common/account-connector-dialog/qu
 export interface AccountConnectorDialogData {
     connector?: AccountConnectors;
     config: XeroComponentConfig | QuovoComponentConfig;
+    disabledConnectorsNames?: string[];
 }
