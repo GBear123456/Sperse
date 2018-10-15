@@ -52,7 +52,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     @Input() lockMarginalEntities = false;
     @Input() dragulaName = 'stage';
-    @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
     @Input() selectFields: string[];
     @Input() filterModelStages: any;
