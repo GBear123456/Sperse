@@ -1,0 +1,7 @@
+<div class="form-group moduleEdition" *ngFor="let editionGroup of editionsGroups">
+    <label [for]="editionGroup[1].moduleId">{{ editionGroup[1].moduleId }}: </label>
+    <select [id]="editionGroup[1].moduleId" (change)="onEditionChange($event, editionGroup[1].moduleId)" name="edition" class="form-control" [(ngModel)]="editionsModels[editionGroup[1].moduleId].editionId" [ngModelOptions]="{standalone: true}" >
+        <option *ngFor="let edition of editionGroup" [value]="edition.value">{{edition.displayText}}</option>
+    </select>
+    <input type="number" class="form-control" min="0" [(ngModel)]="editionsModels[editionGroup[1].moduleId].maxUserCount" [ngModelOptions]="{standalone: true}">
+</div>

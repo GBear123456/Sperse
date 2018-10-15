@@ -1,49 +1,52 @@
+/** Core imports */
 import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { ModalDirective } from 'ngx-bootstrap';
+import { values } from 'lodash';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     CommonLookupServiceProxy,
     CreateTenantInput,
-    TenantEditEditionDto,
     PasswordComplexitySetting,
     ProfileServiceProxy,
     TenantServiceProxy,
     TenantHostType,
-    SubscribableEditionComboboxItemDto,
+    TenantEditEditionDto,
+    SubscribableEditionComboboxItemDto
 } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
-import * as moment from 'moment';
-import { ModalDirective } from 'ngx-bootstrap';
-import { finalize } from 'rxjs/operators';
+import { TenantsService } from '@admin/tenants/tenants.service';
 
 @Component({
     selector: 'createTenantModal',
-    templateUrl: './create-tenant-modal.component.html'
+    templateUrl: './create-tenant-modal.component.html',
+    providers: [ TenantsService ]
 })
 export class CreateTenantModalComponent extends AppComponentBase {
 
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @ViewChild('createModal') modal: ModalDirective;
-    @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;
     saving = false;
     setRandomPassword = true;
-    useHostDb = true;
-    editions: SubscribableEditionComboboxItemDto[] = [];
     tenant: CreateTenantInput;
-    tenantEditionId = 0;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
-    isUnlimited = false;
-    isSubscriptionFieldsVisible = false;
-    isSelectedEditionFree = false;
+    editionsGroups$: Observable<SubscribableEditionComboboxItemDto[][]>;
+    editionsModels: { [value: string]: TenantEditEditionDto } = {};
 
     constructor(
         injector: Injector,
         private _tenantService: TenantServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _profileService: ProfileServiceProxy
+        private _profileService: ProfileServiceProxy,
+        private _tenantsService: TenantsService
     ) {
         super(injector);
     }
@@ -59,11 +62,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     onShown(): void {
-        $(this.tenancyNameInput.nativeElement).focus();
-        $(this.subscriptionEndDateUtc.nativeElement).datetimepicker({
-            locale: abp.localization.currentLanguage.name,
-            format: 'L'
-        });
+        $('#TenancyName').focus();
     }
 
     init(): void {
@@ -71,60 +70,8 @@ export class CreateTenantModalComponent extends AppComponentBase {
         this.tenant.isActive = true;
         this.tenant.shouldChangePasswordOnNextLogin = true;
         this.tenant.sendActivationEmail = true;
-        this.tenantEditionId = 0;
-
-        this._commonLookupService.getEditionsForCombobox(false)
-            .subscribe((result) => {
-                this.editions = result.items;
-
-                let notAssignedItem = new SubscribableEditionComboboxItemDto();
-                notAssignedItem.value = '0';
-                notAssignedItem.displayText = this.l('NotAssigned');
-
-                this.editions.unshift(notAssignedItem);
-
-                this._commonLookupService.getDefaultEditionName().subscribe((getDefaultEditionResult) => {
-                    let defaultEdition = _.filter(this.editions, { 'displayText': getDefaultEditionResult.name });
-                    if (defaultEdition && defaultEdition[0]) {
-                        this.tenantEditionId = parseInt(defaultEdition[0].value);
-                        this.toggleSubscriptionFields();
-                    }
-                });
-            });
-    }
-
-    getEditionValue(item): number {
-        return parseInt(item.value);
-    }
-
-    selectedEditionIsFree(): boolean {
-        let selectedEditions = _.filter(this.editions, { 'value': this.tenantEditionId })
-            .map(u => Object.assign(new SubscribableEditionComboboxItemDto(), u));
-
-        if (selectedEditions.length !== 1) {
-            this.isSelectedEditionFree = true;
-        }
-
-        let selectedEdition = selectedEditions[0];
-        this.isSelectedEditionFree = selectedEdition.isFree;
-        return this.isSelectedEditionFree;
-    }
-
-    subscriptionEndDateIsValid(): boolean {
-        if (this.tenantEditionId <= 0) {
-            return true;
-        }
-
-        if (this.isUnlimited) {
-            return true;
-        }
-
-        if (!this.subscriptionEndDateUtc) {
-            return false;
-        }
-
-        let subscriptionEndDateUtc = $(this.subscriptionEndDateUtc.nativeElement).val();
-        return subscriptionEndDateUtc !== undefined && subscriptionEndDateUtc !== '';
+        this.editionsGroups$ = this._tenantsService.getEditionsGroupsWithDefaultEdition();
+        this.editionsModels = this._tenantsService.editionsModels;
     }
 
     save(): void {
@@ -134,14 +81,8 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.adminPassword = null;
         }
 
-        if (this.tenantEditionId === 0) {
-            this.tenant.editions = null;
-        } else {
-            this.tenant.editions = [TenantEditEditionDto.fromJS({ editionId: this.tenantEditionId })];
-        }
-
+        this.tenant.editions = values(this.editionsModels);
         this.tenant.tenantHostType = <any>TenantHostType.PlatformApp;
-
         this._tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
@@ -156,21 +97,4 @@ export class CreateTenantModalComponent extends AppComponentBase {
         this.modal.hide();
     }
 
-    onEditionChange(): void {
-        this.toggleSubscriptionFields();
-    }
-
-    toggleSubscriptionFields() {
-        if (this.tenantEditionId <= 0 || this.isSelectedEditionFree) {
-            this.isSubscriptionFieldsVisible = false;
-
-            if (this.isSelectedEditionFree) {
-                this.isUnlimited = true;
-            } else {
-                this.isUnlimited = false;
-            }
-        } else {
-            this.isSubscriptionFieldsVisible = true;
-        }
-    }
 }

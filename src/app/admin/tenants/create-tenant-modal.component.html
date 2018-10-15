@@ -87,33 +87,7 @@
                                 </ul>
                             </div>
 
-                            <div class="form-group">
-                                <label for="edition">{{l("Edition")}}</label>
-                                <select id="edition" name="edition" class="form-control" [(ngModel)]="tenantEditionId" (change)="onEditionChange($event)">
-                                    <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
-                                </select>
-                            </div>
-
-                            <div [hidden]="!isSubscriptionFieldsVisible" class="m-checkbox-list">
-                                <label for="CreateTenant_IsUnlimited" class="m-checkbox">
-                                    <input id="CreateTenant_IsUnlimited" type="checkbox" name="IsUnlimited" [(ngModel)]="isUnlimited" />
-                                    {{l("UnlimitedTimeSubscription")}}
-                                    <span></span>
-                                </label>
-                            </div>
-
-                            <div [hidden]="isUnlimited || !isSubscriptionFieldsVisible" class="form-group" [ngClass]="{'has-error': !subscriptionEndDateIsValid()}">
-                                <label for="SubscriptionEndDate">{{l("SubscriptionEndDate")}}</label>
-                                <input id="SubscriptionEndDate" type="text" #SubscriptionEndDateUtc name="SubscriptionEndDateUtc" class="form-control">
-                            </div>
-
-                            <div [hidden]="!isSubscriptionFieldsVisible" class="m-checkbox-list">
-                                <label for="CreateTenant_IsInTrialPeriod" class="m-checkbox">
-                                    <input id="CreateTenant_IsInTrialPeriod" type="checkbox" name="IsInTrialPeriod" [disabled]="isSelectedEditionFree" [(ngModel)]="tenant.isInTrialPeriod">
-                                    {{l("IsInTrialPeriod")}}
-                                    <span></span>
-                                </label>
-                            </div>
+                            <modules-editions-select *ngIf="(editionsGroups$ | async) as editionsGroups" [editionsGroups]="editionsGroups" [(editionsModels)]="editionsModels"></modules-editions-select>
 
                             <div class="m-checkbox-list">
                                 <label for="CreateTenant_ShouldChangePasswordOnNextLogin" class="m-checkbox">
@@ -167,7 +141,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" [disabled]="saving" class="btn btn-secondary" (click)="close()">{{l("Cancel")}}</button>
-                    <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-primary" [disabled]="!tenantCreateForm.form.valid || saving || !subscriptionEndDateIsValid()"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                    <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-primary" [disabled]="!tenantCreateForm.form.valid || saving"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
                 </div>
             </form>
         </div>
