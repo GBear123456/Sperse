@@ -5,7 +5,7 @@
     <account-connector-chooser [hidden]="selectedConnector" [disabledConnectors]="data?.disabledConnectors" (onConnectorChosen)="openConnector($event)"></account-connector-chooser>
 
     <ng-template [ngIf]="selectedConnector === accountConnectors.Quovo">
-        <quovo-login (onClose)="closeDialog($event)" [accountId]="data?.config?.accountId"></quovo-login>
+        <quovo-login (onClose)="closeDialog($event)" [loadingContainerElement]="data?.loadingContainerElement" [accountId]="data?.config?.accountId"></quovo-login>
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.Xero">
         <xero-login
