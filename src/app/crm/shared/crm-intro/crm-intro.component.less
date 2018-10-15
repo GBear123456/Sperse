@@ -1,4 +1,5 @@
 @blue: #00aeef;
+@mainFont: 'Montserrat', sans-serif;
 
 :host {
     position: relative;
@@ -9,12 +10,6 @@
     // basic
     .color-blue {
         color: #00aeef !important;
-    }
-    .top-fromRight-bg {
-        background: #fff url(../../../../assets/common/images/crm-intro/top-fromRight-bg.png) top left no-repeat;
-    }
-    .top-fromLeft-bg {
-        background: #fff url(../../../../assets/common/images/crm-intro/top-fromLeft-bg.png) top left no-repeat;
     }
 
     .close-dialog {
@@ -44,7 +39,25 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-
+        position: relative;
+        
+        .step-bg {
+            display: block;
+            position: absolute;
+            width: 101%;
+            height: 100%;
+            background-image: linear-gradient(244deg, #c86dd7, #3023ae);
+            clip-path: polygon(0 0, 100% 0, 100% 44%, 0 65%);
+            z-index: 0;
+        }
+    
+        .brain-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
         .header {
             height: 12%;
             padding: 11px 52px 11px 24px;
@@ -54,49 +67,144 @@
             font-size: 21px;
             font-weight: 500;
             color: #fff;
+            position: relative;
+            z-index: 5;
+    
+            .crm-intro-logo {
+                margin-right: auto !important;
+            }
         }
 
         .main {
             height: 73%;
             text-align: center;
             flex-grow: 2;
+            position: relative;
+            z-index: 6;
 
             h2 {
-                font-family: Montserrat;
+                font-family: @mainFont;
                 font-size: 32px;
                 font-weight: bold;
                 color: #ffffff;
             }
 
             p {
-                font-family: Montserrat;
+                font-family: @mainFont;
                 font-size: 24px;
                 font-weight: 500;
                 letter-spacing: 0.7px;
-                text-align: center;
                 color: #ffffff;
                 margin-top: -12px;
+            }
+            
+            small {
+                font-size: 14px;
+                color: rgb(255, 255, 255);
+            }
+    
+            .two-cols {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                padding: 50px 25px 50px 59px;
             }
         }
 
         .footer {
             height: 15%;
             align-items: center;
+            position: relative;
+            z-index: 7;
         }
 
     }
 
     // first step
     .first-step {
-        background-image: url(../../../../assets/common/images/crm-intro/prvapoza.jpg);
-        background-repeat: no-repeat;
-
         .main {
-            h2 {
-                margin-bottom: 0;
-                letter-spacing: 7px;
-                font-size: 90px;
-                margin-top: -36px;
+            .text {
+                width: 100%;
+                max-width: 43%;
+                padding-top: 10px;
+                
+                * {
+                    text-align: left;
+                }
+                
+                h2 {
+                    font-family: @mainFont;
+                    font-size: 90px;
+                    font-weight: bold;
+                    line-height: normal;
+                    letter-spacing: 7px;
+                    color: rgb(255, 255, 255);
+                }
+                
+                p {
+                    font-family: @mainFont;
+                    font-size: 26px;
+                    font-weight: 600;
+                    line-height: normal;
+                    letter-spacing: 0.8px;
+                    color: rgb(255, 255, 255);
+                }
+            }
+            
+            .img {
+                max-width: 57%;
+            }
+            
+            .know-customers {
+        
+                &--text {
+                    font-family: @mainFont;
+                    font-size: 22px;
+                    font-weight: 600;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: normal;
+                    letter-spacing: 0.3px;
+                    text-align: center;
+                    color: #424c56;
+                }
+        
+                &--list {
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+                }
+        
+                &--item {
+                    display: inline-block;
+                    width: 142px;
+                    height: 40px;
+                    line-height: 40px;
+            
+                    font-family: @mainFont;
+                    font-size: 14px;
+                    font-weight: 600;
+                    font-style: normal;
+                    font-stretch: normal;
+                    text-transform: uppercase;
+                    letter-spacing: 1.1px;
+                    text-align: center;
+                    color: #ffffff;
+            
+                    background-repeat: no-repeat;
+                    background-size: contain;
+            
+                    &.prospect {
+                        background-image: url(../../../../assets/common/images/intro/first.svg);
+                    }
+                    &.new {
+                        margin: 0 -6px 0 -10px;
+                        background-image: url(../../../../assets/common/images/intro/middle.svg);
+                    }
+                    &.won {
+                        background-image: url(../../../../assets/common/images/intro/last.svg);
+                    }
+                }
             }
         }
     }
@@ -127,185 +235,190 @@
     }
     // keys step
     .keys-step {
-        background-image: url(../../../../assets/common/images/crm-intro/prvapoza.jpg);
-        background-repeat: no-repeat;
-
         .main {
             h2 {
-                height: 42px;
-                color: #ffffff;
-                margin-bottom: 24px;
+                font-size: 26px;
+                font-weight: 500;
+                line-height: normal;
+                letter-spacing: 0.8px;
+                text-align: center;
+                color: rgb(255, 255, 255);
+                margin-bottom: 30px;
             }
         }
 
         .treka {
-            width: 560px;
+            width: 100%;
+            max-width: 665px;
             border-radius: 6px;
             background-color: #ffffff;
             box-shadow: 7px 11px 27px 0 rgba(0, 0, 0, 0.05);
             margin: 0 auto;
-            padding: 32px 45px;
-            box-sizing: content-box;
+            padding: 35px 30px 22px;
+            box-sizing: border-box;
         }
 
         li {
             list-style: none;
-            font-family: Montserrat;
-            font-size: 17px;
-            font-weight: normal;
+            font-family: @mainFont;
+            text-align: left;
+            margin-bottom: 15px;
+    
+            font-size: 16px;
+            font-weight: 400;
             font-style: normal;
             font-stretch: normal;
-            line-height: 1.42;
-            letter-spacing: 0.4px;
-            text-align: left;
-            color: #424c56;
-            margin-bottom: 25px;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+            color: rgb(66, 76, 86);
         }
 
         img {
             margin-right: 22px;
-            margin-bottom: -13px;
+            margin-top: -4px;
         }
     }
     // third step
-    .third-step {
-        .header {
-            background-color: #00aeef;
-            justify-content: flex-start;
-
-            span {
-                font-size: 21px;
-                color: #ffffff;
-            }
+    .third-step,
+    .forth-step,
+    .fifth-step,
+    .sixth-step,
+    .zapier,
+    .tasks,
+    .dashboards {
+        .step-bg {
+            clip-path: polygon(0 0, 100% 0, 100% 19%, 0 39.5%);
         }
-
+        
         .main {
+            padding-top: 40px;
             display: flex;
             align-items: center;
-
-            p {
-                margin-bottom: 0;
-                font-size: 20px;
-                text-align: left;
-                padding: 0 30px;
-                font-weight: 400;
+            
+            .title {
+                font-size: 26px;
+                font-weight: 600;
+                line-height: normal;
+                letter-spacing: 0.8px;
+                text-align: center;
+                color: rgb(255, 255, 255);
             }
-        }
-
-        .pipeline-img {
-            float: left;
-            box-shadow: 0 0 16px rgba(0,0,0,.2);
-            border-radius: 0 5px 5px 0;
-            max-width: 560px;
-        }
-    }
-    // forth-step
-    .forth-step {
-        .header {
-            background-color: #00aeef;
-            justify-content: flex-start;
-
-            span {
-                font-size: 21px;
-                color: #ffffff;
-            }
-        }
-
-        .main {
-            display: flex;
-            align-items: center;
-
-            p {
-                margin-bottom: 0;
-                font-size: 18px;
-                text-align: left;
-                padding: 45px 30px 0;
-            }
-
-            .documents-page {
-                max-width: 560px;
-                box-shadow: 0 0 16px rgba(0,0,0,.2);
-                border-radius: 10px 0 0 10px;
-                max-width: 560px;
-            }
-
-            .documents-types {
-                max-width: 65%;
-                margin-top: 20px;
+            
+            .two-cols {
+                padding: 50px 0 0;
+                align-items: center;
+                
+                .img {
+                    width: 55%;
+                }
+                
+                .content {
+                    width: 45%;
+                    padding-left: 16px;
+                    padding-right: 46px;
+                    
+                    * {
+                        text-align: left;
+                    }
+                    
+                    h2 {
+                        font-size: 24px;
+                        font-weight: 900;
+                        line-height: 1.25;
+                        letter-spacing: 0.8px;
+                        color: rgb(66, 76, 86);
+                        margin-bottom: 20px;
+                    }
+                    
+                    p {
+                        font-size: 16px;
+                        font-weight: 400;
+                        line-height: 1.63;
+                        letter-spacing: normal;
+                        color: rgb(66, 76, 86);
+                    }
+                }
             }
         }
     }
+    
+    .forth-step .main {
+        .content {
+            text-align: left;
+        }
+    }
+    
+    .documents-management-list {
+        padding: 0;
+        margin: 0 0 30px;
+        list-style-type: none;
+        
+        li {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.63;
+            color: rgb(66, 76, 86);
+            
+            &::before {
+                content: '- ';
+            }
+        }
+    }
+    
     // fifth-step
     .fifth-step {
-        .header {
-            background-color: #00aeef;
-            justify-content: flex-start;
-
-            span {
-                font-size: 21px;
-                color: #ffffff;
-            }
+        .title {
+            width: 555px;
+            max-width: 100%;
         }
-
         .main {
-            background: #fff url(../../../../assets/common/images/crm-intro/import-export-bg.png) top left no-repeat;
-            display: flex;
-            align-items: center;
-
-            h5 {
-                margin: 15px 0 0;
-                font-size: 20px;
-                color: @blue;
-                font-weight: 700;
-            }
-
-            p {
-                margin: 0;
-                font-size: 18px;
-                line-height: 1.2;
-                color: @blue;
-                text-align: left;
-            }
-
-            .main-content {
-                max-width: 310px;
-                padding: 0 30px;
-                text-align: left;
-                margin: 0;
+            .two-cols {
+                .img {
+                    width: 60%;
+                }
+        
+                .content {
+                    width: 40%;
+                    padding-left: 0;
+                    padding-right: 46px;
+                    
+                    h2 {
+                        margin-top: 42px;
+                    }
+                }
             }
         }
     }
     // sixth-step
     .sixth-step {
-        .header {
-            background-color: #00aeef;
-            justify-content: flex-start;
+        .title {
+            width: 555px;
+            max-width: 100%;
         }
-
+        
         .main {
-            display: flex;
-            align-items: center;
-
-            p {
-                margin-bottom: 0;
-                font-size: 18px;
-                text-align: left;
-                padding: 45px 30px 0;
-                font-weight: 400;
-                color: @blue;
+            .two-cols {
+                .img {
+                    width: 58%;
+                }
+            
+                .content {
+                    width: 42%;
+                    padding-left: 30px;
+                    padding-right: 50px;
+                    
+                    h2 {
+                        max-width: 70%;
+                    }
+                }
             }
-
-            .plugin-page {
-                max-width: 560px;
-                box-shadow: 0 0 16px rgba(0,0,0,.2);
-                border-radius: 10px 0 0 10px;
-                max-width: 560px;
-            }
-
-            .extension {
-                max-width: 80%;
-                margin-top: 20px;
-            }
+        }
+    }
+    
+    .dashboards {
+        .title {
+            width: 555px;
+            max-width: 100%;
         }
     }
 
@@ -313,6 +426,9 @@
     .questionnaire-step {
         .header {
             justify-content: flex-start;
+        }
+        .main {
+            padding: 0 129px;
         }
     }
 
@@ -323,48 +439,7 @@
         }
     }
 
-    // zapier
-    .zapier {
-        .header {
-            background-color: #00aeef;
-            justify-content: flex-start;
-        }
-
-        .main {
-            display: flex;
-            align-items: center;
-
-            .zapier-img {
-                max-width: 570px;
-                box-shadow: 0 0 16px rgba(0,0,0,.2);
-                border-radius: 0 10px 10px 0;
-                max-width: 560px;
-            }
-
-            h5 {
-                margin: 20px 0 0;
-                font-size: 22px;
-                color: @blue;
-                font-weight: 700;
-            }
-
-            p {
-                margin: 0;
-                font-size: 18px;
-                line-height: 1.2;
-                color: @blue;
-                text-align: left;
-            }
-
-            .main-content {
-                max-width: 310px;
-                padding: 0 30px;
-                text-align: left;
-                margin: 0;
-            }
-        }
-    }
-
+    
     // video
     .video {
         .header {
@@ -394,7 +469,7 @@
             text-align: center;
             padding-top: 0;
             line-height: 37px;
-            font-family: Montserrat;
+            font-family: @mainFont;
             font-size: 15px;
             font-weight: normal;
             color: #00aeef;
@@ -423,7 +498,7 @@
     /deep/ mat-horizontal-stepper {
         .mat-horizontal-stepper-header-container {
             position: absolute;
-            width: 400px;
+            width: 200px;
             bottom: 28px;
             left: 50%;
             transform: translate(-50%, 0);
@@ -471,40 +546,10 @@
                 }
 
                 &[aria-selected="true"] .mat-step-icon {
-                    width: 15px;
-                    height: 15px;
+                    width: 9px;
+                    height: 9px;
+                    bottom: 0;
                     background-color: #00aeef;
-                    border: 4px solid #b8e0ef;
-                }
-
-                &[ng-reflect-index="1"][aria-selected="true"] .mat-step-icon {
-                    background-color: #f59323;
-                    border: 4px solid #f9dab7;
-                }
-
-                &[ng-reflect-index="2"][aria-selected="true"] .mat-step-icon {
-                    background-color: #3dc14c;
-                    border: 4px solid #bdeac2;
-                }
-
-                &[ng-reflect-index="3"][aria-selected="true"] .mat-step-icon {
-                    background-color: #c65cc1;
-                    border: 4px solid #f1d5ef;
-                }
-
-                &[ng-reflect-index="4"][aria-selected="true"] .mat-step-icon {
-                    background-color: #e13571;
-                    border: 4px solid #ffc8dc;
-                }
-
-                &[ng-reflect-index="5"][aria-selected="true"] .mat-step-icon {
-                    background-color: #003174;
-                    border: 4px solid #bbd8ff;
-                }
-
-                &[ng-reflect-index="6"][aria-selected="true"] .mat-step-icon {
-                    background-color: magenta;
-                    border: 4px solid #ffbdff;
                 }
             }
         }
@@ -552,7 +597,7 @@
     list-style: none;
     width: 135px;
     height: 21px;
-    font-family: Montserrat;
+    font-family: @mainFont;
     font-size: 16px;
     font-weight: 500;
     font-style: normal;
@@ -666,7 +711,7 @@ li.akk {
 
 .imputara label {
     list-style: none;
-    font-family: Montserrat;
+    font-family: @mainFont;
     font-size: 17px;
     line-height: 1.42;
     letter-spacing: 0.4px;

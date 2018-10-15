@@ -14,16 +14,18 @@
             letter-spacing: normal;
             text-align: center;
             color: #202b35;
+            margin-bottom: 30px;
         }
 
         .questions {
-            max-width: 85%;
+            //max-width: 85%;
             margin: 0 auto;
 
             .question-item {
                 font-family: Montserrat;
-                font-size: 17px;
-                line-height: 1.42;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: normal;
                 letter-spacing: 0.4px;
                 text-align: left;
                 color: #424c56;
@@ -32,8 +34,13 @@
                 position: relative;
                 border-radius: 11px;
 
-                padding: 14px 0 16px 67px;
-                margin-bottom: 15px;
+                padding: 19px 0 20px 67px;
+                margin-bottom: 7px;
+                
+                &.selected {
+                    border: 1px solid rgb(0, 174, 239);
+                    background-color: rgba(0, 174, 239, 0.07);
+                }
 
                 input {
                     position: absolute;
@@ -43,18 +50,19 @@
 
                 .checkmark {
                     position: absolute;
-                    top: unset;
+                    top: 15px;
                     left: 20px;
                     height: 25px;
                     width: 25px;
-                    background-color: #eee;
+                    background-color: #fff;
                     border-radius: 12px;
+                    border: 1px solid #eee;
 
                     &::after {
                         content: "";
                         display: none;
                         left: 9px;
-                        top: 6px;
+                        top: 5px;
                         width: 6px;
                         height: 11px;
                         border: solid white;
@@ -67,6 +75,7 @@
                 &:hover {
                     input ~ .checkmark {
                         background-color: #ccc;
+                        border-color: #ccc;
                     }
                 }
 
@@ -75,7 +84,8 @@
                 }
 
                 input:checked ~ .checkmark {
-                    background-color: #2196F3;
+                    background-color: #35aeee;
+                    border-color: #35aeee;
                 }
             }
         }

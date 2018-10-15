@@ -59,4 +59,8 @@ export class QuestionnaireComponent extends AppComponentBase implements OnInit {
             this.finishLoading(true);
         }
     }
+
+    onSelectionChange($event) {
+        $event.target.parentElement.classList.toggle('selected');
+    }
 }
