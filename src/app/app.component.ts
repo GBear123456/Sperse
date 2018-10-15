@@ -32,12 +32,15 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         if (appService.isNotHostTenant()) {
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
-                if (name != appService.getDefaultModule()) {
+                let moduleName = name.toLowerCase();
+                if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
+                    if (!appService.subscriptionInGracePeriod(moduleName))
+                        _router.navigate(['app/admin/users']);
                     paymentDialogTimeout = setTimeout(() => {
-                        if (!appService.subscriptionInGracePeriod(name))
-                            _router.navigate(['app/admin/users']);
-                        if (!this.dialog.getDialogById('payment-wizard')) {
+                        if (!this.dialog.getDialogById('payment-wizard') 
+                            && moduleName == appService.getModule()
+                        ) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '655px',
                                 width: '980px',
@@ -46,7 +49,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                                 data: { module: name.toUpperCase() }
                             }).afterClosed().subscribe(result => {});
                         }
-                    });
+                    }, 2000);
                 }
             });
         }

@@ -91,19 +91,21 @@ export class AppService extends AppServiceBase {
 
     getModuleSubscription(name = undefined) {
         let module = (name || this.getModule()).toUpperCase();
-        if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module]) {
-            let subscription = {module: module};
-            return _.find(this.moduleSubscriptions,
-                subscription) || subscription;
-        }
+        if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
+            return _.find(this.moduleSubscriptions, {module: module}) 
+                || {module: module, endDate: new Date(0)};
     }
 
     subscriptionStatusBarIsHidden(): boolean {
+        let module = this.getModule();
+        if (!ModuleSubscriptionInfoDtoModule[module.toUpperCase()])
+            return true;
+
         if (!this._subscriptionBarVisible)
             this._subscriptionBarVisible = !this.showContactInfoPanel &&
                 (this.subscriptionIsExpiringSoon() || this.subscriptionInGracePeriod());
 
-        return this._subscriptionBarsClosed[this.getModule()] || !this._subscriptionBarVisible;
+        return this._subscriptionBarsClosed[module] || !this._subscriptionBarVisible;
     }
 
     hideSubscriptionStatusBar() {
