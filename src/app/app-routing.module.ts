@@ -71,11 +71,13 @@ export class CfoActivateService implements CanActivate {
                     {
                         path: 'admin',
                         loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
+                        resolve: { admin: ModulePathResolverService },
                         data: { preload: false }
                     },
                     {
                         path: 'api',
                         loadChildren: 'app/api/api.module#ApiModule', //Lazy load main module
+                        resolve: { api: ModulePathResolverService },
                         data: { preload: false }
                     },
                     {

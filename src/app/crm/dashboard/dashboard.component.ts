@@ -85,7 +85,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     ngAfterViewInit(): void {
         this.startLoading();
-      
         this.activate();
 
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
