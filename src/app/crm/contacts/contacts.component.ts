@@ -119,12 +119,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             if (event instanceof ActivationEnd && !optionTimeout)
                 optionTimeout = setTimeout(() => {
                     optionTimeout = null;
-                    let data = event.snapshot.data;
-                    this.rightPanelSetting.id = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
+                    let data = event.snapshot.data,
+                        rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
                     this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened',
-                        this.rightPanelSetting.id == RP_DEFAULT_ID && abp.features.isEnabled('CreditReportFeature')
-                        || this.rightPanelSetting.id == RP_USER_INFO_ID && this._userService['data'].userId
+                        rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled('CreditReportFeature')
+                        || rightPanelId == RP_USER_INFO_ID && this._userService['data'].userId
                     );
+                    if (this.rightPanelSetting.opened)
+                        this.rightPanelSetting.id = rightPanelId;
                 });
         });
         _contactsService.userSubscribe((userId) => {
@@ -203,7 +205,12 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     private fillLeadDetails(result) {
         this._contactGroupService['data'].leadInfo = this.leadInfo = result;
-        this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+
+        this.loadLeadsStages(() => {
+            if (this.leadInfo.stage)
+                this.clientStageId = this.leadStages.find(
+                    stage => stage.name === this.leadInfo.stage).id;
+        });
 
         this.storeInitialData();
     }
@@ -282,11 +289,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadLeadData() {
-        if (!this.leadInfo) {
+        let contactInfo  = this._contactGroupService['data'].contactInfo,
+            leadInfo = this._contactGroupService['data'].leadInfo;
+        if (!this.leadInfo && contactInfo && leadInfo) {
             this.startLoading(true);
-            let leadId = this._contactGroupService['data'].leadInfo.id,
+            let leadId = leadInfo.id,
                 leadInfo$ = leadId ? this._leadService.getLeadInfo(leadId) :
-                    this._leadService.getLast(this.contactInfo.id);
+                    this._leadService.getLast(contactInfo.id);
 
             leadInfo$.pipe(finalize(() => {
                 this.finishLoading(true);
@@ -296,18 +305,22 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    private loadLeadsStages() {
-        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
-            .subscribe(result => {
-                this.leadStages = result.stages.map((stage) => {
-                    return {
-                        id: stage.id,
-                        name: stage.name,
-                        text: stage.name,
-                        action: this.updateLeadStage.bind(this)
-                    };
-                });                
-            });
+    private loadLeadsStages(callback = undefined) {
+        if (this.leadStages && this.leadStages.length)
+            callback && callback();
+        else
+            this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
+                .subscribe(result => {
+                    this.leadStages = result.stages.map((stage) => {
+                        return {
+                            id: stage.id,
+                            name: stage.name,
+                            text: stage.name,
+                            action: this.updateLeadStage.bind(this)
+                        };
+                    });
+                    callback && callback();
+                });
     }
 
     private loadPartnerTypes() {

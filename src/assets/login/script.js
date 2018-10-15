@@ -247,13 +247,12 @@
                 $('.agree-rights').show();
 
                 var privacy = $('#privacy');
-                privacy.find('.download').attr('href', remoteServiceUrl + '/docs/SpersePrivacyPolicy.pdf');
                 privacy.on('show.bs.modal', function() {
                     $(this)
                         .addClass('modal-scrollfix')
                         .find('.modal-body')
                         .html('loading...')
-                        .load(remoteServiceUrl + '/docs/privacy.html', function() {
+                        .load('./assets/documents/privacy.html', function() {
                             privacy
                                 .removeClass('modal-scrollfix')
                                 .modal('handleUpdate');
@@ -261,21 +260,20 @@
                 });
 
                 var terms = $('#terms');
-                terms.find('.download').attr('href', remoteServiceUrl + '/docs/SperseTermsOfService.pdf');
                 terms.on('show.bs.modal', function() {
                     $(this)
                         .addClass('modal-scrollfix')
                         .find('.modal-body')
                         .html('loading...')
-                        .load(remoteServiceUrl + '/docs/terms.html', function() {
+                        .load('./assets/documents/terms.html', function() {
                             terms
                                 .removeClass('modal-scrollfix')
                                 .modal('handleUpdate');
                         });
                 });
 
-                $('.print-this').on('click', function() {
-                    printElement($('.print-this-section')[0]);
+                $('.print-this').on('click', function(event) {
+                    printElement($(event.target).closest('.modal-dialog').find('.print-this-section')[0]);
                 });
             });
 

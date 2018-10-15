@@ -27,6 +27,7 @@
                               [hideButtons]="true"
                               [selectedKeys]="[data.appointment.AssignedUserIds]"
                               [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
+                              (onSelectionChanged)="onUserAssignmentChanged($event)"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
 
@@ -54,18 +55,18 @@
                      (onItemSelected)="onClientSelected($event)"
                      [list]="clients">
     </crm-static-list>
-    <crm-static-list #ordersList
-                     [width]="'330px'"
-                     [height]="440"
-                     [targetSelector]="'[accesskey=\'OrdersList\']'"
-                     [title]="l('Order')"
-                     [showConfirmation]="false"
-                     [highlightSelected]="true"
-                     [selectedKeys]="[data.appointment.OrderId]"
-                     [searchEnabled]="true"
-                     (onItemSelected)="onOrderSelected($event)"
-                     [list]="orders">
-    </crm-static-list>
+    <!--<crm-static-list #ordersList-->
+                     <!--[width]="'330px'"-->
+                     <!--[height]="440"-->
+                     <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
+                     <!--[title]="l('Order')"-->
+                     <!--[showConfirmation]="false"-->
+                     <!--[highlightSelected]="true"-->
+                     <!--[selectedKeys]="[data.appointment.OrderId]"-->
+                     <!--[searchEnabled]="true"-->
+                     <!--(onItemSelected)="onOrderSelected($event)"-->
+                     <!--[list]="orders">-->
+    <!--</crm-static-list>-->
 
     <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
                     (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>

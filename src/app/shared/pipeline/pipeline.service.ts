@@ -149,11 +149,13 @@ export class PipelineService {
             targetStage.leads.unshift(
                 sourceStage.leads.splice(
                     sourceStage.leads.indexOf(entity), 1).pop());
+        entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;
     }
 
     completeEntityUpdate(entity, fromStage, toStage) {
+        entity.StageId = toStage.id;
         entity.stage = entity.Stage = toStage.name;
         fromStage.total--;
         toStage.total++;

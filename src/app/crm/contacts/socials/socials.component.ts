@@ -65,7 +65,7 @@ export class SocialsComponent extends AppComponentBase {
     getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('li');
-        return this.dialogService.calculateDialogPosition(event, parent, 0, shiftY);
+        return this.dialogService.calculateDialogPosition(event, parent, 400, shiftY);
     }
 
     calculateShiftY(event) {
@@ -101,6 +101,7 @@ export class SocialsComponent extends AppComponentBase {
             hasBackdrop: false,
             position: this.getDialogPosition(event)
         }).afterClosed().subscribe(result => {
+            scrollTo(0, 0);
             if (result) {
                 if (dialogData.contactId) {
                     this.updateDataField(data, dialogData);

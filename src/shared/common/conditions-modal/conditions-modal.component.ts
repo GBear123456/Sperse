@@ -23,13 +23,13 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     private conditionsOptions = {
         [ConditionsType.Terms]: {
             title: this.l('SperseTermsOfService'),
-            bodyLink: '/docs/terms.html',
-            downloadLink: '/docs/SpersePrivacyPolicy.pdf'
+            bodyLink: './assets/documents/terms.html',
+            downloadLink: './assets/documents/SpersePrivacyPolicy.pdf'
         },
         [ConditionsType.Policies]: {
             title: this.l('SpersePrivacyPolicy'),
-            bodyLink: '/docs/privacy.html',
-            downloadLink: '/docs/SperseTermsOfService.pdf'
+            bodyLink: './assets/documents/privacy.html',
+            downloadLink: './assets/documents/SperseTermsOfService.pdf'
         }
     };
 
@@ -59,7 +59,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             }
         ];
         this.conditionBody$ = this.http.get(
-            AppConsts.remoteServiceBaseUrl + this.conditionsOptions[this.data.type].bodyLink,
+            this.conditionsOptions[this.data.type].bodyLink,
             { responseType: 'text' }
         ).pipe(
             publishReplay(),
@@ -71,7 +71,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     download() {
-        window.open(AppConsts.remoteServiceBaseUrl + this.conditionsOptions[this.data.type].downloadLink, '_blank');
+        window.open(this.conditionsOptions[this.data.type].downloadLink, '_blank');
     }
 
     printContent() {
