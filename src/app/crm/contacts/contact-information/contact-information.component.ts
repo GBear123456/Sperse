@@ -1,12 +1,13 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ContactGroupServiceProxy, ContactGroupInfoDto } from '@shared/service-proxies/service-proxies';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
     selector: 'contact-information',
     templateUrl: './contact-information.component.html',
     styleUrls: ['./contact-information.component.less']
 })
-export class ContactInformationComponent implements OnInit {
+export class ContactInformationComponent extends AppComponentBase implements OnInit {
     public data: {
         contactInfo: ContactGroupInfoDto
     };
@@ -21,6 +22,7 @@ export class ContactInformationComponent implements OnInit {
 
     constructor(injector: Injector,
                 private _contactGroupService: ContactGroupServiceProxy) {
+        super(injector);
     }
 
     checkTabEnabled(tabIndex) {
@@ -30,7 +32,7 @@ export class ContactInformationComponent implements OnInit {
     selectedTabChange(event) {
         this.loadedTabs[this.seletedTabIndex] = true;
         this.loadedTabs[event.index] = true;
-        this.seletedTabIndex = event.index
+        this.seletedTabIndex = event.index;
     }
 
     ngOnInit() {

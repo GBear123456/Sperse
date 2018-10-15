@@ -51,8 +51,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     ngOnInit(): void {
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
-        this.canSendVerificationRequest = 
-            !(this._userService['data'] && this._userService['data'].userId) 
+        this.canSendVerificationRequest =
+            !(this._userService['data'] && this._userService['data'].userId)
                 && this.appService.canSendVerificationRequest();
     }
 
@@ -173,7 +173,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     isClientCFOAvailable() {
-        return this.data && this.data.primaryContactInfo && 
+        return this.data && this.data.primaryContactInfo &&
             this.appService.isCFOAvailable(this.data.primaryContactInfo.userId);
     }
 
