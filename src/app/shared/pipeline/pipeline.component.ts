@@ -50,6 +50,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedLeadsChange.emit(this._selectedLeads);
     }
 
+    @Input() lockMarginalEntities = false;
+    @Input() dragulaName = 'stage';
     @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
     @Input() selectFields: string[];
@@ -83,15 +85,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     newStage = this.getStageByElement(value[2]);
                 if (value[1].classList.contains('selected')) {
                     this.getSelectedLeads().forEach((lead) => {
-                        if ([this.firstStage.name, this.lastStage.name].indexOf(lead.Stage) >= 0)
-                            return false;
-
                         let oldStage = _.find(this.stages, (stage) => {
-                            return stage.name == lead.Stage;
+                            return stage.id == lead.StageId;
                         });
 
-                        if (lead && lead.Stage != newStage.name)
-                            this.updateEntityStage(lead.Id, newStage.name, lead.Stage, () => {
+                        if ([this.firstStage.id, this.lastStage.id].indexOf(oldStage.id) >= 0)
+                            return false;
+
+                        if (lead && oldStage.name != newStage.name)
+                            this.updateEntityStage(lead.Id, newStage.name, oldStage.name, () => {
                                 if (lead.Id != leadId) {
                                     newStage['leads'].unshift(lead);
                                     oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
@@ -133,8 +135,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     });
                     return stage;
                 });
-                this.firstStage = this.stages[0];
-                this.lastStage = this.stages[this.stages.length - 1];
+                              
+                this.firstStage = this.lockMarginalEntities ? this.stages[0]: {};
+                this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1]: {};
 
                 this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
@@ -156,7 +159,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     let cards = this.getSelectedCards();
                     if (cards.length)
                         el.setAttribute('count', [].filter.call(cards, (card) => {
-                            return [this.firstStage.name, this.lastStage.name]
+                            return [this.firstStage.id, this.lastStage.id]
                                 .indexOf(card.getAttribute('stage')) < 0;
                         }).length);
                 }
@@ -167,7 +170,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             if (action.targetStageId) {
                                 let target = _.find(this.stages, (stage) => {
                                     return stage.id == action.targetStageId;
-                                }), targetElm = document.querySelector('[accessKey="' + target.name + '"]');
+                                }), targetElm = document.querySelector('[accessKey="' + target.id + '"]');
                                 targetElm && targetElm.classList.add('drop-area');
                             }
                         });
@@ -216,7 +219,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     getStageByElement(el) {
         return _.find(this.stages, (stage) => {
-            return stage && (stage.name == (el.getAttribute('stage') || this.getAccessKey(el)));
+            return stage && (stage.id == (el.getAttribute('stage') || this.getAccessKey(el)));
         });
     }
 
@@ -404,7 +407,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private toogleHighlightShiftArea(lead, checked) {
         if (this.shiftStartLead &&
-            this.shiftStartLead.Stage == lead.Stage
+            this.shiftStartLead.StageId == lead.StageId
         ) {
             let startCard: any = document.querySelector('[accessKey="' + this.shiftStartLead.Id + '"]'),
                 endCard: any = document.querySelector('[accessKey="' + lead.Id + '"]');

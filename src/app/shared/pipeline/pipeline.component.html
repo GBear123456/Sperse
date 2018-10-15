@@ -3,9 +3,9 @@
         <div class="column-title">
             <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="./assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
-        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.name}}" (click)="hideStageHighlighting()">
+        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()">
             <ng-container *ngFor="let lead of stage.leads">
-                  <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id" (click)="onCardClickInternal(lead, $event)" [attr.stage]="lead?.Stage" count="">
+                  <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id" (click)="onCardClickInternal(lead, $event)" [attr.stage]="lead?.StageId" count="">
                         <div class="container-fluid">                                        
                             <div class="row">
                                 <div class="full-name">
