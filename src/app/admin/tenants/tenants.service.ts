@@ -6,7 +6,7 @@ import {
     TenantEditEditionDto, TenantEditDto
 } from '@shared/service-proxies/service-proxies';
 import { Observable } from 'rxjs';
-import { groupBy, concatAll, toArray, map, mergeMap, filter, switchMap } from 'rxjs/operators';
+import { groupBy, concatAll, toArray, map, mergeMap, filter, switchMap, publishReplay, refCount } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
@@ -29,6 +29,8 @@ export class TenantsService {
 
     getDefaultEditionName(): Observable<string> {
         return this._commonLookupService.getDefaultEditionName().pipe(
+            publishReplay(),
+            refCount(),
             map(res => res.name)
         );
     }
