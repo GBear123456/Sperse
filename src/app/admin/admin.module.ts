@@ -65,6 +65,7 @@ import { AddOrEditSSLBindingModal } from './settings/modals/add-or-edit-ssl-bind
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
+import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 
 @NgModule({
     imports: [
@@ -152,6 +153,7 @@ import { ContactsModule } from '../crm/contacts/contacts.module';
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
+        ModulesEditionsSelectComponent,
         TenantFeaturesModalComponent,
         CreateUserDialogComponent
     ],

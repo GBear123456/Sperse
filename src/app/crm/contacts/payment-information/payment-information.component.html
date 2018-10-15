@@ -29,7 +29,7 @@
                 <div *ngIf="(dispayedPayments$ | async) as displayedPayments;">
                     <ul>
                         <li *ngFor="let payment of displayedPayments">
-                            <span class="date">{{ payment.startDate.format('MMM  M, YYYY') + ' - ' + payment.endDate.format('MMM  M, YYYY') }}</span>
+                            <span class="date">{{ formatDate(payment.startDate) + ' - ' + formatDate(payment.endDate) }}</span>
                             <span class="amount">{{ amountCurrency + payment.amount }}</span>
                         </li>
                     </ul>

@@ -9,6 +9,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 })
 export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
     @Input() accountId: any;
+    @Input() loadingContainerElement: Element;
     @Output() onClose: EventEmitter<any> = new EventEmitter();
 
     quovoHandler: QuovoHandler;
@@ -27,17 +28,16 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
     ngOnInit(): void {
         if (this.quovoHandler.isLoaded) {
             if (this.loading) {
-                this.finishLoading(true);
+                this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
             }
             this.quovoHandler.open((e) => this.onQuovoHanderClose(e), this.accountId);
         } else {
             if (!this.loading) {
-                this.startLoading(true);
+                this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
             }
             setTimeout(() => this.ngOnInit(), 100);
         }
     }
-
 
     private onQuovoHanderClose(e) {
         this.onClose.emit(e);

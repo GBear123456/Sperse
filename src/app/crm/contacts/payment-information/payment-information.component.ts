@@ -3,8 +3,9 @@ import { Component, ChangeDetectionStrategy, OnInit, Injector, ViewChild, Elemen
 
 /** Third party imports */
 import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
-import { concatAll, first, pluck, publishReplay, refCount, map, tap, switchMap, finalize } from 'rxjs/operators';
+import { publishReplay, refCount, tap, switchMap, finalize } from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -28,7 +29,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     payments$: Observable<MonthlyPaymentInfo[]>;
     dispayedPayments$: Observable<MonthlyPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
-    paymentMethodsTypes: PaymentMethodInfoType;
+    paymentMethodsTypes = PaymentMethodInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
     constructor(
         injector: Injector,
@@ -83,6 +84,10 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                this.paymentServiceProxy.getPaymentMethods(contactGroupId).pipe(
                    tap(paymentMethods => this.paymentServiceProxy['data'][contactGroupId].paymentMethods = paymentMethods)
                );
+    }
+
+    formatDate(date: moment.Moment) {
+        return date.utc().format('MMM D, YYYY');
     }
 
     updateCard() {}

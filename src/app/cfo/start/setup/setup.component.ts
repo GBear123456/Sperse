@@ -57,7 +57,11 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         if (!this.isInstanceAdmin)
             return;
 
-        this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig).afterClosed().subscribe(e => {
+        const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
+            data: { loadingContainerElement: this.setupContainerElement }
+        }};
+
+        this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(e => {
             this.isDisabled = false;
         });
     }
