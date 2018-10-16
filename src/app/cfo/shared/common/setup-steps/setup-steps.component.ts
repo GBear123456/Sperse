@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Injector, Input, Output, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
@@ -7,15 +7,16 @@ import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
     templateUrl: './setup-steps.component.html',
     styleUrls: ['./setup-steps.component.less'],
     selector: 'setup-steps',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SetupStepComponent extends CFOComponentBase implements OnInit {
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
-        { caption: 'FinancialAccounts', component: '/linkaccounts' },
-        { caption: 'BusinessEntity', component: '/business-entities' },
-        { caption: 'Chart', component: '/chart-of-accounts' },
-        { caption: 'Rules', component: '/rules' },
-        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin }
+        { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false },
+        { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true },
+        { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
+        { caption: 'Rules', component: '/rules', isAlwaysActive: false },
+        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin, isAlwaysActive: false }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
@@ -32,7 +33,7 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     }
 
     onClick(index: number, elem) {
-        if (this._cfoService.hasTransactions && elem.component)
+        if (elem.isAlwaysActive || this._cfoService.hasTransactions && elem.component)
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + elem.component]);
     }
 
