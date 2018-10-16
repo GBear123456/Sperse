@@ -3,13 +3,14 @@ import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Subscription, Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
     instanceTypeChanged: Subject<string> = new Subject<null>();
     instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
-
+    getStatusSubscription: Subscription;
     constructor(
         private _appService: AppService,
         private _layoutService: LayoutService,
@@ -48,14 +49,18 @@ export class CFOService extends CFOServiceBase {
             this._appService.setContactInfoVisibility(true);
             this._layoutService.hideDefaultPageHeader();
         }
-        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
-            if (this.instanceId && data.userId)
-                this.initContactInfo(data.userId);
-            this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
-            this.hasTransactions = this.initialized && data.hasTransactions;
-            this.updateMenuItems();
-            callback && callback.call(this, this.hasTransactions);
-        });
+        if (!this.getStatusSubscription) {
+            this.getStatusSubscription = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId)
+            .pipe(finalize(() => this.getStatusSubscription = undefined))
+            .subscribe((data) => {
+                if (this.instanceId && data.userId)
+                    this.initContactInfo(data.userId);
+                this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
+                this.hasTransactions = this.initialized && data.hasTransactions;
+                this.updateMenuItems();
+                callback && callback.call(this, this.hasTransactions);
+            });
+        }
     }
 
     private updateMenuItems() {
