@@ -1,10 +1,9 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
-import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
+import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
-import * as _ from "underscore";
 
 @Component({
     selector: 'totals-by-source',
@@ -39,8 +38,8 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
                     .pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
                         this.totalCount = 0;
                         this.totalsData = result.sort((a, b) => {
-                            return (parseInt(a.companySizeRange) || Infinity) > 
-                                (parseInt(b.companySizeRange) || Infinity) ? 1: -1;
+                            return (parseInt(a.companySizeRange) || Infinity) >
+                                (parseInt(b.companySizeRange) || Infinity) ? 1 : -1;
                         });
                         this.totalsData.forEach((item) => {
                             if (!item.companySizeRange)
@@ -48,11 +47,11 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
                             this.totalCount += item.customerCount;
                         });
                     }
-            )
+            );
         });
     }
 
-    onInitialized($event) { 
+    onInitialized($event) {
         setTimeout(() => {
             $event.component.render();
         }, 1000);
@@ -63,16 +62,16 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
     }
 
     customizePoint = (data) => {
-        return {    
+        return {
             color: this.rangeColors[data.index]
-        }
+        };
     }
 
     onPointHoverChanged($event) {
         let isHoverIn = $event.target.fullState, item = $event.target;
-        this.percentage = isHoverIn ? (item.percent * 100).toFixed(1) + '%': '';
-        this.rangeCount = (isHoverIn ? item.initialValue: this.totalCount).toLocaleString('en'); 
-        this.rangeColor = isHoverIn ? this.rangeColors[item.index]: undefined;
+        this.percentage = isHoverIn ? (item.percent * 100).toFixed(1) + '%' : '';
+        this.rangeCount = (isHoverIn ? item.initialValue : this.totalCount).toLocaleString('en');
+        this.rangeColor = isHoverIn ? this.rangeColors[item.index] : undefined;
         this.rangeName = item.argument;
     }
 }

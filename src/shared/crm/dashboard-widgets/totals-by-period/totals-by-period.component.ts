@@ -62,7 +62,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
             }
             this.startLoading();
             this._dashboardServiceProxy.getCustomerAndLeadStats(GroupBy2[this.selectedPeriod.name],
-                 this.selectedPeriod.amount).pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
+                 this.selectedPeriod.amount, false).pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
                      this.totalsData = result;
                  });
         });

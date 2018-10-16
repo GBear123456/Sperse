@@ -92,7 +92,7 @@ export class AppService extends AppServiceBase {
     getModuleSubscription(name = undefined) {
         let module = (name || this.getModule()).toUpperCase();
         if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
-            return _.find(this.moduleSubscriptions, {module: module}) 
+            return _.find(this.moduleSubscriptions, {module: module})
                 || {module: module, endDate: new Date(0)};
     }
 

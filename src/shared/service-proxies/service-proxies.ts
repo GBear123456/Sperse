@@ -10865,14 +10865,17 @@ export class DashboardServiceProxy {
     /**
      * @groupBy (optional) 
      * @periodCount (optional) 
+     * @isCumulative (optional) 
      * @return Success
      */
-    getCustomerAndLeadStats(groupBy: GroupBy2 | null | undefined, periodCount: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getCustomerAndLeadStats(groupBy: GroupBy2 | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
         if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
         if (periodCount !== undefined)
             url_ += "PeriodCount=" + encodeURIComponent("" + periodCount) + "&"; 
+        if (isCumulative !== undefined)
+            url_ += "IsCumulative=" + encodeURIComponent("" + isCumulative) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -36334,17 +36337,13 @@ export class CreateContactGroupInput implements ICreateContactGroupInput {
     nickName!: string | undefined;
     emailAddresses!: CreateContactEmailInput[] | undefined;
     phoneNumbers!: CreateContactPhoneInput[] | undefined;
-    address!: CreateContactAddressInput | undefined;
-    companyName!: string | undefined;
-    organizationEmailAddresses!: CreateContactEmailInput[] | undefined;
-    organizationPhoneNumbers!: CreateContactPhoneInput[] | undefined;
-    organizationAddress!: CreateContactAddressInput | undefined;
-    photo!: ContactPhotoInput | undefined;
+    addresses!: CreateContactAddressInput[] | undefined;
+    links!: CreateContactLinkInput[] | undefined;
     note!: string | undefined;
-    organizationNote!: string | undefined;
+    companyName!: string | undefined;
+    photo!: ContactPhotoInput | undefined;
     organizationUnitId!: number | undefined;
     title!: string | undefined;
-    organizationWebSite!: string | undefined;
     tags!: ContactGroupTagInput[] | undefined;
     lists!: ContactGroupListInput[] | undefined;
     assignedUserId!: number | undefined;
@@ -36379,25 +36378,21 @@ export class CreateContactGroupInput implements ICreateContactGroupInput {
                 for (let item of data["phoneNumbers"])
                     this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
             }
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
-            this.companyName = data["companyName"];
-            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
-                this.organizationEmailAddresses = [];
-                for (let item of data["organizationEmailAddresses"])
-                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(CreateContactAddressInput.fromJS(item));
             }
-            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
-                this.organizationPhoneNumbers = [];
-                for (let item of data["organizationPhoneNumbers"])
-                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(CreateContactLinkInput.fromJS(item));
             }
-            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
-            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.note = data["note"];
-            this.organizationNote = data["organizationNote"];
+            this.companyName = data["companyName"];
+            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
             this.title = data["title"];
-            this.organizationWebSite = data["organizationWebSite"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -36440,25 +36435,21 @@ export class CreateContactGroupInput implements ICreateContactGroupInput {
             for (let item of this.phoneNumbers)
                 data["phoneNumbers"].push(item.toJSON());
         }
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["companyName"] = this.companyName;
-        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
-            data["organizationEmailAddresses"] = [];
-            for (let item of this.organizationEmailAddresses)
-                data["organizationEmailAddresses"].push(item.toJSON());
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
         }
-        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
-            data["organizationPhoneNumbers"] = [];
-            for (let item of this.organizationPhoneNumbers)
-                data["organizationPhoneNumbers"].push(item.toJSON());
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
         }
-        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["note"] = this.note;
-        data["organizationNote"] = this.organizationNote;
+        data["companyName"] = this.companyName;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         data["title"] = this.title;
-        data["organizationWebSite"] = this.organizationWebSite;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -36486,17 +36477,13 @@ export interface ICreateContactGroupInput {
     nickName: string | undefined;
     emailAddresses: CreateContactEmailInput[] | undefined;
     phoneNumbers: CreateContactPhoneInput[] | undefined;
-    address: CreateContactAddressInput | undefined;
-    companyName: string | undefined;
-    organizationEmailAddresses: CreateContactEmailInput[] | undefined;
-    organizationPhoneNumbers: CreateContactPhoneInput[] | undefined;
-    organizationAddress: CreateContactAddressInput | undefined;
-    photo: ContactPhotoInput | undefined;
+    addresses: CreateContactAddressInput[] | undefined;
+    links: CreateContactLinkInput[] | undefined;
     note: string | undefined;
-    organizationNote: string | undefined;
+    companyName: string | undefined;
+    photo: ContactPhotoInput | undefined;
     organizationUnitId: number | undefined;
     title: string | undefined;
-    organizationWebSite: string | undefined;
     tags: ContactGroupTagInput[] | undefined;
     lists: ContactGroupListInput[] | undefined;
     assignedUserId: number | undefined;
@@ -36563,6 +36550,66 @@ export interface ICreateContactPhoneInput {
     isConfirmed: boolean;
     comment: string | undefined;
     usageTypeId: string | undefined;
+}
+
+export class CreateContactLinkInput implements ICreateContactLinkInput {
+    contactId!: number;
+    url!: string;
+    isActive!: boolean;
+    isConfirmed!: boolean;
+    comment!: string | undefined;
+    linkTypeId!: string | undefined;
+    isCompany!: boolean;
+
+    constructor(data?: ICreateContactLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.comment = data["comment"];
+            this.linkTypeId = data["linkTypeId"];
+            this.isCompany = data["isCompany"];
+        }
+    }
+
+    static fromJS(data: any): CreateContactLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["comment"] = this.comment;
+        data["linkTypeId"] = this.linkTypeId;
+        data["isCompany"] = this.isCompany;
+        return data; 
+    }
+}
+
+export interface ICreateContactLinkInput {
+    contactId: number;
+    url: string;
+    isActive: boolean;
+    isConfirmed: boolean;
+    comment: string | undefined;
+    linkTypeId: string | undefined;
+    isCompany: boolean;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -37632,62 +37679,6 @@ export interface IUpdateContactGroupTagInput {
     name: string;
 }
 
-export class CreateContactLinkInput implements ICreateContactLinkInput {
-    contactId!: number;
-    url!: string;
-    isActive!: boolean;
-    isConfirmed!: boolean;
-    comment!: string | undefined;
-    linkTypeId!: string | undefined;
-
-    constructor(data?: ICreateContactLinkInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-            this.url = data["url"];
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-            this.linkTypeId = data["linkTypeId"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactLinkInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactLinkInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["url"] = this.url;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        data["linkTypeId"] = this.linkTypeId;
-        return data; 
-    }
-}
-
-export interface ICreateContactLinkInput {
-    contactId: number;
-    url: string;
-    isActive: boolean;
-    isConfirmed: boolean;
-    comment: string | undefined;
-    linkTypeId: string | undefined;
-}
-
 export class CreateContactLinkOutput implements ICreateContactLinkOutput {
     id!: number | undefined;
 
@@ -37732,6 +37723,7 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     isConfirmed!: boolean;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
+    isCompany!: boolean;
 
     constructor(data?: IUpdateContactLinkInput) {
         if (data) {
@@ -37751,6 +37743,7 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
             this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
+            this.isCompany = data["isCompany"];
         }
     }
 
@@ -37770,6 +37763,7 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
+        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
@@ -37782,6 +37776,7 @@ export interface IUpdateContactLinkInput {
     isConfirmed: boolean;
     comment: string | undefined;
     linkTypeId: string | undefined;
+    isCompany: boolean;
 }
 
 export class ListResultDtoOfContactLinkTypeDto implements IListResultDtoOfContactLinkTypeDto {
@@ -39970,7 +39965,8 @@ export interface IGetTotalsOutput {
 export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOutput {
     date!: moment.Moment | undefined;
     customerCount!: number | undefined;
-    leadCount!: number | undefined;
+    leadTotalCount!: number | undefined;
+    leadStageCount!: { [key: string] : number; } | undefined;
 
     constructor(data?: IGetCustomerAndLeadStatsOutput) {
         if (data) {
@@ -39985,7 +39981,14 @@ export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOu
         if (data) {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.customerCount = data["customerCount"];
-            this.leadCount = data["leadCount"];
+            this.leadTotalCount = data["leadTotalCount"];
+            if (data["leadStageCount"]) {
+                this.leadStageCount = {};
+                for (let key in data["leadStageCount"]) {
+                    if (data["leadStageCount"].hasOwnProperty(key))
+                        this.leadStageCount[key] = data["leadStageCount"][key];
+                }
+            }
         }
     }
 
@@ -40000,7 +40003,14 @@ export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOu
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["customerCount"] = this.customerCount;
-        data["leadCount"] = this.leadCount;
+        data["leadTotalCount"] = this.leadTotalCount;
+        if (this.leadStageCount) {
+            data["leadStageCount"] = {};
+            for (let key in this.leadStageCount) {
+                if (this.leadStageCount.hasOwnProperty(key))
+                    data["leadStageCount"][key] = this.leadStageCount[key];
+            }
+        }
         return data; 
     }
 }
@@ -40008,7 +40018,8 @@ export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOu
 export interface IGetCustomerAndLeadStatsOutput {
     date: moment.Moment | undefined;
     customerCount: number | undefined;
-    leadCount: number | undefined;
+    leadTotalCount: number | undefined;
+    leadStageCount: { [key: string] : number; } | undefined;
 }
 
 export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
@@ -43947,17 +43958,13 @@ export class CreateLeadInput implements ICreateLeadInput {
     nickName!: string | undefined;
     emailAddresses!: CreateContactEmailInput[] | undefined;
     phoneNumbers!: CreateContactPhoneInput[] | undefined;
-    address!: CreateContactAddressInput | undefined;
-    companyName!: string | undefined;
-    organizationEmailAddresses!: CreateContactEmailInput[] | undefined;
-    organizationPhoneNumbers!: CreateContactPhoneInput[] | undefined;
-    organizationAddress!: CreateContactAddressInput | undefined;
-    photo!: ContactPhotoInput | undefined;
+    addresses!: CreateContactAddressInput[] | undefined;
+    links!: CreateContactLinkInput[] | undefined;
     note!: string | undefined;
-    organizationNote!: string | undefined;
+    companyName!: string | undefined;
+    photo!: ContactPhotoInput | undefined;
     organizationUnitId!: number | undefined;
     title!: string | undefined;
-    organizationWebSite!: string | undefined;
     tags!: ContactGroupTagInput[] | undefined;
     lists!: ContactGroupListInput[] | undefined;
     assignedUserId!: number | undefined;
@@ -43994,25 +44001,21 @@ export class CreateLeadInput implements ICreateLeadInput {
                 for (let item of data["phoneNumbers"])
                     this.phoneNumbers.push(CreateContactPhoneInput.fromJS(item));
             }
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
-            this.companyName = data["companyName"];
-            if (data["organizationEmailAddresses"] && data["organizationEmailAddresses"].constructor === Array) {
-                this.organizationEmailAddresses = [];
-                for (let item of data["organizationEmailAddresses"])
-                    this.organizationEmailAddresses.push(CreateContactEmailInput.fromJS(item));
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(CreateContactAddressInput.fromJS(item));
             }
-            if (data["organizationPhoneNumbers"] && data["organizationPhoneNumbers"].constructor === Array) {
-                this.organizationPhoneNumbers = [];
-                for (let item of data["organizationPhoneNumbers"])
-                    this.organizationPhoneNumbers.push(CreateContactPhoneInput.fromJS(item));
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(CreateContactLinkInput.fromJS(item));
             }
-            this.organizationAddress = data["organizationAddress"] ? CreateContactAddressInput.fromJS(data["organizationAddress"]) : <any>undefined;
-            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.note = data["note"];
-            this.organizationNote = data["organizationNote"];
+            this.companyName = data["companyName"];
+            this.photo = data["photo"] ? ContactPhotoInput.fromJS(data["photo"]) : <any>undefined;
             this.organizationUnitId = data["organizationUnitId"];
             this.title = data["title"];
-            this.organizationWebSite = data["organizationWebSite"];
             if (data["tags"] && data["tags"].constructor === Array) {
                 this.tags = [];
                 for (let item of data["tags"])
@@ -44057,25 +44060,21 @@ export class CreateLeadInput implements ICreateLeadInput {
             for (let item of this.phoneNumbers)
                 data["phoneNumbers"].push(item.toJSON());
         }
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["companyName"] = this.companyName;
-        if (this.organizationEmailAddresses && this.organizationEmailAddresses.constructor === Array) {
-            data["organizationEmailAddresses"] = [];
-            for (let item of this.organizationEmailAddresses)
-                data["organizationEmailAddresses"].push(item.toJSON());
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
         }
-        if (this.organizationPhoneNumbers && this.organizationPhoneNumbers.constructor === Array) {
-            data["organizationPhoneNumbers"] = [];
-            for (let item of this.organizationPhoneNumbers)
-                data["organizationPhoneNumbers"].push(item.toJSON());
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
         }
-        data["organizationAddress"] = this.organizationAddress ? this.organizationAddress.toJSON() : <any>undefined;
-        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["note"] = this.note;
-        data["organizationNote"] = this.organizationNote;
+        data["companyName"] = this.companyName;
+        data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["organizationUnitId"] = this.organizationUnitId;
         data["title"] = this.title;
-        data["organizationWebSite"] = this.organizationWebSite;
         if (this.tags && this.tags.constructor === Array) {
             data["tags"] = [];
             for (let item of this.tags)
@@ -44105,17 +44104,13 @@ export interface ICreateLeadInput {
     nickName: string | undefined;
     emailAddresses: CreateContactEmailInput[] | undefined;
     phoneNumbers: CreateContactPhoneInput[] | undefined;
-    address: CreateContactAddressInput | undefined;
-    companyName: string | undefined;
-    organizationEmailAddresses: CreateContactEmailInput[] | undefined;
-    organizationPhoneNumbers: CreateContactPhoneInput[] | undefined;
-    organizationAddress: CreateContactAddressInput | undefined;
-    photo: ContactPhotoInput | undefined;
+    addresses: CreateContactAddressInput[] | undefined;
+    links: CreateContactLinkInput[] | undefined;
     note: string | undefined;
-    organizationNote: string | undefined;
+    companyName: string | undefined;
+    photo: ContactPhotoInput | undefined;
     organizationUnitId: number | undefined;
     title: string | undefined;
-    organizationWebSite: string | undefined;
     tags: ContactGroupTagInput[] | undefined;
     lists: ContactGroupListInput[] | undefined;
     assignedUserId: number | undefined;
