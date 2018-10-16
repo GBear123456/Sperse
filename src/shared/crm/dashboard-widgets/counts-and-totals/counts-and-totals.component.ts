@@ -1,6 +1,6 @@
-import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { DashboardServiceProxy, GetTotalsOutput } from 'shared/service-proxies/service-proxies';
+import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 
@@ -10,7 +10,7 @@ import { DashboardWidgetsService } from '../dashboard-widgets.service';
     styleUrls: ['./counts-and-totals.component.less'],
     providers: [ DashboardServiceProxy ]
 })
-export class CountsAndTotalsComponent extends AppComponentBase implements OnInit {
+export class CountsAndTotalsComponent extends AppComponentBase {
     @Output() onDataLoaded = new EventEmitter();
 
     data = {};
@@ -36,7 +36,4 @@ export class CountsAndTotalsComponent extends AppComponentBase implements OnInit
         });
     }
 
-    ngOnInit() {
-        this._dashboardService.periodChanged();
-    }
 }
