@@ -1,11 +1,7 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
-
-import {
-    BankAccountsServiceProxy
-} from '@shared/service-proxies/service-proxies';
+import { DashboardWidgetsService } from '../dashboard-widgets.service';
 
 @Component({
     selector: 'new-items-totals',
@@ -13,7 +9,7 @@ import {
     styleUrls: ['./new-items-totals.component.less'],
     providers: []
 })
-export class NewItemsTotalsComponent extends AppComponentBase implements OnInit {
+export class NewItemsTotalsComponent extends AppComponentBase {
     fields: any;
     dataAvailable = false;
     data = {};
@@ -25,13 +21,11 @@ export class NewItemsTotalsComponent extends AppComponentBase implements OnInit 
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.fields = _dashboardService.totalsDataFields;
-        _dashboardService.subscribeTotalsData(result => {            
-            this.dataAvailable = result['totalOrderAmount'] || 
-                result['totalLeadCount'] || result['totalClientCount']
+        _dashboardService.subscribeTotalsData(result => {
+            this.dataAvailable = result['totalOrderAmount'] ||
+                result['totalLeadCount'] || result['totalClientCount'];
             this.data = result;
         });
     }
 
-    ngOnInit() {
-    }
 }

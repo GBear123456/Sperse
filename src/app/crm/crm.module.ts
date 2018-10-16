@@ -170,7 +170,7 @@ export class CrmModule {
         private _appStoreService: AppStoreService,
         private _importLeadsService: ImportLeadsService
     ) {
-        this._appStoreService.loadUserDictionaries();
+        setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
         _appService.subscribeModuleChange((config) => {
             if (config['name'] == this.name)
                 _importLeadsService.setupImportCheck();

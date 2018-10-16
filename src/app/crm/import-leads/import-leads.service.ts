@@ -7,9 +7,9 @@ export class ImportLeadsService {
     constructor(injector: Injector,
         private _importWizardService: ImportWizardService,
         private _importProxy: ImportServiceProxy
-    ) {    
+    ) {
         _importWizardService.cancelListen((importIds) => {
-            if (importIds && importIds.length) 
+            if (importIds && importIds.length)
                 importIds.forEach((id) => _importProxy.cancel(id).subscribe());
             else if (_importWizardService.activeImportId)
                 _importProxy.cancel(_importWizardService.activeImportId).subscribe(() => {
