@@ -10865,14 +10865,17 @@ export class DashboardServiceProxy {
     /**
      * @groupBy (optional) 
      * @periodCount (optional) 
+     * @isCumulative (optional) 
      * @return Success
      */
-    getCustomerAndLeadStats(groupBy: GroupBy2 | null | undefined, periodCount: number | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
+    getCustomerAndLeadStats(groupBy: GroupBy2 | null | undefined, periodCount: number | null | undefined, isCumulative: boolean | null | undefined): Observable<GetCustomerAndLeadStatsOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomerAndLeadStats?";
         if (groupBy !== undefined)
             url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
         if (periodCount !== undefined)
             url_ += "PeriodCount=" + encodeURIComponent("" + periodCount) + "&"; 
+        if (isCumulative !== undefined)
+            url_ += "IsCumulative=" + encodeURIComponent("" + isCumulative) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -39970,7 +39973,8 @@ export interface IGetTotalsOutput {
 export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOutput {
     date!: moment.Moment | undefined;
     customerCount!: number | undefined;
-    leadCount!: number | undefined;
+    leadTotalCount!: number | undefined;
+    leadStageCount!: { [key: string] : number; } | undefined;
 
     constructor(data?: IGetCustomerAndLeadStatsOutput) {
         if (data) {
@@ -39985,7 +39989,14 @@ export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOu
         if (data) {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.customerCount = data["customerCount"];
-            this.leadCount = data["leadCount"];
+            this.leadTotalCount = data["leadTotalCount"];
+            if (data["leadStageCount"]) {
+                this.leadStageCount = {};
+                for (let key in data["leadStageCount"]) {
+                    if (data["leadStageCount"].hasOwnProperty(key))
+                        this.leadStageCount[key] = data["leadStageCount"][key];
+                }
+            }
         }
     }
 
@@ -40000,7 +40011,14 @@ export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOu
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["customerCount"] = this.customerCount;
-        data["leadCount"] = this.leadCount;
+        data["leadTotalCount"] = this.leadTotalCount;
+        if (this.leadStageCount) {
+            data["leadStageCount"] = {};
+            for (let key in this.leadStageCount) {
+                if (this.leadStageCount.hasOwnProperty(key))
+                    data["leadStageCount"][key] = this.leadStageCount[key];
+            }
+        }
         return data; 
     }
 }
@@ -40008,7 +40026,8 @@ export class GetCustomerAndLeadStatsOutput implements IGetCustomerAndLeadStatsOu
 export interface IGetCustomerAndLeadStatsOutput {
     date: moment.Moment | undefined;
     customerCount: number | undefined;
-    leadCount: number | undefined;
+    leadTotalCount: number | undefined;
+    leadStageCount: { [key: string] : number; } | undefined;
 }
 
 export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
