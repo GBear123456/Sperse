@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service'; 
 import { AppConsts } from '@shared/AppConsts';
-
+import { finalize } from 'rxjs/operators';
 import * as _ from "underscore";
 
 @Component({
@@ -33,9 +33,10 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
+            this.startLoading();
             _dashboardServiceProxy.getCustomersByCompanySize(
                 period && period.from, period && period.to)
-                    .subscribe((result) => {
+                    .pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
                         this.totalCount = 0;
                         this.totalsData = result.sort((a, b) => {
                             return (parseInt(a.companySizeRange) || Infinity) > 

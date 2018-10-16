@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
+import { finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Component({
@@ -35,8 +36,9 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
+        this.startLoading();
         this._dashboardServiceProxy.getRecentlyCreatedCustomers(
-            this.recordsCount).subscribe(result => {
+            this.recordsCount).pipe(finalize(() => {this.finishLoading();})).subscribe(result => {
                 this.dataSource = result;
             }
         );

@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
-
+import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
 
 @Component({
@@ -60,8 +60,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
                 else
                     this.selectedPeriod = this.periods[2];
             }
+            this.startLoading();
             this._dashboardServiceProxy.getCustomerAndLeadStats(GroupBy2[this.selectedPeriod.name],
-                 this.selectedPeriod.amount).subscribe((result) => {
+                 this.selectedPeriod.amount).pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
                      this.totalsData = result;
                  });
         });

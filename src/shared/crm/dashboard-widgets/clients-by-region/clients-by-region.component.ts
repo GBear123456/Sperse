@@ -7,6 +7,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { DecimalPipe } from '@angular/common';
 import DxChart from 'devextreme/viz/chart';
 import * as mapsData from 'devextreme/dist/js/vectormap-data/world.js';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'clients-by-region',
@@ -30,9 +31,10 @@ export class ClientsByReginComponent extends AppComponentBase implements AfterVi
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
+            this.startLoading();
             _dashboardServiceProxy.getCustomersByRegion(
                 period && period.from, period && period.to)
-                    .subscribe((result) => {
+                    .pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
                         this.gdpData = {};
                         result.forEach((val, index) => {
                             if (this.gdpData.hasOwnProperty(val.countryId))
