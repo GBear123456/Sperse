@@ -52841,6 +52841,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isLocked!: boolean | undefined;
+    hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -52857,6 +52858,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
             this.isLocked = data["isLocked"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
 
@@ -52873,6 +52875,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isLocked"] = this.isLocked;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
 }
@@ -52882,6 +52885,7 @@ export interface IModuleSubscriptionInfoDto {
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
     isLocked: boolean | undefined;
+    hasRecurringBilling: boolean | undefined;
 }
 
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {

@@ -115,6 +115,9 @@ export class AppService extends AppServiceBase {
 
     subscriptionIsExpiringSoon(name = undefined): boolean {
         let sub = this.getModuleSubscription(name);
+        if (this.hasRecurringBilling(sub))
+            return false;
+
         if (this.isNotHostTenant() && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
@@ -124,6 +127,9 @@ export class AppService extends AppServiceBase {
 
     subscriptionInGracePeriod(name = undefined): boolean {
         let sub = this.getModuleSubscription(name);
+        if (this.hasRecurringBilling(sub))
+            return false;
+
         if (this.isNotHostTenant() && sub && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
@@ -150,8 +156,13 @@ export class AppService extends AppServiceBase {
     hasModuleSubscription(name = undefined) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module ||
-            !module.endDate || (module.endDate > moment().utc());
+        return !this.isNotHostTenant() || !module || !module.endDate || 
+            this.hasRecurringBilling(module) || (module.endDate > moment().utc());
+    }
+
+    hasRecurringBilling(module) {
+        return module && module.hasRecurringBilling && (moment(module.endDate).add(
+            AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
     checkModuleExpired(name = undefined) {
