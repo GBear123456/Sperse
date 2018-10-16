@@ -1,5 +1,5 @@
 <mat-tab-group (selectedTabChange)="selectedTabChange($event)">
-    <mat-tab label="Personal">
+    <mat-tab [label]="l('ContactInformation_PersonTitle')">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="col-md-12">
@@ -16,7 +16,7 @@
             </div>
         </dx-scroll-view>
     </mat-tab>
-    <mat-tab label="Business">
+    <mat-tab [label]="l('ContactInformation_CompanyTitle')">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="col-md-12">
@@ -36,11 +36,11 @@
             </div>
         </dx-scroll-view>
     </mat-tab>
-    <mat-tab label="Employment">
+    <mat-tab [label]="l('ContactInformation_EmploymentTitle')">
         <dx-scroll-view *ngIf="checkTabEnabled(EMPLOYMENT_TAB_INDEX)" showScrollbar="onHover">
             <employment [contactId]="data?.contactInfo?.primaryContactInfo?.id"></employment>
         </dx-scroll-view>
     </mat-tab>
-    <mat-tab label="Confidential">
+    <mat-tab [label]="l('ContactInformation_ConfidentialTitle')">
     </mat-tab>
 </mat-tab-group>

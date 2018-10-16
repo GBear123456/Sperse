@@ -22,20 +22,38 @@
         </mat-step>
         <mat-step>
             <div class="first-step step-item">
+                <div class="step-bg"></div>
+                <img src="./assets/common/images/intro/brain.svg" alt="Brain" class="brain-bg">
                 <div class="header">
+                    <img src="./assets/common/images/intro/logo-light.png"
+                         srcset="./assets/common/images/intro/logo-light@2x.png 2x,
+                         ./assets/common/images/intro/logo-light@3x.png 3x"
+                         alt="CRM logo"
+                         class="crm-intro-logo">
                     <span>{{l('Introduction_Tour')}}</span>
                 </div>
                 <div class="main">
-                    <h2>{{l('CRM')}}</h2>
-                    <p>{{l('CRM_description')}}</p>
-                    <div class="play" (click)="goToStep(0)">
-                        <img src="./assets/common/images/crm-intro/play-btn.png">
-                        <div class="bottomp">
-                            <p>
-                                {{l('Know_Your')}} <span class="color-blue">{{l('CRM_Customers')}}</span>
-                            </p>
-                            <img src="./assets/common/images/crm-intro/frb.png">
+                    <div class="two-cols">
+                        <div class="text">
+                            <h2>{{l('CRM')}}</h2>
+                            <p>{{l('CRM_description')}}</p>
                         </div>
+                        <div class="img">
+                            <img src="./assets/common/images/intro/first-step-mockups.png"
+                                 alt="CRM"
+                                 srcset="./assets/common/images/intro/first-step-mockups@2x.png 2x,
+                                 ./assets/common/images/intro/first-step-mockups@3x.png 3x"
+                                 class="img-fluid">
+                        </div>
+                    </div>
+
+                    <div class="know-customers">
+                        <p class="know-customers--text">{{l('Know_Your')}} {{l('CRM_Customers')}}</p>
+                        <ul class="know-customers--list w-100">
+                            <li class="know-customers--item prospect">{{l('prospect')}}</li>
+                            <li class="know-customers--item new">{{l('new')}}</li>
+                            <li class="know-customers--item won">{{l('won')}}</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="footer">
@@ -48,32 +66,38 @@
         </mat-step>
         <mat-step>
             <div class="keys-step step-item">
+                <div class="step-bg"></div>
                 <div class="header">
-                    <span>{{l('Key_Features')}}</span>
+                    <img src="./assets/common/images/intro/logo-light.png"
+                         srcset="./assets/common/images/intro/logo-light@2x.png 2x,
+                         ./assets/common/images/intro/logo-light@3x.png 3x"
+                         alt="CRM logo"
+                         class="crm-intro-logo">
+                    <!--<span>{{l('Key_Features')}}</span>-->
                 </div>
                 <div class="main">
                     <h2>{{l('Key_Features')}}</h2>
                     <ul class="treka">
                         <li>
-                            <img src="./assets/common/images/crm-intro/sijalica.png">{{l('Key_Features_1')}}
+                            <img src="./assets/common/images/intro/icons/drag-n-drop.svg">{{l('Key_Features_1')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/drugi.png">{{l('Key_Features_2')}}
+                            <img src="./assets/common/images/intro/icons/document-manager.svg">{{l('Key_Features_2')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/treci.png">{{l('Key_Features_3')}}
+                            <img src="./assets/common/images/intro/icons/team-assignment-2.svg">{{l('Key_Features_3')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/catvrti.png">{{l('Key_Features_4')}}
+                            <img src="./assets/common/images/intro/icons/dashboard.svg">{{l('Key_Features_4')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/pati.png">{{l('Key_Features_5')}}
+                            <img src="./assets/common/images/intro/icons/import.svg">{{l('Key_Features_5')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/pati.png">{{l('Key_Features_6')}}
+                            <img src="./assets/common/images/intro/icons/browser.svg">{{l('Key_Features_6')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/pati.png">{{l('Key_Features_7')}}
+                            <img src="./assets/common/images/intro/icons/team-assignment.svg">{{l('Key_Features_7')}}
                         </li>
                     </ul>
                 </div>
@@ -85,32 +109,39 @@
         </mat-step>
         <mat-step>
             <div class="keys-step pro step-item">
+                <div class="step-bg"></div>
                 <div class="header">
-                    <span>{{l('Key_Features')}}: {{l('Pro_Edition')}}</span>
+                    <img src="./assets/common/images/intro/logo-light.png"
+                         srcset="./assets/common/images/intro/logo-light@2x.png 2x,
+                         ./assets/common/images/intro/logo-light@3x.png 3x"
+                         alt="CRM logo"
+                         class="crm-intro-logo">
+                    <!--<span>{{l('Key_Features')}}: {{l('Pro_Edition')}}</span>-->
                 </div>
                 <div class="main">
+                    <small>{{l('Coming soon')}}</small>
                     <h2>{{l('Key_Features')}}: {{l('Pro_Edition')}}</h2>
                     <ul class="treka">
                         <li>
-                            <img src="./assets/common/images/crm-intro/sijalica.png">{{l('Key_Features_Pro_1')}}
+                            <img src="./assets/common/images/intro/icons/drag-n-drop-2.svg">{{l('Key_Features_Pro_1')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/drugi.png">{{l('Key_Features_Pro_2')}}
+                            <img src="./assets/common/images/intro/icons/document-manager-2.svg">{{l('Key_Features_Pro_2')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/treci.png">{{l('Key_Features_Pro_3')}}
+                            <img src="./assets/common/images/intro/icons/team-assignment-3.svg">{{l('Key_Features_Pro_3')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/catvrti.png">{{l('Key_Features_Pro_4')}}
+                            <img src="./assets/common/images/intro/icons/browser-2.svg">{{l('Key_Features_Pro_4')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_5')}}
+                            <img src="./assets/common/images/intro/icons/email.svg">{{l('Key_Features_Pro_5')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_6')}}
+                            <img src="./assets/common/images/intro/icons/phone-call.svg">{{l('Key_Features_Pro_6')}}
                         </li>
                         <li>
-                            <img src="./assets/common/images/crm-intro/pati.png">{{l('Key_Features_Pro_7')}}
+                            <img src="./assets/common/images/intro/icons/mobile-app.svg">{{l('Key_Features_Pro_7')}}
                         </li>
                     </ul>
                 </div>
@@ -122,15 +153,21 @@
         </mat-step>
         <mat-step>
             <div class="third-step step-item">
-                <div class="header">
-                    <span>{{l('Drag_Drop_Step_Title')}}</span>
-                </div>
-                <div class="main top-fromRight-bg">
-                    <img src="./assets/common/images/crm-intro/pipeline-manager.png" alt="{{l('Pipeline_Manager')}}" class="pipeline-img">
-                    <div class="content">
-                        <p class="color-blue">
-                            {{l('Drag_Drop_Step_Description')}}
-                        </p>
+                <div class="step-bg"></div>
+                <div class="main flex-column">
+                    <h2 class="title">{{l('Drag_Drop_Step_Title')}}</h2>
+                    <div class="two-cols">
+                        <div class="img">
+                            <img src="./assets/common/images/intro/pipeline-image.png"
+                                 srcset="./assets/common/images/intro/pipeline-image@2x.png 2x,
+                                 ./assets/common/images/intro/pipeline-image@3x.png 3x"
+                                 alt="{{l('Pipeline_Manager')}}"
+                                 class="img-fluid">
+                        </div>
+                        <div class="content">
+                            <h2>{{l('Drag_Drop_Step_Accent_Text')}}</h2>
+                            <p>{{l('Drag_Drop_Step_Text')}}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="footer">
@@ -141,17 +178,32 @@
         </mat-step>
         <mat-step>
             <div class="forth-step step-item">
-                <div class="header">
-                    <span>{{l('Collaborative_Document_Managment')}}</span>
-                </div>
-                <div class="main top-fromLeft-bg">
-                    <div class="content">
-                        <p class="color-blue">
-                            {{l('Collaborative_Document_Managment_Description')}}
-                        </p>
-                        <img src="./assets/common/images/crm-intro/documents-types.png" alt="{{l('Documents_Types')}}" class="documents-types img-responsive">
+                <div class="step-bg"></div>
+                <div class="main flex-column">
+                    <h2 class="title">{{l('Collaborative_Document_Managment')}}</h2>
+                    <div class="two-cols">
+                        <div class="img">
+                            <img src="./assets/common/images/intro/document-manager.png"
+                                 srcset="./assets/common/images/intro/document-manager@2x.png 2x,
+                                 ./assets/common/images/intro/document-manager@3x.png 3x"
+                                 alt="{{l('Documents_Page')}}"
+                                 class="documents-page img-fluid">
+                        </div>
+                        <div class="content">
+                            <p>{{l('Collaborative_Document_Managment_Description')}}</p>
+                            <!--<ul class="documents-management-list">-->
+                                <!--<li>{{l('Upload_Customer_Files')}}</li>-->
+                                <!--<li>{{l('Secure_Cloud_Data_Storage')}}</li>-->
+                                <!--<li>{{l('Permission_Based_Sharing')}}</li>-->
+                                <!--<li>{{l('Fast_Feature_Rich_Viewer')}}</li>-->
+                                <!--<li>{{l('Collaborative_Editing_ESignatures')}}</li>-->
+                                <!--<li>{{l('Data_Security_and_Compliance')}}</li>-->
+                            <!--</ul>-->
+                            <img src="./assets/common/images/intro/extensions.svg"
+                                 alt="{{l('Documents_Types')}}"
+                                 class="documents-types img-fluid">
+                        </div>
                     </div>
-                    <img src="./assets/common/images/crm-intro/document-management.png" alt="{{l('Documents_Page')}}" class="documents-page img-responsive">
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
@@ -161,15 +213,23 @@
         </mat-step>
         <mat-step>
             <div class="fifth-step step-item">
-                <div class="header">
-                    <span>{{l('Intelligent_Data_Import_Export_Wizard')}}</span>
-                </div>
-                <div class="main">
-                    <div class="main-content">
-                        <h5>{{l('Import_Wizard')}}</h5>
-                        <p>{{l('Import_Wizard_Description')}}</p>
-                        <h5>{{l('Export_Tools')}}</h5>
-                        <p>{{l('Export_Tools_Description')}}</p>
+                <div class="step-bg"></div>
+                <div class="main flex-column">
+                    <h2 class="title">{{l('Intelligent_Data_Import_Export_Wizard')}}</h2>
+                    <div class="two-cols">
+                        <div class="img">
+                            <img src="./assets/common/images/intro/import-export.png"
+                                 srcset="./assets/common/images/intro/import-export@2x.png 2x,
+                                 ./assets/common/images/intro/import-export@3x.png 3x"
+                                 alt="{{l('Intelligent_Data_Import_Export_Wizard')}}"
+                                 class="img-fluid">
+                        </div>
+                        <div class="content">
+                            <h2>{{l('Import_Wizard')}}</h2>
+                            <p>{{l('Import_Wizard_Description')}}</p>
+                            <h2>{{l('Export_Tools')}}</h2>
+                            <p>{{l('Export_Tools_Description')}}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="footer">
@@ -180,17 +240,22 @@
         </mat-step>
         <mat-step>
             <div class="sixth-step step-item">
-                <div class="header">
-                    <span>{{l('Browser_Extension')}}</span>
-                </div>
-                <div class="main top-fromLeft-bg">
-                    <div class="content">
-                        <p class="color-blue">
-                            {{l('Browser_Extension_Description')}}
-                        </p>
-                        <img src="./assets/common/images/crm-intro/extension.png" alt="{{l('Plugin_Extension')}}" class="extension img-responsive">
+                <div class="step-bg"></div>
+                <div class="main flex-column">
+                    <h2 class="title">{{l('Browser_Extension')}}</h2>
+                    <div class="two-cols">
+                        <div class="img">
+                            <img src="./assets/common/images/intro/browser-ext.png"
+                                 srcset="./assets/common/images/intro/browser-ext@2x.png 2x,
+                                 ./assets/common/images/intro/browser-ext@3x.png 3x"
+                                 alt="{{l('Browser Extention')}}"
+                                 class="img-fluid">
+                        </div>
+                        <div class="content">
+                            <!--<h2>{{l('Lorem ipsum dolor sit amet')}}</h2>-->
+                            <p>{{l('Browser_Extension_Description')}}</p>
+                        </div>
                     </div>
-                    <img src="./assets/common/images/crm-intro/plugin.png" alt="{{l('Plugin_Page')}}" class="plugin-page img-responsive">
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
@@ -200,16 +265,23 @@
         </mat-step>
         <mat-step>
             <div class="zapier step-item">
-                <div class="header">
-                    <span>{{l('Zap_Custom_Integration')}}</span>
-                </div>
-                <div class="main top-fromRight-bg">
-                    <img src="./assets/common/images/crm-intro/zapier-integration.png" alt="Pipeline Manager" class="zapier-img">
-                    <div class="main-content">
-                        <h5>{{l('Zapier_Integration')}}</h5>
-                        <p>{{l('Zapier_Integration_Description')}}</p>
-                        <h5>{{l('Custom_Integration')}}</h5>
-                        <p>{{l('Custom_Integration_Description')}}</p>
+                <div class="step-bg"></div>
+                <div class="main flex-column">
+                    <h2 class="title">{{l('Zap_Custom_Integration')}}</h2>
+                    <div class="two-cols">
+                        <div class="img">
+                            <img src="./assets/common/images/intro/zapier-app.png"
+                                 srcset="./assets/common/images/intro/zapier-app@2x.png 2x,
+                                     ./assets/common/images/intro/zapier-app@3x.png 3x"
+                                 alt="{{l('Zapier')}}"
+                                 class="img-fluid">
+                        </div>
+                        <div class="content">
+                            <h2>{{l('Zapier_Integration')}}</h2>
+                            <p>{{l('Zapier_Integration_Description')}}</p>
+                            <h2>{{l('Custom_Integration')}}</h2>
+                            <p>{{l('Custom_Integration_Description')}}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="footer">
@@ -218,10 +290,66 @@
                 </div>
             </div>
         </mat-step>
+        <!--<mat-step>-->
+            <!--<div class="tasks step-item">-->
+                <!--<div class="step-bg"></div>-->
+                <!--<div class="main flex-column">-->
+                    <!--<h2 class="title">{{l('Tasks_Title')}}</h2>-->
+                    <!--<div class="two-cols">-->
+                        <!--<div class="img">-->
+                            <!--<img src="./assets/common/images/intro/tasks.png"-->
+                                 <!--srcset="./assets/common/images/intro/tasks@2x.png 2x,-->
+                                     <!--./assets/common/images/intro/tasks@3x.png 3x"-->
+                                 <!--alt="{{l('Tasks')}}"-->
+                                 <!--class="img-fluid">-->
+                        <!--</div>-->
+                        <!--<div class="content">-->
+                            <!--<h2>{{l('Lorem ipsum')}}</h2>-->
+                            <!--<p>{{l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor')}}</p>-->
+                            <!--<h2>{{l('Lorem ipsum')}}</h2>-->
+                            <!--<p>{{l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor')}}</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="footer">-->
+                    <!--<button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>-->
+                    <!--<button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</mat-step>-->
+        <!--<mat-step>-->
+            <!--<div class="dashboards step-item">-->
+                <!--<div class="step-bg"></div>-->
+                <!--<div class="main flex-column">-->
+                    <!--<h2 class="title">{{l('Dashboard_Title')}}</h2>-->
+                    <!--<div class="two-cols">-->
+                        <!--<div class="img">-->
+                            <!--<img src="./assets/common/images/intro/dashboards.png"-->
+                                 <!--srcset="./assets/common/images/intro/dashboards@2x.png 2x,-->
+                                     <!--./assets/common/images/intro/dashboards@3x.png 3x"-->
+                                 <!--alt="{{l('Dashboards')}}"-->
+                                 <!--class="img-fluid">-->
+                        <!--</div>-->
+                        <!--<div class="content">-->
+                            <!--<h2>{{l('Lorem ipsum')}}</h2>-->
+                            <!--<p>{{l('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt')}}</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="footer">-->
+                    <!--<button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>-->
+                    <!--<button mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</mat-step>-->
         <mat-step>
             <div class="questionnaire-step step-item">
                 <div class="header">
-                    <img src="./assets/common/images/sperse-logo.png">
+                    <img src="./assets/common/images/intro/logo-dark.png"
+                         srcset="./assets/common/images/intro/logo-dark@2x.png 2x,
+                         ./assets/common/images/intro/logo-dark@3x.png 3x"
+                         alt="CRM logo"
+                         class="crm-intro-logo">
                 </div>
                 <div class="main">
                     <app-questionnaire [identifier]="identifier"
@@ -243,7 +371,11 @@
         <mat-step *ngIf="showImportUsersStep">
             <div class="import-users-step step-item">
                 <div class="header">
-                    <img src="./assets/common/images/sperse-logo.png">
+                    <img src="./assets/common/images/intro/logo-dark.png"
+                         srcset="./assets/common/images/intro/logo-dark@2x.png 2x,
+                         ./assets/common/images/intro/logo-dark@3x.png 3x"
+                         alt="CRM logo"
+                         class="crm-intro-logo">
                 </div>
                 <div class="main">
                     <app-import-users-step ></app-import-users-step>

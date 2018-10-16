@@ -85,7 +85,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     ngAfterViewInit(): void {
         this.startLoading();
-      
         this.activate();
 
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
@@ -100,8 +99,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     openDialog() {
-        this.dialogConfig.height = '655px';
-        this.dialogConfig.width = '880px';
+        this.dialogConfig.height = '650px';
+        this.dialogConfig.width = '900px';
         this.dialogConfig.id = 'crm-intro';
         this.dialogConfig.panelClass = ['crm-intro', 'setup'];
         this.dialogConfig.data = { alreadyStarted: false };
