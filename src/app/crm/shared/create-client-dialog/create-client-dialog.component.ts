@@ -640,9 +640,18 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts.addresses.personal.addressType = this.addressTypePersonalDefault;
             this.contacts.addresses.business.addressType = this.addressTypeBusinessDefault;
         });
-        
+
+        if (!this.contacts.addresses.personal.country && !this.contacts.addresses.business.country) this.loadStatesDataSource(AppConsts.defaultCountry);
         if (!this.contacts.addresses.personal.country) this.contacts.addresses.personal.country = AppConsts.defaultCountryName;
         if (!this.contacts.addresses.business.country) this.contacts.addresses.business.country = AppConsts.defaultCountryName;
+    }
+
+    loadStatesDataSource(countryCode: string) {
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
+            .subscribe(result => {
+                this.states = result;
+            });
     }
 
     phoneTypesLoad() {
@@ -669,11 +678,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     onCountryChange(event) {
         let country = _.findWhere(this.countries, {name: event.value});
         if (country) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country['code']));
-            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: country['code'] }))
-                .subscribe(result => {
-                    this.states = result;
-                });
+            this.loadStatesDataSource(country['code']);
         }
     }
 
