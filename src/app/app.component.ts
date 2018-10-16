@@ -38,9 +38,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                     if (!appService.subscriptionInGracePeriod(moduleName))
                         _router.navigate(['app/admin/users']);
                     paymentDialogTimeout = setTimeout(() => {
-                        if (!this.dialog.getDialogById('payment-wizard') 
-                            && moduleName == appService.getModule()
-                        ) {
+                        if (!this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '655px',
                                 width: '980px',

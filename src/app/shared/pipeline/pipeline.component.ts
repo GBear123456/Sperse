@@ -181,7 +181,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 let stageSource = this.getStageByElement(source),
                     stageTarget = this.getStageByElement(target);
                 if (stageSource && stageTarget) {
-                    return (stageSource.name != stageTarget.name) &&
+                    return stageSource.id == stageTarget.id ||
                         stageSource.accessibleActions.some((action) => {
                             return action.targetStageId == stageTarget.id;
                         });
