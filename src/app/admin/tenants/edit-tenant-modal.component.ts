@@ -5,7 +5,6 @@ import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from
 import { ModalDirective } from 'ngx-bootstrap';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { values } from 'lodash';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -27,7 +26,6 @@ export class EditTenantModalComponent extends AppComponentBase {
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('editModal') modal: ModalDirective;
     @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
-
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;
@@ -63,7 +61,7 @@ export class EditTenantModalComponent extends AppComponentBase {
 
     save(): void {
         this.saving = true;
-        this.tenant.editions = values(this.editionsModels);
+        this.tenant.editions = this._tenantsService.getTenantEditions();
         this._tenantService.updateTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
