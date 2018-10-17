@@ -1,7 +1,7 @@
 <div class="main-nav">
   <div class="logo">
     <a routerLink="/" target="_self">
-      <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/sperse-logo.png" alt="logo" width="200" />
+      <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="assets/common/images/sperse-logo.png" alt="logo" width="200" />
       <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="200" />
     </a>
 </div>

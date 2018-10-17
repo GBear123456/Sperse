@@ -7,7 +7,7 @@
                         <h2 class="land-form-title">
                             <span class="number">1</span><span>{{l('WhatYouGet')}}
                                 <span class="cr-tooltip">
-                                    <img src="/assets/images/credit-report/rank-info-icon.svg" alt="info" width="16" height="16" class="tooltip-img">
+                                    <img src="assets/images/credit-report/rank-info-icon.svg" alt="info" width="16" height="16" class="tooltip-img">
                                     <span class="tooltip-info">{{l('Vantage')}} <a href="javascript:;">{{l('LearnMore')}}</a> {{l('AboutCreditScores')}}
                                         {{l('FicoScore')}}</span>
                                 </span>
@@ -17,17 +17,17 @@
                             <div class="legend">{{l('CreditScores')}}</div>
                             <div class="credit-score-item">
                                 <figure>
-                                    <img src="/assets/landing/Experian_logo.png" alt="Experian">
+                                    <img src="assets/landing/Experian_logo.png" alt="Experian">
                                 </figure>
                             </div>
                             <div class="credit-score-item">
                                 <figure>
-                                    <img src="/assets/landing/TransUnion-Logo.png" alt="TransUnion">
+                                    <img src="assets/landing/TransUnion-Logo.png" alt="TransUnion">
                                 </figure>
                             </div>
                             <div class="credit-score-item">
                                 <figure>
-                                    <img src="/assets/landing/equafix-logo.png" alt="Equafix">
+                                    <img src="assets/landing/equafix-logo.png" alt="Equafix">
                                 </figure>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                             <div class="legend">{{l('Features')}}</div>
                             <div class="features-item" *ngFor="let item of imgList">
                                 <figure>
-                                    <img src="/assets/landing/{{item.img}}" alt="{{l(item.text)}}">
+                                    <img src="assets/landing/{{item.img}}" alt="{{l(item.text)}}">
                                 </figure>
                                 <p>{{l(item.text)}}</p>
                             </div>
@@ -71,7 +71,7 @@
                         <div class="p-content">
                             <h1>
                                 {{l('creditReportTitle')}}
-                                <!--<a href="/" class="button">{{l('upgrade')}} <img src="/assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon"></a>-->
+                                <!--<a href="/" class="button">{{l('upgrade')}} <img src="assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon"></a>-->
                                 <a [attr.href]="pdfUrl" target="_blank" (click)="generatePdf($event.target)" class="button" download="Credit Report - {{creditReportResult.memberFullName}} - {{creditReportResult.providerCreatedDate | date: 'yyyyMMdd'}}.pdf" [ngClass]="{'disabled spinner': isPdfGenerating}">
                                     {{l('generatePdf')}}
                                     <span class="bounce1"></span>

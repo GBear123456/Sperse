@@ -3,7 +3,7 @@
         <div class="content-wrap">
             <div class="logo">
                 <a routerLink="/" target="_self">
-                    <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="/assets/common/images/sperse-logo.png" alt="logo" width="200" />
+                    <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="assets/common/images/sperse-logo.png" alt="logo" width="200" />
                     <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="200" />
                 </a>
             </div>
@@ -13,7 +13,7 @@
     <wizard id="wizard">
         <wizard-step>
             <wizard-step-tab></wizard-step-tab>
-            <img src="/assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
+            <img src="assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
             <h2 class="step-title">{{l('TellUsAboutYourself')}}</h2>
             <div class="form">
                 <form id="memberInfo">
@@ -148,7 +148,7 @@
                         <dx-validation-summary class="summary"></dx-validation-summary>
                         <dx-button class="button"
                                    text="{{l('Next')}}"
-                                   icon="/assets/landing/right-arrow.svg"
+                                   icon="assets/landing/right-arrow.svg"
                                    type="submit"
                                    rtlEnabled="true"
                                    [disabled]="checkButtonDisabled('memberInfo')"
@@ -170,11 +170,11 @@
                     </ng-container>
                 </div>
                 <button class="button btn-back" (click)="previousStep()" type="button">
-                    <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                    <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
                 </button>
                 <dx-button class="button"
                            text="{{l('Next')}}"
-                           icon="/assets/landing/right-arrow.svg"
+                           icon="assets/landing/right-arrow.svg"
                            [rtlEnabled]="true"
                            [disabled]="checkButtonDisabled('billingInfo')"
                            (onClick)="billingInfoSubmit($event)">
@@ -183,7 +183,7 @@
         </wizard-step>
         <wizard-step>
             <wizard-step-tab></wizard-step-tab>
-            <img src="/assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
+            <img src="assets/landing/about-yourself.svg" alt="About" class="step-icon" width="116">
             <h2 class="step-title">{{l('AddressInfo')}}</h2>
             <div class="form">
                 <form id="addressInfo">
@@ -265,11 +265,11 @@
                         </div>
                         <dx-validation-summary class="summary"></dx-validation-summary>
                         <button class="button btn-back" (click)="previousStep()" type="button">
-                            <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                            <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
                         </button>
                         <dx-button class="button"
                                    text="{{l('Next')}}"
-                                   icon="/assets/landing/right-arrow.svg"
+                                   icon="assets/landing/right-arrow.svg"
                                    [rtlEnabled]="true"
                                    [disabled]="checkButtonDisabled('addressInfo')"
                                    (onClick)="addressInfoSubmit($event)">
@@ -280,7 +280,7 @@
         </wizard-step>
         <wizard-step>
             <wizard-step-tab></wizard-step-tab>
-            <img src="/assets/landing/confirm-reg-icon.svg" alt="Payment" class="step-icon" width="116">
+            <img src="assets/landing/confirm-reg-icon.svg" alt="Payment" class="step-icon" width="116">
             <h2 class="step-title">Confirm your login settings</h2>
             <form novalidate (ngSubmit)="registerMemberSubmit()" #registerMember="ngForm" autocomplete="off" class="last-step">
                 <div class="form-group row">
@@ -338,10 +338,10 @@
                     </div>
                 </div>
                 <button class="button btn-back" (click)="previousStep()" type="button">
-                    <img src="/assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
+                    <img src="assets/landing/left-arrow-icon.svg" alt="{{l('Back')}}">{{l("Back")}}
                 </button>
                 <button class="button" type="submit" [disabled]="!registerMember.valid || registrationInProgress">
-                    {{l("Next")}} <img src="/assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon">
+                    {{l("Next")}} <img src="assets/landing/right-arrow.svg" alt="arrow" width="16" class="btn-icon">
                 </button>
             </form>
         </wizard-step>
