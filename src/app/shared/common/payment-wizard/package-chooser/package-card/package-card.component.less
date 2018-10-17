@@ -7,10 +7,10 @@
     position: relative;
     margin: 25px 10px;
     cursor: default;
-    opacity: .9;
     background: #eee;
     height: 100%;
     border: 3px solid transparent;
+    filter: blur(1px);
     /** Best Value Triangle */
     .bestValue {
         position: absolute;
@@ -20,7 +20,7 @@
         height: 0;
         border-style: solid;
         border-width: 0 84px 84px 0;
-        border-color: transparent #61d956 transparent transparent;
+        border-color: transparent grey transparent transparent;
         span {
             transform: rotate(45deg);
             color: #fff;
@@ -44,9 +44,9 @@
                 font-size: 11.9px;
                 font-weight: 700;
                 letter-spacing: 1.2px;
-                color: #00aeef;
                 text-transform: uppercase;
                 margin-bottom: 8px;
+                color: grey;
             }
             .includesUsers,
             .amountPerMonth {
@@ -74,7 +74,7 @@
             .priceNumber {
                 font-size: 27.2px;
                 font-weight: 700;
-                color: #424c56;
+                color: #9c9090;
                 line-height: 0.8em;
             }
             .priceDecimal {
@@ -113,12 +113,6 @@
     }
 }
 
-:host(.isActive) {
-    cursor: pointer;
-    background: #fff;
-    opacity: 1;
-}
-
 :host(.heightFitContent) {
     height: fit-content;
 }
@@ -126,7 +120,28 @@
 :host(.bestValue) {
     border-radius: 5px;
     box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+    border: 3px solid transparent;
+}
+
+:host(.isActive) {
+    cursor: pointer;
+    background: #fff;
+    filter: blur(0px);
+    .cardHeader {
+        .left .title {
+            color: #00aeef;
+        }
+        .right .priceNumber {
+            color: #424c56;
+        }
+    }
+}
+
+:host(.isActive.bestValue) {
     border: solid 3px #60d956;
+    .bestValue {
+        border-color: transparent #61d956 transparent transparent;
+    }
 }
 
 :host(.selected.isActive) {
