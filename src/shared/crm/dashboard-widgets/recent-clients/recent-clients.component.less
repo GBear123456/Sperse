@@ -24,15 +24,17 @@
             font-size: 14px;
             font-weight: 300;
             padding-left: 40px;
-        }        
+        }
         a {
             font-size: 16px;
-            text-decoration: underline;
             font-weight: 400;
             color: #17AEEB;
             float: right;
             padding-right: 20px;
             cursor: pointer;
+            i {
+                margin-left: 8px;
+            }
         }
     }
 
@@ -41,34 +43,46 @@
         overflow: hidden;
         border: 1px solid #E5E9EC;
         border-radius: 4px;
-        position: relative;    
+        position: relative;
     }
 
     /deep/ dx-data-grid {
         .dx-datagrid-headers {
-            background-color: #8677A4;
-            border-top: 1px solid #ddd;
-            border-bottom: none;
+            background-color: #ecf0f3;
+            border: none;
+
+            .dx-datagrid-content {
+                border-bottom: none !important;
+            }
 
             .dx-column-lines td {
                 height: 25px!important;
                 .dx-datagrid-text-content {
-                    color: #FFF!important;
+                    color: #4a4a4a!important;
                 }
             }
         }
-        .dx-datagrid-rowsview .dx-row {
-            &:nth-child(even) {
-                background-color: #F4F3FA;
-            }
+        .dx-datagrid-rowsview {
+            border-top: none;
+            .dx-row {
+                &:nth-child(even) {
+                    background-color: #f9fbfc;
+                    td:first-child {
+                        font-weight: 600 !important;
+                    }
+                }
 
-            td {
-                cursor: pointer;
-                padding: 4px!important;
-            }
+                td {
+                    cursor: pointer;
+                    padding: 4px!important;
+                    border-bottom: none !important;
+                    font-weight: 500 !important;
+                    font-size: 12px !important;
+                }
 
-            td.tabular, td.tabular * {
-                font-family: 'Lato' !important;
+                td.tabular, td.tabular * {
+                    font-family: 'Lato' !important;
+                }
             }
         }
     }

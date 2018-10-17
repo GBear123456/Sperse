@@ -1,19 +1,20 @@
-<dx-vector-map 
-    id="vector-map" 
+<dx-vector-map
+    id="vector-map"
     [background]="{borderColor: '#FFFFFF'}"
-    [bounds]="[-180, 85, 180, -60]" 
+    [bounds]="[-180, 85, 180, -60]"
     (onTooltipShown)="tooltipShown($event)">
-    <dxo-tooltip 
-        [enabled]="true" 
+    <dxo-tooltip
+        [enabled]="true"
         [customizeTooltip]="customizeTooltip"></dxo-tooltip>
     <dxo-export [enabled]="false"></dxo-export>
     <dxo-title text="">
         <dxo-subtitle text=""></dxo-subtitle>
     </dxo-title>
-    <dxi-layer 
-        [customize]="customizeLayers"  
+    <dxi-layer
+        [customize]="customizeLayers"
         [dataSource]="worldMap"
         [colorGroups]="[0, 100, 500, 1000, 5000, 10000, 100000, 500000]"
+        [palette]="['#e3deff', '#cdc6ff', '#c1bbff', '#b5afff', '#a9a4ff', '#9b99ff', '#8487e7']"
         colorGroupingField="total"
         name="areas">
         <dxo-label [enabled]="true" dataField="region"></dxo-label>

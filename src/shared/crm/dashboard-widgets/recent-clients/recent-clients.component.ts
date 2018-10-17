@@ -14,13 +14,9 @@ import { Router } from '@angular/router';
 })
 export class RecentClientsComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
     @Output() onReady = new EventEmitter();
-
     recordsCount = 10;
-
-    private formatting = AppConsts.formatting;
-    private readonly dataSourceURI = 'Customer';
+    formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
         private _router: Router,

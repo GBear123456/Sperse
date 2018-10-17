@@ -11,19 +11,19 @@ export class DashboardWidgetsService  {
     totalsDataFields = [
         {
             title: 'Sales',
-            color: '#8484ea',
+            color: '#8487e7',
             name: 'totalOrderAmount',
             type: 'currency',
             percent:  '0%'
         }, {
             title: 'Leads',
-            color: '#54e4c9',
+            color: '#00aeef',
             name: 'totalLeadCount',
             type: 'number',
             percent: '0%'
        }, {
            title: 'Clients',
-           color: '#5baae0',
+           color: '#f4ae55',
            name: 'totalClientCount',
            type: 'number',
            percent: '0%'
