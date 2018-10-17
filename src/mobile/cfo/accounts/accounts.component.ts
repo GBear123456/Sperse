@@ -31,7 +31,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit  {
             InstanceType[this.instanceType],
             this.instanceId,
             'Q',
-            AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',
+            AppConsts.appBaseHref + 'assets/cfo-css/quovocustom.css',
             ''
         ).subscribe((data) => {
             this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);

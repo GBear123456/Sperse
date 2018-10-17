@@ -16,7 +16,7 @@ export class SignalRHelper {
             url: '/signalr'
         };
 
-        jQuery.getScript(AppConsts.appBaseUrl + '/assets/abp/abp.signalr-client.js', () => {
+        jQuery.getScript(AppConsts.appBaseHref + 'assets/abp/abp.signalr-client.js', () => {
             callback();
         });
     }

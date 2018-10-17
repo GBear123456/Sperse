@@ -14,7 +14,7 @@ export class FriendProfilePictureComponent implements AfterViewInit {
     @Input() tenantId: number;
     @Input() cssClass = 'media-object';
 
-    profilePicture = AppConsts.appBaseUrl + '/assets/common/images/default-profile-picture.png';
+    profilePicture = AppConsts.appBaseHref + 'assets/common/images/default-profile-picture.png';
 
     constructor(
         private _profileService: ProfileServiceProxy

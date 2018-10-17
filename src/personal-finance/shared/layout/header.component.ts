@@ -11,7 +11,6 @@ import {
     LinkedUserDto,
     ChangeUserLanguageDto,
     TenantLoginInfoDto,
-    GetCurrentLoginInformationsOutput,
     SessionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -29,9 +28,7 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
-
 import * as _ from 'lodash';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: 'header.component.html',
@@ -57,8 +54,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
-    profilePicture = '/assets/common/images/default-profile-picture.png';
-    profileThumbnail = '/assets/common/images/default-profile-picture.png';
+    profilePicture = 'assets/common/images/default-profile-picture.png';
+    profileThumbnail = 'assets/common/images/default-profile-picture.png';
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
