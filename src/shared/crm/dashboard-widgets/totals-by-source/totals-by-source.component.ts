@@ -16,7 +16,11 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
     totalCount = 0;
 
     rangeColors = [
-        '#F9B65C', '#98D66B', '#ED9757', '#5baae0'
+        '#00aeef',
+        '#8487e7',
+        '#86c45d',
+        '#f7d15e',
+        '#ecf0f3'
     ];
 
     percentage: string;
@@ -35,7 +39,7 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
             this.startLoading();
             _dashboardServiceProxy.getCustomersByCompanySize(
                 period && period.from, period && period.to)
-                    .pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
+                    .pipe(finalize(() => { this.finishLoading(); })).subscribe((result) => {
                         this.totalCount = 0;
                         this.totalsData = result.sort((a, b) => {
                             return (parseInt(a.companySizeRange) || Infinity) >

@@ -4,5 +4,5 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.prod.json',
     appBaseUrl: 'https://app.sperse.com',
-    appBaseHref: 'https://testui.blob.core.windows.net/current/'
+    appBaseHref: 'https://sperseprodui.blob.core.windows.net/current/'
 };

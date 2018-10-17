@@ -7,11 +7,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { Observable } from 'rxjs';
 import { groupBy, concatAll, toArray, map, mergeMap, filter, switchMap, publishReplay, refCount } from 'rxjs/operators';
+import { values } from 'lodash';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Injectable()
 export class TenantsService {
     editionsModels: { [name: string]: TenantEditEditionDto } = {};
+    private defaultEditionId = '0';
 
     constructor(
         private _tenantService: TenantServiceProxy,
@@ -61,7 +63,7 @@ export class TenantsService {
 
     concatEditionsWithDefault(editions: SubscribableEditionComboboxItemDto[]): SubscribableEditionComboboxItemDto[] {
         let notAssignedItem = new SubscribableEditionComboboxItemDto();
-        notAssignedItem.value = '0';
+        notAssignedItem.value = this.defaultEditionId;
         notAssignedItem.displayText = this._appLocalizationService.l('NotAssigned');
         editions.unshift(notAssignedItem);
         return editions;
@@ -73,6 +75,10 @@ export class TenantsService {
             this.editionsModels[moduleId] = tenantEdition;
         });
         return this.editionsModels;
+    }
+
+    getTenantEditions() {
+        return values(this.editionsModels).filter(editionModel => editionModel.editionId !== +this.defaultEditionId);
     }
 
     getModuleIdByEditionId(editionId: number, editionsGroups): string {

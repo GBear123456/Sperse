@@ -2,9 +2,13 @@
     <p *ngIf="HeaderTitle" class="title"><a [routerLink]="headerLink">{{HeaderTitle}}</a></p>
     <ul class="steps-progress">
         <ng-template ngFor let-step [ngForOf]="SetupSteps" let-i="index">
-            <li class="steps-progress-item {{getItemClass(i)}}" *ngIf="step.visible || !step.hasOwnProperty('visible')">
+            <li class="steps-progress-item {{getItemClass(i)}}"
+                *ngIf="step.visible || !step.hasOwnProperty('visible')">
                 <div class="img {{'img-' + step.caption}}"></div>
-                <span [ngClass]="{'link': _cfoService.hasTransactions && step.component}" (click)="onClick(i, step)">{{l('SetupStep_' + step.caption)}}</span>
+                <span [ngClass]="{'link': step.isAlwaysActive || (_cfoService.hasTransactions && step.component)}"
+                      (click)="onClick(i, step)">
+                    {{l('SetupStep_' + step.caption)}}
+                </span>
             </li>
         </ng-template>
         <li class="steps-progress-item">

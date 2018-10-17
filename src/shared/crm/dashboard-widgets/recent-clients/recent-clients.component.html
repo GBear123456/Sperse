@@ -1,6 +1,6 @@
 <div class="wrapper">
     <header>
-        <h2 class="title"><i class="icon-people"></i>{{l('CRMDashboard_RecentClients')}}<span>{{l('CRMDashboard_LastNClientsRecords', [recordsCount])}}</span><a routerLink="/app/crm/clients">{{l('CRMDashboard_SeeAllRecords')}}></a></h2>
+        <h2 class="title"><i class="icon-people"></i>{{l('CRMDashboard_RecentClients')}}<span>{{l('CRMDashboard_LastNClientsRecords', [recordsCount])}}</span><a routerLink="/app/crm/clients">{{l('CRMDashboard_SeeAllRecords')}} <i class="fa fa-angle-right"></i></a></h2>
     </header>
 
     <div class="grid-wrapper" [hidden]="isDataLoaded && !totalRowCount">

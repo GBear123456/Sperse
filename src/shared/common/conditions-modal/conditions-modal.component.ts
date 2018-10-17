@@ -1,41 +1,42 @@
+/** Core imports */
 import { Component, ChangeDetectionStrategy, OnInit, Injector, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import printJS from 'print-js';
+import { from } from 'rxjs';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ConditionsType } from '@shared/AppEnums';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map, tap, publishReplay, refCount } from 'rxjs/operators';
-import { PrinterService } from '@shared/common/printer/printer.service';
-import printJS from 'print-js';
 
 @Component({
     selector: 'conditions-modal',
     templateUrl: './conditions-modal.component.html',
     styleUrls: [ './conditions-modal.component.less' ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ PrinterService ]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConditionsModalComponent extends ModalDialogComponent implements OnInit {
     conditionBody$: Observable<SafeHtml>;
-    conditionBody: SafeHtml;
 
     private conditionsOptions = {
         [ConditionsType.Terms]: {
             title: this.l('SperseTermsOfService'),
-            bodyLink: './assets/documents/terms.html',
-            downloadLink: './assets/documents/SpersePrivacyPolicy.pdf'
+            bodyLink: 'terms.html',
+            downloadLink: 'SpersePrivacyPolicy.pdf'
         },
         [ConditionsType.Policies]: {
             title: this.l('SpersePrivacyPolicy'),
-            bodyLink: './assets/documents/privacy.html',
-            downloadLink: './assets/documents/SperseTermsOfService.pdf'
+            bodyLink: 'privacy.html',
+            downloadLink: 'SperseTermsOfService.pdf'
         }
     };
 
     constructor(
         injector: Injector,
-        private http: HttpClient,
         private element: ElementRef,
         private sanitizer: DomSanitizer
     ) {
@@ -58,20 +59,16 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
                 action: this.printContent.bind(this)
             }
         ];
-        this.conditionBody$ = this.http.get(
-            this.conditionsOptions[this.data.type].bodyLink,
-            { responseType: 'text' }
-        ).pipe(
-            publishReplay(),
-            refCount(),
-            /** To avoid cutting of style tag from html */
-            tap(body => this.conditionBody = body),
+        this.conditionBody$ = from($.ajax({
+            url: AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type].bodyLink,
+            method: 'GET'
+        })).pipe(
             map(html => this.sanitizer.bypassSecurityTrustHtml(html))
         );
     }
 
     download() {
-        window.open(this.conditionsOptions[this.data.type].downloadLink, '_blank');
+        window.open(AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type].downloadLink, '_blank');
     }
 
     printContent() {

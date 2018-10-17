@@ -28,7 +28,7 @@ export class BankAccountsQuovoComponent implements OnInit {
             InstanceType[this._cfoSerfice.instanceType],
             this._cfoSerfice.instanceId,
             'Q',
-            AppConsts.appBaseUrl + '/assets/cfo-css/quovocustom.css',
+            AppConsts.appBaseHref + 'assets/cfo-css/quovocustom.css',
             ''
         ).subscribe((data) => {
             this.sourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.setupAccountsLink);

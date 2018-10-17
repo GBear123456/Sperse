@@ -17,6 +17,7 @@ import { RatingsStoreModule } from '@app/store/ratings-store';
 import { StarsStoreModule } from '@app/store/stars-store';
 import { StatusesStoreModule } from '@app/store/statuses-store';
 import { TagsStoreModule } from '@app/store/tags-store';
+import { OrganizationTypeStoreModule } from '@app/store/organization-types-store';
 
 @NgModule({
     imports: [
@@ -34,7 +35,8 @@ import { TagsStoreModule } from '@app/store/tags-store';
         RatingsStoreModule,
         StarsStoreModule,
         StatusesStoreModule,
-        TagsStoreModule
+        TagsStoreModule,
+        OrganizationTypeStoreModule
     ],
     declarations: []
 })

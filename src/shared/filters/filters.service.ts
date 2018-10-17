@@ -25,14 +25,15 @@ export class FiltersService {
 
     setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true) {
         this.subjectFilters.next(this.filters = filters);
+
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
             filters.forEach((filter, i, arr) => {
+                filter.clearFilterItems();
                 if (initFilters[filter.caption]) {
                     let props = Object.keys(initFilters[filter.caption]);
                     props.forEach(val => {
                         if (filter.items[val].setValue) {
-                            filter.clearFilterItems();
                             filter.items[val].setValue(initFilters[filter.caption][val], filter);
                         } else {
                             filter.items[val] = initFilters[filter.caption][val];

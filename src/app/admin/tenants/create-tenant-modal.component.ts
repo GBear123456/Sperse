@@ -3,7 +3,6 @@ import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from
 
 /** Third party imports */
 import { ModalDirective } from 'ngx-bootstrap';
-import { values } from 'lodash';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -81,7 +80,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
             this.tenant.adminPassword = null;
         }
 
-        this.tenant.editions = values(this.editionsModels);
+        this.tenant.editions = this._tenantsService.getTenantEditions();
         this.tenant.tenantHostType = <any>TenantHostType.PlatformApp;
         this._tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))
