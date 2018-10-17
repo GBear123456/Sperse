@@ -458,8 +458,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (streetAddress ||
             address.city ||
             address.state ||
-            address.zip ||
-            address.country) {
+            address.zip) {
             return {
                 streetAddress: streetAddress,
                 city: address.city,
