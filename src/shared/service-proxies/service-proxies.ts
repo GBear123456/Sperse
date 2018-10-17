@@ -33698,12 +33698,12 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
     address!: AddressInfo | undefined;
-    workAddress!: AddressInfo | undefined;
-    userId!: number | undefined;
     photo!: ContactPhotoInfo | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
     contactPhones!: ContactPhoneInfo[] | undefined;
+    contactAddresses!: AddressInfo[] | undefined;
     contactLinks!: ContactLinkInfo[] | undefined;
+    userId!: number | undefined;
 
     constructor(data?: IOrganizationBusinessInfo) {
         if (data) {
@@ -33761,8 +33761,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
-            this.workAddress = data["workAddress"] ? AddressInfo.fromJS(data["workAddress"]) : <any>undefined;
-            this.userId = data["userId"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
                 this.contactEmails = [];
@@ -33774,11 +33772,17 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
                 for (let item of data["contactPhones"])
                     this.contactPhones.push(ContactPhoneInfo.fromJS(item));
             }
+            if (data["contactAddresses"] && data["contactAddresses"].constructor === Array) {
+                this.contactAddresses = [];
+                for (let item of data["contactAddresses"])
+                    this.contactAddresses.push(AddressInfo.fromJS(item));
+            }
             if (data["contactLinks"] && data["contactLinks"].constructor === Array) {
                 this.contactLinks = [];
                 for (let item of data["contactLinks"])
                     this.contactLinks.push(ContactLinkInfo.fromJS(item));
             }
+            this.userId = data["userId"];
         }
     }
 
@@ -33836,8 +33840,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["workAddress"] = this.workAddress ? this.workAddress.toJSON() : <any>undefined;
-        data["userId"] = this.userId;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
             data["contactEmails"] = [];
@@ -33849,11 +33851,17 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             for (let item of this.contactPhones)
                 data["contactPhones"].push(item.toJSON());
         }
+        if (this.contactAddresses && this.contactAddresses.constructor === Array) {
+            data["contactAddresses"] = [];
+            for (let item of this.contactAddresses)
+                data["contactAddresses"].push(item.toJSON());
+        }
         if (this.contactLinks && this.contactLinks.constructor === Array) {
             data["contactLinks"] = [];
             for (let item of this.contactLinks)
                 data["contactLinks"].push(item.toJSON());
         }
+        data["userId"] = this.userId;
         return data; 
     }
 }
@@ -33896,12 +33904,12 @@ export interface IOrganizationBusinessInfo {
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
     address: AddressInfo | undefined;
-    workAddress: AddressInfo | undefined;
-    userId: number | undefined;
     photo: ContactPhotoInfo | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
     contactPhones: ContactPhoneInfo[] | undefined;
+    contactAddresses: AddressInfo[] | undefined;
     contactLinks: ContactLinkInfo[] | undefined;
+    userId: number | undefined;
 }
 
 export class OrganizationAliasInfo implements IOrganizationAliasInfo {
