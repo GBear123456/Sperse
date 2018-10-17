@@ -93,7 +93,7 @@ export class AppService extends AppServiceBase {
         let module = (name || this.getModule()).toUpperCase();
         if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
             return _.find(this.moduleSubscriptions, {module: module})
-                || {module: module, endDate: new Date(0)};
+                || {module: module, endDate: moment(new Date(0))};
     }
 
     subscriptionStatusBarIsHidden(): boolean {
