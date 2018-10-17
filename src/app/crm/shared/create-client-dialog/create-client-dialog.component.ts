@@ -535,7 +535,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     getCurrentEmails() {
         let emails = [];
         this.contacts.emails.forEach((fields, type) => {
-            emails = emails.concat(fields.map(obj => obj.email));
+            emails.push(fields.email);
         });
 
         this.emails && emails.push(this.emails);
@@ -546,7 +546,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     getCurrentPhones() {
         let phones = [];
         this.contacts.phones.forEach((fields) => {
-            phones = phones.concat(fields.map(obj => obj.number));
+            phones.push(fields.number);
         });
 
         this.phones && phones.push(this.phones);
