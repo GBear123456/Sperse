@@ -185,3 +185,7 @@ body.overflow-hidden.modal-open {
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 .dxc-tooltip svg path {transform: translate(0, 0) !important; filter: none !important;}
+
+.modal-open .page-container {
+    z-index: auto !important;
+}
