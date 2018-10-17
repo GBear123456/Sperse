@@ -16,4 +16,5 @@ export * from './ratings-store/index';
 export * from './stars-store/index';
 export * from './statuses-store/index';
 export * from './tags-store/index';
+export * from './organization-types-store/index';
 export { AppStoreModule, AppStore };

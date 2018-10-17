@@ -14,19 +14,25 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { InplaceSelectBoxModel } from '@app/shared/common/inplace-select-box/inplace-select-box.model';
-import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
+import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput, OrganizationTypeServiceProxy } from 'shared/service-proxies/service-proxies';
 
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { OrganizationTypeSelectors } from '@app/store/organization-types-store';
 
 @Component({
     selector: 'organization-dialog',
     templateUrl: './organization-dialog.component.html',
     styleUrls: ['./organization-dialog.component.less'],
-    providers: [ ContactPhotoServiceProxy ]
+    providers: [ContactPhotoServiceProxy, OrganizationTypeServiceProxy ]
 })
 export class OrganizationDialogComponent extends AppComponentBase {
     isEditAllowed = false;
 
+    organizationTypes: any;
+    organizationTypesSelectBoxModel: InplaceSelectBoxModel = {
+        name: 'typeId',
+        options: []
+    } as InplaceSelectBoxModel;
     countries: InplaceSelectBoxModel = {
         name: 'contries',
         options: []
@@ -53,7 +59,19 @@ export class OrganizationDialogComponent extends AppComponentBase {
             expandable: false,
             fields: [
                 ['shortname', 'formedDate'],
-                ['industry', 'relationship'],
+                [
+                    'industry',
+                    {
+                        name: 'typeId',
+                        data: this.organizationTypesSelectBoxModel,
+                        onChange: (value) => {
+                            if (value !== this.data.organization.typeId) {
+                                let item = _.find(this.organizationTypes, item => item.id === value)
+                                item && this.updateValue(item.id, 'typeId');
+                            }
+                        }
+                    }
+                ],
                 [
                     'annualRevenue',
                     {
@@ -65,6 +83,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
                         },
                         onChange: (value) => {
                             let item = this.companySizeList[value];
+                            console.log(this.companySizeList); console.log(this.companySizeList[1]);
                             item && this.updateValue(item.name, 'size');
                         }
                     }
@@ -100,11 +119,20 @@ export class OrganizationDialogComponent extends AppComponentBase {
         public dialogRef: MatDialogRef<OrganizationDialogComponent>,
         private _orgContactService: OrganizationContactServiceProxy,
         private _contactPhotoServiceProxy: ContactPhotoServiceProxy,
+        private _organizationTypeServiceProxy: OrganizationTypeServiceProxy,
         private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
         this.loadCountries();
+
+        this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes))
+            .subscribe(result => {
+                this.organizationTypes = result;
+                this.organizationTypesSelectBoxModel.options = this.organizationTypes;
+                var item = _.find(this.organizationTypes, item => item.id === this.data.organization['typeId']);
+                this.organizationTypesSelectBoxModel.value = item ? item.id : null; 
+            });
     }
 
     loadCountries() {
@@ -181,7 +209,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
             this.data.organization['sizeTo'] = toValue;
         } else
             this.data.organization[fieldName] = value;
-
+        
         this._orgContactService.updateOrganizationInfo(
             UpdateOrganizationInfoInput.fromJS(
                 _.extend({id: this.data.id}, this.data.organization))

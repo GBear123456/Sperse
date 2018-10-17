@@ -13,7 +13,8 @@ import {
     RatingsStoreState,
     StarsStoreState,
     StatusesStoreState,
-    TagsStoreState
+    TagsStoreState,
+    OrganizationTypeStoreState
 } from 'app/store/index';
 
 export interface State {
@@ -32,4 +33,5 @@ export interface State {
     stars: StarsStoreState.State;
     statuses: StatusesStoreState.State;
     tags: TagsStoreState.State;
+    organizationTypes: OrganizationTypeStoreState.State;
 }
