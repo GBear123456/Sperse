@@ -78,7 +78,7 @@ export class TenantsService {
     }
 
     getTenantEditions() {
-        return values(this.editionsModels).filter(editionModel => editionModel.editionId != this.defaultEditionId);
+        return values(this.editionsModels).filter(editionModel => editionModel.editionId !== +this.defaultEditionId);
     }
 
     getModuleIdByEditionId(editionId: number, editionsGroups): string {
