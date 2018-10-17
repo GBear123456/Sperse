@@ -8,7 +8,8 @@ import {
     PartnerTypesStoreActions,
     StarsStoreActions,
     StatusesStoreActions,
-    TagsStoreActions
+    TagsStoreActions,
+    OrganizationTypeStoreActions
 } from '@app/store/index';
 import { Store } from '@ngrx/store';
 import { AppStore } from './index';
@@ -29,5 +30,6 @@ export class AppStoreService {
         this.store$.dispatch(new CustomerAssignedUsersStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new LeadAssignedUsersStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
+        this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
     }
 }

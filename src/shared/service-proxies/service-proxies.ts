@@ -36014,6 +36014,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     duns!: string | undefined;
     ticker!: string | undefined;
     productServicesSold!: number | undefined;
+    typeId!: string | undefined;
 
     constructor(data?: IOrganizationInfoDto) {
         if (data) {
@@ -36043,6 +36044,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.productServicesSold = data["productServicesSold"];
+            this.typeId = data["typeId"];
         }
     }
 
@@ -36072,6 +36074,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["productServicesSold"] = this.productServicesSold;
+        data["typeId"] = this.typeId;
         return data; 
     }
 }
@@ -36094,6 +36097,7 @@ export interface IOrganizationInfoDto {
     duns: string | undefined;
     ticker: string | undefined;
     productServicesSold: number | undefined;
+    typeId: string | undefined;
 }
 
 export class UserKeyInfoDto implements IUserKeyInfoDto {
@@ -47093,6 +47097,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     duns!: string | undefined;
     ticker!: string | undefined;
     productServicesSold!: number | undefined;
+    typeId!: string | undefined;
 
     constructor(data?: ICreateOrganizationInput) {
         if (data) {
@@ -47123,6 +47128,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.productServicesSold = data["productServicesSold"];
+            this.typeId = data["typeId"];
         }
     }
 
@@ -47153,6 +47159,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["productServicesSold"] = this.productServicesSold;
+        data["typeId"] = this.typeId;
         return data; 
     }
 }
@@ -47176,6 +47183,7 @@ export interface ICreateOrganizationInput {
     duns: string | undefined;
     ticker: string | undefined;
     productServicesSold: number | undefined;
+    typeId: string | undefined;
 }
 
 export class CreateOrganizationOutput implements ICreateOrganizationOutput {
@@ -47233,6 +47241,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
     duns!: string | undefined;
     ticker!: string | undefined;
     productServicesSold!: number | undefined;
+    typeId!: string | undefined;
 
     constructor(data?: IUpdateOrganizationInfoInput) {
         if (data) {
@@ -47263,6 +47272,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
             this.duns = data["duns"];
             this.ticker = data["ticker"];
             this.productServicesSold = data["productServicesSold"];
+            this.typeId = data["typeId"];
         }
     }
 
@@ -47293,6 +47303,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data["duns"] = this.duns;
         data["ticker"] = this.ticker;
         data["productServicesSold"] = this.productServicesSold;
+        data["typeId"] = this.typeId;
         return data; 
     }
 }
@@ -47316,6 +47327,7 @@ export interface IUpdateOrganizationInfoInput {
     duns: string | undefined;
     ticker: string | undefined;
     productServicesSold: number | undefined;
+    typeId: string | undefined;
 }
 
 export class OrganizationTypeDto implements IOrganizationTypeDto {

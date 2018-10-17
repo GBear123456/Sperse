@@ -13,6 +13,7 @@ import { RatingsStoreSelectors } from './ratings-store/index';
 import { StarsStoreSelectors } from './stars-store/index';
 import { StatusesStoreSelectors } from './statuses-store/index';
 import { TagsStoreSelectors } from './tags-store/index';
+import { OrganizationTypeSelectors } from './organization-types-store';
 
 export {
     AddressUsageTypesStoreSelectors,
@@ -30,4 +31,5 @@ export {
     StarsStoreSelectors,
     StatusesStoreSelectors,
     TagsStoreSelectors,
+    OrganizationTypeSelectors
 };
