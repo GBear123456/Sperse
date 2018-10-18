@@ -62,6 +62,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
 
+    currentUserId = abp.session.userId;  
     person = new PersonInfoDto();
 
     emailsComponent: any;
@@ -155,7 +156,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private store$: Store<RootStore.State>
     ) {
         super(injector);
-
+        
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
         this.saveContextMenuItems = [
@@ -320,7 +321,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 thumbnail: StringHelper.getBase64(this.photoThumbnailData)
             }) : null,
             note: this.notes,
-            assignedUserId: assignedUserId || abp.session.userId,
+            assignedUserId: assignedUserId || currentUserId,
             stageId: stageId,
             lists: lists,
             tags: tags,

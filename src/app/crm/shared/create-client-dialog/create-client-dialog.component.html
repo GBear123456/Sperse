@@ -30,6 +30,7 @@
     <crm-user-assignment-list   
         [targetSelector]="'[accesskey=\'ClientAssign\']'" 
         [permissionKey]="getAssignmentsPermissinKey()"
+        [selectedItemKey]="currentUserId" 
         [hideButtons]="true" >
     </crm-user-assignment-list>
     <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar records found. Click here for details</div>
