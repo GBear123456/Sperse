@@ -1,11 +1,8 @@
-import {Component, Injector, ViewChild} from '@angular/core';
+import {Component, Injector } from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {PanelMenu} from './panel-menu';
 import {PanelMenuItem} from './panel-menu-item';
-
-import {PermissionCheckerService} from '@abp/auth/permission-checker.service';
 import {AppComponentBase} from '@shared/common/app-component-base';
-
 import {AppSessionService} from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
 import * as _ from 'underscore';
@@ -24,8 +21,8 @@ export class TopBarComponent extends AppComponentBase {
     lastInnerWidth: number;
     visibleMenuItemsWidth: 0;
     updateTimeout: any;
-    navbarItems: any = []; 
-    adaptiveMenuItems: any = []; 
+    navbarItems: any = [];
+    adaptiveMenuItems: any = [];
     menu: PanelMenu = <PanelMenu>{
         items: []
     };
@@ -77,7 +74,7 @@ export class TopBarComponent extends AppComponentBase {
             if (!level && item.visible) {
                 item['length'] = (item.text.length * 10 + 32);
                 this.visibleMenuItemsWidth += item['length'];
-            }            
+            }
             navList.push(item);
         });
         return navList;
@@ -96,7 +93,7 @@ export class TopBarComponent extends AppComponentBase {
             this.updateTimeout = setTimeout(() => {
                 this.lastInnerWidth = window.innerWidth;
                 let availableWidth = this.lastInnerWidth - 600;
-                if (availableWidth < this.visibleMenuItemsWidth) {  
+                if (availableWidth < this.visibleMenuItemsWidth) {
                     let switchItemIndex;
                     this.menu.items.every((item, index) => {
                         switchItemIndex = index;
@@ -107,7 +104,7 @@ export class TopBarComponent extends AppComponentBase {
 
                     this.navbarItems = this.menu.items.slice(0, --switchItemIndex);
                     this.adaptiveMenuItems = this.menu.items.slice(switchItemIndex);
-                } else 
+                } else
                     this.navbarItems = this.menu.items;
             }, 300);
         }
