@@ -176,25 +176,25 @@
                   [dataSource]="addressTypes"
                   displayExpr="name"
                   valueExpr="id"
-                  [(value)]="addresses.addressType"
+                  [(value)]="addresses['addressType']"
                   (onValueChanged)="onTypeChanged($event, 'address')">
                 </dx-select-box>
                 <input *ngIf="!googleAutoComplete" type="text"
                     name="Address"
                     placeholder="{{l('Street')}}"
-                    [(ngModel)]="addresses.address"
+                    [(ngModel)]="addresses['address']"
                     class="dx-texteditor-input"/>
                 <input *ngIf="googleAutoComplete" type="text"
                     name="Address"
                     placeholder="{{l('Street')}}"
-                    [(ngModel)]="addresses.address"
+                    [(ngModel)]="addresses['address']"
                     class="dx-texteditor-input"
                     (country)="updateCountryInfo($event)"
-                    (street_number)='addresses.streetNumber=$event'
-                    (street)='addresses.streetAddress=$event'
-                    (city)='addresses.city=$event'
-                    (state)='addresses.state=$event'
-                    (postal_code)='addresses.zip=$event'
+                    (street_number)="addresses['streetNumber']=$event"
+                    (street)="addresses['streetAddress']=$event"
+                    (city)="addresses['city']=$event"
+                    (state)="addresses['state']=$event"
+                    (postal_code)="addresses['zip']=$event"
                     (setAddress)="onAddressChanged($event)"
                     angularGooglePlace/>
                 <span [class]="addButtonVisible['addresses'] && 'add-contact' || clearButtonVisible['addresses'] && 'clear-contact' || 'hidden'" (click)="clearButtonVisible['addresses'] ? addresses = {}: addAddressContact()">+</span>
@@ -205,7 +205,7 @@
                     maxLength="50"
                     placeholder="{{l('City')}}"
                     [width]="'320px'"
-                    [(value)]="addresses.city"
+                    [(value)]="addresses['city']"
                     (onValueChanged)="checkAddressControls()">
                 </dx-text-box>
                 <dx-select-box
@@ -216,7 +216,7 @@
                     placeholder="{{l('State')}}"
                     [width]="'320px'"
                     [searchEnabled]="true"
-                    [(value)]="addresses.state"
+                    [(value)]="addresses['state']"
                     (onValueChanged)="checkAddressControls()">
                 </dx-select-box>
             </div>
@@ -225,7 +225,7 @@
                     maxLength="10"
                     placeholder="{{l('Zip')}}"
                     [width]="'320px'"
-                    [(value)]="addresses.zip"
+                    [(value)]="addresses['zip']"
                     (onValueChanged)="checkAddressControls()">
                 </dx-text-box>
                 <dx-select-box
@@ -236,7 +236,7 @@
                     placeholder="{{l('Country')}}"
                     [width]="'320px'"
                     [searchEnabled]="true"
-                    [(value)]="addresses.country"
+                    [(value)]="addresses['country']"
                     (onValueChanged)="onCountryChange($event)">
                 </dx-select-box>
             </div>
