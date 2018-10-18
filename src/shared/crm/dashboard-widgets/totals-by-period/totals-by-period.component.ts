@@ -28,6 +28,7 @@ import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     selector: 'totals-by-period',
@@ -67,7 +68,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         }
     ];
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
-    private series = [
+    private series: any[] = [
         {
             axis: 'total',
             type: 'spline',
@@ -88,7 +89,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     constructor(injector: Injector,
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService,
-        private store$: Store<CrmStore.State>
+        private store$: Store<CrmStore.State>,
+        private _pipelineService: PipelineService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -114,7 +116,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             switchMap(data => this.convertLeadsStatsToSeriesConfig(data))
         );
 
-        /** Merge default series config for clients and dynamic leads series configs after period change */
+        /** Merge default series config for clients and dynamic leads series configs */
         this.allSeries$ = this.leadStagesSeries$.pipe(
             withLatestFrom(of(this.series), ((leadStagesSeries , allSeries) => [ ...leadStagesSeries, ...allSeries ]))
         );
@@ -133,35 +135,37 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     private loadCustomersAndLeadsStats(period: any): Observable<GetCustomerAndLeadStatsOutput[]> {
         this.startLoading();
         return this._dashboardServiceProxy.getCustomerAndLeadStats(
-            GroupBy2[period.name],
+            GroupBy2[(period.name as GroupBy2)],
             period.amount,
             true
         ).pipe(finalize(() => { this.finishLoading(); }) );
     }
 
-    private convertLeadsStatsToSeriesConfig(data) {
+    private convertLeadsStatsToSeriesConfig(data): Observable<any> {
         return of(data).pipe(
             mergeAll(),
             pluck('leadStageCount'),
             mergeMap(leadsStages => Object.keys(leadsStages)),
             distinct(),
-            switchMap(stageId => this.getLeadStageSeriaConfig(stageId)),
-            toArray()
+            switchMap(stageId => this.getLeadStageSeriaConfig(+stageId)),
+            toArray(),
+            map(stages => stages.sort((a, b) => +a.sortOrder > +b.sortOrder ? 1 : (+a.sortOrder === +b.sortOrder ? 0 : -1)))
         );
     }
 
     private getLeadStageSeriaConfig(stageId: number): Observable<any> {
-        return this.store$.select(PipelinesStoreSelectors.getStageColorByStageId({
+        return this.store$.select(PipelinesStoreSelectors.getStageById({
             purpose: AppConsts.PipelinePurposeIds.lead,
             stageId: stageId
         })).pipe(
             first(),
-            map(color => {
+            map(stage => {
                 return {
                     valueField: stageId,
-                    name: stageId,
-                    color: color,
-                    type: 'fullstackedbar'
+                    name: stage.name,
+                    color: stage.color || this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
+                    type: 'fullstackedbar',
+                    sortOrder: stage.sortOrder
                 };
             })
         );

@@ -9,20 +9,6 @@ interface Filter {
     stageId?: number;
 }
 
-interface StageColor {
-    [stageSortOrder: string]: string;
-}
-
-const defaultStagesColors: StageColor = {
-    '-3': '#f05b29',
-    '-2': '#f4ae55',
-    '-1': '#f7d15e',
-    '0': '#00aeef',
-    '1': '#b6cf5e',
-    '2': '#86c45d',
-    '3': '#46aa6e'
-};
-
 export const getPipelinesState = createFeatureSelector<State>('pipelines');
 
 export const getPipelines = createSelector(
@@ -99,21 +85,3 @@ export const getStageById = (filter: Filter) => createSelector(
         return stages.find(stage => stage.id === +filter.stageId);
     }
 );
-
-export const getStageColorByStageId = (filter: Filter) => createSelector(
-    getStageById(filter),
-    (stage: StageDto) => {
-        return (stage && stage.color) || getDefaultStageColorBySortOrder(stage.sortOrder);
-    }
-);
-
-const getDefaultStageColorBySortOrder = (sortOrder): string => {
-    /** Get default or the closest color */
-    let color = defaultStagesColors[sortOrder] ;
-    /** If there is not default color for the sort order - get the closest */
-    if (!color) {
-        const defaultColorsKeys = Object.keys(defaultStagesColors);
-        color = defaultColorsKeys[0] > sortOrder ? defaultStagesColors[defaultColorsKeys[0]] : defaultStagesColors[defaultColorsKeys[defaultColorsKeys.length]];
-    }
-    return color;
-};
