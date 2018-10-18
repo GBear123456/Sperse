@@ -46,11 +46,11 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.stepper.selectedIndex = 1;
-        this.getAvailableUserCount();
+        if (this.showImportUsersStep) this.getAvailableUserCount();
     }
 
     onSubmit() {
-        if (this.showImportUsersStep) {
+        if (this.showImportUsersStep && this.importUsersStepComponent) {
             this.importUsersStepComponent.validateUsers();
             if (!this.importUsersStepComponent.validationResult)
                 return;

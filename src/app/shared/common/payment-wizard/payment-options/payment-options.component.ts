@@ -136,7 +136,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
-        this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo).subscribe(
+        let method = paymentMethod == PaymentMethods.PayPal ?
+            this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
+            this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
+
+        method.subscribe(
             () => { this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed }); },
             error => {
                 this.appHttpConfiguration.avoidErrorHandling = false;
