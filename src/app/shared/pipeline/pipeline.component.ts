@@ -392,7 +392,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private highlightSelectedCard(event) {
         let card;
-        event.path.every((elm) => {
+        (event.path || event.composedPath()).every((elm) => {
             let isCard = elm.classList.contains('card');
             if (isCard) {
                 card = elm;
