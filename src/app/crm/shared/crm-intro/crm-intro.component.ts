@@ -1,19 +1,14 @@
 /** Core imports */
-import { Component, Injector, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import * as nameParser from 'parse-full-name';
+import { MAT_DIALOG_DATA, MatDialogRef, MatHorizontalStepper } from '@angular/material';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import {
-    RoleServiceProxy, RoleListDto, UserServiceProxy,
-    InviteUserInput, TenantHostType
-} from 'shared/service-proxies/service-proxies';
-import { ImportUserData } from './crm-intro.model';
+import { ModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 
@@ -30,13 +25,14 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
-    isLinear = false;
     readonly identifier = 'CRM-Setup';
     moduleName: string;
     showImportUsersStep: boolean;
+    maxAvailableUserCount: number;
 
     constructor(
         injector: Injector,
+        private _userService: UserServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
@@ -52,6 +48,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this.stepper.selectedIndex = 1;
+        this.getAvailableUserCount();
     }
 
     onSubmit() {
@@ -75,5 +72,12 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     goToStep(index) {
         this.stepper.selectedIndex = index;
+    }
+
+    // GetAvailableUserCount
+    getAvailableUserCount() {
+        this._userService.getAvailableUserCount(ModuleType.CRM).subscribe(result => {
+            this.maxAvailableUserCount = result;
+        });
     }
 }
