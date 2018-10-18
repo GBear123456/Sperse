@@ -201,12 +201,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     invalidate(quiet = false, stageId = undefined) {
         setTimeout(() => {
-            if (this.showPipeline)
-                this.pipelineComponent.refresh(quiet, stageId);
-            else
-                this.dataGrid.instance.refresh().then(() => {
-                    this.setGridDataLoaded();
-                });
+            this.pipelineComponent.refresh(quiet, stageId);
+            this.dataGrid.instance.refresh().then(() => {
+                this.setGridDataLoaded();
+            });
         });
     }
 
