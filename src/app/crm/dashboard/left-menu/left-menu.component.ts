@@ -27,11 +27,11 @@ export class DashboardMenuComponent extends AppComponentBase {
             { caption: 'ManageClients', component: '/clients', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Customers') },
             { caption: 'ManageLeads', component: '/leads', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Leads') },
             { caption: 'ImportYourList', component: '/import-list', hidden: !this.permission.isGranted('Pages.CRM.BulkImport') },
-            { caption: 'CustomizeSettings', component: '/editions', disabled: true },
-            {
-              caption: 'PaymentWizard', component: '/payment-wizard',
-              disabled: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT
-            }
+            { caption: 'CustomizeSettings', component: '/editions', disabled: true }
+            // {
+            //   caption: 'PaymentWizard', component: '/payment-wizard',
+            //   disabled: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT
+            // }
         ];
     }
 
