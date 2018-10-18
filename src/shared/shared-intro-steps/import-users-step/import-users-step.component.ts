@@ -144,4 +144,9 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         this.importValidators.splice(index, 1);
         this.validateUsers();
     }
+
+    onEmailKeyPress(i: number) {
+        if (!this.importUsers[i].roleNames)
+            this.importUsers[i].roleNames = ['Employee'];
+    }
 }

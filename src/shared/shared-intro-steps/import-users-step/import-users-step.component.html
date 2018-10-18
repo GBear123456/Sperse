@@ -11,7 +11,8 @@
                     <div class="row import-user-row" [attr.index]="i">
                         <dx-text-box [(value)]="user.email"
                                      placeholder="Email"
-                                     (onValueChanged)="validateUsers(true)"
+                                     (onKeyPress)="onEmailKeyPress(i)"
+                                     (onValueChanged)="validateUsers(true);"
                                      class="col-4">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
