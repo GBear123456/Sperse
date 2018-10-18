@@ -44,7 +44,7 @@ export class EditAddressDialog extends AppComponentBase {
                 private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
         if (this.validateAddress(data)) {
             this.action = 'Edit';
             this.address =

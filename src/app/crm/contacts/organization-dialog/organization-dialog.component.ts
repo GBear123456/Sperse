@@ -128,7 +128,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
         private store$: Store<RootStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
         this.loadCountries();
 
         this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes))
