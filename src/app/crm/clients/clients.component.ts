@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -45,6 +45,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { CustomerServiceProxy, ContactGroupStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { CustomReuseStrategy } from '@root/root-routing.module';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -100,7 +101,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _filtersService: FiltersService,
         private _activatedRoute: ActivatedRoute,
         private _clientService: ClientService,
-        private store$: Store<AppStore.State>
+        private store$: Store<AppStore.State>,
+        private _reuseService: RouteReuseStrategy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -168,6 +170,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
         super.invalidate();
+        (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
     }
 
     showCompactRowsHeight() {

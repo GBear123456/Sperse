@@ -1,12 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
-
 import { RouteReuseStrategy } from '@angular/router';
-
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
 
 @Injectable()
 export class ImportWizardService {
@@ -15,7 +11,7 @@ export class ImportWizardService {
     private subscribers: Array<Subscription> = [];
     private statusCheckTimeout: any;
 
-    public activeImportId: number = 0;
+    public activeImportId = 0;
 
     constructor(injector: Injector,
         private _reuseService: RouteReuseStrategy,
@@ -52,7 +48,7 @@ export class ImportWizardService {
                         this.activeImportId = undefined;
                     else {
                         let importStatus = res[0];
-                        method && method(importStatus);                                
+                        method && method(importStatus);
                         if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
                             invalUri && (<any>this._reuseService).invalidate(invalUri);
                             this.activeImportId = undefined;
@@ -62,7 +58,7 @@ export class ImportWizardService {
                     }
                 }
                 callback(res);
-            })
+            });
         });
     }
 
@@ -80,7 +76,7 @@ export class ImportWizardService {
                 if (this.statusCheckTimeout)
                     this.setupCheckTimeout(method, false);
             });
-        }, initial ? 0: 5000);
+        }, initial ? 0 : 5000);
     }
 
     unsubscribe() {
