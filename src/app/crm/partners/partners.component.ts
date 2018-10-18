@@ -700,7 +700,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
-        this.hideHostElement();        
+        this.hideHostElement();
     }
 
     onShowingPopup(e) {

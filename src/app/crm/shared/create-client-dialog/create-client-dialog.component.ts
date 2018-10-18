@@ -28,7 +28,7 @@ import {
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactTypes, ContactGroupType } from '@shared/AppEnums';
+import { ContactGroupType } from '@shared/AppEnums';
 import {
     ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
@@ -62,7 +62,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
 
-    currentUserId = abp.session.userId;  
+    currentUserId = abp.session.userId;
     person = new PersonInfoDto();
 
     emailsComponent: any;
@@ -156,7 +156,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private store$: Store<RootStore.State>
     ) {
         super(injector);
-        
+
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
         this.saveContextMenuItems = [
@@ -592,7 +592,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     updateCountryInfo(countryName: string) {
-        this.addresses['country'] = 
+        this.addresses['country'] =
             (countryName == 'United States' ?
                 AppConsts.defaultCountryName :
                 countryName);
@@ -684,12 +684,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     checkAddressControls() {
-        this.addButtonVisible['addresses'] = this.addresses['address'] && 
+        this.addButtonVisible['addresses'] = this.addresses['address'] &&
             this.addresses['city'] && this.addresses['country'];
         this.clearButtonVisible['addresses'] = !this.addButtonVisible['addresses'];
     }
 
-    addContact(field) {        
+    addContact(field) {
         let value = this.getValidateFieldValue(field);
         if (value && this.contacts[field].every((val) => {
             return JSON.stringify(value) != JSON.stringify(val);
@@ -755,7 +755,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onTypeChanged($event, field) {
-        if ($event.addedItems) {            
+        if ($event.addedItems) {
             this[field + 'Type'] = $event.addedItems[0].id;
         } else {
             $event.element.parentNode.classList

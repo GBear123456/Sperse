@@ -10,10 +10,9 @@ import {
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Store, select } from '@ngrx/store';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -41,7 +40,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { CommonLookupServiceProxy, LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -52,6 +51,7 @@ import { UserAssignmentComponent } from '../shared/user-assignment-list/user-ass
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
+import { CustomReuseStrategy } from '@root/root-routing.module';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -132,7 +132,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _activatedRoute: ActivatedRoute,
-        private store$: Store<AppStore.State>
+        private store$: Store<AppStore.State>,
+        private _reuseService: RouteReuseStrategy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -656,6 +657,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             data: {
                 refreshParent: (quite, stageId) => {
                     this.invalidate(quite, stageId);
+                    (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
                 },
                 isInLeadMode: true,
                 customerType: ContactGroupType.Client

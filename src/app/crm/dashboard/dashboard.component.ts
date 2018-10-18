@@ -122,7 +122,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     activate() {
         super.activate();
-
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -130,6 +129,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.zendeskService.showWidget();
 
         this.showHostElement();
+    }
+
+    invalidate() {
+        this.refresh();
     }
 
     deactivate() {
