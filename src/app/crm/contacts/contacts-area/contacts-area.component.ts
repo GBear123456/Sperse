@@ -25,6 +25,7 @@ import { ContactsService } from '../contacts.service';
     providers: [ DialogService ]
 })
 export class ContactsAreaComponent extends AppComponentBase implements OnInit {
+    @Input() isCompany = false;
     @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() contactInfo: ContactGroupInfoDto;
 
@@ -83,6 +84,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive: true),
             comment: data && data.comment,
+            isCompany: this.isCompany,
             deleteItem: (event) => {
                 if (data.emailAddress)
                     this.deleteEmailAddress(data, event, index);

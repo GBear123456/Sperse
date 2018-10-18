@@ -55,20 +55,22 @@
         <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
             <div class="field email">
                 <label class="email-label">{{l('Email')}}</label>
-                <dx-select-box
-                  width="200px"
-                  name="emailType"
-                  placeholder="{{l('Type')}}"
-                  [dataSource]="emailTypes"
-                  displayExpr="name"
-                  valueExpr="id"
-                  [value]="emailType"
-                  [itemTemplate]="'emailTypeItemTemplate'"
-                  (onValueChanged)="onTypeChanged($event, 'email')">
-                  <div *dxTemplate="let data of 'emailTypeItemTemplate'">
-                      <div title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}">{{data.name}}</div>
-                  </div>
-                </dx-select-box>
+                <div class="drop-down-box-wrapper">
+                    <dx-select-box
+                      width="450px"
+                      name="emailType"
+                      placeholder="{{l('Type')}}"
+                      [dataSource]="emailTypes"
+                      displayExpr="name"
+                      valueExpr="id"
+                      [value]="emailType"
+                      [itemTemplate]="'emailTypeItemTemplate'"
+                      (onValueChanged)="onTypeChanged($event, 'email')">
+                      <div *dxTemplate="let data of 'emailTypeItemTemplate'">
+                          <div title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}"><span style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
+                      </div>
+                    </dx-select-box>
+                </div>
                 <dx-text-box #emailComponent
                   name="email"
                   [width]="'440px'"
@@ -87,20 +89,22 @@
         <dx-validation-group (onInitialized)="initValidationGroup($event, 'phoneValidators')">
       	<div class="field phone H">
             <label class="phone-label">{{l('Phone')}}</label>
-        		<dx-select-box
-        			width="200px"
-        			name="phoneType"
-        			placeholder="{{l('Type')}}"
-        			[dataSource]="phoneTypes"
-        			displayExpr="name"
-        			valueExpr="id"
-        			[value]="phoneType"
-              [itemTemplate]="'phoneTypeItemTemplate'"
-        			(onValueChanged)="onTypeChanged($event, 'phone')">
-              <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                  <div title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}">{{data.name}}</div>
-              </div>
-        		</dx-select-box>
+            <div class="drop-down-box-wrapper">
+            		<dx-select-box
+            			width="450px"
+            			name="phoneType"
+            			placeholder="{{l('Type')}}"
+            			[dataSource]="phoneTypes"
+            			displayExpr="name"
+            			valueExpr="id"
+            			[value]="phoneType"
+                  [itemTemplate]="'phoneTypeItemTemplate'"
+            			(onValueChanged)="onTypeChanged($event, 'phone')">
+                  <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
+                      <div title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}"><span style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
+                  </div>
+            		</dx-select-box>
+            </div>
             <country-phone-number #countryPhoneNumber
                 [(phoneNumber)]="phones"
                 [required]="false"
@@ -178,20 +182,22 @@
         <dx-validation-group>
             <div class="field addr address H">
                 <label class="address-label">{{l('Address')}}</label>
-                <dx-select-box
-                  width="200px"
-                  name="addressType"
-                  placeholder="{{l('Type')}}"
-                  [dataSource]="addressTypes"
-                  displayExpr="name"
-                  valueExpr="id"
-                  [(value)]="addresses['addressType']"
-                  [itemTemplate]="'addressTypeItemTemplate'"
-                  (onValueChanged)="onTypeChanged($event, 'address')">
-                  <div *dxTemplate="let data of 'addressTypeItemTemplate'">
-                      <div title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}">{{data.name}}</div>
-                  </div>
-                </dx-select-box>
+                <div class="drop-down-box-wrapper">
+                    <dx-select-box
+                      width="500px"
+                      name="addressType"
+                      placeholder="{{l('Type')}}"
+                      [dataSource]="addressTypes"
+                      displayExpr="name"
+                      valueExpr="id"
+                      [(value)]="addresses['addressType']"
+                      [itemTemplate]="'addressTypeItemTemplate'"
+                      (onValueChanged)="onTypeChanged($event, 'address')">
+                      <div *dxTemplate="let data of 'addressTypeItemTemplate'">
+                          <div title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}"><span style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
+                      </div>
+                    </dx-select-box>
+                </div>
                 <input *ngIf="!googleAutoComplete" type="text"
                     name="Address"
                     placeholder="{{l('Street')}}"

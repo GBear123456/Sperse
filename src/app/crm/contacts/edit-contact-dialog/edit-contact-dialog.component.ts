@@ -55,6 +55,12 @@ export class EditContactDialog extends AppComponentBase {
         this.action = data.value ? 'Edit' : 'Create';
     }
 
+    getFilteredUsageTypes(types) {
+        return types.filter((type) => {
+            return type.isCompany == this.data.isCompany;
+        });
+    }
+
     urlTypesLoad() {
         this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
         this.store$.pipe(
@@ -71,7 +77,7 @@ export class EditContactDialog extends AppComponentBase {
             select(EmailUsageTypesStoreSelectors.getEmailUsageTypes),
             filter(types => !!types)
         ).subscribe(types => {
-            this.types = types;
+            this.types = this.getFilteredUsageTypes(types);
         });
     }
 
@@ -81,7 +87,7 @@ export class EditContactDialog extends AppComponentBase {
             select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),
             filter(types => !!types)
         ).subscribe(types => {
-            this.types = types;
+            this.types = this.getFilteredUsageTypes(types);
         });
     }
 
@@ -143,7 +149,8 @@ export class EditContactDialog extends AppComponentBase {
         }
     }
 
-    ngOnDestroy() {
-
+    getUsageTypeHint(item) {
+        return item && (['emailAddress', 'phoneNumber'].indexOf(this.data.field) >= 0) ?
+            this.l('ContactInformation_' + this.capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id): '';  
     }
 }

@@ -10,16 +10,20 @@
       [disabled]="!isEditAllowed"
       [(value)]="data.usageTypeId"
       (onValueChanged)="onTypeChanged($event)"
-      fieldTemplate="fieldTemplate">
+      fieldTemplate="fieldTemplate"
+      itemTemplate="itemTemplate">
       <div *dxTemplate="let item of 'fieldTemplate'">
-        <div class="type-item-wrapper ">
+        <div class="type-item-wrapper">
           <dx-text-box class="{{data.field}} type-{{item?.id}}"
             [value]="item?.name"
-            [readOnly]="true">
+            [readOnly]="true"
+            [hint]="getUsageTypeHint(item)">
           </dx-text-box>
         </div>
       </div>
-
+      <div *dxTemplate="let item of 'itemTemplate'">
+          <div title="{{getUsageTypeHint(item)}}">{{item.name}}</div>
+      </div>
       <dx-validator>
         <dxi-validation-rule type="required" message="{{l('TypeRequired')}}"></dxi-validation-rule>
       </dx-validator>

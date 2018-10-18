@@ -33411,6 +33411,7 @@ export interface IListResultDtoOfAddressUsageTypeDto {
 export class AddressUsageTypeDto implements IAddressUsageTypeDto {
     id!: string | undefined;
     name!: string | undefined;
+    isCompany!: boolean | undefined;
 
     constructor(data?: IAddressUsageTypeDto) {
         if (data) {
@@ -33425,6 +33426,7 @@ export class AddressUsageTypeDto implements IAddressUsageTypeDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.isCompany = data["isCompany"];
         }
     }
 
@@ -33439,6 +33441,7 @@ export class AddressUsageTypeDto implements IAddressUsageTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
@@ -33446,6 +33449,7 @@ export class AddressUsageTypeDto implements IAddressUsageTypeDto {
 export interface IAddressUsageTypeDto {
     id: string | undefined;
     name: string | undefined;
+    isCompany: boolean | undefined;
 }
 
 export class ListResultDtoOfAddressOwnershipTypeDto implements IListResultDtoOfAddressOwnershipTypeDto {
@@ -34765,6 +34769,7 @@ export interface IListResultDtoOfEmailUsageTypeDto {
 export class EmailUsageTypeDto implements IEmailUsageTypeDto {
     id!: string | undefined;
     name!: string | undefined;
+    isCompany!: boolean | undefined;
 
     constructor(data?: IEmailUsageTypeDto) {
         if (data) {
@@ -34779,6 +34784,7 @@ export class EmailUsageTypeDto implements IEmailUsageTypeDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.isCompany = data["isCompany"];
         }
     }
 
@@ -34793,6 +34799,7 @@ export class EmailUsageTypeDto implements IEmailUsageTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
@@ -34800,6 +34807,7 @@ export class EmailUsageTypeDto implements IEmailUsageTypeDto {
 export interface IEmailUsageTypeDto {
     id: string | undefined;
     name: string | undefined;
+    isCompany: boolean | undefined;
 }
 
 export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
@@ -37918,6 +37926,7 @@ export interface IListResultDtoOfPhoneUsageTypeDto {
 export class PhoneUsageTypeDto implements IPhoneUsageTypeDto {
     id!: string | undefined;
     name!: string | undefined;
+    isCompany!: boolean | undefined;
 
     constructor(data?: IPhoneUsageTypeDto) {
         if (data) {
@@ -37932,6 +37941,7 @@ export class PhoneUsageTypeDto implements IPhoneUsageTypeDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.isCompany = data["isCompany"];
         }
     }
 
@@ -37946,6 +37956,7 @@ export class PhoneUsageTypeDto implements IPhoneUsageTypeDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
@@ -37953,6 +37964,7 @@ export class PhoneUsageTypeDto implements IPhoneUsageTypeDto {
 export interface IPhoneUsageTypeDto {
     id: string | undefined;
     name: string | undefined;
+    isCompany: boolean | undefined;
 }
 
 export class CreateContactPhotoInput implements ICreateContactPhotoInput {
