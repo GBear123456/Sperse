@@ -8,7 +8,7 @@ import { DictionaryServiceProxy } from 'shared/service-proxies/service-proxies';
 @NgModule({
     imports: [
         StoreModule.forFeature('OrganizationTypes', organizationTypeReducer),
-        EffectsModule.forFeature([OrganizationTypeEffects ])
+        EffectsModule.forFeature([OrganizationTypeEffects])
     ],
     providers: [OrganizationTypeEffects, DictionaryServiceProxy ]
 })
