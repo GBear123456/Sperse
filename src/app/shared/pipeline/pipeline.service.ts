@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy, 
+import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy,
     PipelineDto, ActivityServiceProxy, TransitionActivityDto } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
@@ -39,7 +39,7 @@ export class PipelineService {
             filter(pipelineDefinition => pipelineDefinition),
             map(pipelineDefinition => {
                 this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages, 
+                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
                     (stage) => {
                         return stage.sortOrder;
                     });
@@ -50,7 +50,7 @@ export class PipelineService {
 
     getStages(pipelinePurposeId: string): any {
         return this.getPipeline(pipelinePurposeId).stages;
-    };
+    }
 
     getPipeline(pipelinePurposeId: string): PipelineDto {
         return this._pipelineDefinitions[pipelinePurposeId];

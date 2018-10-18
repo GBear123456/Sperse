@@ -1,12 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable } from 'rxjs';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 
 @Injectable()
 export class DashboardWidgetsService  {
-    private _period: Subject<Object>;
+    private _period: Subject<Object> = new Subject<Object>();
     private _totalsData: Subject<Object>;
     private _subscribers: Array<Subscription> = [];
+    public period$: Observable<Object> = this._period.asObservable();
 
     totalsDataFields = [
         {
@@ -33,12 +34,11 @@ export class DashboardWidgetsService  {
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
         this._totalsData = new Subject<Object>();
-        this._period = new Subject<Object>();
     }
 
     subscribePeriodChange(callback: (period: any) => any) {
         this._subscribers.push(
-            this._period.asObservable().subscribe(callback)
+            this.period$.subscribe(callback)
         );
     }
 

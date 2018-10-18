@@ -17,18 +17,15 @@
         animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
         (onDrawn)="onDrawn($event)"
-        [size]="{height: 245}">
+        [size]="{height: 245}"
+        [series]="allSeries$ | async">
 
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
         <dxo-common-series-settings
             argumentField="date"
-            type="stackedBar"
             ignoreEmptyPoints="true">
         </dxo-common-series-settings>
-
-        <dxi-series [color]="clientColor" valueField="customerCount" name="{{l('Client Count')}}"></dxi-series>
-        <dxi-series [color]="leadColor" valueField="leadCount" name="{{l('Lead Count')}}"></dxi-series>
 
         <!-- Bottom axis -->
         <dxo-argument-axis
@@ -38,24 +35,7 @@
             <dxo-label [customizeText]="customizeBottomAxis"></dxo-label>
         </dxo-argument-axis>
 
-        <dxo-legend
-            [visible]="false"
-            itemsAlignment="center"
-            itemTextPosition="right"
-            orientation="horizontal"
-            position="outside">
-        </dxo-legend>
-
-        <!-- Left axis -->
-        <dxi-value-axis>
-            <dxo-label [customizeText]="customizeAxisValues">
-                <dxo-format
-                    type="number largeNumber"
-                    currency="number">
-                </dxo-format>
-            </dxo-label>
-            <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
-        </dxi-value-axis>
+        <dxo-legend [visible]="false"></dxo-legend>
 
         <!-- Common settings for axis -->
         <dxo-common-axis-settings allowDecimals="false">
@@ -66,6 +46,14 @@
                 <dxo-label horizontal-allignment="center"></dxo-label>
             </dxo-strip-style>
         </dxo-common-axis-settings>
+
+        <dxo-tooltip
+            [enabled]="true"
+            [shared]="true"
+            [customizeTooltip]="customizeTooltip">
+            <dxo-format type="largeNumber" [precision]="1"></dxo-format>
+        </dxo-tooltip>
     </dx-chart>
+
     <app-no-data [hidden]="loading || (totalsData && totalsData.length)"></app-no-data>
 </div>
