@@ -69,16 +69,16 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
         }
     }
 
-    setEditModeEnabled(isEnabled: boolean, event = undefined) {       
+    setEditModeEnabled(isEnabled: boolean, event = undefined) {
         this._clickCounter++;
         clearTimeout(this._clickTimeout);
         this._clickTimeout = setTimeout(() => {
-            if (isEnabled) {                
+            if (isEnabled) {
                 if (this._clickCounter > 1) {
                     this.isEditModeEnabled = isEnabled;
                     this.valueOriginal = this.data.value;
                     setTimeout(() => this.textBox.instance.focus());
-                } else 
+                } else
                     this.showDialog(event);
             } else {
                 this.isEditModeEnabled = isEnabled;
