@@ -368,7 +368,7 @@
                 </div>
             </div>
         </mat-step>
-        <mat-step *ngIf="showImportUsersStep">
+        <mat-step *ngIf="showImportUsersStep && maxAvailableUserCount > 0">
             <div class="import-users-step step-item">
                 <div class="header">
                     <img src="./assets/common/images/intro/logo-dark.png"
@@ -378,7 +378,7 @@
                          class="crm-intro-logo">
                 </div>
                 <div class="main">
-                    <app-import-users-step ></app-import-users-step>
+                    <app-import-users-step [maxAvailableUserCount]="maxAvailableUserCount"></app-import-users-step>
                 </div>
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">Back</button>

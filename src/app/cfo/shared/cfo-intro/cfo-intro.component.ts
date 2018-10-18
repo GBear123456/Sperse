@@ -7,7 +7,7 @@ import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/ma
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { InstanceType } from 'shared/service-proxies/service-proxies';
+import { InstanceType, ModuleType, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
@@ -16,20 +16,22 @@ import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-user
     selector: 'app-cfo-intro',
     templateUrl: './cfo-intro.component.html',
     styleUrls: ['./cfo-intro.component.less'],
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    providers: [UserServiceProxy]
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     @ViewChild('stepper') stepper: MatHorizontalStepper;
     @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CfoIntroComponent, any>;
-    isLinear = false;
     readonly identifier = 'CFO-Instance-Setup';
     moduleName: string;
     showImportUsersStep: boolean;
+    maxAvailableUserCount: number;
 
     constructor(
         injector: Injector,
+        private _userService: UserServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
         super(injector);
@@ -44,6 +46,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     ngOnInit() {
         this.stepper.selectedIndex = 1;
+        this.getAvailableUserCount();
     }
 
     onSubmit() {
@@ -67,5 +70,12 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     goToStep(index) {
         this.stepper.selectedIndex = index;
+    }
+
+    // GetAvailableUserCount
+    getAvailableUserCount() {
+        this._userService.getAvailableUserCount(ModuleType.CFO).subscribe(result => {
+            this.maxAvailableUserCount = result;
+        });
     }
 }

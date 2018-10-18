@@ -1,10 +1,15 @@
-import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
+/** Core imports */
+import { Component, Injector, Input, OnInit } from '@angular/core';
 
+/** Third party imports */
+
+/** Application imports */
 import {
     InviteUserInput,
     RoleListDto,
     RoleServiceProxy,
-    TenantHostType, UserServiceProxy
+    TenantHostType,
+    UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { ImportUserData } from '@app/crm/shared/crm-intro/crm-intro.model';
@@ -18,7 +23,8 @@ import * as nameParser from 'parse-full-name';
 })
 export class ImportUsersStepComponent extends AppComponentBase implements OnInit {
     @Input() showImportUsersStep: boolean;
-    importUsers: ImportUserData[] = [new ImportUserData(), new ImportUserData(), new ImportUserData()];
+    @Input() maxAvailableUserCount: number;
+    importUsers: ImportUserData[] = [];
     importValidators: any[] = [];
     roles: RoleListDto[] = [];
     validationResult: boolean;
@@ -35,6 +41,14 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         this._roleService.getRoles(undefined).subscribe(result => {
             this.roles = result.items;
         });
+        this.setImportUsers();
+    }
+
+    setImportUsers() {
+        while (this.maxAvailableUserCount > 0 && this.importUsers.length < 3) {
+            this.importUsers.push(new ImportUserData());
+            this.maxAvailableUserCount--;
+        }
     }
 
     submitInviteUsers() {
@@ -60,8 +74,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         this.importValidators.forEach((v) => {
             if (validateAll) {
                 result = v.validate().isValid && result;
-            }
-            else {
+            } else {
                 result = result && v.validate().isValid;
             }
         });
@@ -123,6 +136,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
 
     addImportUser() {
         this.importUsers.push(new ImportUserData());
+        this.maxAvailableUserCount--;
     }
 
     removeImportUser(index: number) {
