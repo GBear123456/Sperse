@@ -40,6 +40,7 @@ import {
     DxRadioGroupModule,
     DxCheckBoxModule,
     DxTagBoxModule,
+    DxDropDownBoxModule,
     DxSchedulerModule
 } from 'devextreme-angular';
 import { TableModule } from 'primeng/table';
@@ -83,6 +84,7 @@ import { AppStoreService } from '@app/store/app-store.service';
       ngCommon.CommonModule,
       CommonModule,
       AppCommonModule,
+      DxDropDownBoxModule,
       DxTreeListModule,
       DxDataGridModule,
       DxToolbarModule,

@@ -23,7 +23,7 @@ import { OrganizationTypeSelectors } from '@app/store/organization-types-store';
     selector: 'organization-dialog',
     templateUrl: './organization-dialog.component.html',
     styleUrls: ['./organization-dialog.component.less'],
-    providers: [ContactPhotoServiceProxy, OrganizationTypeServiceProxy ]
+    providers: [ContactPhotoServiceProxy, OrganizationTypeServiceProxy]
 })
 export class OrganizationDialogComponent extends AppComponentBase {
     isEditAllowed = false;
@@ -42,10 +42,17 @@ export class OrganizationDialogComponent extends AppComponentBase {
         options: []
     } as InplaceSelectBoxModel;
     companySizeList: any = [
-        {id: 0, name: '10 - 25'},
-        {id: 1, name: '25 - 50'},
-        {id: 2, name: '50 - 100'},
-        {id: 3, name: '100 - 1000'}
+        {id: 0, name: '1 to 9', value: '1-9'},
+        {id: 1, name: '10 to 19', value: '10-19'},
+        {id: 2, name: '20 to 49', value: '20-49'},
+        {id: 3, name: '50 to 99', value: '50-99'},
+        {id: 4, name: '100 to 249', value: '100-249'},
+        {id: 5, name: '250 to 499', value: '250-499'},
+        {id: 6, name: '500 to 999', value: '500-999'},
+        {id: 7, name: '1,000 to 2,499', value: '1000-2499'},
+        {id: 8, name: '2,500 to 4,999', value: '2500-4999'},
+        {id: 9, name: '5,000 to 9,999', value: '5000-9999'},
+        {id: 10, name: '10,000 or more', value: '10000-'}
     ];
 
     sections: any = [
@@ -83,7 +90,6 @@ export class OrganizationDialogComponent extends AppComponentBase {
                         },
                         onChange: (value) => {
                             let item = this.companySizeList[value];
-                            console.log(this.companySizeList); console.log(this.companySizeList[1]);
                             item && this.updateValue(item.name, 'size');
                         }
                     }
@@ -195,16 +201,17 @@ export class OrganizationDialogComponent extends AppComponentBase {
     }
 
     getCompanySize() {
-        let companySizeStr = this.data.organization['sizeFrom'] + ' - ' +
-            this.data.organization['sizeTo'];
-        let item = this.companySizeList.find(x => x.name == companySizeStr);
+        let companySizeStr = this.data.organization['sizeFrom'] + '-' +
+            (this.data.organization['sizeTo'] || '');
+        let item = this.companySizeList.find(x => x.value == companySizeStr);
         return item ? item.id : null;
     }
 
     updateValue(value, field) {
         let fieldName = field.name || field;
         if (fieldName == 'size') {
-            let [fromValue, toValue] = value.split(' - ');
+            let item = this.companySizeList.find(x => x.name == value);
+            let [fromValue, toValue] = item.value.split('-');
             this.data.organization['sizeFrom'] = fromValue;
             this.data.organization['sizeTo'] = toValue;
         } else
