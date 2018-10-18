@@ -63,7 +63,11 @@
                   displayExpr="name"
                   valueExpr="id"
                   [value]="emailType"
+                  [itemTemplate]="'emailTypeItemTemplate'"
                   (onValueChanged)="onTypeChanged($event, 'email')">
+                  <div *dxTemplate="let data of 'emailTypeItemTemplate'">
+                      <div title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}">{{data.name}}</div>
+                  </div>
                 </dx-select-box>
                 <dx-text-box #emailComponent
                   name="email"
@@ -91,7 +95,11 @@
         			displayExpr="name"
         			valueExpr="id"
         			[value]="phoneType"
+              [itemTemplate]="'phoneTypeItemTemplate'"
         			(onValueChanged)="onTypeChanged($event, 'phone')">
+              <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
+                  <div title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}">{{data.name}}</div>
+              </div>
         		</dx-select-box>
             <country-phone-number #countryPhoneNumber
                 [(phoneNumber)]="phones"
@@ -178,7 +186,11 @@
                   displayExpr="name"
                   valueExpr="id"
                   [(value)]="addresses['addressType']"
+                  [itemTemplate]="'addressTypeItemTemplate'"
                   (onValueChanged)="onTypeChanged($event, 'address')">
+                  <div *dxTemplate="let data of 'addressTypeItemTemplate'">
+                      <div title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}">{{data.name}}</div>
+                  </div>
                 </dx-select-box>
                 <input *ngIf="!googleAutoComplete" type="text"
                     name="Address"

@@ -321,7 +321,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 thumbnail: StringHelper.getBase64(this.photoThumbnailData)
             }) : null,
             note: this.notes,
-            assignedUserId: assignedUserId || currentUserId,
+            assignedUserId: assignedUserId || this.currentUserId,
             stageId: stageId,
             lists: lists,
             tags: tags,
