@@ -30,6 +30,7 @@ import {
     providers: [ DialogService ]
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
+    @Input() isCompany = false;
     @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() contactInfo: ContactGroupInfoDto;
 
@@ -67,10 +68,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         }
         this.getAddressTypes()
             .subscribe(types => {
-                types.reduce(function (obj, type) {
-                    obj[type.id] = type.name;
-                    return obj;
-                }, this.types);
+                this.types = types.map((type) => {
+                    type[type.id] = type.name;
+                    return type['isCompany'] == this.isCompany && type;
+                }).filter(Boolean);
             });
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
@@ -116,6 +117,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');
         dialogData.contactId = this.contactInfoData && this.contactInfoData.contactId;
+        dialogData.isCompany = this.isCompany;
         dialogData.deleteItem = (event) => {
             this.deleteAddress(address, event, index);
         };

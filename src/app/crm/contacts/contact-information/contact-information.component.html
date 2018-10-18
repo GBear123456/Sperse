@@ -20,18 +20,20 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="col-md-12">
-                    <contacts-area [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
-                              [contactInfo]="data?.contactInfo"></contacts-area>
+                    <contacts-area [isCompany]="true"
+                        [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
+                        [contactInfo]="data?.contactInfo"></contacts-area>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <addresses [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
-                               [contactInfo]="data?.contactInfo"></addresses>
+                    <addresses [isCompany]="true"
+                        [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
+                        [contactInfo]="data?.contactInfo"></addresses>
                 </div>
                 <div class="col-md-6">
                     <socials [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
-                             [contactInfo]="data?.contactInfo"></socials>
+                        [contactInfo]="data?.contactInfo"></socials>
                 </div>
             </div>
         </dx-scroll-view>

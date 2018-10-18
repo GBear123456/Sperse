@@ -12,14 +12,19 @@
                 valueExpr="id"
                 [disabled]="!isEditAllowed"
                 [(value)]="data.usageTypeId"
+                itemTemplate="itemTemplate"
                 fieldTemplate="fieldTemplate">
                 <div *dxTemplate="let item of 'fieldTemplate'">
                   <div class="type-item-wrapper ">
                     <dx-text-box class="addressType type-{{item?.id}}"
                       [value]="item?.name"
-                      [readOnly]="true">
+                      [readOnly]="true"
+                      [hint]="getUsageTypeHint(item)">
                     </dx-text-box>
                   </div>
+                </div>
+                <div *dxTemplate="let item of 'itemTemplate'">
+                    <div title="{{getUsageTypeHint(item)}}">{{item.name}}</div>
                 </div>
                 <dx-validator>
                   <dxi-validation-rule type="required" message="{{l('TypeRequired')}}"></dxi-validation-rule>

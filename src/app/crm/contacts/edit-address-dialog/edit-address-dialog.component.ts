@@ -100,7 +100,9 @@ export class EditAddressDialog extends AppComponentBase {
         this.store$.pipe(select(AddressUsageTypesStoreSelectors.getAddressUsageTypes))
             .subscribe(result => {
                 if (result)
-                    this.types = result;
+                    this.types = result.filter((type) => {
+                        return type['isCompany'] == this.data.isCompany;
+                    });
             });
     }
 
@@ -156,5 +158,9 @@ export class EditAddressDialog extends AppComponentBase {
 
             this.mouseDown(event);
         }
+    }
+
+    getUsageTypeHint(item) {
+        return item ? this.l('ContactInformation_AddressTypeTooltip_' + item.id): '';
     }
 }
