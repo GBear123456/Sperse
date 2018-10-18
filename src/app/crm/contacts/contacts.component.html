@@ -8,7 +8,7 @@
             <i class="fa fa-phone" aria-hidden="true"></i>
             <a [routerLink]="'notes'"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
         </div>
-        <operations-widget 
+        <operations-widget
             [enabled]="operationsEnabled"
             [customerType]="customerType"
             [leadId]="leadId"
@@ -27,7 +27,7 @@
         ></operations-widget>
     </div>
     <mat-sidenav-container>
-        <mat-sidenav mode="side" opened="true" position="start">
+        <mat-sidenav mode="side" opened="true" [disableClose]="true" position="start">
             <div class="short-contact">
                 <div class="small-phones">
                     <div class="phone" *ngFor="let phone of primaryContact?.phones">
