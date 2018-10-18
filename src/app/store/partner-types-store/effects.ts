@@ -22,6 +22,7 @@ import * as partnerTypesActions from './actions';
 import {
     BulkUpdatePartnerTypeInput,
     PartnerTypeServiceProxy,
+    DictionaryServiceProxy,
     PartnerServiceProxy,
     PartnerTypeDto,
     RenamePartnerTypeInput
@@ -46,7 +47,7 @@ export class PartnerTypesStoreEffects {
                 return empty();
             }
 
-            return this.injector.get(PartnerTypeServiceProxy).getAll()
+            return this.injector.get(DictionaryServiceProxy).getPartnerTypes()
                 .pipe(
                     map((partnerTypes: PartnerTypeDto[]) => {
                         return new partnerTypesActions.LoadSuccessAction(partnerTypes);

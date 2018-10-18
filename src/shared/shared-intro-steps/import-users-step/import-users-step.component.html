@@ -1,31 +1,37 @@
 <div class="wrapper">
     <h3>
-        Invite Your Team Members <br />
+        Invite Your Team Members <br/>
         With Assigned Roles
     </h3>
     <div class="invite-list">
         <dx-scroll-view height="350" showScrollbar="onHover">
             <div style="position:relative">
-                <dx-validation-group *ngFor="let user of importUsers; let i = index" (onInitialized)="onInviteUserValidationGroupInitialized($event)">
+                <dx-validation-group *ngFor="let user of importUsers; let i = index"
+                                     (onInitialized)="onInviteUserValidationGroupInitialized($event)">
                     <div class="row import-user-row" [attr.index]="i">
                         <dx-text-box [(value)]="user.email"
-                                        placeholder="Email"
-                                        (onValueChanged)="validateUsers(true)"
-                                        class="col-4">
+                                     placeholder="Email"
+                                     (onKeyPress)="onEmailKeyPress(i)"
+                                     (onValueChanged)="validateUsers(true);"
+                                     class="col-4">
                             <dx-validator>
-                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
+                                                     message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="custom" [validationCallback]="validateDuplicatedEmails" [reevaluate]="true" message="{{l('EmailIsDuplicated')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateDuplicatedEmails" [reevaluate]="true"
+                                                     message="{{l('EmailIsDuplicated')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="stringLength" [max]="64"></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                         <dx-text-box [(value)]="user.fullName"
-                                        placeholder="Full name"
-                                        (onValueChanged)="validateInviteUserGroup(i)"
-                                        class="col-4">
+                                     placeholder="Full name"
+                                     (onValueChanged)="validateInviteUserGroup(i)"
+                                     class="col-4">
                             <dx-validator>
-                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="custom" [validationCallback]="validateFullName" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
+                                                     message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateFullName"
+                                                     message="{{l('NameIsRequired')}}."></dxi-validation-rule>
                                 <dxi-validation-rule type="stringLength" [max]="32"></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
@@ -45,13 +51,18 @@
                                 <span class="tag-value">{{tag}}</span>
                             </div>
                             <dx-validator>
-                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true" message="{{l('RequiredField', l('Role'))}}"></dxi-validation-rule>
+                                <dxi-validation-rule type="custom" [validationCallback]="validateInviteUserRow" [reevaluate]="true"
+                                                     message="{{l('RequiredField', l('Role'))}}"></dxi-validation-rule>
                             </dx-validator>
                         </dx-tag-box>
                         <div class="remove-import-user" (click)="removeImportUser(i)"><i class="fa fa-minus"></i></div>
                     </div>
                 </dx-validation-group>
-                <div><span class="add-import-user" (click)="addImportUser()">+ADD</span></div>
+                <div>
+                    <span class="add-import-user"
+                          (click)="addImportUser()"
+                          *ngIf="maxAvailableUserCount > 0">+ADD</span>
+                </div>
             </div>
         </dx-scroll-view>
     </div>
