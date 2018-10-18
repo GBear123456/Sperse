@@ -177,15 +177,15 @@
                 <div class="footer">
                     <button mat-button matStepperPrevious class="btn btn-layout">{{l('Back')}}</button>
 
-                    <button *ngIf="!showImportUsersStep" class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
+                    <button *ngIf="!showImportUsersStep || !maxAvailableUserCount" class="btn btn-layout get-started" (click)="onSubmit()" mat-button>
                         {{data?.alreadyStarted ? 'Submit' : 'Get started'}}
                     </button>
 
-                    <button *ngIf="showImportUsersStep" mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
+                    <button *ngIf="showImportUsersStep && maxAvailableUserCount" mat-button matStepperNext class="btn btn-layout">{{l('Next')}}</button>
                 </div>
             </div>
         </mat-step>
-        <mat-step *ngIf="showImportUsersStep && maxAvailableUserCount > 0">
+        <mat-step *ngIf="showImportUsersStep && maxAvailableUserCount">
             <div class="import-users-step step-item">
                 <div class="header">
                     <img src="./assets/common/images/sperse-logo.png">
