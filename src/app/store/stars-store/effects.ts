@@ -9,13 +9,13 @@ import { catchError, exhaustMap, map, startWith, withLatestFrom } from 'rxjs/ope
 
 /** Application imports */
 import * as starsActions from './actions';
-import { ContactGroupStarsServiceProxy, ContactGroupStarInfoDto } from 'shared/service-proxies/service-proxies';
+import { DictionaryServiceProxy, ContactGroupStarInfoDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
 
 @Injectable()
 export class StarsStoreEffects {
-    constructor(private customerStarsService: ContactGroupStarsServiceProxy,
+    constructor(private dictionaryService: DictionaryServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -29,7 +29,7 @@ export class StarsStoreEffects {
                 return empty();
             }
 
-            return this.customerStarsService.getStars()
+            return this.dictionaryService.getStars()
                 .pipe(
                     map((stars: ContactGroupStarInfoDto[]) => {
                         return new starsActions.LoadSuccessAction(stars);

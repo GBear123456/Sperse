@@ -9,13 +9,13 @@ import { catchError, exhaustMap, map, startWith, switchMap, withLatestFrom } fro
 
 /** Application imports */
 import * as organizationTypesActions from './actions';
-import { OrganizationTypeServiceProxy, OrganizationTypeDto } from 'shared/service-proxies/service-proxies';
+import { DictionaryServiceProxy, OrganizationTypeDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
 
 @Injectable()
 export class OrganizationTypeEffects {
-    constructor(private organizationTypeService: OrganizationTypeServiceProxy,
+    constructor(private dictionaryService: DictionaryServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -29,7 +29,7 @@ export class OrganizationTypeEffects {
                 return empty();
             }
 
-            return this.organizationTypeService.getOrganizationTypes()
+            return this.dictionaryService.getOrganizationTypes()
                 .pipe(
                     map((statuses: OrganizationTypeDto[]) => {
                     return new organizationTypesActions.LoadSuccessAction(statuses);
