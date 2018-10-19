@@ -11,8 +11,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateUserDialogComponent } from './create-user-dialog/create-user-dialog.component';
-import { CreateOrEditUserModalComponent } from './create-or-edit-user-modal.component';
-import { EditUserPermissionsModalComponent } from './edit-user-permissions-modal.component';
 import { ImpersonationService } from './impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
@@ -36,8 +34,6 @@ import { MatDialog } from '@angular/material';
 })
 export class UsersComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild('createOrEditUserModal') createOrEditUserModal: CreateOrEditUserModalComponent;
-    @ViewChild('editUserPermissionsModal') editUserPermissionsModal: EditUserPermissionsModalComponent;
 
     //Filters
     private filters: FilterModel[];

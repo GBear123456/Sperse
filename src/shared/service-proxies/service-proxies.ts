@@ -12993,12 +12993,13 @@ export class ImportServiceProxy {
      * @return Success
      */
     getMappedFields(inputFieldNames: string[] | null | undefined): Observable<ImportFieldInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Import/GetMappedFields?";
-        if (inputFieldNames !== undefined)
-            inputFieldNames && inputFieldNames.forEach(item => { url_ += "inputFieldNames=" + encodeURIComponent("" + item) + "&"; });
+        let url_ = this.baseUrl + "/api/services/CRM/Import/GetMappedFields";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(inputFieldNames);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -13007,7 +13008,7 @@ export class ImportServiceProxy {
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processGetMappedFields(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {

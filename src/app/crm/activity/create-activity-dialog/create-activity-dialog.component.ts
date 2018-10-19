@@ -398,8 +398,15 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             this.data.isTitleValid = true;
             this.userAssignmentComponent.reset();
             this.data.appointment = {
-                Type: CreateActivityDtoType.Event
+                Type: CreateActivityDtoType.Task
             };
+
+            this.isUserSelected = false;
+            this.isStatusSelected = false;
+            this.isLeadsSelected = false;
+            this.isClientSelected = false;
+            this.isStarSelected = false;
+            this.initToolbarConfig();
 
             setTimeout(() => {
                 this.startDate.instance.option('isValid', true);
@@ -454,6 +461,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     onStagesChanged(event) {
         this.data.appointment.StageId = event.id;
+        this.isStatusSelected = !!event.id;
+        this.initToolbarConfig();
     }
 
     titleChanged(event) {
