@@ -255,7 +255,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     openUserDetails(userId) {
         this.searchClear = false;
-        this._router.navigate(['app/admin/user', userId],
+        this._router.navigate(['app/admin/user/' + userId + '/user-information'],
             { queryParams: { referrer: 'app/admin/users'} });
     }
 

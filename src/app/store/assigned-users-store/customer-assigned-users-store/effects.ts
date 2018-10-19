@@ -29,7 +29,7 @@ export class CustomerAssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._userAssignmentService.getAllowedAssignableUsersForPartner(true, undefined, undefined)
+            return this._userAssignmentService.getAllowedAssignableUsersForCustomer(true, undefined, undefined)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction(users);

@@ -74,7 +74,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 }).filter(Boolean);
             });
 
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     loadAddressTypes() {

@@ -65,7 +65,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         private _contactsService: ContactsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Leads.ManageLeads');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Leads.Manage');
     }
 
     ngOnInit() {

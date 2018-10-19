@@ -32,7 +32,7 @@
 
     </div>
 
-    <div class="header_buttons">
+    <div class="header_buttons" *ngIf="!isAdminModule">
         <ng-container *ngIf="isClientCFOAvailable()">
             <span class="link-to-cfo" (click)="redirectToCFO()"></span>
         </ng-container>

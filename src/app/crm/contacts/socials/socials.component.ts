@@ -59,7 +59,7 @@ export class SocialsComponent extends AppComponentBase {
                 private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     getDialogPosition(event) {

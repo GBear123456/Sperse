@@ -34,6 +34,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
 
+    isAdminModule;
+
     constructor(
         injector: Injector,
         public dialog: MatDialog,
@@ -46,6 +48,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private _userService: UserServiceProxy
     ) {
         super(injector);
+
+        this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
     }
 
     ngOnInit(): void {
