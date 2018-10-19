@@ -160,15 +160,15 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     (contact.userId || this.contactInfo.statusId != ContactGroupStatus.Prospective)),
                 route: 'user-information'
             },
-            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
-            {label: 'Questionnaire', route: 'questionnaire'},
             {label: 'Documents', route: 'documents'},
-            {label: 'Application Status', route: 'application-status', hidden: !!this.leadId},
-            {label: 'Referral History', route: 'referral-history'},
+            {label: 'Notes', route: 'notes'},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Activity Logs', route: 'activity-logs'},
-            {label: 'Notes', route: 'notes'}
+            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
+            {label: 'Referral History', route: 'referral-history', disabled: true},
+            {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
+            {label: 'Questionnaire', route: 'questionnaire', disabled: true},
+            {label: 'Activity Logs', route: 'activity-logs', disabled: true}
         ];
     }
 
