@@ -46,7 +46,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     getDialogPossition(event) {

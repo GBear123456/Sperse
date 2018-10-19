@@ -49,7 +49,7 @@ export class EditContactDialog extends AppComponentBase {
                 private store$: Store<AppStore.State>) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
 
         this[data.field + 'TypesLoad']();
         this.action = data.value ? 'Edit' : 'Create';

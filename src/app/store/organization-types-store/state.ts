@@ -6,14 +6,14 @@ export const organizationTypesAdapter: EntityAdapter<
     > = createEntityAdapter<OrganizationTypeDto>({});
 
 export interface State {
-    statuses: OrganizationTypeDto[];
+    organizationTypes: OrganizationTypeDto[];
     isLoading: boolean;
     error: string;
     loaded: boolean;
 }
 
 export const initialState: State = {
-    statuses: null,
+    organizationTypes: null,
     isLoading: false,
     error: null,
     loaded: false

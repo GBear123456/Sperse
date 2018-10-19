@@ -33121,6 +33121,8 @@ export class ContactShortInfo implements IContactShortInfo {
     fullName!: string | undefined;
     photo!: ContactPhotoInfo | undefined;
     ratingId!: number | undefined;
+    contactGroupTypeId!: string | undefined;
+    contactGroupStatusId!: string | undefined;
 
     constructor(data?: IContactShortInfo) {
         if (data) {
@@ -33137,6 +33139,8 @@ export class ContactShortInfo implements IContactShortInfo {
             this.fullName = data["fullName"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             this.ratingId = data["ratingId"];
+            this.contactGroupTypeId = data["contactGroupTypeId"];
+            this.contactGroupStatusId = data["contactGroupStatusId"];
         }
     }
 
@@ -33153,6 +33157,8 @@ export class ContactShortInfo implements IContactShortInfo {
         data["fullName"] = this.fullName;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["ratingId"] = this.ratingId;
+        data["contactGroupTypeId"] = this.contactGroupTypeId;
+        data["contactGroupStatusId"] = this.contactGroupStatusId;
         return data; 
     }
 }
@@ -33162,6 +33168,8 @@ export interface IContactShortInfo {
     fullName: string | undefined;
     photo: ContactPhotoInfo | undefined;
     ratingId: number | undefined;
+    contactGroupTypeId: string | undefined;
+    contactGroupStatusId: string | undefined;
 }
 
 export class ContactPhotoInfo implements IContactPhotoInfo {

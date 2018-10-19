@@ -22,7 +22,7 @@ export class PersonDialogComponent extends AppComponentBase {
         private _personContactService: PersonContactServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     getPropData(propName){

@@ -62,7 +62,7 @@ export class EmploymentComponent extends AppComponentBase implements OnInit {
         private dialog: MatDialog,
         private dialogService: DialogService) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this._isEditAllowed = this.isGranted('Pages.CRM.Customers.ManageContacts');
+        this._isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     ngOnInit() {

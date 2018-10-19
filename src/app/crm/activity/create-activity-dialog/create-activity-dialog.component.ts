@@ -300,13 +300,17 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     private afterSave(): void {
-        if (this.saveContextMenuItems[0].selected) {
+        if (this.saveContextMenuItems.length &&
+            this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
             this.data.refreshParent(true,
                 this.data.appointment.StageId);
-        } else if (this.saveContextMenuItems[1].selected) {
+            // } else if (this.saveContextMenuItems[1].selected) {
+            // @Todo: after add new button uncomment else if and update it, there can be bug with 'Save' button, but I can't reproduce it
+        } else {
             this.close();
+            this.notify.info(this.l('SavedSuccessfully'));
             this.data.refreshParent(false,
                 this.data.appointment.StageId);
        }
